@@ -26,7 +26,6 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new Spawner(new Skeleton(1)), 7, 28));
 		items.add(new FurnitureItem(new Spawner(new Snake(1)), 8, 28));
 		items.add(new FurnitureItem(new Spawner(new Knight(1)), 9, 28));
-		items.add(new FurnitureItem(new Spawner(new AirWizard()), 10, 28));
 
 		items.add(new FurnitureItem(new Chest()));
 		items.add(new FurnitureItem(new DungeonChest(false, true)));

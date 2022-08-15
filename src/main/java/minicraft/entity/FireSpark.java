@@ -1,30 +1,29 @@
 package minicraft.entity;
 
-import java.util.List;
-
 import minicraft.core.Game;
-import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
-public class Spark extends Entity {
-	private final int lifeTime; // How much time until the spark disappears
-	private final double xa;
-	private final double ya; // The x and y acceleration
+import java.util.List;
+
+public class FireSpark extends Entity {
+	private int lifeTime; // How much time until the spark disappears
+	private double xa, ya; // The x and y acceleration
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
-	private final AirWizard owner; // The AirWizard that created this spark
+	private final ObsidianKnight owner; // The Obsidian Knight that created this spark
 
 	/**
-	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
-	 * @param owner The AirWizard spawning the spark.
+	 * Creates a new spark. Owner is the Obsidian Knight which is spawning this spark.
+	 * @param owner The Obsidian Knight spawning the spark.
 	 * @param xa X velocity.
 	 * @param ya Y velocity.
 	 */
-	public Spark(AirWizard owner, double xa, double ya) {
+	public FireSpark(ObsidianKnight owner, double xa, double ya) {
 		super(0, 0);
 
 		this.owner = owner;
@@ -33,8 +32,8 @@ public class Spark extends Entity {
 		this.xa = xa;
 		this.ya = ya;
 
-		// Max time = 389 ticks. Min time = 360 ticks.
-		lifeTime = 60 * 6 + random.nextInt(30);
+		// Max time = 199 ticks. Min time = 180 ticks.
+		lifeTime = 60 * 3 + random.nextInt(20);
 	}
 
 	@Override
@@ -45,15 +44,20 @@ public class Spark extends Entity {
 			return;
 		}
 		// Move the spark:
+		//if ()
 		xx += xa;
 		yy += ya;
 		x = (int) xx;
 		y = (int) yy;
 
-		Player player = getClosestPlayer();
-		if (getClosestPlayer().isWithin(0,this)) {
-			player.hurt(owner,1);
+		if (getClosestPlayer() != null) { // Failsafe if player dies in a fire spark.
+			Player player = getClosestPlayer();
+			if (getClosestPlayer().isWithin(0, this)) {
+				player.burn(5); // Burn the player for 5 seconds
+			}
 		}
+
+
 	}
 
 	/** Can this entity block you? Nope. */
@@ -82,7 +86,7 @@ public class Spark extends Entity {
 		int yt = 13;
 
 		screen.render(x - 4, y - 4 + 2, 8 + 24 * 32, randmirror, 2, -1, false, Color.BLACK); // renders the shadow on the ground
-		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // Renders the spark
+		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2, 0,false,Color.RED); // Renders the spark
 	}
 
 	/**

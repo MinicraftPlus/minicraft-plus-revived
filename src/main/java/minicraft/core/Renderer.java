@@ -43,7 +43,8 @@ import minicraft.util.Quest.QuestSeries;
 import javax.imageio.ImageIO;
 
 public class Renderer extends Game {
-	private Renderer() {}
+	private Renderer() {
+	}
 
 	public static int HEIGHT = 192;
 	public static int WIDTH = 288;
@@ -82,7 +83,7 @@ public class Renderer extends Game {
 			return null;
 		}
 
-		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
+		return new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
 	}
 
 	public static void initScreen() {
@@ -98,7 +99,9 @@ public class Renderer extends Game {
 	}
 
 
-	/** Renders the current screen. Called in game loop, a bit after tick(). */
+	/**
+	 * Renders the current screen. Called in game loop, a bit after tick().
+	 */
 	public static void render() {
 		if (screen == null) return; // No point in this if there's no gui... :P
 
@@ -110,7 +113,8 @@ public class Renderer extends Game {
 		if (display != null) // Renders menu, if present.
 			display.render(screen);
 
-		if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!canvas.hasFocus())
+			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
@@ -160,7 +164,7 @@ public class Renderer extends Game {
 		level.renderSprites(screen, xScroll, yScroll); // Renders level sprites on screen
 
 		// This creates the darkness in the caves
-		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength/4 || Updater.tickCount > Updater.dayLength/2) && !isMode("minicraft.settings.mode.creative")) {
+		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength / 4 || Updater.tickCount > Updater.dayLength / 2) && !isMode("minicraft.settings.mode.creative")) {
 			lightScreen.clear(0); // This doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // Brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
 			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
@@ -169,7 +173,9 @@ public class Renderer extends Game {
 	}
 
 
-	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
+	/**
+	 * Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.)
+	 */
 	private static void renderGui() {
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
@@ -184,10 +190,9 @@ public class Renderer extends Game {
 		}
 
 
-
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
+			if (((ToolItem) player.activeItem).type == ToolType.Bow) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
 				if (isMode("minicraft.settings.mode.creative") || ac >= 10000)
@@ -200,7 +205,8 @@ public class Renderer extends Game {
 		}
 
 		ArrayList<String> permStatus = new ArrayList<>();
-		if (Updater.saving) permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.saving", Math.round(LoadingDisplay.getPercentage())));
+		if (Updater.saving)
+			permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.saving", Math.round(LoadingDisplay.getPercentage())));
 		if (Bed.sleeping()) permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.sleeping"));
 		if (Bed.inBed(Game.player)) {
 			permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.sleep_cancel", input.getMapping("exit")));
@@ -235,14 +241,14 @@ public class Renderer extends Game {
 
 			// Draw each current notification, with shadow text effect.
 			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false)
-				.setYPos(Screen.h*2/5).setRelTextPos(RelPos.TOP, false);
+				.setYPos(Screen.h * 2 / 5).setRelTextPos(RelPos.TOP, false);
 			Font.drawParagraph(print, screen, style, 0);
 		}
 
 
 		// SCORE MODE ONLY:
 		if (isMode("minicraft.settings.mode.score")) {
-			int seconds = (int)Math.ceil(Updater.scoreTime / (double)Updater.normSpeed);
+			int seconds = (int) Math.ceil(Updater.scoreTime / (double) Updater.normSpeed);
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
 			minutes %= 60;
@@ -253,7 +259,7 @@ public class Renderer extends Game {
 			else if (Updater.scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 
-			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left", hours > 0 ? hours + "h " : "", minutes, seconds), screen, Screen.w / 2-9 * 8, 2, timeCol);
+			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left", hours > 0 ? hours + "h " : "", minutes, seconds), screen, Screen.w / 2 - 9 * 8, 2, timeCol);
 
 			String scoreString = Localization.getLocalized("minicraft.display.gui.score.current_score", player.getScore());
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, Color.WHITE);
@@ -261,7 +267,7 @@ public class Renderer extends Game {
 			if (player.getMultiplier() > 1) {
 				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : Color.RED;
 				String mult = "X" + player.getMultiplier();
-				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2 * 8, multColor);
+				Font.draw(mult, screen, Screen.w - Font.textWidth(mult) - 2, 4 + 2 * 8, multColor);
 			}
 		}
 
@@ -270,7 +276,7 @@ public class Renderer extends Game {
 			// Draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
-			int green = (int)(dura * 2.55f); // Let duration show as normal.
+			int green = (int) (dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
@@ -300,6 +306,20 @@ public class Renderer extends Game {
 
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!isMode("minicraft.settings.mode.creative")) {
+			for (int i = 1; i <= 30; i++) {
+				if (i < 11) {
+					screen.render((i - 1) * 8, Screen.h - 16, 0 + 3 * 32, 0, 3); // Empty Hearts
+				}
+				if (i < player.health + 1 && i < 11) {
+					screen.render((i - 1) * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);  // Red Hearts
+				}
+				if (i < player.health + 1 && i < 21 && i >= 11) {
+					screen.render((i - 11) * 8, Screen.h - 16, 0 + 4 * 32, 0, 3); // Yellow Hearts
+				}
+				if (i < player.health + 1 && i >= 21) {
+					screen.render((i - 21) * 8, Screen.h - 16, 0 + 5 * 32, 0, 3); // Obsidian Hearts
+				}
+			}
 			for (int i = 0; i < Player.maxStat; i++) {
 
 				// Renders armor
@@ -311,37 +331,42 @@ public class Renderer extends Game {
 				// Renders your current red hearts, or black hearts for damaged health.
 				if (i < player.health) {
 					screen.render(i * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);
-				} else {
-					screen.render(i * 8, Screen.h - 16, 0 + 3 * 32, 0, 3);
-				}
 
-				if (player.staminaRechargeDelay > 0) {
-					// Creates the white/gray blinking effect when you run out of stamina.
-					if (player.staminaRechargeDelay / 4 % 2 == 0) {
-						screen.render(i * 8, Screen.h - 8, 1 + 4 * 32, 0, 3);
+					if (player.staminaRechargeDelay > 0) {
+						// Creates the white/gray blinking effect when you run out of stamina.
+						if (player.staminaRechargeDelay / 4 % 2 == 0) {
+							screen.render(i * 8, Screen.h - 8, 1 + 4 * 32, 0, 3);
+						} else {
+							screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+						}
 					} else {
-						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+						// Renders your current stamina, and uncharged gray stamina.
+						if (i < player.stamina) {
+							screen.render(i * 8, Screen.h - 8, 1 + 2 * 32, 0, 3);
+						} else {
+							screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+						}
 					}
-				} else {
-					// Renders your current stamina, and uncharged gray stamina.
-					if (i < player.stamina) {
-						screen.render(i * 8, Screen.h - 8, 1 + 2 * 32, 0, 3);
-					} else {
-						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
-					}
-				}
 
-				// Renders hunger
-				if (i < player.hunger) {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 2 * 32, 0, 3);
-				} else {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 3 * 32, 0, 3);
+					// Renders hunger
+					if (i < player.hunger) {
+						screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 2 * 32, 0, 3);
+					} else {
+						screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 3 * 32, 0, 3);
+					}
 				}
 			}
-		}
 
-		renderQuestsDisplay();
-		renderDebugInfo();
+			// Renders the bossbar
+			if (!player.isRemoved()) {
+				if (AirWizard.active && (player.getLevel().depth == 1)) renderBossbar(AirWizard.length, "Air wizard");
+				if (ObsidianKnight.active && (player.getLevel().depth == -4))
+					renderBossbar(ObsidianKnight.length, "Obsidian Knight");
+			}
+
+			renderQuestsDisplay();
+			renderDebugInfo();
+		}
 	}
 
 	private static void renderQuestsDisplay() {
@@ -355,8 +380,8 @@ public class Renderer extends Game {
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			if (!doneQuests.contains(q)) {
 				QuestSeries series = q.getSeries();
-				questsShown.add(expanding?
-					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
+				questsShown.add(expanding ?
+					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE) :
 					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE)
 				);
 			}
@@ -425,7 +450,9 @@ public class Renderer extends Game {
 		}
 	}
 
-	/** Renders the "Click to focus" box when you click off the screen. */
+	/**
+	 * Renders the "Click to focus" box when you click off the screen.
+	 */
 	private static void renderFocusNagger() {
 
 		String msg = "Click to focus!"; // The message when you click off the screen.

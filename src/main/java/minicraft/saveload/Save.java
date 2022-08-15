@@ -164,6 +164,7 @@ public class Save {
 		data.add(String.valueOf(AirWizard.beaten));
 		data.add(String.valueOf(Settings.get("quests")));
 		data.add(String.valueOf(Settings.get("tutorials")));
+		data.add(String.valueOf(ObsidianKnight.beaten));
 		writeToFile(location + filename + extension, data);
 	}
 
@@ -291,6 +292,7 @@ public class Save {
 		data.add(String.valueOf(player.spawnx));
 		data.add(String.valueOf(player.spawny));
 		data.add(String.valueOf(player.health));
+		data.add(String.valueOf(player.extraHealth));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
 		data.add(String.valueOf(player.armorDamageBuffer));
@@ -388,6 +390,10 @@ public class Save {
 
 		if (e instanceof Crafter) {
 			name = ((Crafter)e).type.name();
+		}
+
+		if (e instanceof KnightStatue) {
+			extradata.append(":").append(((KnightStatue) e).obkHealth);
 		}
 
 		if (!isLocalSave) {

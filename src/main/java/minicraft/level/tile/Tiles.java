@@ -13,7 +13,7 @@ import org.tinylog.Logger;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
-    /// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
+	/// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
 
 	public static ArrayList<String> oldids = new ArrayList<>();
 
@@ -71,6 +71,7 @@ public final class Tiles {
 		tiles.put((short)44, new MaterialTile(Tile.Material.Obsidian));
 		tiles.put((short)45, new DecorTile(Tile.Material.Stone));
 		tiles.put((short)46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short)47, new BossWallTile(Tile.Material.Obsidian));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());

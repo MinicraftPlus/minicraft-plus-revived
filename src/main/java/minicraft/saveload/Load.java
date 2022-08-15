@@ -102,13 +102,13 @@ public class Load {
 		if (new File(location + "Preferences.json").exists()) {
 			loadPrefs("Preferences");
 
-		// Check if Preferences.miniplussave exists. (old version)
+			// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
 			loadPrefsOld("Preferences");
 			Logging.SAVELOAD.info("Upgrading preferences to JSON.");
 			resave = true;
 
-		// No preferences file found.
+			// No preferences file found.
 		} else {
 			Logging.SAVELOAD.warn("No preferences found, creating new file.");
 			resave = true;
@@ -574,6 +574,8 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
+		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0)
+			Player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
@@ -785,7 +787,7 @@ public class Load {
 			if (sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
-				Logging.SAVELOAD.error("Failed to load spark; owner id doesn't point to a correct entity");
+				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
 				return null;
 			}
 		} else {
@@ -803,6 +805,17 @@ public class Load {
 			}
 
 			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
+		}
+
+		if (entityName.equals("FireSpark") && !isLocalSave) {
+			int obID = Integer.parseInt(info.get(2));
+			Entity sparkOwner = Network.getEntity(obID);
+			if (sparkOwner instanceof ObsidianKnight)
+				newEntity = new FireSpark((ObsidianKnight)sparkOwner, x, y);
+			else {
+				Logging.SAVELOAD.error("Failed to load FireSpark; owner id doesn't point to a correct entity");
+				return null;
+			}
 		}
 
 		if (newEntity == null)
@@ -875,6 +888,11 @@ public class Load {
 				newEntity = new Spawner(mob);
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+		} else if (newEntity instanceof KnightStatue) {
+			KnightStatue ks = (KnightStatue)newEntity;
+			int health = Integer.parseInt(info.get(2));
+
+			newEntity = new KnightStatue(health);
 		}
 
 		if (!isLocalSave) {
@@ -951,6 +969,8 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
+			case "KnightStatue": return new KnightStatue(0);
+			case "ObsidianKnight": return  new ObsidianKnight(0);
 			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}

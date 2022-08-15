@@ -144,9 +144,10 @@ public class Level {
 			for (int y = 0; y < h; y++) { // Loop through height
 				for (int x = 0; x < w; x++) { // Loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level == -4) /// Make the obsidian wall formation around the stair in the dungeon level
+						if (level == -4) {/// Make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
-
+							Structure.dungeonBossRoom.draw(this, x+10,y+10);
+						}
 						else if (level == 0) { // Surface
 							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
@@ -412,11 +413,11 @@ public class Level {
 	}
 	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
-			 dropItem(x, y, items);
+			dropItem(x, y, items);
 	}
 	public void dropItem(int x, int y, Item... items) {
 		for (Item i: items)
-			 dropItem(x, y, i);
+			dropItem(x, y, i);
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
 		int ranx, rany;
@@ -745,9 +746,9 @@ public class Level {
 		int xd = closest.x - x;
 		int yd = closest.y - y;
 		for (int i = 1; i < players.length; i++) {
-			 int curxd = players[i].x - x;
-			 int curyd = players[i].y - y;
-			 if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
+			int curxd = players[i].x - x;
+			int curyd = players[i].y - y;
+			if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
 				closest = players[i];
 				xd = curxd;
 				yd = curyd;
@@ -772,7 +773,7 @@ public class Level {
 		ArrayList<Tile> local = new ArrayList<>();
 
 		for (Point p: getAreaTilePositions(x, y, rx, ry))
-			 local.add(getTile(p.x, p.y));
+			local.add(getTile(p.x, p.y));
 
 		return local.toArray(new Tile[local.size()]);
 	}
@@ -891,13 +892,13 @@ public class Level {
 
 				add(sp);
 				for (int rpt = 0; rpt < 2; rpt++) {
-					 if (random.nextInt(2) != 0) continue;
-					 Chest c = new Chest();
-					 int chance = -depth;
+					if (random.nextInt(2) != 0) continue;
+					Chest c = new Chest();
+					int chance = -depth;
 
-					 c.populateInvRandom("minidungeon", chance);
+					c.populateInvRandom("minidungeon", chance);
 
-					 add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+					add(c, sp.x - 16 + rpt * 32, sp.y - 16);
 				}
 			}
 		}

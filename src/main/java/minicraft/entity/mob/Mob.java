@@ -1,9 +1,11 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Tnt;
+import minicraft.entity.particle.BurnParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -50,6 +52,23 @@ public abstract class Mob extends Entity {
 
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
+
+		if (canBurn()) {
+			if (this.burningDuration > 0) {
+				if (level.getTile(x / 16, y / 16) == Tiles.get("water")) this.burningDuration = 0;
+				if (this.burningDuration % 10 == 0)
+					level.add(new BurnParticle(x - 8 + (random.nextInt(8) - 4), y - 8 + (random.nextInt(8) - 4)));
+				this.burningDuration--;
+				if (this instanceof Player) {
+					if (this.burningDuration % 70 == 0 && !Renderer.player.potioneffects.containsKey(PotionType.Lava))
+						hurt(this, 1, Direction.NONE); //burning damage
+				} else {
+					if (this.burningDuration % 70 == 0)
+						hurt(this, 2, Direction.NONE); //burning damage
+				}
+			}
+		}
+
 		if (health <= 0) die(); // Die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 
@@ -157,6 +176,14 @@ public abstract class Mob extends Entity {
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
 		if (mob instanceof Player && Game.isMode("minicraft.settings.mode.creative") && mob != this) doHurt(health, attackDir); // Kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
+	}
+
+	/**
+	 *
+	 * @param sec duration in seconds
+	 */
+	public void burn(int sec) {
+		this.burningDuration = sec * 60;
 	}
 
 	/**

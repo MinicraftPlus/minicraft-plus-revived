@@ -3,7 +3,9 @@ package minicraft.item;
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
+import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -18,6 +20,7 @@ public class SummonItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		items.add(new SummonItem("Totem of Air", new Sprite(0, 19, 0), "Air Wizard"));
+		items.add(new SummonItem("Obsidian Poppet", new Sprite(0, 0, 0), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
 
 		return items;
 	}
@@ -38,16 +41,42 @@ public class SummonItem extends StackableItem {
 			case "Air Wizard":
 				// Check if we are on the right level
 				if (level.depth == 1) {
+					if (!AirWizard.active) {
 
-					// Pay stamina
-					if (player.payStamina(2)) {
-						AirWizard aw = new AirWizard();
-						level.add(aw, player.x + 8, player.y + 8, false);
-						Logger.tag("SummonItem").debug("Summoned new Air Wizard");
-						success = true;
+						// Pay stamina
+						if (player.payStamina(2)) {
+							AirWizard aw = new AirWizard();
+							level.add(aw, player.x + 8, player.y + 8, false);
+							Logger.debug("Summoned new Air Wizard");
+							success = true;
+						}
+					}
+					else {
+						Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
 					}
 				} else {
 					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_sky"));
+				}
+
+				break;
+			case "Obsidian Knight":
+				// Check if we are on the right level
+				if (level.depth == -4){
+					if (!KnightStatue.active && !ObsidianKnight.active) {
+
+						// Pay stamina
+						if (player.payStamina(2)) {
+							KnightStatue ks = new KnightStatue(5000);
+							level.add(ks, player.x + 8, player.y + 8, false);
+							Logger.debug("Summoned new Knight Statue");
+							success = true;
+						}
+					}
+					else {
+						Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
+					}
+				} else {
+					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_dungeon"));
 				}
 
 				break;

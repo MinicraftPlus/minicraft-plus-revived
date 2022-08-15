@@ -1,7 +1,7 @@
 Ideas for ways to update or improve existing features.
 ----
 [ ] Design a system where cloud tiles respawn around existing cloud tiles if the total number of cloud tiles is below a certain number.
-[ ] Limit the number of airwizards at one time to 3.
+[X] Limit the number of airwizards at one time to 3. (Limited to 1 for all bosses)
 [ ] Give the player 20 health instead of 10; this means that 1 health will be a half of a heart.
 [ ] Make arrows go away after hitting a certain number of enemies, or dealing a certain amount of damage.
 [ ] Make creeper holes like TNT, just only one block. Though I should still have the thing where it hurts entities based on distance.
