@@ -24,7 +24,9 @@ Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/rel
 * Beds
 * Mob spawners with loot
 * Ruined structures with loot
-* An expanded world: 4th dungeon level
+* An expanded storyline: 
+  * 4th underground level, the Obsidian Dungeon
+  * The Obsidian Knight, ruler of all knights
 * Resizable screen size
 * Key binding customization
 * Tutorials
