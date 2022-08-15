@@ -41,7 +41,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ArrayEntry;
@@ -60,14 +60,15 @@ public class ResourcePackDisplay extends Display {
 	 * <root>
 	 * 	├──	pack.json
 	 * 	├──	pack.png
-	 * 	└──	assets
+	 * 	└──	assets TODO Restructure the structure with the new IDS later
 	 * 		├──	textures
 	 * 		│	├──	entity
 	 * 		│	│	└──	<entity_name>.png
 	 * 		│	├──	item
 	 * 		│	│	└──	<item_name>.png
 	 * 		│	├──	tile
-	 * 		│	│	└──	<tile_name>.png
+	 * 		│	│	├──	<tile_name>.png
+	 * 		│	│	└──	[<tile_name>.png.json]
 	 * 		│	└──	gui
 	 * 		│		├──	font.png
 	 * 		│		├──	hud.png
@@ -80,10 +81,10 @@ public class ResourcePackDisplay extends Display {
 	 * 			└──	<name>.txt
 	 *
 	 * pack.json
-	 * ├──	(name) String
-	 * ├──	(description) String
-	 * ├──	pack_format int
-	 * └──	language object
+	 * 	├──	(name) String
+	 * 	├──	(description) String
+	 * 	├──	pack_format int
+	 * 	└──	(language object)
 	 * 		└──	<locale>
 	 * 			├──	name String
 	 * 			└──	region String
@@ -586,9 +587,15 @@ public class ResourcePackDisplay extends Display {
 		for (URL url : urls) {
 			ResourcePack pack = findPackByURL(url);
 			if (pack != null) { // Refresh the current.
-				if (new File(url.toURI()).exists())
-					pack.refreshPack();
-				else { // Remove if not exist.
+				try {
+					if (new File(url.toURI()).exists())
+						pack.refreshPack();
+					else { // Remove if not exist.
+						resourcePacks.remove(pack);
+						loadedPacks.remove(pack);
+					}
+				} catch (URISyntaxException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Resource pack URL not found.");
 					resourcePacks.remove(pack);
 					loadedPacks.remove(pack);
 				}

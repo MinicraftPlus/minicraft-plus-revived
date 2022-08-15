@@ -104,27 +104,13 @@ public class Localization {
 			selectedLocale = DEFAULT_LOCALE;
 
 		// Attempt to load the string as a json object.
-		try { // This JSON has been verified before.
-			JSONObject json;
-			for (String text : unloadedLocalization.get(selectedLocale)) {
-				json = new JSONObject(text);
-				// Put all loc strings in a key-value set.
-				for (String key : json.keySet()) {
-					localization.put(key, json.getString(key));
-				}
+		JSONObject json;
+		for (String text : unloadedLocalization.get(selectedLocale)) {
+			json = new JSONObject(text); // This JSON has been verified before.
+			// Put all loc strings in a key-value set.
+			for (String key : json.keySet()) {
+				localization.put(key, json.getString(key));
 			}
-		} catch (JSONException e) {
-			// If it is the default locale, the game is too broken to run, so we should just quit.
-			if (selectedLocale == DEFAULT_LOCALE) {
-				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Localization Could not be Loaded", CrashHandler.ErrorInfo.ErrorType.SERIOUS, "The default locale contains broken json."));
-			} else {
-				// If the default locale isn't loaded, retry with the default locale.
-				Logging.RESOURCEHANDLER_LOCALIZATION.error("The locale we attempted to load contains invalid json. Retrying with default locale.");
-				selectedLocale = DEFAULT_LOCALE;
-				loadLanguage();
-			}
-
-			return;
 		}
 	}
 

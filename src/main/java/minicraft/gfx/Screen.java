@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Screen {
 
@@ -55,18 +58,23 @@ public class Screen {
 		Arrays.fill(pixels, color);
 	}
 
-	public void render(int[] pixelColors) {
-		System.arraycopy(pixelColors, 0, pixels, 0, Math.min(pixelColors.length, pixels.length));
-	}
-
 	public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
-
     public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
-
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
 		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
     }
+
+	public void render(int xp, int yp, LinkedSprite sprite) { render(xp, yp, sprite.getSprite()); }
+	public void render(int xp, int yp, Sprite sprite) { render(xp, yp, sprite, false); }
+	public void render(int xp, int yp, Sprite sprite, boolean fullbright) {
+		for (int r = 0; r < sprite.spritePixels.length; r++) {
+			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
+				Sprite.Px px = sprite.spritePixels[r][c];
+				render(xp + c, yp + r, px.x, px.y, px.mirror, px.sheet, sprite.color, fullbright);
+			}
+		}
+	}
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
     public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
@@ -79,6 +87,13 @@ public class Screen {
 		// Determines if the image should be mirrored...
 		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // Horizontally.
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
+
+		// Validation check
+		if (sheet == null || (xt + 1) * 8 + (yt + 1) * 8 * sheet.width > sheet.pixels.length) {
+			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
+			xt = 0;
+			yt = 0;
+		}
 
 		int xTile = xt; // Gets x position of the spritesheet "tile"
 		int yTile = yt; // Gets y position

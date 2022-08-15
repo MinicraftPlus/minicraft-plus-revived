@@ -2,7 +2,7 @@ package minicraft.gfx;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 import java.awt.image.BufferedImage;
 
 import javax.security.auth.DestroyFailedException;
@@ -19,6 +19,8 @@ public class SpriteLinker {
 
 	/** Storing all exist in-used LinkedSprite. */
 	private final ArrayList<LinkedSprite> linkedSheets = new ArrayList<>();
+
+	static Random ran = new Random();
 
 	/** Clearing all Sprite buffers for the upcoming resource pack application. */
 	public void resetSprites() {
@@ -41,8 +43,45 @@ public class SpriteLinker {
 			case Gui: guiSheets.put(key, spriteSheet); break;
 			case Item: itemSheets.put(key, spriteSheet); break;
 			case Tile: tileSheets.put(key, spriteSheet); break;
-			default:
-				break;
+		}
+	}
+
+	public SpriteSheet getSheet(SpriteType t, String key) {
+		switch (t) {
+			case Entity: return entitySheets.get(key);
+			case Gui: return guiSheets.get(key);
+			case Item: return itemSheets.get(key);
+			case Tile: return tileSheets.get(key);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Getting the missing texture texture with the specific sprite type.
+	 * @param type The sprite category.
+	 * @return The missing texture or null if invalid sprite type.
+	 */
+	public static LinkedSprite missingTexture(SpriteType type) {
+		switch (type) {
+			case Entity: return new LinkedSprite(SpriteType.Entity, "missing_entity");
+			case Item: return new LinkedSprite(SpriteType.Item, "missing_item");
+			case Tile: return new LinkedSprite(SpriteType.Tile, "missing_tile");
+			default: return null;
+		}
+	}
+
+	/**
+	 * Getting the sheet of missing texture with the specific sprite type.
+	 * @param type The sprite category.
+	 * @return Ths missing texture sprite sheet or null if invalid sprite type.
+	 */
+	public SpriteSheet missingSheet(SpriteType type) {
+		switch (type) { // The sheets should be found.
+			case Entity: return entitySheets.get("missing_entity");
+			case Item: return itemSheets.get("missing_item");
+			case Tile: return tileSheets.get("missing_tile");
+			default: return null;
 		}
 	}
 
@@ -74,22 +113,20 @@ public class SpriteLinker {
 		 * @param height The height of the {@link SpriteSheet} to be applied to the {@link LinkedSprite}.
 		*/
 		public SpriteSheet(BufferedImage image, int width, int height) {
-			AtomicInteger tmpWidth = new AtomicInteger(width); // Argument check. Might be pointless.
-			AtomicInteger tmpHeight = new AtomicInteger(height);
 			if (width % 8 != 0)
 				CrashHandler.errorHandle(new IllegalArgumentException("Invalid width of SpriteSheet."), new CrashHandler.ErrorInfo(
-						"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
-						String.format("Invalid width: {}, SpriteSheet width should be a multiple of 8.")
-					), () -> tmpWidth.set(width % 8));
+					"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
+					String.format("Invalid width: {}, SpriteSheet width should be a multiple of 8.")
+				));
 			if (height % 8 != 0)
-					CrashHandler.errorHandle(new IllegalArgumentException("Invalid height of SpriteSheet."), new CrashHandler.ErrorInfo(
-							"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
-							String.format("Invalid height: {}, SpriteSheet height should be a multiple of 8.")
-						), () -> tmpHeight.set(height % 8));
+				CrashHandler.errorHandle(new IllegalArgumentException("Invalid height of SpriteSheet."), new CrashHandler.ErrorInfo(
+					"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
+					String.format("Invalid height: {}, SpriteSheet height should be a multiple of 8.")
+				));
 
 			// Sets width and height to that of the image
-			this.width = tmpWidth.get();
-			this.height = tmpHeight.get();
+			this.width = width - width % 8;
+			this.height = height - height % 8;
 			pixels = image.getRGB(0, 0, width, height, null, 0, width); // Gets the color array of the image pixels
 
 			// Applying the RGB array into Minicraft rendering system 25 bits RBG array.
@@ -122,7 +159,16 @@ public class SpriteLinker {
 		}
 	}
 
-	/** The sprite categories in the image resources. */
+	/** The metadata of the sprite sheet. */
+	public static class SpriteMeta {
+		/** The sprite animation configuration. */
+		public int frames = 1, // Minimum with 1.
+		frametime = 0; // 0 if no animation.
+		/** The sprite connector configuration. */
+		public String border = null, corner = null;
+	}
+
+	/** The sprite categories in the image resources. TODO Removed for the new save system */
 	public static enum SpriteType {
 		Item, Gui, Tile, Entity; // Only for resource packs; Skin is not applied.
 	}
@@ -147,18 +193,13 @@ public class SpriteLinker {
 		private final String key; // The resource key.
 
 		/** The sprite configuration. */
-		private int x, y, w, h, color = -1, mirror = 0, number = 0;
-		private int[][] mirrors = null;
-		private boolean onepixel = false;
+		private int x, y, w, h, color = -1, mirror = 0;
 
 		// Sprite data.
 		private HashMap<String, SpriteSheet> linkedMap;
-		private MobSpriteType mobType = MobSpriteType.Animations;
 		private SpriteType spriteType;
-		private MobSprite[][] mobSprites;
 		private Sprite sprite;
 		private boolean destoryed; // It is not linked when destoryed.
-		private boolean useMobSprites = false;
 		private boolean reloaded = false; // Whether the sprite is reloaded.
 
 		/**
@@ -174,6 +215,14 @@ public class SpriteLinker {
 		}
 
 		/**
+		 * Getting the sprite sheet of the linked sprite.
+		 * @return The current linked sprite.
+		 */
+		public SpriteSheet getSheet() {
+			return linkedMap.get(key);
+		}
+
+		/**
 		 * Setting the sprite size.
 		 * @param w The sprite width.
 		 * @param h The sprite height
@@ -186,12 +235,11 @@ public class SpriteLinker {
 			return this;
 		}
 		/**
-		 * @deprecated because of the standization. Setting the sprite position.
+		 * Setting the sprite position.
 		 * @param x The x position of the sprite.
 		 * @param y The y position of the sprite.
 		 * @return The same instance.
 		 */
-		@Deprecated
 		public LinkedSprite setSpritePos(int x, int y) {
 			this.x = x;
 			this.y = y;
@@ -199,14 +247,13 @@ public class SpriteLinker {
 			return this;
 		}
 		/**
-		 * @deprecated because of the standization. Setting the sprite position and size.
+		 * Setting the sprite position and size.
 		 * @param x The x position of the sprite.
 		 * @param y The y position of the sprite.
 		 * @param w The sprite width.
 		 * @param h The sprite height
 		 * @return The same instance.
 		 */
-		@Deprecated
 		public LinkedSprite setSpriteDim(int x, int y, int w, int h) {
 			setSpriteSize(w, h);
 			setSpritePos(x, y);
@@ -233,26 +280,6 @@ public class SpriteLinker {
 			reloaded = false; // Reload this.
 			return this;
 		}
-		/**
-		 * @deprecated because it should not be handled like this. Setting the mirrors of each {@link Sprite.Px Px}.
-		 * @param mirrors The mirrors for each {@link Sprite.Px Px}.
-		 * @return The same instance.
-		 */
-		public LinkedSprite setMirrors(int[][] mirrors) {
-			this.mirrors = mirrors;
-			reloaded = false; // Reload this.
-			return this;
-		}
-		/**
-		 * @deprecated because of the standardization. {@code true} if all {@link Sprite.Px Px} are generated by the one pixel.
-		 * @param onepixel Whether all {@link Sprite.Px Px} generated by the one pixel.
-		 * @return The same instance.
-		 */
-		public LinkedSprite setOnePixel(boolean onepixel) {
-			this.onepixel = onepixel;
-			reloaded = false; // Reload this.
-			return this;
-		}
 
 		/**
 		 * Getting the sprite with the configuration.
@@ -274,47 +301,22 @@ public class SpriteLinker {
 			if (sheet != null) {
 				if (w <= 0) w = sheet.width / 8; // Set the size as the maximum size of the sheet.
 				if (h <= 0) h = sheet.height / 8; // Set the size as the maximum size of the sheet.
-				// TODO Standardization
-				// sprite = mirrors == null ? new Sprite(x, y, w, h, sheet, mirror, onepixel) : new Sprite(x, y, w, h, sheet, onepixel, mirrors);
-				// sprite.color = color;
-				// mobSprites = null;
-				// if (useMobSprites) {
-				// 	switch (mobType) {
-				// 		case Animations: mobSprites = MobSprite.compileMobSpriteAnimations(x, y, sheet); break;
-				// 		case List: mobSprites = new MobSprite[][]{MobSprite.compileSpriteList(x, y, w, h, mirror, number, sheet)}; break;
-				// 	}
-				// }
+
+				Sprite.Px[][] pixels = new Sprite.Px[h][w];
+				for (int r = 0; r < h; r++) {
+					for (int c = 0; c < w; c++) {
+						pixels[r][c] = new Sprite.Px(x + c, y + r, mirror, sheet);
+					}
+				}
+
+				sprite = new Sprite(pixels);
+				sprite.color = color;
 			} else {
 				Logging.SPRITE.warn("Sprite with resource ID not found: {}", key);
-				sprite = Sprite.missingTexture(spriteType).getSprite();
+				sprite = missingTexture(spriteType).getSprite();
 			}
 
 			reloaded = true;
-		}
-
-		// TODO Standardization
-		private enum MobSpriteType { Animations, List }
-		/**
-		 * Setting the mobsprite as MobSprite with animation.
-		 * @return The same instance.
-		 */
-		public LinkedSprite setMobSpriteAnimations() {
-			mobType = MobSpriteType.Animations;
-			reloaded = false; // Reload this.
-			useMobSprites = true;
-			return this;
-		}
-		/**
-		 * Setting the mobsprite as MobSprite with list.
-		 * @param number The horizontal number of list.
-		 * @return The same instance.
-		 */
-		public LinkedSprite setSpriteList(int number) {
-			mobType = MobSpriteType.List;
-			this.number = number;
-			reloaded = false; // Reload this.
-			useMobSprites = true;
-			return this;
 		}
 
 		/** Unlink this LinkedSprite from SpriteLinker. */

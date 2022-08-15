@@ -772,7 +772,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
 
-			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3, 4, 0, hudSheet.getSheet());
+			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3, 2, 0, hudSheet.getSheet());
 		}
 
 		// Makes the player white if they have just gotten hurt
