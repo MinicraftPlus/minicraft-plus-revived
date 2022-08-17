@@ -748,8 +748,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 				// animation effect
 			    if (tickTime / 8 % 2 == 0) {
-			    	 screen.render(xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
-			    	 screen.render(xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
+			    	screen.render(xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
+			    	screen.render(xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
 			    } else {
 					screen.render(xo + 0, yo + 3, 5, 1, 0, hudSheet.getSheet());
 					screen.render(xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
@@ -799,7 +799,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isSwimming()) {
 			Sprite sprite = curSprite.getSprite();
 			screen.render(xo, yo, sprite.spritePixels[0][0]);
-			screen.render(xo, yo, sprite.spritePixels[0][1]);
+			screen.render(xo + 8, yo, sprite.spritePixels[0][1]);
 		} else { // Don't render the bottom half if swimming.
 			screen.render(xo, yo - 4 * onFallDelay, curSprite);
 		}
