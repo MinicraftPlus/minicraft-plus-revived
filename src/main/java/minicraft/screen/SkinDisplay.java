@@ -117,7 +117,7 @@ public class SkinDisplay extends Display {
 	}
 
 	public static void releaseSkins() {
-		for (String skin : skins.keySet()) {
+		for (String skin : new ArrayList<>(skins.keySet())) {
 			if (!defaultSkins.contains(skin) && !skin.equals(selectedSkin)) {
 				Renderer.spriteLinker.setSkin("skin." + skin, null);
 				if (skins.containsKey(skin)) for (LinkedSprite[] a : skins.remove(skin)) {
