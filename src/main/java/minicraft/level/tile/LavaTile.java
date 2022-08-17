@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
+import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
@@ -18,6 +19,12 @@ public class LavaTile extends Tile {
 	@Override
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
+	}
+
+	@Override
+	public void render(Screen screen, Level level, int x, int y) {
+		Tiles.get("dirt").render(screen, level, x, y);
+		super.render(screen, level, x, y);
 	}
 
 	@Override
