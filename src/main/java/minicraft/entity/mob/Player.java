@@ -418,12 +418,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
-					if (returned == stackable.count) {
-						activeItem = null;
-					} else {
+					if (stackable.count > 0) {
 						getLevel().dropItem(x, y, stackable.clone());
-						activeItem = null;
 					}
+
+					activeItem = null;
 				} else if (returned > 0) {
 					activeItem = null;
 				} else {
@@ -480,13 +479,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (prevItem != null) { // and you had a previous item that we should care about...
 				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
-					if (returned < ((StackableItem)prevItem).count) {
+					if (((StackableItem)prevItem).count > 0) {
 						getLevel().dropItem(x, y, prevItem.clone());
 					}
 				} else if (returned == 0) {
 					getLevel().dropItem(x, y, prevItem);
 				}
-			}// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
+			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
 

@@ -693,6 +693,10 @@ public class ResourcePackDisplay extends Display {
 		ArrayList<Localization.LocaleInformation> options = new ArrayList<>(Arrays.asList(Localization.getLocales()));
 		options.sort((a, b) -> a.name.compareTo(b.name));
 		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
+
+		// Refreshing skins
+		SkinDisplay.refreshSkins();
+		SkinDisplay.releaseSkins();
 	}
 
 	/**

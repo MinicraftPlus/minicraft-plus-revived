@@ -39,7 +39,7 @@ class InventoryMenu extends ItemListMenu {
 			Item drop = invItem.clone();
 
 			if (!creativeInv) {
-				if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// just drop one from the stack
 					((StackableItem)drop).count = 1;
 					((StackableItem)invItem).count--;
@@ -49,7 +49,7 @@ class InventoryMenu extends ItemListMenu {
 				}
 			}
 
-			if(holder.getLevel() != null) {
+			if (holder.getLevel() != null) {
 				holder.getLevel().dropItem(holder.x, holder.y, drop);
 			}
 		}

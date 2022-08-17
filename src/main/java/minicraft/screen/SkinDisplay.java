@@ -75,7 +75,7 @@ public class SkinDisplay extends Display {
 		menus[0].setSelection(new ArrayList<>(skins.keySet()).indexOf(selectedSkin));
 	}
 
-	private static void refreshSkins() {
+	public static void refreshSkins() {
 		Renderer.spriteLinker.clearSkins();
 		skins.clear();
 
