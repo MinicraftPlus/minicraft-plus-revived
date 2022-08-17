@@ -5,18 +5,16 @@ import org.jetbrains.annotations.Nullable;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 
 public class Sheep extends PassiveMob {
-	private static final LinkedSprite sprites = new LinkedSprite(SpriteType.Entity, "sheep");
-	private static final LinkedSprite cutSprites = new LinkedSprite(SpriteType.Entity, "sheep").setSpritePos(0, 2);
+	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
+	private static final LinkedSprite[][] cutSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
 
 	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
 
@@ -35,13 +33,13 @@ public class Sheep extends PassiveMob {
 		int xo = x - 8;
 		int yo = y - 11;
 
-		MobSprite[][] curAnim = cut ? cutSprites.getMobSprites() : sprites.getMobSprites();
+		LinkedSprite[][] curAnim = cut ? cutSprites : sprites;
 
-		MobSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
+		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
-			curSprite.render(screen, xo, yo, true);
+			screen.render(xo, yo, curSprite.getSprite(), true);
 		} else {
-			curSprite.render(screen, xo, yo);
+			screen.render(xo, yo, curSprite);
 		}
 	}
 

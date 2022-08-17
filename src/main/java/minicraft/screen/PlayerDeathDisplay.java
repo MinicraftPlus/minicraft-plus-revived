@@ -6,8 +6,8 @@ import java.util.Arrays;
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
-import minicraft.gfx.SpriteSheet;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
@@ -42,7 +42,7 @@ public class PlayerDeathDisplay extends Display {
 
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
-				.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth * 3), RelPos.BOTTOM_RIGHT)
+				.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth * 3), RelPos.BOTTOM_RIGHT)
 				.setTitle("minicraft.displays.player_death.title")
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()

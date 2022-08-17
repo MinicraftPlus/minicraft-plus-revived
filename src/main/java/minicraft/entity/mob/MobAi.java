@@ -5,7 +5,6 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -30,7 +29,7 @@ public abstract class MobAi extends Mob {
 	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
-	protected MobAi(LinkedSprite sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
+	protected MobAi(LinkedSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
 		this.lifetime = lifetime;
 		randomWalkTime = 0;
@@ -96,12 +95,11 @@ public abstract class MobAi extends Mob {
 		int xo = x - 8;
 		int yo = y - 11;
 
-		MobSprite[][] sprites = this.sprites.getMobSprites();
-		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
+		LinkedSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
 		if (hurtTime > 0) {
-			curSprite.render(screen, xo, yo, true);
+			screen.render(xo, yo, curSprite.getSprite(), true);
 		} else {
-			curSprite.render(screen, xo, yo);
+			screen.render(xo, yo, curSprite.getSprite());
 		}
 	}
 

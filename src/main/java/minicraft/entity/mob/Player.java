@@ -53,8 +53,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
 	public static final int maxArmor = 100;
 
-	public static MobSprite[][] sprites;
-	public static MobSprite[][] carrySprites;
+	public static LinkedSprite[][] sprites;
+	public static LinkedSprite[][] carrySprites;
 
 	private Inventory inventory;
 
@@ -106,7 +106,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// Note: the player's health & max health are inherited from Mob.java
 
 	public Player(@Nullable Player previousInstance, InputHandler input) {
-		super(Sprite.missingTexture(SpriteType.Entity), Player.maxHealth);
+		super(null, Player.maxHealth);
 
 		x = 24;
 		y = 24;
@@ -729,7 +729,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void updateSprites() {
 		// Get the current skin we are using as a MobSprite array.
-		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+		LinkedSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
 
 		// Assign the skin to the states.
 		sprites = selectedSkin[0];
@@ -780,10 +780,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			col = Color.WHITE; // Make the sprite white.
 		}
 
-		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
+		LinkedSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
 
 		// Renders falling
-		MobSprite curSprite;
+		LinkedSprite curSprite;
 		if (onFallDelay > 0) {
 			// This makes falling look really cool.
 			float spriteToUse = onFallDelay / 2f;
@@ -795,11 +795,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 		}
 
+		curSprite.setColor(shirtColor);
 		// Render each corner of the sprite
 		if (isSwimming()) {
-			curSprite.renderRow(0, screen, xo, yo, -1, shirtColor);
+			Sprite sprite = curSprite.getSprite();
+			screen.render(xo, yo, sprite.spritePixels[0][0]);
+			screen.render(xo, yo, sprite.spritePixels[0][1]);
 		} else { // Don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
+			screen.render(xo, yo - 4 * onFallDelay, curSprite);
 		}
 
 		// Renders slashes:
@@ -809,28 +812,28 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
 					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						attackItem.sprite.getSprite().render(screen, xo + 4, yo - 4, 1); // Then render the icon of the item, mirrored
+						screen.render(xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
 					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
 					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.getSprite().render(screen, xo - 4, yo + 4, 1);
+						screen.render(xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
 					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
 					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.getSprite().render(screen, xo + 8 + 4, yo + 4);
+						screen.render(xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
 					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
 					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.getSprite().render(screen, xo + 4, yo + 8 + 4);
+						screen.render(xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case NONE:
@@ -842,16 +845,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					activeItem.sprite.getSprite().render(screen, xo + 4, yo - 4, 1);
+					screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case LEFT:
-					activeItem.sprite.getSprite().render(screen, xo - 4, yo + 4, 1);
+					screen.render(xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case RIGHT:
-					activeItem.sprite.getSprite().render(screen, xo + 8 + 4, yo + 4, 0);
+					screen.render(xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
 					break;
 				case DOWN:
-					activeItem.sprite.getSprite().render(screen, xo + 4, yo + 8 + 4, 0);
+					screen.render(xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
 					break;
 				case NONE:
 					break;

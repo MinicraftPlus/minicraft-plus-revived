@@ -9,10 +9,8 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -22,8 +20,8 @@ import minicraft.level.Level;
 
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
-	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new LinkedSprite(SpriteType.Tile, "hardrock")
-		.setSpriteSize(3, 3).setMirror(3), new LinkedSprite(SpriteType.Tile, "hardrock").setSpriteDim(3, 0, 2, 2).setMirror(3), Sprite.missingTexture(SpriteType.Tile));
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hardrock")
+		.setConnectChecker((tile, side) -> tile.getClass() == HardRockTile.class);
 
 	protected HardRockTile(String name) {
 		super(name, sprite);
@@ -76,7 +74,7 @@ public class HardRockTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.setColor(DirtTile.dCol(level.depth));
+		Tiles.get("dirt").render(screen, level, x, y);
 		super.render(screen, level, x, y);
 	}
 

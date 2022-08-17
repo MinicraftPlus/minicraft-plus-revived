@@ -3,15 +3,14 @@ package minicraft.entity.mob;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Snake extends EnemyMob {
-	private static LinkedSprite[] sprites = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Entity, "snake").setSpritePos(0, 0),
-		new LinkedSprite(SpriteType.Entity, "snake").setSpritePos(0, 2),
-		new LinkedSprite(SpriteType.Entity, "snake").setSpritePos(0, 4),
-		new LinkedSprite(SpriteType.Entity, "snake").setSpritePos(0, 6)
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "snake"),
+		Mob.compileMobSpriteAnimations(0, 2, "snake"),
+		Mob.compileMobSpriteAnimations(0, 4, "snake"),
+		Mob.compileMobSpriteAnimations(0, 6, "snake")
 	};
 
 	public Snake(int lvl) {

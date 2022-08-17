@@ -1,19 +1,14 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 /// This class is for tiles WHILE THEY ARE EXPLODING
 public class ExplodedTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(ExplodedTile.class, new LinkedSprite(SpriteType.Tile, "exploded").setSpriteSize(3, 3), new LinkedSprite(SpriteType.Tile, "exploded").setSpriteDim(3, 0, 2, 2))
-	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
-			return !isSide || tile.connectsToLiquid();
-		}
-	};
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "exploded")
+		.setConnectChecker((tile, side) -> tile.getClass() == ExplodedTile.class);
 
 	protected ExplodedTile(String name) {
 		super(name, sprite);

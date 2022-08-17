@@ -2,12 +2,9 @@ package minicraft.gfx;
 
 import java.util.Arrays;
 
-import org.jetbrains.annotations.NotNull;
-
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Screen {
@@ -32,24 +29,9 @@ public class Screen {
 	// So 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// And 3072 the start of the gui sheet
 
-	private SpriteSheet skinSheet;
-
-	public Screen(SpriteSheet skinsSheet) {
-		skinSheet = skinsSheet;
-
+	public Screen() {
 		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
-	}
-	public Screen(Screen model) {
-		this(model.skinSheet);
-	}
-
-	@NotNull
-	public void setSkinSheet(SpriteSheet skinSheet) {
-		this.skinSheet = skinSheet;
-	}
-	public SpriteSheet getSkinSheet() {
-		return skinSheet;
 	}
 
 	/** Clears all the colors on the screen */
@@ -58,26 +40,36 @@ public class Screen {
 		Arrays.fill(pixels, color);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
-    public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
+    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
-    public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
+    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
 		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
     }
 
 	public void render(int xp, int yp, LinkedSprite sprite) { render(xp, yp, sprite.getSprite()); }
 	public void render(int xp, int yp, Sprite sprite) { render(xp, yp, sprite, false); }
-	public void render(int xp, int yp, Sprite sprite, boolean fullbright) {
+	public void render(int xp, int yp, Sprite sprite, boolean fullbright) { render(xp, yp, sprite, 0, fullbright, 0); }
+	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) { render(xp, yp, sprite, mirror, fullbright, 0); }
+	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		for (int r = 0; r < sprite.spritePixels.length; r++) {
 			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
 				Sprite.Px px = sprite.spritePixels[r][c];
-				render(xp + c, yp + r, px.x, px.y, px.mirror, px.sheet, sprite.color, fullbright);
+				render(xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
 			}
 		}
 	}
 
+	public void render(int xp, int yp, Sprite.Px pixel) { render(xp, yp, pixel, -1); }
+	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
+		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
+	}
+
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
+    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
@@ -89,7 +81,7 @@ public class Screen {
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
 
 		// Validation check
-		if (sheet == null || (xt + 1) * 8 + (yt + 1) * 8 * sheet.width > sheet.pixels.length) {
+		if (sheet == null || xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
 			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
 			xt = 0;
 			yt = 0;

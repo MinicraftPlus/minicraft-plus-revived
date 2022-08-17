@@ -7,15 +7,15 @@ import minicraft.entity.Entity;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 
 public class StairsTile extends Tile {
-	private static LinkedSprite down = new LinkedSprite(SpriteType.Tile, "stairs_down");
-	private static LinkedSprite up = new LinkedSprite(SpriteType.Tile, "stairs_up");
+	private static SpriteAnimation down = new SpriteAnimation(SpriteType.Tile, "stairs_down");
+	private static SpriteAnimation up = new SpriteAnimation(SpriteType.Tile, "stairs_up");
 
 	protected StairsTile(String name, boolean leadsUp) {
 		super(name, leadsUp ? up : down);
@@ -24,7 +24,11 @@ public class StairsTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.getSprite().render(screen, x * 16, y * 16, 0, DirtTile.dCol(level.depth));
+		if (level.depth == 1)
+			Tiles.get("cloud").render(screen, level, x, y);
+		else
+			Tiles.get("dirt").render(screen, level, x, y);
+		sprite.render(screen, level, x, y);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

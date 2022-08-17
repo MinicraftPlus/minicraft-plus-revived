@@ -3,9 +3,8 @@ package minicraft.level.tile;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -14,18 +13,11 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class GrassTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class,
-		new LinkedSprite(SpriteType.Tile, "grass").setSpriteSize(3, 3).setMirror(3), new LinkedSprite(SpriteType.Tile, "grass").setSpriteDim(3, 0, 2, 2))
-	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
-			if(!isSide) return true;
-			return tile.connectsToGrass;
-		}
-	};
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
+		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass);
 
 	protected GrassTile(String name) {
 		super(name, sprite);
-		csprite.sides = csprite.sparse;
 		connectsToGrass = true;
 		maySpawn = true;
 	}
@@ -48,7 +40,7 @@ public class GrassTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.setColor(DirtTile.dCol(level.depth));
+		Tiles.get("dirt").render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
 	}
 

@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
@@ -14,7 +14,7 @@ import minicraft.level.Level;
 
 public class LavaBrickTile extends Tile {
 	protected LavaBrickTile(String name) {
-		super(name, Sprite.missingTexture(SpriteType.Tile));
+		super(name, new SpriteAnimation(SpriteType.Tile, "missing_tile"));
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

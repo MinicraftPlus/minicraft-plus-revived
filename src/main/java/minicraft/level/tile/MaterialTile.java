@@ -4,7 +4,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -15,12 +15,12 @@ public class MaterialTile extends Tile {
 	protected Material type;
 
 	protected MaterialTile(Material type) {
-		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (LinkedSprite) null);
+		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (SpriteAnimation) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Stone: sprite = new LinkedSprite(SpriteType.Tile, "stone"); break;
-			case Obsidian: sprite = new LinkedSprite(SpriteType.Tile, "obsidian"); break;
+			case Stone: sprite = new SpriteAnimation(SpriteType.Tile, "stone"); break;
+			case Obsidian: sprite = new SpriteAnimation(SpriteType.Tile, "obsidian"); break;
 			default:
 		}
 	}

@@ -2,25 +2,20 @@ package minicraft.gfx;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
-import java.awt.image.BufferedImage;
 
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 
-import minicraft.core.CrashHandler;
 import minicraft.core.Renderer;
 import minicraft.util.Logging;
 
 public class SpriteLinker {
 	/** Buffering SpriteSheet for caching. */
-	private final HashMap<String, SpriteSheet> entitySheets = new HashMap<>(),
+	private final HashMap<String, MinicraftImage> entitySheets = new HashMap<>(),
 	guiSheets = new HashMap<>(), itemSheets = new HashMap<>(), tileSheets = new HashMap<>();
 
 	/** Storing all exist in-used LinkedSprite. */
 	private final ArrayList<LinkedSprite> linkedSheets = new ArrayList<>();
-
-	static Random ran = new Random();
 
 	/** Clearing all Sprite buffers for the upcoming resource pack application. */
 	public void resetSprites() {
@@ -37,7 +32,7 @@ public class SpriteLinker {
 	 * @param key The sheet key.
 	 * @param spriteSheet The sheet.
 	 */
-	public void setSprite(SpriteType t, String key, SpriteSheet spriteSheet) {
+	public void setSprite(SpriteType t, String key, MinicraftImage spriteSheet) {
 		switch (t) {
 			case Entity: entitySheets.put(key, spriteSheet); break;
 			case Gui: guiSheets.put(key, spriteSheet); break;
@@ -46,7 +41,13 @@ public class SpriteLinker {
 		}
 	}
 
-	public SpriteSheet getSheet(SpriteType t, String key) {
+	/**
+	 * Getting the sprite sheet with the category and key.
+	 * @param t The sprite category
+	 * @param key The resource key.
+	 * @return The sprite sheet. <code>null</code> if not found.
+	 */
+	public MinicraftImage getSheet(SpriteType t, String key) {
 		switch (t) {
 			case Entity: return entitySheets.get(key);
 			case Gui: return guiSheets.get(key);
@@ -55,6 +56,22 @@ public class SpriteLinker {
 		}
 
 		return null;
+	}
+
+	/** Cleaing all skin sheets in entity sheets. */
+	public void clearSkins() {
+		for (String k : new ArrayList<>(entitySheets.keySet())) {
+			if (k.startsWith("skin.")) entitySheets.remove(k);
+		}
+	}
+
+	/**
+	 * Setting the skin in entity sheet.
+	 * @param key The key of the sheet.
+	 * @param spriteSheet The sheet to be added.
+	 */
+	public void setSkin(String key, MinicraftImage spriteSheet) {
+		setSprite(SpriteType.Entity, key, spriteSheet);
 	}
 
 	/**
@@ -76,7 +93,7 @@ public class SpriteLinker {
 	 * @param type The sprite category.
 	 * @return Ths missing texture sprite sheet or null if invalid sprite type.
 	 */
-	public SpriteSheet missingSheet(SpriteType type) {
+	public MinicraftImage missingSheet(SpriteType type) {
 		switch (type) { // The sheets should be found.
 			case Entity: return entitySheets.get("missing_entity");
 			case Item: return itemSheets.get("missing_item");
@@ -87,76 +104,8 @@ public class SpriteLinker {
 
 	/** Updating all existing LinkedSheet for resource pack application. */
 	public void updateLinkedSheets() {
+		Logging.SPRITE.debug("Updating all LinkedSprite.");
 		linkedSheets.forEach(s -> s.reload());
-	}
-
-	/**
-	 * Although we have SpriteLinker, we still need SpriteSheet for buffering.
-	 * As BufferedImage is heavy. Our current rendering system still depends on this array.
-	 */
-	public static class SpriteSheet {
-		/** Each sprite tile size. */
-		public static final int boxWidth = 8;
-
-		public final int width, height; // Width and height of the sprite sheet
-		public final int[] pixels; // Integer array of the image's pixels
-
-		/**
-		 * Default with maximum size of image.
-		 * @param image The image to be added.
-		 */
-		public SpriteSheet(BufferedImage image) { this(image, image.getWidth(), image.getHeight()); }
-		/**
-		 * Custom size.
-		 * @param image The image to be added.
-		 * @param width The width of the {@link SpriteSheet} to be applied to the {@link LinkedSprite}.
-		 * @param height The height of the {@link SpriteSheet} to be applied to the {@link LinkedSprite}.
-		*/
-		public SpriteSheet(BufferedImage image, int width, int height) {
-			if (width % 8 != 0)
-				CrashHandler.errorHandle(new IllegalArgumentException("Invalid width of SpriteSheet."), new CrashHandler.ErrorInfo(
-					"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
-					String.format("Invalid width: {}, SpriteSheet width should be a multiple of 8.")
-				));
-			if (height % 8 != 0)
-				CrashHandler.errorHandle(new IllegalArgumentException("Invalid height of SpriteSheet."), new CrashHandler.ErrorInfo(
-					"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
-					String.format("Invalid height: {}, SpriteSheet height should be a multiple of 8.")
-				));
-
-			// Sets width and height to that of the image
-			this.width = width - width % 8;
-			this.height = height - height % 8;
-			pixels = image.getRGB(0, 0, width, height, null, 0, width); // Gets the color array of the image pixels
-
-			// Applying the RGB array into Minicraft rendering system 25 bits RBG array.
-			for (int i = 0; i < pixels.length; i++) { // Loops through all the pixels
-				int red;
-				int green;
-				int blue;
-
-				// This should be a number from 0-255 that is the red of the pixel
-				red = (pixels[i] & 0xff0000);
-
-				// Same, but green
-				green = (pixels[i] & 0xff00);
-
-				// Same, but blue
-				blue = (pixels[i] & 0xff);
-
-				// This stuff is to figure out if the pixel is transparent or not
-				int transparent = 1;
-
-				// A value of 0 means transparent, a value of 1 means opaque
-				if (pixels[i] >> 24 == 0x00) {
-					transparent = 0;
-				}
-
-				// Actually put the data in the array
-				// Uses 25 bits to store everything (8 for red, 8 for green, 8 for blue, and 1 for alpha)
-				pixels[i] = (transparent << 24) + red + green + blue;
-			}
-		}
 	}
 
 	/** The metadata of the sprite sheet. */
@@ -193,10 +142,10 @@ public class SpriteLinker {
 		private final String key; // The resource key.
 
 		/** The sprite configuration. */
-		private int x, y, w, h, color = -1, mirror = 0;
+		private int x, y, w, h, color = -1, mirror = 0, flip = 0;
 
 		// Sprite data.
-		private HashMap<String, SpriteSheet> linkedMap;
+		private HashMap<String, MinicraftImage> linkedMap;
 		private SpriteType spriteType;
 		private Sprite sprite;
 		private boolean destoryed; // It is not linked when destoryed.
@@ -218,7 +167,7 @@ public class SpriteLinker {
 		 * Getting the sprite sheet of the linked sprite.
 		 * @return The current linked sprite.
 		 */
-		public SpriteSheet getSheet() {
+		public MinicraftImage getSheet() {
 			return linkedMap.get(key);
 		}
 
@@ -226,7 +175,7 @@ public class SpriteLinker {
 		 * Setting the sprite size.
 		 * @param w The sprite width.
 		 * @param h The sprite height
-		 * @return The same instance.
+		 * @return The instance itself.
 		 */
 		public LinkedSprite setSpriteSize(int w, int h) {
 			this.w = w;
@@ -238,7 +187,7 @@ public class SpriteLinker {
 		 * Setting the sprite position.
 		 * @param x The x position of the sprite.
 		 * @param y The y position of the sprite.
-		 * @return The same instance.
+		 * @return The instance itself.
 		 */
 		public LinkedSprite setSpritePos(int x, int y) {
 			this.x = x;
@@ -252,7 +201,7 @@ public class SpriteLinker {
 		 * @param y The y position of the sprite.
 		 * @param w The sprite width.
 		 * @param h The sprite height
-		 * @return The same instance.
+		 * @return The instance itself.
 		 */
 		public LinkedSprite setSpriteDim(int x, int y, int w, int h) {
 			setSpriteSize(w, h);
@@ -263,7 +212,7 @@ public class SpriteLinker {
 		/**
 		 * Setting the white tint.
 		 * @param color The color of the white tint.
-		 * @return The same instance.
+		 * @return The instance itself.
 		 */
 		public LinkedSprite setColor(int color) {
 			this.color = color;
@@ -273,11 +222,21 @@ public class SpriteLinker {
 		/**
 		 * Setting the mirror of the sprite.
 		 * @param mirror The mirror of the sprite.
-		 * @return The same instance.
+		 * @return The instance itself.
 		 */
 		public LinkedSprite setMirror(int mirror) {
 			this.mirror = mirror;
 			reloaded = false; // Reload this.
+			return this;
+		}
+		/**
+		 * Setting the flip of the sprite sheet.
+		 * @param flip The mirror of the sprite sheet.
+		 * @return The instance itself.
+		 */
+		public LinkedSprite setFlip(int flip) {
+			this.flip = flip;
+			reloaded = false;
 			return this;
 		}
 
@@ -297,22 +256,27 @@ public class SpriteLinker {
 		public void reload() { reloaded = false; }
 		/** Reloading the sprite with the configuration. */
 		private void reloadSprite() {
-			SpriteSheet sheet = linkedMap.get(key);
+			MinicraftImage sheet = linkedMap.get(key);
 			if (sheet != null) {
 				if (w <= 0) w = sheet.width / 8; // Set the size as the maximum size of the sheet.
 				if (h <= 0) h = sheet.height / 8; // Set the size as the maximum size of the sheet.
 
+				boolean flipX = (0x01 & flip) > 0, flipY = (0x02 & flip) > 0;
+
 				Sprite.Px[][] pixels = new Sprite.Px[h][w];
 				for (int r = 0; r < h; r++) {
 					for (int c = 0; c < w; c++) {
-						pixels[r][c] = new Sprite.Px(x + c, y + r, mirror, sheet);
+						// The offsets are there to determine the pixel that will be there: the one in order, or on the opposite side.
+						int xOffset = flipX ? w-1 - c : c;
+						int yOffset = flipY ? h-1 - r : r;
+						pixels[r][c] = new Sprite.Px(x + xOffset, y + yOffset, mirror, sheet);
 					}
 				}
 
 				sprite = new Sprite(pixels);
 				sprite.color = color;
 			} else {
-				Logging.SPRITE.warn("Sprite with resource ID not found: {}", key);
+				Logging.SPRITE.warn("SpriteSheet with resource ID not found: {}", key);
 				sprite = missingTexture(spriteType).getSprite();
 			}
 

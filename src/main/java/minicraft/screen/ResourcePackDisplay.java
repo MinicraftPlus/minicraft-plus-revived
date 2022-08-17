@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -39,9 +40,11 @@ import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.SpriteSheet;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ArrayEntry;
@@ -97,7 +100,7 @@ public class ResourcePackDisplay extends Display {
 	private static final int VERSION = 1;
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
-	private static final SpriteSheet defaultLogo;
+	private static final MinicraftImage defaultLogo;
 	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
 	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
@@ -115,7 +118,7 @@ public class ResourcePackDisplay extends Display {
 		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
 		loadedPacks.add(defaultPack);
 		try {
-			defaultLogo = new SpriteSheet(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
+			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
 		} catch (IOException e) {
 			CrashHandler.crashHandle(e);
 			throw new RuntimeException();
@@ -209,7 +212,7 @@ public class ResourcePackDisplay extends Display {
 		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
 	}
 
-	/** Watching the directory changes. */
+	/** Watching the directory changes. Allowing hot-loading. */
 	private class WatcherThread extends Thread implements Closeable {
 		private WatchService watcher;
 		private volatile boolean running = true;
@@ -221,7 +224,7 @@ public class ResourcePackDisplay extends Display {
 				FOLDER_LOCATION.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 					StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
 			} catch (IOException e) {
-				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Unable to Watch File", CrashHandler.ErrorInfo.ErrorType.UNHANDLEABLE, "Unable to create file water service."));
+				CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Unable to Watch File", CrashHandler.ErrorInfo.ErrorType.UNHANDLEABLE, "Unable to create file water service."));
 			}
 
 			start();
@@ -358,7 +361,7 @@ public class ResourcePackDisplay extends Display {
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (packs.size() > 0) {
 			@SuppressWarnings("resource")
-			SpriteSheet logo = packs.get(menus[selection].getSelection()).logo;
+			MinicraftImage logo = packs.get(menus[selection].getSelection()).logo;
 			int h = logo.height / 8;
 			int w = logo.width / 8;
 			int xo = (Screen.w - logo.width) / 2;
@@ -382,7 +385,7 @@ public class ResourcePackDisplay extends Display {
 		private final int packFormat; // The pack format of the pack.
 		private final String name; // The name of the pack.
 		private final String description; // The description of the pack.
-		private SpriteSheet logo; // The logo of the pack.
+		private MinicraftImage logo; // The logo of the pack.
 
 		private boolean opened = false; // If the zip file stream is opened.
 		private ZipFile zipFile = null; // The zip file stream.
@@ -402,7 +405,7 @@ public class ResourcePackDisplay extends Display {
 				openStream();
 				InputStream in = getResourceAsStream("pack.png");
 				if (in != null) {
-					logo = new SpriteSheet(ImageIO.read(in));
+					logo = new MinicraftImage(ImageIO.read(in));
 
 					// Logo size verification.
 					int h = logo.height;
@@ -418,11 +421,10 @@ public class ResourcePackDisplay extends Display {
 				close();
 
 			} catch (IOException | NullPointerException e) {
-				e.printStackTrace();
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo in pack: {}, loading default logo instead.", name);
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load logo in pack: {}, loading default logo instead.", name);
 				if (this == defaultPack) {
 					try {
-						logo = new SpriteSheet(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
+						logo = new MinicraftImage(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
 					} catch (IOException e1) {
 						CrashHandler.crashHandle(e1);
 					}
@@ -461,7 +463,11 @@ public class ResourcePackDisplay extends Display {
 		 * @throws IOException if an I/O error has occurred.
 		 */
 		private InputStream getResourceAsStream(String path) throws IOException {
-			return zipFile.getInputStream(zipFile.getEntry(path));
+			try {
+				return zipFile.getInputStream(zipFile.getEntry(path));
+			} catch (NullPointerException e) {
+				throw new IOException(e);
+			}
 		}
 
 		@FunctionalInterface
@@ -601,7 +607,6 @@ public class ResourcePackDisplay extends Display {
 				}
 			} else { // Add new pack as it should be exist.
 				pack = loadPackMetadata(url);
-				pack.refreshPack();
 				if (pack != null) {
 					resourcePacks.add(pack);
 				}
@@ -667,6 +672,7 @@ public class ResourcePackDisplay extends Display {
 		Localization.resetLocalizations();
 		BookData.resetBooks();
 		Sound.resetSounds();
+		SpriteAnimation.resetMetadata();
 		for (ResourcePack pack : loadQuery) {
 			if (pack.openStream()) {
 				try {
@@ -681,6 +687,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		SpriteAnimation.refreshAnimations();
 		Renderer.spriteLinker.updateLinkedSheets();
 		Localization.loadLanguage();
 		ArrayList<Localization.LocaleInformation> options = new ArrayList<>(Arrays.asList(Localization.getLocales()));
@@ -719,8 +726,83 @@ public class ResourcePackDisplay extends Display {
 			case Tile: path += "tile/"; break;
 		}
 
-		for (String p : pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png") && !isDir)) {
-			Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), new SpriteSheet(ImageIO.read(pack.getResourceAsStream(p))));
+		ArrayList<String> pngs = pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png") && !isDir);
+		if (type == SpriteType.Tile) {
+			// Loading sprite sheet metadata.
+			for (String m : pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
+				try {
+					JSONObject obj = new JSONObject(readStringFromInputStream(pack.getResourceAsStream(m)));
+					SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
+					pngs.remove(m.substring(0, m.length() - 5));
+					BufferedImage image = ImageIO.read(pack.getResourceAsStream(m.substring(0, m.length() - 5)));
+
+					// Applying animations.
+					MinicraftImage sheet;
+					JSONObject animation = obj.optJSONObject("animation");
+					if (animation != null) {
+						meta.frametime = animation.getInt("frametime");
+						meta.frames = image.getHeight() / 16;
+						if (meta.frames == 0) throw new IOException(new IllegalArgumentException(String.format(
+							"Invalid frames 0 detected with {} in pack: {}", m, pack.name)));
+						sheet = new MinicraftImage(image, 16, 16 * meta.frames);
+					} else
+						sheet = new MinicraftImage(image, 16, 16);
+					Renderer.spriteLinker.setSprite(type, m.substring(path.length(), m.length() - 9), sheet);
+
+					JSONObject borderObj = obj.optJSONObject("border");
+					if (borderObj != null) {
+						meta.border = borderObj.optString("key");
+						if (meta.border.isEmpty()) meta.border = null;
+						if (meta.border != null) {
+							String borderK = path + meta.border + ".png";
+							pngs.remove(borderK);
+							try {
+								Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
+							} catch (IOException e) {
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
+								meta.border = null;
+							}
+						}
+
+						meta.corner = borderObj.optString("corner");
+						if (meta.corner.isEmpty()) meta.corner = null;
+						if (meta.corner != null) {
+							String cornerK = path + meta.corner + ".png";
+							pngs.remove(cornerK);
+							try {
+								Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
+							} catch (IOException e) {
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
+								meta.corner = null;
+							}
+						}
+					}
+
+					SpriteAnimation.setMetadata(m.substring(path.length(), m.length() - 9), meta);
+				} catch (JSONException | IOException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.name);
+				}
+			}
+
+		}
+
+		// Loading the left pngs.
+		for (String p : pngs) {
+			try {
+				BufferedImage image = ImageIO.read(pack.getResourceAsStream(p));
+				MinicraftImage sheet;
+				if (type == SpriteType.Item) {
+					sheet = new MinicraftImage(image, 8, 8); // Set the minimum tile sprite size.
+				} else if (type == SpriteType.Tile) {
+					sheet = new MinicraftImage(image, 16, 16); // Set the minimum item sprite size.
+				} else {
+					sheet = new MinicraftImage(image);
+				}
+
+				Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
+			} catch (IOException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
+			}
 		}
 	}
 

@@ -10,7 +10,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -24,16 +24,16 @@ public class OreTile extends Tile {
 	private final OreType type;
 
 	public enum OreType {
-        Iron (Items.get("Iron Ore"), new LinkedSprite(SpriteType.Tile, "iron_ore")),
-		Lapis (Items.get("Lapis"), new LinkedSprite(SpriteType.Tile, "lapis_ore")),
-		Gold (Items.get("Gold Ore"), new LinkedSprite(SpriteType.Tile, "gold_ore")),
-		Gem (Items.get("Gem"), new LinkedSprite(SpriteType.Tile, "gem_ore")),
-		Cloud (Items.get("Cloud Ore"), new LinkedSprite(SpriteType.Tile, "cloud_ore"));
+        Iron (Items.get("Iron Ore"), new SpriteAnimation(SpriteType.Tile, "iron_ore")),
+		Lapis (Items.get("Lapis"), new SpriteAnimation(SpriteType.Tile, "lapis_ore")),
+		Gold (Items.get("Gold Ore"), new SpriteAnimation(SpriteType.Tile, "gold_ore")),
+		Gem (Items.get("Gem"), new SpriteAnimation(SpriteType.Tile, "gem_ore")),
+		Cloud (Items.get("Cloud Ore"), new SpriteAnimation(SpriteType.Tile, "cloud_ore"));
 
 		private final Item drop;
-		public final LinkedSprite sheet;
+		public final SpriteAnimation sheet;
 
-		OreType(Item drop, LinkedSprite sheet) {
+		OreType(Item drop, SpriteAnimation sheet) {
 			this.drop = drop;
 			this.sheet = sheet;
 		}
@@ -49,8 +49,11 @@ public class OreTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.setColor(DirtTile.dCol(level.depth));
-		sprite.getSprite().render(screen, x * 16, y * 16);
+		if (type == OreType.Cloud)
+			Tiles.get("cloud").render(screen, level, x, y);
+		else
+			Tiles.get("dirt").render(screen, level, x, y);
+		sprite.render(screen, level, x, y);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

@@ -6,7 +6,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -31,7 +31,7 @@ public class TorchTile extends Tile {
 	}
 
 	private TorchTile(Tile onType) {
-		super("Torch "+ onType.name, new LinkedSprite(SpriteType.Item, "torch"));
+		super("Torch "+ onType.name, new SpriteAnimation(SpriteType.Tile, "torch"));
 		this.onType = onType;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;
@@ -40,7 +40,7 @@ public class TorchTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		onType.render(screen, level, x, y);
-		sprite.getSprite().render(screen, x * 16 + 4, y * 16 + 4);
+		sprite.render(screen, level, x, y);
 	}
 
 	public int getLightRadius(Level level, int x, int y) {

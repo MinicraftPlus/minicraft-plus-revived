@@ -2,11 +2,10 @@ package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Cow extends PassiveMob {
-	private static LinkedSprite sprites = new LinkedSprite(SpriteType.Entity, "cow");
+	private static LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "cow");
 
 	/**
 	 * Creates the cow with the right sprites and color.

@@ -10,9 +10,8 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -23,8 +22,8 @@ import minicraft.level.Level;
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new LinkedSprite(SpriteType.Tile, "rock").setSpriteSize(3, 3).setMirror(3),
-		new LinkedSprite(SpriteType.Tile, "rock").setSpriteDim(3, 2, 2, 2).setMirror(3), new LinkedSprite(SpriteType.Tile, "rock").setSpriteDim(3, 0, 2, 2).setMirror(3));
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
+		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class);
 
 	private boolean dropCoal = false;
 	private int maxHealth = 50;
@@ -32,12 +31,11 @@ public class RockTile extends Tile {
 	private int damage;
 
 	protected RockTile(String name) {
-		super(name, (ConnectorSprite)null);
-		csprite = sprite;
+		super(name, sprite);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.setColor(DirtTile.dCol(level.depth));
+		Tiles.get("dirt").render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
 	}
 

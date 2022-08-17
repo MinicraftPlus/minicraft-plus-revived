@@ -9,7 +9,7 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
@@ -59,12 +59,12 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), "grass", "dirt"));
 
 		// Creative mode available tiles:
-		items.add(new TileItem("Farmland", Sprite.missingTexture(SpriteType.Item), "farmland", "dirt", "grass", "hole"));
-		items.add(new TileItem("Exploded", Sprite.missingTexture(SpriteType.Item), "explode", "dirt", "grass"));
-		items.add(new TileItem("hole", Sprite.missingTexture(SpriteType.Item), "hole", "dirt", "grass"));
-		items.add(new TileItem("lava", Sprite.missingTexture(SpriteType.Item), "lava", "dirt", "grass", "hole"));
-		items.add(new TileItem("path", Sprite.missingTexture(SpriteType.Item), "path", "dirt", "grass", "hole"));
-		items.add(new TileItem("water", Sprite.missingTexture(SpriteType.Item), "water", "dirt", "grass", "hole"));
+		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), "farmland", "dirt", "grass", "hole"));
+		items.add(new TileItem("Exploded", SpriteLinker.missingTexture(SpriteType.Item), "explode", "dirt", "grass"));
+		items.add(new TileItem("hole", SpriteLinker.missingTexture(SpriteType.Item), "hole", "dirt", "grass"));
+		items.add(new TileItem("lava", SpriteLinker.missingTexture(SpriteType.Item), "lava", "dirt", "grass", "hole"));
+		items.add(new TileItem("path", SpriteLinker.missingTexture(SpriteType.Item), "path", "dirt", "grass", "hole"));
+		items.add(new TileItem("water", SpriteLinker.missingTexture(SpriteType.Item), "water", "dirt", "grass", "hole"));
 
 		return items;
 	}

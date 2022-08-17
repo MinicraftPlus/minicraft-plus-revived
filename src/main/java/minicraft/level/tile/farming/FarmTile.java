@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
@@ -15,12 +15,12 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class FarmTile extends Tile {
-    private static LinkedSprite sprite = new LinkedSprite(SpriteType.Tile, "farmland");
+    private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "farmland");
 
     public FarmTile(String name) {
         super(name, sprite);
     }
-    protected FarmTile(String name, LinkedSprite sprite) {
+    protected FarmTile(String name, SpriteAnimation sprite) {
         super(name, sprite);
     }
 

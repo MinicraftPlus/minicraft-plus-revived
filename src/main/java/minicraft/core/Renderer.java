@@ -29,10 +29,10 @@ import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Ellipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
-import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -76,11 +76,11 @@ public class Renderer extends Game {
 
 	private static LinkedSprite hudSheet;
 
-	public static SpriteSheet loadDefaultSkinSheet() {
-		SpriteSheet skinsSheet;
+	public static MinicraftImage loadDefaultSkinSheet() {
+		MinicraftImage skinsSheet;
 		try {
 			// These set the sprites to be used.
-			skinsSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
+			skinsSheet = new MinicraftImage(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
@@ -97,9 +97,8 @@ public class Renderer extends Game {
 	public static void initScreen() {
 		ResourcePackDisplay.initPacks();
 		ResourcePackDisplay.reloadResources();
-		SpriteSheet sheet = loadDefaultSkinSheet();
-		screen = new Screen(sheet);
-		lightScreen = new Screen(sheet);
+		screen = new Screen();
+		lightScreen = new Screen();
 
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -194,11 +193,11 @@ public class Renderer extends Game {
 		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...Right border.
 		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
-			SpriteSheet cloud = spriteLinker.getSpriteSheet(SpriteType.Tile, "cloud");
+			MinicraftImage cloud = spriteLinker.getSheet(SpriteType.Tile, "cloud_background");
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// Creates the background for the sky (and dungeon) level:
-					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 2, 3, 0, cloud);
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, 0, 0, cloud);
 				}
 		}
 
@@ -351,7 +350,7 @@ public class Renderer extends Game {
 				// Renders armor
 				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
-					player.curArmor.sprite.getSprite().render(screen, i * 8, Screen.h - 24);
+					screen.render(i * 8, Screen.h - 24, player.curArmor.sprite);
 				}
 
 				// Renders your current red hearts, or black hearts for damaged health.

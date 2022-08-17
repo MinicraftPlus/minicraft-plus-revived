@@ -8,9 +8,9 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.network.Network;
@@ -115,7 +115,7 @@ public class TitleDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 
-		SpriteSheet sheet = Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "title");
+		MinicraftImage sheet = Renderer.spriteLinker.getSheet(SpriteType.Gui, "title");
 		int h = sheet.height / 8; // Height of squares (on the spritesheet)
 		int w = sheet.width / 8; // Width of squares (on the spritesheet)
 		int xo = (Screen.w - sheet.width) / 2; // X location of the title

@@ -6,8 +6,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -16,24 +15,24 @@ import minicraft.level.Level;
 
 public class DoorTile extends Tile {
 	protected Material type;
-	private LinkedSprite closedSprite;
-	private LinkedSprite openSprite;
+	private SpriteAnimation closedSprite;
+	private SpriteAnimation openSprite;
 
 	protected DoorTile(Material type) {
-		super(type.name() + " Door", (LinkedSprite) null);
+		super(type.name() + " Door", (SpriteAnimation) null);
 		this.type = type;
 		switch (type) {
 			case Wood:
-				closedSprite = new LinkedSprite(SpriteType.Tile, "wood_door").setSpriteDim(2, 0, 2, 2);
-				openSprite = new LinkedSprite(SpriteType.Tile, "wood_door").setSpriteSize(2, 2);
+				closedSprite = new SpriteAnimation(SpriteType.Tile, "wood_door");
+				openSprite = new SpriteAnimation(SpriteType.Tile, "wood_door_opened");
 				break;
 			case Stone:
-				closedSprite = new LinkedSprite(SpriteType.Tile, "stone_door").setSpriteDim(2, 0, 2, 2);
-				openSprite = new LinkedSprite(SpriteType.Tile, "stone_door").setSpriteSize(2, 2);
+				closedSprite = new SpriteAnimation(SpriteType.Tile, "stone_door");
+				openSprite = new SpriteAnimation(SpriteType.Tile, "stone_door_opened");
 				break;
 			case Obsidian:
-				closedSprite = new LinkedSprite(SpriteType.Tile, "obsidian_door").setSpriteDim(2, 0, 2, 2);
-				openSprite = new LinkedSprite(SpriteType.Tile, "obsidian_door").setSpriteSize(2, 2);
+				closedSprite = new SpriteAnimation(SpriteType.Tile, "obsidian_door");
+				openSprite = new SpriteAnimation(SpriteType.Tile, "obsidian_door_opened");
 				break;
 		}
 		sprite = closedSprite;
@@ -41,8 +40,8 @@ public class DoorTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		boolean closed = level.getData(x, y) == 0;
-		Sprite curSprite = (closed ? closedSprite : openSprite).getSprite();
-		curSprite.render(screen, x * 16, y * 16);
+		SpriteAnimation curSprite = closed ? closedSprite : openSprite;
+		curSprite.render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

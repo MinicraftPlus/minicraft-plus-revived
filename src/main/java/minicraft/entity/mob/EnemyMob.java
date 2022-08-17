@@ -14,7 +14,7 @@ import minicraft.level.tile.Tiles;
 public class EnemyMob extends MobAi {
 
 	public int lvl;
-	protected LinkedSprite[] lvlSprites;
+	protected LinkedSprite[][][] lvlSprites;
 	public int detectDist;
 
 	/**
@@ -30,7 +30,7 @@ public class EnemyMob extends MobAi {
 	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
-	public EnemyMob(int lvl, LinkedSprite[] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
+	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
 		super(lvlSprites[0], isFactor ? (lvl == 0 ? 1 : lvl * lvl) * health * ((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlSprites = java.util.Arrays.copyOf(lvlSprites, lvlSprites.length);
@@ -48,7 +48,7 @@ public class EnemyMob extends MobAi {
 	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
-	public EnemyMob(int lvl, LinkedSprite[] lvlSprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
+	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
 		this(lvl, lvlSprites, health, isFactor, detectDist, 60 * Updater.normSpeed, rwTime, rwChance);
 	}
 
@@ -63,7 +63,7 @@ public class EnemyMob extends MobAi {
 	 * @param health How much health the mob has.
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
 	 */
-	public EnemyMob(int lvl, LinkedSprite[] lvlSprites, int health, int detectDist) {
+	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, int detectDist) {
 		this(lvl, lvlSprites, health, true, detectDist, 60, 200);
 	}
 

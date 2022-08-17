@@ -17,7 +17,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 	// Solely for multiplayer use.
 	private boolean pickedUp = false;
 	private long pickupTimestamp;
-	
+
 	/**
 	 * Creates an item entity of the item item at position (x,y) with size 2*2.
 	 * @param item Item to add as item entity
@@ -127,8 +127,9 @@ public class ItemEntity extends Entity implements ClientTickable {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
-		item.sprite.getSprite().render(screen, x-4, y - 4, 4, -1, Color.get(0, 31)); // Item shadow
-		item.sprite.getSprite().render(screen, x - 4, y - 4 - (int)(zz)); // Item
+
+		screen.render(x-4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
+		screen.render(x - 4, y - 4 - (int) zz, item.sprite); // Item
 	}
 
 	@Override

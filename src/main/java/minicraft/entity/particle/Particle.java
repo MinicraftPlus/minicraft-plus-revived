@@ -1,9 +1,12 @@
 package minicraft.entity.particle;
 
+import javax.security.auth.DestroyFailedException;
+
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.util.Logging;
 
 public class Particle extends Entity implements ClientTickable {
 	private int time; // lifetime elapsed.
@@ -37,11 +40,16 @@ public class Particle extends Entity implements ClientTickable {
 		time++;
 		if (time > lifetime) {
 			remove();
+			if (sprite != null) try {
+				sprite.destroy();
+			} catch (DestroyFailedException e) {
+				Logging.SPRITE.trace(e);
+			}
 		}
 	}
 
 	@Override
-	public void render(Screen screen) { sprite.getSprite().render(screen, x, y); }
+	public void render(Screen screen) { screen.render(x, y, sprite); }
 
 	@Override
 	public boolean isSolid() { return false; }

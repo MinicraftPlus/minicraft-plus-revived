@@ -1,16 +1,25 @@
 package minicraft.level.tile.farming;
 
-import minicraft.core.Renderer;
 import minicraft.core.io.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class PotatoTile extends PlantTile {
+	private LinkedSprite[] spritStages = new LinkedSprite[] {
+		new LinkedSprite(SpriteType.Tile, "potato_stage0"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage1"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage2"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage3"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage4"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage5")
+	};
+
     public PotatoTile(String name) {
         super(name);
     }
@@ -25,7 +34,7 @@ public class PotatoTile extends PlantTile {
         int icon = age / (maxAge / 5);
 
         Tiles.get("Farmland").render(screen, level, x, y);
-        screen.render(x * 16, y * 16, 13 + icon * 2, 0, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Tile, "potato"));
+		screen.render(x * 16, y * 16, spritStages[icon]);
     }
 
     @Override

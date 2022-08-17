@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
@@ -21,7 +21,7 @@ public abstract class Item {
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 
 	protected Item(String name) {
-		sprite = Sprite.missingTexture(SpriteType.Item);
+		sprite = SpriteLinker.missingTexture(SpriteType.Item);
 		this.name = name;
 	}
 	protected Item(String name, LinkedSprite sprite) {
@@ -32,7 +32,7 @@ public abstract class Item {
 	/** Renders an item on the HUD */
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
-		sprite.getSprite().render(screen, x, y);
+		screen.render(x, y, sprite);
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 

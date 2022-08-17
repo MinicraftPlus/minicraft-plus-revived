@@ -5,8 +5,8 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
-import minicraft.gfx.SpriteSheet;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
@@ -51,7 +51,7 @@ public class CraftingDisplay extends Display {
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
 			.setTitle("minicraft.displays.crafting.container_title.have")
 			.setTitlePos(RelPos.TOP_LEFT)
-			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
+			.setPositioning(new Point(recipeMenu.getBounds().getRight()+MinicraftImage.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 
 		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
 			.setTitle("minicraft.displays.crafting.container_title.cost")

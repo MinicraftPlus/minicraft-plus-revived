@@ -61,7 +61,7 @@ public class BookDisplay extends Display {
 
 		builder
 			.setPositioning(new Point(Screen.w/2, pageCount.getBounds().getBottom() + spacing), RelPos.BOTTOM)
-			.setSize(maxX-minX + SpriteSheet.boxWidth*2, maxY-minY + SpriteSheet.boxWidth*2)
+			.setSize(maxX-minX + MinicraftImage.boxWidth*2, maxY-minY + MinicraftImage.boxWidth*2)
 			.setShouldRender(false);
 
 		menus = new Menu[lines.length + pageOffset];

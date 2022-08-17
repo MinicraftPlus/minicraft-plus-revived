@@ -11,14 +11,13 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
 public class AirWizard extends EnemyMob {
-	private static final LinkedSprite[] sprites = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Entity, "air_wizard").setSpritePos(0, 0),
-		new LinkedSprite(SpriteType.Entity, "air_wizard").setSpritePos(0, 2)
+	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "air_wizard"),
+		Mob.compileMobSpriteAnimations(0, 2, "air_wizard")
 	};
 
 	public static boolean beaten = false;

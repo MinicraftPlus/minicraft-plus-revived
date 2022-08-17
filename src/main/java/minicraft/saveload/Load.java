@@ -274,8 +274,7 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
 
-		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
-			SkinDisplay.setSelectedSkinIndex(Integer.parseInt(data.remove(0)));
+		SkinDisplay.releaseSkins();
 
 		// Get legacy language and convert it into the current format.
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) >= 0) {
@@ -364,7 +363,8 @@ public class Load {
 			Localization.changeLanguage(lang);
 		}
 
-		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
+		SkinDisplay.setSelectedSkin(json.optString("skin", "minicraft.skin.paul"));
+		SkinDisplay.releaseSkins();
 
 		// Load keymap
 		JSONArray keyData = json.getJSONArray("keymap");

@@ -9,7 +9,6 @@ import minicraft.entity.furniture.Spawner;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 
@@ -17,11 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Creeper extends EnemyMob {
-	private static LinkedSprite[] sprites = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Entity, "creeper").setSpriteDim(0, 0, 2, 2).setSpriteList(2),
-		new LinkedSprite(SpriteType.Entity, "creeper").setSpriteDim(0, 2, 2, 2).setSpriteList(2),
-		new LinkedSprite(SpriteType.Entity, "creeper").setSpriteDim(0, 4, 2, 2).setSpriteList(2),
-		new LinkedSprite(SpriteType.Entity, "creeper").setSpriteDim(0, 6, 2, 2).setSpriteList(2)
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		new LinkedSprite[][] {Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "creeper")},
+		new LinkedSprite[][] {Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "creeper")},
+		new LinkedSprite[][] {Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "creeper")},
+		new LinkedSprite[][] {Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "creeper")}
 	};
 
 	private static final int MAX_FUSE_TIME = 60;

@@ -2,15 +2,14 @@ package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Zombie extends EnemyMob {
-	private static LinkedSprite[] sprites = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Entity, "zombie"),
-		new LinkedSprite(SpriteType.Entity, "zombie").setSpritePos(0, 2),
-		new LinkedSprite(SpriteType.Entity, "zombie").setSpritePos(0, 4),
-		new LinkedSprite(SpriteType.Entity, "zombie").setSpritePos(0, 6)
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "zombie"),
+		Mob.compileMobSpriteAnimations(0, 2, "zombie"),
+		Mob.compileMobSpriteAnimations(0, 4, "zombie"),
+		Mob.compileMobSpriteAnimations(0, 6, "zombie")
 	};
 
 	/**

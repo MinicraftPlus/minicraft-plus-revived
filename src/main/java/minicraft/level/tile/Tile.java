@@ -7,9 +7,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -45,26 +44,14 @@ public abstract class Tile {
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
 	public boolean connectsToFluid = false;
-	public int light;
-	protected boolean maySpawn;
+	public int light = 1;
+	protected boolean maySpawn = false;
 
-	protected LinkedSprite sprite;
-	protected ConnectorSprite csprite;
+	protected SpriteAnimation sprite = null;
 
-	{
-		light = 1;
-		maySpawn = false;
-		sprite = null;
-		csprite = null;
-	}
-
-	protected Tile(String name, LinkedSprite sprite) {
+	protected Tile(String name, SpriteAnimation sprite) {
 		this.name = name.toUpperCase();
 		this.sprite = sprite;
-	}
-	protected Tile(String name, ConnectorSprite sprite) {
-		this.name = name.toUpperCase();
-		csprite = sprite;
 	}
 
 
@@ -77,10 +64,7 @@ public abstract class Tile {
 
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
-		if (sprite != null)
-			sprite.getSprite().render(screen, x << 4, y << 4);
-		if (csprite != null)
-			csprite.render(screen, level, x, y);
+		sprite.render(screen, level, x, y);
 	}
 
 	public boolean maySpawn() { return maySpawn; }

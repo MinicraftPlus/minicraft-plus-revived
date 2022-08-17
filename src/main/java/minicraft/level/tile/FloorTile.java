@@ -4,7 +4,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -15,13 +15,13 @@ public class FloorTile extends Tile {
 	protected Material type;
 
 	protected FloorTile(Material type) {
-		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name() + " Bricks"), (LinkedSprite) null);
+		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name() + " Bricks"), (SpriteAnimation) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Wood: sprite = new LinkedSprite(SpriteType.Tile, "wood_floor"); break;
-			case Stone: sprite = new LinkedSprite(SpriteType.Tile, "stone_floor"); break;
-			case Obsidian: sprite = new LinkedSprite(SpriteType.Tile, "obsidian_floor"); break;
+			case Wood: sprite = new SpriteAnimation(SpriteType.Tile, "wood_floor"); break;
+			case Stone: sprite = new SpriteAnimation(SpriteType.Tile, "stone_floor"); break;
+			case Obsidian: sprite = new SpriteAnimation(SpriteType.Tile, "obsidian_floor"); break;
 		}
 	}
 

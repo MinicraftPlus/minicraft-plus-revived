@@ -7,11 +7,9 @@ import java.util.Locale;
 
 import org.jetbrains.annotations.NotNull;
 
-import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.util.Logging;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 

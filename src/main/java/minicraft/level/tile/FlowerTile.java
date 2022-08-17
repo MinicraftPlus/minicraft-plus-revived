@@ -4,9 +4,8 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -15,10 +14,11 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	private static final LinkedSprite flowerSprite = new LinkedSprite(SpriteType.Tile, "grass").setSpriteDim(3, 2, 1, 1);
+	private static final SpriteAnimation flowerSprite0 = new SpriteAnimation(SpriteType.Tile, "flower_shape0");
+	private static final SpriteAnimation flowerSprite1 = new SpriteAnimation(SpriteType.Tile, "flower_shape1");
 
 	protected FlowerTile(String name) {
-		super(name, (ConnectorSprite)null);
+		super(name, (SpriteAnimation) null);
 		connectsToGrass = true;
 		maySpawn = true;
 	}
@@ -41,15 +41,9 @@ public class FlowerTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
-
 		int data = level.getData(x, y);
 		int shape = (data / 16) % 2;
-
-		x = x << 4;
-		y = y << 4;
-
-		flowerSprite.getSprite().render(screen, x + 8 * shape, y);
-		flowerSprite.getSprite().render(screen, x + 8 * (shape == 0 ? 1 : 0), y + 8);
+		(shape == 0 ? flowerSprite0 : flowerSprite1).render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {

@@ -6,7 +6,6 @@ import java.util.List;
 
 import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
-import minicraft.gfx.SpriteLinker.SpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Font {
@@ -89,7 +88,7 @@ public class Font {
 	}
 
 	public static int textHeight() {//noinspection SuspiciousNameCombination
-		return SpriteSheet.boxWidth;
+		return MinicraftImage.boxWidth;
 	}
 
 	public static void drawCentered(String msg, Screen screen, int y, int color) {

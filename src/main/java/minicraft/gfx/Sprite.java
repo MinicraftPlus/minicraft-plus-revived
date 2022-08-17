@@ -1,7 +1,5 @@
 package minicraft.gfx;
 
-import minicraft.gfx.SpriteLinker.SpriteSheet;
-
 /** This class represents a group of pixels on their sprite sheet(s). */
 public class Sprite {
 	/**
@@ -13,7 +11,7 @@ public class Sprite {
 		The screen's render method only draws one 8x8 pixel of the spritesheet at a time, so the "sprite size" will be determined by how many repetitions of the above group there are.
 	*/
 
-	protected Px[][] spritePixels;
+	public Px[][] spritePixels;
 	public int color = -1;
 	// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 
@@ -34,9 +32,9 @@ public class Sprite {
 	/** This class represents a pixel on the sprite sheet. */
 	public static class Px {
 		protected int x, y, mirror;
-		protected SpriteSheet sheet;
+		protected MinicraftImage sheet;
 
-		public Px(int sheetX, int sheetY, int mirroring, SpriteSheet sheet) {
+		public Px(int sheetX, int sheetY, int mirroring, MinicraftImage sheet) {
 			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
 			x = sheetX;
 			y = sheetY;

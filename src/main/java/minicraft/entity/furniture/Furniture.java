@@ -68,7 +68,7 @@ public class Furniture extends Entity {
 	}
 
 	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { sprite.getSprite().render(screen, x-8, y-8); }
+	public void render(Screen screen) { screen.render(x-8, y-8, sprite); }
 
 	/** Called when the player presses the MENU key in front of this. */
 	public boolean use(Player player) { return false; }

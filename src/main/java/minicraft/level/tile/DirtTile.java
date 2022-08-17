@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -14,10 +14,10 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DirtTile extends Tile {
-	private static LinkedSprite[] levelSprite = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Tile, "dirt"),
-		new LinkedSprite(SpriteType.Tile, "gray_dirt"),
-		new LinkedSprite(SpriteType.Tile, "purple_dirt")
+	private static SpriteAnimation[] levelSprite = new SpriteAnimation[] {
+		new SpriteAnimation(SpriteType.Tile, "dirt"),
+		new SpriteAnimation(SpriteType.Tile, "gray_dirt"),
+		new SpriteAnimation(SpriteType.Tile, "purple_dirt")
 	};
 
 	protected DirtTile(String name) {
@@ -43,7 +43,7 @@ public class DirtTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		levelSprite[dIdx(level.depth)].getSprite().render(screen, x * 16, y * 16, 0);
+		levelSprite[dIdx(level.depth)].render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

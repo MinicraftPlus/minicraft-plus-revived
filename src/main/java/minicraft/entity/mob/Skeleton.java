@@ -4,15 +4,14 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Skeleton extends EnemyMob {
-	private static LinkedSprite[] sprites = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Entity, "skeleton"),
-		new LinkedSprite(SpriteType.Entity, "skeleton").setSpritePos(0, 2),
-		new LinkedSprite(SpriteType.Entity, "skeleton").setSpritePos(0, 4),
-		new LinkedSprite(SpriteType.Entity, "skeleton").setSpritePos(0, 6)
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "skeleton"),
+		Mob.compileMobSpriteAnimations(0, 2, "skeleton"),
+		Mob.compileMobSpriteAnimations(0, 4, "skeleton"),
+		Mob.compileMobSpriteAnimations(0, 6, "skeleton")
 	};
 
 	private int arrowtime;
