@@ -64,24 +64,24 @@ public class ResourcePackDisplay extends Display {
 	 * 	├──	pack.json
 	 * 	├──	pack.png
 	 * 	└──	assets TODO Restructure the structure with the new IDS later
-	 * 		├──	textures
-	 * 		│	├──	entity
-	 * 		│	│	└──	<entity_name>.png
-	 * 		│	├──	item
-	 * 		│	│	└──	<item_name>.png
-	 * 		│	├──	tile
-	 * 		│	│	├──	<tile_name>.png
-	 * 		│	│	└──	[<tile_name>.png.json]
-	 * 		│	└──	gui
-	 * 		│		├──	font.png
-	 * 		│		├──	hud.png
-	 * 		│		└──	title.png
+	 * 		├──	books
+	 * 		│	└──	<name>.txt
 	 * 		├──	localization
-	 * 		│	└──	<name>_<locale>.json
+	 * 		│	└──	<locale>.json
 	 * 		├──	sound
 	 * 		│	└──	<name>.wav
-	 * 		└──	books
-	 * 			└──	<name>.txt
+	 * 		└──	textures
+	 * 			├──	entity
+	 * 			│	└──	<entity_name>.png
+	 * 			├──	item
+	 * 			│	└──	<item_name>.png
+	 * 			├──	tile
+	 * 			│	├──	<tile_name>.png
+	 * 			│	└──	[<tile_name>.png.json]
+	 * 			└──	gui
+	 * 				├──	font.png
+	 * 				├──	hud.png
+	 * 				└──	title.png
 	 *
 	 * pack.json
 	 * 	├──	(name) String
