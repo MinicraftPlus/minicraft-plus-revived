@@ -215,7 +215,7 @@ public class ResourcePackDisplay extends Display {
 	/** Watching the directory changes. Allowing hot-loading. */
 	private class WatcherThread extends Thread implements Closeable {
 		private WatchService watcher;
-		private volatile boolean running = true;
+		private volatile Thread running = this;
 
 		WatcherThread() {
 			super("Resource Pack File Watcher");
@@ -233,7 +233,7 @@ public class ResourcePackDisplay extends Display {
 
 		@Override
 		public void run() {
-			while (running) { // I don't know why `running` cannot be false.
+			while (running == this) {
 				try {
 					ArrayList<URL> urls = new ArrayList<>();
 					for (WatchEvent<?> event : watcher.take().pollEvents()) {
@@ -261,11 +261,6 @@ public class ResourcePackDisplay extends Display {
 					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
 					return;
 				}
-
-				if (Thread.interrupted()) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
-					return;
-            	}
 			}
 
 			Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
@@ -273,8 +268,7 @@ public class ResourcePackDisplay extends Display {
 
 		@Override
 		public void close() {
-			running = false; // This does no effect...
-			interrupt();
+			running = null;
 		}
 	}
 

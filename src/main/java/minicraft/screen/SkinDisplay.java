@@ -136,6 +136,7 @@ public class SkinDisplay extends Display {
 	/** Watching the directory changes. Allowing hot-loading. */
 	private class WatcherThread extends Thread {
 		private WatchService watcher;
+		private volatile Thread running = this;
 
 		WatcherThread() {
 			super("Skin File Watcher");
@@ -153,7 +154,7 @@ public class SkinDisplay extends Display {
 
 		@Override
 		public void run() {
-			while (true) {
+			while (running == this) {
 				try {
 					ArrayList<File> files = new ArrayList<>();
 					for (WatchEvent<?> event : watcher.take().pollEvents()) {
@@ -175,12 +176,13 @@ public class SkinDisplay extends Display {
 					Logging.RESOURCEHANDLER_SKIN.trace("File watcher terminated.");
 					return;
 				}
-
-				if (Thread.interrupted()) {
-					Logging.RESOURCEHANDLER_SKIN.trace("File watcher terminated.");
-					return;
-				}
 			}
+
+			Logging.RESOURCEHANDLER_SKIN.trace("File watcher terminated.");
+		}
+
+		public void close() {
+			running = null;
 		}
 	}
 
@@ -232,7 +234,7 @@ public class SkinDisplay extends Display {
 
 	@Override
 	public void onExit() {
-		thread.interrupt();
+		thread.close();
 		releaseSkins();
 	}
 
