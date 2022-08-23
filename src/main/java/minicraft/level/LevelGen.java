@@ -478,7 +478,7 @@ public class LevelGen {
 		return new short[][]{map, data};
 	}
 
-	private static short[][] createDungeon(int w, int h) {
+	/*private static short[][] createDungeon(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 
@@ -523,7 +523,80 @@ public class LevelGen {
 		}
 
 		return new short[][]{map, data};
+	}*/
+
+	private static short[][] createDungeon(int w, int h) {
+		LevelGen noise1 = new LevelGen(w, h, 10);
+		LevelGen noise2 = new LevelGen(w, h, 10);
+
+		short[] map = new short[w * h];
+		short[] data = new short[w * h];
+
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				int i = x + y * w;
+
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+
+				double xd = x / (w - 1.1) * 2 - 1;
+				double yd = y / (h - 1.1) * 2 - 1;
+				if (xd < 0) xd = -xd;
+				if (yd < 0) yd = -yd;
+				double dist = xd >= yd ? xd : yd;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				val = -val * 1 - 2.2;
+				val += 1 - dist * 2;
+
+				if (val < -0.35) {
+					map[i] = Tiles.get("Obsidian Wall").id;
+				} else {
+					if (random.nextInt(2) == 1) {
+						if (random.nextInt(2) == 1) {
+							map[i] = Tiles.get("Obsidian").id;
+						} else {
+							map[i] = Tiles.get("Raw Obsidian").id;
+						}
+					}
+					else {
+						map[i] = Tiles.get("dirt").id;
+					}
+				}
+			}
+		}
+
+		decorLoop:
+		for (int i = 0; i < w * h / 450; i++) {
+			int x = random.nextInt(w - 2) + 1;
+			int y = random.nextInt(h - 2) + 1;
+
+			for (int yy = y - 1; yy <= y + 1; yy++) {
+				for (int xx = x - 1; xx <= x + 1; xx++) {
+					if (map[xx + yy * w] != Tiles.get("Obsidian").id)
+						continue decorLoop;
+				}
+			}
+
+			if (x > 8 && y > 8) {
+				if (x < w - 8 && y < w - 8) {
+					if (random.nextInt(2) == 1) {
+						if (random.nextInt(2) == 1) {
+							Structure.ornateLavaPool.draw(map, x, y, w);
+						} else {
+							Structure.fortressGarden.draw(map, x, y, w);
+						}
+					} else {
+						Structure.fortressChest.draw(map, x, y, w);
+					}
+				}
+			}
+		}
+
+		Structure.dungeonGate.draw(map, 60,60, w);
+
+		return new short[][]{map, data};
 	}
+
 
 	private static short[][] createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
@@ -733,7 +806,7 @@ public class LevelGen {
 		Tiles.initTileList();
 		// End of fixes
 
-		int idx = -1;
+		int idx = -2;
 
 		int[] maplvls = new int[args.length];
 		boolean valid = true;
@@ -790,6 +863,8 @@ public class LevelGen {
 					if (map[i] == Tiles.get("Stairs Down").id) pixels[i] = 0xffffffff;
 					if (map[i] == Tiles.get("Stairs Up").id) pixels[i] = 0xffffffff;
 					if (map[i] == Tiles.get("Cloud Cactus").id) pixels[i] = 0xffff00ff;
+					if (map[i] == Tiles.get("Ornate Obsidian").id) pixels[i] = 0x000f0a;
+					if (map[i] == Tiles.get("Raw Obsidian").id) pixels[i] = 0x0a0080;
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);

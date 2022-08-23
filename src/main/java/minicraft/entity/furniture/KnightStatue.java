@@ -11,15 +11,24 @@ import minicraft.item.Item;
 
 public class KnightStatue extends Furniture {
 
-	private boolean touched = false;
+	private boolean touched = false; // second warn
+	private boolean tapped = false; // first warn
+	private boolean awoken = false; // awaking
+	private boolean touched1; // second warn spam failsafe
+	private boolean tapped1; // first warn spam failsafe;
 	public int obkHealth;
 	public static boolean active;
 
 	public KnightStatue(int health) {
 		super("KnightStatue", new Sprite(8, 16, 2, 2, 2), 3, 2);
+		obkHealth = health;
 		ObsidianKnight.active = false;
 		ObsidianKnight.failed = false;
-		this.obkHealth = health;
+		touched = false;
+		tapped = false;
+		awoken = false;
+		touched1 = false;
+		tapped1 = false;
 		active = true;
 	}
 
@@ -28,10 +37,21 @@ public class KnightStatue extends Furniture {
 		super.tick();
 
 		if (!ObsidianKnight.active) {
-			if (touched) {
+			if (tapped && !tapped1) {
+				// Warn the player
+				Game.notifications.add(Localization.getLocalized("minicraft.notifications.statue_tapped"));
+				tapped1 = true;
+			}
+			if (touched && !touched1) {
+				// Warn the player again
+				Game.notifications.add(Localization.getLocalized("minicraft.notifications.statue_touched"));
+				touched1 = true;
+			}
+			if (awoken) {
+				// Awoken notifications is in Boss class
 				// Summon the Obsidian Knight boss
-				ObsidianKnight ob = new ObsidianKnight(obkHealth);
-				level.add(ob, x, y, false);
+				ObsidianKnight obk = new ObsidianKnight(obkHealth);
+				level.add(obk, x, y, false);
 				super.remove();
 			}
 		}
@@ -47,11 +67,29 @@ public class KnightStatue extends Furniture {
 
 	@Override
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
-		if (!touched) {
+		if (!tapped) {
+			tapped = true;
+			return true;
+		}
+		if (!touched && tapped) {
 			touched = true;
 			return true;
 		}
+		if (!awoken && touched){
+			awoken = true;
+			return true;
+		}
 		return false;
+	}
+
+	@Override
+	public void tryPush(Player player) {
+
+	}
+
+	@Override
+	public Furniture clone(){
+		return new KnightStatue(5000);
 	}
 }
 

@@ -159,7 +159,7 @@ public class TitleDisplay extends Display {
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
         "Now with Customizable Skins!",
-        "Skin Update by Litorom1 and El Virus!",
+        "Skin Update by Litorom1, El Virus!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",
@@ -256,5 +256,10 @@ public class TitleDisplay extends Display {
 		"001100010011000000110001!",
 		"011010000110110101101101?",
 		"...zzz...",
+		"He was too redundant",
+		"Echoed Whispers...",
+		"Of Knights and Men",
+		"Breaking NEWS!",
+		"Death before dishonor!",
 	};
 }

@@ -10,6 +10,8 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
+import minicraft.util.Logging;
 import org.tinylog.Logger;
 
 import java.util.ArrayList;
@@ -60,25 +62,27 @@ public class SummonItem extends StackableItem {
 
 				break;
 			case "Obsidian Knight":
-				// Check if we are on the right level
-				if (level.depth == -4){
-					if (!KnightStatue.active && !ObsidianKnight.active) {
+				// Check if we are on the right level and tile
+				if (level.depth == -4) {
+					if (player.getLevel().getTile(player.x >> 4, player.y >> 4).id == Tiles.get(48).id) {
+						if (!KnightStatue.active && !ObsidianKnight.active) {
 
-						// Pay stamina
-						if (player.payStamina(2)) {
-							KnightStatue ks = new KnightStatue(5000);
-							level.add(ks, player.x + 8, player.y + 8, false);
-							Logger.debug("Summoned new Knight Statue");
-							success = true;
+							// Pay stamina
+							if (player.payStamina(2)) {
+								KnightStatue ks = new KnightStatue(5000);
+								level.add(ks, player.x, player.y, false);
+								Logger.debug("Summoned new Knight Statue");
+								success = true;
+							}
+						} else {
+							Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
 						}
-					}
-					else {
-						Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
+					} else {
+						Game.notifications.add(Localization.getLocalized("minicraft.notification.spawn_on_boss_tile"));
 					}
 				} else {
 					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_dungeon"));
 				}
-
 				break;
 			default:
 				Logger.tag("SummonItem").warn("Could not create SummonItem with mob, {}", mob);

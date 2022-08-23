@@ -19,7 +19,7 @@ public class DirtTile extends Tile {
 		levelSprite[1] = new Sprite(14, 2, 2, 2, 1);
 		levelSprite[2] = new Sprite(12, 4, 2, 2, 1);
 	}
-	
+
 	protected DirtTile(String name) {
 		super(name, levelSprite[0]);
 		maySpawn = true;
@@ -41,11 +41,11 @@ public class DirtTile extends Tile {
 			default: return 1; // Caves
 		}
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
 		levelSprite[dIdx(level.depth)].render(screen, x * 16, y * 16, 0);
 	}
-	
+
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

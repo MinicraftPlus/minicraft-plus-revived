@@ -575,7 +575,7 @@ public class Load {
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0)
-			Player.extraHealth = Integer.parseInt(data.remove(0));
+			player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
@@ -891,8 +891,9 @@ public class Load {
 		} else if (newEntity instanceof KnightStatue) {
 			KnightStatue ks = (KnightStatue)newEntity;
 			int health = Integer.parseInt(info.get(2));
+			ks.obkHealth = health;
 
-			newEntity = new KnightStatue(health);
+			newEntity = ks;
 		}
 
 		if (!isLocalSave) {

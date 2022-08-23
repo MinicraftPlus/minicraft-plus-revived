@@ -8,6 +8,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.network.Network;
+import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

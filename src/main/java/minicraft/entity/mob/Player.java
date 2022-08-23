@@ -199,7 +199,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if ((baseHealth + extraHealth) > maxHealth) {
 			extraHealth = maxHealth - 10;
-			Logger.warn("Current Max Health is greater than Max Health, downgrading.");
+			Logging.PLAYER.warn("Current Max Health is greater than Max Health, downgrading.");
 		}
 
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {

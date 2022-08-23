@@ -76,7 +76,7 @@ public class ObsidianKnight extends EnemyMob {
 			lvlSprites = broken;
 		}
 
-		if (Game.isMode("Creative")) return; // Should not attack if player is in creative
+		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
 
 		//TODO: Obsidian Knight Attack patterns (Currently AirWizard placeholder)
 		if (phase1) {

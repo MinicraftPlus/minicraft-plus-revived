@@ -99,7 +99,7 @@ public class Level {
 	private void updateMobCap() {
 		maxMobCount = 150 + 150 * Settings.getIdx("diff");
 		if (depth == 1) maxMobCount /= 2;
-		if (depth == 0 || depth == -4) maxMobCount = maxMobCount * 2 / 3;
+		if (depth == 0 || depth == -4 || depth == -5) maxMobCount = maxMobCount * 2 / 3;
 	}
 
 	public Level(int w, int h, long seed, int level, Level parentLevel, boolean makeWorld) {
@@ -144,9 +144,9 @@ public class Level {
 			for (int y = 0; y < h; y++) { // Loop through height
 				for (int x = 0; x < w; x++) { // Loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level == -4) {/// Make the obsidian wall formation around the stair in the dungeon level
+						if (level == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
-							Structure.dungeonBossRoom.draw(this, x+10,y+10);
+							Structure.dungeonBossRoom.draw(this, x+10, y+10);
 						}
 						else if (level == 0) { // Surface
 							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
@@ -251,18 +251,18 @@ public class Level {
 				// Pick a random tile:
 				int x2 = random.nextInt(16 * w) / 16;
 				int y2 = random.nextInt(16 * h) / 16;
-				if (getTile(x2, y2) == Tiles.get("Obsidian")) {
+				if (getTile(x2, y2) == Tiles.get("Grass")) {
 					boolean xaxis = random.nextBoolean();
 					if (xaxis) {
 						for (int s = x2; s < w - s; s++) {
-							if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
+							if (getTile(s, y2) == Tiles.get("Obsidian Wall") || getTile(s, y2) == Tiles.get("Ornate Obsidian")) {
 								d.x = s * 20 - 16;
 								d.y = y2 * 24 - 14;
 							}
 						}
 					} else { // y axis
 						for (int s = y2; s < y2 - s; s++) {
-							if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
+							if (getTile(x2, s) == Tiles.get("Obsidian Wall") || getTile(x2, s) == Tiles.get("Ornate Obsidian")) {
 								d.x = x2 * 23 - 14;
 								d.y = s * 21 - 16;
 							}
@@ -272,9 +272,9 @@ public class Level {
 						d.x = x2 * 16 - 8;
 						d.y = y2 * 16 - 8;
 					}
-					if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
-						setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
-					}
+					/*if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall") || getTile(d.x / 16, d.y / 16) == Tiles.get("Ornate Obsidian")) {
+						setTile(d.x / 16, d.y / 16, Tiles.get("Grass"));
+					}*/
 
 					add(d);
 					chestCount++;
@@ -830,75 +830,134 @@ public class Level {
 	}
 
 	private void generateSpawnerStructures() {
-		for (int i = 0; i < 18 / -depth * (w / 128); i++) {
+		if (depth != -4) {
+			for (int i = 0; i < 18 / -depth * (w / 128); i++) {
 
-			/// For generating spawner dungeons
-			MobAi m;
-			int r = random.nextInt(5);
+				/// For generating spawner dungeons
+				MobAi m;
+				int r = random.nextInt(5);
 
-			if (r == 1) {
-				m = new Skeleton(-depth);
-			} else if (r == 2 || r == 0) {
-				m = new Slime(-depth);
-			} else {
-				m = new Zombie(-depth);
-			}
-
-			Spawner sp = new Spawner(m);
-			int x3 = random.nextInt(16 * w) / 16;
-			int y3 = random.nextInt(16 * h) / 16;
-			if (getTile(x3, y3) == Tiles.get("dirt")) {
-				boolean xaxis2 = random.nextBoolean();
-
-				if (xaxis2) {
-					for (int s2 = x3; s2 < w - s2; s2++) {
-						if (getTile(s2, y3) == Tiles.get("rock")) {
-							sp.x = s2 * 16 - 24;
-							sp.y = y3 * 16 - 24;
-						}
-					}
+				if (r == 1) {
+					m = new Skeleton(-depth);
+				} else if (r == 2 || r == 0) {
+					m = new Slime(-depth);
 				} else {
-					for (int s2 = y3; s2 < y3 - s2; s2++) {
-						if (getTile(x3, s2) == Tiles.get("rock")) {
-							sp.x = x3 * 16 - 24;
-							sp.y = s2 * 16 - 24;
+					m = new Zombie(-depth);
+				}
+
+				Spawner sp = new Spawner(m);
+				int x3 = random.nextInt(16 * w) / 16;
+				int y3 = random.nextInt(16 * h) / 16;
+				if (getTile(x3, y3) == Tiles.get("dirt")) {
+					boolean xaxis2 = random.nextBoolean();
+
+					if (xaxis2) {
+						for (int s2 = x3; s2 < w - s2; s2++) {
+							if (getTile(s2, y3) == Tiles.get("rock")) {
+								sp.x = s2 * 16 - 24;
+								sp.y = y3 * 16 - 24;
+							}
+						}
+					} else {
+						for (int s2 = y3; s2 < y3 - s2; s2++) {
+							if (getTile(x3, s2) == Tiles.get("rock")) {
+								sp.x = x3 * 16 - 24;
+								sp.y = s2 * 16 - 24;
+							}
 						}
 					}
+
+					if (sp.x == 0 && sp.y == 0) {
+						sp.x = x3 * 16 - 8;
+						sp.y = y3 * 16 - 8;
+					}
+
+					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
+						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					}
+
+					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+
+					if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+					}
+					if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+					}
+					if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
+						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+					}
+					if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
+						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
+					}
+
+					add(sp);
+					for (int rpt = 0; rpt < 2; rpt++) {
+						if (random.nextInt(2) != 0) continue;
+						Chest c = new Chest();
+						int chance = -depth;
+
+						c.populateInvRandom("minidungeon", chance);
+
+						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+					}
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < 18 * (w / 128); i++) {
+
+				/// For generating spawner dungeons
+				MobAi m;
+				int r = random.nextInt(2);
+
+				if (r == 1) {
+					m = new Knight(2);
+				} else {
+					m = new Snake(2);
 				}
 
-				if (sp.x == 0 && sp.y == 0) {
-					sp.x = x3 * 16 - 8;
-					sp.y = y3 * 16 - 8;
-				}
+				Spawner sp = new Spawner(m);
+				int x3 = random.nextInt(16 * w) / 16;
+				int y3 = random.nextInt(16 * h) / 16;
+				if (getTile(x3, y3) == Tiles.get("Obsidian")) {
+					boolean xaxis2 = random.nextBoolean();
 
-				if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-					setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
-				}
+					if (xaxis2) {
+						for (int s2 = x3; s2 < w - s2; s2++) {
+							if (getTile(s2, y3) == Tiles.get("Obsidian Wall")) {
+								sp.x = s2 * 16 - 24;
+								sp.y = y3 * 16 - 24;
+							}
+						}
+					} else {
+						for (int s2 = y3; s2 < y3 - s2; s2++) {
+							if (getTile(x3, s2) == Tiles.get("Obsidian Wall")) {
+								sp.x = x3 * 16 - 24;
+								sp.y = s2 * 16 - 24;
+							}
+						}
+					}
 
-				Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+					if (sp.x == 0 && sp.y == 0) {
+						sp.x = x3 * 16 - 8;
+						sp.y = y3 * 16 - 8;
+					}
 
-				if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
-					Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
-				}
-				if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
-					Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
-				}
-				if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
-					Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
-				}
-				if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
-					Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
-				}
+					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("Obsidian Wall")) {
+						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					}
 
-				add(sp);
-				for (int rpt = 0; rpt < 2; rpt++) {
-					if (random.nextInt(2) != 0) continue;
-					Chest c = new Chest();
-					int chance = -depth;
+					Structure.dungeonSpawner.draw(this, sp.x / 16, sp.y / 16);
 
-					c.populateInvRandom("minidungeon", chance);
+					add(sp);
+					for (int rpt = 0; rpt < 2; rpt++) {
+						if (random.nextInt(2) != 0) continue;
+						DungeonChest c = new DungeonChest(true);
+						chestCount++;
 
-					add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+					}
 				}
 			}
 		}

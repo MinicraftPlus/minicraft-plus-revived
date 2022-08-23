@@ -44,7 +44,7 @@ public class BossWallTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("Creative") || ObsidianKnight.beaten || ObsidianKnight.failed || !ObsidianKnight.active) {
+		if (Game.isMode("minicraft.settings.mode.creative") || ObsidianKnight.failed || !ObsidianKnight.active) {
 			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
 			return true;
 		} else {

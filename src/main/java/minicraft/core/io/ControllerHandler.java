@@ -12,7 +12,7 @@ public class ControllerHandler extends ControllerManager {
 	private final ControllerIndex controllerIndex;
 
 	public ControllerHandler() {
-		ControllerManager controllerManager = new ControllerManager();
+		ControllerManager controllerManager = new ControllerManager(1,"resources/util/gamecontrollerdb.txt");
 		controllerManager.initSDLGamepad();
 		controllerIndex = controllerManager.getControllerIndex(0);
 		controllerManager.update();

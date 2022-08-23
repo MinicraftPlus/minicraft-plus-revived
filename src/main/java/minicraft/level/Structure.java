@@ -3,10 +3,7 @@ package minicraft.level;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.Furniture;
-import minicraft.entity.furniture.KnightStatue;
-import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.*;
 import minicraft.gfx.Point;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -98,6 +95,10 @@ public class Structure {
 	static final Structure dungeonLock;
 	static final Structure dungeonBossRoom;
 	static final Structure lavaPool;
+	static final Structure ornateLavaPool;
+	static final Structure fortressGarden;
+	static final Structure fortressChest;
+	static final Structure dungeonSpawner;
 
 	// All the "mobDungeon" structures are for the spawner structures
 	static final Structure mobDungeonCenter;
@@ -137,7 +138,7 @@ public class Structure {
 					"WWWWW"
 		);
 		dungeonBossRoom = new Structure();
-		dungeonBossRoom.setData("O:Ornate Obsidian,W:Obsidian Boss Wall",
+		dungeonBossRoom.setData("O:Obsidian Boss Floor,W:Obsidian Boss Wall",
 			"WWWWWWWWW\n" +
 				"WOOOOOOOW\n" +
 				"WOOOOOOOW\n" +
@@ -150,11 +151,56 @@ public class Structure {
 		);
 		dungeonBossRoom.addFurniture(0,0,new KnightStatue(5000));
 
+		dungeonSpawner = new Structure();
+		dungeonSpawner.setData("F:Grass,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
+			"WWWDWWW\n" +
+				"WOOOOOW\n" +
+				"WOFFFOW\n" +
+				"DOFFFOD\n" +
+				"WOFFFOW\n" +
+				"WOOOOOW\n" +
+				"WWWDWWW"
+		);
+
 		lavaPool = new Structure();
 		lavaPool.setData("L:Lava",
 					"LL\n" +
 					"LL"
 		);
+
+		ornateLavaPool = new Structure();
+		ornateLavaPool.setData("L:Lava,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
+			"WWWDWWW\n" +
+				"WOOOOOW\n" +
+				"WOLLLOW\n" +
+				"DOLLLOD\n" +
+				"WOLLLOW\n" +
+				"WOOOOOW\n" +
+				"WWWDWWW"
+		);
+
+		fortressGarden = new Structure();
+		fortressGarden.setData("F:Flower,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
+			"WWWDWWW\n" +
+				"WOOOOOW\n" +
+				"WOFFFOW\n" +
+				"DOFFFOD\n" +
+				"WOFFFOW\n" +
+				"WOOOOOW\n" +
+				"WWWDWWW"
+		);
+
+		fortressChest = new Structure();
+		fortressChest.setData("F:Grass,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
+			"WWWDWWW\n" +
+				"WOOOOOW\n" +
+				"WOFFFOW\n" +
+				"DOFFFOD\n" +
+				"WOFFFOW\n" +
+				"WOOOOOW\n" +
+				"WWWDWWW"
+		);
+		fortressChest.addFurniture(0,0, new DungeonChest(true));
 
 		mobDungeonCenter = new Structure();
 		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
