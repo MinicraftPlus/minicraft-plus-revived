@@ -1,3 +1,13 @@
+Minicraft+ version 2.2.0
+
++ Added quests
++ Added Obsidian Knight as the second boss
++ Added controller support
++ Added limitation to inventories
+* Changed the display of world edit
+* Changed the structure of resource pack
+* Split the images of textures
+
 Minicraft+ version 2.1.0
 
 + Added achievements
