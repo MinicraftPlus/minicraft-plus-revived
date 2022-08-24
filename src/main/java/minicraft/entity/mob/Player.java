@@ -794,14 +794,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 		}
 
-		curSprite.setColor(shirtColor);
 		// Render each corner of the sprite
 		if (isSwimming()) {
 			Sprite sprite = curSprite.getSprite();
-			screen.render(xo, yo, sprite.spritePixels[0][0]);
-			screen.render(xo + 8, yo, sprite.spritePixels[0][1]);
+			screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
+			screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
 		} else { // Don't render the bottom half if swimming.
-			screen.render(xo, yo - 4 * onFallDelay, curSprite);
+			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 		}
 
 		// Renders slashes:

@@ -5,6 +5,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -115,7 +117,41 @@ public class ResourcePackDisplay extends Display {
 
 	static { // Initializing the default pack and logo.
 		// Add the default pack.
-		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
+		URL defaultPackURL = Game.class.getProtectionDomain().getCodeSource().getLocation();
+		if (Game.class.getProtectionDomain().getCodeSource().getLocation().toString().endsWith("/")) { // If the source is a directory.
+			try {
+				File zip = File.createTempFile("resources", ".zip");
+				Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
+				if (zip.exists()) zip.delete(); // Delete if exists.
+				try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
+					for (String name : FileHandler.listResources()) { // Copy only assets and pack configuration.
+						if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
+							out.putNextEntry(new ZipEntry(name));
+							if (!name.endsWith("/")) {
+								int b;
+								InputStream stream = Game.class.getResourceAsStream("/" + name);
+								while ((b = stream.read()) != -1) // Write per byte.
+									out.write(b);
+							}
+
+							out.closeEntry();
+						}
+					}
+				} catch (IOException e) {
+					CrashHandler.crashHandle(e);
+				}
+
+				try {
+					defaultPackURL = zip.toURI().toURL();
+				} catch (MalformedURLException e) {
+					CrashHandler.crashHandle(e);
+				}
+			} catch (IOException e) {
+				CrashHandler.crashHandle(e);
+			}
+		}
+
+		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
 		loadedPacks.add(defaultPack);
 		try {
 			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
