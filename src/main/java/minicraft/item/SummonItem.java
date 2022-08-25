@@ -22,7 +22,7 @@ public class SummonItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		items.add(new SummonItem("Totem of Air", new Sprite(0, 19, 0), "Air Wizard"));
-		items.add(new SummonItem("Obsidian Poppet", new Sprite(0, 0, 0), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
+		items.add(new SummonItem("Obsidian Poppet", new Sprite(1, 20, 0), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
 
 		return items;
 	}
