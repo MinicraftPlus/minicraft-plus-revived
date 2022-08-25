@@ -37,6 +37,7 @@ public class ObsidianKnight extends EnemyMob {
 	private int attackDelay = 0;
 	private int attackTime = 0;
 	private int attackType = 0;
+	int ydir=90;
 	public static int length;
 
 	/**
@@ -58,7 +59,6 @@ public class ObsidianKnight extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-
 		if (getClosestPlayer().isRemoved()) {
 			failed = true;
 			KnightStatue ks = new KnightStatue(health);
@@ -80,12 +80,15 @@ public class ObsidianKnight extends EnemyMob {
 
 		//TODO: Obsidian Knight Attack patterns (Currently AirWizard placeholder)
 		if (phase1) {
+			Player player = getClosestPlayer();
 			if (attackDelay > 0) {
 				xmov = ymov = 0;
-				int dir = (attackDelay - 45) / 4 % 4; // The direction of attack.
+				int dir = (attackDelay - 35) / 4 % 4; // The direction of attack.
 				dir = (dir * 2 % 4) + (dir / 2); // Direction attack changes
-				if (attackDelay < 45)
+				if (attackDelay < 35) {
+					ydir = (player.y < y ? 180 : y-16<player.y && player.y<y+16 ? 0 : 90);
 					dir = 0; // Direction is reset, if attackDelay is less than 45; prepping for attack.
+				}
 
 				this.dir = Direction.getDirection(dir);
 
@@ -99,17 +102,23 @@ public class ObsidianKnight extends EnemyMob {
 				return; // Skips the rest of the code (attackDelay must have been > 0)
 			}
 
+			if(attackTime==0)ydir=(player.y < y ? 180 : 90);
 			// Send out sparks
 			if (attackTime > 0) {
 				xmov = ymov = 0;
-				attackTime *= 0.92; // attackTime will decrease by 7% every time.
+				attackTime *= 0.95; // attackTime will decrease by 4% every time.
 				double dir = attackTime * 0.25 * (attackTime % 2 * 2 - 1); // Assigns a local direction variable from the attack time.
-				double speed = 0.7 + attackType * 0.2; // speed is dependent on the attackType. (higher attackType, faster speeds)
-				level.add(new FireSpark(this, Math.cos(dir) * speed, Math.sin(dir) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
+				double speed = 1 + attackType * 0.2; // speed is dependent on the attackType. (higher attackType, faster speeds)
+				int xdir=45+(random.nextInt(32)-16);
+				//xdir+(y-16<player.y && player.y<y+16 ? (player.x<x-8 ? -90 : 0) : (player.x>x+8 ? 90 : 0))
+				if(y-16<player.y && player.y<y+16)
+					level.add(new FireSpark(this, Math.cos(player.x<x ? 90 : 270) * speed, Math.sin(ydir+(random.nextInt(32)-16)) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
+				else
+				level.add(new FireSpark(this, Math.cos(xdir) * speed, Math.sin(ydir) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
 				return; // Skips the rest of the code (attackTime was > 0; ie we're attacking.)
 			}
 
-			Player player = getClosestPlayer();
+
 			if (player != null && randomWalkTime == 0) { // If there is a player around, and the walking is not random
 				int xd = player.x - x; // The horizontal distance between the player and the air wizard.
 				int yd = player.y - y; // The vertical distance between the player and the air wizard.
@@ -179,7 +188,7 @@ public class ObsidianKnight extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 1 damage points.
-			((Player)entity).hurt(this, 1);
+			((Player)entity).hurt(this, 3);
 		}
 	}
 
