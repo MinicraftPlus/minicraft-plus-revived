@@ -34,6 +34,7 @@ public class BossWallTile extends Tile {
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
+		if(ObsidianKnight.active)return false;
 		if (Game.isMode("Creative") || ObsidianKnight.beaten || ObsidianKnight.failed || !ObsidianKnight.active) {
 			return true;
 		}
