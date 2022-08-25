@@ -187,7 +187,7 @@ public class LevelGen {
 			for (int i = 0; i < w * h; i++) {
 				count[result[0][i] & 0xffff]++;
 			}
-			if (count[Tiles.get("Obsidian").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("Obsidian").id & 0xffff] + count[Tiles.get("dirt").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("Obsidian Wall").id & 0xffff] < 100) continue;
 
 			return result;
@@ -531,7 +531,6 @@ public class LevelGen {
 
 		short[] map = new short[w * h];
 		short[] data = new short[w * h];
-
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -548,8 +547,9 @@ public class LevelGen {
 				val = -val * 1 - 2.2;
 				val += 1 - dist * 2;
 
-				if (val < -0.35) {
+				if (val < -0.05) {
 					map[i] = Tiles.get("Obsidian Wall").id;
+				}else if(val>=-0.05 && val<-0.03){map[i] = Tiles.get("Lava").id;
 				} else {
 					if (random.nextInt(2) == 1) {
 						if (random.nextInt(2) == 1) {
@@ -583,17 +583,16 @@ public class LevelGen {
 						if (random.nextInt(2) == 1) {
 							Structure.ornateLavaPool.draw(map, x, y, w);
 						} else {
-							Structure.fortressGarden.draw(map, x, y, w);
+							Structure.dungeonGarden.draw(map, x, y, w);
 						}
 					} else {
-						Structure.fortressChest.draw(map, x, y, w);
+						Structure.dungeonChest.draw(map, x, y, w);
 					}
 				}
 			}
 		}
 
-		Structure.dungeonGate.draw(map, 60,60, w);
-
+		Structure.dungeonGate.draw(map, w/2,h/2, w);
 		return new short[][]{map, data};
 	}
 
@@ -685,8 +684,8 @@ public class LevelGen {
 
 		if (depth > 2) {
 			int r = 1;
-			int xx = 60;
-			int yy = 60;
+			int xx = w/2;
+			int yy = h/2;
 			for (int i = 0; i < w * h / 380; i++) {
 				for (int j = 0; j < 10; j++) {
 					if (xx < w - r && yy < h - r) {
