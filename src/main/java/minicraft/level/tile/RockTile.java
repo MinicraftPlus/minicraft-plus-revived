@@ -22,7 +22,7 @@ import minicraft.level.Level;
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(18, 6, 3, 3, 1, 3), new Sprite(21, 8, 2, 2, 1, 3), new Sprite(21, 6, 2, 2, 1, 3));
+	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(18, 6, 3, 3, 1), new Sprite(21, 8, 2, 2, 1), new Sprite(21, 6, 2, 2, 1));
 
 	private boolean dropCoal = false;
 	private int maxHealth = 50;
