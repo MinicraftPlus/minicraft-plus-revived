@@ -191,28 +191,28 @@ public class SpriteAnimation implements Destroyable {
 			Sprite sides = corner != null ? corner.getSprite() : null; // Must be 2*2.
 
 			if (u && l) {
-				if (ul || sides == null) screen.render(x, y, full.spritePixels[1][1], full.color);
-				else screen.render(x, y, sides.spritePixels[0][0], sides.color);
+				if (ul || sides == null) screen.render(x, y, full.spritePixels[0][0], full.color);
+				else screen.render(x, y, sides.spritePixels[1][1], sides.color);
 			} else
-				screen.render(x, y, sparse.spritePixels[u ? 1 : 2][l ? 1 : 2], sparse.color);
+				screen.render(x, y, sparse.spritePixels[u ? 1 : 0][l ? 1 : 0], sparse.color);
 
 			if (u && r) {
-				if (ur || sides == null) screen.render(x + 8, y, full.spritePixels[1][0], full.color);
-				else screen.render(x + 8, y, sides.spritePixels[0][1], sides.color);
+				if (ur || sides == null) screen.render(x + 8, y, full.spritePixels[0][1], full.color);
+				else screen.render(x + 8, y, sides.spritePixels[1][0], sides.color);
 			} else
-				screen.render(x + 8, y, sparse.spritePixels[u ? 1 : 2][r ? 1 : 0], sparse.color);
+				screen.render(x + 8, y, sparse.spritePixels[u ? 1 : 0][r ? 1 : 2], sparse.color);
 
 			if (d && l) {
-				if (dl || sides == null) screen.render(x, y + 8, full.spritePixels[0][1], full.color);
-				else screen.render(x, y + 8, sides.spritePixels[1][0], sides.color);
+				if (dl || sides == null) screen.render(x, y + 8, full.spritePixels[1][0], full.color);
+				else screen.render(x, y + 8, sides.spritePixels[0][1], sides.color);
 			} else
-				screen.render(x, y + 8, sparse.spritePixels[d ? 1 : 0][l ? 1 : 2], sparse.color);
+				screen.render(x, y + 8, sparse.spritePixels[d ? 1 : 2][l ? 1 : 0], sparse.color);
 
 			if (d && r) {
-				if (dr || sides == null) screen.render(x + 8, y + 8, full.spritePixels[0][0], full.color);
-				else screen.render(x + 8, y + 8, sides.spritePixels[1][1], sides.color);
+				if (dr || sides == null) screen.render(x + 8, y + 8, full.spritePixels[1][1], full.color);
+				else screen.render(x + 8, y + 8, sides.spritePixels[0][0], sides.color);
 			} else
-				screen.render(x + 8, y + 8, sparse.spritePixels[d ? 1 : 0][r ? 1 : 0], sparse.color);
+				screen.render(x + 8, y + 8, sparse.spritePixels[d ? 1 : 2][r ? 1 : 2], sparse.color);
 
 		} else
 			screen.render(x << 4, y << 4, animations[frame]);
@@ -264,8 +264,8 @@ public class SpriteAnimation implements Destroyable {
 			}
 
 			// Tile sprite only.
-			if (metadata.border != null) border = new LinkedSprite(type, metadata.border).setMirror(3);
-			if (metadata.corner != null) corner = new LinkedSprite(type, metadata.corner).setMirror(3);
+			if (metadata.border != null) border = new LinkedSprite(type, metadata.border);
+			if (metadata.corner != null) corner = new LinkedSprite(type, metadata.corner);
 		} else {
 			animations = new LinkedSprite[] {new LinkedSprite(type, key).setSpriteSize(width, width)};
 			border = null;
