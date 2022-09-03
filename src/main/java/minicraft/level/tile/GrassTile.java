@@ -14,7 +14,8 @@ import minicraft.level.Level;
 
 public class GrassTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
-		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass);
+		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
+		.setSingletonWithConnective(true);
 
 	protected GrassTile(String name) {
 		super(name, sprite);

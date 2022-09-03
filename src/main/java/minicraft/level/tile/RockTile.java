@@ -23,7 +23,8 @@ import minicraft.level.Level;
 
 public class RockTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
-		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class);
+		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class)
+		.setSingletonWithConnective(true);
 
 	private boolean dropCoal = false;
 	private int maxHealth = 50;

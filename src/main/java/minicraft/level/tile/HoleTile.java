@@ -8,7 +8,8 @@ import minicraft.level.Level;
 
 public class HoleTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hole")
-		.setConnectChecker((tile, side) -> tile.connectsToLiquid());
+		.setConnectChecker((tile, side) -> tile.connectsToLiquid())
+		.setSingletonWithConnective(true);
 
 	protected HoleTile(String name) {
 		super(name, sprite);

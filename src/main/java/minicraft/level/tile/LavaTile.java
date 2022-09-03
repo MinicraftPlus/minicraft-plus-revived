@@ -8,7 +8,8 @@ import minicraft.level.Level;
 
 public class LavaTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "lava")
-		.setConnectChecker((tile, side) -> tile.connectsToFluid);
+		.setConnectChecker((tile, side) -> tile.connectsToFluid)
+		.setSingletonWithConnective(true);
 
 	protected LavaTile(String name) {
 		super(name, sprite);
