@@ -300,8 +300,11 @@ public class ObsidianKnight extends EnemyMob {
 	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
-			// If the entity is the Player, then deal them 1 damage points.
-			((Player)entity).hurt(this, 3);
+			// If the entity is the Player, then deal them 2 damage points.
+			((Player)entity).hurt(this, 2);
+			if (attackPhase == 2) {
+				dashTime -= 10;
+			}
 		}
 	}
 
