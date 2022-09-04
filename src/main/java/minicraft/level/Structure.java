@@ -96,8 +96,8 @@ public class Structure {
 	static final Structure dungeonBossRoom;
 	static final Structure lavaPool;
 	static final Structure ornateLavaPool;
-	static final Structure fortressGarden;
-	static final Structure fortressChest;
+	static final Structure dungeonGarden;
+	static final Structure dungeonChest;
 	static final Structure dungeonSpawner;
 
 	// All the "mobDungeon" structures are for the spawner structures
@@ -179,8 +179,8 @@ public class Structure {
 				"WWWDWWW"
 		);
 
-		fortressGarden = new Structure();
-		fortressGarden.setData("F:Flower,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
+		dungeonGarden = new Structure();
+		dungeonGarden.setData("F:Flower,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
 			"WWWDWWW\n" +
 				"WOOOOOW\n" +
 				"WOFFFOW\n" +
@@ -190,8 +190,8 @@ public class Structure {
 				"WWWDWWW"
 		);
 
-		fortressChest = new Structure();
-		fortressChest.setData("F:Grass,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
+		dungeonChest = new Structure();
+		dungeonChest.setData("F:Grass,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
 			"WWWDWWW\n" +
 				"WOOOOOW\n" +
 				"WOFFFOW\n" +
@@ -200,7 +200,7 @@ public class Structure {
 				"WOOOOOW\n" +
 				"WWWDWWW"
 		);
-		fortressChest.addFurniture(0,0, new DungeonChest(true));
+		dungeonChest.addFurniture(0,0, new DungeonChest(true));
 
 		mobDungeonCenter = new Structure();
 		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
