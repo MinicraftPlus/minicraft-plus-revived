@@ -152,7 +152,7 @@ public class ObsidianKnight extends EnemyMob {
 			}
 		}else{
 			if(dashCooldown<1){
-				dashTime=120;
+				dashTime=80;
 				dashCooldown=1000;
 			}else{
 				dashCooldown--;
