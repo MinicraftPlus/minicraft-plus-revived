@@ -60,8 +60,10 @@ public class Arrow extends Entity implements ClientTickable {
 				Mob mob = (Mob) hit;
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
 				if(hit instanceof ObsidianKnight){
+
 					if(mob.health<2500) //if we are on phase 2
 					mob.hurt(owner, damage + extradamage, dir);
+					else this.remove();
 				}else mob.hurt(owner, damage + extradamage, dir); //normal hurting to other mobs
 
 			}
