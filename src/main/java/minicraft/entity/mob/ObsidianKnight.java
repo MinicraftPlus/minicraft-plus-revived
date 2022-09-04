@@ -23,6 +23,8 @@ public class ObsidianKnight extends EnemyMob {
 	public static boolean active = false;
 	public static boolean failed = false;
 	private static boolean phase1 = true;
+	private int dashTime = 0;
+	private int dashCooldown = 1000;
 
 	static {
 		armored = new MobSprite[2][4][2];
@@ -77,8 +79,7 @@ public class ObsidianKnight extends EnemyMob {
 		}
 
 		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
-
-		//TODO: Obsidian Knight Attack patterns (Currently AirWizard placeholder)
+		
 		if (phase1) {
 			Player player = getClosestPlayer();
 			if (attackDelay > 0) {
@@ -148,6 +149,23 @@ public class ObsidianKnight extends EnemyMob {
 				if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // If a random number, 0-3, equals 0, and the player is less than 50 blocks away, and attackDelay and attackTime equal 0...
 					attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
 				}
+			}
+		}else{
+			if(dashCooldown<1){
+				dashTime=120;
+				dashCooldown=1000;
+			}else{
+				dashCooldown--;
+			}
+			if(dashTime==0){
+				this.speed=1;
+				dashCooldown--; //we want cooldown
+			}
+
+			if(dashTime>0){
+				dashTime--;
+				this.speed=3;
+				level.add(new FireSpark(this, 0, 0)); //fiery trail
 			}
 		}
 	}
