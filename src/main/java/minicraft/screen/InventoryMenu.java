@@ -30,9 +30,9 @@ class InventoryMenu extends ItemListMenu {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		boolean dropOne = input.isClicked("drop-one");
+		boolean dropOne = input.getKey("drop-one").clicked;
 
-		if(getNumOptions() > 0 && (dropOne || input.isClicked("drop-stack"))) {
+		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
 			Item invItem = entry.getItem();

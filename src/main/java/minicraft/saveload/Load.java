@@ -205,6 +205,8 @@ public class Load {
 
 		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0)
 			World.setWorldSeed(Long.parseLong(data.remove(0)));
+		else
+			World.setWorldSeed(0);
 
 		if (worldVer.compareTo(new Version("2.0.4-dev8")) >= 0)
 			loadMode(data.remove(0));
