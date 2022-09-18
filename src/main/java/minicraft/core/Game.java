@@ -26,7 +26,6 @@ public class Game {
 	public static final Version VERSION = new Version("2.2.0-dev1");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
-	public static final ControllerHandler controlInput = new ControllerHandler(); // controlInput used in Menu Classes for Controllers
 	public static Player player;
 
 	public static List<String> notifications = new ArrayList<>();

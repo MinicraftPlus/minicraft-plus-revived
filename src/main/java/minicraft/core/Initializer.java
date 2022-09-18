@@ -16,7 +16,6 @@ import minicraft.core.io.FileHandler;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 
-import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;
 
 public class Initializer extends Game {
