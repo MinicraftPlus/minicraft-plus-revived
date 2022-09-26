@@ -7,7 +7,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class HoleTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new Sprite(24, 6, 3, 3, 1, 3), new Sprite(27, 6, 2, 2, 1))
+	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new Sprite(24, 6, 3, 3, 1), new Sprite(27, 6, 2, 2, 1))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return tile.connectsToLiquid();

@@ -7,7 +7,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class WaterTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(12, 6, 3, 3, 1, 3), Sprite.dots(/*Color.get(005, 105, 115, 115)*/ 0))
+	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(12, 6, 3, 3, 1), Sprite.dots(/*Color.get(005, 105, 115, 115)*/ 0))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return tile.connectsToFluid;
