@@ -224,20 +224,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+		if (input.getKey("potionEffects").down && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
 		}
 
-		if (input.getKey("simpPotionEffects").clicked) {
+		if (input.getKey("simpPotionEffects").down) {
 			simpPotionEffects = !simpPotionEffects;
 		}
 
-		if (input.getKey("toggleHUD").clicked) {
+		if (input.getKey("toggleHUD").down) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.getKey("expandQuestDisplay").clicked) {
+		if (input.getKey("expandQuestDisplay").down) {
 			questExpanding = 30;
 		}
 
@@ -365,10 +365,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
 				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
-				if (input.isHeld("move-up")) vec.y--;
-				if (input.isHeld("move-down")) vec.y++;
-				if (input.isHeld("move-left")) vec.x--;
-				if (input.isHeld("move-right")) vec.x++;
+				if (input.getKey("move-up").down) vec.y--;
+				if (input.getKey("move-down").down) vec.y++;
+				if (input.getKey("move-left").down) vec.x--;
+				if (input.getKey("move-right").down) vec.x++;
 
 
 			}
@@ -393,10 +393,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.isClicked("drop-one") || input.isClicked("drop-stack"))) {
+			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
 				Item drop = activeItem.clone();
 
-				if (input.isClicked("drop-one") && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -407,14 +407,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.isClicked("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.isClicked("menu") && activeItem != null) {
+			if (input.getKey("menu").clicked && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -432,28 +432,28 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.isClicked("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.isClicked("pause"))
+				if (input.getKey("pause").clicked)
 					Game.setDisplay(new PauseDisplay());
-				if (input.isClicked("craft") && !use())
+				if (input.getKey("craft").clicked && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
-				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
+				if (input.getKey("info").down) Game.setDisplay(new InfoDisplay());
 
-				if (input.getKey("quicksave").clicked && !Updater.saving) {
+				if (input.getKey("quicksave").down && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.getKey("shift-p").clicked) { // Remove all potion effects
+				if (Game.debug && input.getKey("shift-p").down) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}
 				}
 
-				if (input.isClicked("pickup") && (activeItem == null || !activeItem.used_pending)) {
+				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.

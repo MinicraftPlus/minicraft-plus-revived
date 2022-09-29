@@ -200,7 +200,7 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (display == null && input.getKey("toggleDebug").clicked) { // Shows debug info in upper-left
+				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 

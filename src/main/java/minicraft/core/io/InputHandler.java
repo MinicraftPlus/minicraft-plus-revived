@@ -132,7 +132,6 @@ public class InputHandler implements KeyListener {
 		keymap.put("EXPANDQUESTDISPLAY", "L"); // Expands the quest display
 		keymap.put("TOGGLEHUD", "F1"); // Toggle HUD
 		keymap.put("SCREENSHOT", "F2"); // To make screenshot
-		keymap.put("TOGGLEDEBUG", "F3"); // Toggle debug display
 		keymap.put("INFO", "SHIFT-I"); // Toggle player stats display
 
 		keymap.put("FULLSCREEN", "F11");
@@ -151,24 +150,6 @@ public class InputHandler implements KeyListener {
 			for (Key key: keyboard.values())
 				key.tick(); // Call tick() for each key.
 		}
-	}
-
-	/**
-	 * Check if key has been clicked.
-	 * @param key The key to check.
-	 * @return If it has been clicked.
-	 */
-	public boolean isClicked(String key) {
-		return Game.controlInput.isKeyPressed(key) || getKey(key).clicked;
-	}
-
-	/**
-	 * Check if key is being held down.
-	 * @param key The key being held down.
-	 * @return If the key is being held down.
-	 */
-	public boolean isHeld(String key) {
-		return Game.controlInput.isKeyDown(key) || getKey(key).down;
 	}
 
 	// The Key class.
