@@ -28,21 +28,22 @@ public class WorldGenDisplay extends Display {
 	static {
 		if (FileHandler.OS.contains("windows")) {
 			// Reference: https://stackoverflow.com/a/6804755
-			worldNameRegex = Pattern.compile(
-				"# Match a valid Windows filename (unspecified file system).          \n" +
-					"^                                # Anchor to start of string.        \n" +
-					"(?!                              # Assert filename is not: CON, PRN, \n" +
-					"  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
-					"    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
-					"    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
-					"  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
-					"  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
-					"  $                              # and end of string                 \n" +
-					")                                # End negative lookahead assertion. \n" +
-					"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
-					"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
-					"$                                # Anchor to end of string.            ",
-				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS).toString();
+			worldNameRegex = "[^<>:\"/\\\\|?*\\x00-\\x1F]+";
+//				Pattern.compile(
+//				"# Match a valid Windows filename (unspecified file system).          \n" +
+//					"^                                # Anchor to start of string.        \n" +
+//					"(?!                              # Assert filename is not: CON, PRN, \n" +
+//					"  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
+//					"    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
+//					"    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
+//					"  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
+//					"  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
+//					"  $                              # and end of string                 \n" +
+//					")                                # End negative lookahead assertion. \n" +
+//					"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
+//					"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
+//					"$                                # Anchor to end of string.            ",
+//				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS).toString();
 		} else {
 			worldNameRegex = "[a-zA-Z0-9 ]+";
 		}
@@ -89,7 +90,7 @@ public class WorldGenDisplay extends Display {
 					String drive = null;
 					FindDrive:
 					{ // Reference: https://github.com/apache/commons-io/blob/37cad9653b46ad4f0b2da2ac570546e5941694c1/src/main/java/org/apache/commons/io/FilenameUtils.java#L806
-						String fileName = FileHandler.getLocalGameDir();
+						String fileName = FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir();
 						char ch0 = fileName.charAt(0);
 						if (ch0 == '~') {
 							int posUnix = fileName.indexOf("/", 1);
@@ -144,7 +145,7 @@ public class WorldGenDisplay extends Display {
 					}
 				} else if (!FileHandler.OS.contains("mac")) { // Linux
 					LibC.Statvfs statvfs = new LibC.Statvfs();
-					if (LibC.INSTANCE.statvfs(FileHandler.getLocalGameDir(), statvfs) == 0) {
+					if (LibC.INSTANCE.statvfs(FileHandler.getSystemGameDir()+"/"+FileHandler.getLocalGameDir(), statvfs) == 0) {
 						int v = statvfs.f_namemax.intValue();
 						if (v <= 0) maxlength = 255;
 						else maxlength = v;
