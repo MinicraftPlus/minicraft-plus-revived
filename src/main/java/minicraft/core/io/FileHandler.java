@@ -28,7 +28,7 @@ public class FileHandler extends Game {
 	public static final int RENAME_COPY = 1;
 	public static final int SKIP = 2;
 
-	static final String OS;
+	public static final String OS;
 	private static final String localGameDir;
 	static final String systemGameDir;
 
