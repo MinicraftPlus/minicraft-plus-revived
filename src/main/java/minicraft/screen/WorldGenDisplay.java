@@ -44,8 +44,10 @@ public class WorldGenDisplay extends Display {
 //					"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
 //					"$                                # Anchor to end of string.            ",
 //				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS).toString();
-		} else {
-			worldNameRegex = "[a-zA-Z0-9 ]+";
+		} else if (FileHandler.OS.contains("mac")) {
+			worldNameRegex = "[^/:]+";
+		} else { // Reference: https://en.wikipedia.org/wiki/Filename#Length_restrictions
+			worldNameRegex = "[^/\0]+";
 		}
 	}
 
