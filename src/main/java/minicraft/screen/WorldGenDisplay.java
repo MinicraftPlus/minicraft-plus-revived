@@ -1,9 +1,5 @@
 package minicraft.screen;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.linux.LibC;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.ptr.IntByReference;
 import minicraft.core.Game;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
@@ -15,6 +11,8 @@ import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.util.Logging;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -86,80 +84,13 @@ public class WorldGenDisplay extends Display {
 					if(other.equalsIgnoreCase(name))
 						return false;
 
-				// Checking length.
-				int maxlength;
-				if (FileHandler.OS.contains("windows")) {
-					String drive = null;
-					FindDrive:
-					{ // Reference: https://github.com/apache/commons-io/blob/37cad9653b46ad4f0b2da2ac570546e5941694c1/src/main/java/org/apache/commons/io/FilenameUtils.java#L806
-						String fileName = FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir();
-						char ch0 = fileName.charAt(0);
-						if (ch0 == '~') {
-							int posUnix = fileName.indexOf("/", 1);
-							int posWin = fileName.indexOf("\\", 1);
-							posUnix = posUnix == -1 ? posWin : posUnix;
-							posWin = posWin == -1 ? posUnix : posWin;
-							drive = fileName.substring(0, Math.min(posUnix, posWin) + 1);
-							break FindDrive;
-						}
-						final char ch1 = fileName.charAt(1);
-						if (ch1 == ':') {
-							ch0 = Character.toUpperCase(ch0);
-							if (ch0 >= 'A' && ch0 <= 'Z') {
-								drive = fileName.substring(0, 3);
-								break FindDrive;
-							}
-							break FindDrive;
-						}
-						int posUnix = fileName.indexOf("/", 2);
-						int posWin = fileName.indexOf("\\", 2);
-						posUnix = posUnix == -1 ? posWin : posUnix;
-						posWin = posWin == -1 ? posUnix : posWin;
-						final int pos = Math.min(posUnix, posWin) + 1;
-						final String hostnamePart = fileName.substring(2, pos - 1);
-						// Reference: http://www.java2s.com/example/java/java.util.regex/is-ipv6-address-by-regex.html
-						if (hostnamePart.matches("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$") ||
-							hostnamePart.matches("^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$") ||
-							((Supplier<Boolean>) () -> {
-								// Reference: https://github.com/apache/commons-io/blob/37cad9653b46ad4f0b2da2ac570546e5941694c1/src/main/java/org/apache/commons/io/FilenameUtils.java#L1166
-								final String[] parts = name.split("\\.", -1);
-								for (int i = 0; i < parts.length; i++) {
-									if (parts[i].isEmpty()) {
-										// trailing dot is legal, otherwise we've hit a .. sequence
-										return i == parts.length - 1;
-									}
-									if (!parts[i].matches("^[a-zA-Z0-9][a-zA-Z0-9-]*$")) {
-										return false;
-									}
-								}
-								return true;
-							}).get())
-							drive = fileName.substring(0, pos + 1);
-					}
-
-					maxlength = 260; // Default value when LongPaths is not enabled.
-					// Reference: https://stackoverflow.com/a/15656224
-					IntByReference buf = new IntByReference();
-					if (Kernel32.INSTANCE.GetVolumeInformation(drive, null, 0, null, buf, null, null, 0)) {
-						if (buf.getValue() < maxlength) maxlength = buf.getValue();
-					} else { // On error.
-						Logging.WORLD.error("Unable to get volume information (Windows): " + Kernel32.INSTANCE.GetLastError());
-					}
-				} else if (!FileHandler.OS.contains("mac")) { // Linux
-					LibC.Statvfs statvfs = new LibC.Statvfs();
-					if (LibC.INSTANCE.statvfs(FileHandler.getSystemGameDir()+"/"+FileHandler.getLocalGameDir(), statvfs) == 0) {
-						int v = statvfs.f_namemax.intValue();
-						if (v <= 0) maxlength = 255;
-						else maxlength = v;
-					} else { // On error. Error number please refer to com.sun.jna.platform.linux.ErrNo.
-						Logging.WORLD.error("Unable to get filesystem information (Linux): " + Native.getLastError());
-						maxlength = 255;
-					}
-				} else {
-					maxlength = 255; // Basically 255 for mac.
+				try { // Checking if the folder name is valid;
+					Paths.get(Game.gameDir+"/saves/"+worldNameRegex+"/");
+				} catch (InvalidPathException e) {
+					return false;
 				}
 
-				return name.length() <= maxlength;
+				return name.length() <= 255; // If it is lower than the valid folder name length.
 			}
 
 			@Override

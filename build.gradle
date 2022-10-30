@@ -27,8 +27,6 @@ dependencies {
     implementation 'com.konghq:unirest-java:3.13.10'
     implementation 'org.tinylog:tinylog-api:2.4.1'
     implementation 'org.tinylog:tinylog-impl:2.4.1'
-    implementation 'net.java.dev.jna:jna:5.12.1'
-    implementation 'net.java.dev.jna:jna-platform:5.12.1'
 }
 
 java {
