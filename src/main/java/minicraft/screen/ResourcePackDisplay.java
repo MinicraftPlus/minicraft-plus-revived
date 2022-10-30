@@ -151,6 +151,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		// Default resources
 		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
 		loadedPacks.add(defaultPack);
 		try {
@@ -166,10 +167,12 @@ public class ResourcePackDisplay extends Display {
 		super(true, true);
 		initPacks();
 
+		// Left Hand Side
 		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
 			.setDisplayLength(8)
 			.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT);
 
+		// Right Hand Side
 		builder1 = new Menu.Builder(false, 2, RelPos.RIGHT)
 			.setDisplayLength(8)
 			.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT);
@@ -207,7 +210,7 @@ public class ResourcePackDisplay extends Display {
 	/** Reloading the entries to refresh the current pack list. */
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
-		for (ResourcePack pack : resourcePacks) {
+		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
 			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
@@ -218,7 +221,7 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		entries1.clear(); // Second list: to be loaded.
-		for (ResourcePack pack : loadedPacks) {
+		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
 			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
@@ -239,12 +242,13 @@ public class ResourcePackDisplay extends Display {
 				.createMenu()
 		};
 
+		// Reapplying selections.
 		newMenus[0].setSelection(menus[0].getSelection());
 		newMenus[1].setSelection(menus[1].getSelection());
 
 		menus = newMenus;
 
-		/** Translate position. */
+		/* Translate position. */
 		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
 	}
 
@@ -389,7 +393,7 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
-		if (packs.size() > 0) {
+		if (packs.size() > 0) { // If there is any pack that can be selected.
 			@SuppressWarnings("resource")
 			MinicraftImage logo = packs.get(menus[selection].getSelection()).logo;
 			int h = logo.height / 8;

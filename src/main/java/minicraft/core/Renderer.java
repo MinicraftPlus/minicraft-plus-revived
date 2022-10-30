@@ -145,6 +145,7 @@ public class Renderer extends Game {
 		// Make the picture visible.
 		bs.show();
 
+		// Screen capturing.
 		if (Updater.screenshot > 0) {
 			new File(Game.gameDir + "/screenshots/").mkdirs();
 			int count = 1;
