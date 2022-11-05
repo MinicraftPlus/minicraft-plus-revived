@@ -31,7 +31,7 @@ public class ResourcePackDisplay extends Display {
 	private static final int SHEET_DIMENSIONS = 256;
 
 	private static final String DEFAULT_RESOURCE_PACK = "Default";
-	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
+	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/resourcepacks");
 
 	private static String loadedPack = DEFAULT_RESOURCE_PACK;
 
