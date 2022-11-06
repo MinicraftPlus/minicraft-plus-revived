@@ -16,7 +16,7 @@ Minicraft+ version 2.2.0
 * Changed a better logging
 * Fixed seed random problem
 * Improved the localization support
-* Changed how the game uses the --savedir command line argument. Now, when specified, the game will use it as the final game directory path instead of adding an extra '.playminicraft/mods/Minicraft_Plus' to it.
+* --savedir, if present, no longer is appended an extra '.playminicraft/mods/Minecraft Plus' to it
 
 Minicraft+ version 2.1.0
 
