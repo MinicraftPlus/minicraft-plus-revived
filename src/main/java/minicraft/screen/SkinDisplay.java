@@ -51,7 +51,7 @@ public class SkinDisplay extends Display {
 		defaultSkins = skinNames.size();
 
 		// Get the folder containing the skins.
-		File skinsFolder = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/skins");
+		File skinsFolder = new File(FileHandler.gameDir + "/skins");
 
 		// Create folder, and see if it was successful.
 		if (skinsFolder.mkdirs()) {

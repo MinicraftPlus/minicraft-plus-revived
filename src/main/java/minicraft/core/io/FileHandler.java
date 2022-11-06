@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.saveload.Save;
@@ -41,29 +43,47 @@ public class FileHandler extends Game {
 	}
 
 
-	public static void determineGameDir(String saveDir) {
-		gameDir = saveDir + localGameDir;
-		Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
+	/**
+	 * Determines the path the game will use to store worlds, settings, resource packs, etc.
+	 * If saveDir is not null, use it as the game directory. Otherwise use the default path.
+	 * <p>
+	 * If the default path is used, check if old default path exists and if so move it to the new path.
+	 *
+	 * @param saveDir Value from --savedir argument. Null if it was not set.
+	 */
+	public static void determineGameDir(@Nullable String saveDir) {
+		if (saveDir != null) {
+			gameDir = saveDir;
+			Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
 
-		File testFile = new File(gameDir);
-		testFile.mkdirs();
+			File gameDirFile = new File(gameDir);
+			gameDirFile.mkdirs();
+		} else {
+			saveDir = FileHandler.getSystemGameDir();
 
-		File oldFolder = new File(saveDir + "/.playminicraft/mods/Minicraft Plus");
-		if (oldFolder.exists()) {
-			try {
-				copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
-			} catch (IOException e) {
-				CrashHandler.errorHandle(e);
-			}
-		}
+			gameDir = saveDir + localGameDir;
+			Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
 
-		if (OS.contains("mac")) {
-			oldFolder = new File(saveDir + "/.playminicraft");
+			File testFile = new File(gameDir);
+			testFile.mkdirs();
+
+			File oldFolder = new File(saveDir + "/.playminicraft/mods/Minicraft Plus");
 			if (oldFolder.exists()) {
 				try {
 					copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
 				} catch (IOException e) {
 					CrashHandler.errorHandle(e);
+				}
+			}
+
+			if (OS.contains("mac")) {
+				oldFolder = new File(saveDir + "/.playminicraft");
+				if (oldFolder.exists()) {
+					try {
+						copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
+					} catch (IOException e) {
+						CrashHandler.errorHandle(e);
+					}
 				}
 			}
 		}
