@@ -97,7 +97,7 @@ public class ResourcePackDisplay extends Display {
 
 
 	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // Packs that are not loaded.
-	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
+	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/resourcepacks");
 	@SuppressWarnings("unused")
 	private static final int VERSION = 1;
 

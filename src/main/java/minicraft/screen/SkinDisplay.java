@@ -39,7 +39,7 @@ public class SkinDisplay extends Display {
 	private static final LinkedHashMap<String, LinkedSprite[][]> skins = new LinkedHashMap<>();
 	private static final ArrayList<String> defaultSkins = new ArrayList<>();
 	private static final MinicraftImage defaultSheet;
-	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/skins");
+	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/skins");
 	private static String selectedSkin;
 
 	private int step;
