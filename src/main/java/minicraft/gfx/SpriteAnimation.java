@@ -8,6 +8,7 @@ import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 
 import minicraft.core.Renderer;
+import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteMeta;
 import minicraft.gfx.SpriteLinker.SpriteType;
@@ -41,6 +42,7 @@ public class SpriteAnimation implements Destroyable {
 	private SpriteMeta metadata; // The metadata of the sprite sheet.
 	private int frame = 0; // The current frame of the animation.
 	private int frametick = 0; // The current tick of the current frame. It would be always 0 if no animation.
+	private int lastTick = Updater.gameTime; // The last tick gained from the updater.
 	private boolean destoryed = false; // Whether this instance is still registered.
 
 	// Border settings.
@@ -75,7 +77,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the tile class of this animation used for tile connector rendering.
-	 * @param clazz The tile class.
+	 * @param connectChecker The tile connection checker.
 	 * @return The instance itself.
 	 */
 	public SpriteAnimation setConnectChecker(BiFunction<Tile, Boolean, Boolean> connectChecker) {
@@ -242,15 +244,15 @@ public class SpriteAnimation implements Destroyable {
 
 		// If there is animation.
 		if (animations.length > 1) {
-			frametick++;
+			frametick += Updater.gameTime - lastTick;
+			lastTick = Updater.gameTime;
 
 			// Checking frame increment.
-			if (frametick == metadata.frametime) {
-				frametick = 0;
-				if (frame == animations.length - 1)
-					frame = 0;
-				else
-					frame++;
+			if (frametick >= metadata.frametime) {
+				frame += frametick / metadata.frametime;
+				frametick %= metadata.frametime;
+				if (frame >= animations.length - 1)
+					frame %= animations.length;
 			}
 		}
 	}

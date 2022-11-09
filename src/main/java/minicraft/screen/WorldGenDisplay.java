@@ -85,7 +85,7 @@ public class WorldGenDisplay extends Display {
 						return false;
 
 				try { // Checking if the folder name is valid;
-					Paths.get(Game.gameDir+"/saves/"+worldNameRegex+"/");
+					Paths.get(Game.gameDir+"/saves/"+name+"/");
 				} catch (InvalidPathException e) {
 					return false;
 				}
