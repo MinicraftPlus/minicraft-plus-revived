@@ -76,17 +76,25 @@ public class WorldGenDisplay extends Display {
 
 	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue, boolean isGen) {
 		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
+			private String lastName;
+
 			@Override
 			public boolean isValid() {
 				if(!super.isValid()) return false;
 				String name = getUserInput();
 				for(String other: takenNames)
-					if(other.equalsIgnoreCase(name))
+					if(other.equalsIgnoreCase(name)) {
+						Logging.WORLD.debug("Duplicated or existed world name \"{}\".", name);
 						return false;
+					}
 
 				try { // Checking if the folder name is valid;
 					Paths.get(Game.gameDir+"/saves/"+name+"/");
 				} catch (InvalidPathException e) {
+					if (!name.equals(lastName)) {
+						Logging.WORLD.debug("Invalid world name (InvalidPathException) \"{}\": {}", name, e.getMessage());
+					}
+
 					return false;
 				}
 
