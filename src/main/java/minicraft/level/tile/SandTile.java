@@ -37,7 +37,7 @@ public class SandTile extends Tile {
 
 	public void steppedOn(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob) {
-			level.add(new SandParticle(entity.x - 8 + random.nextInt(-2, 3), entity.y - 8 + random.nextInt(-2, 3)));
+			level.add(new SandParticle(entity.x - 8 + random.nextInt(5)-2, entity.y - 8 + random.nextInt(5)-2));
 		}
 	}
 
