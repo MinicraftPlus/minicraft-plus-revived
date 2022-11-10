@@ -9,6 +9,7 @@ import javax.security.auth.Destroyable;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteMeta;
 import minicraft.gfx.SpriteLinker.SpriteType;
@@ -43,6 +44,7 @@ public class SpriteAnimation implements Destroyable {
 	private int frame = 0; // The current frame of the animation.
 	private int frametick = 0; // The current tick of the current frame. It would be always 0 if no animation.
 	private int lastTick = Updater.gameTime; // The last tick gained from the updater.
+	private long lastMillis = System.currentTimeMillis(); // The last timestamp rendered.
 	private boolean destoryed = false; // Whether this instance is still registered.
 
 	// Border settings.
@@ -244,8 +246,15 @@ public class SpriteAnimation implements Destroyable {
 
 		// If there is animation.
 		if (animations.length > 1) {
+			if (lastMillis < World.getLastWorldEnterTime()) { // Last time rendered is before this new world entered.
+				lastTick = Updater.gameTime; // Reset game time. Depends on world.
+				frame = 0;
+				frametick = 0;
+			}
+
 			frametick += Updater.gameTime - lastTick;
 			lastTick = Updater.gameTime;
+			lastMillis = System.currentTimeMillis();
 
 			// Checking frame increment.
 			if (frametick >= metadata.frametime) {

@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
@@ -39,7 +40,10 @@ public class PauseDisplay extends Display {
 				items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.pause.display.exit_popup.1"))));
 				items.add(new BlankEntry());
 				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.cancel", Game::exitDisplay));
-				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.quit", () -> Game.setDisplay(new TitleDisplay())));
+				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.quit", () -> {
+					Game.setDisplay(new TitleDisplay());
+					World.onWorldExits();
+				}));
 
 				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 8), items.toArray(new ListEntry[0])));
 			}),
