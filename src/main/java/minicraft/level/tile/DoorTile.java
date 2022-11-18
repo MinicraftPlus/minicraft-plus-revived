@@ -6,7 +6,8 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -14,36 +15,33 @@ import minicraft.level.Level;
 
 public class DoorTile extends Tile {
 	protected Material type;
-	private Sprite closedSprite;
-	private Sprite openSprite;
+	private SpriteAnimation closedSprite;
+	private SpriteAnimation openSprite;
 
 	protected DoorTile(Material type) {
-		super(type.name() + " Door", (Sprite) null);
+		super(type.name() + " Door", (SpriteAnimation) null);
 		this.type = type;
 		switch (type) {
-			case Wood: {
-				closedSprite = new Sprite(5, 16, 2, 2, 1);
-				openSprite = new Sprite(3, 16, 2, 2, 1);
+			case Wood:
+				closedSprite = new SpriteAnimation(SpriteType.Tile, "wood_door");
+				openSprite = new SpriteAnimation(SpriteType.Tile, "wood_door_opened");
 				break;
-			}
-			case Stone: {
-				closedSprite = new Sprite(15, 16, 2, 2, 1);
-				openSprite = new Sprite(13, 16, 2, 2, 1);
+			case Stone:
+				closedSprite = new SpriteAnimation(SpriteType.Tile, "stone_door");
+				openSprite = new SpriteAnimation(SpriteType.Tile, "stone_door_opened");
 				break;
-			}
-			case Obsidian: {
-				closedSprite = new Sprite(25, 16, 2, 2, 1);
-				openSprite = new Sprite(23, 16, 2, 2, 1);
+			case Obsidian:
+				closedSprite = new SpriteAnimation(SpriteType.Tile, "obsidian_door");
+				openSprite = new SpriteAnimation(SpriteType.Tile, "obsidian_door_opened");
 				break;
-			}
 		}
 		sprite = closedSprite;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
 		boolean closed = level.getData(x, y) == 0;
-		Sprite curSprite = closed ? closedSprite : openSprite;
-		curSprite.render(screen, x * 16, y * 16);
+		SpriteAnimation curSprite = closed ? closedSprite : openSprite;
+		curSprite.render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -52,7 +50,7 @@ public class DoorTile extends Tile {
 			if (tool.type == type.getRequiredTool()) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get(id + 3)); // Will get the corresponding floor tile.
-					Sound.monsterHurt.play();
+					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(type.name() + " Door"));
 					return true;
 				}

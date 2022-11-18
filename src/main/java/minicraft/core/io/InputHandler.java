@@ -129,8 +129,9 @@ public class InputHandler implements KeyListener {
 
 		keymap.put("POTIONEFFECTS", "P"); // Toggle potion effect display
 		keymap.put("SIMPPOTIONEFFECTS", "O"); // Whether to simplify the potion effect display
-		keymap.put("TOGGLEHUD", "F1"); // Whether to hide hide GUI
 		keymap.put("EXPANDQUESTDISPLAY", "L"); // Expands the quest display
+		keymap.put("TOGGLEHUD", "F1"); // Toggle HUD
+		keymap.put("SCREENSHOT", "F2"); // To make screenshot
 		keymap.put("INFO", "SHIFT-I"); // Toggle player stats display
 
 		keymap.put("FULLSCREEN", "F11");

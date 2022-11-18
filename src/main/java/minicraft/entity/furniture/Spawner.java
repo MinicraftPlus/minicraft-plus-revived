@@ -3,14 +3,24 @@ package minicraft.entity.furniture;
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.mob.Cow;
+import minicraft.entity.mob.Creeper;
 import minicraft.entity.mob.EnemyMob;
+import minicraft.entity.mob.Knight;
 import minicraft.entity.mob.MobAi;
+import minicraft.entity.mob.Pig;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.Sheep;
+import minicraft.entity.mob.Skeleton;
+import minicraft.entity.mob.Slime;
+import minicraft.entity.mob.Snake;
+import minicraft.entity.mob.Zombie;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.*;
 import org.tinylog.Logger;
 
@@ -35,7 +45,7 @@ public class Spawner extends Furniture {
 	 */
 	private void initMob(MobAi m) {
 		mob = m;
-		sprite.color = col = mob.col;
+		sprite.setColor(col = mob.col);
 
 		if (m instanceof EnemyMob) {
 			lvl = ((EnemyMob)mob).lvl;
@@ -55,7 +65,16 @@ public class Spawner extends Furniture {
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new Sprite(8, 28, 2, 2, 2), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSprite(SpriteType.Item, "cow_spawner"):
+			m instanceof Pig ? new LinkedSprite(SpriteType.Item, "pig_spawner"):
+			m instanceof Sheep ? new LinkedSprite(SpriteType.Item, "sheep_spawner"):
+			m instanceof Slime ? new LinkedSprite(SpriteType.Item, "slime_spawner"):
+			m instanceof Zombie ? new LinkedSprite(SpriteType.Item, "zombie_spawner"):
+			m instanceof Creeper ? new LinkedSprite(SpriteType.Item, "creeper_spawner"):
+			m instanceof Skeleton ? new LinkedSprite(SpriteType.Item, "skeleton_spawner"):
+			m instanceof Snake ? new LinkedSprite(SpriteType.Item, "snake_spawner"):
+			m instanceof Knight ? new LinkedSprite(SpriteType.Item, "knight_spawner"):
+			new LinkedSprite(SpriteType.Item, "air_wizard_spawner"), 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();
@@ -132,7 +151,7 @@ public class Spawner extends Furniture {
 		newmob.y = spawnPos.y << 4;
 
 		level.add(newmob);
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 		for (int i = 0; i < 6; i++) {
 			 int randX = rnd.nextInt(16);
 			 int randY = rnd.nextInt(12);
@@ -145,7 +164,7 @@ public class Spawner extends Furniture {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
 
-			Sound.monsterHurt.play();
+			Sound.play("monsterhurt");
 
 			int dmg;
 			if (Game.isMode("minicraft.settings.mode.creative"))
@@ -164,7 +183,7 @@ public class Spawner extends Furniture {
 			level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
 			if (health <= 0) {
 				level.remove(this);
-				Sound.playerDeath.play();
+				Sound.play("death");
 				player.addScore(500);
 			}
 

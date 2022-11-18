@@ -32,7 +32,7 @@ public class CrashHandler {
 	/** This handles application crashing errors by giving notification to the user clearly.<br>
 	 * The user can only exit the program. */
 	public static void crashHandle(Throwable throwable, ErrorInfo info) {
-		throwable.printStackTrace();
+		Logging.CRASHHANDLER.error(throwable);
 
 		StringWriter string = new StringWriter();
 		PrintWriter printer = new PrintWriter(string);

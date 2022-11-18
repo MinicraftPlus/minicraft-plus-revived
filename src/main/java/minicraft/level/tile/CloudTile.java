@@ -4,8 +4,8 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -13,13 +13,10 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class CloudTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new Sprite(0, 22, 3, 3, 1), new Sprite(3, 24, 2, 2, 1), new Sprite(3, 22, 2, 2, 1))
-	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
-			return tile != Tiles.get("Infinite Fall");
-		}
-	};
-	
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cloud")
+		.setConnectChecker((tile, side) -> tile.getClass() != InfiniteFallTile.class)
+		.setSingletonWithConnective(true);
+
 	protected CloudTile(String name) {
 		super(name, sprite);
 	}
@@ -34,7 +31,7 @@ public class CloudTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel && player.payStamina(5)) {
 				level.setTile(xt, yt, Tiles.get("Infinite Fall")); // Would allow you to shovel cloud, I think.
-				Sound.monsterHurt.play();
+				Sound.play("monsterhurt");
 				level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, 3, Items.get("Cloud"));
 				return true;
 			}

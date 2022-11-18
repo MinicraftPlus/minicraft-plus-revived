@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
+import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
@@ -26,7 +28,7 @@ public class Font {
 			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
 			if (ix >= 0) {
 				// If that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix % 32, ix / 32, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "font"), whiteTint);
 			}
 		}
 	}
@@ -65,7 +67,7 @@ public class Font {
 	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
 		String newMsg = msg.toUpperCase(Localization.getSelectedLocale());
 		for (int i = 0; i < newMsg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 31, 0, 3);
+			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
 		}
 
 		// Renders the text
@@ -86,7 +88,7 @@ public class Font {
 	}
 
 	public static int textHeight() {//noinspection SuspiciousNameCombination
-		return SpriteSheet.boxWidth;
+		return MinicraftImage.boxWidth;
 	}
 
 	public static void drawCentered(String msg, Screen screen, int y, int color) {

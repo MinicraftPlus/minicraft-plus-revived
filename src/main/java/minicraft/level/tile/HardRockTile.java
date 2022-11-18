@@ -9,9 +9,9 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -20,7 +20,9 @@ import minicraft.level.Level;
 
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
-	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new Sprite(18, 9, 3, 3, 1), new Sprite(21, 10, 2, 2, 1), Sprite.missingTexture(2, 2));
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hardrock")
+		.setConnectChecker((tile, side) -> tile.getClass() == HardRockTile.class)
+		.setSingletonWithConnective(true);
 
 	protected HardRockTile(String name) {
 		super(name, sprite);
@@ -59,7 +61,7 @@ public class HardRockTile extends Tile {
 		int hrHealth = 200;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= hrHealth) {
@@ -73,7 +75,7 @@ public class HardRockTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+		Tiles.get("dirt").render(screen, level, x, y);
 		super.render(screen, level, x, y);
 	}
 

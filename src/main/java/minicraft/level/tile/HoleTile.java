@@ -1,18 +1,15 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class HoleTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new Sprite(24, 6, 3, 3, 1), new Sprite(27, 6, 2, 2, 1))
-	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
-			return tile.connectsToLiquid();
-		}
-	};
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hole")
+		.setConnectChecker((tile, side) -> tile.connectsToLiquid())
+		.setSingletonWithConnective(true);
 
 	protected HoleTile(String name) {
 		super(name, sprite);
@@ -22,7 +19,7 @@ public class HoleTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+		Tiles.get("dirt").render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
 	}
 

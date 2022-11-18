@@ -72,7 +72,7 @@ public class PlantTile extends FarmTile {
         }
 
 		// Play sound.
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
         level.setTile(x, y, Tiles.get("Dirt"));
     }

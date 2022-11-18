@@ -1,6 +1,5 @@
 package minicraft.util;
 
-import minicraft.core.Game;
 import minicraft.util.TinylogLoggingConfiguration.WriterConfig.TagList;
 import org.tinylog.Level;
 import org.tinylog.Supplier;
@@ -134,7 +133,7 @@ public class TinylogLoggingConfiguration {
 		HashMap<String, String> properties = new HashMap<>();
 		String ID = String.format("writer1%s%s%s", logTime ? "T" : "F", logThread ? "T" : "F", logTrace ? "T" : "F");
 
-		properties.put("level", Game.debug && logTrace ? "trace" : Game.debug ? "debug" : "info");
+		properties.put("level", logTrace ? "trace" : "debug");
 		Level level = ConfigurationParser.parse(properties.get("level"), Level.TRACE);
 
 		properties.put("format", String.format("%s%s[{tag}] {level}: {message}", logTime ? "{date: HH:mm:ss.SSS} " : "", logThread ? "[{thread-id}/{thread}] " : ""));

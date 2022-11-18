@@ -10,9 +10,9 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -22,7 +22,9 @@ import minicraft.level.Level;
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(18, 6, 3, 3, 1), new Sprite(21, 8, 2, 2, 1), new Sprite(21, 6, 2, 2, 1));
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
+		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class)
+		.setSingletonWithConnective(true);
 
 	private boolean dropCoal = false;
 	private int maxHealth = 50;
@@ -30,12 +32,11 @@ public class RockTile extends Tile {
 	private int damage;
 
 	protected RockTile(String name) {
-		super(name, (ConnectorSprite)null);
-		csprite = sprite;
+		super(name, sprite);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+		Tiles.get("dirt").render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
 	}
 
@@ -71,7 +72,7 @@ public class RockTile extends Tile {
 		}
 
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= maxHealth) {

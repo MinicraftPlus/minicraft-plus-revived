@@ -50,6 +50,7 @@ public class Updater extends Game {
 	public static int asTick = 0; // The time interval between autosaves.
 	public static boolean saving = false; // If the game is performing a save.
 	public static int savecooldown; // Prevents saving many times too fast, I think.
+	public static int screenshot = 0; // Counter for screenshot queries.
 
 	public enum Time {
 		Morning (0),
@@ -99,6 +100,10 @@ public class Updater extends Game {
 		if (input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
+		}
+
+		if (input.getKey("screenshot").clicked) {
+			screenshot++;
 		}
 
 		if (newDisplay != display) {

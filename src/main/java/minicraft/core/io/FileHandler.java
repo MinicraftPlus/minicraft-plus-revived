@@ -2,12 +2,19 @@ package minicraft.core.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +30,7 @@ public class FileHandler extends Game {
 	public static final int RENAME_COPY = 1;
 	public static final int SKIP = 2;
 
-	static final String OS;
+	public static final String OS;
 	private static final String localGameDir;
 	static final String systemGameDir;
 
@@ -152,4 +159,64 @@ public class FileHandler extends Game {
 			deleteFolder(origFolder.toFile());
 	}
 
+	/** https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275 */
+	public static ArrayList<String> listResources() {
+		ArrayList<String> names = new ArrayList<>();
+		try {
+			CodeSource src = Game.class.getProtectionDomain().getCodeSource();
+			if (src != null) {
+				URL jar = src.getLocation();
+				ZipInputStream zip = new ZipInputStream(jar.openStream());
+				int reads = 0;
+				while (zip.available() == 1) {
+					ZipEntry e = zip.getNextEntry();
+
+					// e is either null if there are no entries left, or if
+					// we're running this from an ide
+					if (e == null) {
+						if (reads > 0) break;
+						else {
+							return listResourcesUsingIDE();
+						}
+					}
+					reads++;
+					names.add(e.getName());
+				}
+			} else {
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("Failed to get code source.");
+				return names;
+			}
+
+			return names;
+		} catch (IOException e) {
+			CrashHandler.errorHandle(e);
+			return names;
+		}
+	}
+
+	/**
+	 * Gets a list of paths to where the localization files are located on your disk, and adds them to the "localizationFiles" HashMap.
+	 * The path is relative to the "resources" folder.
+	 * Will not work if we are running this from a jar.
+	 */
+	private static ArrayList<String> listResourcesUsingIDE() {
+		ArrayList<String> names = new ArrayList<>();
+		try {
+			URL fUrl = Game.class.getResource("/");
+			if (fUrl == null) {
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not find localization folder.");
+				return names;
+			}
+
+			Path folderPath = Paths.get(fUrl.toURI());
+			Files.walk(folderPath)
+        		.forEach(p -> {
+					names.add(folderPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
+				});
+		} catch (IOException | URISyntaxException e) {
+			CrashHandler.errorHandle(e);
+		}
+
+		return names;
+	}
 }

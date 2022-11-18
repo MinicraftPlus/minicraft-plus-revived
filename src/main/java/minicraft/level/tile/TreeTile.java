@@ -9,8 +9,11 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -20,9 +23,11 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.QuestsDisplay;
 
 public class TreeTile extends Tile {
+	private static LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
+	private static LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
 
 	protected TreeTile(String name) {
-		super(name, (ConnectorSprite)null);
+		super(name, (SpriteAnimation)null);
 		connectsToGrass = true;
 	}
 
@@ -38,25 +43,31 @@ public class TreeTile extends Tile {
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
 
+		Sprite sprite = treeSprite.getSprite();
+		Sprite spriteFull = treeSpriteFull.getSprite();
+
 		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 0, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, 0 + 0 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 0, sprite.spritePixels[0][0]);
 		}
+
 		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, 1 + 2 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 0, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, 1 + 0 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 0, sprite.spritePixels[0][1]);
 		}
+
 		if (d && dl && l) {
-			screen.render(x * 16 + 0, y * 16 + 8, 1 + 2 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, 0 + 1 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
+
 		if (d && dr && r) {
-			screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, 1 + 3 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
 		}
 	}
 
@@ -104,7 +115,7 @@ public class TreeTile extends Tile {
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
 
 		level.add(new SmashParticle(x*16, y*16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {

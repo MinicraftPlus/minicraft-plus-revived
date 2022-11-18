@@ -1,0 +1,8 @@
+{
+  "border": {
+    "key": "water_border"
+  },
+  "animation": {
+    "frametime": 10
+  }
+}

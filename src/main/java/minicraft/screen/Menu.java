@@ -3,6 +3,8 @@ package minicraft.screen;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
@@ -54,6 +56,8 @@ public class Menu {
 	 * The actual typed word in searcher bar
 	 */
 	private String typingSearcher;
+
+	private LinkedSprite hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 	private Menu() {}
 	protected Menu(Menu m) {
@@ -231,7 +235,7 @@ public class Menu {
 			entries.get(selection).tick(input); // only ticks the entry on a frame where the selection cursor has not moved.
 			return;
 		} else
-			Sound.select.play();
+			Sound.play("select");
 
 		do {
 			selection += delta;
@@ -280,12 +284,12 @@ public class Menu {
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
-					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3 + 21 * 32, 0, 3);
+					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 3, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else {
 				for (int i = 0; i < title.length(); i++) {
-					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3 + 21 * 32, 0, 3);
+					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 3, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
 				}
 			}
@@ -304,7 +308,7 @@ public class Menu {
 
 			for (int i = 0; i < typingSearcher.length() + 4; i++) {
 				if (hasFrame) {
-					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3 + 21 * 32, 0, 3);
+					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 3, 0, hudSheet.getSheet());
 				}
 
 				Font.draw("> " + typingSearcher + " <", screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
@@ -368,26 +372,25 @@ public class Menu {
 	private void renderFrame(Screen screen) {
 		if(!hasFrame) return;
 
-		int bottom = bounds.getBottom()-SpriteSheet.boxWidth;
-		int right = bounds.getRight()-SpriteSheet.boxWidth;
+		int bottom = bounds.getBottom()-MinicraftImage.boxWidth;
+		int right = bounds.getRight()-MinicraftImage.boxWidth;
 
-		for (int y = bounds.getTop(); y <= bottom; y += SpriteSheet.boxWidth) { // loop through the height of the bounds
-			for (int x = bounds.getLeft(); x <= right; x += SpriteSheet.boxWidth) { // loop through the width of the bounds
+		for (int y = bounds.getTop(); y <= bottom; y += MinicraftImage.boxWidth) { // loop through the height of the bounds
+			for (int x = bounds.getLeft(); x <= right; x += MinicraftImage.boxWidth) { // loop through the width of the bounds
 
 				boolean xend = x == bounds.getLeft() || x == right;
 				boolean yend = y == bounds.getTop() || y == bottom;
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 
+				screen.render(x, y, spriteoffset, 3, mirrors, hudSheet.getSheet());
 
-				screen.render(x, y, spriteoffset + 21 * 32, mirrors, 3);
-
-				if(x < right && x + SpriteSheet.boxWidth > right)
-					x = right - SpriteSheet.boxWidth;
+				if(x < right && x + MinicraftImage.boxWidth > right)
+					x = right - MinicraftImage.boxWidth;
 			}
 
-			if(y < bottom && y + SpriteSheet.boxWidth > bottom)
-				y = bottom - SpriteSheet.boxWidth;
+			if(y < bottom && y + MinicraftImage.boxWidth > bottom)
+				y = bottom - MinicraftImage.boxWidth;
 		}
 	}
 
@@ -538,14 +541,14 @@ public class Menu {
 
 			Insets border;
 			if(menu.hasFrame)
-				border = new Insets(SpriteSheet.boxWidth); // add frame insets
+				border = new Insets(MinicraftImage.boxWidth); // add frame insets
 			else {
 				border = new Insets();
 
 				// add title insets
 				if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
 					RelPos c = titlePos;
-					int space = SpriteSheet.boxWidth * 2;
+					int space = MinicraftImage.boxWidth * 2;
 					if (c.yIndex == 0)
 						border.top = space;
 					else if (c.yIndex == 2)
@@ -559,8 +562,8 @@ public class Menu {
 
 			if(menu.isSelectable()) {
 				// add spacing for selection cursors
-				border.left += SpriteSheet.boxWidth * 2;
-				border.right += SpriteSheet.boxWidth * 2;
+				border.left += MinicraftImage.boxWidth * 2;
+				border.right += MinicraftImage.boxWidth * 2;
 			}
 
 			if(menu.wrap && menu.displayLength > 0)
@@ -574,7 +577,7 @@ public class Menu {
 				for(ListEntry entry: menu.entries) {
 					int entryWidth = entry.getWidth();
 					if(menu.isSelectable() && !entry.isSelectable())
-						entryWidth = Math.max(0, entryWidth - SpriteSheet.boxWidth * 4);
+						entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
 					width = Math.max(width, entryWidth);
 				}
 
@@ -621,9 +624,9 @@ public class Menu {
 			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 
 			if(titlePos.xIndex == 0 && titlePos.yIndex != 1)
-				menu.titleLoc.x += SpriteSheet.boxWidth;
+				menu.titleLoc.x += MinicraftImage.boxWidth;
 			if(titlePos.xIndex == 2 && titlePos.yIndex != 1)
-				menu.titleLoc.x -= SpriteSheet.boxWidth;
+				menu.titleLoc.x -= MinicraftImage.boxWidth;
 
 			// set the menu title color
 			if(menu.title.length() > 0) {

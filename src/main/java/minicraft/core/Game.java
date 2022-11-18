@@ -8,7 +8,6 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
-import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,7 @@ public class Game {
 			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
-		Sound.back.play();
+		Sound.play("craft");
 		newDisplay = display.getParent();
 	}
 	@Nullable
@@ -69,20 +68,9 @@ public class Game {
 
 		Analytics.GameStartup.ping();
 
-		/* Load default loc.
-		 * DO NOT trigger any other classes before this.
-		 * Including static initialization.*/
-		Localization.loadLanguage();
-
 		input = new InputHandler(Renderer.canvas);
 
 		Tiles.initTileList();
-		Sound.init();
-
-		World.resetGame(); // "half"-starts a new game, to set up initial variables
-		player.eid = 0;
-		new Load(true); // This loads any saved preferences.
-		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();
@@ -91,8 +79,10 @@ public class Game {
 
 		Renderer.initScreen();
 
-		// Loads the resorce pack locaded in save.
-		new ResourcePackDisplay().initResourcePack();
+		World.resetGame(); // "half"-starts a new game, to set up initial variables
+		player.eid = 0;
+		new Load(true); // This loads any saved preferences.
+		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {

@@ -22,6 +22,7 @@ import org.tinylog.writers.ConsoleWriter;
 import org.tinylog.writers.FileWriter;
 import org.tinylog.writers.Writer;
 
+import minicraft.core.Game;
 import minicraft.util.TinylogLoggingConfiguration.WriterConfig;
 
 /** Originally copied from {@link org.tinylog.core.TinylogLoggingProvider} */
@@ -161,7 +162,8 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 		Consumer<Writer> addToThread = writer -> {
 			WriterConfig cfg = writers.get(writer);
-			if (cfg.levels.contains(level) && cfg.tags.contains(tag))
+			if ((level.ordinal() <= Level.DEBUG.ordinal() && Game.debug || level.ordinal() > Level.DEBUG.ordinal()) &&
+					cfg.levels.contains(level) && cfg.tags.contains(tag))
 				writingThread.add(writer, logEntry);
 		};
 

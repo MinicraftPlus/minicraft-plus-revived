@@ -17,8 +17,6 @@ public class ArrayEntry<T> extends ListEntry {
 	private boolean wrap;
 	private boolean localize;
 
-	private int maxWidth;
-
 	private ChangeListener changeAction;
 
 	@SafeVarargs
@@ -33,12 +31,6 @@ public class ArrayEntry<T> extends ListEntry {
 		this.options = options;
 		this.wrap = wrap;
 		this.localize = localize;
-
-		maxWidth = 0;
-		for (T option: options)
-			maxWidth = Math.max(maxWidth, Font.textWidth(
-				localize ? Localization.getLocalized(getLocalizationOption(option)) : getLocalizationOption(option)
-			));
 
 		optionVis = new boolean[options.length];
 		Arrays.fill(optionVis, true);
@@ -57,6 +49,14 @@ public class ArrayEntry<T> extends ListEntry {
 		setSelection(getIndex(value)); // if it is -1, setSelection simply won't set the value.
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setOptions(T... options) {
+		this.options = options;
+		optionVis = new boolean[options.length];
+		Arrays.fill(optionVis, true);
+		setSelection(selection);
+	}
+
 	protected String getLabel() { return label; }
 	protected String getLocalizationOption(T option) { return option.toString(); }
 
@@ -69,7 +69,6 @@ public class ArrayEntry<T> extends ListEntry {
 		else
 			return getValue().equals(value);
 	}
-
 
 	private int getIndex(Object value) {
 		boolean areStrings = value instanceof String && options instanceof String[];
@@ -108,7 +107,7 @@ public class ArrayEntry<T> extends ListEntry {
 		if(input.getKey("cursor-right").clicked) selection++;
 
 		if(prevSel != selection) {
-			Sound.select.play();
+			Sound.play("select");
 			moveSelection(selection - prevSel);
 		}
 	}
@@ -134,7 +133,7 @@ public class ArrayEntry<T> extends ListEntry {
 
 	@Override
 	public int getWidth() {
-		return Font.textWidth(Localization.getLocalized(label)+": ") + maxWidth;
+		return Font.textWidth(toString());
 	}
 
 	@Override

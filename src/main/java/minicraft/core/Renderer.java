@@ -2,12 +2,16 @@ package minicraft.core;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,14 +22,17 @@ import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Ellipsis;
 import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.gfx.Ellipsis.SmoothEllipsis;
+import minicraft.gfx.Ellipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -35,12 +42,15 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
 import javax.imageio.ImageIO;
+
+import org.json.JSONObject;
 
 public class Renderer extends Game {
 	private Renderer() {}
@@ -50,6 +60,7 @@ public class Renderer extends Game {
 	static float SCALE = 3;
 
 	public static Screen screen; // Creates the main screen
+	public static SpriteLinker spriteLinker = new SpriteLinker(); // The sprite linker for sprites
 
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
@@ -63,35 +74,35 @@ public class Renderer extends Game {
 
 	private static int potionRenderOffset = 0;
 
-	public static SpriteSheet[] loadDefaultSpriteSheets() {
-		SpriteSheet itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet;
+	private static LinkedSprite hudSheet;
+
+	public static MinicraftImage loadDefaultSkinSheet() {
+		MinicraftImage skinsSheet;
 		try {
 			// These set the sprites to be used.
-			itemSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/items.png"))));
-			tileSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/tiles.png"))));
-			entitySheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/entities.png"))));
-			guiSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/gui.png"))));
-			skinsSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
+			skinsSheet = new MinicraftImage(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
 			return null;
 		} catch (IOException | IllegalArgumentException e) {
 			// If there is an error reading the file.
-			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not Be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
+			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
 		}
 
-		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
+		return skinsSheet;
 	}
 
 	public static void initScreen() {
-		SpriteSheet[] sheets = loadDefaultSpriteSheets();
-		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
-		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
+		ResourcePackDisplay.initPacks();
+		ResourcePackDisplay.reloadResources();
+		screen = new Screen();
+		lightScreen = new Screen();
 
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
 		canvas.requestFocus();
@@ -133,6 +144,40 @@ public class Renderer extends Game {
 
 		// Make the picture visible.
 		bs.show();
+
+		// Screen capturing.
+		if (Updater.screenshot > 0) {
+			new File(Game.gameDir + "/screenshots/").mkdirs();
+			int count = 1;
+			LocalDateTime datetime = LocalDateTime.now();
+			String stamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss").format(datetime);
+			File file = new File(String.format("%s/screenshots/%s.png", Game.gameDir, stamp));
+			while (file.exists()) {
+				file = new File(String.format("%s/screenshots/%s_%s.png", Game.gameDir, stamp, count));
+				count++;
+			}
+
+			try { // https://stackoverflow.com/a/4216635
+				int w = image.getWidth();
+				int h = image.getHeight();
+				BufferedImage before = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+				before.getRaster().setRect(image.getData());
+				int scale = (Integer) Settings.get("screenshot");
+				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
+				AffineTransform at = new AffineTransform();
+				at.scale(scale, scale); // Setting the scaling.
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+
+				// Use this solution without larger scales which use up a lot memory.
+				// With scale 20, up to around 360MB overall RAM use.
+				BufferedImage after = scaleOp.filter(before, null);
+				ImageIO.write(after, "png", file);
+			} catch (IOException e) {
+				CrashHandler.errorHandle(e);
+			}
+
+			Updater.screenshot--;
+		}
 	}
 
 
@@ -149,10 +194,11 @@ public class Renderer extends Game {
 		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...Right border.
 		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
+			MinicraftImage cloud = spriteLinker.getSheet(SpriteType.Tile, "cloud_background");
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// Creates the background for the sky (and dungeon) level:
-					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 2 + 25 * 32, 0, 1);
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, 0, 0, cloud);
 				}
 		}
 
@@ -174,7 +220,7 @@ public class Renderer extends Game {
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
-				screen.render(x * 8, Screen.h - 8, 31, 0, 3);
+				screen.render(x * 8, Screen.h - 8, 5, 2, 0, hudSheet.getSheet());
 			}
 		}
 
@@ -195,7 +241,7 @@ public class Renderer extends Game {
 				else
 					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
 				// Displays the arrow icon
-				screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
+				screen.render(10 * 8 + 4, Screen.h - 16, 4, 1, 0, hudSheet.getSheet());
 			}
 		}
 
@@ -305,37 +351,37 @@ public class Renderer extends Game {
 				// Renders armor
 				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
-					screen.render(i * 8, Screen.h - 24, (player.curArmor.level - 1) + 9 * 32, 0, 0);
+					screen.render(i * 8, Screen.h - 24, player.curArmor.sprite);
 				}
 
 				// Renders your current red hearts, or black hearts for damaged health.
 				if (i < player.health) {
-					screen.render(i * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);
+					screen.render(i * 8, Screen.h - 16, 0, 0, 0, hudSheet.getSheet());
 				} else {
-					screen.render(i * 8, Screen.h - 16, 0 + 3 * 32, 0, 3);
+					screen.render(i * 8, Screen.h - 16, 0, 1, 0, hudSheet.getSheet());
 				}
 
 				if (player.staminaRechargeDelay > 0) {
 					// Creates the white/gray blinking effect when you run out of stamina.
 					if (player.staminaRechargeDelay / 4 % 2 == 0) {
-						screen.render(i * 8, Screen.h - 8, 1 + 4 * 32, 0, 3);
+						screen.render(i * 8, Screen.h - 8, 1, 2, 0, hudSheet.getSheet());
 					} else {
-						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+						screen.render(i * 8, Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
 					}
 				} else {
 					// Renders your current stamina, and uncharged gray stamina.
 					if (i < player.stamina) {
-						screen.render(i * 8, Screen.h - 8, 1 + 2 * 32, 0, 3);
+						screen.render(i * 8, Screen.h - 8, 1, 0, 0, hudSheet.getSheet());
 					} else {
-						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+						screen.render(i * 8, Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
 					}
 				}
 
 				// Renders hunger
 				if (i < player.hunger) {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 2 * 32, 0, 3);
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2, 0, 0, hudSheet.getSheet());
 				} else {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 3 * 32, 0, 3);
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2, 1, 0, hudSheet.getSheet());
 				}
 			}
 		}
@@ -351,12 +397,12 @@ public class Renderer extends Game {
 		int length = expanding ? 5 : 2;
 		ArrayList<ListEntry> questsShown = new ArrayList<>();
 		ArrayList<Quest> doneQuests = QuestsDisplay.getCompletedQuest();
-		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
+		JSONObject questStatus = QuestsDisplay.getStatusQuests();
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			if (!doneQuests.contains(q)) {
 				QuestSeries series = q.getSeries();
 				questsShown.add(expanding?
-					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
+					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
 					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE)
 				);
 			}
@@ -437,24 +483,24 @@ public class Renderer extends Game {
 		int h = 1;
 
 		// Renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0 + 21 * 32, 0, 3);
-		screen.render(xx + w * 8, yy - 8, 0 + 21 * 32, 1, 3);
-		screen.render(xx - 8, yy + 8, 0 + 21 * 32, 2, 3);
-		screen.render(xx + w * 8, yy + 8, 0 + 21 * 32, 3, 3);
+		screen.render(xx - 8, yy - 8, 0, 3, 0, hudSheet.getSheet());
+		screen.render(xx + w * 8, yy - 8, 0, 3, 1, hudSheet.getSheet());
+		screen.render(xx - 8, yy + 8, 0, 3, 2, hudSheet.getSheet());
+		screen.render(xx + w * 8, yy + 8, 0, 3, 3, hudSheet.getSheet());
 
 		// Renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1 + 21 * 32, 0, 3); // ...Top part
-			screen.render(xx + x * 8, yy + 8, 1 + 21 * 32, 2, 3); // ...Bottom part
+			screen.render(xx + x * 8, yy - 8, 1, 3, 0, hudSheet.getSheet()); // ...Top part
+			screen.render(xx + x * 8, yy + 8, 1, 3, 2, hudSheet.getSheet()); // ...Bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2 + 21 * 32, 0, 3); // ...Left part
-			screen.render(xx + w * 8, yy + y * 8, 2 + 21 * 32, 1, 3); // ...Right part
+			screen.render(xx - 8, yy + y * 8, 2, 3, 0, hudSheet.getSheet()); // ...Left part
+			screen.render(xx + w * 8, yy + y * 8, 2, 3, 1, hudSheet.getSheet()); // ...Right part
 		}
 
 		// The middle
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy, 3 + 21 * 32, 0, 3);
+			screen.render(xx + x * 8, yy, 3, 3, 0, hudSheet.getSheet());
 		}
 
 		// Renders the focus nagger text with a flash effect...

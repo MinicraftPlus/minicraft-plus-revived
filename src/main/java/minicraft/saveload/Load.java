@@ -1,6 +1,7 @@
 package minicraft.saveload;
 
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -12,6 +13,7 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -23,12 +25,10 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class Load {
@@ -278,8 +278,7 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
 
-		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
-			SkinDisplay.setSelectedSkinIndex(Integer.parseInt(data.remove(0)));
+		SkinDisplay.releaseSkins();
 
 		// Get legacy language and convert it into the current format.
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) >= 0) {
@@ -368,7 +367,8 @@ public class Load {
 			Localization.changeLanguage(lang);
 		}
 
-		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
+		SkinDisplay.setSelectedSkin(json.optString("skin", "minicraft.skin.paul"));
+		SkinDisplay.releaseSkins();
 
 		// Load keymap
 		JSONArray keyData = json.getJSONArray("keymap");
@@ -382,8 +382,18 @@ public class Load {
 			Game.input.setKey(map[0], map[1]);
 		}
 
-		if (json.has("resourcePack"))
-			new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
+		JSONArray packsJSON = json.optJSONArray("resourcePacks");
+		if (packsJSON != null) {
+			String[] packs = new String[packsJSON.length()];
+			for (int i = 0; i < packs.length; i++) {
+				packs[i] = packsJSON.getString(i);
+			}
+
+			ResourcePackDisplay.loadResourcePacks(packs);
+			ResourcePackDisplay.reloadResources();
+		}
+
+		ResourcePackDisplay.releaseUnloadedPacks();
 	}
 
 	private void loadUnlocksOld(String filename) {
@@ -523,7 +533,6 @@ public class Load {
 
 					ArrayList<String> unlocked = new ArrayList<>();
 					ArrayList<String> done = new ArrayList<>();
-					HashMap<String, String> questStatus = new HashMap<>();
 					ArrayList<Recipe> recipeLocks = new ArrayList<>();
 
 					for (int i = 0; i < unlockedQuests.length(); i++) {
@@ -532,10 +541,6 @@ public class Load {
 
 					for (int i = 0; i < doneQuests.length(); i++) {
 						done.add(doneQuests.getString(i));
-					}
-
-					for (String i : questData.keySet()) {
-						questStatus.put(i, questData.getString(i));
 					}
 
 					for (String i : lockedRecipes.keySet()) {
@@ -548,7 +553,7 @@ public class Load {
 						recipeLocks.add(new Recipe(i, costs));
 					}
 
-					QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
+					QuestsDisplay.loadGameQuests(unlocked, done, questData);
 					CraftingDisplay.loadLockedRecipes(recipeLocks);
 
 				} catch (IOException e) {

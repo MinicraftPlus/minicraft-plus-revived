@@ -1,7 +1,8 @@
 package minicraft.core.io;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.util.HashMap;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -12,36 +13,31 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.CrashHandler;
 import minicraft.util.Logging;
 
 public class Sound {
 	// Creates sounds from their respective files
-	public static final Sound playerHurt = new Sound("/resources/sound/playerhurt.wav");
-	public static final Sound playerDeath = new Sound("/resources/sound/death.wav");
-	public static final Sound monsterHurt = new Sound("/resources/sound/monsterhurt.wav");
-	public static final Sound bossDeath = new Sound("/resources/sound/bossdeath.wav");
-	public static final Sound fuse = new Sound("/resources/sound/fuse.wav");
-	public static final Sound explode = new Sound("/resources/sound/explode.wav");
-	public static final Sound pickup = new Sound("/resources/sound/pickup.wav");
-	public static final Sound craft = new Sound("/resources/sound/craft.wav");
-	public static final Sound back = new Sound("/resources/sound/craft.wav");
-	public static final Sound place = new Sound("/resources/sound/craft.wav");
-	public static final Sound select = new Sound("/resources/sound/select.wav");
-	public static final Sound confirm = new Sound("/resources/sound/confirm.wav");
+	private static final HashMap<String, Sound> sounds = new HashMap<>();
 
 	private Clip clip; // Creates a audio clip to be played
 
-	public static void init() {} // A way to initialize the class without actually doing anything
+	private Sound(Clip clip) {
+		this.clip = clip;
+	}
 
-	private Sound(String name) {
+	public static void resetSounds() {
+		sounds.clear();
+	}
+
+	public static void loadSound(String key, InputStream in, String pack) {
 		try {
-			URL url = getClass().getResource(name);
-
-			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(url).getFormat());
+			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(in).getFormat());
 
 			if (!AudioSystem.isLineSupported(info)) {
-				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
+				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
 
 				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
 				Logging.RESOURCEHANDLER_SOUND.error("-source:");
@@ -70,8 +66,8 @@ public class Sound {
 				return;
 			}
 
-			clip = (Clip)AudioSystem.getLine(info);
-			clip.open(AudioSystem.getAudioInputStream(url));
+			Clip clip = (Clip)AudioSystem.getLine(info);
+			clip.open(AudioSystem.getAudioInputStream(in));
 
 			clip.addLineListener(e -> {
 				if (e.getType() == LineEvent.Type.STOP) {
@@ -80,9 +76,30 @@ public class Sound {
 				}
 			});
 
+			sounds.put(key, new Sound(clip));
+
 		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Sound file Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT, "Could not load sound file " + name));
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Audio Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT,
+				String.format("Could not load audio: %s in pack: %s", key, pack)));
 		}
+	}
+
+	/** Recommend {@link #play(String)} and {@link #loop(String, boolean)}. */
+	@Nullable
+	public static Sound getSound(String key) {
+		return sounds.get(key);
+	}
+
+	/** This method does safe check for {@link #play()}. */
+	public static void play(String key) {
+		Sound sound = sounds.get(key);
+		if (sound != null) sound.play();
+	}
+
+	/** This method does safe check for {@link #loop(boolean)}. */
+	public static void loop(String key, boolean start) {
+		Sound sound = sounds.get(key);
+		if (sound != null) sound.loop(start);
 	}
 
 	public void play() {
