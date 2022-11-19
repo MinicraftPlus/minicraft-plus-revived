@@ -1,3 +1,23 @@
+Minicraft+ version 2.2.0
+
++ Added quests and tutorial
++ Added obsidian knight as the second boss
++ Added limitation to inventories
++ Added limitation to stackable items
++ Added 4 new debug arguments
++ Added a toggle for HUD display
++ Added a toggle for simplified effect display
++ Added a new menu for creative mode
++ Added a few creative mode only items for tile placement
+* Changed the display of world edit
+* Changed the structure of resource pack
+* Split the images of textures
+* Changed the UI of crash popup
+* Changed a better logging
+* Fixed seed random problem
+* Improved the localization support
+* --savedir, if present, no longer is appended an extra '.playminicraft/mods/Minecraft Plus' to it
+
 Minicraft+ version 2.1.0
 
 + Added achievements

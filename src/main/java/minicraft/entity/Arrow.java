@@ -2,18 +2,24 @@ package minicraft.entity;
 
 import java.util.List;
 
+import javax.security.auth.DestroyFailedException;
+
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.util.Logging;
 
 public class Arrow extends Entity implements ClientTickable {
 	private Direction dir;
 	private int damage;
 	public Mob owner;
 	private int speed;
-	
+	private LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
+
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);
 	}
@@ -23,15 +29,21 @@ public class Arrow extends Entity implements ClientTickable {
 		this.x = x;
 		this.y = y;
 		this.dir = dir;
-		
+
 		damage = dmg;
 		col = Color.get(-1, 111, 222, 430);
-		
+
+		int xt = 0;
+		if(dir == Direction.LEFT) xt = 1;
+		if(dir == Direction.UP) xt = 2;
+		if(dir == Direction.DOWN) xt = 3;
+		sprite.setSpritePos(xt, 0);
+
 		if (damage > 3) speed = 8;
 		else if (damage >= 0) speed = 7;
 		else speed = 6;
 	}
-	
+
 	/**
 	 * Generates information about the arrow.
 	 * @return string representation of owner, xdir, ydir and damage.
@@ -39,7 +51,7 @@ public class Arrow extends Entity implements ClientTickable {
 	public String getData() {
 		return owner.eid + ":" + dir.ordinal() + ":"+damage;
 	}
-	
+
 	@Override
 	public void tick() {
 		if (x < 0 || x >> 4 > level.w || y < 0 || y >> 4 > level.h) {
@@ -65,6 +77,11 @@ public class Arrow extends Entity implements ClientTickable {
 					&& !level.getTile(x / 16, y / 16).connectsToFluid
 					&& level.getTile(x / 16, y / 16).id != 16) {
 				this.remove();
+				try {
+					sprite.destroy();
+				} catch (DestroyFailedException e) {
+					Logging.SPRITE.trace(e);
+				}
 			}
 		}
 	}
@@ -75,13 +92,6 @@ public class Arrow extends Entity implements ClientTickable {
 
 	@Override
 	public void render(Screen screen) {
-		int xt = 0;
-		int yt = 2;
-
-		if(dir == Direction.LEFT) xt = 1;
-		if(dir == Direction.UP) xt = 2;
-		if(dir == Direction.DOWN) xt = 3;
-		
-		screen.render(x - 4, y - 4, xt + yt * 32, 0);
+		screen.render(x - 4, y - 4, sprite);
 	}
 }

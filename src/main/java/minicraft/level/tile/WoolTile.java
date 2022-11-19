@@ -4,7 +4,8 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -23,7 +24,7 @@ public class WoolTile extends Tile {
 			if (tool.type == ToolType.Shears) {
 				if (player.payStamina(3 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
-					Sound.monsterHurt.play();
+					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(name));
 					return true;
 				}
@@ -37,14 +38,14 @@ public class WoolTile extends Tile {
 	}
 
 	public enum WoolType {
-		BLACK("Black Wool", new Sprite(10, 4, 2, 2, 1)),
-		BLUE("Blue Wool", new Sprite(8, 2, 2, 2, 1)),
-		GREEN("Green Wool", new Sprite(10, 2, 2, 2, 1)),
-		NORMAL("Wool", new Sprite(8, 0, 2, 2, 1)),
-		RED("Red Wool", new Sprite(10, 0, 2, 2, 1)),
-		YELLOW("Yellow Wool", new Sprite(8, 4, 2, 2, 1));
+		BLACK("Black Wool", new SpriteAnimation(SpriteType.Tile, "black_wool")),
+		BLUE("Blue Wool", new SpriteAnimation(SpriteType.Tile, "blue_wool")),
+		GREEN("Green Wool", new SpriteAnimation(SpriteType.Tile, "green_wool")),
+		NORMAL("Wool", new SpriteAnimation(SpriteType.Tile, "white_wool")),
+		RED("Red Wool", new SpriteAnimation(SpriteType.Tile, "red_wool")),
+		YELLOW("Yellow Wool", new SpriteAnimation(SpriteType.Tile, "yellow_wool"));
 
-		public final Sprite sprite;
+		public final SpriteAnimation sprite;
 		public final String name;
 
 		/**
@@ -52,7 +53,7 @@ public class WoolTile extends Tile {
 		 *
 		 * @param sprite The sprite for the type of wool.
 		 */
-		WoolType(String name, Sprite sprite) {
+		WoolType(String name, SpriteAnimation sprite) {
 			this.sprite = sprite;
 			this.name = name;
 		}

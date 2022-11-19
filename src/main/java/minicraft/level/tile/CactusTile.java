@@ -10,12 +10,13 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class CactusTile extends Tile {
-	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cactus");
 
 	protected CactusTile(String name) {
 		super(name, sprite);
@@ -36,7 +37,7 @@ public class CactusTile extends Tile {
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
 			level.setTile(x, y, Tiles.get("sand"));
-			Sound.monsterHurt.play();
+			Sound.play("monsterhurt");
 			level.dropItem(x * 16 + 8, y * 16 + 8, 2, 4, Items.get("Cactus"));
 		} else {
 			level.setData(x, y, damage);
@@ -47,8 +48,7 @@ public class CactusTile extends Tile {
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Sand").render(screen, level, x, y);
-
-		sprite.render(screen, x << 4, y << 4);
+		sprite.render(screen, level, x, y);
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {

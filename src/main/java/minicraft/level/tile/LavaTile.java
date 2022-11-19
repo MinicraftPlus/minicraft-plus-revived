@@ -1,37 +1,31 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class LavaTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(12, 9, 3, 3, 1, 3), Sprite.dots(0))
-	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
-			return tile.connectsToFluid;
-		}
-	};
+	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "lava")
+		.setConnectChecker((tile, side) -> tile.connectsToFluid)
+		.setSingletonWithConnective(true);
 
 	protected LavaTile(String name) {
-		super(name, (ConnectorSprite)null);
-		super.csprite = sprite;
+		super(name, sprite);
 		connectsToSand = true;
 		connectsToFluid = true;
 	}
 
 	@Override
-	public void render(Screen screen, Level level, int x, int y) {
-		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
-		sprite.full = Sprite.randomDots(seed, 1);
-		sprite.sparse.color = DirtTile.dCol(level.depth);
-		sprite.render(screen, level, x, y);
+	public boolean mayPass(Level level, int x, int y, Entity e) {
+		return e.canSwim();
 	}
 
 	@Override
-	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e.canSwim();
+	public void render(Screen screen, Level level, int x, int y) {
+		Tiles.get("dirt").render(screen, level, x, y);
+		super.render(screen, level, x, y);
 	}
 
 	@Override

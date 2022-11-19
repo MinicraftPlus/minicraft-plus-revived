@@ -1,19 +1,16 @@
 package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
-import minicraft.gfx.MobSprite;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Knight extends EnemyMob {
-	private static MobSprite[][][] sprites;
-	static {
-		sprites = new MobSprite[4][4][2];
-		for (int i = 0; i < 4; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(0, 8 + (i * 2));
-			sprites[i] = list;
-		}
-	}
-
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "knight"),
+		Mob.compileMobSpriteAnimations(0, 2, "knight"),
+		Mob.compileMobSpriteAnimations(0, 4, "knight"),
+		Mob.compileMobSpriteAnimations(0, 6, "knight")
+	};
 
 	/**
 	 * Creates a knight of a given level.

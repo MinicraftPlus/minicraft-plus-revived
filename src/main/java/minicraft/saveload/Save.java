@@ -31,7 +31,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 public class Save {
 
@@ -103,7 +102,7 @@ public class Save {
 
 	public Save(Player player, boolean writePlayer) {
 		// This is simply for access to writeToFile.
-		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
+		this(new File(Game.gameDir+"/saves/"+WorldSelectDisplay.getWorldName() + "/"));
 		if (writePlayer) {
 			writePlayer("Player", player);
 			writeInventory("Inventory", player);
@@ -175,12 +174,12 @@ public class Save {
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
 		json.put("lang", Localization.getSelectedLocale().toLanguageTag());
-		json.put("skinIdx", String.valueOf(SkinDisplay.getSelectedSkinIndex()));
+		json.put("skin", String.valueOf(SkinDisplay.getSelectedSkin()));
 		json.put("savedIP", MultiplayerDisplay.savedIP);
 		json.put("savedUUID", MultiplayerDisplay.savedUUID);
 		json.put("savedUsername", MultiplayerDisplay.savedUsername);
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
-		json.put("resourcePack", ResourcePackDisplay.getLoadedPack());
+		json.put("resourcePacks", new JSONArray(ResourcePackDisplay.getLoadedPacks()));
 		json.put("showquests", String.valueOf(Settings.get("showquests")));
 
 		// Save json
@@ -242,7 +241,7 @@ public class Save {
 			JSONObject fileObj = new JSONObject();
 			JSONArray unlockedQuests = new JSONArray();
 			JSONArray doneQuests = new JSONArray();
-			JSONObject questData = new JSONObject();
+			JSONObject questData = new JSONObject(QuestsDisplay.getStatusQuests());
 			JSONObject lockedRecipes = new JSONObject();
 
 			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
@@ -251,10 +250,6 @@ public class Save {
 
 			for (Quest q : QuestsDisplay.getCompletedQuest()) {
 				doneQuests.put(q.id);
-			}
-
-			for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
-				questData.put(e.getKey(), e.getValue().toQuestString());
 			}
 
 			for (Recipe recipe : CraftingDisplay.getLockedRecipes()) {

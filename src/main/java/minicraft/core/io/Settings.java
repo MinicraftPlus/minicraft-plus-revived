@@ -13,6 +13,7 @@ public class Settings {
 
 	static {
 		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20)); // The magnification of screenshot. I would want to see ultimate sized.
 		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("minicraft.settings.mode", "minicraft.settings.mode.survival", "minicraft.settings.mode.creative", "minicraft.settings.mode.hardcore", "minicraft.settings.mode.score"));
@@ -33,9 +34,8 @@ public class Settings {
 		options.put("quests", new BooleanEntry("Quests", false));
 		options.put("showquests", new BooleanEntry("Quests Panel", true));
 
-		options.put("language", new ArrayEntry<>("minicraft.settings.language", true, Localization.getLocalesAsString()));
-		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());
-
+		options.put("language", new ArrayEntry<>("minicraft.settings.language", true, false, Localization.getLocales()));
+		options.get("language").setValue(Localization.getSelectedLanguage());
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))

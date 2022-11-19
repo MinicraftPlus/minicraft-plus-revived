@@ -5,7 +5,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -14,12 +15,12 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class FarmTile extends Tile {
-    private static Sprite sprite = new Sprite(12, 0, 2, 2, 1, true, new int[][] {{1, 0}, {0, 1}});
+    private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "farmland");
 
     public FarmTile(String name) {
         super(name, sprite);
     }
-    protected FarmTile(String name, Sprite sprite) {
+    protected FarmTile(String name, SpriteAnimation sprite) {
         super(name, sprite);
     }
 
@@ -30,7 +31,7 @@ public class FarmTile extends Tile {
             if (tool.type == ToolType.Shovel) {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("Dirt"));
-                    Sound.monsterHurt.play();
+                    Sound.play("monsterhurt");
                     return true;
                 }
             }

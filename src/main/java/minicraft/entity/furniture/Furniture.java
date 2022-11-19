@@ -1,12 +1,11 @@
 package minicraft.entity.furniture;
 
-import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
@@ -18,7 +17,8 @@ public class Furniture extends Entity {
 
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
-	public Sprite sprite;
+	public LinkedSprite sprite;
+	public LinkedSprite itemSprite;
 	public String name;
 
 	/**
@@ -27,8 +27,8 @@ public class Furniture extends Entity {
 	 * @param name Name of the furniture.
 	 * @param sprite Furniture sprite.
 	 */
-	public Furniture(String name, Sprite sprite) {
-		this(name, sprite, 3, 3);
+	public Furniture(String name, LinkedSprite sprite, LinkedSprite itemSprite) {
+		this(name, sprite, itemSprite, 3, 3);
 	}
 
 	/**
@@ -39,12 +39,12 @@ public class Furniture extends Entity {
 	 * @param xr Horizontal radius.
 	 * @param yr Vertical radius.
 	 */
-	public Furniture(String name, Sprite sprite, int xr, int yr) {
+	public Furniture(String name, LinkedSprite sprite, LinkedSprite itemSprite, int xr, int yr) {
 		// All of these are 2x2 on the spritesheet; radius is for collisions only.
 		super(xr, yr);
 		this.name = name;
 		this.sprite = sprite;
-		col = sprite.color;
+		this.itemSprite = itemSprite;
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class Furniture extends Entity {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return new Furniture(name, sprite);
+		return new Furniture(name, sprite, itemSprite);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class Furniture extends Entity {
 	}
 
 	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { sprite.render(screen, x-8, y-8); }
+	public void render(Screen screen) { screen.render(x-8, y-8, sprite); }
 
 	/** Called when the player presses the MENU key in front of this. */
 	public boolean use(Player player) { return false; }
@@ -91,7 +91,7 @@ public class Furniture extends Entity {
 	@Override
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
-			Sound.monsterHurt.play();
+			Sound.play("monsterhurt");
 				remove();
 				if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
 					player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory

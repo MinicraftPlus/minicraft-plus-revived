@@ -4,8 +4,8 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
-import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.StringEntry;
 
 public class InfoDisplay extends Display {
@@ -21,7 +21,7 @@ public class InfoDisplay extends Display {
 			))
 			.setTitle("minicraft.displays.info.title")
 			.setTitlePos(RelPos.TOP_LEFT)
-			.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth), RelPos.BOTTOM_RIGHT)
+			.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth), RelPos.BOTTOM_RIGHT)
 			.createMenu()
 		);
 	}
