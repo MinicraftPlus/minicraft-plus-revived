@@ -21,31 +21,34 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
+	private static final Pattern detailedFilenamePattern;
 
 	private static final String worldNameRegex;
 	static {
 		if (FileHandler.OS.contains("windows")) {
 			// Reference: https://stackoverflow.com/a/6804755
 			worldNameRegex = "[^<>:\"/\\\\|?*\\x00-\\x1F]+";
-//				Pattern.compile(
-//				"# Match a valid Windows filename (unspecified file system).          \n" +
-//					"^                                # Anchor to start of string.        \n" +
-//					"(?!                              # Assert filename is not: CON, PRN, \n" +
-//					"  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
-//					"    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
-//					"    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
-//					"  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
-//					"  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
-//					"  $                              # and end of string                 \n" +
-//					")                                # End negative lookahead assertion. \n" +
-//					"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
-//					"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
-//					"$                                # Anchor to end of string.            ",
-//				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS).toString();
+			detailedFilenamePattern = Pattern.compile(
+			"# Match a valid Windows filename (unspecified file system).          \n" +
+				"^                                # Anchor to start of string.        \n" +
+				"(?!                              # Assert filename is not: CON, PRN, \n" +
+				"  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
+				"    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
+				"    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
+				"  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
+				"  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
+				"  $                              # and end of string                 \n" +
+				")                                # End negative lookahead assertion. \n" +
+				"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
+				"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
+				"$                                # Anchor to end of string.            ",
+			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 		} else if (FileHandler.OS.contains("mac")) {
 			worldNameRegex = "[^/:]+";
+			detailedFilenamePattern = null;
 		} else { // Reference: https://en.wikipedia.org/wiki/Filename#Length_restrictions
 			worldNameRegex = "[^/\0]+";
+			detailedFilenamePattern = null;
 		}
 	}
 
@@ -84,7 +87,11 @@ public class WorldGenDisplay extends Display {
 				String name = getUserInput();
 				for(String other: takenNames)
 					if(other.equalsIgnoreCase(name)) {
-						Logging.WORLD.debug("Duplicated or existed world name \"{}\".", name);
+						if (!name.equals(lastName)) {
+							Logging.WORLD.debug("Duplicated or existed world name \"{}\".", name);
+							lastName = name;
+						}
+
 						return false;
 					}
 
@@ -93,12 +100,25 @@ public class WorldGenDisplay extends Display {
 				} catch (InvalidPathException e) {
 					if (!name.equals(lastName)) {
 						Logging.WORLD.debug("Invalid world name (InvalidPathException) \"{}\": {}", name, e.getMessage());
+						lastName = name;
 					}
 
 					return false;
 				}
 
-				return name.length() <= 255; // If it is lower than the valid folder name length.
+				if (detailedFilenamePattern != null) {
+					if (!detailedFilenamePattern.matcher(name).matches()) {
+						if (!name.equals(lastName)) {
+							Logging.WORLD.debug("Invalid file name (Not matches to the valid pattern with the corresponding system) \"{}\".", name);
+							lastName = name;
+						}
+
+						return false;
+					}
+				}
+
+				lastName = name;
+				return name.length() <= 255; // If it is lower than the general valid folder name length.
 			}
 
 			@Override
