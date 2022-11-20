@@ -321,7 +321,7 @@ public class ObsidianKnight extends EnemyMob {
 			}
 		}
 
-		Sound.bossDeath.play();
+		Sound.play("bossdeath");
 
 		//Analytics.AirWizardDeath.ping();
 		Updater.notifyAll(Localization.getLocalized("minicraft.notification.obsidian_knight_defeated"));

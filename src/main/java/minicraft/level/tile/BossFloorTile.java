@@ -5,6 +5,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -12,14 +14,14 @@ import minicraft.level.Level;
 
 public class BossFloorTile extends Tile {
 	protected Material type;
-	private Sprite sprite;
+	private SpriteAnimation sprite;
 
 	protected BossFloorTile(Material type) {
-		super((type == Material.Obsidian ? "Obsidian" : type.name()) + " Boss Floor", (Sprite) null);
+		super((type == Material.Obsidian ? "Obsidian" : type.name()) + " Boss Floor", null);
 		this.type = type;
 		maySpawn = true;
 		if (type == Material.Obsidian) {
-			sprite = new Sprite(27,16,2,2,1,0);
+			sprite = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "ornate_obsidian");;
 		}
 		super.sprite = sprite;
 	}
@@ -34,7 +36,7 @@ public class BossFloorTile extends Tile {
 					} else {
 						level.setTile(xt, yt, Tiles.get("Hole"));
 					}
-					Sound.monsterHurt.play();
+					Sound.play("monsterhurt");
 					return true;
 				}
 			}

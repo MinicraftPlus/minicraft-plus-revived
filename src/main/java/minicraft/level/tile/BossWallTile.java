@@ -11,25 +11,27 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
-import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
 public class BossWallTile extends Tile {
+	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
+		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
 
 	private static final String wallMsg = "The Obsidian Knight must be defeated first.";
 	protected Material type;
-	private ConnectorSprite sprite;
+	private SpriteAnimation sprite;
 
 	protected BossWallTile(Material type) {
-		super(type.name() + " Boss Wall", (ConnectorSprite) null);
+		super(type.name() + " Boss Wall", null);
 		this.type = type;
 		if (type == Material.Obsidian) {
-			sprite = new ConnectorSprite(BossWallTile.class, new Sprite(20, 14, 3, 3, 1, 3), new Sprite(23, 14, 2, 2, 1, 3), new Sprite(21, 15, 2, 2, 1, 0, true));
+			sprite = obsidian;
 		}
-		csprite = sprite;
+		super.sprite = sprite;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -78,7 +80,7 @@ public class BossWallTile extends Tile {
 		if (Game.isMode("Creative")) dmg = damage = sbwHealth;
 
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= sbwHealth) {
