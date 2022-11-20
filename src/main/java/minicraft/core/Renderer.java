@@ -357,16 +357,16 @@ public class Renderer extends Game {
 			for (int i = 1; i <= 30; i++) {
 				// Renders your current red default hearts, golden hearts for 20 HP, obsidian hearts for 30 HP, or black hearts for damaged health.
 				if (i < 11) {
-					screen.render((i - 1) * 8, Screen.h - 16, 0 + 3 * 32, 0, hudSheet.getSheet()); // Empty Hearts
+					screen.render((i - 1) * 8, Screen.h - 16, 0, 1, 0, hudSheet.getSheet()); // Empty Hearts
 				}
 				if (i < player.health + 1 && i < 11) {
-					screen.render((i - 1) * 8, Screen.h - 16, 0 + 2 * 32, 0, hudSheet.getSheet());  // Red Hearts
+					screen.render((i - 1) * 8, Screen.h - 16, 0, 0, 0, hudSheet.getSheet());  // Red Hearts
 				}
 				if (i < player.health + 1 && i < 21 && i >= 11) {
-					screen.render((i - 11) * 8, Screen.h - 16, 0 + 4 * 32, 0, hudSheet.getSheet()); // Yellow Hearts
+					screen.render((i - 11) * 8, Screen.h - 16, 0, 2, 0, hudSheet.getSheet()); // Yellow Hearts
 				}
 				if (i < player.health + 1 && i >= 21) {
-					screen.render((i - 21) * 8, Screen.h - 16, 0 + 5 * 32, 0, hudSheet.getSheet()); // Obsidian Hearts
+					screen.render((i - 21) * 8, Screen.h - 16, 0, 3, 0, hudSheet.getSheet()); // Obsidian Hearts
 				}
 			}
 			for (int i = 0; i < Player.maxStat; i++) {
@@ -421,24 +421,24 @@ public class Renderer extends Game {
 		int max_bar_length = 100;
 		int bar_length = length; // Bossbar size.
 
-		int INACTIVE_BOSSBAR = 6; // sprite x position
-		int ACTIVE_BOSSBAR = 7; // sprite x position
+		int INACTIVE_BOSSBAR = 4; // sprite x position
+		int ACTIVE_BOSSBAR = 5; // sprite x position
 
 
-		screen.render(x + (max_bar_length * 2) , y , 0 + INACTIVE_BOSSBAR * 32, 1, 3); // left corner
+		screen.render(x + (max_bar_length * 2), y, 0, INACTIVE_BOSSBAR, 1, hudSheet.getSheet()); // left corner
 
 		// The middle
 		for (int bx = 0; bx < max_bar_length; bx++) {
 			for (int by = 0; by < 1; by++) {
-				screen.render(x + bx * 2, y + by * 8, 3 + INACTIVE_BOSSBAR * 32, 0, 3);
+				screen.render(x + bx * 2, y + by * 8, 3, INACTIVE_BOSSBAR, 0, hudSheet.getSheet());
 			}
 		}
 
-		screen.render(x - 5 , y , 0 + ACTIVE_BOSSBAR * 32, 0, 3); // right corner
+		screen.render(x - 5 , y , 0, ACTIVE_BOSSBAR, 0, hudSheet.getSheet()); // right corner
 
 		for (int bx = 0; bx < bar_length; bx++) {
 			for (int by = 0; by < 1; by++) {
-				screen.render(x + bx * 2, y + by * 8, 3 + ACTIVE_BOSSBAR * 32, 0, 3);
+				screen.render(x + bx * 2, y + by * 8, 3, ACTIVE_BOSSBAR, 0, hudSheet.getSheet());
 			}
 		}
 
@@ -540,24 +540,24 @@ public class Renderer extends Game {
 		int h = 1;
 
 		// Renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0, 3, 0, hudSheet.getSheet());
-		screen.render(xx + w * 8, yy - 8, 0, 3, 1, hudSheet.getSheet());
-		screen.render(xx - 8, yy + 8, 0, 3, 2, hudSheet.getSheet());
-		screen.render(xx + w * 8, yy + 8, 0, 3, 3, hudSheet.getSheet());
+		screen.render(xx - 8, yy - 8, 0, 6, 0, hudSheet.getSheet());
+		screen.render(xx + w * 8, yy - 8, 0, 6, 1, hudSheet.getSheet());
+		screen.render(xx - 8, yy + 8, 0, 6, 2, hudSheet.getSheet());
+		screen.render(xx + w * 8, yy + 8, 0, 6, 3, hudSheet.getSheet());
 
 		// Renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1, 3, 0, hudSheet.getSheet()); // ...Top part
-			screen.render(xx + x * 8, yy + 8, 1, 3, 2, hudSheet.getSheet()); // ...Bottom part
+			screen.render(xx + x * 8, yy - 8, 1, 6, 0, hudSheet.getSheet()); // ...Top part
+			screen.render(xx + x * 8, yy + 8, 1, 6, 2, hudSheet.getSheet()); // ...Bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2, 3, 0, hudSheet.getSheet()); // ...Left part
-			screen.render(xx + w * 8, yy + y * 8, 2, 3, 1, hudSheet.getSheet()); // ...Right part
+			screen.render(xx - 8, yy + y * 8, 2, 6, 0, hudSheet.getSheet()); // ...Left part
+			screen.render(xx + w * 8, yy + y * 8, 2, 6, 1, hudSheet.getSheet()); // ...Right part
 		}
 
 		// The middle
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy, 3, 3, 0, hudSheet.getSheet());
+			screen.render(xx + x * 8, yy, 3, 6, 0, hudSheet.getSheet());
 		}
 
 		// Renders the focus nagger text with a flash effect...

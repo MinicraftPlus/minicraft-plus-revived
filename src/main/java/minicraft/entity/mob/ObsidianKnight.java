@@ -10,8 +10,8 @@ import minicraft.entity.FireSpark;
 import minicraft.entity.furniture.KnightStatue;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
@@ -19,8 +19,18 @@ import minicraft.screen.AchievementsDisplay;
 import java.util.Random;
 
 public class ObsidianKnight extends EnemyMob {
-	private static final MobSprite[][][] armored;
-	private static final MobSprite[][][] broken;
+	private static final SpriteLinker.LinkedSprite[][][] armored = new SpriteLinker.LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "obsidian_knight_armored"),
+		Mob.compileMobSpriteAnimations(0, 2, "obsidian_knight_armored"),
+		Mob.compileMobSpriteAnimations(0, 4, "obsidian_knight_armored"),
+		Mob.compileMobSpriteAnimations(0, 6, "obsidian_knight_armored")
+	};
+	private static final SpriteLinker.LinkedSprite[][][] broken = new SpriteLinker.LinkedSprite[][][] {
+		Mob.compileMobSpriteAnimations(0, 0, "obsidian_knight_broken"),
+		Mob.compileMobSpriteAnimations(0, 2, "obsidian_knight_broken"),
+		Mob.compileMobSpriteAnimations(0, 4, "obsidian_knight_broken"),
+		Mob.compileMobSpriteAnimations(0, 6, "obsidian_knight_broken")
+	};
 	public static boolean beaten = false;
 	public static boolean active = false;
 	public static boolean failed = false;
@@ -36,15 +46,6 @@ public class ObsidianKnight extends EnemyMob {
 
 	private int dashTime = 0;
 	private int dashCooldown = 1000;
-
-	static {
-		armored = new MobSprite[2][4][2];
-		broken = new MobSprite[2][4][2];
-		for (int i = 0; i < 2; i++) {
-			armored[i] = MobSprite.compileMobSpriteAnimations(0, 16 + (i * 2));
-			broken[i] = MobSprite.compileMobSpriteAnimations(0, 18 + (i * 2));
-		}
-	}
 
 	private int attackDelay = 0;
 	private int attackTime = 0;

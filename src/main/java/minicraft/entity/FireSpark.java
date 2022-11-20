@@ -7,10 +7,13 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker;
 
 import java.util.List;
 
 public class FireSpark extends Entity {
+	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "spark");
+
 	private int lifeTime; // How much time until the spark disappears
 	private double xa, ya; // The x and y acceleration
 	private double xx, yy; // The x and y positions
@@ -85,8 +88,8 @@ public class FireSpark extends Entity {
 		int xt = 8;
 		int yt = 13;
 
-		screen.render(x - 4, y - 4 + 2, 8 + 24 * 32, randmirror, 2, -1, false, Color.BLACK); // renders the shadow on the ground
-		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2, 0,false,Color.RED); // Renders the spark
+		screen.render(x - 4, y - 4 + 2, sprite.getSprite(), randmirror, false, Color.BLACK); // renders the shadow on the ground
+		screen.render(x - 4, y - 4 - 2, sprite.getSprite(), randmirror, false, Color.RED); // Renders the spark
 	}
 
 	/**

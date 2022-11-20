@@ -6,7 +6,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
 
 public class KnightStatue extends Furniture {
@@ -20,7 +20,7 @@ public class KnightStatue extends Furniture {
 	public static boolean active;
 
 	public KnightStatue(int health) {
-		super("KnightStatue", new Sprite(8, 16, 2, 2, 2), 3, 2);
+		super("KnightStatue", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "knight_statue"), new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "knight_statue"), 3, 2);
 		obkHealth = health;
 		ObsidianKnight.active = false;
 		ObsidianKnight.failed = false;
