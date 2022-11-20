@@ -14,7 +14,6 @@ import minicraft.level.Level;
 
 public class BossFloorTile extends Tile {
 	protected Material type;
-	private SpriteAnimation sprite;
 
 	protected BossFloorTile(Material type) {
 		super((type == Material.Obsidian ? "Obsidian" : type.name()) + " Boss Floor", null);
@@ -23,7 +22,6 @@ public class BossFloorTile extends Tile {
 		if (type == Material.Obsidian) {
 			sprite = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "ornate_obsidian");;
 		}
-		super.sprite = sprite;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

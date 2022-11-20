@@ -4,7 +4,6 @@ import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
@@ -23,7 +22,6 @@ public class BossWallTile extends Tile {
 
 	private static final String wallMsg = "The Obsidian Knight must be defeated first.";
 	protected Material type;
-	private SpriteAnimation sprite;
 
 	protected BossWallTile(Material type) {
 		super(type.name() + " Boss Wall", null);
@@ -31,7 +29,6 @@ public class BossWallTile extends Tile {
 		if (type == Material.Obsidian) {
 			sprite = obsidian;
 		}
-		super.sprite = sprite;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

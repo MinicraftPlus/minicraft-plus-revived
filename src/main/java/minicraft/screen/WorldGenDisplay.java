@@ -93,6 +93,7 @@ public class WorldGenDisplay extends Display {
 				} catch (InvalidPathException e) {
 					if (!name.equals(lastName)) {
 						Logging.WORLD.debug("Invalid world name (InvalidPathException) \"{}\": {}", name, e.getMessage());
+						lastName = name;
 					}
 
 					return false;

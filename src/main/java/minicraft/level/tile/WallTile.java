@@ -29,7 +29,7 @@ public class WallTile extends Tile {
 	protected Material type;
 
 	protected WallTile(Material type) {
-		super(type.name() + " Wall", (SpriteAnimation) null);
+		super(type.name() + " Wall", null);
 		this.type = type;
 		switch (type) {
 			case Wood: sprite = wood; break;

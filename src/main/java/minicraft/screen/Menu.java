@@ -383,7 +383,7 @@ public class Menu {
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 
-				screen.render(x, y, spriteoffset, 3, mirrors, hudSheet.getSheet());
+				screen.render(x, y, spriteoffset, 6, mirrors, hudSheet.getSheet());
 
 				if(x < right && x + MinicraftImage.boxWidth > right)
 					x = right - MinicraftImage.boxWidth;
