@@ -7,9 +7,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -37,54 +36,39 @@ public abstract class Tile {
 			return requiredTool;
 		}
 	}
-	
+
 	public final String name;
-	
+
 	public short id;
-	
+
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
 	public boolean connectsToFluid = false;
-	public int light;
-	protected boolean maySpawn;
-	
-	protected Sprite sprite;
-	protected ConnectorSprite csprite;
-	
-	{
-		light = 1;
-		maySpawn = false;
-		sprite = null;
-		csprite = null;
-	}
-	
-	protected Tile(String name, Sprite sprite) {
+	public int light = 1;
+	protected boolean maySpawn = false;
+
+	protected SpriteAnimation sprite = null;
+
+	protected Tile(String name, SpriteAnimation sprite) {
 		this.name = name.toUpperCase();
 		this.sprite = sprite;
 	}
-	protected Tile(String name, ConnectorSprite sprite) {
-		this.name = name.toUpperCase();
-		csprite = sprite;
-	}
 
-	
+
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
 	// At least, that was the idea at first...
 	public int getDefaultData() {
 		return 0;
 	}
-	
+
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
-		if (sprite != null)
-			sprite.render(screen, x << 4, y << 4);
-		if (csprite != null)
-			csprite.render(screen, level, x, y);
+		sprite.render(screen, level, x, y);
 	}
-	
+
 	public boolean maySpawn() { return maySpawn; }
-	
+
 	/** Returns if the player can walk on it, overrides in sub-classes  */
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
@@ -115,13 +99,13 @@ public abstract class Tile {
 	 * @param dmg The damage taken.
 	 */
 	public void hurt(Level level, int x, int y, int dmg) {}
-	
+
 	/** What happens when you run into the tile (ex: run into a cactus) */
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
-	
+
 	/** Update method */
 	public boolean tick(Level level, int xt, int yt) { return false; }
-	
+
 	/** What happens when you are inside the tile (ex: lava) */
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
 
@@ -150,10 +134,10 @@ public abstract class Tile {
 	public boolean onExplode(Level level, int xt, int yt) {
 		return false;
 	}
-	
+
 	/** Sees if the tile connects to a fluid. */
 	public boolean connectsToLiquid() { return connectsToFluid; }
-	
+
 	public int getData(String data) {
 		try {
 			return Integer.parseInt(data);
@@ -161,38 +145,38 @@ public abstract class Tile {
 			return 0;
 		}
 	}
-	
+
 	public boolean matches(int thisData, String tileInfo) {
 		return name.equals(tileInfo.split("_")[0]);
 	}
-	
+
 	public String getName(int data) {
 		return name;
 	}
-	
+
 	public static String getData(int depth, int x, int y) {
 		try {
 			byte lvlidx = (byte) World.lvlIdx(depth);
 			Level curLevel = World.levels[lvlidx];
 			int pos = x + curLevel.w * y;
-			
+
 			int tileid = curLevel.tiles[pos];
 			int tiledata = curLevel.data[pos];
-			
+
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch(NullPointerException | IndexOutOfBoundsException ignored) {
 		}
-		
+
 		return "";
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Tile)) return false;
 		Tile o = (Tile) other;
 		return name.equals(o.name);
 	}
-	
+
 	@Override
 	public int hashCode() { return name.hashCode(); }
 }

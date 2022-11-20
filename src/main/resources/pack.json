@@ -1,0 +1,47 @@
+{
+  "pack_format": 1,
+  "name": "Default",
+  "description": "The built-in default resources in Minicraft+.",
+  "language": {
+    "en-us": {
+      "name": "English",
+      "region": "US"
+    },
+    "fr-fr": {
+      "name": "French",
+      "region": "Frence"
+    },
+    "hu-hu": {
+      "name": "Hungarian",
+      "region": "Hungary"
+    },
+    "id-id": {
+      "name": "Indonesian",
+      "region": "Indonesia"
+    },
+    "it-it": {
+      "name": "Italian",
+      "region": "Italy"
+    },
+    "nb-no": {
+      "name": "Norwegian",
+      "region": "Norway"
+    },
+    "pt-pt": {
+      "name": "Portuguese",
+      "region": "Portugal"
+    },
+    "ru-ru": {
+      "name": "Russian",
+      "region": "Russia"
+    },
+    "es-es": {
+      "name": "Spanish",
+      "region": "Spain"
+    },
+    "tr-tr": {
+      "name": "Turkish",
+      "region": "Turkey"
+    }
+  }
+}

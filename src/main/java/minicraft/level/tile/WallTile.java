@@ -10,28 +10,32 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
 public class WallTile extends Tile {
+	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
+		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+	private static SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_wall")
+		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
+		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
 
 	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
 	protected Material type;
-	private ConnectorSprite sprite;
 
 	protected WallTile(Material type) {
-		super(type.name() + " Wall", (ConnectorSprite) null);
+		super(type.name() + " Wall", (SpriteAnimation) null);
 		this.type = type;
 		switch (type) {
-			case Wood: sprite = new ConnectorSprite(WallTile.class, new Sprite(0, 14, 3, 3, 1, 3), new Sprite(3, 14, 2, 2, 1, 3), new Sprite(1, 15, 2, 2, 1, 0, true)); break;
-			case Stone: sprite = new ConnectorSprite(WallTile.class, new Sprite(10, 14, 3, 3, 1, 3), new Sprite(13, 14, 2, 2, 1, 3), new Sprite(11, 15, 2, 2, 1, 0, true)); break;
-			case Obsidian: sprite = new ConnectorSprite(WallTile.class, new Sprite(20, 14, 3, 3, 1, 3), new Sprite(23, 14, 2, 2, 1, 3), new Sprite(21, 15, 2, 2, 1, 0, true)); break;
+			case Wood: sprite = wood; break;
+			case Stone: sprite = stone; break;
+			case Obsidian: sprite = obsidian; break;
 		}
-		csprite = sprite;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -74,7 +78,7 @@ public class WallTile extends Tile {
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = sbwHealth;
 
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= sbwHealth) {

@@ -4,11 +4,22 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class PotatoTile extends PlantTile {
+	private LinkedSprite[] spritStages = new LinkedSprite[] {
+		new LinkedSprite(SpriteType.Tile, "potato_stage0"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage1"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage2"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage3"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage4"),
+		new LinkedSprite(SpriteType.Tile, "potato_stage5")
+	};
+
     public PotatoTile(String name) {
         super(name);
     }
@@ -23,11 +34,7 @@ public class PotatoTile extends PlantTile {
         int icon = age / (maxAge / 5);
 
         Tiles.get("Farmland").render(screen, level, x, y);
-
-        screen.render(x * 16 + 0, y * 16 + 0, 13 + 1 * 32 + icon, 0, 1);
-        screen.render(x * 16 + 8, y * 16 + 0, 13 + 1 * 32 + icon, 0, 1);
-        screen.render(x * 16 + 0, y * 16 + 8, 13 + 1 * 32 + icon, 1, 1);
-        screen.render(x * 16 + 8, y * 16 + 8, 13 + 1 * 32 + icon, 1, 1);
+		screen.render(x * 16, y * 16, spritStages[icon]);
     }
 
     @Override
@@ -48,7 +55,7 @@ public class PotatoTile extends PlantTile {
         }
 
 		// Play sound.
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
         level.setTile(x, y, Tiles.get("Dirt"));
     }

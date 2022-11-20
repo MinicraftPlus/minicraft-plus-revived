@@ -1,5 +1,14 @@
 package minicraft.screen;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
@@ -21,22 +30,12 @@ import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestReward;
 import minicraft.util.Quest.QuestSeries;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 public class QuestsDisplay extends Display {
 	private final static HashMap<String, Quest> quests = new HashMap<>();
 	private final static ArrayList<Quest> unlockedQuests = new ArrayList<>();
 	private final static ArrayList<Quest> completedQuest = new ArrayList<>();
-	private final static HashMap<String, QuestStatus> questStatus = new HashMap<>();
+	private final static JSONObject questStatus = new JSONObject();
 	private final static HashMap<String, QuestSeries> series = new HashMap<>();
 	private final static ArrayList<QuestSeries> unlockedSeries = new ArrayList<>();
 	private final static ArrayList<QuestSeries> completedSeries = new ArrayList<>();
@@ -237,7 +236,7 @@ public class QuestsDisplay extends Display {
 						@Override
 						public void tick(InputHandler input) {
 							super.tick(input);
-							if (input.isClicked("select")) {
+							if (input.getKey("select").clicked) {
 								skipSeries(series);
 								display.reloadEntries();
 								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
@@ -330,8 +329,8 @@ public class QuestsDisplay extends Display {
 	public static ArrayList<Quest> getCompletedQuest() {
 		return new ArrayList<>(completedQuest);
 	}
-	public static HashMap<String, QuestStatus> getStatusQuests() {
-		return new HashMap<>(questStatus);
+	public static JSONObject getStatusQuests() {
+		return new JSONObject(questStatus.toMap());
 	}
 
 	public static boolean isQuestDone(String id) {
@@ -341,11 +340,8 @@ public class QuestsDisplay extends Display {
 	public static Object getQuestData(String id) {
 		return questStatus.get(id);
 	}
-	public static void setQuestData(String id, QuestStatus val) {
+	public static void setQuestData(String id, Object val) {
 		questStatus.put(id, val);
-	}
-	public static void setQuestDataVal(String id, Object val) {
-		questStatus.get(id).val = val;
 	}
 
 	public static int getSeriesQuestsCompleted(String id) { return getSeriesQuestsCompleted(series.get(id)); }
@@ -523,8 +519,8 @@ public class QuestsDisplay extends Display {
 		}
 	}
 
-	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed) { loadGameQuests(unlocked, completed, new HashMap<>()); }
-	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed, Map<String, String> data) {
+	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed) { loadGameQuests(unlocked, completed, new JSONObject()); }
+	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed, JSONObject data) {
 		resetGameQuests();
 
 		for (String n : unlocked) {
@@ -547,19 +543,21 @@ public class QuestsDisplay extends Display {
 				completedSeries.add(s);
 		}
 
-		for (Entry<String, String> e : data.entrySet()) questStatus.put(e.getKey(), QuestStatus.fromStringType(e.getValue()));
+		for (String k : data.keySet()) {
+			questStatus.put(k, data.get(k));
+		}
 	}
 
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.isClicked("cursor-left")) if (selectedEntry > 0) {
+		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.isClicked("cursor-right")) if (selectedEntry < 1) {
+		if (input.getKey("cursor-right").clicked) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}
@@ -585,68 +583,5 @@ public class QuestsDisplay extends Display {
 		int select = previousSelection;
 		previousSelection = menus[0].getSelection();
 		menus[0].setSelection(select);
-	}
-
-	public static class QuestStatus {
-		public static enum Types {
-			String (String.class, TypeConverters.STRING),
-			Int (Integer.class, TypeConverters.INTEGER),
-			Double (Double.class, TypeConverters.DOUBLE);
-
-			public final Class<?> valueType;
-			public final TypeConverter<?> typeConverter;
-			Types(Class<?> type, TypeConverter<?> convertor) {
-				valueType = type;
-				typeConverter = convertor;
-			}
-		}
-		public final Types type;
-		public final boolean hasMax;
-		public final Object maxVal;
-		public Object val;
-
-		public QuestStatus(Types type, boolean hasMax, Object iniVal, Object maxVal) {
-			this.type = type;
-			this.hasMax = hasMax;
-			this.maxVal = maxVal;
-			val = iniVal;
-		}
-
-		public static QuestStatus fromString(Types type, boolean hasMax, String text) {
-			if (hasMax) {
-				String[] m = text.split("/");
-				return new QuestStatus(type, hasMax, type.typeConverter.fromString(m[0]), type.typeConverter.fromString(m[1]));
-
-			} else {
-				return new QuestStatus(type, hasMax, type.typeConverter.fromString(text), null);
-			}
-		}
-
-		/** String format follow to {@link #toQuestString()} */
-		public static QuestStatus fromStringType(String text) {
-			String[] t = text.split(";", 3);
-			return fromString(Types.valueOf(t[0]), Boolean.parseBoolean(t[1]), t[2]);
-		}
-
-		@Override
-		public String toString() {
-			return val.toString() + (hasMax ? "/"+maxVal.toString() : "");
-		}
-
-		public String toQuestString() {
-			return type.toString() + ";" + hasMax + ";" + toString();
-		}
-	}
-
-	@FunctionalInterface
-	public static interface TypeConverter<T> {
-		public T fromString(String text);
-	}
-
-	// Convertors which convert String to other types
-	public static class TypeConverters {
-		public static TypeConverter<String> STRING = text -> text;
-		public static TypeConverter<Integer> INTEGER = text -> Integer.parseInt(text);
-		public static TypeConverter<Double> DOUBLE = text -> Double.parseDouble(text);
 	}
 }

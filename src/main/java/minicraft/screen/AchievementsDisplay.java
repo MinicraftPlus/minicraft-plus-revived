@@ -93,7 +93,7 @@ public class AchievementsDisplay extends Display {
     @Override
     public void onExit() {
         // Play confirm sound.
-        Sound.confirm.play();
+        Sound.play("confirm");
         new Save();
     }
 

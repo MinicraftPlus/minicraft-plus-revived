@@ -7,7 +7,8 @@ import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -21,7 +22,7 @@ public class SummonItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new SummonItem("Totem of Air", new Sprite(0, 19, 0), "Air Wizard"));
+		items.add(new SummonItem("Totem of Air", new LinkedSprite(SpriteType.Item, "air_totem"), "Air Wizard"));
 		items.add(new SummonItem("Obsidian Poppet", new Sprite(1, 20, 0), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
 
 		return items;
@@ -29,8 +30,8 @@ public class SummonItem extends StackableItem {
 
 	private final String mob;
 
-	private SummonItem(String name, Sprite sprite, String mob) { this(name, sprite, 1, mob); }
-	private SummonItem(String name, Sprite sprite, int count, String mob) {
+	private SummonItem(String name, LinkedSprite sprite, String mob) { this(name, sprite, 1, mob); }
+	private SummonItem(String name, LinkedSprite sprite, int count, String mob) {
 		super(name, sprite, count);
 		this.mob = mob;
 	}

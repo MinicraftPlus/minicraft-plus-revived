@@ -31,6 +31,9 @@ public class World extends Game {
 	@Nullable
 	public static Action onChangeAction; // Allows action to be stored during a change schedule that should only occur once the screen is blacked out.
 
+	private static long lastWorldExitTime = 0; // When the world exited.
+	private static long lastWorldEnterTime = 0; // When the world entered.
+
 	static {
 		int min, max;
 		min = max = idxToDepth[0];
@@ -93,6 +96,7 @@ public class World extends Game {
 		Bed.removePlayers();
 		Updater.gameTime = 0;
 		Updater.gamespeed = 1;
+		lastWorldEnterTime = System.currentTimeMillis();
 
 		Updater.changeTimeOfDay(Updater.Time.Morning); // Resets tickCount; game starts in the day, so that it's nice and bright.
 		gameOver = false;
@@ -121,7 +125,7 @@ public class World extends Game {
 			for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 				// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 
-				Logging.WORLD.trace("Loading level " + i + "...");
+				Logging.WORLD.trace("Generating level " + i + "...");
 
 				LoadingDisplay.setMessage(Level.getDepthString(i));
 				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.hasLoadedWorld());
@@ -129,7 +133,7 @@ public class World extends Game {
 				LoadingDisplay.progress(loadingInc);
 			}
 
-			Logging.WORLD.trace("Level loading complete.");
+			Logging.WORLD.trace("Level generation complete.");
 
 			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
 			Updater.pastDay1 = false;
@@ -185,4 +189,14 @@ public class World extends Game {
 			AchievementsDisplay.setAchievement("minicraft.achievement.obsidian_dungeon", true);
 		}
 	}
+
+	/**
+	 * Called when the world exits.
+	 */
+	public static void onWorldExits() {
+		lastWorldExitTime = System.currentTimeMillis();
+	}
+
+	public static long getLastWorldExitTime() { return lastWorldExitTime; }
+	public static long getLastWorldEnterTime() { return lastWorldEnterTime; }
 }

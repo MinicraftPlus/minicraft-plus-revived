@@ -46,6 +46,10 @@ public class Items {
 		addAll(HeartItem.getAllInstances());
 	}
 
+	public static ArrayList<Item> getAll() {
+		return new ArrayList<>(items);
+	}
+
 	/** fetches an item from the list given its name. */
 	@NotNull
 	public static Item get(String name) {

@@ -61,7 +61,7 @@ public class BookDisplay extends Display {
 
 		builder
 			.setPositioning(new Point(Screen.w/2, pageCount.getBounds().getBottom() + spacing), RelPos.BOTTOM)
-			.setSize(maxX-minX + SpriteSheet.boxWidth*2, maxY-minY + SpriteSheet.boxWidth*2)
+			.setSize(maxX-minX + MinicraftImage.boxWidth*2, maxY-minY + MinicraftImage.boxWidth*2)
 			.setShouldRender(false);
 
 		menus = new Menu[lines.length + pageOffset];
@@ -84,8 +84,8 @@ public class BookDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.isClicked("menu") || input.isClicked("exit")) Game.exitDisplay(); // Close the menu.
-		if (input.isClicked("cursor-left")) turnPage(-1); // This is what turns the page back
-		if (input.isClicked("cursor-right")) turnPage(1); // This is what turns the page forward
+		if (input.getKey("menu").clicked || input.getKey("exit").clicked) Game.exitDisplay(); // Close the menu.
+		if (input.getKey("cursor-left").clicked) turnPage(-1); // This is what turns the page back
+		if (input.getKey("cursor-right").clicked) turnPage(1); // This is what turns the page forward
 	}
 }

@@ -4,7 +4,8 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -12,17 +13,16 @@ import minicraft.level.Level;
 
 public class MaterialTile extends Tile {
 	protected Material type;
-	private Sprite sprite;
 
 	protected MaterialTile(Material type) {
-		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (Sprite) null);
+		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (SpriteAnimation) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Stone: sprite = new Sprite(17,14,2,2,1,0); break;
-			case Obsidian: sprite = new Sprite(27,14,2,2,1,0); break;
+			case Stone: sprite = new SpriteAnimation(SpriteType.Tile, "stone"); break;
+			case Obsidian: sprite = new SpriteAnimation(SpriteType.Tile, "obsidian"); break;
+			default:
 		}
-		super.sprite = sprite;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -41,7 +41,7 @@ public class MaterialTile extends Tile {
 						case Obsidian: drop = Items.get("Raw Obsidian"); break;
 						default: throw new IllegalStateException("Unexpected value: " + type);
 					}
-					Sound.monsterHurt.play();
+					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);
 					return true;
 				}

@@ -28,11 +28,8 @@ public class KeyInputEntry extends SelectEntry {
 
 		String newMapping = "";
 		for (String k : mapping.split("\\|")) {
-			if (duplicated.contains(k))
-				newMapping += Color.RED_CODE;
-			else
-				newMapping += Color.WHITE_CODE + Color.GRAY_CODE;
-				
+			if (duplicated.contains(k)) k = Color.RED_CODE + k;
+			k = Color.GRAY_CODE + k + Color.WHITE_CODE;
 			newMapping += k + "|";
 		}
 

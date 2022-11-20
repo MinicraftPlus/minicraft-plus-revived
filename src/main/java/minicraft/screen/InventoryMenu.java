@@ -13,8 +13,8 @@ class InventoryMenu extends ItemListMenu {
 	private final Entity holder;
 	protected boolean creativeInv = false;
 
-	InventoryMenu(Entity holder, Inventory inv, String title) {
-		super(ItemListMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos) {
+		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
 	}
@@ -30,16 +30,16 @@ class InventoryMenu extends ItemListMenu {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		boolean dropOne = input.isClicked("drop-one");
+		boolean dropOne = input.getKey("drop-one").clicked;
 
-		if(getNumOptions() > 0 && (dropOne || input.isClicked("drop-stack"))) {
+		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
 			Item invItem = entry.getItem();
 			Item drop = invItem.clone();
 
 			if (!creativeInv) {
-				if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// just drop one from the stack
 					((StackableItem)drop).count = 1;
 					((StackableItem)invItem).count--;
@@ -49,7 +49,7 @@ class InventoryMenu extends ItemListMenu {
 				}
 			}
 
-			if(holder.getLevel() != null) {
+			if (holder.getLevel() != null) {
 				holder.getLevel().dropItem(holder.x, holder.y, drop);
 			}
 		}

@@ -18,7 +18,7 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 
 	public ContainerDisplay(Player player, Chest chest) {
-		super(new InventoryMenu(chest, chest.getInventory(), chest.name), new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory"));
+		super(new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.LEFT), new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT));
 		//pInv = player.getInventory();
 		//cInv = chest.getInventory();
 		this.player = player;
@@ -40,13 +40,13 @@ public class ContainerDisplay extends Display {
 			m.translate(shift, 0);
 	}
 
-	private int getOtherIdx() { return (selection+1) % 2; }
+	private int getOtherIdx() { return selection ^ 1; }
 
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if(input.isClicked("menu") || chest.isRemoved()) {
+		if(input.getKey("menu").clicked || chest.isRemoved()) {
 			Game.setDisplay(null);
 			return;
 		}
@@ -54,7 +54,7 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if((input.isClicked("attack")) || input.getKey("shift-enter").clicked) {
+		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
 			if (curMenu.getEntries().length == 0) return;
 			// switch inventories
 			Inventory from, to;

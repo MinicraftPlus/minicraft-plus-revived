@@ -8,8 +8,10 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.network.Network;
 import minicraft.screen.entry.BlankEntry;
@@ -48,10 +50,10 @@ public class TitleDisplay extends Display {
 			new SelectEntry("minicraft.displays.title.help", () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 					new BlankEntry(),
-					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
-					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
-					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about))),
-					new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
+					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions.collect()))),
+					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide.collect()))),
+					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about.collect()))),
+					new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits.collect())))
 				).setTitle("minicraft.displays.title.help").createMenu()))
 			),
 			new SelectEntry("minicraft.displays.title.quit", Game::quit)
@@ -113,14 +115,15 @@ public class TitleDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 
-		int h = 2; // Height of squares (on the spritesheet)
-		int w = 15; // Width of squares (on the spritesheet)
-		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 18; // Y location of the title
+		MinicraftImage sheet = Renderer.spriteLinker.getSheet(SpriteType.Gui, "title");
+		int h = sheet.height / 8; // Height of squares (on the spritesheet)
+		int w = sheet.width / 8; // Width of squares (on the spritesheet)
+		int xo = (Screen.w - sheet.width) / 2; // X location of the title
+		int yo = 26 - sheet.height / 2; // Y location of the title
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
+				screen.render(xo + x * 8, yo + y * 8, x, y, 0, sheet);
 			}
 		}
 

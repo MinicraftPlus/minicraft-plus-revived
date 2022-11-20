@@ -9,6 +9,8 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Spark extends Entity {
 	private final int lifeTime; // How much time until the spark disappears
@@ -17,6 +19,7 @@ public class Spark extends Entity {
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
 	private final AirWizard owner; // The AirWizard that created this spark
+	private LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "spark");
 
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
@@ -77,12 +80,9 @@ public class Spark extends Entity {
 			randmirror = random.nextInt(4);
 		}
 
-
-		int xt = 8;
-		int yt = 13;
-
-		screen.render(x - 4, y - 4 + 2, 8 + 24 * 32, randmirror, 2, -1, false, Color.BLACK); // renders the shadow on the ground
-		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // Renders the spark
+		sprite.setMirror(randmirror);
+		screen.render(x - 4, y - 4 + 2, sprite.getSprite(), 0, false, Color.BLACK); // renders the shadow on the ground
+		screen.render(x - 4, y - 4 - 2, sprite); // Renders the spark
 	}
 
 	/**

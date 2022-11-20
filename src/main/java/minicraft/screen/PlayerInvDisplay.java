@@ -22,15 +22,15 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory"));
+		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT));
 
 		creativeMode = Game.isMode("minicraft.settings.mode.creative");
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				menus[0],
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items") {{
-					super.creativeInv = true;
+				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
+					creativeInv = true;
 				}}
 			};
 
@@ -47,7 +47,7 @@ public class PlayerInvDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if(input.isClicked("menu")) {
+		if(input.getKey("menu").clicked) {
 			Game.exitDisplay();
 			return;
 		}
@@ -60,7 +60,7 @@ public class PlayerInvDisplay extends Display {
 
 			Inventory from, to;
 			if (selection == 0) {
-				if (input.isClicked("attack") && menus[0].getNumOptions() > 0) {
+				if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
 					player.activeItem = player.getInventory().remove(menus[0].getSelection());
 					Game.exitDisplay();
 					return;
@@ -97,7 +97,7 @@ public class PlayerInvDisplay extends Display {
 				Item fromItem = from.get(fromSel);
 
 				boolean transferAll;
-				if (input.isClicked("attack")) { // If stack limit is available, this can transfer whole stack
+				if (input.getKey("attack").clicked) { // If stack limit is available, this can transfer whole stack
 					transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 				} else return;
 
@@ -112,7 +112,7 @@ public class PlayerInvDisplay extends Display {
 			}
 
 		} else {
-			if (input.isClicked("attack") && menus[0].getNumOptions() > 0) {
+			if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
 				player.activeItem = player.getInventory().remove(menus[0].getSelection());
 				Game.exitDisplay();
 			}
@@ -150,7 +150,9 @@ public class PlayerInvDisplay extends Display {
 
 	private void update() {
 		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
+		menus[1] = new InventoryMenu((InventoryMenu) menus[1]) {{
+			creativeInv = true;
+		}};
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 	}

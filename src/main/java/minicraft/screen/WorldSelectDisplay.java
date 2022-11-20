@@ -112,7 +112,7 @@ public class WorldSelectDisplay extends Display {
 					e.printStackTrace();
 				}
 
-				Sound.confirm.play();
+				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
@@ -159,7 +159,7 @@ public class WorldSelectDisplay extends Display {
 					Logging.GAMEHANDLER.error("Rename failed in WorldEditDisplay.");
 				}
 
-				Sound.confirm.play();
+				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
@@ -199,7 +199,7 @@ public class WorldSelectDisplay extends Display {
 				}
 				world.delete();
 
-				Sound.confirm.play();
+				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {

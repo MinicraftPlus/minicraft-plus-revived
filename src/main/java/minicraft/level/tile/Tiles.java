@@ -9,8 +9,6 @@ import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
 
-import org.tinylog.Logger;
-
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
 	/// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
@@ -191,7 +189,8 @@ public final class Tiles {
 		overflowCheck++;
 
 		if(overflowCheck > 50) {
-			CrashHandler.crashHandle(new StackOverflowError("Tiles#get: " + name), new CrashHandler.ErrorInfo("Tile fetching Stacking", CrashHandler.ErrorInfo.ErrorType.SERIOUS, "STACKOVERFLOW prevented in Tiles.get(), on: " + name));
+			CrashHandler.crashHandle(new StackOverflowError("Tiles#get: " + name), new CrashHandler.ErrorInfo("Tile fetching Stacking",
+				CrashHandler.ErrorInfo.ErrorType.SERIOUS, "STACKOVERFLOW prevented in Tiles.get(), on: " + name));
 		}
 
 		//System.out.println("Fetching tile " + name);
@@ -256,5 +255,9 @@ public final class Tiles {
 		descriptName = parts[0];
 		data = Integer.parseInt(parts[1]);
 		return get(descriptName).getName(data);
+	}
+
+	public static HashMap<Short, Tile> getAll() {
+		return new HashMap<>(tiles);
 	}
 }

@@ -14,6 +14,8 @@ import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.*;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -53,8 +55,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static int baseHealth = 10;
 	public static final int maxArmor = 100;
 
-	public static MobSprite[][] sprites;
-	public static MobSprite[][] carrySprites;
+	public static LinkedSprite[][] sprites;
+	public static LinkedSprite[][] carrySprites;
 
 	private Inventory inventory;
 
@@ -101,10 +103,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
 
+	private LinkedSprite hudSheet;
+
 	// Note: the player's health & max health are inherited from Mob.java
 
 	public Player(@Nullable Player previousInstance, InputHandler input) {
-		super(sprites, Player.baseHealth);
+		super(null, Player.baseHealth);
 
 		x = 24;
 		y = 24;
@@ -135,6 +139,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawnx = previousInstance.spawnx;
 			spawny = previousInstance.spawny;
 		}
+
+		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		updateSprites();
 	}
@@ -225,20 +231,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+		if (input.getKey("potionEffects").down && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
 		}
 
-		if (input.getKey("simpPotionEffects").clicked) {
+		if (input.getKey("simpPotionEffects").down) {
 			simpPotionEffects = !simpPotionEffects;
 		}
 
-		if (input.getKey("toggleHUD").clicked) {
+		if (input.getKey("toggleHUD").down) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.getKey("expandQuestDisplay").clicked) {
+		if (input.getKey("expandQuestDisplay").down) {
 			questExpanding = 30;
 		}
 
@@ -366,10 +372,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
 				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
-				if (input.isHeld("move-up")) vec.y--;
-				if (input.isHeld("move-down")) vec.y++;
-				if (input.isHeld("move-left")) vec.x--;
-				if (input.isHeld("move-right")) vec.x++;
+				if (input.getKey("move-up").down) vec.y--;
+				if (input.getKey("move-down").down) vec.y++;
+				if (input.getKey("move-left").down) vec.x--;
+				if (input.getKey("move-right").down) vec.x++;
 
 
 			}
@@ -394,10 +400,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.isClicked("drop-one") || input.isClicked("drop-stack"))) {
+			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
 				Item drop = activeItem.clone();
 
-				if (input.isClicked("drop-one") && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -408,23 +414,22 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.isClicked("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.isClicked("menu") && activeItem != null) {
+			if (input.getKey("menu").clicked && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
-					if (returned == stackable.count) {
-						activeItem = null;
-					} else {
+					if (stackable.count > 0) {
 						getLevel().dropItem(x, y, stackable.clone());
-						activeItem = null;
 					}
+
+					activeItem = null;
 				} else if (returned > 0) {
 					activeItem = null;
 				} else {
@@ -434,28 +439,28 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.isClicked("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.isClicked("pause"))
+				if (input.getKey("pause").clicked)
 					Game.setDisplay(new PauseDisplay());
-				if (input.isClicked("craft") && !use())
+				if (input.getKey("craft").clicked && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
-				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
+				if (input.getKey("info").down) Game.setDisplay(new InfoDisplay());
 
-				if (input.getKey("quicksave").clicked && !Updater.saving) {
+				if (input.getKey("quicksave").down && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.getKey("shift-p").clicked) { // Remove all potion effects
+				if (Game.debug && input.getKey("shift-p").down) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}
 				}
 
-				if (input.isClicked("pickup") && (activeItem == null || !activeItem.used_pending)) {
+				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
@@ -481,13 +486,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (prevItem != null) { // and you had a previous item that we should care about...
 				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
-					if (returned < ((StackableItem)prevItem).count) {
+					if (((StackableItem)prevItem).count > 0) {
 						getLevel().dropItem(x, y, prevItem.clone());
 					}
 				} else if (returned == 0) {
 					getLevel().dropItem(x, y, prevItem);
 				}
-			}// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
+			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
 
@@ -730,7 +735,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void updateSprites() {
 		// Get the current skin we are using as a MobSprite array.
-		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+		LinkedSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
 
 		// Assign the skin to the states.
 		sprites = selectedSkin[0];
@@ -749,24 +754,23 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 
 				// animation effect
-				if (tickTime / 8 % 2 == 0) {
-					screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
-					screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
-				} else {
-					screen.render(xo + 0, yo + 3, 5 + 3 * 32, 0, 3);
-					screen.render(xo + 8, yo + 3, 5 + 3 * 32, 1, 3);
-				}
+			    if (tickTime / 8 % 2 == 0) {
+			    	screen.render(xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
+			    	screen.render(xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
+			    } else {
+					screen.render(xo + 0, yo + 3, 5, 1, 0, hudSheet.getSheet());
+					screen.render(xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
+			    }
 
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
 
-				if (tickTime / 8 % 2 == 0) {
-					screen.render(xo + 0, yo + 3, 6 + 2 * 32, 1, 3); // Render the lava graphic
-					screen.render(xo + 8, yo + 3, 6 + 2 * 32, 0, 3); // Render the mirrored lava graphic to the right.
-				} else {
-					screen.render(xo + 0, yo + 3, 6 + 3 * 32, 1, 3);
-					screen.render(xo + 8, yo + 3, 6 + 3 * 32, 0, 3);
-				}
-
+			    if (tickTime / 8 % 2 == 0) {
+					screen.render(xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
+					screen.render(xo + 8, yo + 3, 6, 0, 0, hudSheet.getSheet()); // Render the mirrored lava graphic to the right.
+			    } else {
+					screen.render(xo + 0, yo + 3, 6, 1, 1, hudSheet.getSheet());
+					screen.render(xo + 8, yo + 3, 6, 1, 0, hudSheet.getSheet());
+			    }
 			}
 		}
 
@@ -774,7 +778,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
 
-			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3 + 4 * 32, 0, 3);
+			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3, 2, 0, hudSheet.getSheet());
 		}
 
 		// Makes the player white if they have just gotten hurt
@@ -782,10 +786,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			col = Color.WHITE; // Make the sprite white.
 		}
 
-		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
+		LinkedSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
 
 		// Renders falling
-		MobSprite curSprite;
+		LinkedSprite curSprite;
 		if (onFallDelay > 0) {
 			// This makes falling look really cool.
 			float spriteToUse = onFallDelay / 2f;
@@ -799,40 +803,42 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Render each corner of the sprite
 		if (isSwimming()) {
-			curSprite.renderRow(0, screen, xo, yo, -1, shirtColor);
+			Sprite sprite = curSprite.getSprite();
+			screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
+			screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
 		} else { // Don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
+			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 		}
 
 		// Renders slashes:
 		if (attackTime > 0) {
 			switch (attackDir) {
 				case UP:  // If currently attacking upwards...
-					screen.render(xo + 0, yo - 4, 3 + 2 * 32, 0, 3); // Render left half-slash
-					screen.render(xo + 8, yo - 4, 3 + 2 * 32, 1, 3); // Render right half-slash (mirror of left).
+					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
+					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						attackItem.sprite.render(screen, xo + 4, yo - 4, 1); // Then render the icon of the item, mirrored
+						screen.render(xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
-					screen.render(xo - 4, yo, 4 + 2 * 32, 1, 3);
-					screen.render(xo - 4, yo + 8, 4 + 2 * 32, 3, 3);
+					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
+					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.render(screen, xo - 4, yo + 4, 1);
+						screen.render(xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
-					screen.render(xo + 8 + 4, yo, 4 + 2 * 32, 0, 3);
-					screen.render(xo + 8 + 4, yo + 8, 4 + 2 * 32, 2, 3);
+					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
+					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
+						screen.render(xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
-					screen.render(xo + 0, yo + 8 + 4, 3 + 2 * 32, 2, 3);
-					screen.render(xo + 8, yo + 8 + 4, 3 + 2 * 32, 3, 3);
+					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
+					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+						screen.render(xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case NONE:
@@ -844,16 +850,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, fishingLevel + 11 * 32, 1);
+					screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, fishingLevel + 11 * 32, 1);
+					screen.render(xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, fishingLevel + 11 * 32, 0);
+					screen.render(xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, fishingLevel + 11 * 32, 0);
+					screen.render(xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
 					break;
 				case NONE:
 					break;
@@ -882,7 +888,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (picked == total) {
-			Sound.pickup.play();
+			Sound.play("pickup");
 
 			itemEntity.remove();
 			addScore(1);
@@ -997,7 +1003,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem != null) dc.getInventory().add(activeItem);
 		if (curArmor != null) dc.getInventory().add(curArmor);
 
-		Sound.playerDeath.play();
+		Sound.play("death");
 
 		// Add the death chest to the world.
 		World.levels[Game.currentLevel].add(dc);
@@ -1053,7 +1059,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
-		Sound.playerHurt.play();
+		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
 	}
 
@@ -1075,7 +1081,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
-		Sound.playerHurt.play();
+		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
 	}
 

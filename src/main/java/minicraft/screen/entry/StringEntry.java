@@ -15,6 +15,7 @@ public class StringEntry extends ListEntry {
 
 	private String text;
 	private int color;
+	private boolean localize;
 
 	/**
 	 *
@@ -41,12 +42,13 @@ public class StringEntry extends ListEntry {
 	public StringEntry(String text, int color) { this(text, color, true); } // This should be always true with the new localization IDs
 	public StringEntry(String text, int color, boolean localize) {
 		setSelectable(false);
-		this.text = localize? Localization.getLocalized(text): text;
+		this.text = text;
+		this.localize = localize;
 		this.color = color;
 	}
 
 	public void setText(String text) {
-		this.text = Localization.getLocalized(text);
+		this.text = text;
 	}
 
 	@Override
@@ -56,5 +58,5 @@ public class StringEntry extends ListEntry {
 	public int getColor(boolean isSelected) { return color; }
 
 	@Override
-	public String toString() { return text; }
+	public String toString() { return localize? Localization.getLocalized(text): text; }
 }

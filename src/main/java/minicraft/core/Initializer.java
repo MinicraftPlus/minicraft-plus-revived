@@ -16,7 +16,7 @@ import minicraft.core.io.FileHandler;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 
-import org.tinylog.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.provider.ProviderRegistry;
 
 public class Initializer extends Game {
@@ -32,11 +32,12 @@ public class Initializer extends Game {
 
 	static void parseArgs(String[] args) {
 		// Parses command line arguments
-		String saveDir = FileHandler.getSystemGameDir();
+		@Nullable
+		String saveDir = null;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("--debug")) {
 				debug = true;
-			} else if (args[i].equalsIgnoreCase("--savedir") && i+1 < args.length) {
+			} else if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
 				i++;
 				saveDir = args[i];
 			} else if (args[i].equalsIgnoreCase("--fullscreen")) {
@@ -55,8 +56,6 @@ public class Initializer extends Game {
 
 		FileHandler.determineGameDir(saveDir);
 	}
-
-
 
 	/** This is the main loop that runs the game. It:
 	 *	-keeps track of the amount of time that has passed

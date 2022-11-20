@@ -1,28 +1,25 @@
 package minicraft.util;
 
-import java.io.IOException;
-
-import minicraft.saveload.Load;
+import minicraft.item.BookItem;
 
 public class BookData {
 
-	public static final String about = loadBook("about");
-	public static final String credits = loadBook("credits");
-	public static final String instructions = loadBook("instructions");
-	public static final String antVenomBook = loadBook("antidous");
-	public static final String storylineGuide = loadBook("story_guide");
-	
-	private static String loadBook(String bookTitle) {
-		String book;
-		try {
-			book = String.join("\n", Load.loadFile("/resources/books/" + bookTitle + ".txt"));
-			book = book.replaceAll("\\\\0", "\0");
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			book = "";
-		}
-		
-		return book;
+	public static BookItem.BookContent about;
+	public static BookItem.BookContent credits;
+	public static BookItem.BookContent instructions;
+	public static BookItem.BookContent antVenomBook;
+	public static BookItem.BookContent storylineGuide;
+
+	public static void resetBooks() {
+		about = null;
+		credits = null;
+		instructions = null;
+		antVenomBook = null;
+		storylineGuide = null;
+	}
+
+	public static String loadBook(String content) {
+		return content.replaceAll("\\\\0", "\0");
 	}
 
 	public static void saveBook(String bookTitle) {
