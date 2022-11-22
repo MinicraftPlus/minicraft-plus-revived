@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
@@ -103,12 +104,12 @@ public class CraftingDisplay extends Display {
 			refreshData();
 		}
 
-		if (input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
+		if (input.getKey("menu").clicked || input.buttonPressed(ControllerButton.X) || (isPersonalCrafter && (input.getKey("craft").clicked || input.buttonPressed(ControllerButton.Y)))) {
 			Game.exitDisplay();
 			return;
 		}
 
-		if ((input.getKey("select").clicked || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
+		if ((input.getKey("select").clicked || input.buttonPressed(ControllerButton.A) || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
 			// check the selected recipe
 			if (recipes.length == 0) return;
 			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];

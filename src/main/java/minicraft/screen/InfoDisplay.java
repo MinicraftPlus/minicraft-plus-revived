@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
@@ -28,7 +29,7 @@ public class InfoDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("select").clicked || input.getKey("exit").clicked)
+		if (input.getKey("select").clicked || input.buttonPressed(ControllerButton.A) || input.getKey("exit").clicked || input.buttonPressed(ControllerButton.B))
 			Game.exitDisplay();
 	}
 

@@ -1,6 +1,11 @@
 package minicraft.core.io;
 
+import com.studiohartman.jamepad.ControllerButton;
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 import minicraft.core.Game;
+import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -42,6 +47,9 @@ public class InputHandler implements KeyListener {
 	public String keyToChange = null; // This is used when listening to change key bindings.
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
+
+	private ControllerManager controllerManager = new ControllerManager();
+	private ControllerIndex controllerIndex;
 
 	public String getChangedKey() {
 		String key = keyChanged + ";" + keymap.get(keyChanged);
@@ -86,6 +94,15 @@ public class InputHandler implements KeyListener {
 		keyboard.put("SHIFT", new Key(true));
 		keyboard.put("CTRL", new Key(true));
 		keyboard.put("ALT", new Key(true));
+
+		controllerManager.initSDLGamepad();
+		controllerIndex = controllerManager.getControllerIndex(0);
+		controllerManager.update();
+		try {
+			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
+		} catch (ControllerUnpluggedException e) {
+			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
+		}
 	}
 	public InputHandler(Component inputSource) {
 		this();
@@ -426,5 +443,21 @@ public class InputHandler implements KeyListener {
 		}
 
 		return typing;
+	}
+
+	public boolean buttonPressed(ControllerButton button) {
+		try {
+			return controllerIndex.isButtonJustPressed(button);
+		} catch (ControllerUnpluggedException e) {
+			return false;
+		}
+	}
+
+	public boolean buttonDown(ControllerButton button) {
+		try {
+			return controllerIndex.isButtonPressed(button);
+		} catch (ControllerUnpluggedException e){
+			return false;
+		}
 	}
 }

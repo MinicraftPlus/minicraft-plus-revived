@@ -19,6 +19,8 @@ mainClassName = 'minicraft.core.Game'
 
 repositories {
     mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -27,6 +29,11 @@ dependencies {
     implementation 'com.konghq:unirest-java:3.13.10'
     implementation 'org.tinylog:tinylog-api:2.4.1'
     implementation 'org.tinylog:tinylog-impl:2.4.1'
+    implementation 'com.badlogicgames.gdx:gdx:1.11.0'
+    implementation 'com.badlogicgames.gdx:gdx-box2d:1.11.0'
+    implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
+    implementation 'uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.4'
+    implementation 'com.github.WilliamAHartman:Jamepad:1.4.0'
 }
 
 java {
