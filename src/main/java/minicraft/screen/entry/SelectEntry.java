@@ -1,5 +1,6 @@
 package minicraft.screen.entry;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -36,7 +37,7 @@ public class SelectEntry extends ListEntry {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("select").clicked && onSelect != null) {
+		if ((input.getKey("select").clicked || input.buttonPressed(ControllerButton.A)) && onSelect != null) {
 			Sound.play("confirm");
 			onSelect.act();
 		}

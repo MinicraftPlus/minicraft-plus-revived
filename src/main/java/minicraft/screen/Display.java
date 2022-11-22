@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
@@ -43,7 +44,7 @@ public class Display {
 
 	public void tick(InputHandler input) {
 
-		if (canExit && input.getKey("exit").clicked) {
+		if (canExit && (input.getKey("exit").clicked || input.buttonPressed(ControllerButton.B))) {
 			Game.exitDisplay();
 			return;
 		}

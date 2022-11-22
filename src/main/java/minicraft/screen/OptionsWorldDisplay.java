@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -50,11 +51,11 @@ public class OptionsWorldDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		if (confirmOff) {
-			if (input.getKey("exit").clicked) {
+			if (input.getKey("exit").clicked || input.buttonPressed(ControllerButton.B)) {
 				confirmOff = false;
 				menus[1].shouldRender = false;
 				selection = 0;
-			} else if (input.getKey("select").clicked) {
+			} else if (input.getKey("select").clicked || input.buttonPressed(ControllerButton.A)) {
 				confirmOff = false;
 				QuestsDisplay.tutorialOff();
 

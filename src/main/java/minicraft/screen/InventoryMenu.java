@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
@@ -30,9 +31,9 @@ class InventoryMenu extends ItemListMenu {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		boolean dropOne = input.getKey("drop-one").clicked;
+		boolean dropOne = input.getKey("drop-one").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER);
 
-		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
+		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked || input.buttonPressed(ControllerButton.RIGHTSTICK))) {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
 			Item invItem = entry.getItem();

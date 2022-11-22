@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.ItemHolder;
@@ -46,7 +47,7 @@ public class ContainerDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if(input.getKey("menu").clicked || chest.isRemoved()) {
+		if(input.getKey("menu").clicked || input.buttonPressed(ControllerButton.X) || chest.isRemoved()) {
 			Game.setDisplay(null);
 			return;
 		}
@@ -54,7 +55,7 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
+		if(input.getKey("attack").clicked || input.buttonPressed(ControllerButton.A) || input.getKey("shift-enter").clicked) {
 			if (curMenu.getEntries().length == 0) return;
 			// switch inventories
 			Inventory from, to;

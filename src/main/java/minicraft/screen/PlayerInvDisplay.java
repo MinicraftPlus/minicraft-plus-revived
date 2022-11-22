@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -47,7 +48,7 @@ public class PlayerInvDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if(input.getKey("menu").clicked) {
+		if(input.getKey("menu").clicked || input.buttonPressed(ControllerButton.X)) {
 			Game.exitDisplay();
 			return;
 		}
@@ -60,7 +61,7 @@ public class PlayerInvDisplay extends Display {
 
 			Inventory from, to;
 			if (selection == 0) {
-				if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
+				if ((input.getKey("attack").clicked || input.buttonPressed(ControllerButton.A)) && menus[0].getNumOptions() > 0) {
 					player.activeItem = player.getInventory().remove(menus[0].getSelection());
 					Game.exitDisplay();
 					return;
@@ -97,7 +98,7 @@ public class PlayerInvDisplay extends Display {
 				Item fromItem = from.get(fromSel);
 
 				boolean transferAll;
-				if (input.getKey("attack").clicked) { // If stack limit is available, this can transfer whole stack
+				if (input.getKey("attack").clicked || input.buttonPressed(ControllerButton.A)) { // If stack limit is available, this can transfer whole stack
 					transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 				} else return;
 
@@ -112,7 +113,7 @@ public class PlayerInvDisplay extends Display {
 			}
 
 		} else {
-			if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
+			if ((input.getKey("attack").clicked || input.buttonPressed(ControllerButton.A)) && menus[0].getNumOptions() > 0) {
 				player.activeItem = player.getInventory().remove(menus[0].getSelection());
 				Game.exitDisplay();
 			}

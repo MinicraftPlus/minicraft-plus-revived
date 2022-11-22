@@ -1,65 +1,35 @@
 package minicraft.entity.mob;
 
-import java.util.HashMap;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.Arrow;
-import minicraft.entity.ClientTickable;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.ItemHolder;
+import minicraft.entity.*;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
-import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.*;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.ArmorItem;
-import minicraft.item.FishingData;
-import minicraft.item.FishingRodItem;
-import minicraft.item.FurnitureItem;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.Recipes;
-import minicraft.item.StackableItem;
-import minicraft.item.TileItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
+import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
-import minicraft.screen.AchievementsDisplay;
-import minicraft.screen.CraftingDisplay;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PauseDisplay;
-import minicraft.screen.PlayerInvDisplay;
-import minicraft.screen.SkinDisplay;
-import minicraft.screen.WorldSelectDisplay;
+import minicraft.screen.*;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
@@ -255,20 +225,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+		if (input.getKey("potionEffects").down && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
 		}
 
-		if (input.getKey("simpPotionEffects").clicked) {
+		if (input.getKey("simpPotionEffects").down) {
 			simpPotionEffects = !simpPotionEffects;
 		}
 
-		if (input.getKey("toggleHUD").clicked) {
+		if (input.getKey("toggleHUD").down) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.getKey("expandQuestDisplay").clicked) {
+		if (input.getKey("expandQuestDisplay").down) {
 			questExpanding = 30;
 		}
 
@@ -396,10 +366,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
 				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
-				if (input.getKey("move-up").down) vec.y--;
-				if (input.getKey("move-down").down) vec.y++;
-				if (input.getKey("move-left").down) vec.x--;
-				if (input.getKey("move-right").down) vec.x++;
+				if (input.getKey("move-up").down || input.buttonDown(ControllerButton.DPAD_UP)) vec.y--;
+				if (input.getKey("move-down").down || input.buttonDown(ControllerButton.DPAD_DOWN)) vec.y++;
+				if (input.getKey("move-left").down || input.buttonDown(ControllerButton.DPAD_LEFT)) vec.x--;
+				if (input.getKey("move-right").down || input.buttonDown(ControllerButton.DPAD_RIGHT)) vec.x++;
 
 
 			}
@@ -424,10 +394,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+			if (activeItem != null && (input.getKey("drop-one").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER) || input.getKey("drop-stack").clicked) || input.buttonPressed(ControllerButton.RIGHTSTICK)) {
 				Item drop = activeItem.clone();
 
-				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if ((input.getKey("drop-one").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER)) && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -438,14 +408,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.buttonPressed(ControllerButton.A)) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.getKey("menu").clicked && activeItem != null) {
+			if ((input.getKey("menu").clicked || input.buttonPressed(ControllerButton.X)) && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -463,11 +433,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if ((input.getKey("menu").clicked || input.buttonPressed(ControllerButton.X)) && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.getKey("pause").clicked)
+				if (input.getKey("pause").clicked || input.buttonPressed(ControllerButton.START))
 					Game.setDisplay(new PauseDisplay());
-				if (input.getKey("craft").clicked && !use())
+				if ((input.getKey("craft").clicked || input.buttonPressed(ControllerButton.Y)) && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.getKey("info").down) Game.setDisplay(new InfoDisplay());
@@ -484,7 +454,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending)) {
+				if ((input.getKey("pickup").clicked || input.buttonPressed(ControllerButton.LEFTBUMPER)) && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
@@ -799,12 +769,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Renders indicator for what tile the item will be placed on
-		if (activeItem instanceof TileItem && !isSwimming()) {
+		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
-			screen.render(t.x * 16, t.y * 16, 3, 2, 0, hudSheet.getSheet());
-			screen.render(t.x * 16 + 8, t.y * 16, 3, 2, 1, hudSheet.getSheet());
-			screen.render(t.x * 16, t.y * 16 + 8, 3, 2, 2, hudSheet.getSheet());
-			screen.render(t.x * 16 + 8, t.y * 16 + 8, 3, 2, 3, hudSheet.getSheet());
+
+			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3, 2, 0, hudSheet.getSheet());
 		}
 
 		// Makes the player white if they have just gotten hurt
@@ -1123,21 +1091,4 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public String getDebugHunger() { return hungerStamCnt + "_" + stamHungerTicks; }
-
-	/**
-	 * Trying to add item(s) to the player inventory.
-	 * If no more item(s) can be added to the inventory, drop the item(s) near the player.
-	 */
-	public void tryAddToInvOrDrop(@Nullable Item item) {
-		if (item != null) {
-			int returned = inventory.add(0, item);
-			if (item instanceof StackableItem) {
-				if (((StackableItem)item).count > 0) {
-					getLevel().dropItem(x, y, item);
-				}
-			} else if (returned == 0) {
-				getLevel().dropItem(x, y, item);
-			}
-		}
-	}
 }
