@@ -104,8 +104,8 @@ public class ArrayEntry<T> extends ListEntry {
 		int prevSel = selection;
 		int selection = this.selection;
 
-		if(input.getKey("cursor-left").clicked || input.buttonPressed(ControllerButton.DPAD_LEFT)) selection--;
-		if(input.getKey("cursor-right").clicked || input.buttonPressed(ControllerButton.DPAD_RIGHT)) selection++;
+		if(input.inputPressed("cursor-left")) selection--;
+		if(input.inputPressed("cursor-right")) selection++;
 
 		if(prevSel != selection) {
 			Sound.play("select");
