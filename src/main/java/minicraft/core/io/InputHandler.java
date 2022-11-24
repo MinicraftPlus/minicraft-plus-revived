@@ -84,6 +84,8 @@ public class InputHandler implements KeyListener {
 	private String lastKeyTyped = ""; // Used for things like typing world names.
 	private String keyTypedBuffer = ""; // Used to store the last key typed before putting it into the main var during tick().
 
+	private final LastInputActivityListener lastInputActivityListener = new LastInputActivityListener();
+
 	public InputHandler() {
 		keymap = new LinkedHashMap<>(); // Stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); // Stores physical keyboard keys; auto-generated :D
@@ -103,6 +105,8 @@ public class InputHandler implements KeyListener {
 		} catch (ControllerUnpluggedException e) {
 			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
 		}
+
+		lastInputActivityListener.start();
 	}
 	public InputHandler(Component inputSource) {
 		this();
@@ -266,6 +270,11 @@ public class InputHandler implements KeyListener {
 	/** Simply returns the mapped value of key in keymap. */
 	public String getMapping(String actionKey) {
 		actionKey = actionKey.toUpperCase();
+		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp) {
+			if (buttonMap.containsKey(actionKey))
+				return buttonMap.get(actionKey).toString().replace("_", "-");
+		}
+
 		if (keymap.containsKey(actionKey))
 			return keymap.get(actionKey).replace("|", "/");
 
@@ -487,11 +496,46 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
+	public ArrayList<ControllerButton> getAllPressedButtons() {
+		ArrayList<ControllerButton> btnList = new ArrayList<>();
+		for (ControllerButton btn : ControllerButton.values()) {
+			try {
+				if (controllerIndex.isButtonPressed(btn))
+					btnList.add(btn);
+			} catch (ControllerUnpluggedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		return btnList;
+	}
+
 	public boolean inputPressed(String mapping) {
 		return getKey(mapping).clicked || (buttonMap.containsKey(mapping) && buttonPressed(buttonMap.get(mapping)));
 	}
 
 	public boolean inputDown(String mapping) {
 		return getKey(mapping).down || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
+	}
+
+	private class LastInputActivityListener extends Thread {
+		public long lastKeyActivityTimestamp = 0;
+		public long lastButtonActivityTimestamp = 0;
+
+		public LastInputActivityListener() {
+			super("LastInputActivityListener");
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				if (getAllPressedKeys().size() > 0)
+					lastKeyActivityTimestamp = System.currentTimeMillis();
+				if (getAllPressedButtons().size() > 0)
+					lastButtonActivityTimestamp = System.currentTimeMillis();
+				if (isInterrupted())
+					return;
+			}
+		}
 	}
 }
