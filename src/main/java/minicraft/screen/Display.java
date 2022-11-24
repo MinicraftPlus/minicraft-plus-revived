@@ -44,7 +44,7 @@ public class Display {
 
 	public void tick(InputHandler input) {
 
-		if (canExit && (input.getKey("exit").clicked || input.buttonPressed(ControllerButton.B))) {
+		if (canExit && input.inputPressed("exit")) {
 			Game.exitDisplay();
 			return;
 		}

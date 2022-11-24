@@ -48,7 +48,7 @@ public class InputHandler implements KeyListener {
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
 
-	private ControllerManager controllerManager = new ControllerManager();
+	private ControllerManager controllerManager = new ControllerManager(1);
 	private ControllerIndex controllerIndex;
 
 	public String getChangedKey() {
@@ -152,6 +152,32 @@ public class InputHandler implements KeyListener {
 		keymap.put("INFO", "SHIFT-I"); // Toggle player stats display
 
 		keymap.put("FULLSCREEN", "F11");
+	}
+
+	private final HashMap<String, ControllerButton> buttonMap = new HashMap<>();
+	private void initButtonMap() {
+		buttonMap.put("MOVE-UP", ControllerButton.DPAD_UP);
+		buttonMap.put("MOVE-DOWN", ControllerButton.DPAD_DOWN);
+		buttonMap.put("MOVE-LEFT", ControllerButton.DPAD_LEFT);
+		buttonMap.put("MOVE-RIGHT", ControllerButton.DPAD_RIGHT);
+
+		buttonMap.put("CURSOR-UP", ControllerButton.DPAD_UP);
+		buttonMap.put("CURSOR-DOWN", ControllerButton.DPAD_DOWN);
+		buttonMap.put("CURSOR-LEFT", ControllerButton.DPAD_LEFT);
+		buttonMap.put("CURSOR-RIGHT", ControllerButton.DPAD_RIGHT);
+
+		buttonMap.put("SELECT", ControllerButton.A);
+		buttonMap.put("EXIT", ControllerButton.B);
+
+		buttonMap.put("ATTACK", ControllerButton.A);
+		buttonMap.put("MENU", ControllerButton.X);
+		buttonMap.put("CRAFT", ControllerButton.Y);
+		buttonMap.put("PICKUP", ControllerButton.LEFTBUMPER);
+
+		buttonMap.put("PAUSE", ControllerButton.START);
+
+		buttonMap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
+		buttonMap.put("DROP-STACK", ControllerButton.RIGHTSTICK);
 	}
 
 	public void resetKeyBindings() {
@@ -459,5 +485,13 @@ public class InputHandler implements KeyListener {
 		} catch (ControllerUnpluggedException e){
 			return false;
 		}
+	}
+
+	public boolean inputPressed(String mapping) {
+		return getKey(mapping).clicked || (buttonMap.containsKey(mapping) && buttonPressed(buttonMap.get(mapping)));
+	}
+
+	public boolean inputDown(String mapping) {
+		return getKey(mapping).down || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
 	}
 }

@@ -85,8 +85,8 @@ public class BookDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.buttonPressed(ControllerButton.X) || input.getKey("exit").clicked || input.buttonPressed(ControllerButton.B)) Game.exitDisplay(); // Close the menu.
-		if (input.getKey("cursor-left").clicked || input.buttonPressed(ControllerButton.DPAD_LEFT)) turnPage(-1); // This is what turns the page back
-		if (input.getKey("cursor-right").clicked || input.buttonPressed(ControllerButton.DPAD_RIGHT)) turnPage(1); // This is what turns the page forward
+		if (input.inputPressed("menu") || input.inputPressed("exit")) Game.exitDisplay(); // Close the menu.
+		if (input.inputPressed("cursor-left")) turnPage(-1); // This is what turns the page back
+		if (input.inputPressed("cursor-right")) turnPage(1); // This is what turns the page forward
 	}
 }

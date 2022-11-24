@@ -237,7 +237,7 @@ public class QuestsDisplay extends Display {
 						@Override
 						public void tick(InputHandler input) {
 							super.tick(input);
-							if (input.getKey("select").clicked || input.buttonPressed(ControllerButton.A)) {
+							if (input.inputPressed("select")) {
 								skipSeries(series);
 								display.reloadEntries();
 								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
@@ -553,12 +553,12 @@ public class QuestsDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("cursor-left").clicked || input.buttonPressed(ControllerButton.DPAD_LEFT)) if (selectedEntry > 0) {
+		if (input.inputPressed("cursor-left")) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.getKey("cursor-right").clicked || input.buttonPressed(ControllerButton.DPAD_RIGHT)) if (selectedEntry < 1) {
+		if (input.inputPressed("cursor-right")) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}

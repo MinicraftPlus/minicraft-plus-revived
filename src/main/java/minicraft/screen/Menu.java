@@ -158,8 +158,8 @@ public class Menu {
 		if(!selectable || entries.size() == 0) return;
 
 		int prevSel = selection;
-		if (input.getKey("cursor-up").clicked || input.buttonPressed(ControllerButton.DPAD_UP)) selection--;
-		if (input.getKey("cursor-down").clicked || input.buttonPressed(ControllerButton.DPAD_DOWN)) selection++;
+		if (input.inputPressed("cursor-up")) selection--;
+		if (input.inputPressed("cursor-down")) selection++;
 		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
 		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
 		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;

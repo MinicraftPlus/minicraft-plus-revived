@@ -29,7 +29,7 @@ public class InfoDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("select").clicked || input.buttonPressed(ControllerButton.A) || input.getKey("exit").clicked || input.buttonPressed(ControllerButton.B))
+		if (input.inputPressed("select") || input.inputPressed("exit"))
 			Game.exitDisplay();
 	}
 
