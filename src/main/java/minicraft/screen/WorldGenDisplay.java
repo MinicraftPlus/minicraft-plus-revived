@@ -1,7 +1,9 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.FileHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
@@ -164,7 +166,7 @@ public class WorldGenDisplay extends Display {
 			public boolean isValid() { return true; }
 		};
 
-		menus = new Menu[] {
+		Menu mainMenu =
 			new Menu.Builder(false, 10, RelPos.LEFT,
 				nameField,
 				nameHelp,
@@ -192,7 +194,55 @@ public class WorldGenDisplay extends Display {
 				.setDisplayLength(5)
 				.setScrollPolicies(0.8f, false)
 				.setTitle("minicraft.displays.world_gen.title")
-				.createMenu()
-		};
+				.createMenu();
+
+		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
+		if (onScreenKeyboardMenu == null)
+			menus = new Menu[] { mainMenu };
+		else
+			menus = new Menu[] { onScreenKeyboardMenu, mainMenu };
+	}
+
+	OnScreenKeyboardMenu onScreenKeyboardMenu;
+
+	@Override
+	public void tick(InputHandler input) {
+		boolean acted = false; // Checks if typing action is needed to be handled.
+		boolean takeExitHandle = true;
+		if (onScreenKeyboardMenu == null)
+			super.tick(input);
+		else {
+			try {
+				onScreenKeyboardMenu.tick(input);
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted e) {
+				acted = true;
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+				takeExitHandle = false;
+				acted = true;
+			}
+
+			if (takeExitHandle && input.inputPressed("exit")) {
+				Game.exitDisplay();
+				return;
+			}
+		}
+
+		// Handling the on-screen keyboard.
+		if (menus.length > 1) {
+			if (menus[1].getSelection() == 0) {
+				if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
+					onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
+					if (!onScreenKeyboardMenu.isVisible())
+						selection = 1;
+					else
+						selection = 0;
+				}
+
+				if (!acted) menus[1].tick(input); // Process the tick of the main menu.
+			} else if (selection == 0) {
+				onScreenKeyboardMenu.setVisible(false);
+				selection = 1;
+			}
+		}
 	}
 }
