@@ -1,8 +1,11 @@
-# Minicraft+ Version ChangeLog
+# Minicraft+ Version 2 Changelog
 
-## 2.2
+This changelog is related to all the Minicraft+ versions.
+All notable changes to this project will be documented in this file.
 
-### 2.2(.0)
+## [2.2]
+
+### [2.2.0]
 
 #### Additions
 
@@ -33,9 +36,9 @@
 
 * Fixed seed random problem
 
-## 2.1
+## [2.1]
 
-### 2.1.3
+### [2.1.3]
 
 #### Removals
 
@@ -45,20 +48,20 @@
 
 * Fixed localization not being loaded on first launch
 
-### 2.1.2
+### [2.1.2]
 
 #### Fixes
 
 * Fixed a critical game crashing cause by loading worlds
 
-### 2.1.1
+### [2.1.1]
 
 #### Fixes
 
 * Fixed air wizard spawner
 * Fixed player spawning outside the map
 
-### 2.1(.0)
+### [2.1.0]
 
 #### Additions
 
@@ -111,7 +114,7 @@
 >
 > ---------------------------------------------------------------------------------------
 
-## 2.0.7
+## [2.0.7]
 
 ### Additions
 
@@ -151,7 +154,7 @@
 
 * Fixed sound not playing on certain actions
 
-## 2.0.6
+## [2.0.6]
 
 ### Additions
 
@@ -182,7 +185,7 @@
 * Fixed the creeper's explosion to only hurt mobs if it actually explodes
 * Menus that don't have frames don't render the title background
 
-## 2.0.5
+## [2.0.5]
 
 ### Additions
 
@@ -215,7 +218,7 @@
 * Fixed bug where creative player couldn't break a tile
 * Fixed item data in chests
 
-## 2.0.4
+## [2.0.4]
 
 ### Additions
 
@@ -247,7 +250,7 @@
 * Fixed a long-standing bug that mainly affected dungeon chests and airwizards not appearing when they should, as well as mob spawner dungeons
 * Fixed score mode in multiplayer
 
-## 2.0.3
+## [2.0.3]
 
 ### Additions
 
@@ -273,7 +276,7 @@
 * Fixed issues with the pickup control in single player and multiplayer
 * Fixed multiplayer client saving with the account system.
 
-## 2.0.2
+## [2.0.2]
 
 ### Additions
 
@@ -304,7 +307,7 @@
 * Patched possible duplicate usernames glitch
 * Fixed unlocked score mode times not appearing until you restarted the game; you shouldn't have to restart it now.
 
-## 2.0.1
+## [2.0.1]
 
 ### Additions
 
@@ -330,7 +333,7 @@
 
 * Ensured that most all the normal world features work in multiplayer. However, I have not been able to do much testing with Client Player saves, so that might not work very well. Everything else should work, though; but the connection lag between computers may cause some wierd effects. Fixing this lag is my next goal.
 
-## 2.0.0
+## [2.0.0]
 
 ### Additions
 
@@ -339,103 +342,23 @@
 
 ### Changes
 
-> *** mostly, just lots and lots of important bug fixes, such as:
 * You disappear from the level when you get in bed, as you should
 * you can now see the edges of the level
 * crafting furniture no longer disappears upon loading a pre-existing world
 * Stackable item count decreases as it should
 
----------------------------------------------------------
-
-# Minicraft+ version 1 ChangeLog (Old)
-
-## 1.9.4
-
-* Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
-+ Daylight now increases and decreases more smoothly; steadily goes from dark to light in the morning, and light to dark in the evening.
-
-+ Added Instant Health Potion! Instantly refills up to 5 hearts.
-* changed death chest expire times; easy:30min, norm:10min, hard:2min
-* Sped up sleeping game speed.
-- Prevented Airwizard from being removed during daily entity clear.
-* Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
-+ Added missingTexture sprite.
-* Changed the name of a couple items (was abbreviated).
-+ Wool slows down all mobs except you.
-+ Added some more help messages when trying do things that you might not know you can't do yet. (destroying hardrock, obsidian stair on lava level).
-+ Imposed a limit to the number of mobs that can spawn on a level, dependent on the level and the game difficulty.
-
-+ Added small tweak for creative mode: empty buckets will remain empty, so you can empty the ocean as much as you like. Full buckets remain full, as well.
-+ Additional creative mode tweak: "attacking" mob spawner with hand changes the level of mob it spawns. Also, you can pick up spawners in creative mode.
-+ Creative mode inventory remains full.
-
-+ Key controls displayed on (hopefully) all menus will always be correct. ;)
-* Revised some key binding details to hopefully prevent inability to select anything. Also, added feature to reset all key bindings to default.
-
-+ You can now copy world saves.
-+ Added another confirm dialog before deleting worlds.
-+ Player score shown on-screen in score mode. TIP: as you probably don't know... you can unlock new time limits for score mode. unlock 10min by getting 1000 points in a 20min game, and unlock 2Hour by getting 100,000 points in a 1Hour game. (Hint: defeating the AirWizard gives you 100,000 points...)
-
-## 1.9.3
-
-+ added command line argument to change the save directory of the world files.
-* revised input system to (hopefully) work on any language keyboard/computer.
-+ added back feature where mobs stay away during the first night.
-* Reduced world load time from 2 seconds to about half a second, for me). It used to generate new levels needlessly, but now it doesn't.
-+ Loading has a progress bar. Though honestly, it doesn't need one.
-
-
-## 1.9.2
-
-* HUGE renovations to the code; might not see many changes to functionality, but entirely new bugs are bound to crop up...
-* renovated entities
-* renovated menus, a bit
-+ added Key Binding Menu, finally! You can now customize key controls, and save them. Accessible from the title screen, and the pause menu.
-+ added spanish keyboard(/computer?) support... for the enter (and backspace) key... but that's all you need to access and change the key binding menu.
-+ Key bindings, sound, and autosave options are loaded on startup, in a special file that applies to all saves; like beating the second airwizard.
-+ world difficulty is saved for each world
-
-
-## 1.9.1
-
-= Armor now functions as a damage buffer rather than extra hearts; you take damage after only a certain number of damage points accumulate.
-+ Armor lasts longer.
-= Rate of hunger bar healing health depends on hunger; still happens when less than full health.
-- removed player's restriction on movement while being hurt
-+ Added version number to save file
-+ Hunger bar now decreases in a better way (in my opinion)
-// fixed all the bugs I could find!
-
-
-## 1.9
-
-=Everything reimplemented
-=stuff works
-+Game window is resizable
-+more entries in debug display
-+added debug features
-+key preferences... well, kinda. You can't really change them...
-+airwizard suit status and key prefs saved with game file
-+modifier keys supported (shift, alt, ctrl)
-+added obsidian brick and door to creative inventory
-
-
-## 1.8
-> Noteable additions
-* Spawners & underground mini-dungeons
-* Airwizard's health appears above his head
-* Added colored clothes to change the player's outfit. They are craftable in the loom, or dropped rarely by zombies.
-* You can set the timer for score mode: 20m (default), 30m, 40m, or 1h
-* you can unlock new score mode times with high enough scores: 10 min and 2 hours.
-* "Airwizard II" boss shows up on the surface after you unlock all the locked chests
-* Once you defeat the Air Wizard, you can wear his costume by going into the settings menu. This suit allows the player to walk on air tiles.
-
-## 1.7
-> Noteable additions
-* Save/Load worlds
-* Updated pause menu
-* Potions
-* Added locked chests in purple dungeon.
-* Keys to open the chests are dropped by knights
-* A death chest will appear if you die, allowing you to retrieve your stuff.
-* Added an Iron Lantern at the entrance of the purple dungeon
+[2.2]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.3...HEAD
+[2.2.0]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.3...HEAD
+[2.1]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.7...v2.1.3
+[2.1.3]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.2...v2.1.3
+[2.1.2]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.0...v2.1.1
+[2.1.0]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.7...v2.1.0
+[2.0.7]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.6...v2.0.7
+[2.0.6]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.5...v2.0.6
+[2.0.5]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.4...v2.0.5
+[2.0.4]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.3...v2.0.4
+[2.0.3]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.2...v2.0.3
+[2.0.2]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v1.9.4...v2.0.0
