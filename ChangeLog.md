@@ -114,8 +114,6 @@ but some sections are changed to compliant this project.
 >
 > ---------------------------------------------------------------------------------------
 
-# Minicraft+ Older Version Changelog
-
 >     Minicraft+ version 2.0.7
 >
 >     + Added sheep shearing
