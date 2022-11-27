@@ -25,6 +25,7 @@ public class Screen {
 
 	public int[] pixels; // Pixels on the screen
 
+	// Outdated Information:
 	// Since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
 	// So 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// And 3072 the start of the gui sheet

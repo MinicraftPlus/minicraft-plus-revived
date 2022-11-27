@@ -49,7 +49,9 @@ public class InputHandler implements KeyListener {
 	private boolean overwrite = false;
 
 	private ControllerManager controllerManager = new ControllerManager(1);
-	private ControllerIndex controllerIndex;
+	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
+	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
+	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
 
 	public String getChangedKey() {
 		String key = keyChanged + ";" + keymap.get(keyChanged);
@@ -91,6 +93,11 @@ public class InputHandler implements KeyListener {
 		keyboard = new HashMap<>(); // Stores physical keyboard keys; auto-generated :D
 
 		initKeyMap(); // This is seperate so I can make a "restore defaults" option.
+		initButtonMap();
+		for (ControllerButton btn : ControllerButton.values()) {
+			controllerButtonBooleanMap.put(btn, false);
+			controllerButtonBooleanMapJust.put(btn, false);
+		}
 
 		// I'm not entirely sure if this is necessary... but it doesn't hurt.
 		keyboard.put("SHIFT", new Key(true));
@@ -158,6 +165,7 @@ public class InputHandler implements KeyListener {
 		keymap.put("FULLSCREEN", "F11");
 	}
 
+	// The button mapping should not be modifiable.
 	private final HashMap<String, ControllerButton> buttonMap = new HashMap<>();
 	private void initButtonMap() {
 		buttonMap.put("MOVE-UP", ControllerButton.DPAD_UP);
@@ -196,6 +204,19 @@ public class InputHandler implements KeyListener {
 		synchronized ("lock") {
 			for (Key key: keyboard.values())
 				key.tick(); // Call tick() for each key.
+		}
+
+		// Also update the controller button state.
+		for (ControllerButton btn : ControllerButton.values()) {
+			try {
+				controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
+			} catch (ControllerUnpluggedException e) {
+				controllerButtonBooleanMapJust.put(btn, false);
+			} try {
+				controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
+			} catch (ControllerUnpluggedException e) {
+				controllerButtonBooleanMap.put(btn, false);
+			}
 		}
 	}
 
@@ -376,9 +397,11 @@ public class InputHandler implements KeyListener {
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keyList = new ArrayList<>(keyboard.size());
 
-		for (Entry<String, Key> entry : keyboard.entrySet()) {
-			if (entry.getValue().down) {
-				keyList.add(entry.getKey());
+		synchronized ("lock") {
+			for (Entry<String, Key> entry : keyboard.entrySet()) {
+				if (entry.getValue().down) {
+					keyList.add(entry.getKey());
+				}
 			}
 		}
 
@@ -480,41 +503,35 @@ public class InputHandler implements KeyListener {
 		return typing;
 	}
 
+	public boolean anyControllerConnected() {
+		return controllerManager.getNumControllers() > 0;
+	}
+
 	public boolean buttonPressed(ControllerButton button) {
-		try {
-			return controllerIndex.isButtonJustPressed(button);
-		} catch (ControllerUnpluggedException e) {
-			return false;
-		}
+		return controllerButtonBooleanMapJust.get(button);
 	}
 
 	public boolean buttonDown(ControllerButton button) {
-		try {
-			return controllerIndex.isButtonPressed(button);
-		} catch (ControllerUnpluggedException e){
-			return false;
-		}
+		return controllerButtonBooleanMap.get(button);
 	}
 
 	public ArrayList<ControllerButton> getAllPressedButtons() {
 		ArrayList<ControllerButton> btnList = new ArrayList<>();
 		for (ControllerButton btn : ControllerButton.values()) {
-			try {
-				if (controllerIndex.isButtonPressed(btn))
-					btnList.add(btn);
-			} catch (ControllerUnpluggedException e) {
-				throw new RuntimeException(e);
-			}
+			if (controllerButtonBooleanMap.get(btn))
+				btnList.add(btn);
 		}
 
 		return btnList;
 	}
 
 	public boolean inputPressed(String mapping) {
+		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
 		return getKey(mapping).clicked || (buttonMap.containsKey(mapping) && buttonPressed(buttonMap.get(mapping)));
 	}
 
 	public boolean inputDown(String mapping) {
+		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
 		return getKey(mapping).down || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
 	}
 
