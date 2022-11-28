@@ -284,8 +284,8 @@ public class OnScreenKeyboardMenu extends Menu {
 			final int defaultKeyWidth = 16;
 			int keyWidth = defaultKeyWidth;
 			int totalLength = (keys[r].length * keyWidth);
-			totalLength += keyWidth * 2 * Stream.of(keys[r]).filter(k -> k == spaceBar).count();
-			totalLength += keyWidth * Stream.of(keys[r]).filter(k -> k == shiftKey).count();
+			totalLength += keyWidth * 2 * (int) Stream.of(keys[r]).filter(k -> k == spaceBar).count();
+			totalLength += keyWidth * (int) Stream.of(keys[r]).filter(k -> k == shiftKey).count();
 			int xOffset = (Screen.w - totalLength) / 2;
 			int y = renderingTop + 2 + r * keyHeight;
 			int x = xOffset;
