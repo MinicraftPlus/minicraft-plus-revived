@@ -33,7 +33,7 @@ dependencies {
     implementation 'com.badlogicgames.gdx:gdx-box2d:1.11.0'
     implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
     implementation 'com.github.MinicraftPlus:sdl2gdx:1.0.0'
-    implementation 'com.github.WilliamAHartman:Jamepad:1.4.0'
+    implementation 'com.badlogicgames.jamepad:jamepad:2.0.20.0'
 }
 
 java {
