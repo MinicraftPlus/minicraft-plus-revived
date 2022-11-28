@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 public class InputHandler implements KeyListener {
 	/**
@@ -491,10 +492,34 @@ public class InputHandler implements KeyListener {
 		if (lastKeyTyped.length() > 0) {
 			String letter = lastKeyTyped;
 			lastKeyTyped = "";
-			if ( letter.matches(control) && (pattern == null || letter.matches(pattern)) )
+			if ( letter.matches(control) && (pattern == null || letter.matches(pattern)) || letter.equals("\b") )
 				typing += letter;
 		}
 
+		// Erasing characters by \b. Reference: https://stackoverflow.com/a/30174028
+		Stack<Character> stack = new Stack<>();
+
+		// for-each character in the string
+		for (int i = 0; i < typing.length(); i++) {
+			char c = typing.charAt(i);
+
+			// push if it's not a backspace
+			if (c != '\b') {
+				stack.push(c);
+				// else pop if possible
+			} else if (!stack.empty()) {
+				stack.pop();
+			}
+		}
+
+		// convert stack to string
+		StringBuilder builder = new StringBuilder(stack.size());
+
+		for (Character c : stack) {
+			builder.append(c);
+		}
+
+		typing = builder.toString();
 		if (getKey("backspace").clicked && typing.length() > 0) {
 			// Backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
 			typing = typing.substring(0, typing.length()-1);
@@ -533,6 +558,24 @@ public class InputHandler implements KeyListener {
 	public boolean inputDown(String mapping) {
 		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
 		return getKey(mapping).down || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
+	}
+
+	/**
+	 * Vibrate the controller using the new rumble API
+	 * This will return false if the controller doesn't support vibration or if SDL was unable to start
+	 * vibration (maybe the controller doesn't support left/right vibration, maybe it was unplugged in the
+	 * middle of trying, etc...)
+	 *
+	 * @param leftMagnitude The speed for the left motor to vibrate (this should be between 0 and 1)
+	 * @param rightMagnitude The speed for the right motor to vibrate (this should be between 0 and 1)
+	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
+	 */
+	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
+		try {
+			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+		} catch (ControllerUnpluggedException ignored) {
+			return false;
+		}
 	}
 
 	private class LastInputActivityListener extends Thread {

@@ -211,7 +211,7 @@ public class WorldGenDisplay extends Display {
 		boolean takeExitHandle = true;
 		if (onScreenKeyboardMenu == null)
 			super.tick(input);
-		else {
+		else { // Handling the on-screen keyboard.
 			try {
 				onScreenKeyboardMenu.tick(input);
 			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted e) {
@@ -225,10 +225,7 @@ public class WorldGenDisplay extends Display {
 				Game.exitDisplay();
 				return;
 			}
-		}
 
-		// Handling the on-screen keyboard.
-		if (menus.length > 1) {
 			if (menus[1].getSelection() == 0) {
 				if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
 					onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
@@ -242,6 +239,9 @@ public class WorldGenDisplay extends Display {
 			} else if (selection == 0) {
 				onScreenKeyboardMenu.setVisible(false);
 				selection = 1;
+				menus[1].tick(input);
+			} else {
+				menus[1].tick(input);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class OnScreenKeyboardMenu extends Menu {
 	private static final Builder builder = getBuilder();
@@ -44,17 +45,14 @@ public class OnScreenKeyboardMenu extends Menu {
 	}
 
 	public class VirtualKey {
-		public final InputHandler.Key key;
-		public final String output;
+		public final char output;
 
-		public VirtualKey(String out, InputHandler.Key key) {
-			this.key = key;
+		public VirtualKey(char out) {
 			this.output = out;
 		}
 
 		public void press() {
-			key.toggle(true);
-			Game.input.keyTyped(new KeyEvent(new Label(), 0, 0, 0, 0, output.charAt(0)));
+			Game.input.keyTyped(new KeyEvent(new Label(), KeyEvent.KEY_TYPED, System.currentTimeMillis(), KeyEvent.VK_UNDEFINED, 0, output));
 		}
 	}
 
@@ -63,7 +61,7 @@ public class OnScreenKeyboardMenu extends Menu {
 		private final Consumer<Boolean> stickyListener;
 
 		public StickyVirtualKey(Consumer<Boolean> stickyListener) {
-			super(null, null);
+			super('\0');
 			this.stickyListener = stickyListener;
 		}
 
@@ -90,92 +88,90 @@ public class OnScreenKeyboardMenu extends Menu {
 	private void initKeyboard() {
 		InputHandler input = Game.input;
 
-		spaceBar = new VirtualKey(" ", input.getKey(" "));
-		backspace = new VirtualKey("<", input.getKey("backspace"));
+		spaceBar = new VirtualKey(' ');
+		backspace = new VirtualKey('\b');
 		shiftKey = new StickyVirtualKey(this::setShiftPressed);
 
 		keysF = new VirtualKey[4][];
 		keysF[0] = new VirtualKey[10];
 		keysF[1] = new VirtualKey[10];
 		keysF[2] = new VirtualKey[9];
-		keysF[3] = new VirtualKey[5];
-		keysF[0][0] = new VirtualKey("Q", input.getKey("Q"));
-		keysF[0][1] = new VirtualKey("W", input.getKey("W"));
-		keysF[0][2] = new VirtualKey("E", input.getKey("E"));
-		keysF[0][3] = new VirtualKey("R", input.getKey("R"));
-		keysF[0][4] = new VirtualKey("T", input.getKey("T"));
-		keysF[0][5] = new VirtualKey("Y", input.getKey("Y"));
-		keysF[0][6] = new VirtualKey("U", input.getKey("U"));
-		keysF[0][7] = new VirtualKey("I", input.getKey("I"));
-		keysF[0][8] = new VirtualKey("O", input.getKey("O"));
-		keysF[0][9] = new VirtualKey("P", input.getKey("P"));
-		keysF[1][0] = new VirtualKey("A", input.getKey("A"));
-		keysF[1][1] = new VirtualKey("S", input.getKey("S"));
-		keysF[1][2] = new VirtualKey("D", input.getKey("D"));
-		keysF[1][3] = new VirtualKey("F", input.getKey("F"));
-		keysF[1][4] = new VirtualKey("G", input.getKey("G"));
-		keysF[1][5] = new VirtualKey("H", input.getKey("H"));
-		keysF[1][6] = new VirtualKey("J", input.getKey("J"));
-		keysF[1][7] = new VirtualKey("K", input.getKey("K"));
-		keysF[1][8] = new VirtualKey("L", input.getKey("L"));
+		keysF[3] = new VirtualKey[3];
+		keysF[0][0] = new VirtualKey('Q');
+		keysF[0][1] = new VirtualKey('W');
+		keysF[0][2] = new VirtualKey('E');
+		keysF[0][3] = new VirtualKey('R');
+		keysF[0][4] = new VirtualKey('T');
+		keysF[0][5] = new VirtualKey('Y');
+		keysF[0][6] = new VirtualKey('U');
+		keysF[0][7] = new VirtualKey('I');
+		keysF[0][8] = new VirtualKey('O');
+		keysF[0][9] = new VirtualKey('P');
+		keysF[1][0] = new VirtualKey('A');
+		keysF[1][1] = new VirtualKey('S');
+		keysF[1][2] = new VirtualKey('D');
+		keysF[1][3] = new VirtualKey('F');
+		keysF[1][4] = new VirtualKey('G');
+		keysF[1][5] = new VirtualKey('H');
+		keysF[1][6] = new VirtualKey('J');
+		keysF[1][7] = new VirtualKey('K');
+		keysF[1][8] = new VirtualKey('L');
 		keysF[1][9] = backspace;
 		keysF[2][0] = shiftKey;
-		keysF[2][1] = new VirtualKey("Z", input.getKey("Z"));
-		keysF[2][2] = new VirtualKey("X", input.getKey("X"));
-		keysF[2][3] = new VirtualKey("C", input.getKey("C"));
-		keysF[2][4] = new VirtualKey("V", input.getKey("V"));
-		keysF[2][5] = new VirtualKey("B", input.getKey("B"));
-		keysF[2][6] = new VirtualKey("N", input.getKey("N"));
-		keysF[2][7] = new VirtualKey("M", input.getKey("M"));
+		keysF[2][1] = new VirtualKey('Z');
+		keysF[2][2] = new VirtualKey('X');
+		keysF[2][3] = new VirtualKey('C');
+		keysF[2][4] = new VirtualKey('V');
+		keysF[2][5] = new VirtualKey('B');
+		keysF[2][6] = new VirtualKey('N');
+		keysF[2][7] = new VirtualKey('M');
 		keysF[2][8] = shiftKey;
-		keysF[3][0] = new VirtualKey("/", input.getKey("/"));
-		keysF[3][1] = new VirtualKey("?", input.getKey("?"));
+		keysF[3][0] = new VirtualKey('/');
+		keysF[3][1] = new VirtualKey('?');
 //		keysF[3][2] = new VirtualKey("`", input.getKey("`"));
 //		keysF[3][3] = new VirtualKey("~", input.getKey("~"));
 		keysF[3][2] = spaceBar;
-		keysF[3][3] = spaceBar;
-		keysF[3][4] = spaceBar;
 
 		keysB = new VirtualKey[4][10];
-		keysB[0][0] = new VirtualKey("1", input.getKey("1"));
-		keysB[0][1] = new VirtualKey("2", input.getKey("2"));
-		keysB[0][2] = new VirtualKey("3", input.getKey("3"));
-		keysB[0][3] = new VirtualKey("4", input.getKey("4"));
-		keysB[0][4] = new VirtualKey("5", input.getKey("5"));
-		keysB[0][5] = new VirtualKey("6", input.getKey("6"));
-		keysB[0][6] = new VirtualKey("7", input.getKey("7"));
-		keysB[0][7] = new VirtualKey("8", input.getKey("8"));
-		keysB[0][8] = new VirtualKey("9", input.getKey("9"));
-		keysB[0][9] = new VirtualKey("0", input.getKey("0"));
-		keysB[1][0] = new VirtualKey("!", input.getKey("!"));
-		keysB[1][1] = new VirtualKey("@", input.getKey("@"));
-		keysB[1][2] = new VirtualKey("#", input.getKey("#"));
-		keysB[1][3] = new VirtualKey("$", input.getKey("$"));
-		keysB[1][4] = new VirtualKey("%", input.getKey("%"));
-		keysB[1][5] = new VirtualKey("^", input.getKey("^"));
-		keysB[1][6] = new VirtualKey("&", input.getKey("&"));
-		keysB[1][7] = new VirtualKey("*", input.getKey("*"));
-		keysB[1][8] = new VirtualKey("(", input.getKey("("));
-		keysB[1][9] = new VirtualKey(")", input.getKey(")"));
-		keysB[2][0] = new VirtualKey("-", input.getKey("-"));
-		keysB[2][1] = new VirtualKey("=", input.getKey("="));
-		keysB[2][2] = new VirtualKey("_", input.getKey("_"));
-		keysB[2][3] = new VirtualKey("+", input.getKey("+"));
-		keysB[2][4] = new VirtualKey("[", input.getKey("["));
-		keysB[2][5] = new VirtualKey("]", input.getKey("]"));
-		keysB[2][6] = new VirtualKey("{", input.getKey("{"));
-		keysB[2][7] = new VirtualKey("}", input.getKey("}"));
-		keysB[2][8] = new VirtualKey("\\", input.getKey("\\"));
-		keysB[2][9] = new VirtualKey("|", input.getKey("|"));
+		keysB[0][0] = new VirtualKey('1');
+		keysB[0][1] = new VirtualKey('2');
+		keysB[0][2] = new VirtualKey('3');
+		keysB[0][3] = new VirtualKey('4');
+		keysB[0][4] = new VirtualKey('5');
+		keysB[0][5] = new VirtualKey('6');
+		keysB[0][6] = new VirtualKey('7');
+		keysB[0][7] = new VirtualKey('8');
+		keysB[0][8] = new VirtualKey('9');
+		keysB[0][9] = new VirtualKey('0');
+		keysB[1][0] = new VirtualKey('!');
+		keysB[1][1] = new VirtualKey('@');
+		keysB[1][2] = new VirtualKey('#');
+		keysB[1][3] = new VirtualKey('$');
+		keysB[1][4] = new VirtualKey('%');
+		keysB[1][5] = new VirtualKey('^');
+		keysB[1][6] = new VirtualKey('&');
+		keysB[1][7] = new VirtualKey('*');
+		keysB[1][8] = new VirtualKey('(');
+		keysB[1][9] = new VirtualKey(')');
+		keysB[2][0] = new VirtualKey('-');
+		keysB[2][1] = new VirtualKey('=');
+		keysB[2][2] = new VirtualKey('_');
+		keysB[2][3] = new VirtualKey('+');
+		keysB[2][4] = new VirtualKey('[');
+		keysB[2][5] = new VirtualKey(']');
+		keysB[2][6] = new VirtualKey('{');
+		keysB[2][7] = new VirtualKey('}');
+		keysB[2][8] = new VirtualKey('\\');
+		keysB[2][9] = new VirtualKey('|');
 		keysB[3][0] = shiftKey;
-		keysB[3][1] = new VirtualKey(";", input.getKey(";"));
-		keysB[3][2] = new VirtualKey(":", input.getKey(":"));
-		keysB[3][3] = new VirtualKey("'", input.getKey("'"));
-		keysB[3][4] = new VirtualKey("\"", input.getKey("\""));
-		keysB[3][5] = new VirtualKey(",", input.getKey(","));
-		keysB[3][6] = new VirtualKey("<", input.getKey("<"));
-		keysB[3][7] = new VirtualKey(".", input.getKey("."));
-		keysB[3][8] = new VirtualKey(">", input.getKey(">"));
+		keysB[3][1] = new VirtualKey(';');
+		keysB[3][2] = new VirtualKey(':');
+		keysB[3][3] = new VirtualKey('\'');
+		keysB[3][4] = new VirtualKey('\"');
+		keysB[3][5] = new VirtualKey(',');
+		keysB[3][6] = new VirtualKey('<');
+		keysB[3][7] = new VirtualKey('.');
+		keysB[3][8] = new VirtualKey('>');
 		keysB[3][9] = spaceBar;
 	}
 
@@ -183,9 +179,9 @@ public class OnScreenKeyboardMenu extends Menu {
 		this.shiftPressed = pressed;
 		x = 0;
 		if (pressed) {
-			y = 2;
-		} else {
 			y = 3;
+		} else {
+			y = 2;
 		}
 	}
 
@@ -282,42 +278,76 @@ public class OnScreenKeyboardMenu extends Menu {
 			}
 		}
 
-		final int keyWidth = 16;
 		final int keyHeight = 14;
 		VirtualKey[][] keys = shiftPressed? keysB: keysF;
 		for (int r = 0; r < keys.length; r++) {
-			int xOffset = (Screen.w - (keys[r].length * keyWidth)) / 2;
+			final int defaultKeyWidth = 16;
+			int keyWidth = defaultKeyWidth;
+			int totalLength = (keys[r].length * keyWidth);
+			totalLength += keyWidth * 2 * Stream.of(keys[r]).filter(k -> k == spaceBar).count();
+			totalLength += keyWidth * Stream.of(keys[r]).filter(k -> k == shiftKey).count();
+			int xOffset = (Screen.w - totalLength) / 2;
 			int y = renderingTop + 2 + r * keyHeight;
+			int x = xOffset;
 			for (int c = 0; c < keys[r].length; c++) {
 				VirtualKey key = keys[r][c];
-				int x = xOffset + c * keyWidth;
-				if (key != spaceBar) {
-					int color = keyPressed > 0 && r == this.y && c == this.x? 0x1EFEFF0: 0x1FDFDFD;
-					if (key == backspace) { // Rendering the left arrow.
-						for (int i = 1; i < 9; i++) {
-							colorPixel.accept(x + keyWidth/2 + i - 4 + (y + keyHeight/2) * Screen.w, color);
-						}
+				if (key == spaceBar)
+					keyWidth = defaultKeyWidth * 3;
+				else if (key == shiftKey)
+					keyWidth = defaultKeyWidth * 2;
+				else
+					keyWidth = defaultKeyWidth;
+				int color = keyPressed > 0 && r == this.y && c == this.x? 0x1EFEFF0: 0x1FDFDFD;
+				if (key == backspace) { // Rendering the backspace.
+					// Rendering the cross.
+					colorPixel.accept(x + 1 + keyWidth/2 + (y + keyHeight/2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 + 1) * Screen.w, color);
 
-						colorPixel.accept(x + keyWidth/2 - 2 + (y + keyHeight/2 - 1) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 - 2 + (y + keyHeight/2 + 1) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 - 1 + (y + keyHeight/2 - 2) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 - 1 + (y + keyHeight/2 + 2) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 + (y + keyHeight/2 - 3) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 + (y + keyHeight/2 + 3) * Screen.w, color);
-					} else if (key == shiftKey) { // Rendering the up arrow
-						for (int i = 1; i < 9; i++) {
-							colorPixel.accept(x + keyWidth/2 + (y + keyHeight/2 + i - 4) * Screen.w, color);
-						}
+					// Rendering the upper base.
+					colorPixel.accept(x + 1 + keyWidth/2 - 3 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 2 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 2 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 3 + (y + keyHeight/2 - 3) * Screen.w, color);
 
-						colorPixel.accept(x + keyWidth/2 - 1 + (y + keyHeight/2 - 2) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 + 1 + (y + keyHeight/2 - 2) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 - 2 + (y + keyHeight/2 - 1) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 + 2 + (y + keyHeight/2 - 1) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 - 3 + (y + keyHeight/2) * Screen.w, color);
-						colorPixel.accept(x + keyWidth/2 + 3 + (y + keyHeight/2) * Screen.w, color);
-					} else
-						Font.draw(key.output, screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
-				}
+					// Rendering the lower base.
+					colorPixel.accept(x + 1 + keyWidth/2 - 3 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 2 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 2 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 3 + (y + keyHeight/2 + 3) * Screen.w, color);
+
+					// Rendering the left angle.
+					colorPixel.accept(x + 1 + keyWidth/2 - 4 + (y + keyHeight/2 - 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 5 + (y + keyHeight/2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 6 + (y + keyHeight/2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 5 + (y + keyHeight/2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 - 4 + (y + keyHeight/2 + 2) * Screen.w, color);
+
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 - 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 + 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 + 3) * Screen.w, color);
+				} else if (key == shiftKey) { // Rendering "SYM".
+					Font.draw("S", screen, x + keyWidth/2 - 3 - defaultKeyWidth/2, y + keyHeight/2 - 3, color);
+					Font.draw("Y", screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
+					Font.draw("M", screen, x + keyWidth/2 - 3 + defaultKeyWidth/2, y + keyHeight/2 - 3, color);
+				} else if (key == spaceBar) { // Rendering "underscore".
+					for (int i = 1; i < 19; i++) {
+						colorPixel.accept(x + keyWidth/2 + i - 9 + (y + keyHeight/2 + 2) * Screen.w, color);
+					}
+				} else
+					Font.draw(String.valueOf(key.output), screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
 
 				for (int i = 0; i <= keyHeight; i++) { // Rendering left and right border.
 					colorPixel.accept(x + (y + i) * Screen.w, 0x1BCBCBC);
@@ -326,24 +356,19 @@ public class OnScreenKeyboardMenu extends Menu {
 					colorPixel.accept(x + i + y * Screen.w, 0x1BCBCBC);
 					colorPixel.accept(x + i + (y + keyHeight) * Screen.w, 0x1BCBCBC);
 				}
-			}
-		}
 
-		{
-			int xOffset = (Screen.w - (keys[y].length * keyWidth)) / 2;
-			int yy = renderingTop + 2 + y * keyHeight;
-			int xx = xOffset + x * keyWidth;
-			int color = keyPressed > 0? 0x1EFEFF0: 0x1DFDFE0;
-			for (int i = 0; i <= keyHeight; i++) { // Rendering left and right border.
-				colorPixel.accept(xx + (yy + i) * Screen.w, color);
-				colorPixel.accept(xx + keyWidth + (yy + i) * Screen.w, color);
-				colorPixel.accept(xx + 1 + (yy + i) * Screen.w, color);
-				colorPixel.accept(xx - 1 + keyWidth + (yy + i) * Screen.w, color);
-			} for (int i = 0; i <= keyWidth; i++) { // Rendering top and bottom border.
-				colorPixel.accept(xx + i + yy * Screen.w, color);
-				colorPixel.accept(xx + i + (yy + keyHeight) * Screen.w, color);
-				colorPixel.accept(xx + i + (yy + 1) * Screen.w, color);
-				colorPixel.accept(xx + i + (yy - 1 + keyHeight) * Screen.w, color);
+				if (this.x == c && this.y == r) {
+					color = keyPressed > 0? 0x1EFEFF0: 0x1DFDFE0;
+					for (int i = 1; i < keyHeight; i++) { // Rendering left and right border.
+						colorPixel.accept(x + 1 + (y + i) * Screen.w, color);
+						colorPixel.accept(x - 1 + keyWidth + (y + i) * Screen.w, color);
+					} for (int i = 1; i < keyWidth; i++) { // Rendering top and bottom border.
+						colorPixel.accept(x + i + (y + 1) * Screen.w, color);
+						colorPixel.accept(x + i + (y - 1 + keyHeight) * Screen.w, color);
+					}
+				}
+
+				x += keyWidth;
 			}
 		}
 	}

@@ -1055,6 +1055,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
+		input.controllerVibration(0.1f, 0.1f, 100);
 	}
 
 	/**
