@@ -49,7 +49,7 @@ public class InputHandler implements KeyListener {
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
 
-	private ControllerManager controllerManager = new ControllerManager(1);
+	private ControllerManager controllerManager = new ControllerManager();
 	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
 	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
 	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
