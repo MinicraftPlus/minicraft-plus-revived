@@ -1,9 +1,6 @@
 package minicraft.core.io;
 
-import com.studiohartman.jamepad.ControllerButton;
-import com.studiohartman.jamepad.ControllerIndex;
-import com.studiohartman.jamepad.ControllerManager;
-import com.studiohartman.jamepad.ControllerUnpluggedException;
+import com.studiohartman.jamepad.*;
 import minicraft.core.Game;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
@@ -187,6 +184,8 @@ public class InputHandler implements KeyListener {
 		buttonMap.put("CRAFT", ControllerButton.Y);
 		buttonMap.put("PICKUP", ControllerButton.LEFTBUMPER);
 
+		buttonMap.put("SEARCHER-BAR", ControllerButton.START);
+
 		buttonMap.put("PAUSE", ControllerButton.START);
 
 		buttonMap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
@@ -219,6 +218,9 @@ public class InputHandler implements KeyListener {
 				controllerButtonBooleanMap.put(btn, false);
 			}
 		}
+
+		if (leftTriggerCooldown > 0) leftTriggerCooldown--;
+		if (rightTriggerCooldown > 0) rightTriggerCooldown--;
 	}
 
 	// The Key class.
@@ -301,6 +303,19 @@ public class InputHandler implements KeyListener {
 			return keymap.get(actionKey).replace("|", "/");
 
 		return "NO_KEY";
+	}
+
+	/**
+	 * Returning the corresponding mapping depends on the device last acted.
+	 * @param keyMap The keyboard mapping.
+	 * @param buttonMap The controller mapping
+	 * @return The selected mapping.
+	 */
+	public String selectMapping(String keyMap, String buttonMap) {
+		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp)
+			return buttonMap;
+		else
+			return keyMap;
 	}
 
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
@@ -569,6 +584,32 @@ public class InputHandler implements KeyListener {
 		try {
 			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
 		} catch (ControllerUnpluggedException ignored) {
+			return false;
+		}
+	}
+
+	private int leftTriggerCooldown = 0;
+	private int rightTriggerCooldown = 0;
+
+	public boolean leftTriggerPressed() {
+		try {
+			if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
+				leftTriggerCooldown = 8;
+				return true;
+			} else
+				return false;
+		} catch (ControllerUnpluggedException e) {
+			return false;
+		}
+	}
+	public boolean rightTriggerPressed() {
+		try {
+			if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
+				rightTriggerCooldown = 8;
+				return true;
+			} else
+				return false;
+		} catch (ControllerUnpluggedException e) {
 			return false;
 		}
 	}

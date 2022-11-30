@@ -112,9 +112,9 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean deleteAll;
-					if (input.getKey("SHIFT-D").clicked) {
+					if (input.getKey("SHIFT-D").clicked || input.buttonPressed(ControllerButton.Y)) {
 						deleteAll = true;
-					} else if (input.getKey("D").clicked) {
+					} else if (input.getKey("D").clicked || input.buttonPressed(ControllerButton.X)) {
 						deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 					} else return;
 
