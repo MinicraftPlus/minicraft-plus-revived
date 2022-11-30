@@ -248,6 +248,8 @@ public class OnScreenKeyboardMenu extends Menu {
 			translate(0, visible? -rec.getHeight(): rec.getHeight());
 			this.visible = visible;
 		}
+
+		keyPressed = 0;
 	}
 	public boolean isVisible() {
 		return visible;

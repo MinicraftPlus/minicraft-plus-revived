@@ -147,6 +147,8 @@ public class Menu {
 	boolean isSelectable() { return selectable; }
 	boolean shouldRender() { return shouldRender; }
 
+	public boolean isSearcherBarActive() { return searcherBarActive; }
+
 	/** @noinspection SameParameterValue*/
 	void translate(int xoff, int yoff) {
 		bounds.translate(xoff, yoff);
