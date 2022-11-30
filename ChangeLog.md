@@ -1,4 +1,4 @@
-Minicraft+ version 2.2.0
+# Minicraft+ version 2.2.0
 
 + Added quests and tutorial
 + Added obsidian knight as the second boss
@@ -18,7 +18,7 @@ Minicraft+ version 2.2.0
 * Improved the localization support
 * --savedir, if present, no longer is appended an extra '.playminicraft/mods/Minecraft Plus' to it
 
-Minicraft+ version 2.1.0
+# Minicraft+ version 2.1.0
 
 + Added achievements
 + Added ability to copy, cut, and paste in menus
@@ -50,19 +50,23 @@ Minicraft+ version 2.1.0
 * Renamed shear to shears
 * Saplings should no longer grow if an entity is on it
 * Made cloud cactus into an ore you can mine and use
-* Fixed air wizard spawner
-* Fixed player spawning outside the map
-* Fixed localization not being loaded on first launch
 - Removed texture packs
 - Removed suits
 - Removed second air wizard
+
+## 2.1.1
+* Fixed air wizard spawner
+* Fixed player spawning outside the map
+
+## 2.1.3
+* Fixed localization not being loaded on first launch
 - Removed option of changing skin in the options display because of a crash
 
 ------------------------------------------------------------------------------------------
 - Changed versioning system to be in compliance with https://semver.org/spec/v2.0.0.html -
 ------------------------------------------------------------------------------------------
 
-Minicraft+ version 2.0.7
+# Minicraft+ version 2.0.7
 
 + Added sheep shearing
 + Added shear tool
@@ -91,7 +95,7 @@ Minicraft+ version 2.0.7
 * Shears must be used to destroy wool tiles
 - Disabled multiplayer functionality
 
-Minicraft+ version 2.0.6
+# Minicraft+ version 2.0.6
 
 + Prevented players from getting stuck in skyholes with a cool animation
 * Fixed the creeper's explosion to only hurt mobs if it actually explodes
@@ -112,7 +116,7 @@ Minicraft+ version 2.0.6
 * Menus that don't have frames don't render the title background
 
 
-Minicraft+ version 2.0.5
+# Minicraft+ version 2.0.5
 
 + Added tool durability to all tools
 * Updated door sprites and a couple others in minor ways
@@ -138,7 +142,7 @@ Minicraft+ version 2.0.5
 * Made items face the right way when you attack with them
 
 
-Minicraft+ version 2.0.4
+# Minicraft+ version 2.0.4
 
 * HUGE menu renovation! Menus will be changed forever. You'll see. It's pretty obvious.
 + Added world seeding! You now have a reliable way of recreating a world... provided you used a seed in the first place, that is... Commands aren't quite here yet...
@@ -160,7 +164,7 @@ Minicraft+ version 2.0.4
 + Added a version checker, so you know when new updates are available without having to look. It even opens the link for you. ;)
 
 
-Minicraft+ version 2.0.3
+# Minicraft+ version 2.0.3
 
 + Added support for dedicated servers! With a CLI OS, meaning an OS without a GUI. This allows for more compatibility, not to mention more resources being able to be devoted to the game.
 + Added various server options, and a command help system, for dedicated servers.
@@ -179,7 +183,7 @@ Minicraft+ version 2.0.3
 + Allowed torches to be placed on obsidian bricks
 
 
-Minicraft+ version 2.0.2
+# Minicraft+ version 2.0.2
 
 * Switched the multiplayer protocol from UDP to TCP.
 * fixed problems with doors, floors, and walls (item drops, etc.)
@@ -200,7 +204,7 @@ Minicraft+ version 2.0.2
 * Patched possible duplicate usernames glitch
 
 
-Minicraft+ version 2.0.1
+# Minicraft+ version 2.0.1
 
 +* added more super-secret debug powers... mua ha ha...
 + added to F3 window: level mobcount + max mobcount, and name of current tile
@@ -219,7 +223,7 @@ Minicraft+ version 2.0.1
 * Ensured that most all the normal world features work in multiplayer. However, I have not been able to do much testing with Client Player saves, so that might not work very well. Everything else should work, though; but the connection lag between computers may cause some wierd effects. Fixing this lag is my next goal.
 
 
-Minicraft+ version 2.0.0
+# Minicraft+ version 2.0.0
 
 +++ MULTIPLAYER MODE now supported! (dun, dun-dun-dun!)
 	-*- Well... kind of. I got one way to work, but it's super laggy.
@@ -233,7 +237,7 @@ Minicraft+ version 2.0.0
 
 ---------------------------------------------------------
 
-Minicraft+ version 1.9.4
+# Minicraft+ version 1.9.4
 
 * Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
 + Daylight now increases and decreases more smoothly; steadily goes from dark to light in the morning, and light to dark in the evening.
@@ -260,7 +264,7 @@ Minicraft+ version 1.9.4
 + Added another confirm dialog before deleting worlds.
 + Player score shown on-screen in score mode. TIP: as you probably don't know... you can unlock new time limits for score mode. unlock 10min by getting 1000 points in a 20min game, and unlock 2Hour by getting 100,000 points in a 1Hour game. (Hint: defeating the AirWizard gives you 100,000 points...)
 
-Minicraft+ version 1.9.3
+# Minicraft+ version 1.9.3
 
 + added command line argument to change the save directory of the world files.
 * revised input system to (hopefully) work on any language keyboard/computer.
@@ -269,7 +273,7 @@ Minicraft+ version 1.9.3
 + Loading has a progress bar. Though honestly, it doesn't need one.
 
 
-Minicraft+ version 1.9.2
+# Minicraft+ version 1.9.2
 
 * HUGE renovations to the code; might not see many changes to functionality, but entirely new bugs are bound to crop up...
 * renovated entities
@@ -280,7 +284,7 @@ Minicraft+ version 1.9.2
 + world difficulty is saved for each world
 
 
-Minicraft+ version 1.9.1
+# Minicraft+ version 1.9.1
 
 = Armor now functions as a damage buffer rather than extra hearts; you take damage after only a certain number of damage points accumulate.
 + Armor lasts longer.
@@ -288,10 +292,10 @@ Minicraft+ version 1.9.1
 - removed player's restriction on movement while being hurt
 + Added version number to save file
 + Hunger bar now decreases in a better way (in my opinion)
-# fixed all the bugs I could find!
+// fixed all the bugs I could find!
 
 
-Minicraft+ version 1.9
+# Minicraft+ version 1.9
 
 =Everything reimplemented
 =stuff works
@@ -304,7 +308,7 @@ Minicraft+ version 1.9
 +added obsidian brick and door to creative inventory
 
 
------ Noteable additions in v1.8 -----
+# ----- Noteable additions in v1.8 -----
 * Spawners & underground mini-dungeons
 * Airwizard's health appears above his head
 * Added colored clothes to change the player's outfit. They are craftable in the loom, or dropped rarely by zombies.
@@ -313,7 +317,7 @@ Minicraft+ version 1.9
 * "Airwizard II" boss shows up on the surface after you unlock all the locked chests
 * Once you defeat the Air Wizard, you can wear his costume by going into the settings menu. This suit allows the player to walk on air tiles.
 
------ Noteable additions in v1.7 -----
+# ----- Noteable additions in v1.7 -----
 * Save/Load worlds
 * Updated pause menu
 * Potions
