@@ -19,9 +19,9 @@ public class PopupDisplay extends Display {
 
 	public PopupDisplay(@Nullable PopupConfig config, String... messages) { this(config, false, messages); }
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, String... messages) { this(config, clearScreen, true, messages); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, String... messages) { this(config, clearScreen, StringEntry.useLines(messages)); }
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, String... messages) { this(config, clearScreen, menuFrame, StringEntry.useLines(messages)); }
 	public PopupDisplay(@Nullable PopupConfig config, ListEntry... entries) { this(config, false, entries); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, ListEntry... entries) { this(config, false, true, entries); }
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, ListEntry... entries) { this(config, clearScreen, true, entries); }
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, ListEntry... entries) {
 		super(clearScreen, true);
 
@@ -50,6 +50,7 @@ public class PopupDisplay extends Display {
 	public void tick(InputHandler input) {
 		boolean acted = false; // Checks if typing action is needed to be handled.
 		boolean takeExitHandle = true;
+		boolean handleMenu = false;
 		if (onScreenKeyboardMenu == null) {
 			if (!tickCallbacks(input))
 				super.tick(input); // Continues with this if no callback returns true.
@@ -78,17 +79,18 @@ public class PopupDisplay extends Display {
 				}
 
 				if (!acted)
-					if (!tickCallbacks(input))
-						menus[1].tick(input); // Continues with this if no callback returns true. // Process the tick of the main menu.
+					handleMenu = true;
 			} else if (selection == 0) {
 				onScreenKeyboardMenu.setVisible(false);
 				selection = 1;
-				if (!tickCallbacks(input))
-					menus[1].tick(input); // Continues with this if no callback returns true.
+				handleMenu = true;
 			} else {
+				handleMenu = true;
+			}
+
+			if (handleMenu)
 				if (!tickCallbacks(input))
 					menus[1].tick(input); // Continues with this if no callback returns true.
-			}
 		}
 	}
 
