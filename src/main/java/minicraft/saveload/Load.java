@@ -1,7 +1,6 @@
 package minicraft.saveload;
 
 import minicraft.core.Game;
-import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -13,23 +12,26 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
 import minicraft.screen.*;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Load {
 
@@ -82,6 +84,56 @@ public class Load {
 			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
+			}
+
+			if (worldVer.compareTo(new Version("2.2.0-dev3")) < 0) {
+				Logging.SAVELOAD.trace("Old version dungeon detected.");
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.0"),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.1"),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.2")
+				)));
+
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.3", Game.input.getMapping("select")),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.4", Game.input.getMapping("exit"))
+				)));
+
+				AtomicBoolean acted = new AtomicBoolean(false);
+				AtomicBoolean continues = new AtomicBoolean(false);
+
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					Game.exitDisplay();
+					acted.set(true);
+					continues.set(true);
+					return true;
+				}));
+
+				callbacks.add(new PopupDisplay.PopupActionCallback("exit", popup -> {
+					Game.exitDisplay();
+					acted.set(true);
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+
+				while (true) {
+					if (acted.get()) {
+						if (continues.get()) {
+							Logging.SAVELOAD.trace("Regenerating dungeon (B4)...");
+							LoadingDisplay.setMessage("minicraft.displays.loading.message.dungeon_regeneration");
+							int lvlidx = World.lvlIdx(-4);
+							Level oriLevel = World.levels[lvlidx];
+							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
+						} else {
+							throw new RuntimeException(new InterruptedException("World loading interrupted."));
+						}
+
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -524,6 +576,7 @@ public class Load {
 
 		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
 			if (new File(location+"Quests.json").exists()) {
+				LoadingDisplay.setMessage("minicraft.displays.loading.message.quests");
 				try {
 					JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
 					JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");

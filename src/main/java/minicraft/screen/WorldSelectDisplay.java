@@ -119,7 +119,13 @@ public class WorldSelectDisplay extends Display {
 					Game.exitDisplay();
 				} else {
 					Game.exitDisplay();
+					try { // Wait for exiting display
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
 					Game.exitDisplay();
+					try { // Wait for exiting display
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
@@ -166,7 +172,13 @@ public class WorldSelectDisplay extends Display {
 					Game.exitDisplay();
 				} else {
 					Game.exitDisplay();
+					try { // Wait for exiting display
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
 					Game.exitDisplay();
+					try { // Wait for exiting display
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
@@ -209,7 +221,13 @@ public class WorldSelectDisplay extends Display {
 					}
 				} else {
 					Game.exitDisplay();
+					try { // Wait for exiting display
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
 					Game.exitDisplay();
+					try { // Wait for exiting display
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
 					Game.setDisplay(new WorldGenDisplay());
 				}
 

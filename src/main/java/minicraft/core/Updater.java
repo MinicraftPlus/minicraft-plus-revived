@@ -217,9 +217,6 @@ public class Updater extends Game {
 					}
 
 					// Host-only cheats.
-					if (input.getKey("Shift-r").clicked)
-						World.initWorld(); // For single-player use only.
-
 					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
 					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
 					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
