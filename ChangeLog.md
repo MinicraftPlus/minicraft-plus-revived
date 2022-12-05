@@ -15,24 +15,49 @@ but some sections are changed to compliant this project.
 + Added obsidian knight as the second boss
 + Added limitation to inventories
 + Added limitation to stackable items
-+ Added 4 new debug arguments
++ Added 4 new debug arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`
 + Added a toggle for HUD display
 + Added a toggle for simplified effect display
 + Added a new menu for creative mode
 + Added a few creative mode only items for tile placement
++ Added a standard PopupDisplay for all popups
++ Added a crash handler and a better look of dialog.
++ Added a simple ability for screenshots
++ Added dynamic for sounds
++ Added sand particle for sand
++ Added more support fonts (for `ÀÂÄÈÎÌÏÒÙÛÝ*«»£$&€§ªº`)
++ Added world-wide seed
 
 ### Changes
 
 * Changed the display of world edit
-* Changed the structure of resource pack
+  * Removed another display for world edits
+* Greatly improved the resource pack system
+  * The past versions of resource packs are unsupported
+  * Changed the structure of resource pack
+  * Improved the handling of skins
 * Split the images of textures
 * Changed the UI of crash popup
 * Changed a better logging
 * Improved the localization support
+  * Updated the localization for displays and for parameterized localizations
+  * Changed some localization keys into IDs instead of words themselves
 * With optional flag `--savedir`, if present, no longer is appended an extra '.playminicraft/mods/Minecraft Plus' to it
 * Improved some textures
-* Greatly improved the resource pack system
 * Restructured the resources
+* Enhanced the rendering system for sprites
+  * Added standard LinkedSprite, SpriteAnimation (also replaces the role of ConnectorSprite) for all sprite renderings
+  * Removed ConnectorSprite for tiles, MobSprite for mobs (with more standard way)
+  * Renamed SpriteSheet into MinicraftImage
+* Slightly standardized all the resource handlers
+  * For localizations, sounds, textures, books
+  * Does not rule out the possibility of addition of a standard resource manager
+* Reapplied the role of seeds (the sameness with same seed)
+* Now renders the parent display as background.
+
+### Removals
+
+- Removed stepped sand texture
 
 ### Fixes
 
