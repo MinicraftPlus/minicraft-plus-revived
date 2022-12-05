@@ -18,7 +18,7 @@ import minicraft.level.Level;
 
 public class BossWallTile extends Tile {
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectChecker((tile, side) -> tile.getClass() == BossWallTile.class);
 
 	private static final String wallMsg = "The Obsidian Knight must be defeated first.";
 	protected Material type;
