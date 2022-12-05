@@ -140,7 +140,7 @@ public class WorldGenDisplay extends Display {
 
 		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true);
 
-		SelectEntry nameHelp = new SelectEntry("minicraft.displays.world_gen.troublesome_input", () -> Game.setDisplay(new PopupDisplay(null, null, "minicraft.displays.world_gen.troublesome_input.msg"))) {
+		SelectEntry nameHelp = new SelectEntry("minicraft.displays.world_gen.troublesome_input", () -> Game.setDisplay(new PopupDisplay(null, "minicraft.displays.world_gen.troublesome_input.msg"))) {
 			@Override
 			public int getColor(boolean isSelected) {
 				return Color.get(1, 204);
