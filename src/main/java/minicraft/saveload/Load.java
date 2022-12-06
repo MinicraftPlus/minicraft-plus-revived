@@ -125,8 +125,10 @@ public class Load {
 							Logging.SAVELOAD.trace("Regenerating dungeon (B4)...");
 							LoadingDisplay.setMessage("minicraft.displays.loading.message.dungeon_regeneration");
 							int lvlidx = World.lvlIdx(-4);
+							boolean reAdd = Game.player.getLevel().depth == -4;
 							Level oriLevel = World.levels[lvlidx];
 							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
+							if (reAdd) World.levels[lvlidx].add(Game.player);
 						} else {
 							throw new RuntimeException(new InterruptedException("World loading interrupted."));
 						}
