@@ -78,6 +78,7 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("autosave"),
 			Settings.getEntry("showquests"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			Settings.getEntry("language"),
 			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))

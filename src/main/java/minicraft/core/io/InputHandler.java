@@ -318,6 +318,17 @@ public class InputHandler implements KeyListener {
 			return keyMap;
 	}
 
+	/**
+	 * Getting the last input device type.
+	 * @return The input device type: 0 for keyboard, 1 for controller.
+	 */
+	public int getLastInputType() {
+		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp)
+			return 1;
+		else
+			return 0;
+	}
+
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
 	public Key getKey(String keytext) { return getKey(keytext, true); }
 	private Key getKey(String keytext, boolean getFromMap) {
