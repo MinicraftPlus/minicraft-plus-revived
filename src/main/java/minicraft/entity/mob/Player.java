@@ -224,20 +224,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.getKey("potionEffects").down && cooldowninfo == 0) {
+		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
 		}
 
-		if (input.getKey("simpPotionEffects").down) {
+		if (input.getKey("simpPotionEffects").clicked) {
 			simpPotionEffects = !simpPotionEffects;
 		}
 
-		if (input.getKey("toggleHUD").down) {
+		if (input.getKey("toggleHUD").clicked) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.getKey("expandQuestDisplay").down) {
+		if (input.getKey("expandQuestDisplay").clicked) {
 			questExpanding = 30;
 		}
 
