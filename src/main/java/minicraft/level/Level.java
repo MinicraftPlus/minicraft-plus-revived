@@ -139,6 +139,8 @@ public class Level {
 		if (level == 0)
 			generateVillages();
 
+		if (level == -4)
+			generateDungeonStructures();
 
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't a sky level)
 			for (int y = 0; y < h; y++) { // Loop through height
@@ -1022,6 +1024,25 @@ public class Level {
 				}
 			}
 		}
+	}
+
+	private void generateDungeonStructures() {
+		for (int i = 0; i < Math.sqrt(w); i++) {
+			int x = random.nextInt(w - 2) + 1;
+			int y = random.nextInt(h - 2) + 1;
+
+			if (x > 8 && y > 8) {
+				if (x < w - 8 && y < w - 8) {
+					if (random.nextInt(2) == 1) {
+						Structure.dungeonGarden.draw(this, x, y);
+					} else {
+						Structure.dungeonChest.draw(this, x, y);
+					}
+				}
+			}
+		}
+
+		Structure.dungeonGate.draw(this, w/2,h/2);
 	}
 
 	public String toString() {

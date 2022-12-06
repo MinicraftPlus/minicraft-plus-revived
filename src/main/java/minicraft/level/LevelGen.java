@@ -579,20 +579,12 @@ public class LevelGen {
 
 			if (x > 8 && y > 8) {
 				if (x < w - 8 && y < w - 8) {
-					if (random.nextInt(2) == 1) {
-						if (random.nextInt(2) == 1) {
-							Structure.ornateLavaPool.draw(map, x, y, w);
-						} else {
-							Structure.dungeonGarden.draw(map, x, y, w);
-						}
-					} else {
-						Structure.dungeonChest.draw(map, x, y, w);
-					}
+					if (random.nextInt(2) == 0)
+						Structure.ornateLavaPool.draw(map, x, y, w);
 				}
 			}
 		}
 
-		Structure.dungeonGate.draw(map, w/2,h/2, w);
 		return new short[][]{map, data};
 	}
 
