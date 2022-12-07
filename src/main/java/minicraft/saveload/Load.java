@@ -86,7 +86,7 @@ public class Load {
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
 
-			if (worldVer.compareTo(new Version("2.2.0-dev3")) < 0) {
+			if (worldVer.compareTo(new Version("2.2.0-dev2")) < 0) {
 				Logging.SAVELOAD.trace("Old version dungeon detected.");
 				ArrayList<ListEntry> entries = new ArrayList<>();
 				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
@@ -636,7 +636,7 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
-		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0)
+		if (worldVer.compareTo(new Version("2.2.0-dev2")) >= 0)
 			player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
