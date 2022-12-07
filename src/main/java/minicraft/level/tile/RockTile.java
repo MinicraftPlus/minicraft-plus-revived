@@ -18,6 +18,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.QuestsDisplay;
 
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
@@ -90,6 +91,7 @@ public class RockTile extends Tile {
 
 			level.dropItem(x * 16 + 8, y * 16 + 8, stone, Items.get("Stone"));
 			level.setTile(x, y, Tiles.get("Dirt"));
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.break_rocks");
 		} else {
 			level.setData(x, y, damage);
 		}

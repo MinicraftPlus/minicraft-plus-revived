@@ -136,6 +136,18 @@ public class CraftingDisplay extends Display {
 					selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
 					selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
+				} else if (selectedRecipe.getProduct().equals(Items.get("Wooden Axe"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.craft_wooden_axe");
+				} else if (selectedRecipe.getProduct().equals(Items.get("Wooden Pickaxe"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.craft_wooden_pickaxe");
+				} else if (selectedRecipe.getProduct().equals(Items.get("Stone Pickaxe"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_stone_pickaxe");
+				} else if (selectedRecipe.getProduct().equals(Items.get("Torch"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_torches");
+				} else if (selectedRecipe.getProduct().equals(Items.get("Oven"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_oven");
+				} else if (selectedRecipe.getProduct().equals(Items.get("Iron Armor"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.stronger.iron_armor");
 				}
 
 				selectedRecipe.craft(player);

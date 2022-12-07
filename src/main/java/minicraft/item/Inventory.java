@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import minicraft.screen.QuestsDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.entity.furniture.Furniture;
@@ -106,7 +107,7 @@ public class Inventory {
 						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
 						if (adding.count == 0) break;
 						if (items.size() == maxItem) return total - toTake.count;
-						items.add(adding); // Add the item to the items list
+						addItemToList(adding); // Add the item to the items list
 						toTake.count -= adding.count;
 					}
 					return total;
@@ -114,22 +115,37 @@ public class Inventory {
 					return total - toTake.count;
 				}
 			} else {
-				items.add(slot, toTake);
+				addItemToList(slot, toTake);
 				return total;
 			}
 		}
 
 		if (!unlimited) {
 			if (items.size() < maxItem) {
-				items.add(slot, item); // Add the item to the items list
+				addItemToList(slot, item); // Add the item to the items list
 				return 1;
 			} else {
 				return 0;
 			}
 		} else {
-			items.add(slot, item);
+			addItemToList(slot, item);
 			return 1;
 		}
+	}
+
+	private void addItemToList(Item item) { addItemToList(items.size(), item); }
+	private void addItemToList(int index, Item item) {
+		if (item.equals(Items.get("Wheat Seeds"))) {
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.farming.get_seeds");
+		} else if (item.equals(Items.get("Coal"))) {
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.get_coal");
+		} else if (item.equals(Items.get("Iron Ore"))) {
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.get_iron_ore");
+		} else if (item.equals(Items.get("Iron"))) {
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.get_iron");
+		}
+
+		items.add(index, item);
 	}
 
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */

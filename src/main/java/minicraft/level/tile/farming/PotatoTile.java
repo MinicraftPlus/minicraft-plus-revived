@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.QuestsDisplay;
 
 public class PotatoTile extends PlantTile {
 	private LinkedSprite[] spritStages = new LinkedSprite[] {
@@ -49,6 +50,9 @@ public class PotatoTile extends PlantTile {
         }
 
         level.dropItem(x * 16 + 8, y * 16 + 8, count + 1, Items.get("Potato"));
+		if (count > 0) {
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.farming.harvest");
+		}
 
         if (age >= maxAge && entity instanceof Player) {
             ((Player)entity).addScore(random.nextInt(4) + 1);

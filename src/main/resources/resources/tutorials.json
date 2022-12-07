@@ -1,7 +1,7 @@
 {
   "minicraft.quest.tutorial.get_started": {
     "desc": "minicraft.quest.tutorial.get_started.desc",
-    "leads_to": ["minicraft.quest.tutorial.farming"],
+    "leads_to": ["minicraft.quest.tutorial.farming", "minicraft.quest.tutorial.underground"],
     "quests": [
       {
         "id": "minicraft.quest.tutorial.get_started.kill_tree",

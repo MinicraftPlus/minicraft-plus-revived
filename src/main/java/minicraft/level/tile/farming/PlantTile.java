@@ -9,6 +9,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.QuestsDisplay;
 
 public class PlantTile extends FarmTile {
     protected static int maxAge = 100;
@@ -66,6 +67,9 @@ public class PlantTile extends FarmTile {
         }
 
         level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get(name));
+		if (count > 0) {
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.farming.harvest");
+		}
 
         if (age >= maxAge && entity instanceof Player) {
             ((Player)entity).addScore(random.nextInt(5) + 1);
