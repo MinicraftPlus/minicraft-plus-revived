@@ -94,7 +94,6 @@ public class Updater extends Game {
 
 		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
 			Game.setDisplay(new LevelTransitionDisplay(1));
-
 		}
 
 		if (input.getKey("FULLSCREEN").clicked) {

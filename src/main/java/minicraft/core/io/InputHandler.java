@@ -124,8 +124,8 @@ public class InputHandler implements KeyListener {
 
 		keymap.put("PAUSE", "ESCAPE"); // Pause the Game.
 
-		keymap.put("SURVIVAL=debug", "SHIFT-S|SHIFT-1");
-		keymap.put("CREATIVE=debug", "SHIFT-C|SHIFT-2");
+		keymap.put("SURVIVAL=debug", "SHIFT-1");
+		keymap.put("CREATIVE=debug", "SHIFT-2");
 
 		keymap.put("POTIONEFFECTS", "P"); // Toggle potion effect display
 		keymap.put("SIMPPOTIONEFFECTS", "O"); // Whether to simplify the potion effect display
