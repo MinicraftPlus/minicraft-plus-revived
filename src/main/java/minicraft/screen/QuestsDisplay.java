@@ -143,7 +143,7 @@ public class QuestsDisplay extends Display {
 		for (QuestSeries questSeries : series.values()) {
 			boolean isCompleted = completedSeries.contains(questSeries);
 			boolean isUnlocked = questSeries.unlocked;
-			SelectEntry select = new SelectEntry(Localization.getLocalized(questSeries.id), () -> Game.setDisplay(new SeriesInfomationDisplay(this, questSeries)), true) {
+			SelectEntry select = new SelectEntry(Localization.getLocalized(questSeries.id), () -> Game.setDisplay(new SeriesInformationDisplay(this, questSeries)), true) {
 				@Override
 				public int getColor(boolean isSelected) {
 					return isCompleted ? Color.GREEN : isUnlocked ? Color.WHITE : Color.GRAY;
@@ -207,8 +207,8 @@ public class QuestsDisplay extends Display {
 		updateEntries();
 	}
 
-	public static class SeriesInfomationDisplay extends Display {
-		public SeriesInfomationDisplay(QuestsDisplay display, QuestSeries series) {
+	public static class SeriesInformationDisplay extends Display {
+		public SeriesInformationDisplay(QuestsDisplay display, QuestSeries series) {
 			super(false, true);
 			ArrayList<ListEntry> entries = new ArrayList<>();
 

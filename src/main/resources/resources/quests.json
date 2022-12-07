@@ -21,7 +21,15 @@
       {
         "id": "minicraft.quest.road_of_gem.get_gem",
         "desc": "minicraft.quest.road_of_gem.get_gem.desc",
-        "leads_to": ["minicraft.quest.road_of_gem.gem_armor"]
+        "leads_to": ["minicraft.quest.road_of_gem.gem_armor"],
+        "rewards": {
+          "recipes": {
+            "Gem Armor_1": ["gem_65"],
+            "Gem Sword_1": ["Wood_5", "gem_50"],
+            "Gem Claymore_1": ["Gem Sword_1", "shard_15"],
+            "Gem Axe_1": ["Wood_5", "gem_50"]
+          }
+        }
       },
       {
         "id": "minicraft.quest.road_of_gem.gem_armor",
@@ -30,10 +38,6 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Armor_1": ["gem_65"],
-        "Gem Sword_1": ["Wood_5", "gem_50"],
-        "Gem Claymore_1": ["Gem Sword_1", "shard_15"],
-        "Gem Axe_1": ["Wood_5", "gem_50"],
         "Gem Hoe_1": ["Wood_5", "gem_50"],
         "Gem Pickaxe_1": ["Wood_5", "gem_50"],
         "Gem Shovel_1": ["Wood_5", "gem_50"],
@@ -41,5 +45,26 @@
         "Totem of Air_1": ["gold_10", "gem_10", "Lapis_5","Cloud Ore_5"]
       }
     }
+  },
+  "minicraft.quest.enchantments": {
+    "desc": "minicraft.quest.enchantments.desc",
+    "quests": [
+      {
+        "id": "minicraft.quest.enchantments.craft_enchanter",
+        "desc": "minicraft.quest.enchantments.craft_enchanter.desc"
+      },
+      {
+        "id": "minicraft.quest.enchantments.health_potions",
+        "desc": "minicraft.quest.enchantments.health_potions.desc"
+      },
+      {
+        "id": "minicraft.quest.enchantments.speed_potions",
+        "desc": "minicraft.quest.enchantments.speed_potions.desc"
+      },
+      {
+        "id": "minicraft.quest.enchantments.shield_potions",
+        "desc": "minicraft.quest.enchantments.shield_potions.desc"
+      }
+    ]
   }
 }
