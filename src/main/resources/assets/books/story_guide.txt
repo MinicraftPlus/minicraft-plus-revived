@@ -4,9 +4,9 @@ On each level, you'll have to find stairs leading down to the next. This is made
 
 You may also notice, on the surface level, stairs leading up, into the sky, surrounded by strange hard rock. To break this rock, you need a gem pickaxe. So, in order to reach the sky, you must first get all the way down to the third underground level, where gems and lava reside, and make it back up.
 
-If you manage to accomplish that, and craft a gem pickaxe, then you can break the hard rock surrounding the stairs to the sky. There, you'll find the air wizard boss waiting for you.
+If you manage to accomplish that, and craft a gem pickaxe, then you can break the hard rock surrounding the stairs to the sky. There, you'll find the air wizard boss waiting for you. The air wizard has 1 attack pattern: spark spiral.
 
-When the air wizars is defeated, a message appears on screen, saying the dungeon is open. That refers to a certain staircase on the third underground level going down, surrounded by purple obsidian bricks and walls. Only after defeating the air wizard can you destroy the obsidian and go down the stairs. The dungeon level you'll find is entirely composed of various obsidian tiles, with occasional small pockets of lava scattered about. There are no ores.
+When the air wizard is defeated, a message appears on screen, saying the dungeon is open. That refers to a certain staircase on the third underground level going down, surrounded by purple obsidian bricks and walls. Only after defeating the air wizard can you destroy the obsidian and go down the stairs. The dungeon level you'll find is entirely composed of various obsidian tiles, with occasional small pockets of lava scattered about. There are no ores.
 
 The enemies there are mostly of two types: snakes, and knights. Snakes drop scales, which can be used to craft green snake armor, and knights drop shards, which are needed to craft claymores, upgraded powerful swords. Additionally there are a variety of rooms through the dungeon: spawn rooms, dungeon gardens, fancy lava pools, and rooms filled with grayed-out chests. These chests are dungeon chests and require keys to open and said keys drop from the enemies of the floor. Within these chests are fancy powerful items to help fight the next boss.
 
