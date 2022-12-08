@@ -183,7 +183,7 @@ public class QuestsDisplay extends Display {
 				.setSelectable(true)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
-				.setPositioning(new Point(Screen.w / 2 - 8 * 11, 30), RelPos.RIGHT)
+				.setPositioning(new Point(Screen.w / 2 - 8 * (2 + Localization.getLocalized("minicraft.displays.quests.display.header.unlocked").length()), 30), RelPos.RIGHT)
 				.setEntries(new StringEntry("minicraft.displays.quests.display.header.unlocked", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
