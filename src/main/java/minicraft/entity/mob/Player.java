@@ -237,7 +237,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.getKey("expandQuestDisplay").clicked) {
+		if (input.getKey("expandQuestDisplay").down) {
 			questExpanding = 30;
 		}
 

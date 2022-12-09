@@ -141,7 +141,7 @@ public class QuestsDisplay extends Display {
 		ArrayList<QuestSeries> completedSeries = new ArrayList<>();
 		ArrayList<QuestSeries> unlockedSeries = new ArrayList<>();
 		for (QuestSeries questSeries : series.values()) {
-			boolean isCompleted = completedSeries.contains(questSeries);
+			boolean isCompleted = QuestsDisplay.completedSeries.contains(questSeries);
 			boolean isUnlocked = questSeries.unlocked;
 			SelectEntry select = new SelectEntry(Localization.getLocalized(questSeries.id), () -> Game.setDisplay(new SeriesInformationDisplay(this, questSeries)), true) {
 				@Override
@@ -294,7 +294,7 @@ public class QuestsDisplay extends Display {
 					String state = isCompleted ? "Completed" : quest.unlocked ? "Unlocked" : "Locked";
 					int color = isCompleted ? Color.GREEN : quest.unlocked ? Color.WHITE : Color.GRAY;
 
-					entries.add(new StringEntry("Status: " + (questStatus.get(quest.id) == null ? "None" : questStatus.get(quest.id).toString())));
+					entries.add(new StringEntry("Status: " + (questStatus.opt(quest.id) == null ? "None" : questStatus.get(quest.id).toString()), false));
 					entries.add(new BlankEntry());
 					entries.addAll(Arrays.asList(StringEntry.useLines(Localization.getLocalized(quest.description))));
 
@@ -528,11 +528,11 @@ public class QuestsDisplay extends Display {
 		for (String n : unlocked) {
 			Quest q = quests.get(n);
 			if (q != null && !unlockedQuests.contains(q))
-				unlockedQuests.add(q);
+				unlockQuest(q, true);
 
 			QuestSeries s = series.get(n);
 			if (s != null && !unlockedSeries.contains(s))
-				unlockedSeries.add(s);
+				unlockSeries(s, true);
 		}
 
 		for (String n : completed) {
