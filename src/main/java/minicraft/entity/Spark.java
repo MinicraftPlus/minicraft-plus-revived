@@ -54,7 +54,7 @@ public class Spark extends Entity {
 		y = (int) yy;
 
 		Player player = getClosestPlayer();
-		if (getClosestPlayer().isWithin(0,this)) {
+		if (player.isWithin(0,this)) {
 			player.hurt(owner,1);
 		}
 	}

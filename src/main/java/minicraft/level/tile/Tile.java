@@ -64,9 +64,6 @@ public abstract class Tile {
 
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
-		if (sprite == null) {
-			System.out.println(this);
-		}
 		sprite.render(screen, level, x, y);
 	}
 
