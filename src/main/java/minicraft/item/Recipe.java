@@ -1,12 +1,12 @@
 package minicraft.item;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 
 public class Recipe {
-	private HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
+	private TreeMap<String, Integer> costs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);  // A list of costs for the recipe
 	private String product; // The result item of the recipe
 	private int amount;
 	private boolean canCraft; // Checks if the player can craft the recipe
@@ -39,7 +39,7 @@ public class Recipe {
 	public Item getProduct() {
 		return Items.get(product);
 	}
-	public HashMap<String, Integer> getCosts() { return costs; }
+	public TreeMap<String, Integer> getCosts() { return costs; }
 
 	public int getAmount() { return amount; }
 	public boolean getCanCraft() { return canCraft; }
@@ -80,5 +80,16 @@ public class Recipe {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Recipe) {
+			Recipe r = (Recipe) obj;
+			return this.amount == r.amount &&
+				this.product.equalsIgnoreCase(r.product) &&
+				this.costs.equals(r.costs);
+		} else
+			return false;
 	}
 }

@@ -104,10 +104,10 @@ public class QuestsDisplay extends Display {
 				}
 			}
 
-			JSONArray recipesJson = json.optJSONArray("recipes");
+			JSONObject recipesJson = json.optJSONObject("recipes");
 			if (recipesJson != null) {
-				for (String product : json.keySet()) {
-					JSONArray costsJson = json.getJSONArray(product);
+				for (String product : recipesJson.keySet()) {
+					JSONArray costsJson = recipesJson.getJSONArray(product);
 					String[] costs = new String[costsJson.length()];
 					for (int j = 0; j < costsJson.length(); j++) {
 						costs[j] = costsJson.getString(j);
@@ -474,7 +474,7 @@ public class QuestsDisplay extends Display {
 
 		ArrayList<Recipe> recipes = reward.getRecipe();
 		if (recipes.size() > 0) {
-			recipes.forEach(recipe -> CraftingDisplay.unlockRecipe(recipe));
+			recipes.forEach(CraftingDisplay::unlockRecipe);
 		}
 	}
 

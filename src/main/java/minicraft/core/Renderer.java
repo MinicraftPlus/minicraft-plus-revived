@@ -402,17 +402,17 @@ public class Renderer extends Game {
 			if (!doneQuests.contains(q)) {
 				QuestSeries series = q.getSeries();
 				questsShown.add(expanding?
-					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
-					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE)
+					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE, false):
+					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE, false)
 				);
 			}
 		}
 
 		if (questsShown.size() > 0) {
-			potionRenderOffset = 9 + (questsShown.size() > 3 ? 3 : questsShown.size()) * 8 + 8 * 2;
+			potionRenderOffset = 9 + (Math.min(questsShown.size(), 3)) * 8 + 8 * 2;
 			new Menu.Builder(true, 0, RelPos.RIGHT)
 				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-				.setDisplayLength(questsShown.size() > length ? length : questsShown.size())
+				.setDisplayLength(Math.min(questsShown.size(), length))
 				.setTitle("Quests")
 				.setSelectable(false)
 				.setEntries(questsShown)

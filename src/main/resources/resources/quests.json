@@ -22,7 +22,7 @@
         "id": "minicraft.quest.road_of_gem.get_gem",
         "desc": "minicraft.quest.road_of_gem.get_gem.desc",
         "leads_to": ["minicraft.quest.road_of_gem.gem_armor"],
-        "rewards": {
+        "reward": {
           "recipes": {
             "Gem Armor_1": ["gem_65"],
             "Gem Sword_1": ["Wood_5", "gem_50"],
@@ -36,7 +36,7 @@
         "desc": "minicraft.quest.road_of_gem.gem_armor.desc"
       }
     ],
-    "rewards": {
+    "reward": {
       "recipes": {
         "Gem Hoe_1": ["Wood_5", "gem_50"],
         "Gem Pickaxe_1": ["Wood_5", "gem_50"],

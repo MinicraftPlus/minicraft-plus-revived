@@ -15,8 +15,8 @@ import minicraft.screen.entry.ItemListing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class CraftingDisplay extends Display {
@@ -46,7 +46,7 @@ public class CraftingDisplay extends Display {
 			recipeMenu = new RecipeMenu(recipes, title, player);
 
 		this.player = player;
-		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
+		this.recipes = recipes.toArray(new Recipe[0]);
 
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
 			.setTitle("minicraft.displays.crafting.container_title.have")
@@ -86,13 +86,13 @@ public class CraftingDisplay extends Display {
 		ArrayList<ItemListing> costList = new ArrayList<>();
 		if (recipes.length == 0) return new ItemListing[0];
 
-		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
+		TreeMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
 			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
 		}
 
-		return costList.toArray(new ItemListing[costList.size()]);
+		return costList.toArray(new ItemListing[0]);
 	}
 
 	@Override
@@ -136,9 +136,9 @@ public class CraftingDisplay extends Display {
 					selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
 					selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
-				} else if (selectedRecipe.getProduct().equals(Items.get("Wooden Axe"))) {
+				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Axe"))) {
 					QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.craft_wooden_axe");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Wooden Pickaxe"))) {
+				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Pickaxe"))) {
 					QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.craft_wooden_pickaxe");
 				} else if (selectedRecipe.getProduct().equals(Items.get("Stone Pickaxe"))) {
 					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_stone_pickaxe");
@@ -191,16 +191,12 @@ public class CraftingDisplay extends Display {
 				new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5")
 			);
 
-			for (Recipe recipe : new ArrayList<>(lockedRecipes)) {
-				if (!locks.contains(recipe)) {
-					lockedRecipes.remove(recipe);
-				}
-			}
+			lockedRecipes.removeIf(recipe -> !locks.contains(recipe));
 		} else lockedRecipes.clear();
 	}
 
 	public static void unlockRecipe(Recipe recipe) {
-		lockedRecipes.remove(recipe);
+		lockedRecipes.remove(lockedRecipes.stream().filter(r -> r.equals(recipe)).findAny().orElse(null));
 	}
 
 	public static ArrayList<Recipe> getLockedRecipes() {
