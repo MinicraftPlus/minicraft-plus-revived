@@ -358,13 +358,14 @@ public class QuestsDisplay extends Display {
 	}
 
 	public static void unlockQuest(String id) { unlockQuest(quests.get(id)); }
-	public static void unlockQuest(Quest quest) {
+	public static void unlockQuest(Quest quest) { unlockQuest(quest, false); }
+	private static void unlockQuest(Quest quest, boolean internal) {
 		if (quest == null) return;
 		if (unlockedQuests.contains(quest)) return;
 
 		quest.unlocked = true;
 		unlockedQuests.add(quest);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + ": " + Localization.getLocalized(quest.id));
+		if (!internal) Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + ": " + Localization.getLocalized(quest.id));
 	}
 	public static void refreshQuestLocks() {
 		for (Quest quest : quests.values()) {
@@ -394,14 +395,15 @@ public class QuestsDisplay extends Display {
 		if (quest.callback != null) quest.callback.act();
 		return true;
 	}
-	public static void unlockSeries(QuestSeries series) {
+	public static void unlockSeries(QuestSeries series) { unlockSeries(series, false); }
+	private static void unlockSeries(QuestSeries series, boolean internal) {
 		if (series == null) return;
 		if (unlockedSeries.contains(series)) return;
 
 		series.unlocked = true;
 		unlockedSeries.add(series);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_series_unlocked") + ": " + Localization.getLocalized(series.id));
-		unlockQuest(series.getSeriesQuests().get(0));
+		if (!internal) Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_series_unlocked") + ": " + Localization.getLocalized(series.id));
+		unlockQuest(series.getSeriesQuests().get(0), internal);
 	}
 	public static void seriesCompleted(QuestSeries questSeries) {
 		if (questSeries == null) return;
@@ -511,7 +513,7 @@ public class QuestsDisplay extends Display {
 		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
 			for (QuestSeries questSeries : series.values()) {
 				if (initiallyUnlocked.contains(questSeries.id) && ((boolean) Settings.get("tutorials") && questSeries.tutorial || (boolean) Settings.get("quests") && !questSeries.tutorial)) {
-					unlockSeries(questSeries);
+					unlockSeries(questSeries, true);
 				} else {
 					questSeries.unlocked = false;
 				}
