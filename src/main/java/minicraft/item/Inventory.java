@@ -133,8 +133,16 @@ public class Inventory {
 		}
 	}
 
-	private void addItemToList(Item item) { addItemToList(items.size(), item); }
+	private void addItemToList(Item item) {
+		resolveQuests(item);
+		items.add(item);
+	}
 	private void addItemToList(int index, Item item) {
+		resolveQuests(item);
+		items.add(index, item);
+	}
+
+	private void resolveQuests(Item item) {
 		if (item.equals(Items.get("Wheat Seeds"))) {
 			QuestsDisplay.questCompleted("minicraft.quest.tutorial.farming.get_seeds");
 		} else if (item.equals(Items.get("Coal"))) {
@@ -144,8 +152,6 @@ public class Inventory {
 		} else if (item.equals(Items.get("Iron"))) {
 			QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.get_iron");
 		}
-
-		items.add(index, item);
 	}
 
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
