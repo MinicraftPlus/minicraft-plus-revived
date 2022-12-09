@@ -144,8 +144,8 @@ public class CraftingDisplay extends Display {
 					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_stone_pickaxe");
 				} else if (selectedRecipe.getProduct().equals(Items.get("Torch"))) {
 					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_torches");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Oven"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_oven");
+				} else if (selectedRecipe.getProduct().equals(Items.get("Furnace"))) {
+					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_furnace");
 				} else if (selectedRecipe.getProduct().equals(Items.get("Iron Armor"))) {
 					QuestsDisplay.questCompleted("minicraft.quest.stronger.iron_armor");
 				}

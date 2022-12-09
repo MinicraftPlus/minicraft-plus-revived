@@ -71,11 +71,11 @@
       {
         "id": "minicraft.quest.tutorial.underground.get_iron_ore",
         "desc": "minicraft.quest.tutorial.underground.get_iron_ore.desc",
-        "leads_to": ["minicraft.quest.tutorial.underground.craft_oven"]
+        "leads_to": ["minicraft.quest.tutorial.underground.craft_furnace"]
       },
       {
-        "id": "minicraft.quest.tutorial.underground.craft_oven",
-        "desc": "minicraft.quest.tutorial.underground.craft_oven.desc",
+        "id": "minicraft.quest.tutorial.underground.craft_furnace",
+        "desc": "minicraft.quest.tutorial.underground.craft_furnace.desc",
         "leads_to": ["minicraft.quest.tutorial.underground.get_iron"]
       },
       {
