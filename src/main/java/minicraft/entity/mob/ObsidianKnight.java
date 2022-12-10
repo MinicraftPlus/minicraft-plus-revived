@@ -28,6 +28,7 @@ public class ObsidianKnight extends EnemyMob {
 		Mob.compileMobSpriteAnimations(0, 4, "obsidian_knight_broken"),
 		Mob.compileMobSpriteAnimations(0, 6, "obsidian_knight_broken")
 	};
+	public static ObsidianKnight entity = null;
 	public static boolean beaten = false;
 	public static boolean active = false;
 	public static boolean failed = false;
@@ -40,21 +41,18 @@ public class ObsidianKnight extends EnemyMob {
 	 * 2 = Walking
 	 */
 
-
 	private int dashTime = 0;
 	private int dashCooldown = 1000;
 
 	private int attackDelay = 0;
 	private int attackTime = 0;
 	private int attackType = 0;
-	private Random r = new Random(); // Randomize
 	private int ydir = 90;
-	public static int length;
 
 	/**
 	 * Constructor for the ObsidianKnight.
 	 */
-	public ObsidianKnight(int savHealth) {
+	public ObsidianKnight(int health) {
 		super(1, armored, 5000, false, 16 * 8, -1, 10, 50);
 
 		Updater.notifyAll(Localization.getLocalized("minicraft.notification.obsidian_knight_awoken")); // On spawn tell player.
@@ -64,7 +62,8 @@ public class ObsidianKnight extends EnemyMob {
 		active = true;
 		speed = 1;
 		walkTime = 3;
-		health = savHealth;
+		this.health = health;
+		entity = this;
 	}
 
 	@Override
@@ -76,8 +75,6 @@ public class ObsidianKnight extends EnemyMob {
 			level.add(ks, x, y, false);
 			this.remove();
 		}
-
-		length = health / (maxHealth / 100);
 
 		//Achieve phase2
 		if (health <= 2500) {
@@ -134,7 +131,6 @@ public class ObsidianKnight extends EnemyMob {
 						level.add(new FireSpark(this, Math.cos(xdir) * speed, Math.sin(ydir) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
 					return; // Skips the rest of the code (attackTime was > 0; ie we're attacking.)
 				}
-
 
 				if (player != null && randomWalkTime == 0) { // If there is a player around, and the walking is not random
 					int xd = player.x - x; // The horizontal distance between the player and the Obsidian Knight.
@@ -225,7 +221,6 @@ public class ObsidianKnight extends EnemyMob {
 					return; // Skips the rest of the code (attackTime was > 0; ie we're attacking.)
 				}
 
-
 				if (player != null && randomWalkTime == 0) { // If there is a player around, and the walking is not random
 					int xd = player.x - x; // The horizontal distance between the player and the Obsidian Knight.
 					int yd = player.y - y; // The vertical distance between the player and the Obsidian Knight.
@@ -256,12 +251,9 @@ public class ObsidianKnight extends EnemyMob {
 						attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
 					}
 				}
-			} else if (attackPhase == 2) {
-				// Walk like normal Mob; handled by Mob.java
-			}
+			} // In attackPhase == 2, walk like normal Mob; handled by Mob.java
 		}
 	}
-
 
 	@Override
 	public void doHurt(int damage, Direction attackDir) {
@@ -334,6 +326,7 @@ public class ObsidianKnight extends EnemyMob {
 		beaten = true;
 		active = false;
 		KnightStatue.active = false;
+		entity = null;
 
 		super.die(); // Calls the die() method in EnemyMob.java
 	}
@@ -344,7 +337,7 @@ public class ObsidianKnight extends EnemyMob {
 			attacker.remove();
 			return 0;
 		}
-		
+
 		return super.calculateEntityDamage(attacker, damage);
 	}
 }

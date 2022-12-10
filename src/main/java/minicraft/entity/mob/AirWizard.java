@@ -23,11 +23,11 @@ public class AirWizard extends EnemyMob {
 
 	public static boolean beaten = false;
 	public static boolean active = true;
+	public static AirWizard entity = null;
 
 	private int attackDelay = 0;
 	private int attackTime = 0;
 	private int attackType = 0;
-	public static int length;
 
 	/**
 	 * This is used by the spawner to spawn air wizards. {@code lvl} is unused.
@@ -43,13 +43,12 @@ public class AirWizard extends EnemyMob {
 		active = true;
 		speed = 2;
 		walkTime = 2;
+		entity = this;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-
-		length = health / (maxHealth / 100);
 
 		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
 
@@ -182,6 +181,7 @@ public class AirWizard extends EnemyMob {
 
 		beaten = true;
 		active = false;
+		entity = null;
 
 		super.die(); // Calls the die() method in EnemyMob.java
 	}

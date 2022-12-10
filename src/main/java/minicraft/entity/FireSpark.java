@@ -53,14 +53,12 @@ public class FireSpark extends Entity {
 		x = (int) xx;
 		y = (int) yy;
 
-		if (getClosestPlayer() != null) { // Failsafe if player dies in a fire spark.
-			Player player = getClosestPlayer();
-			if (getClosestPlayer().isWithin(0, this)) {
+		Player player = getClosestPlayer();
+		if (player != null) { // Failsafe if player dies in a fire spark.
+			if (player.isWithin(0, this)) {
 				player.burn(5); // Burn the player for 5 seconds
 			}
 		}
-
-
 	}
 
 	/** Can this entity block you? Nope. */
@@ -79,11 +77,8 @@ public class FireSpark extends Entity {
 				if (time / 6 % 2 == 0) return; // If time is divisible by 12, then skip the rest of the code.
 			}
 
-
-
 			randmirror = random.nextInt(4);
 		}
-
 
 		int xt = 8;
 		int yt = 13;

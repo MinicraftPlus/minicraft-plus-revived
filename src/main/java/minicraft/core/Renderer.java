@@ -404,9 +404,13 @@ public class Renderer extends Game {
 
 		// Renders the bossbar
 		if (!player.isRemoved()) {
-			if (AirWizard.active && (player.getLevel().depth == 1)) renderBossbar(AirWizard.length, "Air wizard");
-			if (ObsidianKnight.active && (player.getLevel().depth == -4))
-				renderBossbar(ObsidianKnight.length, "Obsidian Knight");
+			if (AirWizard.active && (player.getLevel().depth == 1)) {
+				AirWizard boss = AirWizard.entity;
+				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100), "Air wizard");
+			} else if (ObsidianKnight.active && (player.getLevel().depth == -4)) {
+				ObsidianKnight boss = ObsidianKnight.entity;
+				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100), "Obsidian Knight");
+			}
 		}
 
 		renderQuestsDisplay();
