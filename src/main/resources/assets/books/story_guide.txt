@@ -12,7 +12,7 @@ The enemies there are mostly of two types: snakes, and knights. Snakes drop scal
 
 There are a certain amount of dungeon chests that you will have to open if you want to survive from the next boss. The amount is dependent on the map size and some random chance. If you press F3 while on the dungeon level, it will display how many locked chests remain. Upon unlocking the final chest out of all the chest on the map, you will receive 5 golden apples.
 
-You will eventually come across a room with a strange curious statue and can walk through its walls. This is the boss room, if you tap the statue inside three times, the obsidian knight will spawn. Soon you will notice the walls are solid and unbreakable until either the boss is defeated or the player dies. This boss has 3 attack patterns and 2 phases: fire spiral and fire spray for phase 1 and additionally dash for phase 2.
+You will eventually come across a room with a strange curious statue and can walk through its walls. This is the boss room, if you tap the statue inside three times, the obsidian knight will spawn. Soon you will notice the walls are solid and unbreakable until either the boss is defeated or the player dies. This boss has 3 attack patterns and 2 phases: fire spray and normal walk for phase 1 and additionally dash for phase 2.
 
 If you came prepared and/or was lucky and manage to defeat the obsidian knight, it will drop a big amount of shards and a new curious item. This item, the obsidian heart, when used will increase your health by 5 per use, with a maximum of 30 in total (4 obsidian hearts are needed). The boss only drops one, so for maximum hp you will need to respawn the boss with an obsidian poppet, which is craftable in the enchanter.
 
