@@ -29,17 +29,18 @@ public class ObsidianKnight extends EnemyMob {
 		Mob.compileMobSpriteAnimations(0, 6, "obsidian_knight_broken")
 	};
 	public static ObsidianKnight entity = null;
-	public static boolean beaten = false;
-	public static boolean active = false;
-	public static boolean failed = false;
-	private static boolean phase1 = true;
-	private static int attackPhaseCooldown = 0;
-	private static int attackPhase = 0;
+	public static boolean beaten = false; // If the boss was beaten
+	public static boolean active = false; // If the boss is active
+	public static boolean failed = false; // If the player dies
+	private static boolean phase1 = true; // If the boss is in phase 1 or not
+	private static int attackPhaseCooldown = 0; // Cooldown between attacks
+
 	/*
 	 * 0 = Fire Sparks
 	 * 1 = Dashing
 	 * 2 = Walking
 	 */
+	private static int attackPhase = 0;
 
 	private int dashTime = 0;
 	private int dashCooldown = 1000;
