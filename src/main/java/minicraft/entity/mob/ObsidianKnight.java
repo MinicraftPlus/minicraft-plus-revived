@@ -4,16 +4,13 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.FireSpark;
+import minicraft.entity.*;
 import minicraft.entity.furniture.KnightStatue;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
-import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
 import java.util.Random;
@@ -339,5 +336,15 @@ public class ObsidianKnight extends EnemyMob {
 		KnightStatue.active = false;
 
 		super.die(); // Calls the die() method in EnemyMob.java
+	}
+
+	@Override
+	public int calculateEntityDamage(Entity attacker, int damage) {
+		if (attacker instanceof Arrow && phase1) {
+			attacker.remove();
+			return 0;
+		}
+		
+		return super.calculateEntityDamage(attacker, damage);
 	}
 }

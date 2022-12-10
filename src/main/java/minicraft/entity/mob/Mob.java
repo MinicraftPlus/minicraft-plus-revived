@@ -268,4 +268,13 @@ public abstract class Mob extends Entity {
 	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
 		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
 	}
+
+	/**
+	 * This checks how the {@code attacker} can damage this mob.
+	 * @param attacker The attacker entity.
+	 * @return The calculated damage.
+	 */
+	public int calculateEntityDamage(Entity attacker, int damage) {
+		return damage;
+	}
 }
