@@ -951,11 +951,8 @@ public class Load {
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
 		} else if (newEntity instanceof KnightStatue) {
-			KnightStatue ks = (KnightStatue)newEntity;
 			int health = Integer.parseInt(info.get(2));
-			ks.obkHealth = health;
-
-			newEntity = ks;
+			newEntity = new KnightStatue(health);
 		}
 
 		if (!isLocalSave) {
