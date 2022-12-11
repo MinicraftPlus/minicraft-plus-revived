@@ -66,7 +66,7 @@ public class SummonItem extends StackableItem {
 				// Check if we are on the right level and tile
 				if (level.depth == -4) {
 					if (player.getLevel().getTile(player.x >> 4, player.y >> 4).id == Tiles.get(48).id) {
-						if (!KnightStatue.active && !ObsidianKnight.active) {
+						if (!ObsidianKnight.active) {
 
 							// Pay stamina
 							if (player.payStamina(2)) {

@@ -29,9 +29,10 @@ public class ObsidianKnight extends EnemyMob {
 		Mob.compileMobSpriteAnimations(0, 6, "obsidian_knight_broken")
 	};
 	public static ObsidianKnight entity = null;
+
+	public static final int MaxHealth = 5000;
 	public static boolean beaten = false; // If the boss was beaten
 	public static boolean active = false; // If the boss is active
-	public static boolean failed = false; // If the player dies
 	private static boolean phase1 = true; // If the boss is in phase 1 or not
 	private static int attackPhaseCooldown = 0; // Cooldown between attacks
 
@@ -54,11 +55,10 @@ public class ObsidianKnight extends EnemyMob {
 	 * Constructor for the ObsidianKnight.
 	 */
 	public ObsidianKnight(int health) {
-		super(1, armored, 5000, false, 16 * 8, -1, 10, 50);
+		super(1, armored, MaxHealth, false, 16 * 8, -1, 10, 50);
 
 		Updater.notifyAll(Localization.getLocalized("minicraft.notification.obsidian_knight_awoken")); // On spawn tell player.
 
-		failed = false;
 		phase1 = true;
 		active = true;
 		speed = 1;
@@ -71,7 +71,7 @@ public class ObsidianKnight extends EnemyMob {
 	public void tick() {
 		super.tick();
 		if (getClosestPlayer().isRemoved()) {
-			failed = true;
+			active = false;
 			KnightStatue ks = new KnightStatue(health);
 			level.add(ks, x, y, false);
 			this.remove();
@@ -326,7 +326,6 @@ public class ObsidianKnight extends EnemyMob {
 
 		beaten = true;
 		active = false;
-		KnightStatue.active = false;
 		entity = null;
 
 		super.die(); // Calls the die() method in EnemyMob.java

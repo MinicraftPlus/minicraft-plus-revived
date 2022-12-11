@@ -33,7 +33,7 @@ public class BossWallTile extends Tile {
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		if(ObsidianKnight.active)return false;
-		if (Game.isMode("Creative") || ObsidianKnight.beaten || ObsidianKnight.failed || !ObsidianKnight.active) {
+		if (Game.isMode("Creative") || ObsidianKnight.beaten || !ObsidianKnight.active) {
 			return true;
 		}
 		else {
@@ -43,8 +43,8 @@ public class BossWallTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || ObsidianKnight.failed || !ObsidianKnight.active) {
-			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
+		if (Game.isMode("minicraft.settings.mode.creative") || !ObsidianKnight.active) {
+			hurt(level, x, y, (int)(((float)random.nextInt(6)) / 6 * dmg / 2));
 			return true;
 		} else {
 			Game.notifications.add(wallMsg);
@@ -58,7 +58,7 @@ public class BossWallTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
-				if (ObsidianKnight.beaten || ObsidianKnight.failed || !ObsidianKnight.active) {
+				if (ObsidianKnight.beaten || !ObsidianKnight.active) {
 					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 						hurt(level, xt, yt, tool.getDamage());
 						return true;

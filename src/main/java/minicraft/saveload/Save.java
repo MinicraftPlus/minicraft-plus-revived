@@ -385,7 +385,7 @@ public class Save {
 		}
 
 		if (e instanceof KnightStatue) {
-			extradata.append(":").append(((KnightStatue) e).obkHealth);
+			extradata.append(":").append(((KnightStatue) e).getBossHealth());
 		}
 
 		if (!isLocalSave) {
