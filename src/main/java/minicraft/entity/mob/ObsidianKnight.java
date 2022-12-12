@@ -118,20 +118,20 @@ public class ObsidianKnight extends EnemyMob {
 			if (attackTime > 0) {
 				xmov = ymov = 0;
 				attackTime--;
-				int attackDir; // The degree of attack. {0, 45, 90, 135, 180, 225, 270, 315}
+				int attackDir; // The degree of attack. {0, 45, 90, 135, 180, -45, -90, -135}
 				double atan2 = Math.toDegrees(Math.atan2(player.y - y, player.x - x));
 				if (atan2 > 157.5 || atan2 < -157.5) attackDir = 270;
-				else if (atan2 > 112.5) attackDir = 315;
-				else if (atan2 > 67.5) attackDir = 0;
+				else if (atan2 > 112.5) attackDir = 135;
+				else if (atan2 > 67.5) attackDir = 90;
 				else if (atan2 > 22.5) attackDir = 45;
-				else if (atan2 < -112.5) attackDir = 225;
-				else if (atan2 < -67.5) attackDir = 180;
-				else if (atan2 < -22.5) attackDir = 135;
-				else attackDir = 90;
+				else if (atan2 < -112.5) attackDir = -135;
+				else if (atan2 < -67.5) attackDir = -90;
+				else if (atan2 < -22.5) attackDir = -45;
+				else attackDir = 0;
 				double speed = 1 + attackLevel * 0.2 + attackTime / 10 * 0.01; // speed is dependent on the attackType. (higher attackType, faster speeds)
 				// The range of attack is 90 degrees. With little random factor.
-				int theta = attackDir - 36 + (attackTime % 5) * 18 + random.nextInt(7) - 3;
-				level.add(new FireSpark(this, Math.cos(theta) * speed, Math.sin(theta) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
+				int phi = attackDir - 36 + (attackTime % 5) * 18 + random.nextInt(7) - 3;
+				level.add(new FireSpark(this, Math.cos(Math.toRadians(phi)) * speed, Math.sin(Math.toRadians(phi)) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
 				return; // Skips the rest of the code (attackTime was > 0; ie we're attacking.)
 			}
 
