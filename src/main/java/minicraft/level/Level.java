@@ -274,9 +274,6 @@ public class Level {
 						d.x = x2 * 16 - 8;
 						d.y = y2 * 16 - 8;
 					}
-					/*if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall") || getTile(d.x / 16, d.y / 16) == Tiles.get("Ornate Obsidian")) {
-						setTile(d.x / 16, d.y / 16, Tiles.get("Grass"));
-					}*/
 
 					add(d);
 					chestCount++;

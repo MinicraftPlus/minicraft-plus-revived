@@ -478,53 +478,6 @@ public class LevelGen {
 		return new short[][]{map, data};
 	}
 
-	/*private static short[][] createDungeon(int w, int h) {
-		LevelGen noise1 = new LevelGen(w, h, 8);
-		LevelGen noise2 = new LevelGen(w, h, 8);
-
-		short[] map = new short[w * h];
-		short[] data = new short[w * h];
-
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				int i = x + y * w;
-
-				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
-
-				double xd = x / (w - 1.1) * 2 - 1;
-				double yd = y / (h - 1.1) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
-				val = -val * 1 - 2.2;
-				val += 1 - dist * 2;
-
-				if (val < -0.35) {
-					map[i] = Tiles.get("Obsidian Wall").id;
-				} else {
-					map[i] = Tiles.get("Obsidian").id;
-				}
-			}
-		}
-
-		lavaLoop:
-		for (int i = 0; i < w * h / 450; i++) {
-			int x = random.nextInt(w - 2) + 1;
-			int y = random.nextInt(h - 2) + 1;
-
-			for (int yy = y - 1; yy <= y + 1; yy++)
-				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue lavaLoop;
-				}
-
-			Structure.lavaPool.draw(map, x, y, w);
-		}
-
-		return new short[][]{map, data};
-	}*/
-
 	private static short[][] createDungeon(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 10);
 		LevelGen noise2 = new LevelGen(w, h, 10);
