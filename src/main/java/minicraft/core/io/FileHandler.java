@@ -213,6 +213,14 @@ public class FileHandler extends Game {
         		.forEach(p -> {
 					names.add(folderPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
 				});
+
+			if (!names.contains("resources")) { // Providing a simple resolution when the previous location is invalid, the gradle build path is used.
+				Path fPath = folderPath.resolve("../../../resources/main");
+				Files.walk(fPath)
+					.forEach(p -> {
+						names.add(fPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
+					});
+			}
 		} catch (IOException | URISyntaxException e) {
 			CrashHandler.errorHandle(e);
 		}
