@@ -15,14 +15,14 @@ import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
 public class BossFloorTile extends FloorTile {
-	private static final String floorMsg = "The Obsidian Knight must be defeated first.";
+	private static final String floorMsg = "minicraft.notification.defeat_obsidian_knight_first";
 
 	protected BossFloorTile() {
 		super(Material.Obsidian, "Boss Floor");
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (ObsidianKnight.beaten || !ObsidianKnight.active) {
+		if (!ObsidianKnight.beaten && !Game.isMode("minicraft.settings.mode.creative")) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {

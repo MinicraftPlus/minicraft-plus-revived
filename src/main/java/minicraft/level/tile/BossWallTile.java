@@ -16,95 +16,29 @@ import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
-public class BossWallTile extends Tile {
-	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == BossWallTile.class);
+public class BossWallTile extends WallTile {
+	private static final String wallMsg = "minicraft.notification.defeat_obsidian_knight_first";
 
-	private static final String wallMsg = "The Obsidian Knight must be defeated first.";
-	protected Material type;
-
-	protected BossWallTile(Material type) {
-		super(type.name() + " Boss Wall", null);
-		this.type = type;
-		if (type == Material.Obsidian) {
-			sprite = obsidian;
-		}
-	}
-
-	public boolean mayPass(Level level, int x, int y, Entity e) {
-		if(ObsidianKnight.active)return false;
-		if (Game.isMode("Creative") || ObsidianKnight.beaten || !ObsidianKnight.active) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || !ObsidianKnight.active) {
-			hurt(level, x, y, (int)(((float)random.nextInt(6)) / 6 * dmg / 2));
-			return true;
-		} else {
-			Game.notifications.add(wallMsg);
-			return false;
-		}
+	protected BossWallTile() {
+		super(Material.Obsidian, "Boss Wall");
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("Creative"))
-			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
-			if (tool.type == type.getRequiredTool()) {
-				if (ObsidianKnight.beaten || !ObsidianKnight.active) {
-					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-						hurt(level, xt, yt, tool.getDamage());
+		if (!ObsidianKnight.beaten && !Game.isMode("minicraft.settings.mode.creative")) {
+			if (item instanceof ToolItem) {
+				ToolItem tool = (ToolItem) item;
+				if (tool.type == type.getRequiredTool()) {
+					if (player.payStamina(1)) {
+						Game.notifications.add(wallMsg);
+						Sound.play("monsterhurt");
 						return true;
 					}
-				} else {
-					Game.notifications.add(wallMsg);
 				}
 			}
+
+			return false;
 		}
-		return false;
-	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + dmg;
-		int sbwHealth = 100;
-		if (Game.isMode("Creative")) dmg = damage = sbwHealth;
-
-		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.play("monsterhurt");
-
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= sbwHealth) {
-			String itemName = "", tilename = "";
-			// Get what tile to set and what item to drop
-			if (type == Material.Obsidian) {
-				itemName = "Obsidian Boss Wall";
-				tilename = "Obsidian Boss Wall";
-			}
-
-			//level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3 - type.ordinal(), Items.get(itemName));
-			level.setTile(x, y, Tiles.get(tilename));
-		} else {
-			level.setData(x, y, damage);
-		}
-	}
-
-	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt);
-		if (damage > 0) {
-			level.setData(xt, yt, damage - 1);
-			return true;
-		}
-		return false;
-	}
-
-	public String getName(int data) {
-		return Material.values[data].name() + " Boss Wall";
+		return super.interact(level, xt, yt, player, item, attackDir);
 	}
 }
