@@ -14,7 +14,8 @@ public class Font {
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"+
 			"6789.,!?'\"-+=/\\%()<>:;^@ÁÉÍÓÚÑ¿¡"+
 			"ÃÊÇÔÕĞÇÜİÖŞÆØÅŰŐ[]#|{}_АБВГДЕЁЖЗ"+
-			"ИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+			"ИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯÀÂÄÈÎÌÏÒ"+
+			"ÙÛÝ*«»£$&€§ªº";
 
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 
