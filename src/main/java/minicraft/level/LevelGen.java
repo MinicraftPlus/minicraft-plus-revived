@@ -645,12 +645,10 @@ public class LevelGen {
 					lockRect.getRight() < w - edgeMargin && lockRect.getBottom() < h - edgeMargin &&
 					!lockRect.intersects(bossRoomRect)) {
 
-					int xc = lockRect.getLeft() + 3;
-					int yc = lockRect.getTop() + 3;
-					Structure.dungeonLock.draw(map, xc - 2, yc - 2, w);
+					Structure.dungeonLock.draw(map, xx, yy, w);
 
 					/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
-					map[xc + yc * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
+					map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
 					break; // The generation is successful.
 				}
 			} while (true);
