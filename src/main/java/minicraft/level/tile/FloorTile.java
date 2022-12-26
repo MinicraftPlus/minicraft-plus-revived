@@ -14,8 +14,9 @@ import minicraft.level.Level;
 public class FloorTile extends Tile {
 	protected Material type;
 
-	protected FloorTile(Material type) {
-		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name() + " Bricks"), (SpriteAnimation) null);
+	protected FloorTile(Material type) { this(type, null); }
+	protected FloorTile(Material type, String name) {
+		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name() + " " + (name == null ? "Bricks" : name)), null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
