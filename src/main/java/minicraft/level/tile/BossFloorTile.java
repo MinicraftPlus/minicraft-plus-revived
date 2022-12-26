@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -27,7 +28,7 @@ public class BossFloorTile extends FloorTile {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {
 					if (player.payStamina(1)) {
-						Game.notifications.add(floorMsg);
+						Game.notifications.add(Localization.getLocalized(floorMsg));
 						Sound.play("monsterhurt");
 						return true;
 					}

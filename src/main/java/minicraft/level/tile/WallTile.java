@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -49,7 +50,7 @@ public class WallTile extends Tile {
 			hurt(level, x, y, 0);
 			return true;
 		} else {
-			Game.notifications.add(obrickMsg);
+			Game.notifications.add(Localization.getLocalized(obrickMsg));
 			return false;
 		}
 	}

@@ -1045,7 +1045,12 @@ public class Level {
 	 */
 	public void regenerateBossRoom() {
 		if (depth == -4) {
-			Structure.dungeonBossRoom.draw(this, w/2, h/2); // Generating the boss room at the center.
+			Structure.dungeonBossRoom.draw(tiles, w/2, h/2, w); // Generating the boss room at the center.
+			for (int x = w/2-4; x < w/2+5; x++) { // Resetting tile data.
+				for (int y = h/2-4; y < h/2+5; y++) {
+					setData(x, y, 0);
+				}
+			}
 		}
 	}
 

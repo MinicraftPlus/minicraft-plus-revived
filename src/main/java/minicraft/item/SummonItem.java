@@ -3,6 +3,7 @@ package minicraft.item;
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
+import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
@@ -48,7 +49,7 @@ public class SummonItem extends StackableItem {
 						if (player.payStamina(2)) {
 							AirWizard aw = new AirWizard();
 							level.add(aw, player.x + 8, player.y + 8, false);
-							Logger.debug("Summoned new Air Wizard");
+							Logger.tag("SummonItem").debug("Summoned new Air Wizard");
 							success = true;
 						}
 					}
@@ -64,13 +65,13 @@ public class SummonItem extends StackableItem {
 				// Check if we are on the right level and tile
 				if (level.depth == -4) {
 					// If the player nears the center.
-					if (new Rectangle(level.w/2, level.h/2, 3, 3).contains(player.x >> 4, player.y >> 4)) {
+					if (new Rectangle(level.w/2-1, level.h/2-1, 3, 3).contains(player.x >> 4, player.y >> 4)) {
 						if (!ObsidianKnight.active) {
 
 							// Pay stamina
 							if (player.payStamina(2)) {
-								level.regenerateBossRoom();
-								Logger.debug("Summoned new Knight Statue");
+								level.add(new KnightStatue(5000), level.w/2, level.h/2, true);
+								Logger.tag("SummonItem").debug("Summoned new Knight Statue");
 								success = true;
 							}
 						} else {

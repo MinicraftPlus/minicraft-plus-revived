@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.*;
@@ -11,6 +12,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
+import minicraft.level.Level;
 import minicraft.level.Structure;
 import minicraft.screen.AchievementsDisplay;
 
@@ -60,6 +62,8 @@ public class ObsidianKnight extends EnemyMob {
 		walkTime = 3;
 		this.health = health;
 		entity = this;
+
+		World.levels[World.lvlIdx(-4)].regenerateBossRoom();
 	}
 
 	@Override

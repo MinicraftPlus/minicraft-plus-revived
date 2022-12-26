@@ -16,7 +16,7 @@ public class FloorTile extends Tile {
 
 	protected FloorTile(Material type) { this(type, null); }
 	protected FloorTile(Material type, String name) {
-		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name() + " " + (name == null ? "Bricks" : name)), null);
+		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" + (name == null ? "" : " "+name) : type.name() + " " + (name == null ? "Bricks" : name)), null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {

@@ -138,16 +138,16 @@ public class Structure {
 					"WWWWW"
 		);
 		dungeonBossRoom = new Structure();
-		dungeonBossRoom.setData("O:Obsidian Boss Floor,W:Obsidian Boss Wall",
-			"WWWWWWWWW\n" +
+		dungeonBossRoom.setData("O:Obsidian Boss Floor,D:Obsidian Boss Door,W:Obsidian Boss Wall",
+			"WWWWDWWWW\n" +
 				"WOOOOOOOW\n" +
 				"WOOOOOOOW\n" +
 				"WOOOOOOOW\n" +
+				"DOOOOOOOD\n" +
 				"WOOOOOOOW\n" +
 				"WOOOOOOOW\n" +
 				"WOOOOOOOW\n" +
-				"WOOOOOOOW\n" +
-				"WWWWWWWWW"
+				"WWWWDWWWW"
 		);
 		dungeonBossRoom.addFurniture(0,0,new KnightStatue(5000));
 
