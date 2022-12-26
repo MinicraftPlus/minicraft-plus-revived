@@ -147,8 +147,8 @@ public class Level {
 				for (int x = 0; x < w; x++) { // Loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
 						if (level == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
-							Structure.dungeonGate.draw(this, x, y);
-							Structure.dungeonBossRoom.draw(this, x+10, y+10);
+							Structure.dungeonGate.draw(this, x, y); // Te gate should not intersect with the boss room.
+							Structure.dungeonBossRoom.draw(this, w/2, h/2); // Generating the boss room at the center.
 						}
 						else if (level == 0) { // Surface
 							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
@@ -1038,8 +1038,6 @@ public class Level {
 				}
 			}
 		}
-
-		Structure.dungeonGate.draw(this, w/2,h/2);
 	}
 
 	public String toString() {

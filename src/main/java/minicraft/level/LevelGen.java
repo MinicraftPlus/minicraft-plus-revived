@@ -1,12 +1,14 @@
 package minicraft.level;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import minicraft.gfx.Rectangle;
+import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -241,7 +243,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val += 1 - dist*20;
@@ -436,7 +438,7 @@ public class LevelGen {
 		for (int i = 0; i < w * h / 100; i++) {
 			int xx = random.nextInt(w);
 			int yy = random.nextInt(h);
-			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+			if (xx < w && yy < h) {
 				if (map[xx + yy * w] == Tiles.get("sand").id) {
 					map[xx + yy * w] = Tiles.get("cactus").id;
 				}
@@ -494,7 +496,7 @@ public class LevelGen {
 				double yd = y / (h - 1.1) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -583,11 +585,11 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = Math.pow(dist, 8);
 				val += 1 - dist * 20;
 
-				if (val > -1 && wval < -1 + (depth) / 2 * 3) {
+				if (val > -1 && wval < -1 + (depth) / 2.0 * 3) {
 					if (depth == 3) map[i] = Tiles.get("lava").id;
 					else if (depth == 1) map[i] = Tiles.get("dirt").id;
 					else map[i] = Tiles.get("water").id;
@@ -627,21 +629,31 @@ public class LevelGen {
 			}
 		}
 
-		if (depth > 2) {
+		if (depth > 2) { // The level above dungeon.
 			int r = 1;
-			int xx = w/2;
-			int yy = h/2;
-			for (int i = 0; i < w * h / 380; i++) {
-				for (int j = 0; j < 10; j++) {
-					if (xx < w - r && yy < h - r) {
+			int xm = w/2;
+			int ym = h/2;
+			int side = 6; // The side of the lock is 5, and pluses margin with 1.
+			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
+			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
+			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
+				int xx = random.nextInt(w);
+				int yy = random.nextInt(h);
+				lockRect.setPosition(xx, yy, RelPos.CENTER);
+				if (lockRect.getTop() > edgeMargin && lockRect.getLeft() > edgeMargin &&
+					lockRect.getRight() < w - edgeMargin && lockRect.getBottom() < h - edgeMargin &&
+					!lockRect.intersects(bossRoomRect)) {
 
-						Structure.dungeonLock.draw(map, xx, yy, w);
+					int xc = lockRect.getLeft() + 3;
+					int yc = lockRect.getTop() + 3;
+					Structure.dungeonLock.draw(map, xc - 2, yc - 2, w);
 
-						/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
-						map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
-					}
+					/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
+					map[xc + yc * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
+					break; // The generation is successful.
 				}
-			}
+			} while (true);
 		}
 
 		if (depth < 3) {
