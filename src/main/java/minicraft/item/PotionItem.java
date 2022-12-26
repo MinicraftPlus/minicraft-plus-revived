@@ -34,7 +34,13 @@ public class PotionItem extends StackableItem {
 		if (type.equals(PotionType.Lava)) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.lava",true);
 		}
-		return super.interactOn(applyPotion(player, type, true));
+		return interactOn(applyPotion(player, type, true), player);
+	}
+
+	protected boolean interactOn(boolean subClassSuccess, Player player) {
+		if (subClassSuccess)
+			player.tryAddToInvOrDrop(Items.get("glass bottle"));
+		return super.interactOn(subClassSuccess);
 	}
 
 	/// Only ever called to load from file
