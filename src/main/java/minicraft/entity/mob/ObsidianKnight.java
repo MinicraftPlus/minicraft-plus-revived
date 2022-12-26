@@ -11,6 +11,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
+import minicraft.level.Structure;
 import minicraft.screen.AchievementsDisplay;
 
 public class ObsidianKnight extends EnemyMob {

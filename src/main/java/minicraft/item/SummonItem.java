@@ -3,7 +3,6 @@ package minicraft.item;
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
-import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
@@ -11,10 +10,9 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.Tiles;
-import minicraft.util.Logging;
 import org.tinylog.Logger;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class SummonItem extends StackableItem {
@@ -65,13 +63,13 @@ public class SummonItem extends StackableItem {
 			case "Obsidian Knight":
 				// Check if we are on the right level and tile
 				if (level.depth == -4) {
-					if (player.getLevel().getTile(player.x >> 4, player.y >> 4).id == Tiles.get(48).id) {
+					// If the player nears the center.
+					if (new Rectangle(level.w/2, level.h/2, 3, 3).contains(player.x >> 4, player.y >> 4)) {
 						if (!ObsidianKnight.active) {
 
 							// Pay stamina
 							if (player.payStamina(2)) {
-								KnightStatue ks = new KnightStatue(5000);
-								level.add(ks, player.x, player.y, false);
+								level.regenerateBossRoom();
 								Logger.debug("Summoned new Knight Statue");
 								success = true;
 							}

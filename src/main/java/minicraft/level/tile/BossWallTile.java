@@ -24,7 +24,7 @@ public class BossWallTile extends WallTile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (!ObsidianKnight.beaten && !Game.isMode("minicraft.settings.mode.creative")) {
+		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative")) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {

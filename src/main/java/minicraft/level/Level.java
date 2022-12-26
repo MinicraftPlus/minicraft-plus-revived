@@ -1040,6 +1040,15 @@ public class Level {
 		}
 	}
 
+	/**
+	 * Regenerating/repairing the boss room in the dungeon.
+	 */
+	public void regenerateBossRoom() {
+		if (depth == -4) {
+			Structure.dungeonBossRoom.draw(this, w/2, h/2); // Generating the boss room at the center.
+		}
+	}
+
 	public String toString() {
 		return "Level(depth=" + depth + ")";
 	}
