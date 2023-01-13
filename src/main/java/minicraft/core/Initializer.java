@@ -107,6 +107,7 @@ public class Initializer extends Game {
 	static void createAndDisplayFrame() {
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
+		Renderer.canvas.setBackground(Color.WHITE);
 		logoSplash.setMinimumSize(new java.awt.Dimension(1, 1));
 		logoSplash.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = Initializer.frame = new JFrame(NAME);
