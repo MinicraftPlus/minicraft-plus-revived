@@ -3,6 +3,7 @@ package minicraft.util;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 public final class MyUtils {
@@ -43,7 +44,7 @@ public final class MyUtils {
 	 * @param in The input stream to be read.
 	 * @return The returned string.
 	 */
-	public static String readStringFromInputStream(InputStream in) {
+	public static String readStringFromInputStream(InputStream in) throws NullPointerException, UncheckedIOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 		return String.join("\n", reader.lines().toArray(String[]::new));
 	}

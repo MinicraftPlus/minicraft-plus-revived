@@ -1,15 +1,17 @@
 package minicraft.util;
 
-import minicraft.core.CrashHandler;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
 import minicraft.screen.ResourcePackDisplay;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -33,39 +35,64 @@ public abstract class ResourcePack {
 	 */
 	public static final int PACK_FORMAT = 2;
 
-	/**
-	 * Checking if the provided pack format is incompatible to the current system.
-	 * @param packFormat The pack format to check.
-	 * @return {@code true} if this is compatible.
-	 */
-	public static boolean isIncompatible(int packFormat) {
-		if (packFormat <= 0) return false; // Incompatible before 1 or unknown format.
-		if (packFormat > PACK_FORMAT) return false; // Incompatible for future format (unknown).
-		if (packFormat == PACK_FORMAT) return true; // Always compatible since the format is same.
+	protected int packFormat; // The pack format of the pack.
+	protected String name; // The name of the pack.
+	protected String description; // The description of the pack.
+	protected MinicraftImage logo; // The logo of the pack.
 
-		// TODO The following should be checked and updated to be compatible with the updated pack format.
-		return true;
+	public ResourcePack(int packFormat, @NotNull String name, String desc) {
+		this.packFormat = packFormat;
+		this.name = name;
+		this.description = desc;
+		reloadLogo();
 	}
 
-	private final int packFormat; // The pack format of the pack.
-	private final String filename; // The name of the pack.
-	private final String description; // The description of the pack.
-	private MinicraftImage logo; // The logo of the pack.
-
-	public ResourcePack(int packFormat, String name, String desc) {
-		this.packFormat = packFormat;
-		this.filename = name;
-		this.description = desc;
-		refreshPack();
+	/**
+	 * Getting the pack format of the resource pack.
+	 * @return The pack format of the pack.
+	 */
+	public int getPackFormat() {
+		return packFormat;
 	}
 
 	/**
 	 * Getting the display name of the resource pack.
-	 * @return the display name of the pack.
+	 * @return The display name of the pack.
 	 */
 	@NotNull
 	public String getName() {
-		return filename;
+		return name;
+	}
+
+	/**
+	 * Getting the description of the resource pack.
+	 * @return The description of the pack.
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Getting the logo of the resource pack.
+	 * @return The logo of the pack.
+	 */
+	public MinicraftImage getLogo() {
+		return logo;
+	}
+
+	/**
+	 * Reloading the logo of the resource pack.
+	 */
+	protected abstract void reloadLogo();
+
+	/**
+	 * Refreshing the pack metadata in the resource pack menu.
+	 * @throws PackRestructureNeededException if the pack is needed to be reloaded by classes again.
+	 * @see ResourcePackDisplay#loadPackMetadata(URL)
+	 */
+	public void refreshPack() throws PackRestructureNeededException {
+		reloadMetadata();
+		reloadLogo();
 	}
 
 	/**
@@ -73,7 +100,7 @@ public abstract class ResourcePack {
 	 * @throws PackRestructureNeededException if the pack is needed to be reloaded by classes again.
 	 * @see ResourcePackDisplay#loadPackMetadata(URL)
 	 */
-	public abstract void refreshPack() throws PackRestructureNeededException;
+	protected abstract void reloadMetadata() throws PackRestructureNeededException;
 
 	/**
 	 * This is thrown if the pack is needed to be reloaded by classes again in {@link #refreshPack()}.
@@ -82,13 +109,19 @@ public abstract class ResourcePack {
 
 	/**
 	 * Getting the pack resource collector.
+	 * @return The pack resource collector stream.
+	 * {@code null} if there is any error occurs.
 	 */
-	public abstract void loadPack();
+	public abstract PackResourceStream loadPack();
 
 	/**
 	 * The resource collector of a resource pack.
 	 */
 	public static abstract class PackResourceStream implements AutoCloseable {
+		protected boolean closeRequested = false;
+
+		protected PackResourceStream() {}
+
 		@FunctionalInterface
 		public interface FilesFilter { // Literally functioned.
 			boolean check(Path path, boolean isDir);
@@ -99,56 +132,53 @@ public abstract class ResourcePack {
 		 * @param path The entry directory path to be listed.
 		 * @param filter The filter to be applied.
 		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
+		 * @throws IllegalStateException if this collector has been closed.
 		 */
 		@NotNull
-		public abstract ArrayList<String> getFiles(String path, FilesFilter filter);
+		public abstract ArrayList<String> getFiles(String path, FilesFilter filter) throws IllegalStateException;
 
 		/**
 		 * Getting the input stream associated with the relative path.
 		 * @param path The relative path of the resource pack root.
 		 * @return The input stream by the relative path in the pack.
-		 * {@code null} if there is not resource associated with the path.
+		 * {@code null} if there is not resource associated with the path or I/O error occurs.
+		 * @throws IllegalStateException if this collector has been closed.
 		 */
-		public abstract InputStream getResourceAsStream(String path);
-	}
+		public abstract InputStream getInputStream(String path) throws IllegalStateException;
 
-	public static class UnknownResourcePack extends ResourcePack {
-		public UnknownResourcePack(int packFormat, String filename, String desc) {
-			super(packFormat, filename, desc);
-		}
-
+		/**
+		 * Closing this instance and relinquishing the underlying resources.
+		 * After closing this instance, no more resources can be collected.
+		 * @throws Exception if this resource cannot be closed.
+		 */
 		@Override
-		public void refreshPack() {
+		public abstract void close() throws Exception;
 
+		protected final void ensureOpen() {
+			if (closeRequested)
+				throw new IllegalStateException("pack resource collector closed");
 		}
 	}
 
 	public static class ZipFileResourcePack extends ResourcePack {
-		private URL packRoot;
-
-		private final String filename; // The name of the pack.
-		private final String description; // The description of the pack.
-		private MinicraftImage logo; // The logo of the pack.
-
-		private boolean opened = false; // If the zip file stream is opened.
-		private ZipFile zipFile = null; // The zip file stream.
-
-		public ResourcePack(URL packRoot, int packFormat, String name, String desc) {
-			this.packRoot = packRoot;
-			this.packFormat = packFormat;
-			this.filename = name;
-			this.description = desc;
-			refreshPack();
-		}
+		private final File file;
 
 		/**
-		 * This does not include metadata refresh.
+		 * The resource pack should be validated before constructing the instance.
+		 * @param file The zip file of the resource pack.
+		 * @param packFormat The pack format of the pack.
+		 * @param filename The filename of the file.
+		 * @param desc The description of the pack.
 		 */
-		public void refreshPack() {
-			// Refresh pack logo.png, name and description.
-			try {
-				openStream();
-				InputStream in = getResourceAsStream("pack.png");
+		public ZipFileResourcePack(File file, int packFormat, String filename, String desc) {
+			super(packFormat, filename, desc);
+			this.file = file;
+		}
+
+		@Override
+		protected void reloadLogo() {
+			try (ZipFile zipFile = new ZipFile(file)) {
+				InputStream in = zipFile.getInputStream(zipFile.getEntry("pack.png"));
 				if (in != null) {
 					logo = new MinicraftImage(ImageIO.read(in));
 
@@ -157,93 +187,116 @@ public abstract class ResourcePack {
 					int w = logo.width;
 					if (h == 0 || w == 0 || h % 8 != 0 || w % 8 != 0 ||
 						h > 32 || w > Screen.w) {
-						throw new IOException(String.format("Unacceptable logo size: %s;%s", w, h));
+						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo in pack: {}: Unacceptable logo size: {};{}; loading default logo instead.", name, w, h);
+						throw new ImagingOpException("");
 					}
+
+					return;
 				} else {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found in pack: {}, loading default logo instead.", filename);
-					logo = ResourcePackDisplay.defaultLogo;
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found in pack: {}; loading default logo instead.", name);
 				}
-				close();
-
 			} catch (IOException | NullPointerException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load logo in pack: {}, loading default logo instead.", filename);
-				if (this == ResourcePackDisplay.defaultPack) {
-					try {
-						logo = new MinicraftImage(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
-					} catch (IOException e1) {
-						CrashHandler.crashHandle(e1);
-					}
-				} else logo = ResourcePackDisplay.defaultLogo;
-			}
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load logo in pack: {}; loading default logo instead.", name);
+			} catch (ImagingOpException ignored) {}
+
+			// Using the default logo instead.
+			logo = ResourcePackDisplay.defaultLogo;
 		}
 
-		/**
-		 * Open the stream of the zip file.
-		 *
-		 * @return {@code true} if the stream has successfully been opened.
-		 */
-		private boolean openStream() {
-			try {
-				zipFile = new ZipFile(new File(packRoot.toURI()));
-				return opened = true;
-			} catch (IOException | URISyntaxException e) {
-				e.printStackTrace();
-				return opened = false;
-			}
-		}
-
-		/**
-		 * Closing the stream of the zip file if opened.
-		 */
 		@Override
-		public void close() throws IOException {
-			if (opened) {
-				zipFile.close();
-				zipFile = null;
-				opened = false;
+		protected void reloadMetadata() throws PackRestructureNeededException {
+			// Refresh pack format, name and description.
+			try (ZipFile zipFile = new ZipFile(file)) {
+				try (InputStream in = zipFile.getInputStream(zipFile.getEntry("pack.json"))) {
+					JSONObject meta = new JSONObject(MyUtils.readStringFromInputStream(in));
+					packFormat = meta.getInt("pack_format");
+					description = meta.getString("description");
+				}
+			} catch (IOException | UncheckedIOException | NullPointerException | JSONException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack.json in pack: {}.", name);
+				throw new PackRestructureNeededException();
 			}
 		}
 
-		/**
-		 * Getting the stream by the path.
-		 *
-		 * @param path The path of the entry.
-		 * @return The input stream of the specified entry.
-		 * @throws IOException if an I/O error has occurred.
-		 */
-		private InputStream getResourceAsStream(String path) throws IOException {
+		@Override
+		public PackResourceStream loadPack() {
 			try {
-				return zipFile.getInputStream(zipFile.getEntry(path));
-			} catch (NullPointerException e) {
-				throw new IOException(e);
+				return new ZipFilePackResourceStream(file);
+			} catch (IOException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack: {}; skipping...", name);
+				return null;
 			}
 		}
 
-		@FunctionalInterface
-		private static interface FilesFilter { // Literally functioned.
-			public abstract boolean check(Path path, boolean isDir);
-		}
+		public static class ZipFilePackResourceStream extends PackResourceStream {
+			private final ZipFile zipFile;
 
-		/**
-		 * Getting the subfiles under the specified entry directrory.
-		 *
-		 * @param path   The directory to be listed.
-		 * @param filter The filter to be applied.
-		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
-		 */
-		@NotNull
-		private ArrayList<String> getFiles(String path, ResourcePack.FilesFilter filter) {
-			ArrayList<String> paths = new ArrayList<>();
-			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
-				ZipEntry entry = e.nextElement();
-				Path parent;
-				if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
-					(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
-					paths.add(entry.getName());
+			private ZipFilePackResourceStream(File file) throws IOException {
+				zipFile = new ZipFile(file);
+			}
+
+			@Override
+			public @NotNull ArrayList<String> getFiles(String path, FilesFilter filter) throws IllegalStateException {
+				ensureOpen();
+				ArrayList<String> paths = new ArrayList<>();
+				try {
+					for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
+						ZipEntry entry = e.nextElement();
+						Path parent;
+						if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
+							(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
+							paths.add(entry.getName());
+						}
+					}
+				} catch (IllegalStateException ignored) {}
+
+				return paths;
+			}
+
+			@Override
+			public InputStream getInputStream(String path) throws IllegalStateException {
+				ensureOpen();
+				try {
+					return zipFile.getInputStream(zipFile.getEntry(path));
+				} catch (NullPointerException | IOException | IllegalStateException e) {
+					return null;
 				}
 			}
 
-			return paths;
+			@Override
+			public void close() throws Exception {
+				if (!closeRequested) {
+					zipFile.close();
+					closeRequested = true;
+				}
+			}
+		}
+	}
+
+	public static class DirectoryResourcePack extends ResourcePack {
+
+	}
+
+	/**
+	 * The default resources of Minicraft+ with a pack control.
+	 */
+	public static class DefaultResourcePack extends ResourcePack {
+		public static final DefaultResourcePack DEFAULT_RESOURCE_PACK = new DefaultResourcePack();
+
+		private DefaultResourcePack() {
+			super(PACK_FORMAT, "Default", "The default look and feel of Minicraft+ (built-in)");
+		}
+	}
+
+	/**
+	 * The classic textures of Minicraft+ in pack.
+	 * This class could be simplified if loading external assets is possible.
+	 */
+	public static class ClassicArtResourcePack extends ResourcePack {
+		public static final ClassicArtResourcePack CLASSIC_ART_RESOURCE_PACK = new ClassicArtResourcePack();
+
+		private ClassicArtResourcePack() {
+			super(PACK_FORMAT, "Classic Art", "The classic look of Minicraft+ (built-in)");
 		}
 	}
 }

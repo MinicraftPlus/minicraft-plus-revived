@@ -1,7 +1,4 @@
 {
-  "pack_format": 1,
-  "name": "Default",
-  "description": "The built-in default resources in Minicraft+.",
   "language": {
     "en-us": {
       "name": "English",

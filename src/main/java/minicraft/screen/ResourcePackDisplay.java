@@ -53,6 +53,7 @@ import minicraft.util.Logging;
 
 import minicraft.util.MyUtils;
 import minicraft.util.ResourcePack;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,7 +100,7 @@ public class ResourcePackDisplay extends Display {
 	private static final int VERSION = 1;
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
-	private static final MinicraftImage defaultLogo;
+	public static final MinicraftImage defaultLogo;
 	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
 	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
@@ -152,7 +153,7 @@ public class ResourcePackDisplay extends Display {
 		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
 		loadedPacks.add(defaultPack);
 		try {
-			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
+			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/assets/textures/misc/unknown_pack.png")));
 		} catch (IOException e) {
 			CrashHandler.crashHandle(e);
 			throw new RuntimeException();
@@ -208,7 +209,7 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.filename, () -> Game.setDisplay(new PopupDisplay(null, pack.filename, pack.description)), false) {
+			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 1) return SelectEntry.COL_UNSLCT;
@@ -219,7 +220,7 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.filename, () -> Game.setDisplay(new PopupDisplay(null, pack.filename, pack.description)), false) {
+			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 0) return SelectEntry.COL_UNSLCT;
@@ -410,8 +411,10 @@ public class ResourcePackDisplay extends Display {
 	/**
 	 * Loading pack metadata of the pack.
 	 * @param file The path of the pack.
-	 * @return The loaded pack with metadata.
+	 * @return The loaded pack with metadata. {@code null} if the pack could not be recognized as a valid pack;
+	 * the pack is ignored.
 	 */
+	@Nullable
 	public static ResourcePack loadPackMetadata(URL file) {
 		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
 			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
@@ -505,7 +508,7 @@ public class ResourcePackDisplay extends Display {
 					resourcePacks.remove(pack);
 					loadedPacks.remove(pack);
 				}
-			} else { // Add new pack as it should be exist.
+			} else { // Add new pack as it should be existed.
 				pack = loadPackMetadata(url);
 				if (pack != null) {
 					resourcePacks.add(pack);
@@ -513,7 +516,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		resourcePacks.sort((p1, p2) -> p1.filename.compareTo(p2.filename));
+		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
 	}
 
 	/** Releasing the unloaded packs. */
@@ -647,7 +650,7 @@ public class ResourcePackDisplay extends Display {
 						meta.frametime = animation.getInt("frametime");
 						meta.frames = image.getHeight() / 16;
 						if (meta.frames == 0) throw new IOException(new IllegalArgumentException(String.format(
-							"Invalid frames 0 detected with {} in pack: {}", m, pack.filename)));
+							"Invalid frames 0 detected with {} in pack: {}", m, pack.name)));
 						sheet = new MinicraftImage(image, 16, 16 * meta.frames);
 					} else
 						sheet = new MinicraftImage(image, 16, 16);
@@ -663,7 +666,7 @@ public class ResourcePackDisplay extends Display {
 							try {
 								Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
 							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.filename);
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
 								meta.border = null;
 							}
 						}
@@ -676,7 +679,7 @@ public class ResourcePackDisplay extends Display {
 							try {
 								Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
 							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.filename);
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
 								meta.corner = null;
 							}
 						}
@@ -684,7 +687,7 @@ public class ResourcePackDisplay extends Display {
 
 					SpriteAnimation.setMetadata(m.substring(path.length(), m.length() - 9), meta);
 				} catch (JSONException | IOException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.filename);
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.name);
 				}
 			}
 
@@ -705,7 +708,7 @@ public class ResourcePackDisplay extends Display {
 
 				Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.filename);
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
 			}
 		}
 	}
@@ -719,7 +722,7 @@ public class ResourcePackDisplay extends Display {
 		try {
 			langJSON = new JSONObject(MyUtils.readStringFromInputStream(pack.getResourceAsStream("pack.json"))).optJSONObject("language");
 		} catch (JSONException | IOException e1) {
-			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.filename);
+			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
 		}
 
 		if (langJSON != null) {
@@ -729,7 +732,7 @@ public class ResourcePackDisplay extends Display {
 					JSONObject info = langJSON.getJSONObject(loc);
 					Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")));
 				} catch (JSONException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.filename);
+					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.name);
 				}
 			}
 		}
@@ -746,9 +749,9 @@ public class ResourcePackDisplay extends Display {
 				// Add verified localization.
 				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)), json);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.filename);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
 			} catch (JSONException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.filename);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.name);
 			}
 		}
 	}
@@ -769,7 +772,7 @@ public class ResourcePackDisplay extends Display {
 					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
 				}
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.filename);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
 			}
 		}
 	}
@@ -782,9 +785,9 @@ public class ResourcePackDisplay extends Display {
 		for (String f : pack.getFiles("assets/sounds/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
 			String name = Paths.get(f).getFileName().toString();
 			try {
-				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.filename);
+				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.name);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.filename);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
 			}
 		}
 	}
