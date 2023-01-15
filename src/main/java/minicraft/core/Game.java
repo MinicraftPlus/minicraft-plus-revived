@@ -1,6 +1,13 @@
 package minicraft.core;
 
-import minicraft.core.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -10,10 +17,10 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
+import minicraft.util.resource.SyncReloadableResourceManager;
+import minicraft.util.resource.reloader.BookReloader;
+import minicraft.util.resource.reloader.LocalizationReloader;
+import minicraft.util.resource.reloader.SoundReloader;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
@@ -59,6 +66,7 @@ public class Game {
 	static boolean running = true;
 	public static void quit() { running = false; }
 
+	public static final SyncReloadableResourceManager resourceManager = new SyncReloadableResourceManager();
 
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
@@ -77,7 +85,13 @@ public class Game {
 
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
-		Renderer.initScreen();
+		{
+			resourceManager.registerReloader(new LocalizationReloader());
+			resourceManager.registerReloader(new SoundReloader());
+			resourceManager.registerReloader(new BookReloader());
+
+			Renderer.initScreen();
+		}
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
