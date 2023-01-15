@@ -2,17 +2,14 @@ package minicraft.screen;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +19,6 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -55,7 +51,8 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.util.BookData;
 import minicraft.util.Logging;
 
-import org.jetbrains.annotations.NotNull;
+import minicraft.util.MyUtils;
+import minicraft.util.ResourcePack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -211,7 +208,7 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+			entries0.add(new SelectEntry(pack.filename, () -> Game.setDisplay(new PopupDisplay(null, pack.filename, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 1) return SelectEntry.COL_UNSLCT;
@@ -222,7 +219,7 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+			entries1.add(new SelectEntry(pack.filename, () -> Game.setDisplay(new PopupDisplay(null, pack.filename, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 0) return SelectEntry.COL_UNSLCT;
@@ -410,137 +407,6 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
-	/** The object representation of resource pack. */
-	private static class ResourcePack implements Closeable {
-		private URL packRoot;
-
-		/** 0 - before 2.2.0; 1 - 2.2.0-latest */
-		@SuppressWarnings("unused")
-		private final int packFormat; // The pack format of the pack.
-		private final String name; // The name of the pack.
-		private final String description; // The description of the pack.
-		private MinicraftImage logo; // The logo of the pack.
-
-		private boolean opened = false; // If the zip file stream is opened.
-		private ZipFile zipFile = null; // The zip file stream.
-
-		private ResourcePack(URL packRoot, int packFormat, String name, String desc) {
-			this.packRoot = packRoot;
-			this.packFormat = packFormat;
-			this.name = name;
-			this.description = desc;
-			refreshPack();
-		}
-
-		/** This does not include metadata refresh. */
-		public void refreshPack() {
-			// Refresh pack logo.png.
-			try {
-				openStream();
-				InputStream in = getResourceAsStream("pack.png");
-				if (in != null) {
-					logo = new MinicraftImage(ImageIO.read(in));
-
-					// Logo size verification.
-					int h = logo.height;
-					int w = logo.width;
-					if (h == 0 || w == 0 || h % 8 != 0 || w % 8 != 0 ||
-						h > 32 || w > Screen.w) {
-						throw new IOException(String.format("Unacceptable logo size: %s;%s", w, h));
-					}
-				} else {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found in pack: {}, loading default logo instead.", name);
-					logo = defaultLogo;
-				}
-				close();
-
-			} catch (IOException | NullPointerException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load logo in pack: {}, loading default logo instead.", name);
-				if (this == defaultPack) {
-					try {
-						logo = new MinicraftImage(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
-					} catch (IOException e1) {
-						CrashHandler.crashHandle(e1);
-					}
-				} else logo = defaultLogo;
-			}
-		}
-
-		/**
-		 * Open the stream of the zip file.
-		 * @return {@code true} if the stream has successfully been opened.
-		 */
-		private boolean openStream() {
-			try {
-				zipFile = new ZipFile(new File(packRoot.toURI()));
-				return opened = true;
-			} catch (IOException | URISyntaxException e) {
-				e.printStackTrace();
-				return opened = false;
-			}
-		}
-
-		/** Closing the stream of the zip file if opened. */
-		@Override
-		public void close() throws IOException {
-			if (opened) {
-				zipFile.close();
-				zipFile = null;
-				opened = false;
-			}
-		}
-
-		/**
-		 * Getting the stream by the path.
-		 * @param path The path of the entry.
-		 * @return The input stream of the specified entry.
-		 * @throws IOException if an I/O error has occurred.
-		 */
-		private InputStream getResourceAsStream(String path) throws IOException {
-			try {
-				return zipFile.getInputStream(zipFile.getEntry(path));
-			} catch (NullPointerException e) {
-				throw new IOException(e);
-			}
-		}
-
-		@FunctionalInterface
-		private static interface FilesFilter { // Literally functioned.
-			public abstract boolean check(Path path, boolean isDir);
-		}
-
-		/**
-		 * Getting the subfiles under the specified entry directrory.
-		 * @param path The directory to be listed.
-		 * @param filter The filter to be applied.
-		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
-		 */
-		@NotNull
-		private ArrayList<String> getFiles(String path, FilesFilter filter) {
-			ArrayList<String> paths = new ArrayList<>();
-			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
-				ZipEntry entry = e.nextElement();
-				Path parent;
-				if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
-						(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
-					paths.add(entry.getName());
-				}
-			}
-
-			return paths;
-		}
-	}
-
-	/**
-	 * Reading the string from the input stream.
-	 * @param in The input stream to be read.
-	 * @return The returned string.
-	 */
-	public static String readStringFromInputStream(InputStream in) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-		return String.join("\n", reader.lines().toArray(String[]::new));
-	}
-
 	/**
 	 * Loading pack metadata of the pack.
 	 * @param file The path of the pack.
@@ -549,7 +415,7 @@ public class ResourcePackDisplay extends Display {
 	public static ResourcePack loadPackMetadata(URL file) {
 		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
 			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
-				JSONObject meta = new JSONObject(readStringFromInputStream(in));
+				JSONObject meta = new JSONObject(MyUtils.readStringFromInputStream(in));
 				return new ResourcePack(file.toURI().toURL(),
 					meta.getInt("pack_format"), meta.optString("name", new File(file.toURI()).getName()), meta.optString("description", "No description"));
 			}
@@ -647,7 +513,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
+		resourcePacks.sort((p1, p2) -> p1.filename.compareTo(p2.filename));
 	}
 
 	/** Releasing the unloaded packs. */
@@ -769,7 +635,7 @@ public class ResourcePackDisplay extends Display {
 			// Loading sprite sheet metadata.
 			for (String m : pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
 				try {
-					JSONObject obj = new JSONObject(readStringFromInputStream(pack.getResourceAsStream(m)));
+					JSONObject obj = new JSONObject(MyUtils.readStringFromInputStream(pack.getResourceAsStream(m)));
 					SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
 					pngs.remove(m.substring(0, m.length() - 5));
 					BufferedImage image = ImageIO.read(pack.getResourceAsStream(m.substring(0, m.length() - 5)));
@@ -781,7 +647,7 @@ public class ResourcePackDisplay extends Display {
 						meta.frametime = animation.getInt("frametime");
 						meta.frames = image.getHeight() / 16;
 						if (meta.frames == 0) throw new IOException(new IllegalArgumentException(String.format(
-							"Invalid frames 0 detected with {} in pack: {}", m, pack.name)));
+							"Invalid frames 0 detected with {} in pack: {}", m, pack.filename)));
 						sheet = new MinicraftImage(image, 16, 16 * meta.frames);
 					} else
 						sheet = new MinicraftImage(image, 16, 16);
@@ -797,7 +663,7 @@ public class ResourcePackDisplay extends Display {
 							try {
 								Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
 							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.filename);
 								meta.border = null;
 							}
 						}
@@ -810,7 +676,7 @@ public class ResourcePackDisplay extends Display {
 							try {
 								Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
 							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.filename);
 								meta.corner = null;
 							}
 						}
@@ -818,7 +684,7 @@ public class ResourcePackDisplay extends Display {
 
 					SpriteAnimation.setMetadata(m.substring(path.length(), m.length() - 9), meta);
 				} catch (JSONException | IOException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.name);
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.filename);
 				}
 			}
 
@@ -839,7 +705,7 @@ public class ResourcePackDisplay extends Display {
 
 				Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.filename);
 			}
 		}
 	}
@@ -851,9 +717,9 @@ public class ResourcePackDisplay extends Display {
 	private static void loadLocalization(ResourcePack pack) {
 		JSONObject langJSON = null;
 		try {
-			langJSON = new JSONObject(readStringFromInputStream(pack.getResourceAsStream("pack.json"))).optJSONObject("language");
+			langJSON = new JSONObject(MyUtils.readStringFromInputStream(pack.getResourceAsStream("pack.json"))).optJSONObject("language");
 		} catch (JSONException | IOException e1) {
-			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
+			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.filename);
 		}
 
 		if (langJSON != null) {
@@ -863,7 +729,7 @@ public class ResourcePackDisplay extends Display {
 					JSONObject info = langJSON.getJSONObject(loc);
 					Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")));
 				} catch (JSONException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.name);
+					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.filename);
 				}
 			}
 		}
@@ -871,7 +737,7 @@ public class ResourcePackDisplay extends Display {
 		for (String f : pack.getFiles("assets/localization/", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
 			String str = Paths.get(f).getFileName().toString();
 			try { // JSON verification.
-				String json = readStringFromInputStream(pack.getResourceAsStream(f));
+				String json = MyUtils.readStringFromInputStream(pack.getResourceAsStream(f));
 				JSONObject obj = new JSONObject(json);
 				for (String k : obj.keySet()) {
 					obj.getString(k);
@@ -880,9 +746,9 @@ public class ResourcePackDisplay extends Display {
 				// Add verified localization.
 				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)), json);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.filename);
 			} catch (JSONException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.name);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.filename);
 			}
 		}
 	}
@@ -894,7 +760,7 @@ public class ResourcePackDisplay extends Display {
 	private static void loadBooks(ResourcePack pack) {
 		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
 			try {
-				String book = BookData.loadBook(readStringFromInputStream(pack.getResourceAsStream(path)));
+				String book = BookData.loadBook(MyUtils.readStringFromInputStream(pack.getResourceAsStream(path)));
 				switch (path) {
 					case "assets/books/about.txt": BookData.about = () -> book; break;
 					case "assets/books/credits.txt": BookData.credits = () -> book; break;
@@ -903,7 +769,7 @@ public class ResourcePackDisplay extends Display {
 					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
 				}
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.filename);
 			}
 		}
 	}
@@ -913,12 +779,12 @@ public class ResourcePackDisplay extends Display {
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadSounds(ResourcePack pack) {
-		for (String f : pack.getFiles("assets/sound/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
+		for (String f : pack.getFiles("assets/sounds/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
 			String name = Paths.get(f).getFileName().toString();
 			try {
-				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.name);
+				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.filename);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.filename);
 			}
 		}
 	}
