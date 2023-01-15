@@ -2,7 +2,6 @@ package minicraft.util.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -39,7 +38,7 @@ public class SyncReloadableResourceManager implements ResourceManager, AutoClose
 			InputStream inputStream;
 			try {
 				if ((inputStream = pack.getFile(path)) != null) {
-					return new Resource(pack, Paths.get(path), inputStream);
+					return new Resource(pack, path, inputStream);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -47,6 +46,10 @@ public class SyncReloadableResourceManager implements ResourceManager, AutoClose
 		}
 
 		return null;
+	}
+
+	public List<Resource> getResources(String path) {
+		return getResources(path, p -> p.endsWith(path));
 	}
 
 	public List<Resource> getResources(String beginPath, Predicate<String> filePathPredicate) {

@@ -39,7 +39,7 @@ public abstract class ResourcePack implements AutoCloseable {
 
 	abstract public void getAllFiles(String beginPath, Predicate<String> filePathPredicate, FindResultConsumer consumer);
 
-	public static interface FindResultConsumer extends BiConsumer<Path, InputStream> {}
+	public static interface FindResultConsumer extends BiConsumer<String, InputStream> {}
 
 	/**
 	 * Returns the name of the resource pack
@@ -61,11 +61,10 @@ public abstract class ResourcePack implements AutoCloseable {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(this.getFile("pack.json")));
 				JSONObject object = new JSONObject(String.join("\n", reader.lines().toArray(String[]::new)));
 
-				String mName = object.optString("name", this.getName());
 				String mDescription = object.optString("description", "");
 				int mPackFormat = object.getInt("pack_format");
 
-				this.packMetadata = new ResourcePackMetadata(this.loadLogo(), mName, mDescription, mPackFormat);
+				this.packMetadata = new ResourcePackMetadata(mDescription, mPackFormat);
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
@@ -102,24 +101,12 @@ public abstract class ResourcePack implements AutoCloseable {
 	}
 
 	public class ResourcePackMetadata {
-		private final MinicraftImage logo;
-		private final String name;
 		private final String description;
 		private final int packFormat;
 
-		ResourcePackMetadata(MinicraftImage logo, String name, String description, int packFormat) {
-			this.logo = logo;
-			this.name = name;
+		ResourcePackMetadata(String description, int packFormat) {
 			this.description = description;
 			this.packFormat = packFormat;
-		}
-
-		public MinicraftImage logo() {
-			return this.logo;
-		}
-
-		public String name() {
-			return this.name;
 		}
 
 		public String description() {

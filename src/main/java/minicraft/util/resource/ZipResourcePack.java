@@ -3,6 +3,7 @@ package minicraft.util.resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -48,9 +49,25 @@ public class ZipResourcePack extends ResourcePack {
 		return null;
 	}
 
-	// TODO
 	@Override
 	public void getAllFiles(String beginPath, Predicate<String> filePathPredicate, FindResultConsumer consumer) {
+		if (this.zip == null) return;
+
+		Enumeration<? extends ZipEntry> enumeration = this.zip.entries();
+
+		while (enumeration.hasMoreElements()) {
+			ZipEntry entry = enumeration.nextElement();
+
+			if (entry.isDirectory() || !entry.getName().startsWith(beginPath)) continue;
+
+			if (filePathPredicate.test(entry.getName())) {
+				try {
+					consumer.accept(entry.getName(), this.zip.getInputStream(entry));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package minicraft.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+
 public final class MyUtils {
 
 	private MyUtils() {}
@@ -25,6 +28,14 @@ public final class MyUtils {
 			Thread.sleep(millis);
 		} catch(InterruptedException ignored) {
 		}
+	}
+
+	public static String normalizeToPosix(String path) {
+		return path.replace(File.separator, "/");
+	}
+
+	public static String readAsString(BufferedReader reader) {
+		return String.join("\n", reader.lines().toArray(String[]::new));
 	}
 
 	@Deprecated

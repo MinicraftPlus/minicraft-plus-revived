@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import minicraft.util.MyUtils;
 
 public class Resource {
 	private final InputStream inputStream;
 	private final ResourcePack pack;
-	private final Path path;
+	private final String path;
 
-	public Resource(ResourcePack pack, Path path, InputStream inputStream) {
+	public Resource(ResourcePack pack, String path, InputStream inputStream) {
 		this.pack = pack;
-		this.path = path;
+		this.path = MyUtils.normalizeToPosix(path);
 		this.inputStream = inputStream;
 	}
 
@@ -42,7 +44,7 @@ public class Resource {
 	 * @return The name of the file with the extension
 	 */
 	public String getName() {
-		return this.path.getFileName().toString();
+		return Paths.get(this.path).getFileName().toString();
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class Resource {
 	 *
 	 * @return the path of the resource relative to the resource pack root
 	 */
-	public Path getPath() {
+	public String getPath() {
 	  	return this.path;
 	}
 
@@ -82,6 +84,8 @@ public class Resource {
 	 * @throws IOException
 	 */
 	public String getAsString() throws IOException {
-		return String.join("\n", this.getAsReader().lines().toArray(String[]::new));
+		try (BufferedReader reader = this.getAsReader()) {
+			return String.join("\n", this.getAsReader().lines().toArray(String[]::new));
+		}
 	}
 }

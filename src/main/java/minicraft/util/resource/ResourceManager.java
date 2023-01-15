@@ -17,13 +17,22 @@ public interface ResourceManager {
 
 	/**
 	 * Gets all files that start the beginPath and satisfy the filePathPredicate.
-	 * It searches from topmost to bottommost until it finds a resource.
+	 * It searches from topmost to bottommost.
 	 *
 	 * @param beginPath How the path has to start with
 	 * @param filePathPredicate Predicate for the path
 	 * @return The list of files as {@link Resource}
 	 */
 	public List<Resource> getResources(String beginPath, Predicate<String> filePathPredicate);
+
+	/**
+	 * Gets all files that satisfy the path.
+	 * It searches from topmost to bottommost.
+	 *
+	 * @param path the path of the file to search for in all resource packs
+	 * @return The list of files as {@link Resource}
+	 */
+	public List<Resource> getResources(String path);
 
 	/**
 	 * The first resource pack in the list is the bottommost.

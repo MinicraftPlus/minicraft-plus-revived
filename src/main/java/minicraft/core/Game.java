@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
@@ -18,9 +19,8 @@ import minicraft.screen.Display;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import minicraft.util.resource.SyncReloadableResourceManager;
-import minicraft.util.resource.reloader.BookReloader;
-import minicraft.util.resource.reloader.LocalizationReloader;
-import minicraft.util.resource.reloader.SoundReloader;
+import minicraft.util.resource.VanillaResourcePack;
+import minicraft.util.resource.reloader.SplashManager;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
@@ -86,9 +86,12 @@ public class Game {
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
 		{
-			resourceManager.registerReloader(new LocalizationReloader());
-			resourceManager.registerReloader(new SoundReloader());
-			resourceManager.registerReloader(new BookReloader());
+			resourceManager.registerReloader(new SplashManager());
+			// resourceManager.registerReloader(new LocalizationReloader());
+			// resourceManager.registerReloader(new SoundReloader());
+			// resourceManager.registerReloader(new BookReloader());
+			// resourceManager.registerReloader(new TextureReloader());
+			resourceManager.reload(Arrays.asList(new VanillaResourcePack()));
 
 			Renderer.initScreen();
 		}
