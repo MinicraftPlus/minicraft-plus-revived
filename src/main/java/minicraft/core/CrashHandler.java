@@ -26,6 +26,11 @@ import org.jetbrains.annotations.Nullable;
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
 
+/** @deprecated Swing popups intended to be replaced with a crash report system, logging and in-game popups.
+ * Preventing the unintended running threads and programs being able to run.
+ * Also preventing continuously generating multiple popups at a time.
+ * There is a point that is to catch exceptions as many as possible. */
+@Deprecated
 public class CrashHandler {
 	public static void crashHandle(Thread thread, Throwable throwable) { crashHandle(throwable); }
 	public static void crashHandle(Throwable throwable) { crashHandle(throwable, new ErrorInfo(true)); }
@@ -268,7 +273,11 @@ public class CrashHandler {
 			UNEXPECTED (-2, "Unexpected error"),
 			UNHANDLEABLE (-3, "Unhandleable error"),
 			SERIOUS (1, "Serious error"),
+			/** @deprecated Intended to be removed to reduce error popups. */
+			@Deprecated
 			HANDLED (0, "Handled error"),
+			/** @deprecated Intended to be removed to reduce error popups. */
+			@Deprecated
 			REPORT (0, "Error report"),
 			;
 

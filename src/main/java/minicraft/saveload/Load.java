@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Load {
@@ -389,8 +390,11 @@ public class Load {
 				packs[i] = packsJSON.getString(i);
 			}
 
-			ResourcePackDisplay.loadResourcePacks(packs);
-			ResourcePackDisplay.reloadResources();
+			if (prefVer.compareTo(new Version("2.2.0")) < 0) { // TODO Fill-in the blank, current version.
+				Collections.reverse(Arrays.asList(packs));
+			}
+
+			ResourcePackDisplay.initLoadedPacks(packs);
 		}
 
 		ResourcePackDisplay.releaseUnloadedPacks();

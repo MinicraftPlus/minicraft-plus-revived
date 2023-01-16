@@ -77,12 +77,12 @@ public class Game {
 
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
-		Renderer.initScreen();
-
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
 		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
+
+		Renderer.initScreen();
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {

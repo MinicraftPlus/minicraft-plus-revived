@@ -1,16 +1,20 @@
 package minicraft.screen;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.channels.FileLock;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -19,15 +23,19 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
+import java.util.function.Function;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
+import javax.swing.TransferHandler;
 
+import minicraft.core.Initializer;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.CrashHandler;
@@ -36,6 +44,7 @@ import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
@@ -48,6 +57,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
 import minicraft.util.Logging;
 
@@ -91,67 +101,47 @@ public class ResourcePackDisplay extends Display {
 	 * 		└──	<locale>
 	 * 			├──	name String
 	 * 			└──	region String
+	 *
+	 * [<tile_name>.png.json]
+	 * 	├──	(animation object)
+	 * 	│	└──	frametime int
+	 * 	└──	(border object)
+	 * 		├──	(key) String
+	 * 		└──	(corner) String
 	 */
 
-
-	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // Packs that are not loaded.
-	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/resourcepacks");
-	@SuppressWarnings("unused")
-	private static final int VERSION = 1;
-
-	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	public static final MinicraftImage defaultLogo;
-	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
-	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
+
+	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/resourcepacks");
+	private static final ArrayList<ResourcePack> loadedPacks = new ArrayList<>(); // All currently loaded packs.
+	private static final HashMap<ResourcePack, FileLock> packLocks = new HashMap<>();
+	private final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // All packs available.
+	private final ArrayList<ResourcePack> loadQuery = new ArrayList<>(); // All packs intended to be loaded.
+	private final ArrayList<ResourcePack> unloadedPacks = new ArrayList<ResourcePack>() { // Packs that are not loaded.
+		private final Comparator<ResourcePack> sorter = (o1, o2) -> {
+			if (o1 instanceof ResourcePack.ClassicArtResourcePack) return 1;
+			if (o2 instanceof ResourcePack.ClassicArtResourcePack) return -1;
+			return o1.getName().compareTo(o2.getName());
+		};
+
+		public boolean add(ResourcePack pack) {
+			int index = Collections.binarySearch(this, pack, sorter);
+			if (index < 0) index = ~index;
+			super.add(index, pack);
+			return true;
+		}
+	}; // Reference: https://stackoverflow.com/a/4903642.
 
 	private static final int padding = 10;
 
-	private WatcherThread fileWatcher;
-	private ArrayList<ListEntry> entries0 = new ArrayList<>();
-	private ArrayList<ListEntry> entries1 = new ArrayList<>();
-	private Menu.Builder builder0;
-	private Menu.Builder builder1;
-	private boolean changed = false;
+	private final WatcherThread fileWatcher;
+	private final TransferHandler origTransferHandler;
+	private final ArrayList<ListEntry> entries0 = new ArrayList<>();
+	private final ArrayList<ListEntry> entries1 = new ArrayList<>();
+	private final Menu.Builder builder0;
+	private final Menu.Builder builder1;
 
 	static { // Initializing the default pack and logo.
-		// Add the default pack.
-		URL defaultPackURL = Game.class.getProtectionDomain().getCodeSource().getLocation();
-		if (Game.class.getProtectionDomain().getCodeSource().getLocation().toString().endsWith("/")) { // If the source is a directory.
-			try {
-				File zip = File.createTempFile("resources", ".zip");
-				Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
-				if (zip.exists()) zip.delete(); // Delete if exists.
-				try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-					for (String name : FileHandler.listResources()) { // Copy only assets and pack configuration.
-						if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
-							out.putNextEntry(new ZipEntry(name));
-							if (!name.endsWith("/")) {
-								int b;
-								InputStream stream = Game.class.getResourceAsStream("/" + name);
-								while ((b = stream.read()) != -1) // Write per byte.
-									out.write(b);
-							}
-
-							out.closeEntry();
-						}
-					}
-				} catch (IOException e) {
-					CrashHandler.crashHandle(e);
-				}
-
-				try {
-					defaultPackURL = zip.toURI().toURL();
-				} catch (MalformedURLException e) {
-					CrashHandler.crashHandle(e);
-				}
-			} catch (IOException e) {
-				CrashHandler.crashHandle(e);
-			}
-		}
-
-		// Default resources
-		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
-		loadedPacks.add(defaultPack);
 		try {
 			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/assets/textures/misc/unknown_pack.png")));
 		} catch (IOException e) {
@@ -164,6 +154,8 @@ public class ResourcePackDisplay extends Display {
 	public ResourcePackDisplay() {
 		super(true, true);
 		initPacks();
+		loadQuery.addAll(loadedPacks);
+		Collections.reverse(loadQuery);
 
 		// Left Hand Side
 		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
@@ -188,6 +180,8 @@ public class ResourcePackDisplay extends Display {
 			menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
 
 		fileWatcher = new WatcherThread();
+		origTransferHandler = Initializer.getFrame().getTransferHandler();
+		Initializer.getFrame().setTransferHandler(new FileDropHandler());
 	}
 
 	@Override
@@ -207,27 +201,45 @@ public class ResourcePackDisplay extends Display {
 
 	/** Reloading the entries to refresh the current pack list. */
 	private void reloadEntries() {
-		entries0.clear(); // First list: unloaded.
-		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+		Function<ResourcePack, SelectEntry> getter = pack -> {
+			ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(StringEntry.useLines(Color.WHITE, false, pack.getName())));
+			int compatibility = packCompatibility(pack);
+			if (compatibility != 0)
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, compatibility < 0 ? "minicraft.displays.resource_packs.display.pack_made_for_older" :
+					"minicraft.displays.resource_packs.display.pack_made_for_newer")));
+			entries.addAll(Arrays.asList(StringEntry.useLines(Color.GRAY, false, pack.getDescription())));
+			return new SelectEntry(pack.getName(), () -> Game.setDisplay(new PopupDisplay(null, entries.toArray(new ListEntry[0]))), false) {
 				@Override
 				public int getColor(boolean isSelected) {
-					if (selection == 1) return SelectEntry.COL_UNSLCT;
-					return super.getColor(isSelected);
+					if (pack.getPackFormat() != ResourcePack.PACK_FORMAT) {
+						return selection == 1 ? Color.tint(Color.RED, 1, true) : Color.RED;
+					} else {
+						return selection == 1 ? SelectEntry.COL_UNSLCT : super.getColor(isSelected);
+					}
 				}
-			});
+			};
+		};
+
+		entries0.clear(); // First list: unloaded.
+		for (ResourcePack pack : unloadedPacks) { // First list: all available unloaded resource packs.
+			entries0.add(getter.apply(pack));
 		}
 
 		entries1.clear(); // Second list: to be loaded.
-		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
-				@Override
-				public int getColor(boolean isSelected) {
-					if (selection == 0) return SelectEntry.COL_UNSLCT;
-					return super.getColor(isSelected);
-				}
-			});
+		for (ResourcePack pack : loadQuery) { // Second List: loaded resource packs.
+			entries1.add(getter.apply(pack));
 		}
+	}
+
+	/**
+	 * Getting the compatibility of the specified pack.
+	 * @param pack The pack to check.
+	 * @return {@code 0} if the pack is fully compatible, which means the pack format is as same as the current supported one.
+	 * Negative integer if the pack is made for an older version of Minicraft+.
+	 * Positive integer if the pack is made for a newer version of Minicraft+.
+	 */
+	private static int packCompatibility(ResourcePack pack) {
+		return Integer.compare(pack.getPackFormat(), ResourcePack.PACK_FORMAT);
 	}
 
 	/** Applying the reloaded entries into the display. */
@@ -250,8 +262,73 @@ public class ResourcePackDisplay extends Display {
 		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
 	}
 
+	/** Reference: https://stackoverflow.com/a/39415436 */
+	private static final class FileDropHandler extends TransferHandler {
+		@Override
+		public boolean canImport(TransferHandler.TransferSupport support) {
+			for (DataFlavor flavor : support.getDataFlavors()) {
+				if (flavor.isFlavorJavaFileListType()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public boolean importData(TransferHandler.TransferSupport support) {
+			if (!this.canImport(support))
+				return false;
+
+			List<File> files;
+			try {
+				files = (List<File>) support.getTransferable()
+					.getTransferData(DataFlavor.javaFileListFlavor);
+			} catch (UnsupportedFlavorException | IOException ex) {
+				// should never happen (or JDK is buggy)
+				return false;
+			}
+
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.add(new StringEntry("minicraft.displays.resource_packs.popups.display.add_pack_confirm", Color.WHITE));
+			files.forEach(f -> entries.add(new StringEntry(f.getName(), Color.GRAY, false)));
+			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+				Localization.getLocalized("minicraft.display.popup.enter_confirm", Game.input.getMapping("select")),
+				Localization.getLocalized("minicraft.display.popup.escape_cancel", Game.input.getMapping("exit"))
+			)));
+
+			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+				for (File file: files) {
+					if (!file.toPath().startsWith(FOLDER_LOCATION.toPath())) { // The file is not in the folder.
+						if (file.exists() && !new File(FOLDER_LOCATION, file.getName()).exists()) { // If there is no file originally.
+							if (file.isDirectory()) {
+								try {
+									FileHandler.copyFolderContents(file.toPath(), FOLDER_LOCATION.toPath(), FileHandler.REPLACE_EXISTING, false);
+								} catch (IOException e) {
+									Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to copy folder {} to resource pack folder.", file.getPath());
+								}
+							} else if (file.isFile()) {
+								try {
+									Files.copy(file.toPath(), FOLDER_LOCATION.toPath());
+								} catch (IOException e) {
+									Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to copy folder {} to resource pack folder.", file.getPath());
+								}
+							}
+						}
+					}
+				}
+
+				return true;
+			}));
+
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+			return true;
+		}
+	}
+
 	/** Watching the directory changes. Allowing hot-loading. */
-	private class WatcherThread extends Thread implements Closeable {
+	private final class WatcherThread extends Thread implements Closeable {
 		private WatchService watcher;
 		private volatile Thread running = this;
 
@@ -273,26 +350,20 @@ public class ResourcePackDisplay extends Display {
 		public void run() {
 			while (running == this) {
 				try {
-					ArrayList<URL> urls = new ArrayList<>();
+					ArrayList<File> files = new ArrayList<>();
 					for (WatchEvent<?> event : watcher.take().pollEvents()) {
 						if (event.kind() == StandardWatchEventKinds.OVERFLOW)
 							continue;
 
 						@SuppressWarnings("unchecked")
 						WatchEvent<Path> ev = (WatchEvent<Path>) event;
-        				Path filename = ev.context();
-
-						try {
-							urls.add(FOLDER_LOCATION.toPath().resolve(filename).toFile().toURI().toURL());
-						} catch (IOException e) {
-							e.printStackTrace();
-							continue;
-						}
+						Path filename = ev.context();
+						files.add(FOLDER_LOCATION.toPath().resolve(filename).toFile());
 					}
 
-					if (urls.size() > 0) {
-						Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Refreshing resource packs.");
-						refreshResourcePacks(urls);
+					if (files.size() > 0) {
+						Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Refreshing resource packs: {}.", files);
+						refreshResourcePacks(files);
 						refreshEntries();
 					}
 				} catch (InterruptedException e) {
@@ -312,62 +383,95 @@ public class ResourcePackDisplay extends Display {
 
 	@Override
 	public void onExit() {
-		resourcePacks.clear(); // Releases unloaded packs.
 		fileWatcher.close(); // Removes watcher.
+		Initializer.getFrame().setTransferHandler(origTransferHandler);
+		Collections.reverse(loadQuery);
+		if (!loadQuery.equals(loadedPacks)) // Changes applied.
+			reloadResources(this);
 		new Save();
-		if (changed) reloadResources();
+	}
+
+	/** Checking if the pack is movable in the menu. The position should be checked as valid. */
+	private static boolean isMovable(ResourcePack pack, Direction dir) {
+		if (pack instanceof ResourcePack.DefaultResourcePack.WorldBundledDefaultResourcePack)
+			return false; // World-bundled pack is fixed.
+		if (dir == Direction.DOWN || dir == Direction.UP) {
+			return true;
+		} else if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+			return !(pack instanceof ResourcePack.DefaultResourcePack.GameDefaultResourcePack);
+		}
+
+		return false;
 	}
 
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getKey("right").clicked) { // Move cursor to the second list.
-			if (selection == 0) {
-				Sound.play("select");
-				onSelectionChange(0, 1);
+		boolean inputRightClicked = input.getKey("right").clicked;
+		boolean inputLeftClicked = input.getKey("left").clicked;
+
+		if (inputRightClicked || inputLeftClicked) {
+			boolean successful = false;
+			if (inputRightClicked) { // Move cursor to the second list.
+				if (selection == 0) {
+					onSelectionChange(0, 1);
+					successful = true;
+				}
+			} else { // Move cursor to the first list.
+				if (selection == 1) {
+					onSelectionChange(1, 0);
+					successful = true;
+				}
 			}
 
+			if (successful) Sound.play("select");
 			return;
-		} else if (input.getKey("left").clicked) { // Move cursor to the first list.
-			if (selection == 1) {
-				Sound.play("select");
-				onSelectionChange(1, 0);
+		}
+
+		boolean inputSRightClicked = input.getKey("shift-right").clicked;
+		boolean inputSLeftClicked = input.getKey("shift-left").clicked;
+		boolean inputSUpClicked = input.getKey("shift-up").clicked;
+		boolean inputSDownClicked = input.getKey("shift-down").clicked;
+
+		if (inputSRightClicked || inputSLeftClicked || inputSUpClicked || inputSDownClicked) {
+			boolean successful = false;
+			if (inputSRightClicked) { // Move the selected pack from the first to the second list.
+				if (selection == 0 && unloadedPacks.size() > 0) {
+					ResourcePack pack = unloadedPacks.get(menus[0].getSelection());
+					if (isMovable(pack, Direction.RIGHT)) {
+						loadQuery.add(0, unloadedPacks.remove(menus[0].getSelection()));
+						successful = true;
+					}
+				}
+			} else if (inputSLeftClicked) { // Move the selected pack from the second to the first list.
+				if (selection == 1) { // loadQuery is always non-empty; default pack(s) exist(s).
+					ResourcePack pack = loadQuery.get(menus[1].getSelection());
+					if (isMovable(pack, Direction.LEFT)) {
+						unloadedPacks.add(loadQuery.remove(menus[1].getSelection()));
+						successful = true;
+					}
+				}
+			} else if (inputSUpClicked) { // Move up the selected pack in the second list.
+				if (selection == 1 && menus[1].getSelection() > 0) {
+					ResourcePack pack = loadQuery.get(menus[1].getSelection());
+					ResourcePack oPack = loadQuery.get(menus[1].getSelection() - 1);
+					if (isMovable(pack, Direction.UP) && isMovable(oPack, Direction.DOWN)) {
+						Collections.swap(loadQuery, menus[1].getSelection(), menus[1].getSelection() - 1);
+						successful = true;
+					}
+				}
+			} else { // Move down the selected pack in the second list.
+				if (selection == 1 && menus[1].getSelection() < loadQuery.size() - 1) {
+					ResourcePack pack = loadQuery.get(menus[1].getSelection());
+					ResourcePack oPack = loadQuery.get(menus[1].getSelection() + 1);
+					if (isMovable(pack, Direction.DOWN) && isMovable(oPack, Direction.UP)) {
+						Collections.swap(loadQuery, menus[1].getSelection(), menus[1].getSelection() + 1);
+						successful = true;
+					}
+				}
 			}
 
-			return;
-		} else if (input.getKey("shift-right").clicked) { // Move the selected pack to the second list.
-			if (selection == 0 && resourcePacks.size() > 0) {
-				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
-				changed = true;
-				refreshEntries();
-				Sound.play("select");
-			}
-
-			return;
-		} else if (input.getKey("shift-left").clicked) { // Move the selected pack to the first list.
-			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
-				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
-				changed = true;
-				refreshEntries();
-				Sound.play("select");
-			}
-
-			return;
-		} else if (input.getKey("shift-up").clicked) { // Move up the selected pack in the second list.
-			if (selection == 1 && menus[1].getSelection() > 0) {
-				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
-				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
-				changed = true;
-				refreshEntries();
-				Sound.play("select");
-			}
-
-			return;
-		} else if (input.getKey("shift-down").clicked) { // Move down the selected pack in the second list.
-			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
-				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
-				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
-				changed = true;
+			if (successful) {
 				refreshEntries();
 				Sound.play("select");
 			}
@@ -390,10 +494,9 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
 
-		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
+		ArrayList<ResourcePack> packs = selection == 0 ? unloadedPacks : loadQuery;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
-			@SuppressWarnings("resource")
-			MinicraftImage logo = packs.get(menus[selection].getSelection()).logo;
+			MinicraftImage logo = packs.get(menus[selection].getSelection()).getLogo();
 			int h = logo.height / 8;
 			int w = logo.width / 8;
 			int xo = (Screen.w - logo.width) / 2;
@@ -410,137 +513,125 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading pack metadata of the pack.
-	 * @param file The path of the pack.
+	 * @param file The file of the pack.
 	 * @return The loaded pack with metadata. {@code null} if the pack could not be recognized as a valid pack;
 	 * the pack is ignored.
 	 */
 	@Nullable
-	public static ResourcePack loadPackMetadata(URL file) {
-		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
-			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
-				JSONObject meta = new JSONObject(MyUtils.readStringFromInputStream(in));
-				return new ResourcePack(file.toURI().toURL(),
-					meta.getInt("pack_format"), meta.optString("name", new File(file.toURI()).getName()), meta.optString("description", "No description"));
+	public static ResourcePack loadPackMetadata(File file) {
+		try {
+			if (file.isDirectory()) { // Is a directory.
+				File metaF = new File(file, "pack.json");
+				if (metaF.isFile()) {
+					try (FileInputStream in = new FileInputStream(metaF)) {
+						JSONObject meta = new JSONObject(MyUtils.readStringFromInputStream(in));
+						return new ResourcePack.DirectoryResourcePack(file, meta.getInt("pack_format"), file.getName(), meta.getString("description"));
+					} catch (IOException | UncheckedIOException | NullPointerException | JSONException ignored) {}
+				}
+			} else if (file.isFile() && file.getName().endsWith(".zip")) { // Is a zip file.
+				try (ZipFile zip = new ZipFile(file)) {
+					try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
+						JSONObject meta = new JSONObject(MyUtils.readStringFromInputStream(in));
+						return new ResourcePack.ZipFileResourcePack(file, meta.getInt("pack_format"), file.getName(), meta.getString("description"));
+					}
+				} catch (IOException | IllegalStateException | UncheckedIOException | NullPointerException | JSONException ignored) {}
 			}
-		} catch (JSONException | IOException | URISyntaxException e) {
-			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Cannot Load Resource Pack",
-				CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load resource pack: %s.", file.getPath())));
-		} catch (NullPointerException e) { // pack.json is missing.
-			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Resource Pack not Supported",
-				CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Missing pack.json in resource pack: %s.", file.getPath())));
-		}
+		} catch (SecurityException | NullPointerException ignored) {}
 
 		return null;
 	}
 
-	/** Intializing the packs from directory and loaded. */
-	public static void initPacks() {
+	private static void initFolder() {
 		// Generate resource packs folder
+		if (FOLDER_LOCATION.isFile()) {
+			if (FOLDER_LOCATION.delete())
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Non-directory file %s is deleted successfully.", FOLDER_LOCATION);
+			else
+				throw new RuntimeException(String.format("Non-directory file %s is deleted unsuccessfully.", FOLDER_LOCATION));
+		}
 		if (FOLDER_LOCATION.mkdirs()) {
 			Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created resource packs folder at {}.", FOLDER_LOCATION);
 		}
-
-		ArrayList<URL> urls = new ArrayList<>();
-		// Read and add the .zip file to the resource pack list. Only accept files ending with .zip or directory.
-		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) ->  name.endsWith(".zip")))) {
-			try {
-				urls.add(file.toPath().toUri().toURL());
-			} catch (MalformedURLException e) {
-				CrashHandler.errorHandle(e);
-			}
-		}
-
-		// Adding all unadded packs for refreshing.
-		URL theURL;
-		for (ResourcePack pack : resourcePacks) {
-			if (!urls.contains(theURL = pack.packRoot)) {
-				urls.add(theURL);
-			}
-		}
-
-		for (ResourcePack pack : loadedPacks) {
-			if (pack == defaultPack && !urls.contains(theURL = pack.packRoot)) {
-				urls.add(theURL);
-			}
-		}
-
-		refreshResourcePacks(urls);
 	}
 
 	/**
-	 * Finding the pack by pack's file URL.
-	 * @param url The url for query.
-	 * @return The found resource pack. {@code null} if not found.
+	 * First initialization on the resource pack system.
+	 * This should only be called ONCE only.
+	 * Loading the resource packs when loading preferences.
+	 * @param names The names of the packs.
 	 */
-	private static ResourcePack findPackByURL(URL url) {
+	public static void initLoadedPacks(String[] names) {
+		initFolder();
+
+		// Getting the list of all available packs in packs folder.
+		ArrayList<ResourcePack> resourcePacks = new ArrayList<>();
+		resourcePacks.add(ResourcePack.DefaultResourcePack.DEFAULT_RESOURCE_PACK);
+		resourcePacks.add(ResourcePack.ClassicArtResourcePack.CLASSIC_ART_RESOURCE_PACK);
+		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles())) {
+			ResourcePack pack = loadPackMetadata(file); // Read and add the .zip ZipFile files and directories to the resource pack list.
+			if (pack != null) { // If the pack is valid.
+				resourcePacks.add(pack);
+			}
+		}
+
+		for (String name : new HashSet<>(Arrays.asList(names))) {
+			for (ResourcePack pack : resourcePacks) {
+				if (name.equals(pack.getIdentifier())) {
+					loadedPacks.add(pack);
+					break;
+				}
+			}
+		}
+
+		reloadResources(null);
+	}
+
+	private void initPacks() {
+		initFolder();
+
+		// Getting the list of all available packs in packs folder.
+		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles())) {
+			ResourcePack pack = loadPackMetadata(file); // Read and add the .zip ZipFile files and directories to the resource pack list.
+			if (pack != null) { // If the pack is valid.
+				resourcePacks.add(pack);
+			}
+		}
+
 		for (ResourcePack pack : resourcePacks) {
-			if (pack.packRoot.equals(url)) {
-				return pack;
+			if (!loadedPacks.contains(pack)) {
+				unloadedPacks.add(pack);
 			}
 		}
-
-		for (ResourcePack pack : loadedPacks) {
-			if (pack.packRoot.equals(url)) {
-				return pack;
-			}
-		}
-
-		return null;
 	}
 
 	/**
 	 * Refreshing the pack list by the urls.
-	 * @param urls The packs' url to be refreshed.
+	 * @param files The files under the folder to be refreshed.
 	 */
-	private static void refreshResourcePacks(List<URL> urls) {
-		for (URL url : urls) {
-			ResourcePack pack = findPackByURL(url);
+	private void refreshResourcePacks(List<File> files) {
+		for (File file : files) {
+			ResourcePack pack = resourcePacks.stream().filter(p -> p.getFile().equals(file)).findAny().orElse(null);
 			if (pack != null) { // Refresh the current.
-				try {
-					if (new File(url.toURI()).exists())
-						pack.refreshPack();
-					else { // Remove if not exist.
-						resourcePacks.remove(pack);
-						loadedPacks.remove(pack);
-					}
-				} catch (URISyntaxException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Resource pack URL not found.");
-					resourcePacks.remove(pack);
-					loadedPacks.remove(pack);
-				}
+				refreshResourcePack(pack);
 			} else { // Add new pack as it should be existed.
-				pack = loadPackMetadata(url);
+				pack = loadPackMetadata(file);
 				if (pack != null) {
-					resourcePacks.add(pack);
+					unloadedPacks.add(pack);
 				}
 			}
 		}
-
-		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
 	}
 
-	/** Releasing the unloaded packs. */
-	public static void releaseUnloadedPacks() {
-		resourcePacks.clear(); // Releases unloaded packs.
-	}
-
-	/**
-	 * Loading the resource packs when loading preferences. This should only be called by {@link minicraft.saveload.Load}.
-	 * @param names The names of the packs.
-	 */
-	public static void loadResourcePacks(String[] names) {
-		for (String name : names) {
-			for (ResourcePack pack : new ArrayList<>(resourcePacks)) {
-				try {
-					if (Paths.get(pack.packRoot.toURI()).equals(FOLDER_LOCATION.toPath().resolve(name))) {
-						resourcePacks.remove(pack);
-						loadedPacks.add(loadedPacks.indexOf(defaultPack), pack);
-					}
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug("URL invalid.");
-				}
-			}
+	private void refreshResourcePack(ResourcePack pack) {
+		try {
+			pack.refreshPack();
+		} catch (ResourcePack.PackRestructureNeededException e) {
+			loadQuery.remove(pack); // Unregistering the original pack instance.
+			unloadedPacks.remove(pack);
+			resourcePacks.remove(pack);
+			pack = loadPackMetadata(pack.getFile()); // Getting the reidentified pack instance.
+			if (pack != null)
+				unloadedPacks.add(pack);
 		}
 	}
 
@@ -551,13 +642,7 @@ public class ResourcePackDisplay extends Display {
 	public static ArrayList<String> getLoadedPacks() {
 		ArrayList<String> packs = new ArrayList<>();
 		for (ResourcePack pack : loadedPacks) {
-			if (pack != defaultPack) {
-				try {
-					packs.add(new File(pack.packRoot.toURI()).getName());
-				} catch (URISyntaxException e) {
-					CrashHandler.errorHandle(e);
-				}
-			}
+			packs.add(pack.getIdentifier());
 		}
 
 		return packs;
@@ -565,10 +650,7 @@ public class ResourcePackDisplay extends Display {
 
 	/** Reloading all the resources with the currently packs to be loaded. */
 	@SuppressWarnings("unchecked")
-	public static void reloadResources() {
-		loadQuery.clear();
-		loadQuery.addAll(loadedPacks);
-		Collections.reverse(loadQuery);
+	public static void reloadResources(@Nullable ResourcePackDisplay display) {
 
 		// Clear all previously loaded resources.
 		Renderer.spriteLinker.resetSprites();
@@ -576,7 +658,7 @@ public class ResourcePackDisplay extends Display {
 		BookData.resetBooks();
 		Sound.resetSounds();
 		SpriteAnimation.resetMetadata();
-		for (ResourcePack pack : loadQuery) {
+		for (ResourcePack pack : loadedPacks) {
 			if (pack.openStream()) {
 				try {
 					loadTextures(pack);

@@ -31,6 +31,7 @@ public class Initializer extends Game {
 	static LogoSplashCanvas logoSplash = new LogoSplashCanvas();
 	static int fra, tik; // These store the number of frames and ticks in the previous second; used for fps, at least.
 
+	public static JFrame getFrame() { return frame; }
 	public static int getCurFps() { return fra; }
 
 	static void parseArgs(String[] args) {

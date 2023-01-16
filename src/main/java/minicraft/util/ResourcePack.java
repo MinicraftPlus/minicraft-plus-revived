@@ -82,6 +82,14 @@ public abstract class ResourcePack {
 	}
 
 	/**
+	 * Getting the pack file of the resource pack.
+	 * @return The file of the pack.
+	 */
+	public File getFile() {
+		return file;
+	}
+
+	/**
 	 * Getting the identifier used for identifying resource pack in options.
 	 * @return The pack identifier.
 	 */
@@ -174,10 +182,10 @@ public abstract class ResourcePack {
 		/**
 		 * Closing this instance and relinquishing the underlying resources.
 		 * After closing this instance, no more resources can be collected.
-		 * @throws Exception if this resource cannot be closed.
+		 * @throws IOException if this resource cannot be closed.
 		 */
 		@Override
-		public abstract void close() throws Exception;
+		public abstract void close() throws IOException;
 
 		protected final void ensureOpen() throws IllegalStateException {
 			if (closeRequested)
