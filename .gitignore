@@ -34,6 +34,7 @@ logs/
 *.war
 *.ear
 *.zip
+!src/**/*.zip
 *.tar.gz
 *.rar
 
