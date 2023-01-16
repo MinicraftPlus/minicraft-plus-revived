@@ -6,6 +6,7 @@ import minicraft.core.io.FileHandler;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.WorldSelectDisplay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
@@ -17,7 +18,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
@@ -72,6 +76,14 @@ public abstract class ResourcePack {
 	@NotNull
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Getting the identifier used for identifying resource pack in options.
+	 * @return The pack identifier.
+	 */
+	public String getIdentifier() {
+		return "file/" + name;
 	}
 
 	/**
@@ -426,25 +438,129 @@ public abstract class ResourcePack {
 		}
 	}
 
-	/**
-	 * The default resources of Minicraft+ with a pack control.
-	 */
-	public static class DefaultResourcePack extends ZipFileResourcePack {
-		private static final ResourcePack DEFAULT_RESOURCE_PACK = new DefaultResourcePack();
+	public static class DefaultResourcePack {
+		/** The default game resource pack, other than the world-bundled one, in directory or in jar. */
+		public static final GameDefaultResourcePack DEFAULT_RESOURCE_PACK = new GameDefaultResourcePack();
+
 		/** @see FileHandler#listResources() */
-		private static final URL gameJar;
+		private static File sourceResourceRoot = null;
+		private static boolean isSourceJar = false;
+
 		static {
+			try {
+				// Copied from FileHandler.
+				CodeSource src = Game.class.getProtectionDomain().getCodeSource();
+				if (src != null) {
+					URL jar = src.getLocation();
+					ZipInputStream zip = new ZipInputStream(jar.openStream());
+					if (zip.available() == 1) {
+						if (zip.getNextEntry() != null) { // Valid jar
+							sourceResourceRoot = Paths.get(jar.toURI()).toFile();
+							isSourceJar = true;
+						} else { // Running from an IDE
+							URL fUrl = Game.class.getResource("/");
+							if (fUrl == null) {
+								throw new IllegalStateException("Unexpected error: Unable to find the root of resources.");
+							}
+
+							Path p = Paths.get(fUrl.toURI());
+							File f = p.toFile();
+							isSourceJar = false;
+							if (new File(f, "resources").exists()) {
+								sourceResourceRoot = f;
+							} else { // Providing a simple resolution when the previous location is invalid, the gradle build path is used.
+								sourceResourceRoot = p.resolve("../../../resources/main").toFile();
+							}
+						}
+					} else
+						throw new IllegalStateException("Unexpected error: The code source is empty.");
+				} else {
+					throw new IllegalStateException("Unable to get code source.");
+				}
+			} catch (IOException | IllegalStateException | URISyntaxException e) {
+				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Invalid Game Code Source",
+					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to get code source in order to get default resources."));
+			}
 		}
 
-		public static ResourcePack getGameDefaultResourcePack() {
-			return DEFAULT_RESOURCE_PACK;
-		}
-		public static ResourcePack getWorldDefaultResourcePack() {
+		/**
+		 * Constructing a new instance with the world-bundled default resource pack.
+		 * @param worldName The world name associated with.
+		 * @return The world-bundled default resource pack. {@code null} if there is no associated pack or world.
+		 */
+		@Nullable
+		public static WorldBundledDefaultResourcePack newWorldBundledDefaultResourcePack(@Nullable String worldName) {
+			if (worldName == null) return null;
+			if (!WorldSelectDisplay.getWorldNames().contains(worldName)) return null; // There is no world.
 
+			File file = new File(Game.gameDir + "/saves/" + worldName, "resources.zip");
+			if (file.isFile()) {
+				try (ZipFile zipFile = new ZipFile(file)) {
+					try (InputStream in = zipFile.getInputStream(zipFile.getEntry("pack.json"))) {
+						JSONObject meta = new JSONObject(MyUtils.readStringFromInputStream(in));
+						return new WorldBundledDefaultResourcePack(file, meta.getInt("pack_format"), meta.has("description") ? meta.getString("description") + " (world)" : "(world)");
+					}
+				} catch (IOException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load world-bundled pack in world: {}.", worldName);
+					return null;
+				} catch (JSONException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack.json in world-bundled pack in world: {}.", worldName);
+					return null;
+				}
+			} else
+				return null;
 		}
 
-		private DefaultResourcePack() {
-			super(, PACK_FORMAT, "Default", "The default look and feel of Minicraft+ (built-in)");
+		/**
+		 * The default resources of Minicraft+ with a pack control.
+		 */
+		public static class GameDefaultResourcePack extends ResourcePack {
+			public static final String IDENTIFIER = "vanilla";
+
+			private final ResourcePack childHandler;
+
+			private GameDefaultResourcePack() {
+				super(sourceResourceRoot, PACK_FORMAT, "Default", "The default look and feel of Minicraft+ (built-in)");
+				if (isSourceJar)
+					childHandler = new ZipFileResourcePack(file, packFormat, name, description);
+				else
+					childHandler = new DirectoryResourcePack(file, packFormat, name, description);
+			}
+
+			@Override
+			public String getIdentifier() {
+				return IDENTIFIER;
+			}
+
+			@Override
+			protected void reloadLogo() {
+				childHandler.reloadLogo();
+			}
+
+			@Override
+			protected void reloadMetadata() throws PackRestructureNeededException {
+				childHandler.reloadMetadata();
+			}
+
+			@Override
+			public PackResourceStream loadPack() {
+				return childHandler.loadPack();
+			}
+		}
+
+		/**
+		 * The resource pack control for world specific resources.
+		 * This pack has the most priority and is fixed and loaded before the world loading.
+		 */
+		public static class WorldBundledDefaultResourcePack extends ZipFileResourcePack {
+			private WorldBundledDefaultResourcePack(File file, int packFormat, String desc) {
+				super(file, packFormat, "World Specific Resources", desc);
+			}
+
+			@Override
+			public String getIdentifier() {
+				return null;
+			}
 		}
 	}
 
@@ -452,11 +568,40 @@ public abstract class ResourcePack {
 	 * The classic textures of Minicraft+ in pack.
 	 * This class could be simplified if loading external assets is possible.
 	 */
-	public static class ClassicArtResourcePack extends ResourcePack {
-		public static final ClassicArtResourcePack CLASSIC_ART_RESOURCE_PACK = new ClassicArtResourcePack();
+	public static class ClassicArtResourcePack extends ZipFileResourcePack {
+		public static final String IDENTIFIER = "classic_art";
+		public static final ClassicArtResourcePack CLASSIC_ART_RESOURCE_PACK;
 
-		private ClassicArtResourcePack() {
-			super(, PACK_FORMAT, "Classic Art", "The classic look of Minicraft+ (built-in)");
+		static {
+			ClassicArtResourcePack temp;
+			try {
+				temp = new ClassicArtResourcePack();
+			} catch (URISyntaxException | UnsupportedOperationException | IllegalArgumentException |
+					 FileSystemNotFoundException | SecurityException e) {
+				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Classic Art Resource Pack Invalid",
+					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to load the built-in classic resource pack."));
+				temp = null;
+			}
+
+			CLASSIC_ART_RESOURCE_PACK = temp;
+		}
+
+		private static final URL path;
+
+		static {
+			path = Game.class.getResource("/assets/resourcepacks");
+			if (path == null)
+				CrashHandler.crashHandle(new NullPointerException("Classic Art Resource Pack not Found"), new CrashHandler.ErrorInfo("Classic Art Resource Pack not Found",
+					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to get the classic resource pack by the path."));
+		}
+
+		private ClassicArtResourcePack() throws URISyntaxException {
+			super(Paths.get(path.toURI()).toFile(), PACK_FORMAT, "Classic Art", "The classic look of Minicraft+ (built-in)");
+		}
+
+		@Override
+		public String getIdentifier() {
+			return IDENTIFIER;
 		}
 	}
 }
