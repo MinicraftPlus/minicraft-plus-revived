@@ -19,7 +19,7 @@ public class BookReloader implements SyncReloadableResourceManager.SyncReloader 
 			try (BufferedReader reader = resource.getAsReader()) {
 				String book = BookData.loadBook(MyUtils.readAsString(reader));
 
-				switch (resource.getPath().toString()) {
+				switch (resource.getPath()) {
 					case "assets/books/about.txt": BookData.about = () -> book; break;
 					case "assets/books/credits.txt": BookData.credits = () -> book; break;
 					case "assets/books/instructions.txt": BookData.instructions = () -> book; break;

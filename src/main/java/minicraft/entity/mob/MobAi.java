@@ -120,7 +120,7 @@ public abstract class MobAi extends Mob {
 			int xd = player.x - x;
 			int yd = player.y - y;
 			if (xd * xd + yd * yd < 80 * 80) {
-				Sound.play("monsterhurt");
+				Sound.play("monster_hurt");
 			}
 		}
 		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted

@@ -37,7 +37,7 @@ public class CactusTile extends Tile {
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
 			level.setTile(x, y, Tiles.get("sand"));
-			Sound.play("monsterhurt");
+			Sound.play("monster_hurt");
 			level.dropItem(x * 16 + 8, y * 16 + 8, 2, 4, Items.get("Cactus"));
 		} else {
 			level.setData(x, y, damage);

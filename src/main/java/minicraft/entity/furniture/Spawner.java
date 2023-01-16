@@ -1,5 +1,10 @@
 package minicraft.entity.furniture;
 
+import java.util.ArrayList;
+import java.util.Random;
+
+import org.tinylog.Logger;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -21,11 +26,12 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.*;
-import org.tinylog.Logger;
-
-import java.util.ArrayList;
-import java.util.Random;
+import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
+import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
+import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 
 public class Spawner extends Furniture {
 
@@ -151,7 +157,7 @@ public class Spawner extends Furniture {
 		newmob.y = spawnPos.y << 4;
 
 		level.add(newmob);
-		Sound.play("monsterhurt");
+		Sound.play("monster_hurt");
 		for (int i = 0; i < 6; i++) {
 			 int randX = rnd.nextInt(16);
 			 int randY = rnd.nextInt(12);
@@ -164,7 +170,7 @@ public class Spawner extends Furniture {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
 
-			Sound.play("monsterhurt");
+			Sound.play("monster_hurt");
 
 			int dmg;
 			if (Game.isMode("minicraft.settings.mode.creative"))

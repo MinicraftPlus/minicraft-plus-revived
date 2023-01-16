@@ -78,7 +78,7 @@ public class WallTile extends Tile {
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = sbwHealth;
 
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.play("monsterhurt");
+		Sound.play("monster_hurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= sbwHealth) {

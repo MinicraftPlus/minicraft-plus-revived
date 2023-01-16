@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
 
+import minicraft.util.MyUtils;
+
 public class SyncReloadableResourceManager implements ResourceManager, AutoCloseable {
 	private final List<SyncReloader> reloaders = new ArrayList<>();
 	private List<ResourcePack> packs = new ArrayList<>();
@@ -63,7 +65,7 @@ public class SyncReloadableResourceManager implements ResourceManager, AutoClose
 			});
 		}
 
-		return list;
+		return MyUtils.reverseList(list);
 	}
 
 	public List<SyncReloader> getReloaders() {

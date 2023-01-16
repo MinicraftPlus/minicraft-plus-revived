@@ -31,7 +31,7 @@ public class FarmTile extends Tile {
             if (tool.type == ToolType.Shovel) {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("Dirt"));
-                    Sound.play("monsterhurt");
+                    Sound.play("monster_hurt");
                     return true;
                 }
             }

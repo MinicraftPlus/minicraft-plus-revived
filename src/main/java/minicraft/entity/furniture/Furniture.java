@@ -1,5 +1,7 @@
 package minicraft.entity.furniture;
 
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -9,7 +11,6 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
-import org.jetbrains.annotations.Nullable;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
@@ -91,7 +92,7 @@ public class Furniture extends Entity {
 	@Override
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
-			Sound.play("monsterhurt");
+			Sound.play("monster_hurt");
 				remove();
 				if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
 					player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory

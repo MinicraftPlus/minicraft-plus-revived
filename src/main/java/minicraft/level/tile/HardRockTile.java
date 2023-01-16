@@ -61,7 +61,7 @@ public class HardRockTile extends Tile {
 		int hrHealth = 200;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.play("monsterhurt");
+		Sound.play("monster_hurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= hrHealth) {

@@ -69,7 +69,7 @@ public class SandTile extends Tile {
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
-					Sound.play("monsterhurt");
+					Sound.play("monster_hurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Sand"));
 					return true;
 				}

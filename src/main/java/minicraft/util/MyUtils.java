@@ -2,6 +2,8 @@ package minicraft.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class MyUtils {
 
@@ -36,6 +38,18 @@ public final class MyUtils {
 
 	public static String readAsString(BufferedReader reader) {
 		return String.join("\n", reader.lines().toArray(String[]::new));
+	}
+
+	public static <T> List<T> reverseList(List<T> list) {
+		if (list.size() == 0) return list;
+
+		List<T> l = new ArrayList<>();
+
+		for (int i = list.size() - 1; i >= 0; --i) {
+			l.add(list.get(i));
+		}
+
+		return l;
 	}
 
 	@Deprecated

@@ -24,7 +24,7 @@ public class SplashManager implements SyncReloadableResourceManager.SyncReloader
 	public void reload(ResourceManager manager) {
 		splashes.clear();
 
-		for (Resource res : manager.getResources("assets/splashes.json")) {
+		for (Resource res : manager.getResources("assets/texts/splashes.json")) {
 			System.out.println(res.getName());
 			try (BufferedReader reader = res.getAsReader()) {
 				JSONObject obj = new JSONObject(MyUtils.readAsString(reader));

@@ -52,7 +52,7 @@ public class FlowerTile extends Tile {
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
 					level.setTile(x, y, Tiles.get("Grass"));
-					Sound.play("monsterhurt");
+					Sound.play("monster_hurt");
 					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Flower"));
 					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Rose"));
 					return true;
