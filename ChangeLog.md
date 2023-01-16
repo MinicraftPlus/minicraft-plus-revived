@@ -53,8 +53,9 @@ but some sections are changed to compliant this project.
   * For localizations, sounds, textures, books
   * Does not rule out the possibility of addition of a standard resource manager
 * Reapplied the role of seeds (the sameness with same seed)
-* Now renders the parent display as background.
-* Changed the height requirement on skin images from 32 pixels to 16 pixels.
+* Now renders the parent display as background
+* Changed the height requirement on skin images from 32 pixels to 16 pixels
+* Fixed lights disappearing when out of screen
 
 ### Removals
 
