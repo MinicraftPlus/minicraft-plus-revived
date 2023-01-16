@@ -20,10 +20,13 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -179,6 +182,19 @@ public abstract class ResourcePack {
 		protected final void ensureOpen() throws IllegalStateException {
 			if (closeRequested)
 				throw new IllegalStateException("pack resource collector closed");
+		}
+	}
+
+	/**
+	 * Getting a valid lock on the associated resource pack file.
+	 * @return The file lock on the pack.
+	 * {@code null} if creating the lock failed.
+	 */
+	public FileLock lockFile() {
+		try (FileChannel channel = FileChannel.open(file.toPath(), StandardOpenOption.APPEND)) {
+			return channel.lock();
+		} catch (IOException e) {
+			return null;
 		}
 	}
 
@@ -528,6 +544,11 @@ public abstract class ResourcePack {
 			}
 
 			@Override
+			public FileLock lockFile() {
+				return null;
+			}
+
+			@Override
 			public String getIdentifier() {
 				return IDENTIFIER;
 			}
@@ -572,6 +593,8 @@ public abstract class ResourcePack {
 		public static final String IDENTIFIER = "classic_art";
 		public static final ClassicArtResourcePack CLASSIC_ART_RESOURCE_PACK;
 
+		private static final URL path;
+
 		static {
 			ClassicArtResourcePack temp;
 			try {
@@ -584,11 +607,7 @@ public abstract class ResourcePack {
 			}
 
 			CLASSIC_ART_RESOURCE_PACK = temp;
-		}
 
-		private static final URL path;
-
-		static {
 			path = Game.class.getResource("/assets/resourcepacks");
 			if (path == null)
 				CrashHandler.crashHandle(new NullPointerException("Classic Art Resource Pack not Found"), new CrashHandler.ErrorInfo("Classic Art Resource Pack not Found",
@@ -602,6 +621,11 @@ public abstract class ResourcePack {
 		@Override
 		public String getIdentifier() {
 			return IDENTIFIER;
+		}
+
+		@Override
+		public FileLock lockFile() {
+			return null;
 		}
 	}
 }
