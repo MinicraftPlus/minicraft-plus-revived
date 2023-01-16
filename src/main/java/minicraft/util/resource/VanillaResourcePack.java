@@ -16,13 +16,13 @@ import minicraft.core.io.FileHandler;
 
 public class VanillaResourcePack extends ZipResourcePack {
 	public VanillaResourcePack() {
-		super("Vanilla", null);
+		super("vanilla", null);
 	}
 
 	@Nullable
 	@Override
 	protected ZipFile getZipFile() {
-		if (this.zip == null) {
+		if (this.zipFile == null) {
 			if (Game.class.getProtectionDomain().getCodeSource().getLocation().toString().endsWith("/")) {
 				try {
 					File file = File.createTempFile("resources", ".zip");
@@ -46,13 +46,13 @@ public class VanillaResourcePack extends ZipResourcePack {
 						CrashHandler.crashHandle(e);
 					}
 
-					return new ZipFile(file);
+					this.zipFile = new ZipFile(file);
 				} catch(IOException e) {
 					CrashHandler.crashHandle(e);
 				}
 			}
 		}
 
-		return null;
+		return this.zipFile;
 	}
 }

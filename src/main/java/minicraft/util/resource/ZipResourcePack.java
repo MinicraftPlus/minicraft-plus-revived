@@ -12,37 +12,37 @@ import org.jetbrains.annotations.Nullable;
 
 public class ZipResourcePack extends ResourcePack {
 	@Nullable
-	protected ZipFile zip;
+	protected ZipFile zipFile;
 	protected boolean failedToOpen;
 
-	private File zipFile;
+	private File file;
 
 	public ZipResourcePack(String name, File zipFile) {
 		super(name);
-
-		this.zip = this.getZipFile();
+		this.file = zipFile;
 	}
 
 	@Nullable
 	protected ZipFile getZipFile() {
-		if (this.zip == null && !this.failedToOpen) {
+		if (this.zipFile == null && !this.failedToOpen) {
 			try {
-				return new ZipFile(this.zipFile);
+				this.zipFile = new ZipFile(this.file);
 			} catch(IOException e) {
 				this.failedToOpen = true;
 			}
 		}
 
-		return null;
+		return this.zipFile;
 	}
 
 	@Override
 	public InputStream getFile(String path) throws IOException {
-		if (this.zip != null) {
-			ZipEntry entry = this.zip.getEntry(path);
+		ZipFile zip = this.getZipFile();
+		if (zip != null) {
+			ZipEntry entry = zip.getEntry(path);
 
 			if (entry != null) {
-				return this.zip.getInputStream(entry);
+				return zip.getInputStream(entry);
 			}
 		}
 
@@ -51,9 +51,10 @@ public class ZipResourcePack extends ResourcePack {
 
 	@Override
 	public void getAllFiles(String beginPath, Predicate<String> filePathPredicate, FindResultConsumer consumer) {
-		if (this.zip == null) return;
+		ZipFile zip = this.getZipFile();
+		if (zip == null) return;
 
-		Enumeration<? extends ZipEntry> enumeration = this.zip.entries();
+		Enumeration<? extends ZipEntry> enumeration = zip.entries();
 
 		while (enumeration.hasMoreElements()) {
 			ZipEntry entry = enumeration.nextElement();
@@ -62,7 +63,7 @@ public class ZipResourcePack extends ResourcePack {
 
 			if (filePathPredicate.test(entry.getName())) {
 				try {
-					consumer.accept(entry.getName(), this.zip.getInputStream(entry));
+					consumer.accept(entry.getName(), zip.getInputStream(entry));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -72,9 +73,9 @@ public class ZipResourcePack extends ResourcePack {
 
 	@Override
 	public void close() {
-		if (this.zip != null) {
+		if (this.zipFile != null) {
 			try {
-				this.zip.close();
+				this.zipFile.close();
 			} catch(IOException e) {}
 		}
 	}

@@ -18,6 +18,8 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
+import minicraft.util.resource.ResourcePackManager;
+import minicraft.util.resource.ResourcePackManager.DefaultResourcePackProvider;
 import minicraft.util.resource.SyncReloadableResourceManager;
 import minicraft.util.resource.VanillaResourcePack;
 import minicraft.util.resource.reloader.SplashManager;
@@ -67,6 +69,8 @@ public class Game {
 	public static void quit() { running = false; }
 
 	public static final SyncReloadableResourceManager resourceManager = new SyncReloadableResourceManager();
+	public static ResourcePackManager resourcePackManager;
+	public static VanillaResourcePack defaultResourcePack;
 
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
@@ -86,12 +90,17 @@ public class Game {
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
 		{
+			defaultResourcePack = new VanillaResourcePack();
+			resourcePackManager = new ResourcePackManager();
+			resourcePackManager.addProvider(new DefaultResourcePackProvider(defaultResourcePack));
+			resourcePackManager.findPacks();
 			resourceManager.registerReloader(new SplashManager());
 			// resourceManager.registerReloader(new LocalizationReloader());
 			// resourceManager.registerReloader(new SoundReloader());
 			// resourceManager.registerReloader(new BookReloader());
 			// resourceManager.registerReloader(new TextureReloader());
-			resourceManager.reload(Arrays.asList(new VanillaResourcePack()));
+			resourcePackManager.setEnabledPacks(Arrays.asList("vanilla"));
+			resourceManager.reload(resourcePackManager.getEnabledPacks());
 
 			Renderer.initScreen();
 		}
