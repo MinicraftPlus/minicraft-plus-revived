@@ -33,8 +33,8 @@ public final class MyUtils {
 		}
 	}
 
-	@Deprecated
 	/** @deprecated Multiplayer removed. */
+	@Deprecated
 	public static <T> T fromNetworkStatus(T offline, T client, T server) {
 		return offline;
 	}

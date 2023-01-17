@@ -32,56 +32,49 @@ public class Sound {
 		sounds.clear();
 	}
 
-	public static void loadSound(String key, InputStream in, String pack) {
-		try {
-			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(in).getFormat());
+	public static void loadSound(String key, InputStream in, String pack) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(in).getFormat());
 
-			if (!AudioSystem.isLineSupported(info)) {
-				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
+		if (!AudioSystem.isLineSupported(info)) {
+			Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
 
-				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
-				Logging.RESOURCEHANDLER_SOUND.error("-source:");
-				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
-				Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
-				for (Line.Info value : sinfo) {
-					if (value instanceof DataLine.Info) {
-						DataLine.Info dataLineInfo = (DataLine.Info) value;
-						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-						for (AudioFormat af : supportedFormats)
-							Logging.RESOURCEHANDLER_SOUND.error(af);
-					}
+			Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
+			Logging.RESOURCEHANDLER_SOUND.error("-source:");
+			Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
+			Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
+			for (Line.Info value : sinfo) {
+				if (value instanceof DataLine.Info) {
+					DataLine.Info dataLineInfo = (DataLine.Info) value;
+					AudioFormat[] supportedFormats = dataLineInfo.getFormats();
+					for (AudioFormat af : supportedFormats)
+						Logging.RESOURCEHANDLER_SOUND.error(af);
 				}
-				Logging.RESOURCEHANDLER_SOUND.error("-target:");
-				for (int i = 0; i < tinfo.length; i++)
+			}
+			Logging.RESOURCEHANDLER_SOUND.error("-target:");
+			for (int i = 0; i < tinfo.length; i++) {
+				if (tinfo[i] instanceof DataLine.Info)
 				{
-					if (tinfo[i] instanceof DataLine.Info)
-					{
-						DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
-						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-						for (AudioFormat af: supportedFormats)
-							Logging.RESOURCEHANDLER_SOUND.error(af);
-					}
+					DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
+					AudioFormat[] supportedFormats = dataLineInfo.getFormats();
+					for (AudioFormat af: supportedFormats)
+						Logging.RESOURCEHANDLER_SOUND.error(af);
 				}
-
-				return;
 			}
 
-			Clip clip = (Clip)AudioSystem.getLine(info);
-			clip.open(AudioSystem.getAudioInputStream(in));
-
-			clip.addLineListener(e -> {
-				if (e.getType() == LineEvent.Type.STOP) {
-					clip.flush();
-					clip.setFramePosition(0);
-				}
-			});
-
-			sounds.put(key, new Sound(clip));
-
-		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Audio Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT,
-				String.format("Could not load audio: %s in pack: %s", key, pack)));
+			return;
 		}
+
+		Clip clip = (Clip)AudioSystem.getLine(info);
+		clip.open(AudioSystem.getAudioInputStream(in));
+
+		clip.addLineListener(e -> {
+			if (e.getType() == LineEvent.Type.STOP) {
+				clip.flush();
+				clip.setFramePosition(0);
+			}
+		});
+
+		sounds.put(key, new Sound(clip));
 	}
 
 	/** Recommend {@link #play(String)} and {@link #loop(String, boolean)}. */

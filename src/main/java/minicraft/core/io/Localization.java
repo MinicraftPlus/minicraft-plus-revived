@@ -135,14 +135,22 @@ public class Localization {
 		}
 	}
 
-	public static void addLocale(Locale loc, LocaleInformation info) {
-		if (!localeInfo.containsKey(loc)) localeInfo.put(loc, info);
+	/**
+	 * Adding the locale to the locale list, only if the locale is not defined yet.
+	 * @param loc The locale object to add.
+	 * @param info The information about the locale.
+	 * @return {@code true} if there has already been a value existed and the locale is not added;
+	 * {@code false} otherwise.
+	 */
+	public static boolean addLocale(Locale loc, LocaleInformation info) {
+		return localeInfo.putIfAbsent(loc, info) != null;
 	}
 
-	public static void addLocalization(Locale loc, String json) {
-		if (!localeInfo.containsKey(loc)) return; // Only add when Locale Information is exist.
+	public static boolean addLocalization(Locale loc, String json) {
+		if (!localeInfo.containsKey(loc)) return false; // Only add when Locale Information is existed.
 		if (!unloadedLocalization.containsKey(loc))
 			unloadedLocalization.put(loc, new ArrayList<>());
 		unloadedLocalization.get(loc).add(json);
+		return true;
 	}
 }

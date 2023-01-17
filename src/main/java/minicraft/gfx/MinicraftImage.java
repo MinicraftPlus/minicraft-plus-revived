@@ -30,9 +30,9 @@ public class MinicraftImage {
 	 * @param image The image to be added.
 	 * @param width The width of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
 	 * @param height The height of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
-	 * @throws IOException
+	 * @throws IndexOutOfBoundsException When {@code width} or {@code height} out of the actual dimension.
 	*/
-	public MinicraftImage(BufferedImage image, int width, int height) throws IOException {
+	public MinicraftImage(BufferedImage image, int width, int height) throws IndexOutOfBoundsException {
 		if (width % 8 != 0)
 			CrashHandler.errorHandle(new IllegalArgumentException("Invalid width of SpriteSheet."), new CrashHandler.ErrorInfo(
 				"Invalid SpriteSheet argument.", CrashHandler.ErrorInfo.ErrorType.HANDLED,
@@ -50,8 +50,8 @@ public class MinicraftImage {
 
 		// If size is bigger than image source, throw error.
 		if (this.width > image.getWidth() || this.height > image.getHeight()) {
-			throw new IOException(new IndexOutOfBoundsException(String.format("Requested size %s*%s out of source size %s*%s",
-				this.width, this.height, image.getWidth(), image.getHeight())));
+			throw new IndexOutOfBoundsException(String.format("Requested size %s*%s out of source size %s*%s",
+				this.width, this.height, image.getWidth(), image.getHeight()));
 		}
 
 		pixels = image.getRGB(0, 0, width, height, null, 0, width); // Gets the color array of the image pixels

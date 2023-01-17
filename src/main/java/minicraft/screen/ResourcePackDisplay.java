@@ -10,9 +10,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.channels.FileLock;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -33,6 +32,8 @@ import java.util.function.Function;
 import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.TransferHandler;
 
 import minicraft.core.Initializer;
@@ -114,8 +115,9 @@ public class ResourcePackDisplay extends Display {
 
 	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/resourcepacks");
 	private static final ArrayList<ResourcePack> loadedPacks = new ArrayList<>(); // All currently loaded packs.
-	private static final HashMap<ResourcePack, FileLock> packLocks = new HashMap<>();
+	private static final HashMap<ResourcePack, ResourcePack.PackLock> packLocks = new HashMap<>(); // The pack locks in FileChannel to block other operations.
 	private final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // All packs available.
+	private final ArrayList<ResourcePack> incompatiblePacks = new ArrayList<>(); // All incompatible packs.
 	private final ArrayList<ResourcePack> loadQuery = new ArrayList<>(); // All packs intended to be loaded.
 	private final ArrayList<ResourcePack> unloadedPacks = new ArrayList<ResourcePack>() { // Packs that are not loaded.
 		private final Comparator<ResourcePack> sorter = (o1, o2) -> {
@@ -350,7 +352,7 @@ public class ResourcePackDisplay extends Display {
 		public void run() {
 			while (running == this) {
 				try {
-					ArrayList<File> files = new ArrayList<>();
+					HashSet<File> files = new HashSet<>();
 					for (WatchEvent<?> event : watcher.take().pollEvents()) {
 						if (event.kind() == StandardWatchEventKinds.OVERFLOW)
 							continue;
@@ -358,12 +360,12 @@ public class ResourcePackDisplay extends Display {
 						@SuppressWarnings("unchecked")
 						WatchEvent<Path> ev = (WatchEvent<Path>) event;
 						Path filename = ev.context();
-						files.add(FOLDER_LOCATION.toPath().resolve(filename).toFile());
+						files.add(FOLDER_LOCATION.toPath().resolve(filename.getName(0)).toFile());
 					}
 
 					if (files.size() > 0) {
 						Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Refreshing resource packs: {}.", files);
-						refreshResourcePacks(files);
+						refreshResourcePacks(new ArrayList<>(files));
 						refreshEntries();
 					}
 				} catch (InterruptedException e) {
@@ -386,8 +388,12 @@ public class ResourcePackDisplay extends Display {
 		fileWatcher.close(); // Removes watcher.
 		Initializer.getFrame().setTransferHandler(origTransferHandler);
 		Collections.reverse(loadQuery);
-		if (!loadQuery.equals(loadedPacks)) // Changes applied.
-			reloadResources(this);
+		if (!loadQuery.equals(loadedPacks)) { // Changes applied.
+			loadedPacks.clear();
+			loadedPacks.addAll(loadQuery);
+			reloadResources();
+		}
+
 		new Save();
 	}
 
@@ -399,6 +405,29 @@ public class ResourcePackDisplay extends Display {
 			return true;
 		} else if (dir == Direction.LEFT || dir == Direction.RIGHT) {
 			return !(pack instanceof ResourcePack.DefaultResourcePack.GameDefaultResourcePack);
+		}
+
+		return false;
+	}
+
+	/** Checking entry-interact-able cursor directions based on the current cursor. */
+	private boolean isMovable(Direction dir) {
+		if (dir == Direction.RIGHT) { // Move the selected pack from the first to the second list.
+			if (selection == 0 && unloadedPacks.size() > 0)
+				return isMovable(unloadedPacks.get(menus[0].getSelection()), dir);
+			return false;
+		} else if (dir == Direction.LEFT) { // Move the selected pack from the second to the first list.
+			if (selection == 1) // loadQuery is always non-empty; default pack(s) exist(s).
+				return isMovable(loadQuery.get(menus[1].getSelection()), dir);
+			return false;
+		} else if (dir == Direction.UP) { // Move up the selected pack in the second list.
+			if (selection == 1 && menus[1].getSelection() > 0)
+				return isMovable(loadQuery.get(menus[1].getSelection()), Direction.UP) && // This
+					isMovable(loadQuery.get(menus[1].getSelection() - 1), Direction.DOWN); // Upper
+		} else if (dir == Direction.DOWN) { // Move down the selected pack in the second list.
+			if (selection == 1 && menus[1].getSelection() < loadQuery.size() - 1)
+				return isMovable(loadQuery.get(menus[1].getSelection()), Direction.DOWN) && // This
+					isMovable(loadQuery.get(menus[1].getSelection() + 1), Direction.UP); // Lower
 		}
 
 		return false;
@@ -436,38 +465,24 @@ public class ResourcePackDisplay extends Display {
 		if (inputSRightClicked || inputSLeftClicked || inputSUpClicked || inputSDownClicked) {
 			boolean successful = false;
 			if (inputSRightClicked) { // Move the selected pack from the first to the second list.
-				if (selection == 0 && unloadedPacks.size() > 0) {
-					ResourcePack pack = unloadedPacks.get(menus[0].getSelection());
-					if (isMovable(pack, Direction.RIGHT)) {
-						loadQuery.add(0, unloadedPacks.remove(menus[0].getSelection()));
-						successful = true;
-					}
+				if (isMovable(Direction.RIGHT)) {
+					loadQuery.add(0, unloadedPacks.remove(menus[0].getSelection()));
+					successful = true;
 				}
 			} else if (inputSLeftClicked) { // Move the selected pack from the second to the first list.
-				if (selection == 1) { // loadQuery is always non-empty; default pack(s) exist(s).
-					ResourcePack pack = loadQuery.get(menus[1].getSelection());
-					if (isMovable(pack, Direction.LEFT)) {
-						unloadedPacks.add(loadQuery.remove(menus[1].getSelection()));
-						successful = true;
-					}
+				if (isMovable(Direction.LEFT)) { // loadQuery is always non-empty; default pack(s) exist(s).
+					unloadedPacks.add(loadQuery.remove(menus[1].getSelection()));
+					successful = true;
 				}
 			} else if (inputSUpClicked) { // Move up the selected pack in the second list.
-				if (selection == 1 && menus[1].getSelection() > 0) {
-					ResourcePack pack = loadQuery.get(menus[1].getSelection());
-					ResourcePack oPack = loadQuery.get(menus[1].getSelection() - 1);
-					if (isMovable(pack, Direction.UP) && isMovable(oPack, Direction.DOWN)) {
-						Collections.swap(loadQuery, menus[1].getSelection(), menus[1].getSelection() - 1);
-						successful = true;
-					}
+				if (isMovable(Direction.UP)) {
+					Collections.swap(loadQuery, menus[1].getSelection(), menus[1].getSelection() - 1);
+					successful = true;
 				}
 			} else { // Move down the selected pack in the second list.
-				if (selection == 1 && menus[1].getSelection() < loadQuery.size() - 1) {
-					ResourcePack pack = loadQuery.get(menus[1].getSelection());
-					ResourcePack oPack = loadQuery.get(menus[1].getSelection() + 1);
-					if (isMovable(pack, Direction.DOWN) && isMovable(oPack, Direction.UP)) {
-						Collections.swap(loadQuery, menus[1].getSelection(), menus[1].getSelection() + 1);
-						successful = true;
-					}
+				if (isMovable(Direction.DOWN)) {
+					Collections.swap(loadQuery, menus[1].getSelection(), menus[1].getSelection() + 1);
+					successful = true;
 				}
 			}
 
@@ -490,9 +505,19 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.WHITE);
 
 		// Info text at the bottom.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move"), screen, Screen.h - 9, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
+		ArrayList<String> help = new ArrayList<>();
+		if (isMovable(Direction.LEFT))
+			help.add(Localization.getLocalized("minicraft.displays.resource_packs.display.help.set_to_unload", "SHIFT-LEFT"));
+		else if (isMovable(Direction.RIGHT))
+			help.add(Localization.getLocalized("minicraft.displays.resource_packs.display.help.set_to_load", "SHIFT-RIGHT"));
+		if (isMovable(Direction.DOWN))
+			help.add(Localization.getLocalized("minicraft.displays.resource_packs.display.help.lower_priority", "SHIFT-DOWN"));
+		if (isMovable(Direction.UP))
+			help.add(Localization.getLocalized("minicraft.displays.resource_packs.display.help.upper_priority", "SHIFT-UP"));
+		for (int i = 0; i < help.size(); i++)
+			Font.drawCentered(help.get(i), screen, Screen.h - 25 + 8 * i, Color.DARK_GRAY);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? unloadedPacks : loadQuery;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
@@ -583,7 +608,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		reloadResources(null);
+		reloadResources();
 	}
 
 	private void initPacks() {
@@ -650,7 +675,14 @@ public class ResourcePackDisplay extends Display {
 
 	/** Reloading all the resources with the currently packs to be loaded. */
 	@SuppressWarnings("unchecked")
-	public static void reloadResources(@Nullable ResourcePackDisplay display) {
+	public static void reloadResources() {
+		packLocks.forEach((pack, lock) -> {
+			try {
+				lock.close();
+			} catch (IOException ignored) {}
+		}); // Releasing all locks.
+		packLocks.clear();
+		loadedPacks.forEach(pack -> packLocks.put(pack, pack.lockFile()));
 
 		// Clear all previously loaded resources.
 		Renderer.spriteLinker.resetSprites();
@@ -658,6 +690,8 @@ public class ResourcePackDisplay extends Display {
 		BookData.resetBooks();
 		Sound.resetSounds();
 		SpriteAnimation.resetMetadata();
+
+		// TODO replace contents inside for loop to Loaders.
 		for (ResourcePack pack : loadedPacks) {
 			if (pack.openStream()) {
 				try {
@@ -676,7 +710,7 @@ public class ResourcePackDisplay extends Display {
 		Renderer.spriteLinker.updateLinkedSheets();
 		Localization.loadLanguage();
 		ArrayList<Localization.LocaleInformation> options = new ArrayList<>(Arrays.asList(Localization.getLocales()));
-		options.sort((a, b) -> a.name.compareTo(b.name));
+		options.sort(Comparator.comparing(Localization.LocaleInformation::toString));
 		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
 
 		// Refreshing skins
@@ -684,193 +718,404 @@ public class ResourcePackDisplay extends Display {
 		SkinDisplay.releaseSkins();
 	}
 
-	/**
-	 * Loading the textures of the pack.
-	 * @param pack The pack to be loaded.
-	 * @throws IOException if I/O exception occurs.
-	 */
-	private static void loadTextures(ResourcePack pack) throws IOException {
-		for (String t : pack.getFiles("assets/textures/", null)) {
-			switch (t) {
-				case "assets/textures/entity/": loadTextures(pack, SpriteType.Entity); break;
-				case "assets/textures/gui/": loadTextures(pack, SpriteType.Gui); break;
-				case "assets/textures/item/": loadTextures(pack, SpriteType.Item); break;
-				case "assets/textures/tile/": loadTextures(pack, SpriteType.Tile); break;
-			}
-		}
+	/** Used for loading resources from resource packs. */
+	private static abstract class ResourcePackLoader {
+		protected ResourcePackLoader() {}
+
+		public abstract void loadResources(ResourcePack.PackResourceStream pack);
+
+		/**
+		 * Loading all textures from the pack.
+		 * @param pack The pack to be loaded.
+		 */
+		public abstract void loadTextures(ResourcePack.PackResourceStream pack);
+		/**
+		 * Loading the specific category of basic textures from the pack.
+		 * @param pack The pack to be loaded.
+		 * @param entry The directory entry of the pack.
+		 * @param type The category of basic textures.
+		 */
+		public abstract void loadTextures(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry, SpriteType type);
+
+		/**
+		 * Loading localization from the pack.
+		 * @param pack The pack to be loaded.
+		 */
+		public abstract void loadLocalization(ResourcePack.PackResourceStream pack);
+
+		/**
+		 * Loading the texts from the pack.
+		 * @param pack The pack to be loaded.
+		 */
+		public abstract void loadTexts(ResourcePack.PackResourceStream pack);
+
+		/**
+		 * Loading sounds from the pack.
+		 * @param pack The pack to be loaded.
+		 */
+		public abstract void loadSounds(ResourcePack.PackResourceStream pack);
 	}
 
-	/**
-	 * Loading the categories of textures from the pack.
-	 * @param pack The pack to be loaded.
-	 * @param type The category of textures.
-	 * @throws IOException if I/O exception occurs.
-	 */
-	private static void loadTextures(ResourcePack pack, SpriteType type) throws IOException {
-		String path = "assets/textures/";
-		switch (type) {
-			case Entity: path += "entity/"; break;
-			case Gui: path += "gui/"; break;
-			case Item: path += "item/"; break;
-			case Tile: path += "tile/"; break;
+	/** Supports only for current packs with {@link ResourcePack#PACK_FORMAT}. */
+	private static final class CompatibleResourcePackLoader extends ResourcePackLoader {
+		public static final CompatibleResourcePackLoader INSTANCE = new CompatibleResourcePackLoader();
+
+		@Override
+		public void loadResources(ResourcePack.PackResourceStream pack) {
+			loadTextures(pack);
+			loadLocalization(pack);
+			loadTexts(pack);
+			loadSounds(pack);
 		}
 
-		ArrayList<String> pngs = pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png") && !isDir);
-		if (type == SpriteType.Tile) {
-			// Loading sprite sheet metadata.
-			for (String m : pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
+		@Override
+		public void loadTextures(ResourcePack.PackResourceStream pack) {
+			for (ResourcePack.PackResourceStream.PackEntry t : pack.getFiles("assets/textures", (p, d) -> d)) {
+				switch (t.getFilename()) {
+					case "entity": loadTextures(pack, t, SpriteType.Entity); break;
+					case "gui": loadTextures(pack, t, SpriteType.Gui); break;
+					case "item": loadTextures(pack, t, SpriteType.Item); break;
+					case "tile": loadTextures(pack, t, SpriteType.Tile); break;
+				}
+			}
+		}
+
+		@Override
+		public void loadTextures(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry, SpriteType type) {
+			if (entry.getParent() == null) return; // Should be under a directory in assets directory.
+			ArrayList<ResourcePack.PackResourceStream.PackEntry> pngFiles = pack.getFiles(entry.getParent().resolve(entry.getFilename()), (p, d) -> !d && p.toString().endsWith(".png"));
+			if (type == SpriteType.Tile) {
+				// Loading sprite sheet metadata.
+				for (ResourcePack.PackResourceStream.PackEntry jsonF : pack.getFiles(entry.getFullPath(), (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
+					try {
+						JSONObject obj = new JSONObject(readTextFileFromPack(pack, getPathFromPackEntry(jsonF)));
+						SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
+						String metaFn = jsonF.getFilename();
+						String pngFn = metaFn.substring(0, metaFn.length() - 5);
+						ResourcePack.PackResourceStream.PackEntry pngF = null;
+						for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
+							ResourcePack.PackResourceStream.PackEntry e = it.next();
+							if (e.getFilename().equals(pngFn)) { // Removing the associated png file from the list.
+								it.remove();
+								pngF = e; // The png file is handled here instead.
+								break;
+							}
+						}
+
+						if (pngF == null) {
+							Path parent = Objects.requireNonNull(jsonF.getParent());
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} found in pack; skipping...",
+								parent.resolve(pngFn), jsonF.getFullPath(), pack.getPack().getName());
+							continue;
+						}
+
+						BufferedImage image = readImageFileFromPack(pack, pngF);
+						if (image == null) { // The file is not dir; the only reason is that the format is unsupported.
+							Path parent = Objects.requireNonNull(jsonF.getParent());
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+								parent.resolve(pngFn), pack.getPack().getName());
+							continue;
+						}
+
+						if (isSpriteImageSupported(image, SpriteType.Tile)) {
+							Path parent = Objects.requireNonNull(jsonF.getParent());
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
+								parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+							continue;
+						}
+
+						// Applying animations.
+						MinicraftImage sheet;
+						JSONObject animation = obj.optJSONObject("animation");
+						if (animation != null) {
+							if (isSpriteImageFullyCompatible(image, type, true)) {
+								Path parent = Objects.requireNonNull(jsonF.getParent());
+								Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
+									parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+							}
+
+							meta.frametime = animation.getInt("frametime");
+							meta.frames = image.getHeight() / 16;
+							sheet = new MinicraftImage(image, 16, 16 * meta.frames);
+						} else {
+							if (isSpriteImageFullyCompatible(image, type, false)) {
+								Path parent = Objects.requireNonNull(jsonF.getParent());
+								Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
+									parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+							}
+
+							sheet = new MinicraftImage(image, 16, 16);
+						}
+
+						String key = metaFn.substring(0, metaFn.length() - 9);
+						Renderer.spriteLinker.setSprite(type, key, sheet);
+						JSONObject borderObj = obj.optJSONObject("border");
+						if (borderObj != null) {
+							meta.border = borderObj.optString("key", null);
+							if (meta.border != null) {
+								String borderFn = meta.border + ".png";
+								ResourcePack.PackResourceStream.PackEntry borderF = null;
+								for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
+									ResourcePack.PackResourceStream.PackEntry e = it.next();
+									if (e.getFilename().equals(borderFn)) { // Removing the associated png file from the list.
+										it.remove();
+										borderF = e; // The png file is handled here instead.
+										break;
+									}
+								}
+
+								if (borderF == null) {
+									Path parent = Objects.requireNonNull(jsonF.getParent());
+									Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} has defined as border in pack; skipping...",
+										parent.resolve(borderFn), jsonF.getFullPath(), pack.getPack().getName());
+									meta.border = null;
+								} else {
+									BufferedImage borderImage = readImageFileFromPack(pack, borderF);
+									if (borderImage == null) { // The file is not dir; the only reason is that the format is unsupported.
+										Path parent = Objects.requireNonNull(jsonF.getParent());
+										Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+											parent.resolve(borderFn), pack.getPack().getName());
+										meta.border = null;
+									} else {
+										if (borderImage.getWidth() < 24 || borderImage.getHeight() < 24) {
+											Path parent = Objects.requireNonNull(jsonF.getParent());
+											Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (border) {} dimension {}x{} unsupported in pack; skipping...",
+												parent.resolve(borderFn), borderImage.getWidth(), borderImage.getHeight(), pack.getPack().getName());
+											meta.border = null;
+										} else {
+											if (borderImage.getWidth() != 24 || borderImage.getHeight() != 24) {
+												Path parent = Objects.requireNonNull(jsonF.getParent());
+												Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file (border) {} dimension {}x{} is not fully compatible in pack.",
+													parent.resolve(borderFn), borderImage.getWidth(), borderImage.getHeight(), pack.getPack().getName());
+											}
+
+											Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(borderImage, 24, 24));
+										}
+									}
+								}
+							}
+
+							meta.corner = borderObj.optString("corner", null);
+							if (meta.corner != null) {
+								String cornerFn = meta.corner + ".png";
+								ResourcePack.PackResourceStream.PackEntry cornerF = null;
+								for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
+									ResourcePack.PackResourceStream.PackEntry e = it.next();
+									if (e.getFilename().equals(cornerFn)) { // Removing the associated png file from the list.
+										it.remove();
+										cornerF = e; // The png file is handled here instead.
+										break;
+									}
+								}
+
+								if (cornerF == null) {
+									Path parent = Objects.requireNonNull(jsonF.getParent());
+									Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} has defined as border in pack; skipping...",
+										parent.resolve(cornerFn), jsonF.getFullPath(), pack.getPack().getName());
+									meta.corner = null;
+								} else {
+									BufferedImage cornerImage = readImageFileFromPack(pack, cornerF);
+									if (cornerImage == null) { // The file is not dir; the only reason is that the format is unsupported.
+										Path parent = Objects.requireNonNull(jsonF.getParent());
+										Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+											parent.resolve(cornerFn), pack.getPack().getName());
+										meta.corner = null;
+									} else {
+										if (cornerImage.getWidth() < 16 || cornerImage.getHeight() < 16) {
+											Path parent = Objects.requireNonNull(jsonF.getParent());
+											Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (corner) {} dimension {}x{} unsupported in pack; skipping...",
+												parent.resolve(cornerFn), cornerImage.getWidth(), cornerImage.getHeight(), pack.getPack().getName());
+											meta.corner = null;
+										} else {
+											if (cornerImage.getWidth() != 16 || cornerImage.getHeight() != 16) {
+												Path parent = Objects.requireNonNull(jsonF.getParent());
+												Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file (corner) {} dimension {}x{} is not fully compatible in pack.",
+													parent.resolve(cornerFn), cornerImage.getWidth(), cornerImage.getHeight(), pack.getPack().getName());
+											}
+
+											Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(cornerImage, 16, 16));
+										}
+									}
+								}
+							}
+						}
+
+						SpriteAnimation.setMetadata(key, meta);
+					} catch (JSONException | IOException | NullPointerException | UncheckedIOException | IllegalArgumentException e) {
+						Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}; skipping...", jsonF.getFullPath(), pack.getPack().getName());
+					}
+				}
+			}
+
+			// Loading the png files left.
+			for (ResourcePack.PackResourceStream.PackEntry pngF : pngFiles) {
 				try {
-					JSONObject obj = new JSONObject(MyUtils.readStringFromInputStream(pack.getResourceAsStream(m)));
-					SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
-					pngs.remove(m.substring(0, m.length() - 5));
-					BufferedImage image = ImageIO.read(pack.getResourceAsStream(m.substring(0, m.length() - 5)));
-
-					// Applying animations.
-					MinicraftImage sheet;
-					JSONObject animation = obj.optJSONObject("animation");
-					if (animation != null) {
-						meta.frametime = animation.getInt("frametime");
-						meta.frames = image.getHeight() / 16;
-						if (meta.frames == 0) throw new IOException(new IllegalArgumentException(String.format(
-							"Invalid frames 0 detected with {} in pack: {}", m, pack.name)));
-						sheet = new MinicraftImage(image, 16, 16 * meta.frames);
-					} else
-						sheet = new MinicraftImage(image, 16, 16);
-					Renderer.spriteLinker.setSprite(type, m.substring(path.length(), m.length() - 9), sheet);
-
-					JSONObject borderObj = obj.optJSONObject("border");
-					if (borderObj != null) {
-						meta.border = borderObj.optString("key");
-						if (meta.border.isEmpty()) meta.border = null;
-						if (meta.border != null) {
-							String borderK = path + meta.border + ".png";
-							pngs.remove(borderK);
-							try {
-								Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
-							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
-								meta.border = null;
-							}
-						}
-
-						meta.corner = borderObj.optString("corner");
-						if (meta.corner.isEmpty()) meta.corner = null;
-						if (meta.corner != null) {
-							String cornerK = path + meta.corner + ".png";
-							pngs.remove(cornerK);
-							try {
-								Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
-							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
-								meta.corner = null;
-							}
-						}
+					String pngFn = pngF.getFilename();
+					BufferedImage image = readImageFileFromPack(pack, pngF);
+					if (image == null) { // The file is not dir; the only reason is that the format is unsupported.
+						Path parent = Objects.requireNonNull(pngF.getParent());
+						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+							parent.resolve(pngFn), pack.getPack().getName());
+						continue;
 					}
 
-					SpriteAnimation.setMetadata(m.substring(path.length(), m.length() - 9), meta);
-				} catch (JSONException | IOException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.name);
+					if (isSpriteImageSupported(image, type)) {
+						Path parent = Objects.requireNonNull(pngF.getParent());
+						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
+							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+						continue;
+					}
+
+					if (isSpriteImageFullyCompatible(image, type, false)) {
+						Path parent = Objects.requireNonNull(pngF.getParent());
+						Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
+							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+					}
+
+					MinicraftImage sheet;
+					if (type == SpriteType.Item) {
+						sheet = new MinicraftImage(image, 8, 8); // Set the minimum tile sprite size.
+					} else if (type == SpriteType.Tile) {
+						sheet = new MinicraftImage(image, 16, 16); // Set the minimum item sprite size.
+					} else {
+						int width = image.getWidth();
+						int height = image.getHeight();
+						sheet = new MinicraftImage(image, width - width % 8, height - height % 8);
+					}
+
+					Renderer.spriteLinker.setSprite(type, pngFn.substring(0, pngFn.length() - 4), sheet);
+				} catch (IOException | IllegalArgumentException | NullPointerException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load {} in pack: {}; skipping...", pngF, pack.getPack().getName());
 				}
 			}
-
 		}
 
-		// Loading the left pngs.
-		for (String p : pngs) {
-			try {
-				BufferedImage image = ImageIO.read(pack.getResourceAsStream(p));
-				MinicraftImage sheet;
-				if (type == SpriteType.Item) {
-					sheet = new MinicraftImage(image, 8, 8); // Set the minimum tile sprite size.
-				} else if (type == SpriteType.Tile) {
-					sheet = new MinicraftImage(image, 16, 16); // Set the minimum item sprite size.
-				} else {
-					sheet = new MinicraftImage(image);
-				}
-
-				Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
-			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
+		boolean isSpriteImageSupported(BufferedImage image, SpriteType type) {
+			// Extra pixels are cropped out; regarded as supported.
+			if (type == SpriteType.Tile) {
+				return image.getWidth() >= 16 && image.getHeight() >= 16;
+			} else {
+				return image.getWidth() >= 8 && image.getHeight() >= 8;
 			}
 		}
-	}
 
-	/**
-	 * Loading localization from the pack.
-	 * @param pack The pack to be loaded.
-	 */
-	private static void loadLocalization(ResourcePack pack) {
-		JSONObject langJSON = null;
-		try {
-			langJSON = new JSONObject(MyUtils.readStringFromInputStream(pack.getResourceAsStream("pack.json"))).optJSONObject("language");
-		} catch (JSONException | IOException e1) {
-			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
+		boolean isSpriteImageFullyCompatible(BufferedImage image, SpriteType type, boolean isAnimated) {
+			// Extra pixels are counted in.
+			if (type == SpriteType.Tile) {
+				if (image.getWidth() != 16) return false;
+				else if (isAnimated)
+					return image.getHeight() % 16 == 0 && image.getHeight() > 0;
+				else
+					return image.getHeight() == 16; // Perfect square.
+			} else {
+				return image.getWidth() > 0 && image.getWidth() % 8 == 0 &&
+					image.getHeight() > 0 && image.getHeight() % 8 == 0;
+			}
 		}
 
-		if (langJSON != null) {
-			for (String loc : langJSON.keySet()) {
-				try {
-					Locale locale = Locale.forLanguageTag(loc);
-					JSONObject info = langJSON.getJSONObject(loc);
-					Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")));
+		@Override
+		public void loadLocalization(ResourcePack.PackResourceStream pack) {
+			try { // pack.json should be valid here; validated previously.
+				JSONObject json = new JSONObject(readTextFileFromPack(pack, "pack.json"));
+				JSONObject langJSON = json.optJSONObject("language", null);
+
+				if (langJSON != null) {
+					String undLang = new Locale("und").getLanguage();
+					for (String loc : langJSON.keySet()) {
+						try {
+							Locale locale = Locale.forLanguageTag(loc.replace('_', '-'));
+							if (locale.getLanguage().equals(undLang)) {
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Language {} is unsupported in pack {}; skipping...", loc, pack.getPack().getName());
+								continue;
+							}
+
+							JSONObject info = langJSON.getJSONObject(loc);
+							if (Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")))) {
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Language {} has already been existed before pack {}; skipping...", loc, pack.getPack().getName());
+							}
+						} catch (JSONException e) {
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Invalid localization configuration in pack: {}", pack.getPack().getName());
+						}
+					}
+				}
+			} catch (JSONException | NullPointerException | UncheckedIOException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack.json in pack: {}", pack.getPack().getName());
+			}
+
+			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/localization", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
+				try { // JSON verification.
+					String fn = entry.getFilename();
+					String json = readTextFileFromPack(pack, entry.getFullPath().toString());
+					JSONObject obj = new JSONObject(json);
+					for (String k : obj.keySet()) {
+						obj.getString(k);
+					}
+
+					// Add verified localization.
+					if (!Localization.addLocalization(Locale.forLanguageTag(fn.substring(0, fn.length() - 5)), json)) {
+						Logging.RESOURCEHANDLER_LOCALIZATION.warn("Unable to add localization because the language is not existed: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
+					}
+				} catch (NullPointerException | UncheckedIOException e) {
+					Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Unable to load localization: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
 				} catch (JSONException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.name);
+					Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Invalid JSON format detected in localization: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
 				}
 			}
 		}
 
-		for (String f : pack.getFiles("assets/localization/", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
-			String str = Paths.get(f).getFileName().toString();
-			try { // JSON verification.
-				String json = MyUtils.readStringFromInputStream(pack.getResourceAsStream(f));
-				JSONObject obj = new JSONObject(json);
-				for (String k : obj.keySet()) {
-					obj.getString(k);
+		@Override
+		public void loadTexts(ResourcePack.PackResourceStream pack) {
+			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
+				try {
+					String book = BookData.loadBook(readTextFileFromPack(pack, entry.getFullPath().toString()));
+					switch (entry.getFilename()) {
+						case "about.txt": BookData.about = () -> book; break;
+						case "credits.txt": BookData.credits = () -> book; break;
+						case "instructions.txt": BookData.instructions = () -> book; break;
+						case "antidous.txt": BookData.antVenomBook = () -> book; break;
+						case "story_guide.txt": BookData.storylineGuide = () -> book; break;
+					}
+				} catch (NullPointerException | UncheckedIOException e) {
+					Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Unable to load book: {} in pack : {}", entry.getFullPath(), pack.getPack().getName());
 				}
+			}
+		}
 
-				// Add verified localization.
-				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)), json);
-			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
-			} catch (JSONException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.name);
+		@Override
+		public void loadSounds(ResourcePack.PackResourceStream pack) {
+			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/sound", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
+				String name = entry.getFilename();
+				try {
+					Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getInputStream(entry.getFullPath().toString())), pack.getPack().getName());
+				} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+					Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", entry.getFullPath(), pack.getPack().getName());
+				}
 			}
 		}
 	}
 
-	/**
-	 * Loading the books from the pack.
-	 * @param pack The pack to be loaded.
-	 */
-	private static void loadBooks(ResourcePack pack) {
-		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
-			try {
-				String book = BookData.loadBook(MyUtils.readStringFromInputStream(pack.getResourceAsStream(path)));
-				switch (path) {
-					case "assets/books/about.txt": BookData.about = () -> book; break;
-					case "assets/books/credits.txt": BookData.credits = () -> book; break;
-					case "assets/books/instructions.txt": BookData.instructions = () -> book; break;
-					case "assets/books/antidous.txt": BookData.antVenomBook = () -> book; break;
-					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
-				}
-			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
-			}
+	/** Supports only for resource packs made for an older version of Minicraft+. */
+	private static final class IncompatibleResourcePackLoaders {
+		private static class PathFormat1ResourcePackLoader extends ResourcePackLoader {
+			public static final PathFormat1ResourcePackLoader INSTANCE = new PathFormat1ResourcePackLoader();
 		}
 	}
 
-	/**
-	 * Loading sounds from the pack.
-	 * @param pack The pack to be loaded.
-	 */
-	private static void loadSounds(ResourcePack pack) {
-		for (String f : pack.getFiles("assets/sounds/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
-			String name = Paths.get(f).getFileName().toString();
-			try {
-				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.name);
-			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
-			}
+	private static String getPathFromPackEntry(ResourcePack.PackResourceStream.PackEntry entry) {
+		return entry.getFullPath().toString();
+	}
+
+	@Nullable
+	private static BufferedImage readImageFileFromPack(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry)
+		throws IOException, IllegalStateException, IllegalArgumentException {
+		if (entry.isDir()) return null;
+		try (InputStream is = pack.getInputStream(getPathFromPackEntry(entry))) {
+			return ImageIO.read(is);
 		}
+	}
+
+	private static String readTextFileFromPack(ResourcePack.PackResourceStream pack, String path)
+		throws NullPointerException, UncheckedIOException, IllegalStateException {
+		return MyUtils.readStringFromInputStream(pack.getInputStream(path));
 	}
 }

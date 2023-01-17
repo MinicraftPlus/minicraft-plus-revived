@@ -13,10 +13,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.image.ImagingOpException;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -26,13 +29,10 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
@@ -121,7 +121,7 @@ public abstract class ResourcePack {
 	/**
 	 * Refreshing the pack metadata in the resource pack menu.
 	 * @throws PackRestructureNeededException if the pack is needed to be reloaded by classes again.
-	 * @see ResourcePackDisplay#loadPackMetadata(URL)
+	 * @see ResourcePackDisplay#loadPackMetadata(File)
 	 */
 	public void refreshPack() throws PackRestructureNeededException {
 		reloadMetadata();
@@ -131,7 +131,7 @@ public abstract class ResourcePack {
 	/**
 	 * Refreshing the pack metadata in the resource pack menu.
 	 * @throws PackRestructureNeededException if the pack is needed to be reloaded by classes again.
-	 * @see ResourcePackDisplay#loadPackMetadata(URL)
+	 * @see ResourcePackDisplay#loadPackMetadata(File)
 	 */
 	protected abstract void reloadMetadata() throws PackRestructureNeededException;
 
@@ -151,13 +151,58 @@ public abstract class ResourcePack {
 	 * The resource collector of a resource pack.
 	 */
 	public static abstract class PackResourceStream implements AutoCloseable {
+		private final ResourcePack pack;
 		protected boolean closeRequested = false;
 
-		protected PackResourceStream() {}
+		protected PackResourceStream(ResourcePack pack) {
+			this.pack = pack;
+		}
+
+		public ResourcePack getPack() {
+			return pack;
+		}
 
 		@FunctionalInterface
 		public interface FilesFilter { // Literally functioned.
 			boolean check(Path path, boolean isDir);
+		}
+
+		/** Representing a file entry inside a resource pack.
+		 * The path is relative to the root of the pack. */
+		public static class PackEntry {
+			private Path parent = null; // null if this entry is at the root.
+			private boolean isParentSet = false;
+			private String name = null; // This should not be null since the root is not used here.
+			private Path fullPath = null;
+			private final boolean isDir;
+
+			public PackEntry(@Nullable Path parent, @NotNull String name, boolean isDir) {
+				this.parent = parent;
+				isParentSet = true;
+				this.name = name;
+				this.isDir = isDir;
+			}
+			public PackEntry(@NotNull Path path, boolean isDir) {
+				fullPath = path;
+				this.isDir = isDir;
+			}
+
+			public @Nullable Path getParent() {
+				if (!isParentSet)
+					return parent = fullPath.getParent();
+				return parent;
+			}
+			public @NotNull String getFilename() {
+				if (name == null)
+					return name = fullPath.getFileName().toString();
+				return name;
+			}
+			public @NotNull Path getFullPath() {
+				if (fullPath == null)
+					return fullPath = parent == null ? Paths.get(name) : parent.resolve(name);
+				return fullPath;
+			}
+			public boolean isDir() { return isDir; }
 		}
 
 		/**
@@ -168,7 +213,27 @@ public abstract class ResourcePack {
 		 * @throws IllegalStateException if this collector has been closed.
 		 */
 		@NotNull
-		public abstract ArrayList<String> getFiles(String path, @Nullable FilesFilter filter) throws IllegalStateException;
+		public abstract ArrayList<PackEntry> getFiles(@NotNull Path path, @Nullable FilesFilter filter) throws IllegalStateException;
+
+		/**
+		 * Getting the subfiles under the specified path.
+		 * @param path The entry directory path to be listed.
+		 * @param filter The filter to be applied.
+		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
+		 * @throws IllegalStateException if this collector has been closed.
+		 */
+		@NotNull
+		public abstract ArrayList<PackEntry> getFiles(@NotNull String path, @Nullable FilesFilter filter) throws IllegalStateException;
+
+		/**
+		 * Getting whether the path is a directory inside the pack.
+		 * @param path The relative path.
+		 * @return {@code null} if the path is unknown or not existed.
+		 * {@code true} if the path is a directory.
+		 * @throws IllegalStateException if this collector has been closed.
+		 */
+		@Nullable
+		public abstract Boolean isDir(String path) throws IllegalStateException;
 
 		/**
 		 * Getting the input stream associated with the relative path.
@@ -198,13 +263,62 @@ public abstract class ResourcePack {
 	 * @return The file lock on the pack.
 	 * {@code null} if creating the lock failed.
 	 */
-	public FileLock lockFile() {
-		try (FileChannel channel = FileChannel.open(file.toPath(), StandardOpenOption.APPEND)) {
-			return channel.lock();
+	public PackLock lockFile() {
+		// Reference: https://www.baeldung.com/java-lock-files#2-exclusive-locks-using-a-randomaccessfile.
+		try {
+			return new PackLock(file);
 		} catch (IOException e) {
 			return null;
 		}
 	}
+
+	public static class PackLock implements Closeable {
+		private final File file;
+		private final RandomAccessFile randomAccessFile;
+		private final FileChannel channel;
+		private final FileLock lock;
+		private boolean closeRequested = false;
+
+		public PackLock(File file) throws FileNotFoundException {
+			this.file = file;
+			if (file.isFile()) {
+				this.randomAccessFile = new RandomAccessFile(file, "rw");
+				channel = randomAccessFile.getChannel();
+				try {
+					lock = channel.lock();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				randomAccessFile = null;
+				channel = null;
+				lock = null;
+				file.setWritable(false, false);
+			}
+		}
+
+		/**
+		 * Checking whether the file lock is still valid.
+		 * @return {@code true} if the lock is valid.
+		 */
+		public boolean isLockValid() {
+			return lock.isValid();
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (!closeRequested) {
+				if (randomAccessFile != null) {
+					lock.close();
+					channel.close();
+					randomAccessFile.close();
+				} else {
+					file.setWritable(true, false);
+				}
+			}
+		}
+	}
+
 
 	public static class ZipFileResourcePack extends ResourcePack {
 		/**
@@ -277,7 +391,7 @@ public abstract class ResourcePack {
 		@Override
 		public PackResourceStream loadPack() {
 			try {
-				return new ZipFilePackResourceStream(file);
+				return new ZipFilePackResourceStream(file, this);
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack: {}; skipping...", name);
 				return null;
@@ -287,26 +401,46 @@ public abstract class ResourcePack {
 		public static class ZipFilePackResourceStream extends PackResourceStream {
 			private final ZipFile zipFile;
 
-			private ZipFilePackResourceStream(File file) throws IOException {
+			private ZipFilePackResourceStream(File file, ResourcePack pack) throws IOException {
+				super(pack);
 				zipFile = new ZipFile(file);
 			}
 
 			@Override
-			public @NotNull ArrayList<String> getFiles(String path, @Nullable FilesFilter filter) throws IllegalStateException {
+			public @NotNull ArrayList<PackEntry> getFiles(@NotNull Path path, @Nullable FilesFilter filter) throws IllegalStateException {
+				return getFiles(path.toString(), path, filter);
+			}
+
+			@Override
+			public @NotNull ArrayList<PackEntry> getFiles(@NotNull String path, @Nullable FilesFilter filter) throws IllegalStateException {
+				return getFiles(path, Paths.get(path), filter);
+			}
+
+			private @NotNull ArrayList<PackEntry> getFiles(@NotNull String pathStr, @NotNull Path path, @Nullable FilesFilter filter) throws IllegalStateException {
 				ensureOpen();
-				ArrayList<String> paths = new ArrayList<>();
+				ArrayList<PackEntry> paths = new ArrayList<>();
 				try {
-					for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
-						ZipEntry entry = e.nextElement();
-						Path parent;
-						if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
-							(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
-							paths.add(entry.getName());
+					if (zipFile.getEntry(pathStr).isDirectory())
+						for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
+							ZipEntry entry = e.nextElement();
+							Path parent;
+							Path f = Paths.get(entry.getName());
+							if ((parent = f.getParent()) != null && parent.equals(path) &&
+								(filter == null || filter.check(f, entry.isDirectory()))) {
+								paths.add(new PackEntry(f, entry.isDirectory()));
+							}
 						}
-					}
 				} catch (IllegalStateException ignored) {}
 
 				return paths;
+			}
+
+			@Override
+			public @Nullable Boolean isDir(String path) throws IllegalStateException {
+				ensureOpen();
+				ZipEntry entry = zipFile.getEntry(path);
+				if (entry == null) return null;
+				return entry.isDirectory();
 			}
 
 			@Override
@@ -403,7 +537,7 @@ public abstract class ResourcePack {
 		public PackResourceStream loadPack() {
 			if (file.exists()) {
 				if (file.isDirectory()) {
-					return new DirectoryPackResourceStream(file);
+					return new DirectoryPackResourceStream(file, this);
 				} else {
 					Logging.RESOURCEHANDLER_RESOURCEPACK.warn("The pack is no longer a directory: {}; skipping...", name);
 				}
@@ -417,15 +551,25 @@ public abstract class ResourcePack {
 		public static class DirectoryPackResourceStream extends PackResourceStream {
 			private final File file;
 
-			private DirectoryPackResourceStream(File file) {
+			private DirectoryPackResourceStream(File file, ResourcePack pack) {
+				super(pack);
 				this.file = file;
 			}
 
 			@Override
-			public @NotNull ArrayList<String> getFiles(String path, @Nullable FilesFilter filter) throws IllegalStateException {
+			public @NotNull ArrayList<PackEntry> getFiles(@NotNull Path path, @Nullable FilesFilter filter) throws IllegalStateException {
+				return getFiles(file.toPath().resolve(path).toFile(), path, filter);
+			}
+
+			@Override
+			public @NotNull ArrayList<PackEntry> getFiles(@NotNull String path, @Nullable FilesFilter filter) throws IllegalStateException {
+				return getFiles(new File(file, path), Paths.get(path), filter);
+			}
+
+			private @NotNull ArrayList<PackEntry> getFiles(File file, Path path, @Nullable FilesFilter filter) throws IllegalStateException {
 				ensureOpen();
-				ArrayList<String> paths = new ArrayList<>();
-				try {
+				ArrayList<PackEntry> paths = new ArrayList<>();
+				if (file != null && path != null) try {
 					String[] files;
 					if (filter == null)
 						files = file.list();
@@ -434,13 +578,28 @@ public abstract class ResourcePack {
 							File fl;
 							return filter.check((fl = new File(f, s)).toPath(), fl.isDirectory());
 						});
-					if (files != null)
-						paths.addAll(Arrays.asList(files));
+					if (files != null) {
+						for (String f : files) {
+							paths.add(new PackEntry(path, f, new File(file, f).isDirectory()));
+						}
+					}
 				} catch (SecurityException e) {
 					Logging.RESOURCEHANDLER_RESOURCEPACK.trace(e, "Unable to list files in directory pack: {}.", file);
 				} catch (IllegalStateException ignored) {}
 
 				return paths;
+			}
+
+			@Override
+			public @Nullable Boolean isDir(String path) throws IllegalStateException {
+				ensureOpen();
+				File f = new File(file, path);
+				if (f.exists()) {
+					if (f.isDirectory()) return true;
+					if (f.isFile()) return false;
+				}
+
+				return null;
 			}
 
 			@Override
@@ -552,7 +711,7 @@ public abstract class ResourcePack {
 			}
 
 			@Override
-			public FileLock lockFile() {
+			public PackLock lockFile() {
 				return null;
 			}
 
@@ -632,7 +791,7 @@ public abstract class ResourcePack {
 		}
 
 		@Override
-		public FileLock lockFile() {
+		public PackLock lockFile() {
 			return null;
 		}
 	}
