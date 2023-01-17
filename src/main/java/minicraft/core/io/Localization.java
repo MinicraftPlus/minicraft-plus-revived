@@ -17,6 +17,7 @@ public class Localization {
 
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
+	private static final HashMap<String, String> fallbackLocalization = new HashMap<>();
 
 	private static Locale selectedLocale = DEFAULT_LOCALE;
 	private static final HashMap<Locale, ArrayList<String>> unloadedLocalization = new HashMap<>();
@@ -39,11 +40,23 @@ public class Localization {
 
 		String localString = localization.get(key);
 
-		if (Game.debug && localString == null) {
-			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
-			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
-				knownUnlocalizedStrings.get(selectedLocale).add(key);
+		if (localString == null) {
+			if (Game.debug) {
+				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
+				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
+					Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+					knownUnlocalizedStrings.get(selectedLocale).add(key);
+				}
+			}
+
+			// Language fall back.
+			localString = fallbackLocalization.get(key);
+			if (localString == null && Game.debug) {
+				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
+				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
+					Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+					knownUnlocalizedStrings.get(selectedLocale).add(key);
+				}
 			}
 		}
 
@@ -94,6 +107,7 @@ public class Localization {
 	public static void loadLanguage() {
 		Logging.RESOURCEHANDLER_LOCALIZATION.trace("Loading language...");
 		localization.clear();
+		fallbackLocalization.clear();
 
 		// Check if selected localization exists.
 		if (!unloadedLocalization.containsKey(selectedLocale))
@@ -106,6 +120,14 @@ public class Localization {
 			// Put all loc strings in a key-value set.
 			for (String key : json.keySet()) {
 				localization.put(key, json.getString(key));
+			}
+		}
+
+		for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) {
+			json = new JSONObject(text); // This JSON has been verified before.
+			// Put all loc strings in a key-value set.
+			for (String key : json.keySet()) {
+				fallbackLocalization.put(key, json.getString(key));
 			}
 		}
 	}
