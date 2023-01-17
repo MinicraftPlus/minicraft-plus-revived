@@ -14,6 +14,7 @@ import java.util.Locale;
 public class Localization {
 
 	public static final Locale DEFAULT_LOCALE = Locale.US;
+	public static final Locale DEBUG_LOCALE = Locale.ROOT; // This locale is used for debugging;
 
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
@@ -32,6 +33,7 @@ public class Localization {
 	@NotNull
 	public static String getLocalized(String key, Object... arguments) {
 		if (key.matches("^ *$")) return key; // Blank, or just whitespace
+		if (selectedLocale == DEBUG_LOCALE) return key; // Debugging locale.
 
 		try {
 			Double.parseDouble(key);
@@ -71,7 +73,8 @@ public class Localization {
 	 * Gets the currently selected locale.
 	 * @return A locale object.
 	 */
-	public static Locale getSelectedLocale() { return selectedLocale; }
+	public static Locale getSelectedLocale() {
+		return selectedLocale; }
 
 	/**
 	 * Get the currently selected locale, but as a full name without the country code.
@@ -109,6 +112,8 @@ public class Localization {
 		localization.clear();
 		fallbackLocalization.clear();
 
+		if (selectedLocale == DEBUG_LOCALE) return; // DO NOT load any localization for debugging.
+
 		// Check if selected localization exists.
 		if (!unloadedLocalization.containsKey(selectedLocale))
 			selectedLocale = DEFAULT_LOCALE;
@@ -136,6 +141,9 @@ public class Localization {
 		// Clear array with localization files.
 		unloadedLocalization.clear();
 		localeInfo.clear();
+		if (Game.debug) { // Adding the debug locale as an option.
+			localeInfo.put(DEBUG_LOCALE, new LocaleInformation(DEBUG_LOCALE, "Debug", null));
+		}
 	}
 
 	public static class LocaleInformation {
@@ -151,7 +159,18 @@ public class Localization {
 
 		@Override
 		public String toString() {
+			if (region == null) return name;
 			return String.format("%s (%s)", name, region);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (obj instanceof LocaleInformation)
+				return locale.equals(((LocaleInformation) obj).locale) &&
+					name.equals(((LocaleInformation) obj).name) &&
+					region.equals(((LocaleInformation) obj).region);
+			return false;
 		}
 	}
 
