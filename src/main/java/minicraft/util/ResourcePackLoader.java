@@ -65,34 +65,44 @@ public abstract class ResourcePackLoader {
 
 	/**
 	 * Loading all textures from the pack.
+	 * This ideally should be only used by {@link #loadResources(ResourcePack.PackResourceStream)}.
 	 * @param pack The pack to be loaded.
 	 */
+	@SuppressWarnings("unused")
 	public abstract void loadTextures(ResourcePack.PackResourceStream pack);
 
 	/**
 	 * Loading the specific category of basic textures from the pack.
+	 * This ideally should be only used by {@link #loadResources(ResourcePack.PackResourceStream)}.
 	 * @param pack  The pack to be loaded.
 	 * @param entry The directory entry of the pack.
 	 * @param type  The category of basic textures.
 	 */
+	@SuppressWarnings("unused")
 	public abstract void loadTextures(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry, SpriteLinker.SpriteType type);
 
 	/**
 	 * Loading localization from the pack.
+	 * This ideally should be only used by {@link #loadResources(ResourcePack.PackResourceStream)}.
 	 * @param pack The pack to be loaded.
 	 */
+	@SuppressWarnings("unused")
 	public abstract void loadLocalization(ResourcePack.PackResourceStream pack);
 
 	/**
 	 * Loading the texts from the pack.
+	 * This ideally should be only used by {@link #loadResources(ResourcePack.PackResourceStream)}.
 	 * @param pack The pack to be loaded.
 	 */
+	@SuppressWarnings("unused")
 	public abstract void loadTexts(ResourcePack.PackResourceStream pack);
 
 	/**
 	 * Loading sounds from the pack.
+	 * This ideally should be only used by {@link #loadResources(ResourcePack.PackResourceStream)}.
 	 * @param pack The pack to be loaded.
 	 */
+	@SuppressWarnings("unused")
 	public abstract void loadSounds(ResourcePack.PackResourceStream pack);
 
 	/** Supports only for current packs with {@link ResourcePack#PACK_FORMAT}. */
