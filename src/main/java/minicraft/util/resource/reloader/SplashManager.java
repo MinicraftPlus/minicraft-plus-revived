@@ -14,9 +14,8 @@ import org.json.JSONObject;
 import minicraft.util.MyUtils;
 import minicraft.util.resource.Resource;
 import minicraft.util.resource.ResourceManager;
-import minicraft.util.resource.SyncReloadableResourceManager;
 
-public class SplashManager implements SyncReloadableResourceManager.SyncReloader {
+public class SplashManager extends SyncResourceReloader {
 	private static final Random random = new Random();
 	private static final List<String> splashes = new ArrayList<>();
 

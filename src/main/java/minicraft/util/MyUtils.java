@@ -4,8 +4,32 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public final class MyUtils {
+	/**
+	 * Used by the ResourceReloader so that when closing the game/application the reloading can be stopped/shutdown.
+	 * Otherwise, it would continue running until it finished. We don't want to anger gamers.
+	 */
+	public static final ExecutorService RELOADER_WORKER = Executors.newSingleThreadExecutor();
+
+	public static void shutdownWorkers() {
+		RELOADER_WORKER.shutdown();
+
+		boolean terminated;
+		try {
+			terminated = RELOADER_WORKER.awaitTermination(3, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			terminated = false;
+		}
+
+		if (!terminated) {
+			RELOADER_WORKER.shutdownNow();
+		}
+	}
 
 	private MyUtils() {}
 

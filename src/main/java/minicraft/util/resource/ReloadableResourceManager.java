@@ -9,27 +9,27 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.util.MyUtils;
+import minicraft.util.resource.ResourceLoader.OnComplete;
+import minicraft.util.resource.reloader.ResourceReloader;
 
-public class SyncReloadableResourceManager implements ResourceManager, AutoCloseable {
-	private final List<SyncReloader> reloaders = new ArrayList<>();
+public class ReloadableResourceManager implements ResourceManager, AutoCloseable {
+	private final List<ResourceReloader> reloaders = new ArrayList<>();
 	private List<ResourcePack> packs = new ArrayList<>();
 
-	public void registerReloader(SyncReloader reloader) {
+	public void registerReloader(ResourceReloader reloader) {
 		this.reloaders.add(reloader);
 	}
 
 	/**
-	 * Reloads everything synchronously with the provived resource packs
+	 * Reloads everything with the provived resource packs
 	 *
 	 * @param packs The list of resource packs
 	 */
-	public void reload(List<ResourcePack> packs) {
+	public ResourceLoader reload(List<ResourcePack> packs, OnComplete onComplete) {
 		this.closePacks();
 		this.packs = packs;
 
-		for (SyncReloader reloader : this.reloaders) {
-			reloader.reload(this);
-		}
+		return new ResourceLoader(this.reloaders, this, onComplete);
 	}
 
 	@Nullable
@@ -68,10 +68,6 @@ public class SyncReloadableResourceManager implements ResourceManager, AutoClose
 		return MyUtils.reverseList(list);
 	}
 
-	public List<SyncReloader> getReloaders() {
-	  return this.reloaders;
-	}
-
 	public List<ResourcePack> getResourcePacks() {
 	  return this.packs;
 	}
@@ -83,9 +79,5 @@ public class SyncReloadableResourceManager implements ResourceManager, AutoClose
 	@Override
 	public void close() {
 		this.closePacks();
-	}
-
-	public interface SyncReloader {
-		void reload(ResourceManager manager);
 	}
 }

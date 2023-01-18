@@ -1,17 +1,23 @@
 package minicraft.core.io;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.util.Logging;
-
-import org.json.JSONObject;
-import org.tinylog.Logger;
+import minicraft.util.MyUtils;
+import minicraft.util.resource.Resource;
+import minicraft.util.resource.reloader.ResourceReloader;
+import minicraft.util.resource.reloader.SyncResourceReloader;
 
 public class Localization {
 
@@ -23,6 +29,49 @@ public class Localization {
 	private static Locale selectedLocale = DEFAULT_LOCALE;
 	private static final HashMap<Locale, ArrayList<String>> unloadedLocalization = new HashMap<>();
 	private static final HashMap<Locale, LocaleInformation> localeInfo = new HashMap<>();
+
+	public static final ResourceReloader reloader = new SyncResourceReloader() {
+		protected void reload(minicraft.util.resource.ResourceManager manager) {
+			Localization.resetLocalizations();
+
+			for (Resource res : manager.getResources("pack.json")) {
+				try (BufferedReader reader = res.getAsReader()) {
+					JSONObject obj = new JSONObject(MyUtils.readAsString(reader));
+
+					for (String loc : obj.keySet()) {
+						try {
+							Locale locale = Locale.forLanguageTag(loc);
+							JSONObject info = obj.getJSONObject(loc);
+							Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")));
+						} catch (JSONException e) {
+							Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", res.getResourcePack());
+						}
+					}
+				} catch (JSONException | IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			for (Resource res : manager.getResources("assets/localization/", p -> p.endsWith(".json"))) {
+				try (BufferedReader reader = res.getAsReader()) {
+					String json = MyUtils.readAsString(reader);
+					JSONObject obj = new JSONObject();
+
+					for (String k : obj.keySet()) {
+						obj.getString(k);
+					}
+
+					// Add verified localization.
+					String name = res.getName();
+					Localization.addLocalization(Locale.forLanguageTag(name.substring(0, name.length() - 5)), json);
+				} catch (IOException e) {
+					Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", res.getName(), res.getResourcePackName());
+				} catch (JSONException e) {
+					Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", res.getName(), res.getResourcePackName());
+				}
+			}
+		}
+	};
 
 	/**
 	 * Get the provided key's localization for the currently selected language.

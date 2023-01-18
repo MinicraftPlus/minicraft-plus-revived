@@ -18,10 +18,12 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
+import minicraft.util.MyUtils;
+import minicraft.util.resource.ReloadableResourceManager;
+import minicraft.util.resource.ResourceLoader;
 import minicraft.util.resource.ResourcePackManager;
-import minicraft.util.resource.ResourcePackManager.DefaultResourcePackProvider;
-import minicraft.util.resource.SyncReloadableResourceManager;
 import minicraft.util.resource.VanillaResourcePack;
+import minicraft.util.resource.provider.DefaultResourcePackProvider;
 import minicraft.util.resource.reloader.SplashManager;
 
 public class Game {
@@ -68,9 +70,12 @@ public class Game {
 	static boolean running = true;
 	public static void quit() { running = false; }
 
-	public static final SyncReloadableResourceManager resourceManager = new SyncReloadableResourceManager();
+	public static final ReloadableResourceManager resourceManager = new ReloadableResourceManager();
 	public static ResourcePackManager resourcePackManager;
 	public static VanillaResourcePack defaultResourcePack;
+	public static boolean reloading;
+	@Nullable
+	public static ResourceLoader currentLoader;
 
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
@@ -89,21 +94,26 @@ public class Game {
 
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
-		{
-			defaultResourcePack = new VanillaResourcePack();
-			resourcePackManager = new ResourcePackManager();
-			resourcePackManager.addProvider(new DefaultResourcePackProvider(defaultResourcePack));
-			resourcePackManager.findPacks();
-			resourceManager.registerReloader(new SplashManager());
-			// resourceManager.registerReloader(new LocalizationReloader());
-			// resourceManager.registerReloader(new SoundReloader());
-			// resourceManager.registerReloader(new BookReloader());
-			// resourceManager.registerReloader(new TextureReloader());
-			resourcePackManager.setEnabledPacks(Arrays.asList("vanilla"));
-			resourceManager.reload(resourcePackManager.getEnabledPacks());
+		defaultResourcePack = new VanillaResourcePack();
+		resourcePackManager = new ResourcePackManager();
+		resourcePackManager.addProvider(new DefaultResourcePackProvider(defaultResourcePack));
+		resourcePackManager.findPacks();
+		resourceManager.registerReloader(new SplashManager());
+		// resourceManager.registerReloader(Sound.reloader);
+		// resourceManager.registerReloader(new LocalizationReloader());
+		// resourceManager.registerReloader(new SoundReloader());
+		// resourceManager.registerReloader(new BookReloader());
+		// resourceManager.registerReloader(new TextureReloader());
+		resourcePackManager.setEnabledPacks(Arrays.asList("vanilla"));
+		Game.reloading = true;
+		Game.currentLoader = resourceManager.reload(resourcePackManager.getEnabledPacks(), () -> {
+			Game.reloading = false;
+			Game.currentLoader = null;
+		});
 
-			Renderer.initScreen();
-		}
+		// TODO: remove reloading from this method so that the reload overlay can be shown >:(
+		// So remove the splash window too because is not needed. When reloading, no screen and level should be render.
+		Renderer.initScreen();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
@@ -119,6 +129,9 @@ public class Game {
 		Initializer.run();
 
 		Logging.GAMEHANDLER.debug("Main game loop ended; Terminating application...");
+
+		MyUtils.shutdownWorkers();
+
 		System.exit(0);
 	}
 }

@@ -40,6 +40,26 @@ public class Screen {
 		Arrays.fill(pixels, color);
 	}
 
+	/**
+	 * Render rect with specified color
+	 */
+	public void render(int xp, int yp, int width, int height, int color) {
+		xp -= xOffset;
+		yp -= yOffset;
+
+		for (int yy = yp; yy < yp + height; yy++) {
+			if (yy < 0 || yy >= Screen.h) continue;
+
+			for (int xx = xp; xx < xp + width; xx++) {
+				if (xx < 0 || xx >= Screen.w) continue;
+
+				if ((color >> 24 & 0xFF) != 0) { // Discard if color.a == 0
+					pixels[yy * Screen.w + xx] = color;
+				}
+			}
+		}
+	}
+
 	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
     public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/

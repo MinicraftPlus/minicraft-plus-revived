@@ -16,23 +16,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.imageio.ImageIO;
+
+import org.json.JSONObject;
+
 import minicraft.core.CrashHandler.ErrorInfo;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Ellipsis;
+import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
+import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -47,10 +51,6 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
-
-import javax.imageio.ImageIO;
-
-import org.json.JSONObject;
 
 public class Renderer extends Game {
 	private Renderer() {}
@@ -114,16 +114,28 @@ public class Renderer extends Game {
 	public static void render() {
 		if (screen == null) return; // No point in this if there's no gui... :P
 
-		if (readyToRenderGameplay) {
-			renderLevel();
-			if (player.renderGUI) renderGui();
+		if (Game.reloading) {
+			screen.render(0, 0, Screen.w, Screen.h, 0xFF_FFFFFF);
+
+			if (Game.currentLoader != null) {
+				int barw = 120;
+				int barh = 8;
+
+				screen.render((Screen.w - barw) / 2, (Screen.w - barh) / 2, barw, barh, 0xFF_FFFFFF);
+				screen.render((Screen.w - barw) / 2 + 1, (Screen.w - barh) / 2 + 1, barw - 2, barh - 2, 0xFF_000000);
+				screen.render((Screen.w - barw) / 2 + 2, (Screen.w - barh) / 2 + 2, (int)(barw * Game.currentLoader.getProgress()) - 4, barh - 4, 0xFF_FFFFFF);
+			}
+		} else {
+			if (readyToRenderGameplay) {
+				renderLevel();
+				if (player.renderGUI) renderGui();
+			}
+
+			if (display != null) // Renders menu, if present.
+				display.render(screen);
+
+			if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		}
-
-		if (display != null) // Renders menu, if present.
-			display.render(screen);
-
-		if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
-
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
 		Graphics g = bs.getDrawGraphics(); // Gets the graphics in which java draws the picture

@@ -1,14 +1,13 @@
 package minicraft.util.resource;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import minicraft.core.io.FileHandler;
+import minicraft.util.resource.provider.ResourcePackProvider;
 
 public class ResourcePackManager {
 	private final Map<String, ResourcePack> packs = new HashMap<>();
@@ -53,45 +52,7 @@ public class ResourcePackManager {
 	}
 
 	public List<ResourcePack> getEnabledPacks() {
-	  return this.enabledPacks;
+	 	return this.enabledPacks;
 	}
 
-	public interface ResourcePackProvider {
-		void provide(Consumer<ResourcePack> consumer);
-	}
-
-	public static class DefaultResourcePackProvider implements ResourcePackProvider {
-		private final ResourcePack defaultResourcePack;
-
-		public DefaultResourcePackProvider(ResourcePack defaultResourcePack) {
-			this.defaultResourcePack = defaultResourcePack;
-		}
-
-		@Override
-		public void provide(Consumer<ResourcePack> consumer) {
-			consumer.accept(this.defaultResourcePack);
-
-			defaultResourcePack.getAllFiles("assets/resources/", p -> p.endsWith(".zip"), (p, s) -> {
-			});
-		}
-	}
-
-	public static abstract class WorldResourcePackProvider implements ResourcePackProvider  {
-		private final File worldResourcePacks;
-
-		public WorldResourcePackProvider(Path worldPath) {
-			this.worldResourcePacks = worldPath.resolve("resourcepacks").toFile();
-		}
-
-		@Override
-		public void provide(Consumer<ResourcePack> consumer) {
-			for (File file : this.worldResourcePacks.listFiles()) {
-				ResourcePack pack = ResourcePack.getFromPath(file.toPath());
-
-				if (pack != null) {
-					consumer.accept(pack);
-				}
-			}
-		}
-	}
 }
