@@ -121,7 +121,7 @@ public abstract class ResourcePackLoader {
 
 		@Override
 		public void loadTextures(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry, SpriteLinker.SpriteType type) {
-			super.loadTextures(pack);
+			super.loadTextures(pack, entry, type);
 		}
 
 		@Override
@@ -222,7 +222,7 @@ public abstract class ResourcePackLoader {
 						return;
 					}
 
-					if (isSpriteImageSupported(image, SpriteLinker.SpriteType.Tile)) {
+					if (!isSpriteImageSupported(image, SpriteLinker.SpriteType.Tile)) {
 						Path parent = Objects.requireNonNull(jsonF.getParent());
 						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
 							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
@@ -250,7 +250,7 @@ public abstract class ResourcePackLoader {
 
 				JSONObject animation = json.optJSONObject("animation");
 				if (animation != null) {
-					if (isSpriteImageFullyCompatible(image, type, true)) {
+					if (!isSpriteImageFullyCompatible(image, type, true)) {
 						Path parent = Objects.requireNonNull(jsonF.getParent());
 						Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
 							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
@@ -260,7 +260,7 @@ public abstract class ResourcePackLoader {
 					meta.frames = image.getHeight() / 16;
 					return new MinicraftImage(image, 16, 16 * meta.frames);
 				} else {
-					if (isSpriteImageFullyCompatible(image, type, false)) {
+					if (!isSpriteImageFullyCompatible(image, type, false)) {
 						Path parent = Objects.requireNonNull(jsonF.getParent());
 						Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
 							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
@@ -306,7 +306,7 @@ public abstract class ResourcePackLoader {
 						BufferedImage borderImage = readImageFileFromPack(pack, borderF);
 						if (borderImage == null) { // The file is not dir; the only reason is that the format is unsupported.
 							Path parent = Objects.requireNonNull(jsonF.getParent());
-							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (border) {} format unsupported in pack; skipping...",
 								parent.resolve(borderFn), pack.getPack().getName());
 							meta.border = null;
 						} else {
@@ -354,7 +354,7 @@ public abstract class ResourcePackLoader {
 						BufferedImage cornerImage = readImageFileFromPack(pack, cornerF);
 						if (cornerImage == null) { // The file is not dir; the only reason is that the format is unsupported.
 							Path parent = Objects.requireNonNull(jsonF.getParent());
-							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (corner) {} format unsupported in pack; skipping...",
 								parent.resolve(cornerFn), pack.getPack().getName());
 							meta.corner = null;
 						} else {
@@ -412,14 +412,14 @@ public abstract class ResourcePackLoader {
 						return; // Skipping.
 					}
 
-					if (isSpriteImageSupported(image, type)) {
+					if (!isSpriteImageSupported(image, type)) {
 						Path parent = Objects.requireNonNull(pngF.getParent());
 						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
 							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
 						return; // Skipping.
 					}
 
-					if (isSpriteImageFullyCompatible(image, type, false)) {
+					if (!isSpriteImageFullyCompatible(image, type, false)) {
 						Path parent = Objects.requireNonNull(pngF.getParent());
 						Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
 							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());

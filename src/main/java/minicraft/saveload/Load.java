@@ -362,6 +362,20 @@ public class Load {
 		Settings.set("fps", json.getInt("fps"));
 		Settings.set("showquests", json.optBoolean("showquests", true));
 
+		JSONArray packsJSON = json.optJSONArray("resourcePacks");
+		if (packsJSON != null) {
+			String[] packs = new String[packsJSON.length()];
+			for (int i = 0; i < packs.length; i++) {
+				packs[i] = packsJSON.getString(i);
+			}
+
+			if (prefVer.compareTo(new Version("2.2.0")) < 0) { // TODO Fill-in the blank, current version.
+				Collections.reverse(Arrays.asList(packs));
+			}
+
+			ResourcePackDisplay.initLoadedPacks(packs);
+		}
+
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
@@ -381,20 +395,6 @@ public class Load {
 			// Split key and value
 			String[] map = str.split(";");
 			Game.input.setKey(map[0], map[1]);
-		}
-
-		JSONArray packsJSON = json.optJSONArray("resourcePacks");
-		if (packsJSON != null) {
-			String[] packs = new String[packsJSON.length()];
-			for (int i = 0; i < packs.length; i++) {
-				packs[i] = packsJSON.getString(i);
-			}
-
-			if (prefVer.compareTo(new Version("2.2.0")) < 0) { // TODO Fill-in the blank, current version.
-				Collections.reverse(Arrays.asList(packs));
-			}
-
-			ResourcePackDisplay.initLoadedPacks(packs);
 		}
 	}
 

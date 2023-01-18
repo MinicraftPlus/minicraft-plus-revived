@@ -599,6 +599,11 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		// Adding vanilla pack as the lowest priority if there is no.
+		if (!loadedPacks.contains(ResourcePack.DefaultResourcePack.DEFAULT_RESOURCE_PACK)) {
+			loadedPacks.add(0, ResourcePack.DefaultResourcePack.DEFAULT_RESOURCE_PACK);
+		}
+
 		reloadResources();
 	}
 
@@ -673,7 +678,10 @@ public class ResourcePackDisplay extends Display {
 			} catch (IOException ignored) {}
 		}); // Releasing all locks.
 		packLocks.clear();
-		loadedPacks.forEach(pack -> packLocks.put(pack, pack.lockFile())); // Relocking current packs.
+		loadedPacks.forEach(pack -> {
+			ResourcePack.PackLock lock = pack.lockFile();
+			if (lock != null) packLocks.put(pack, lock);
+		}); // Relocking current packs.
 
 		// Clear all previously loaded resources.
 		Renderer.spriteLinker.resetSprites();

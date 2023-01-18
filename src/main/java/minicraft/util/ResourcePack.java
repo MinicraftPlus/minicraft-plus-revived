@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.image.ImagingOpException;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,13 +26,18 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -233,6 +239,7 @@ public abstract class ResourcePack {
 		 * @throws IllegalStateException if this collector has been closed.
 		 */
 		@Nullable
+		@SuppressWarnings("unused") // Keeping for possibly later use.
 		public abstract Boolean isDir(String path) throws IllegalStateException;
 
 		/**
@@ -318,7 +325,6 @@ public abstract class ResourcePack {
 			}
 		}
 	}
-
 
 	public static class ZipFileResourcePack extends ResourcePack {
 		/**
@@ -420,7 +426,7 @@ public abstract class ResourcePack {
 				ensureOpen();
 				ArrayList<PackEntry> paths = new ArrayList<>();
 				try {
-					if (zipFile.getEntry(pathStr).isDirectory())
+					if (zipFile.getEntry(pathStr.replace('\\', '/')).isDirectory())
 						for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
 							ZipEntry entry = e.nextElement();
 							Path parent;
@@ -438,7 +444,7 @@ public abstract class ResourcePack {
 			@Override
 			public @Nullable Boolean isDir(String path) throws IllegalStateException {
 				ensureOpen();
-				ZipEntry entry = zipFile.getEntry(path);
+				ZipEntry entry = zipFile.getEntry(path.replace('\\', '/'));
 				if (entry == null) return null;
 				return entry.isDirectory();
 			}
@@ -447,7 +453,7 @@ public abstract class ResourcePack {
 			public InputStream getInputStream(String path) throws IllegalStateException {
 				ensureOpen();
 				try {
-					return zipFile.getInputStream(zipFile.getEntry(path));
+					return zipFile.getInputStream(zipFile.getEntry(path.replace('\\', '/')));
 				} catch (NullPointerException | IOException | IllegalStateException e) {
 					return null;
 				}
@@ -566,10 +572,10 @@ public abstract class ResourcePack {
 				return getFiles(new File(file, path), Paths.get(path), filter);
 			}
 
-			private @NotNull ArrayList<PackEntry> getFiles(File file, Path path, @Nullable FilesFilter filter) throws IllegalStateException {
+			private @NotNull ArrayList<PackEntry> getFiles(File file, @NotNull Path path, @Nullable FilesFilter filter) throws IllegalStateException {
 				ensureOpen();
 				ArrayList<PackEntry> paths = new ArrayList<>();
-				if (file != null && path != null) try {
+				if (file != null) try {
 					String[] files;
 					if (filter == null)
 						files = file.list();
@@ -623,13 +629,17 @@ public abstract class ResourcePack {
 
 	public static class DefaultResourcePack {
 		/** The default game resource pack, other than the world-bundled one, in directory or in jar. */
-		public static final GameDefaultResourcePack DEFAULT_RESOURCE_PACK = new GameDefaultResourcePack();
+		public static final GameDefaultResourcePack DEFAULT_RESOURCE_PACK;
 
 		/** @see FileHandler#listResources() */
-		private static File sourceResourceRoot = null;
-		private static boolean isSourceJar = false;
+		private static final Path sourceResourceRootPath;
+		private static final File sourceResourceRoot;
+		private static final boolean isSourceJar;
 
 		static {
+			Path sourceResourceRootPathTemp = null;
+			File sourceResourceRootTemp = null;
+			boolean isSourceJarTemp = false;
 			try {
 				// Copied from FileHandler.
 				CodeSource src = Game.class.getProtectionDomain().getCodeSource();
@@ -638,8 +648,9 @@ public abstract class ResourcePack {
 					ZipInputStream zip = new ZipInputStream(jar.openStream());
 					if (zip.available() == 1) {
 						if (zip.getNextEntry() != null) { // Valid jar
-							sourceResourceRoot = Paths.get(jar.toURI()).toFile();
-							isSourceJar = true;
+							sourceResourceRootPathTemp = Paths.get(jar.toURI());
+							sourceResourceRootTemp = sourceResourceRootPathTemp.toFile();
+							isSourceJarTemp = true;
 						} else { // Running from an IDE
 							URL fUrl = Game.class.getResource("/");
 							if (fUrl == null) {
@@ -648,11 +659,14 @@ public abstract class ResourcePack {
 
 							Path p = Paths.get(fUrl.toURI());
 							File f = p.toFile();
-							isSourceJar = false;
+							//noinspection ReassignedVariable,ConstantConditions
+							isSourceJarTemp = false;
 							if (new File(f, "resources").exists()) {
-								sourceResourceRoot = f;
+								sourceResourceRootPathTemp = p;
+								sourceResourceRootTemp = f;
 							} else { // Providing a simple resolution when the previous location is invalid, the gradle build path is used.
-								sourceResourceRoot = p.resolve("../../../resources/main").toFile();
+								sourceResourceRootPathTemp = p.resolve("../../../resources/main");
+								sourceResourceRootTemp = sourceResourceRootPathTemp.toFile();
 							}
 						}
 					} else
@@ -664,6 +678,11 @@ public abstract class ResourcePack {
 				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Invalid Game Code Source",
 					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to get code source in order to get default resources."));
 			}
+
+			sourceResourceRootPath = Objects.requireNonNull(sourceResourceRootPathTemp);
+			sourceResourceRoot = Objects.requireNonNull(sourceResourceRootTemp);
+			isSourceJar = isSourceJarTemp;
+			DEFAULT_RESOURCE_PACK = new GameDefaultResourcePack();
 		}
 
 		/**
@@ -700,14 +719,20 @@ public abstract class ResourcePack {
 		public static class GameDefaultResourcePack extends ResourcePack {
 			public static final String IDENTIFIER = "vanilla";
 
-			private final ResourcePack childHandler;
+			private ResourcePack childHandler = null;
 
 			private GameDefaultResourcePack() {
 				super(sourceResourceRoot, PACK_FORMAT, "Default", "The default look and feel of Minicraft+ (built-in)");
-				if (isSourceJar)
-					childHandler = new ZipFileResourcePack(file, packFormat, name, description);
-				else
-					childHandler = new DirectoryResourcePack(file, packFormat, name, description);
+			}
+
+			// Initializing childHandler here but not in <init>, because other methods may be called first.
+			private void init() {
+				if (childHandler == null) {
+					if (isSourceJar)
+						childHandler = new ZipFileResourcePack(file, packFormat, name, description);
+					else
+						childHandler = new DirectoryResourcePack(file, packFormat, name, description);
+				}
 			}
 
 			@Override
@@ -722,16 +747,19 @@ public abstract class ResourcePack {
 
 			@Override
 			protected void reloadLogo() {
+				init();
 				childHandler.reloadLogo();
 			}
 
 			@Override
 			protected void reloadMetadata() throws PackRestructureNeededException {
+				init();
 				childHandler.reloadMetadata();
 			}
 
 			@Override
 			public PackResourceStream loadPack() {
+				init();
 				return childHandler.loadPack();
 			}
 		}
@@ -760,9 +788,32 @@ public abstract class ResourcePack {
 		public static final String IDENTIFIER = "classic_art";
 		public static final ClassicArtResourcePack CLASSIC_ART_RESOURCE_PACK;
 
-		private static final URL path;
+		private static final FileSystem fs;
+		private static final Path path;
 
 		static {
+			FileSystem fsTemp;
+			try {
+				fsTemp = FileSystems.newFileSystem(DefaultResourcePack.sourceResourceRootPath, (ClassLoader) null);
+			} catch (IOException e) {
+				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Classic Art Resource Pack Invalid",
+					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to load the built-in classic resource pack."));
+				fsTemp = null;
+			}
+			fs = fsTemp;
+			assert fs != null;
+
+			Path pathTemp;
+			try {
+				pathTemp = fs.getPath("assets/resourcepacks/classic_art.zip");
+			} catch (InvalidPathException e) {
+				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Classic Art Resource Pack Not Found",
+					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to get the classic resource pack by the path."));
+				pathTemp = null;
+			}
+			path = pathTemp;
+			assert path != null;
+
 			ClassicArtResourcePack temp;
 			try {
 				temp = new ClassicArtResourcePack();
@@ -772,17 +823,12 @@ public abstract class ResourcePack {
 					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to load the built-in classic resource pack."));
 				temp = null;
 			}
-
 			CLASSIC_ART_RESOURCE_PACK = temp;
-
-			path = Game.class.getResource("/assets/resourcepacks");
-			if (path == null)
-				CrashHandler.crashHandle(new NullPointerException("Classic Art Resource Pack not Found"), new CrashHandler.ErrorInfo("Classic Art Resource Pack not Found",
-					CrashHandler.ErrorInfo.ErrorType.UNEXPECTED, true, "Unable to get the classic resource pack by the path."));
 		}
 
 		private ClassicArtResourcePack() throws URISyntaxException {
-			super(Paths.get(path.toURI()).toFile(), PACK_FORMAT, "Classic Art", "The classic look of Minicraft+ (built-in)");
+			// Placeholder file.
+			super(DefaultResourcePack.sourceResourceRoot, PACK_FORMAT, "Classic Art", "The classic look of Minicraft+ (built-in)");
 		}
 
 		@Override
@@ -793,6 +839,145 @@ public abstract class ResourcePack {
 		@Override
 		public PackLock lockFile() {
 			return null;
+		}
+
+		// Assuming the file always exists and is a file.
+		// Reference: https://stackoverflow.com/a/14603620.
+
+		@Override
+		protected void reloadLogo() {
+			try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(path))) {
+				InputStream in = null;
+				for (ZipEntry e; (e = zin.getNextEntry()) != null;) {
+					if (e.getName().equals("pack.png")) {
+						byte[] bytes = new byte[(int) e.getSize()];
+						int res = zin.read(bytes);
+						if (res == e.getSize()) {
+							in = new ByteArrayInputStream(bytes);
+						} // Incomplete bytes read.
+					}
+				}
+
+				if (in != null) {
+					logo = new MinicraftImage(ImageIO.read(in));
+
+					// Logo size verification.
+					int h = logo.height;
+					int w = logo.width;
+					if (h == 0 || w == 0 || h % 8 != 0 || w % 8 != 0 ||
+						h > 32 || w > Screen.w) {
+						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo in pack: {}: Unacceptable logo size: {};{}; loading default logo instead.", name, w, h);
+						throw new ImagingOpException("");
+					}
+
+					return;
+				} else {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found in pack: {}; loading default logo instead.", name);
+				}
+			} catch (IOException | NullPointerException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load logo in pack: {}; loading default logo instead.", name);
+			} catch (ImagingOpException ignored) {}
+
+			// Using the default logo instead.
+			logo = ResourcePackDisplay.defaultLogo;
+		}
+
+		@Override
+		protected void reloadMetadata() {
+			// Assuming no metadata is needed to be reloaded.
+		}
+
+		@Override
+		public PackResourceStream loadPack() {
+			try {
+				return new ClassicArtPackResourceStream(this);
+			} catch (IOException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack: {}; skipping...", name);
+				return null;
+			}
+		}
+
+		private static class ClassicArtPackResourceStream extends PackResourceStream {
+			private final ZipInputStream zin;
+			private final HashMap<Path, ZipEntry> entries = new HashMap<>();
+
+			protected ClassicArtPackResourceStream(ResourcePack pack) throws IOException {
+				super(pack);
+				zin = new ZipInputStream(Files.newInputStream(path));
+				// Searching and indexing first.
+				for (ZipEntry e; (e = zin.getNextEntry()) != null;) {
+					entries.put(fs.getPath(e.getName()), e);
+				}
+			}
+
+			@Override
+			public @NotNull ArrayList<PackEntry> getFiles(@NotNull Path path, @Nullable FilesFilter filter) throws IllegalStateException {
+				ensureOpen();
+				ArrayList<PackEntry> paths = new ArrayList<>();
+
+				try {
+					for (Path p : entries.keySet()) {
+						Path parent;
+						if ((parent = p.getParent()) != null && parent.equals(path) &&
+							(filter == null || filter.check(p, entries.get(p).isDirectory()))) {
+							paths.add(new PackEntry(p, entries.get(p).isDirectory()));
+						}
+					}
+				} catch (SecurityException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace(e, "Unable to list files in directory pack: {}.", getPack().getName());
+				} catch (IllegalStateException ignored) {}
+
+				return paths;
+			}
+
+			@Override
+			public @NotNull ArrayList<PackEntry> getFiles(@NotNull String path, @Nullable FilesFilter filter) throws IllegalStateException {
+				try {
+					return getFiles(fs.getPath(path), filter);
+				} catch (InvalidPathException e) {
+					return new ArrayList<>();
+				}
+			}
+
+			@Override
+			public @Nullable Boolean isDir(String path) throws IllegalStateException {
+				try {
+					ZipEntry e = entries.get(fs.getPath(path));
+					if (e == null) return null;
+					return e.isDirectory();
+				} catch (InvalidPathException e) {
+					return null;
+				}
+			}
+
+			@Override
+			public InputStream getInputStream(String path) throws IllegalStateException {
+				try {
+					Path p = fs.getPath(path);
+					if (entries.containsKey(p)) {
+						zin.reset();
+						for (ZipEntry entry; (entry = zin.getNextEntry()) != null;) {
+							if (fs.getPath(entry.getName()).equals(p)) {
+								byte[] bytes = new byte[(int) entry.getSize()];
+								int res = zin.read(bytes);
+								if (res == entry.getSize()) {
+									return new ByteArrayInputStream(bytes);
+								} // Incomplete bytes read.
+							}
+						}
+					}
+				} catch (InvalidPathException | IOException ignored) {}
+
+				return null;
+			}
+
+			@Override
+			public void close() throws IOException {
+				if (!closeRequested) {
+					entries.clear();
+					zin.close();
+				}
+			}
 		}
 	}
 }
