@@ -396,8 +396,6 @@ public class Load {
 
 			ResourcePackDisplay.initLoadedPacks(packs);
 		}
-
-		ResourcePackDisplay.releaseUnloadedPacks();
 	}
 
 	private void loadUnlocksOld(String filename) {
