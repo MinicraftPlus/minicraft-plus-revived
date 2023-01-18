@@ -56,6 +56,7 @@ but some sections are changed to compliant this project.
 * Now renders the parent display as background
 * Changed the height requirement on skin images from 32 pixels to 16 pixels
 * Fixed lights disappearing when out of screen
+* Improved player's tile indicator
 
 ### Removals
 
