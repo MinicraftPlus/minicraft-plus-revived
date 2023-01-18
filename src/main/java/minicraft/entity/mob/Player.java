@@ -1,34 +1,65 @@
 package minicraft.entity.mob;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.*;
+import minicraft.entity.Arrow;
+import minicraft.entity.ClientTickable;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.*;
+import minicraft.gfx.Color;
+import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
+import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.*;
+import minicraft.item.ArmorItem;
+import minicraft.item.FishingData;
+import minicraft.item.FishingRodItem;
+import minicraft.item.FurnitureItem;
+import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
+import minicraft.item.Recipes;
+import minicraft.item.StackableItem;
+import minicraft.item.TileItem;
+import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
-import minicraft.screen.*;
+import minicraft.screen.AchievementsDisplay;
+import minicraft.screen.CraftingDisplay;
+import minicraft.screen.InfoDisplay;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.PauseDisplay;
+import minicraft.screen.PlayerInvDisplay;
+import minicraft.screen.SkinDisplay;
+import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
@@ -768,10 +799,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Renders indicator for what tile the item will be placed on
-		if (activeItem instanceof TileItem) {
+		if (activeItem instanceof TileItem && !isSwimming()) {
 			Point t = getInteractionTile();
-
-			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3, 2, 0, hudSheet.getSheet());
+			screen.render(t.x * 16, t.y * 16, 3, 2, 0, hudSheet.getSheet());
+			screen.render(t.x * 16 + 8, t.y * 16, 3, 2, 1, hudSheet.getSheet());
+			screen.render(t.x * 16, t.y * 16 + 8, 3, 2, 2, hudSheet.getSheet());
+			screen.render(t.x * 16 + 8, t.y * 16 + 8, 3, 2, 3, hudSheet.getSheet());
 		}
 
 		// Makes the player white if they have just gotten hurt
