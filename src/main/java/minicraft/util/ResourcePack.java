@@ -746,9 +746,19 @@ public abstract class ResourcePack {
 			}
 
 			@Override
+			public MinicraftImage getLogo() {
+				return childHandler.getLogo();
+			}
+
+			@Override
 			protected void reloadLogo() {
 				init();
 				childHandler.reloadLogo();
+			}
+
+			@Override
+			public void refreshPack() throws PackRestructureNeededException {
+				childHandler.refreshPack();
 			}
 
 			@Override

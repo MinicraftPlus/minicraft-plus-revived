@@ -136,7 +136,7 @@ public class ResourcePackDisplay extends Display {
 
 	static { // Initializing the default pack and logo.
 		try {
-			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/assets/textures/misc/unknown_pack.png")));
+			defaultLogo = new MinicraftImage(ImageIO.read(Objects.requireNonNull(ResourcePackDisplay.class.getResourceAsStream("/assets/textures/misc/unknown_pack.png"))));
 		} catch (IOException e) {
 			CrashHandler.crashHandle(e);
 			throw new RuntimeException();
@@ -181,12 +181,16 @@ public class ResourcePackDisplay extends Display {
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
 		if (oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		translateMenu(newSel);
+	}
+
+	private void translateMenu(int to) {
 		menus[0].translate(-menus[0].getBounds().getLeft(), 0);
 		menus[1].translate(Screen.w - menus[1].getBounds().getRight(), 0);
-		if (newSel == 0) {
+		if (to == 0) {
 			if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
 				menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
-		} else if (newSel == 1) {
+		} else if (to == 1) {
 			if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
 				menus[0].translate(-(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding), 0);
 		}
@@ -204,10 +208,11 @@ public class ResourcePackDisplay extends Display {
 			return new SelectEntry(pack.getName(), () -> Game.setDisplay(new PopupDisplay(null, entries.toArray(new ListEntry[0]))), false) {
 				@Override
 				public int getColor(boolean isSelected) {
+					isSelected = isSelected && (selection == 0 && unloadedPacks.contains(pack) || selection == 1 && loadQuery.contains(pack));
 					if (pack.getPackFormat() != ResourcePack.PACK_FORMAT) {
-						return selection == 1 ? Color.tint(Color.RED, 1, true) : Color.RED;
+						return isSelected ? Color.tint(Color.RED, 1, true) : Color.RED;
 					} else {
-						return selection == 1 ? SelectEntry.COL_UNSLCT : super.getColor(isSelected);
+						return super.getColor(isSelected);
 					}
 				}
 			};
@@ -252,7 +257,7 @@ public class ResourcePackDisplay extends Display {
 		menus = newMenus;
 
 		/* Translate position. */
-		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
+		translateMenu(selection);
 	}
 
 	/** Reference: https://stackoverflow.com/a/39415436 */
@@ -382,10 +387,11 @@ public class ResourcePackDisplay extends Display {
 		if (!loadQuery.equals(loadedPacks)) { // Changes applied.
 			loadedPacks.clear();
 			loadedPacks.addAll(loadQuery);
-			reloadResources();
+			reloadResources(false);
 		}
 
 		new Save();
+		Game.setDisplay(new PopupDisplay(null, "TEST"));
 	}
 
 	/** Checking if the pack is movable in the menu. The position should be checked as valid. */
@@ -429,6 +435,10 @@ public class ResourcePackDisplay extends Display {
 		// Overrides the default tick handler.
 		boolean inputRightClicked = input.getKey("right").clicked;
 		boolean inputLeftClicked = input.getKey("left").clicked;
+		if (selection == 0 && unloadedPacks.size() == 0)
+			inputRightClicked = true;
+		if (selection == 1 && unloadedPacks.size() == 0)
+			inputLeftClicked = false;
 
 		if (inputRightClicked || inputLeftClicked) {
 			boolean successful = false;
@@ -604,13 +614,15 @@ public class ResourcePackDisplay extends Display {
 			loadedPacks.add(0, ResourcePack.DefaultResourcePack.DEFAULT_RESOURCE_PACK);
 		}
 
-		reloadResources();
+		reloadResources(true);
 	}
 
 	private void initPacks() {
 		initFolder();
 
 		// Getting the list of all available packs in packs folder.
+		resourcePacks.add(ResourcePack.DefaultResourcePack.DEFAULT_RESOURCE_PACK);
+		resourcePacks.add(ResourcePack.ClassicArtResourcePack.CLASSIC_ART_RESOURCE_PACK);
 		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles())) {
 			ResourcePack pack = loadPackMetadata(file); // Read and add the .zip ZipFile files and directories to the resource pack list.
 			if (pack != null) { // If the pack is valid.
@@ -670,8 +682,15 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	/** Reloading all the resources with the currently packs to be loaded. */
+	public static void reloadResources(boolean isInitial) {
+		if (isInitial) reloadResources0(); // Handling it directly.
+		else {
+			reloadResources0();// TODO
+		}
+	}
+
 	@SuppressWarnings("unchecked")
-	public static void reloadResources() {
+	private static void reloadResources0() {
 		packLocks.forEach((pack, lock) -> {
 			try {
 				lock.close();
