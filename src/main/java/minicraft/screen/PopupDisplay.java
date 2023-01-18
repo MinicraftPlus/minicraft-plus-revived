@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import minicraft.core.io.InputHandler;
-import minicraft.gfx.Color;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import org.jetbrains.annotations.Nullable;

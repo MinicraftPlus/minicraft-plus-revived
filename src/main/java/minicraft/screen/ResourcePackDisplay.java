@@ -682,7 +682,7 @@ public class ResourcePackDisplay extends Display {
 			} catch (IOException ignored) {}
 		}); // Releasing all locks.
 		packLocks.clear();
-		loadedPacks.forEach(pack -> packLocks.put(pack, pack.lockFile()));
+		loadedPacks.forEach(pack -> packLocks.put(pack, pack.lockFile())); // Relocking current packs.
 
 		// Clear all previously loaded resources.
 		Renderer.spriteLinker.resetSprites();
@@ -691,18 +691,12 @@ public class ResourcePackDisplay extends Display {
 		Sound.resetSounds();
 		SpriteAnimation.resetMetadata();
 
-		// TODO replace contents inside for loop to Loaders.
 		for (ResourcePack pack : loadedPacks) {
-			if (pack.openStream()) {
-				try {
-					loadTextures(pack);
-					loadLocalization(pack);
-					loadBooks(pack);
-					loadSounds(pack);
-					pack.close();
-				} catch (IOException e) {
-					CrashHandler.errorHandle(e);
-				}
+			ResourcePackLoader loader = ResourcePackLoader.getFormatSuitableResourcePackLoader(pack.getPackFormat());
+			try (ResourcePack.PackResourceStream stream = pack.loadPack()) {
+				loader.loadResources(stream);
+			} catch (IOException | IllegalStateException e) {
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack {}, the loaded contents might not be complete; skipping...", pack.getName());
 			}
 		}
 
@@ -713,7 +707,7 @@ public class ResourcePackDisplay extends Display {
 		options.sort(Comparator.comparing(Localization.LocaleInformation::toString));
 		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
 
-		// Refreshing skins
+		// Refreshing skins.
 		SkinDisplay.refreshSkins();
 		SkinDisplay.releaseSkins();
 	}
@@ -721,6 +715,15 @@ public class ResourcePackDisplay extends Display {
 	/** Used for loading resources from resource packs. */
 	private static abstract class ResourcePackLoader {
 		protected ResourcePackLoader() {}
+
+		private static ResourcePackLoader getFormatSuitableResourcePackLoader(int packFormat) {
+			// TODO The following parts should be updated when new pack format is introduced.
+			if (packFormat == 1)
+				return IncompatibleResourcePackLoaders.PathFormat1ResourcePackLoader.INSTANCE;
+
+			// Before 1 and after or the current version.
+			return CompatibleResourcePackLoader.INSTANCE;
+		}
 
 		public abstract void loadResources(ResourcePack.PackResourceStream pack);
 
@@ -762,328 +765,32 @@ public class ResourcePackDisplay extends Display {
 
 		@Override
 		public void loadResources(ResourcePack.PackResourceStream pack) {
-			loadTextures(pack);
-			loadLocalization(pack);
-			loadTexts(pack);
-			loadSounds(pack);
+			IncompatibleResourcePackLoaders.PathFormat1ResourcePackLoader.INSTANCE.loadResources(pack);
 		}
 
 		@Override
 		public void loadTextures(ResourcePack.PackResourceStream pack) {
-			for (ResourcePack.PackResourceStream.PackEntry t : pack.getFiles("assets/textures", (p, d) -> d)) {
-				switch (t.getFilename()) {
-					case "entity": loadTextures(pack, t, SpriteType.Entity); break;
-					case "gui": loadTextures(pack, t, SpriteType.Gui); break;
-					case "item": loadTextures(pack, t, SpriteType.Item); break;
-					case "tile": loadTextures(pack, t, SpriteType.Tile); break;
-				}
-			}
+			IncompatibleResourcePackLoaders.PathFormat1ResourcePackLoader.INSTANCE.loadTextures(pack);
 		}
 
 		@Override
 		public void loadTextures(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry, SpriteType type) {
-			if (entry.getParent() == null) return; // Should be under a directory in assets directory.
-			ArrayList<ResourcePack.PackResourceStream.PackEntry> pngFiles = pack.getFiles(entry.getParent().resolve(entry.getFilename()), (p, d) -> !d && p.toString().endsWith(".png"));
-			if (type == SpriteType.Tile) {
-				// Loading sprite sheet metadata.
-				for (ResourcePack.PackResourceStream.PackEntry jsonF : pack.getFiles(entry.getFullPath(), (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
-					try {
-						JSONObject obj = new JSONObject(readTextFileFromPack(pack, getPathFromPackEntry(jsonF)));
-						SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
-						String metaFn = jsonF.getFilename();
-						String pngFn = metaFn.substring(0, metaFn.length() - 5);
-						ResourcePack.PackResourceStream.PackEntry pngF = null;
-						for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
-							ResourcePack.PackResourceStream.PackEntry e = it.next();
-							if (e.getFilename().equals(pngFn)) { // Removing the associated png file from the list.
-								it.remove();
-								pngF = e; // The png file is handled here instead.
-								break;
-							}
-						}
-
-						if (pngF == null) {
-							Path parent = Objects.requireNonNull(jsonF.getParent());
-							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} found in pack; skipping...",
-								parent.resolve(pngFn), jsonF.getFullPath(), pack.getPack().getName());
-							continue;
-						}
-
-						BufferedImage image = readImageFileFromPack(pack, pngF);
-						if (image == null) { // The file is not dir; the only reason is that the format is unsupported.
-							Path parent = Objects.requireNonNull(jsonF.getParent());
-							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
-								parent.resolve(pngFn), pack.getPack().getName());
-							continue;
-						}
-
-						if (isSpriteImageSupported(image, SpriteType.Tile)) {
-							Path parent = Objects.requireNonNull(jsonF.getParent());
-							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
-								parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
-							continue;
-						}
-
-						// Applying animations.
-						MinicraftImage sheet;
-						JSONObject animation = obj.optJSONObject("animation");
-						if (animation != null) {
-							if (isSpriteImageFullyCompatible(image, type, true)) {
-								Path parent = Objects.requireNonNull(jsonF.getParent());
-								Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
-									parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
-							}
-
-							meta.frametime = animation.getInt("frametime");
-							meta.frames = image.getHeight() / 16;
-							sheet = new MinicraftImage(image, 16, 16 * meta.frames);
-						} else {
-							if (isSpriteImageFullyCompatible(image, type, false)) {
-								Path parent = Objects.requireNonNull(jsonF.getParent());
-								Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
-									parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
-							}
-
-							sheet = new MinicraftImage(image, 16, 16);
-						}
-
-						String key = metaFn.substring(0, metaFn.length() - 9);
-						Renderer.spriteLinker.setSprite(type, key, sheet);
-						JSONObject borderObj = obj.optJSONObject("border");
-						if (borderObj != null) {
-							meta.border = borderObj.optString("key", null);
-							if (meta.border != null) {
-								String borderFn = meta.border + ".png";
-								ResourcePack.PackResourceStream.PackEntry borderF = null;
-								for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
-									ResourcePack.PackResourceStream.PackEntry e = it.next();
-									if (e.getFilename().equals(borderFn)) { // Removing the associated png file from the list.
-										it.remove();
-										borderF = e; // The png file is handled here instead.
-										break;
-									}
-								}
-
-								if (borderF == null) {
-									Path parent = Objects.requireNonNull(jsonF.getParent());
-									Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} has defined as border in pack; skipping...",
-										parent.resolve(borderFn), jsonF.getFullPath(), pack.getPack().getName());
-									meta.border = null;
-								} else {
-									BufferedImage borderImage = readImageFileFromPack(pack, borderF);
-									if (borderImage == null) { // The file is not dir; the only reason is that the format is unsupported.
-										Path parent = Objects.requireNonNull(jsonF.getParent());
-										Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
-											parent.resolve(borderFn), pack.getPack().getName());
-										meta.border = null;
-									} else {
-										if (borderImage.getWidth() < 24 || borderImage.getHeight() < 24) {
-											Path parent = Objects.requireNonNull(jsonF.getParent());
-											Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (border) {} dimension {}x{} unsupported in pack; skipping...",
-												parent.resolve(borderFn), borderImage.getWidth(), borderImage.getHeight(), pack.getPack().getName());
-											meta.border = null;
-										} else {
-											if (borderImage.getWidth() != 24 || borderImage.getHeight() != 24) {
-												Path parent = Objects.requireNonNull(jsonF.getParent());
-												Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file (border) {} dimension {}x{} is not fully compatible in pack.",
-													parent.resolve(borderFn), borderImage.getWidth(), borderImage.getHeight(), pack.getPack().getName());
-											}
-
-											Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(borderImage, 24, 24));
-										}
-									}
-								}
-							}
-
-							meta.corner = borderObj.optString("corner", null);
-							if (meta.corner != null) {
-								String cornerFn = meta.corner + ".png";
-								ResourcePack.PackResourceStream.PackEntry cornerF = null;
-								for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
-									ResourcePack.PackResourceStream.PackEntry e = it.next();
-									if (e.getFilename().equals(cornerFn)) { // Removing the associated png file from the list.
-										it.remove();
-										cornerF = e; // The png file is handled here instead.
-										break;
-									}
-								}
-
-								if (cornerF == null) {
-									Path parent = Objects.requireNonNull(jsonF.getParent());
-									Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} has defined as border in pack; skipping...",
-										parent.resolve(cornerFn), jsonF.getFullPath(), pack.getPack().getName());
-									meta.corner = null;
-								} else {
-									BufferedImage cornerImage = readImageFileFromPack(pack, cornerF);
-									if (cornerImage == null) { // The file is not dir; the only reason is that the format is unsupported.
-										Path parent = Objects.requireNonNull(jsonF.getParent());
-										Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
-											parent.resolve(cornerFn), pack.getPack().getName());
-										meta.corner = null;
-									} else {
-										if (cornerImage.getWidth() < 16 || cornerImage.getHeight() < 16) {
-											Path parent = Objects.requireNonNull(jsonF.getParent());
-											Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (corner) {} dimension {}x{} unsupported in pack; skipping...",
-												parent.resolve(cornerFn), cornerImage.getWidth(), cornerImage.getHeight(), pack.getPack().getName());
-											meta.corner = null;
-										} else {
-											if (cornerImage.getWidth() != 16 || cornerImage.getHeight() != 16) {
-												Path parent = Objects.requireNonNull(jsonF.getParent());
-												Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file (corner) {} dimension {}x{} is not fully compatible in pack.",
-													parent.resolve(cornerFn), cornerImage.getWidth(), cornerImage.getHeight(), pack.getPack().getName());
-											}
-
-											Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(cornerImage, 16, 16));
-										}
-									}
-								}
-							}
-						}
-
-						SpriteAnimation.setMetadata(key, meta);
-					} catch (JSONException | IOException | NullPointerException | UncheckedIOException | IllegalArgumentException e) {
-						Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}; skipping...", jsonF.getFullPath(), pack.getPack().getName());
-					}
-				}
-			}
-
-			// Loading the png files left.
-			for (ResourcePack.PackResourceStream.PackEntry pngF : pngFiles) {
-				try {
-					String pngFn = pngF.getFilename();
-					BufferedImage image = readImageFileFromPack(pack, pngF);
-					if (image == null) { // The file is not dir; the only reason is that the format is unsupported.
-						Path parent = Objects.requireNonNull(pngF.getParent());
-						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
-							parent.resolve(pngFn), pack.getPack().getName());
-						continue;
-					}
-
-					if (isSpriteImageSupported(image, type)) {
-						Path parent = Objects.requireNonNull(pngF.getParent());
-						Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
-							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
-						continue;
-					}
-
-					if (isSpriteImageFullyCompatible(image, type, false)) {
-						Path parent = Objects.requireNonNull(pngF.getParent());
-						Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
-							parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
-					}
-
-					MinicraftImage sheet;
-					if (type == SpriteType.Item) {
-						sheet = new MinicraftImage(image, 8, 8); // Set the minimum tile sprite size.
-					} else if (type == SpriteType.Tile) {
-						sheet = new MinicraftImage(image, 16, 16); // Set the minimum item sprite size.
-					} else {
-						int width = image.getWidth();
-						int height = image.getHeight();
-						sheet = new MinicraftImage(image, width - width % 8, height - height % 8);
-					}
-
-					Renderer.spriteLinker.setSprite(type, pngFn.substring(0, pngFn.length() - 4), sheet);
-				} catch (IOException | IllegalArgumentException | NullPointerException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load {} in pack: {}; skipping...", pngF, pack.getPack().getName());
-				}
-			}
-		}
-
-		boolean isSpriteImageSupported(BufferedImage image, SpriteType type) {
-			// Extra pixels are cropped out; regarded as supported.
-			if (type == SpriteType.Tile) {
-				return image.getWidth() >= 16 && image.getHeight() >= 16;
-			} else {
-				return image.getWidth() >= 8 && image.getHeight() >= 8;
-			}
-		}
-
-		boolean isSpriteImageFullyCompatible(BufferedImage image, SpriteType type, boolean isAnimated) {
-			// Extra pixels are counted in.
-			if (type == SpriteType.Tile) {
-				if (image.getWidth() != 16) return false;
-				else if (isAnimated)
-					return image.getHeight() % 16 == 0 && image.getHeight() > 0;
-				else
-					return image.getHeight() == 16; // Perfect square.
-			} else {
-				return image.getWidth() > 0 && image.getWidth() % 8 == 0 &&
-					image.getHeight() > 0 && image.getHeight() % 8 == 0;
-			}
+			IncompatibleResourcePackLoaders.PathFormat1ResourcePackLoader.INSTANCE.loadTextures(pack);
 		}
 
 		@Override
 		public void loadLocalization(ResourcePack.PackResourceStream pack) {
-			try { // pack.json should be valid here; validated previously.
-				JSONObject json = new JSONObject(readTextFileFromPack(pack, "pack.json"));
-				JSONObject langJSON = json.optJSONObject("language", null);
-
-				if (langJSON != null) {
-					String undLang = new Locale("und").getLanguage();
-					for (String loc : langJSON.keySet()) {
-						try {
-							Locale locale = Locale.forLanguageTag(loc.replace('_', '-'));
-							if (locale.getLanguage().equals(undLang)) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Language {} is unsupported in pack {}; skipping...", loc, pack.getPack().getName());
-								continue;
-							}
-
-							JSONObject info = langJSON.getJSONObject(loc);
-							if (Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")))) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Language {} has already been existed before pack {}; skipping...", loc, pack.getPack().getName());
-							}
-						} catch (JSONException e) {
-							Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Invalid localization configuration in pack: {}", pack.getPack().getName());
-						}
-					}
-				}
-			} catch (JSONException | NullPointerException | UncheckedIOException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack.json in pack: {}", pack.getPack().getName());
-			}
-
-			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/localization", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
-				try { // JSON verification.
-					String fn = entry.getFilename();
-					String json = readTextFileFromPack(pack, entry.getFullPath().toString());
-					JSONObject obj = new JSONObject(json);
-					for (String k : obj.keySet()) {
-						obj.getString(k);
-					}
-
-					// Add verified localization.
-					if (!Localization.addLocalization(Locale.forLanguageTag(fn.substring(0, fn.length() - 5)), json)) {
-						Logging.RESOURCEHANDLER_LOCALIZATION.warn("Unable to add localization because the language is not existed: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
-					}
-				} catch (NullPointerException | UncheckedIOException e) {
-					Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Unable to load localization: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
-				} catch (JSONException e) {
-					Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Invalid JSON format detected in localization: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
-				}
-			}
+			IncompatibleResourcePackLoaders.PathFormat1ResourcePackLoader.INSTANCE.loadLocalization(pack);
 		}
 
 		@Override
 		public void loadTexts(ResourcePack.PackResourceStream pack) {
-			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
-				try {
-					String book = BookData.loadBook(readTextFileFromPack(pack, entry.getFullPath().toString()));
-					switch (entry.getFilename()) {
-						case "about.txt": BookData.about = () -> book; break;
-						case "credits.txt": BookData.credits = () -> book; break;
-						case "instructions.txt": BookData.instructions = () -> book; break;
-						case "antidous.txt": BookData.antVenomBook = () -> book; break;
-						case "story_guide.txt": BookData.storylineGuide = () -> book; break;
-					}
-				} catch (NullPointerException | UncheckedIOException e) {
-					Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Unable to load book: {} in pack : {}", entry.getFullPath(), pack.getPack().getName());
-				}
-			}
+			IncompatibleResourcePackLoaders.PathFormat1ResourcePackLoader.INSTANCE.loadTexts(pack);
 		}
 
 		@Override
 		public void loadSounds(ResourcePack.PackResourceStream pack) {
-			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/sound", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
+			for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/sounds", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
 				String name = entry.getFilename();
 				try {
 					Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getInputStream(entry.getFullPath().toString())), pack.getPack().getName());
@@ -1098,6 +805,339 @@ public class ResourcePackDisplay extends Display {
 	private static final class IncompatibleResourcePackLoaders {
 		private static class PathFormat1ResourcePackLoader extends ResourcePackLoader {
 			public static final PathFormat1ResourcePackLoader INSTANCE = new PathFormat1ResourcePackLoader();
+
+			@Override
+			public void loadResources(ResourcePack.PackResourceStream pack) {
+				loadTextures(pack);
+				loadLocalization(pack);
+				loadTexts(pack);
+				loadSounds(pack);
+			}
+
+			@Override
+			public void loadTextures(ResourcePack.PackResourceStream pack) {
+				for (ResourcePack.PackResourceStream.PackEntry t : pack.getFiles("assets/textures", (p, d) -> d)) {
+					switch (t.getFilename()) {
+						case "entity": loadTextures(pack, t, SpriteType.Entity); break;
+						case "gui": loadTextures(pack, t, SpriteType.Gui); break;
+						case "item": loadTextures(pack, t, SpriteType.Item); break;
+						case "tile": loadTextures(pack, t, SpriteType.Tile); break;
+					}
+				}
+			}
+
+			@Override
+			public void loadTextures(ResourcePack.PackResourceStream pack, ResourcePack.PackResourceStream.PackEntry entry, SpriteType type) {
+				if (entry.getParent() == null) return; // Should be under a directory in assets directory.
+				ArrayList<ResourcePack.PackResourceStream.PackEntry> pngFiles = pack.getFiles(entry.getParent().resolve(entry.getFilename()), (p, d) -> !d && p.toString().endsWith(".png"));
+				if (type == SpriteType.Tile) {
+					// Loading sprite sheet metadata.
+					for (ResourcePack.PackResourceStream.PackEntry jsonF : pack.getFiles(entry.getFullPath(), (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
+						try {
+							JSONObject obj = new JSONObject(readTextFileFromPack(pack, getPathFromPackEntry(jsonF)));
+							SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
+							String metaFn = jsonF.getFilename();
+							String pngFn = metaFn.substring(0, metaFn.length() - 5);
+							ResourcePack.PackResourceStream.PackEntry pngF = null;
+							for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
+								ResourcePack.PackResourceStream.PackEntry e = it.next();
+								if (e.getFilename().equals(pngFn)) { // Removing the associated png file from the list.
+									it.remove();
+									pngF = e; // The png file is handled here instead.
+									break;
+								}
+							}
+
+							if (pngF == null) {
+								Path parent = Objects.requireNonNull(jsonF.getParent());
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} found in pack; skipping...",
+									parent.resolve(pngFn), jsonF.getFullPath(), pack.getPack().getName());
+								continue;
+							}
+
+							BufferedImage image = readImageFileFromPack(pack, pngF);
+							if (image == null) { // The file is not dir; the only reason is that the format is unsupported.
+								Path parent = Objects.requireNonNull(jsonF.getParent());
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+									parent.resolve(pngFn), pack.getPack().getName());
+								continue;
+							}
+
+							if (isSpriteImageSupported(image, SpriteType.Tile)) {
+								Path parent = Objects.requireNonNull(jsonF.getParent());
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
+									parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+								continue;
+							}
+
+							// Applying animations.
+							MinicraftImage sheet;
+							JSONObject animation = obj.optJSONObject("animation");
+							if (animation != null) {
+								if (isSpriteImageFullyCompatible(image, type, true)) {
+									Path parent = Objects.requireNonNull(jsonF.getParent());
+									Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
+										parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+								}
+
+								meta.frametime = animation.getInt("frametime");
+								meta.frames = image.getHeight() / 16;
+								sheet = new MinicraftImage(image, 16, 16 * meta.frames);
+							} else {
+								if (isSpriteImageFullyCompatible(image, type, false)) {
+									Path parent = Objects.requireNonNull(jsonF.getParent());
+									Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
+										parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+								}
+
+								sheet = new MinicraftImage(image, 16, 16);
+							}
+
+							String key = metaFn.substring(0, metaFn.length() - 9);
+							Renderer.spriteLinker.setSprite(type, key, sheet);
+							JSONObject borderObj = obj.optJSONObject("border");
+							if (borderObj != null) {
+								meta.border = borderObj.optString("key", null);
+								if (meta.border != null) {
+									String borderFn = meta.border + ".png";
+									ResourcePack.PackResourceStream.PackEntry borderF = null;
+									for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
+										ResourcePack.PackResourceStream.PackEntry e = it.next();
+										if (e.getFilename().equals(borderFn)) { // Removing the associated png file from the list.
+											it.remove();
+											borderF = e; // The png file is handled here instead.
+											break;
+										}
+									}
+
+									if (borderF == null) {
+										Path parent = Objects.requireNonNull(jsonF.getParent());
+										Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} has defined as border in pack; skipping...",
+											parent.resolve(borderFn), jsonF.getFullPath(), pack.getPack().getName());
+										meta.border = null;
+									} else {
+										BufferedImage borderImage = readImageFileFromPack(pack, borderF);
+										if (borderImage == null) { // The file is not dir; the only reason is that the format is unsupported.
+											Path parent = Objects.requireNonNull(jsonF.getParent());
+											Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+												parent.resolve(borderFn), pack.getPack().getName());
+											meta.border = null;
+										} else {
+											if (borderImage.getWidth() < 24 || borderImage.getHeight() < 24) {
+												Path parent = Objects.requireNonNull(jsonF.getParent());
+												Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (border) {} dimension {}x{} unsupported in pack; skipping...",
+													parent.resolve(borderFn), borderImage.getWidth(), borderImage.getHeight(), pack.getPack().getName());
+												meta.border = null;
+											} else {
+												if (borderImage.getWidth() != 24 || borderImage.getHeight() != 24) {
+													Path parent = Objects.requireNonNull(jsonF.getParent());
+													Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file (border) {} dimension {}x{} is not fully compatible in pack.",
+														parent.resolve(borderFn), borderImage.getWidth(), borderImage.getHeight(), pack.getPack().getName());
+												}
+
+												Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(borderImage, 24, 24));
+											}
+										}
+									}
+								}
+
+								meta.corner = borderObj.optString("corner", null);
+								if (meta.corner != null) {
+									String cornerFn = meta.corner + ".png";
+									ResourcePack.PackResourceStream.PackEntry cornerF = null;
+									for (Iterator<ResourcePack.PackResourceStream.PackEntry> it = pngFiles.iterator(); it.hasNext();) {
+										ResourcePack.PackResourceStream.PackEntry e = it.next();
+										if (e.getFilename().equals(cornerFn)) { // Removing the associated png file from the list.
+											it.remove();
+											cornerF = e; // The png file is handled here instead.
+											break;
+										}
+									}
+
+									if (cornerF == null) {
+										Path parent = Objects.requireNonNull(jsonF.getParent());
+										Logging.RESOURCEHANDLER_RESOURCEPACK.warn("File {} not found but meta file {} has defined as border in pack; skipping...",
+											parent.resolve(cornerFn), jsonF.getFullPath(), pack.getPack().getName());
+										meta.corner = null;
+									} else {
+										BufferedImage cornerImage = readImageFileFromPack(pack, cornerF);
+										if (cornerImage == null) { // The file is not dir; the only reason is that the format is unsupported.
+											Path parent = Objects.requireNonNull(jsonF.getParent());
+											Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+												parent.resolve(cornerFn), pack.getPack().getName());
+											meta.corner = null;
+										} else {
+											if (cornerImage.getWidth() < 16 || cornerImage.getHeight() < 16) {
+												Path parent = Objects.requireNonNull(jsonF.getParent());
+												Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file (corner) {} dimension {}x{} unsupported in pack; skipping...",
+													parent.resolve(cornerFn), cornerImage.getWidth(), cornerImage.getHeight(), pack.getPack().getName());
+												meta.corner = null;
+											} else {
+												if (cornerImage.getWidth() != 16 || cornerImage.getHeight() != 16) {
+													Path parent = Objects.requireNonNull(jsonF.getParent());
+													Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file (corner) {} dimension {}x{} is not fully compatible in pack.",
+														parent.resolve(cornerFn), cornerImage.getWidth(), cornerImage.getHeight(), pack.getPack().getName());
+												}
+
+												Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(cornerImage, 16, 16));
+											}
+										}
+									}
+								}
+							}
+
+							SpriteAnimation.setMetadata(key, meta);
+						} catch (JSONException | IOException | NullPointerException | UncheckedIOException | IllegalArgumentException e) {
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}; skipping...", jsonF.getFullPath(), pack.getPack().getName());
+						}
+					}
+				}
+
+				// Loading the png files left.
+				for (ResourcePack.PackResourceStream.PackEntry pngF : pngFiles) {
+					try {
+						String pngFn = pngF.getFilename();
+						BufferedImage image = readImageFileFromPack(pack, pngF);
+						if (image == null) { // The file is not dir; the only reason is that the format is unsupported.
+							Path parent = Objects.requireNonNull(pngF.getParent());
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} format unsupported in pack; skipping...",
+								parent.resolve(pngFn), pack.getPack().getName());
+							continue;
+						}
+
+						if (isSpriteImageSupported(image, type)) {
+							Path parent = Objects.requireNonNull(pngF.getParent());
+							Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Image file {} dimension {}x{} unsupported in pack; skipping...",
+								parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+							continue;
+						}
+
+						if (isSpriteImageFullyCompatible(image, type, false)) {
+							Path parent = Objects.requireNonNull(pngF.getParent());
+							Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Image file {} dimension {}x{} is not fully compatible in pack.",
+								parent.resolve(pngFn), image.getWidth(), image.getHeight(), pack.getPack().getName());
+						}
+
+						MinicraftImage sheet;
+						if (type == SpriteType.Item) {
+							sheet = new MinicraftImage(image, 8, 8); // Set the minimum tile sprite size.
+						} else if (type == SpriteType.Tile) {
+							sheet = new MinicraftImage(image, 16, 16); // Set the minimum item sprite size.
+						} else {
+							int width = image.getWidth();
+							int height = image.getHeight();
+							sheet = new MinicraftImage(image, width - width % 8, height - height % 8);
+						}
+
+						Renderer.spriteLinker.setSprite(type, pngFn.substring(0, pngFn.length() - 4), sheet);
+					} catch (IOException | IllegalArgumentException | NullPointerException e) {
+						Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load {} in pack: {}; skipping...", pngF, pack.getPack().getName());
+					}
+				}
+			}
+
+			boolean isSpriteImageSupported(BufferedImage image, SpriteType type) {
+				// Extra pixels are cropped out; regarded as supported.
+				if (type == SpriteType.Tile) {
+					return image.getWidth() >= 16 && image.getHeight() >= 16;
+				} else {
+					return image.getWidth() >= 8 && image.getHeight() >= 8;
+				}
+			}
+
+			boolean isSpriteImageFullyCompatible(BufferedImage image, SpriteType type, boolean isAnimated) {
+				// Extra pixels are counted in.
+				if (type == SpriteType.Tile) {
+					if (image.getWidth() != 16) return false;
+					else if (isAnimated)
+						return image.getHeight() % 16 == 0 && image.getHeight() > 0;
+					else
+						return image.getHeight() == 16; // Perfect square.
+				} else {
+					return image.getWidth() > 0 && image.getWidth() % 8 == 0 &&
+						image.getHeight() > 0 && image.getHeight() % 8 == 0;
+				}
+			}
+
+			@Override
+			public void loadLocalization(ResourcePack.PackResourceStream pack) {
+				try { // pack.json should be valid here; validated previously.
+					JSONObject json = new JSONObject(readTextFileFromPack(pack, "pack.json"));
+					JSONObject langJSON = json.optJSONObject("language", null);
+
+					if (langJSON != null) {
+						String undLang = new Locale("und").getLanguage();
+						for (String loc : langJSON.keySet()) {
+							try {
+								Locale locale = Locale.forLanguageTag(loc.replace('_', '-'));
+								if (locale.getLanguage().equals(undLang)) {
+									Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Language {} is unsupported in pack {}; skipping...", loc, pack.getPack().getName());
+									continue;
+								}
+
+								JSONObject info = langJSON.getJSONObject(loc);
+								if (Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")))) {
+									Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Language {} has already been existed before pack {}; skipping...", loc, pack.getPack().getName());
+								}
+							} catch (JSONException e) {
+								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Invalid localization configuration in pack: {}", pack.getPack().getName());
+							}
+						}
+					}
+				} catch (JSONException | NullPointerException | UncheckedIOException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack.json in pack: {}", pack.getPack().getName());
+				}
+
+				for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/localization", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
+					try { // JSON verification.
+						String fn = entry.getFilename();
+						String json = readTextFileFromPack(pack, entry.getFullPath().toString());
+						JSONObject obj = new JSONObject(json);
+						for (String k : obj.keySet()) {
+							obj.getString(k);
+						}
+
+						// Add verified localization.
+						if (!Localization.addLocalization(Locale.forLanguageTag(fn.substring(0, fn.length() - 5)), json)) {
+							Logging.RESOURCEHANDLER_LOCALIZATION.warn("Unable to add localization because the language is not existed: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
+						}
+					} catch (NullPointerException | UncheckedIOException e) {
+						Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Unable to load localization: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
+					} catch (JSONException e) {
+						Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Invalid JSON format detected in localization: {} in pack: {}", entry.getFullPath(), pack.getPack().getName());
+					}
+				}
+			}
+
+			@Override
+			public void loadTexts(ResourcePack.PackResourceStream pack) {
+				for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
+					try {
+						String book = BookData.loadBook(readTextFileFromPack(pack, entry.getFullPath().toString()));
+						switch (entry.getFilename()) {
+							case "about.txt": BookData.about = () -> book; break;
+							case "credits.txt": BookData.credits = () -> book; break;
+							case "instructions.txt": BookData.instructions = () -> book; break;
+							case "antidous.txt": BookData.antVenomBook = () -> book; break;
+							case "story_guide.txt": BookData.storylineGuide = () -> book; break;
+						}
+					} catch (NullPointerException | UncheckedIOException e) {
+						Logging.RESOURCEHANDLER_LOCALIZATION.warn(e, "Unable to load book: {} in pack : {}", entry.getFullPath(), pack.getPack().getName());
+					}
+				}
+			}
+
+			@Override
+			public void loadSounds(ResourcePack.PackResourceStream pack) {
+				for (ResourcePack.PackResourceStream.PackEntry entry : pack.getFiles("assets/sound", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
+					String name = entry.getFilename();
+					try {
+						Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getInputStream(entry.getFullPath().toString())), pack.getPack().getName());
+					} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+						Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", entry.getFullPath(), pack.getPack().getName());
+					}
+				}
+			}
 		}
 	}
 
