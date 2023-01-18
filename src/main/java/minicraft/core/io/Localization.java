@@ -73,8 +73,7 @@ public class Localization {
 	 * Gets the currently selected locale.
 	 * @return A locale object.
 	 */
-	public static Locale getSelectedLocale() {
-		return selectedLocale; }
+	public static Locale getSelectedLocale() { return selectedLocale; }
 
 	/**
 	 * Get the currently selected locale, but as a full name without the country code.
