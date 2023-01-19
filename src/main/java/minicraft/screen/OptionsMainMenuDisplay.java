@@ -33,6 +33,6 @@ public class OptionsMainMenuDisplay extends Display {
     public void onExit() {
         Localization.changeLanguage(((LocaleInformation)Settings.get("language")).locale.toLanguageTag());
         new Save();
-        Game.MAX_FPS = (int)Settings.get("fps");
+        Game.MAX_FPS = Settings.getFPS();
     }
 }

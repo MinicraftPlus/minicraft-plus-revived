@@ -69,7 +69,7 @@ public class Updater extends Game {
 		// Dispose is needed to set undecorated value
 		Initializer.frame.dispose();
 
-		GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+		GraphicsDevice device = Initializer.frame.getGraphicsConfiguration().getDevice();
 		if (Updater.FULLSCREEN) {
 			Initializer.frame.setUndecorated(true);
 			device.setFullScreenWindow(Initializer.frame);
