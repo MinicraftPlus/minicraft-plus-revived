@@ -109,6 +109,7 @@ public class Recipes {
 		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass_1", "sand_4", "coal_1"));
+		furnaceRecipes.add(new Recipe("glass bottle_1", "glass_3"));
 
 		ovenRecipes.add(new Recipe("cooked pork_1", "raw pork_1", "coal_1"));
 		ovenRecipes.add(new Recipe("steak_1", "raw beef_1", "coal_1"));
@@ -117,16 +118,16 @@ public class Recipes {
 		ovenRecipes.add(new Recipe("Baked Potato_1", "Potato_1"));
 
 		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
-		enchantRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
-		enchantRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
-		enchantRecipes.add(new Recipe("light potion_1", "potion_1", "slime_5"));
-		enchantRecipes.add(new Recipe("swim potion_1", "potion_1", "raw fish_5"));
-		enchantRecipes.add(new Recipe("haste potion_1", "potion_1", "Wood_5", "Stone_5"));
-		enchantRecipes.add(new Recipe("lava potion_1", "potion_1", "Lava Bucket_1"));
-		enchantRecipes.add(new Recipe("energy potion_1", "potion_1", "gem_25"));
-		enchantRecipes.add(new Recipe("regen potion_1", "potion_1", "Gold Apple_1"));
-		enchantRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
-		enchantRecipes.add(new Recipe("Escape Potion_1", "potion_1", "GunPowder_3", "Lapis_7"));
+		enchantRecipes.add(new Recipe("awkward potion_1", "glass bottle_1", "Lapis_3"));
+		enchantRecipes.add(new Recipe("speed potion_1", "awkward potion_1", "Cactus_5"));
+		enchantRecipes.add(new Recipe("light potion_1", "awkward potion_1", "slime_5"));
+		enchantRecipes.add(new Recipe("swim potion_1", "awkward potion_1", "raw fish_5"));
+		enchantRecipes.add(new Recipe("haste potion_1", "awkward potion_1", "Wood_5", "Stone_5"));
+		enchantRecipes.add(new Recipe("lava potion_1", "awkward potion_1", "Lava Bucket_1"));
+		enchantRecipes.add(new Recipe("energy potion_1", "awkward potion_1", "gem_25"));
+		enchantRecipes.add(new Recipe("regen potion_1", "awkward potion_1", "Gold Apple_1"));
+		enchantRecipes.add(new Recipe("Health Potion_1", "awkward potion_1", "GunPowder_2", "Leather Armor_1"));
+		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "GunPowder_3", "Lapis_7"));
 		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5"));
 	}
 }

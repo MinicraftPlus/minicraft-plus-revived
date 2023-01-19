@@ -112,6 +112,7 @@ public class Initializer extends Game {
 	static void createAndDisplayFrame() {
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
+		Renderer.canvas.setBackground(Color.BLACK);
 		logoSplash.setMinimumSize(new java.awt.Dimension(1, 1));
 		logoSplash.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = Initializer.frame = new JFrame(NAME);
@@ -181,11 +182,31 @@ public class Initializer extends Game {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			if (transparency < 255) g.drawImage(logo, getWidth()/2 - logo.getWidth(frame)*2, getHeight()/2 - logo.getHeight(frame)*2, logo.getWidth(frame)*4, logo.getHeight(frame)*4, frame);
-			if (transparency > 0) {
-				g.setColor(new Color(255, 255, 255, transparency));
-				g.fillRect(0, 0, g.getClipBounds().width, g.getClipBounds().height);
+			final int w = g.getClipBounds().width;
+			final int h = g.getClipBounds().height;
+
+			// Drawing colorful background.
+			Graphics2D g2d = (Graphics2D) g;
+			int n = 6;
+			float[] fractions = new float[n];
+			Color[] colors = new Color[n];
+			for (int x = 0; x < n; x++) {
+				double sin = Math.sin(Math.PI * (255-transparency)/255.0);
+				double cos = Math.cos(Math.PI * x/n);
+				double hue = Math.abs((sin*210 + cos*45) % 360) / 360;
+				double s = 1 - Math.pow(Math.min(Math.sin(Math.cos(Math.abs(sin - cos))), 1), 4);
+				fractions[x] = (float) Math.sin((double) x/n * Math.PI/2) * x/n;
+				colors[x] = Color.getHSBColor((float) hue, (float) s, 1);
 			}
+			g2d.setPaint(new LinearGradientPaint(0, 0, w, 0, fractions, colors));
+			g2d.fillRect(0, 0, w, h);
+
+			// Drawing the centered logo.
+			if (transparency < 255) g.drawImage(logo, w/2 - logo.getWidth(frame)*2, h/2 - logo.getHeight(frame)*2, logo.getWidth(frame)*4, logo.getHeight(frame)*4, frame);
+
+			// Fading effect.
+			g.setColor(new Color(0, 0, 0, Math.max(Math.min(255 - (int) (Math.cos(transparency/255.0 * Math.PI) * 255), 255), 0)));
+			g.fillRect(0, 0, w, h);
 
 			if (inAnimation) {
 				if (display) {
