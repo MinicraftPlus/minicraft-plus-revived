@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.awt.image.ImagingOpException;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -908,16 +911,30 @@ public abstract class ResourcePack {
 		}
 
 		private static class ClassicArtPackResourceStream extends PackResourceStream {
-			private final ZipInputStream zin;
+			private static final String meta;
+
+			static {
+				JSONObject json = new JSONObject();
+				json.put("pack_format", CLASSIC_ART_RESOURCE_PACK.getPackFormat());
+				json.put("description", CLASSIC_ART_RESOURCE_PACK.getDescription());
+				meta = json.toString();
+			}
+
+			private ZipInputStream zin = null;
 			private final HashMap<Path, ZipEntry> entries = new HashMap<>();
 
 			protected ClassicArtPackResourceStream(ResourcePack pack) throws IOException {
 				super(pack);
-				zin = new ZipInputStream(Files.newInputStream(path));
+				resetZipInput();
 				// Searching and indexing first.
 				for (ZipEntry e; (e = zin.getNextEntry()) != null;) {
 					entries.put(fs.getPath(e.getName()), e);
 				}
+			}
+
+			private void resetZipInput() throws IOException {
+				if (zin != null) zin.close();
+				zin = new ZipInputStream(Files.newInputStream(path));
 			}
 
 			@Override
@@ -963,20 +980,27 @@ public abstract class ResourcePack {
 			@Override
 			public InputStream getInputStream(String path) throws IllegalStateException {
 				try {
+					if (path.equals("pack.json"))
+						return new ByteArrayInputStream(meta.getBytes());
 					Path p = fs.getPath(path);
-					if (entries.containsKey(p)) {
-						zin.reset();
+					if (entries.keySet().stream().anyMatch(k -> k.equals(p))) {
+						resetZipInput();
 						for (ZipEntry entry; (entry = zin.getNextEntry()) != null;) {
 							if (fs.getPath(entry.getName()).equals(p)) {
-								byte[] bytes = new byte[(int) entry.getSize()];
-								int res = zin.read(bytes);
-								if (res == entry.getSize()) {
-									return new ByteArrayInputStream(bytes);
-								} // Incomplete bytes read.
+								ByteArrayOutputStream out = new ByteArrayOutputStream();
+								byte[] buffer = new byte[2048];
+								int len;
+								while ((len = zin.read(buffer)) > 0) {
+									out.write(buffer, 0, len);
+								}
+
+								return new ByteArrayInputStream(out.toByteArray());
 							}
 						}
 					}
-				} catch (InvalidPathException | IOException ignored) {}
+				} catch (InvalidPathException | IOException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace(e);
+				}
 
 				return null;
 			}

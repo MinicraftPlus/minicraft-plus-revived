@@ -15,14 +15,14 @@ import org.tinylog.Logger;
 
 public class Localization {
 
-	public static final Locale DEFAULT_LOCALE = Locale.US;
+	public static final String DEFAULT_LOCALE = "en_us";
 
-	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
+	private static final HashMap<String, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
 
-	private static Locale selectedLocale = DEFAULT_LOCALE;
-	private static final HashMap<Locale, ArrayList<String>> unloadedLocalization = new HashMap<>();
-	private static final HashMap<Locale, LocaleInformation> localeInfo = new HashMap<>();
+	private static String selectedLocale = DEFAULT_LOCALE;
+	private static final HashMap<String, ArrayList<String>> unloadedLocalization = new HashMap<>();
+	private static final HashMap<String, LocaleInformation> localeInfo = new HashMap<>();
 
 	/**
 	 * Get the provided key's localization for the currently selected language.
@@ -44,13 +44,13 @@ public class Localization {
 		if (Game.debug && localString == null) {
 			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale, key);
 				knownUnlocalizedStrings.get(selectedLocale).add(key);
 			}
 		}
 
 		if (localString != null) {
-			localString = String.format(getSelectedLocale(), localString, arguments);
+			localString = String.format(localString, arguments);
 		}
 
 		return (localString == null ? key : localString);
@@ -58,9 +58,9 @@ public class Localization {
 
 	/**
 	 * Gets the currently selected locale.
-	 * @return A locale object.
+	 * @return A locale string.
 	 */
-	public static Locale getSelectedLocale() { return selectedLocale; }
+	public static String getSelectedLocale() { return selectedLocale; }
 
 	/**
 	 * Get the currently selected locale, but as a full name without the country code.
@@ -84,7 +84,7 @@ public class Localization {
 	 * @param newLanguage The language-country code of the language to load.
 	 */
 	public static void changeLanguage(@NotNull String newLanguage) {
-		selectedLocale = Locale.forLanguageTag(newLanguage);
+		selectedLocale = newLanguage;
 
 		loadLanguage();
 	}
@@ -119,11 +119,11 @@ public class Localization {
 	}
 
 	public static class LocaleInformation {
-		public final Locale locale;
+		public final String locale;
 		public final String name;
 		public final String region;
 
-		public LocaleInformation(Locale locale, String name, String region) {
+		public LocaleInformation(String locale, String name, String region) {
 			this.locale = locale;
 			this.name = name;
 			this.region = region;
@@ -131,6 +131,7 @@ public class Localization {
 
 		@Override
 		public String toString() {
+			if (region == null) return name;
 			return String.format("%s (%s)", name, region);
 		}
 	}
@@ -142,11 +143,11 @@ public class Localization {
 	 * @return {@code true} if there has already been a value existed and the locale is not added;
 	 * {@code false} otherwise.
 	 */
-	public static boolean addLocale(Locale loc, LocaleInformation info) {
+	public static boolean addLocale(String loc, LocaleInformation info) {
 		return localeInfo.putIfAbsent(loc, info) != null;
 	}
 
-	public static boolean addLocalization(Locale loc, String json) {
+	public static boolean addLocalization(String loc, String json) {
 		if (!localeInfo.containsKey(loc)) return false; // Only add when Locale Information is existed.
 		if (!unloadedLocalization.containsKey(loc))
 			unloadedLocalization.put(loc, new ArrayList<>());

@@ -173,7 +173,7 @@ public class Save {
 		json.put("sound", String.valueOf(Settings.get("sound")));
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
-		json.put("lang", Localization.getSelectedLocale().toLanguageTag());
+		json.put("lang", Localization.getSelectedLocale());
 		json.put("skin", String.valueOf(SkinDisplay.getSelectedSkin()));
 		json.put("savedIP", MultiplayerDisplay.savedIP);
 		json.put("savedUUID", MultiplayerDisplay.savedUUID);

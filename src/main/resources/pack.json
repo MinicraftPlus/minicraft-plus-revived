@@ -1,44 +1,44 @@
 {
   "language": {
-    "en-us": {
+    "en_us": {
       "name": "English",
       "region": "US"
     },
-    "fr-fr": {
-      "name": "French",
-      "region": "Frence"
+    "fr_fr": {
+      "name": "Français",
+      "region": "France"
     },
-    "hu-hu": {
-      "name": "Hungarian",
-      "region": "Hungary"
+    "hu_hu": {
+      "name": "Magyar",
+      "region": "Magyarország"
     },
-    "id-id": {
-      "name": "Indonesian",
+    "id_id": {
+      "name": "Bahasa Indonesia",
       "region": "Indonesia"
     },
-    "it-it": {
-      "name": "Italian",
-      "region": "Italy"
+    "it_it": {
+      "name": "Italiano",
+      "region": "Italia"
     },
-    "nb-no": {
-      "name": "Norwegian",
-      "region": "Norway"
+    "no_no": {
+      "name": "Norsk nynorsk",
+      "region": "Norge"
     },
-    "pt-pt": {
-      "name": "Portuguese",
+    "pt_pt": {
+      "name": "Português",
       "region": "Portugal"
     },
-    "ru-ru": {
-      "name": "Russian",
-      "region": "Russia"
+    "ru_ru": {
+      "name": "Русский",
+      "region": "Россия"
     },
-    "es-es": {
-      "name": "Spanish",
-      "region": "Spain"
+    "es_es": {
+      "name": "Español",
+      "region": "España"
     },
-    "tr-tr": {
-      "name": "Turkish",
-      "region": "Turkey"
+    "tr_tr": {
+      "name": "Türkçe",
+      "region": "Türkiye"
     }
   }
 }

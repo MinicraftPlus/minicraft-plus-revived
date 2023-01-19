@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +24,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.zip.ZipFile;
 
@@ -379,21 +385,6 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
-	@Override
-	public void onExit() {
-		fileWatcher.close(); // Removes watcher.
-		Initializer.getFrame().setTransferHandler(origTransferHandler);
-		Collections.reverse(loadQuery);
-		if (!loadQuery.equals(loadedPacks)) { // Changes applied.
-			loadedPacks.clear();
-			loadedPacks.addAll(loadQuery);
-			reloadResources(false);
-		}
-
-		new Save();
-		Game.setDisplay(new PopupDisplay(null, "TEST"));
-	}
-
 	/** Checking if the pack is movable in the menu. The position should be checked as valid. */
 	private static boolean isMovable(ResourcePack pack, Direction dir) {
 		if (pack instanceof ResourcePack.DefaultResourcePack.WorldBundledDefaultResourcePack)
@@ -495,6 +486,20 @@ public class ResourcePackDisplay extends Display {
 			return;
 		}
 
+		if (input.getKey("exit").clicked) {
+			fileWatcher.close(); // Removes watcher.
+			Initializer.getFrame().setTransferHandler(origTransferHandler);
+			Collections.reverse(loadQuery);
+			if (!loadQuery.equals(loadedPacks)) { // Changes applied.
+				loadedPacks.clear();
+				loadedPacks.addAll(loadQuery);
+				reloadResources(false);
+			}
+
+			new Save();
+			return;
+		}
+
 		super.tick(input);
 	}
 
@@ -518,7 +523,7 @@ public class ResourcePackDisplay extends Display {
 		if (isMovable(Direction.UP))
 			help.add(Localization.getLocalized("minicraft.displays.resource_packs.display.help.upper_priority", "SHIFT-UP"));
 		for (int i = 0; i < help.size(); i++)
-			Font.drawCentered(help.get(i), screen, Screen.h - 25 + 8 * i, Color.DARK_GRAY);
+			Font.drawCentered(help.get(i), screen, Screen.h - 25 - 8 * i, Color.DARK_GRAY);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? unloadedPacks : loadQuery;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
@@ -682,51 +687,145 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	/** Reloading all the resources with the currently packs to be loaded. */
-	public static void reloadResources(boolean isInitial) {
-		if (isInitial) reloadResources0(); // Handling it directly.
-		else {
-			reloadResources0();// TODO
+	@SuppressWarnings("unchecked")
+	private static void reloadResources(boolean isInitial) {
+		ResourcePackLoadingDisplay loading = isInitial ? null : new ResourcePackLoadingDisplay();
+		if (!isInitial) Game.setDisplay(loading);
+
+		CompletableFuture<Void> future =
+			CompletableFuture.runAsync(() -> {
+				if (loading != null)
+					loading.toProgress(0.05);
+
+				packLocks.forEach((pack, lock) -> {
+					try {
+						lock.close();
+					} catch (IOException ignored) {}
+				}); // Releasing all locks.
+				packLocks.clear();
+				loadedPacks.forEach(pack -> {
+					ResourcePack.PackLock lock = pack.lockFile();
+					if (lock != null) packLocks.put(pack, lock);
+				}); // Relocking current packs.
+			});
+
+		future = future.thenRunAsync(() -> {
+			if (loading != null)
+				loading.toProgress(0.1);
+
+			// Clear all previously loaded resources.
+			Renderer.spriteLinker.resetSprites();
+			Localization.resetLocalizations();
+			BookData.resetBooks();
+			Sound.resetSounds();
+			SpriteAnimation.resetMetadata();
+		});
+
+		for (int i = 0; i < loadedPacks.size(); i++) {
+			ResourcePack pack = loadedPacks.get(i);
+			int j = i;
+			future = future.thenRunAsync(() -> {
+				if (loading != null)
+					loading.toProgress(0.1 + 0.8 * j / loadedPacks.size());
+
+				ResourcePackLoader loader = ResourcePackLoader.getFormatSuitableResourcePackLoader(pack.getPackFormat());
+				try (ResourcePack.PackResourceStream stream = pack.loadPack()) {
+					loader.loadResources(stream);
+				} catch (IOException | IllegalStateException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack {}, the loaded contents might not be complete; skipping...", pack.getName());
+				}
+			});
+		}
+
+		future = future.thenRunAsync(() -> {
+			if (loading != null)
+				loading.toProgress(0.95);
+
+			SpriteAnimation.refreshAnimations();
+			Renderer.spriteLinker.updateLinkedSheets();
+			Localization.loadLanguage();
+			ArrayList<Localization.LocaleInformation> options = new ArrayList<>(Arrays.asList(Localization.getLocales()));
+			options.sort(Comparator.comparing(Localization.LocaleInformation::toString));
+			((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
+
+			// Refreshing skins.
+			SkinDisplay.refreshSkins();
+			SkinDisplay.releaseSkins();
+
+			if (loading != null)
+				loading.toProgress(1);
+		});
+
+		if (loading == null) {
+			while (true)
+				try {
+					future.get();
+					break;
+				} catch (InterruptedException | ExecutionException ignored) {}
+		} else {
+			CompletableFuture<Void> completableFuture = future;
+			executorService.submit(() -> {
+				Thread.sleep(100);
+				completableFuture.join();
+				return null;
+			});
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void reloadResources0() {
-		packLocks.forEach((pack, lock) -> {
-			try {
-				lock.close();
-			} catch (IOException ignored) {}
-		}); // Releasing all locks.
-		packLocks.clear();
-		loadedPacks.forEach(pack -> {
-			ResourcePack.PackLock lock = pack.lockFile();
-			if (lock != null) packLocks.put(pack, lock);
-		}); // Relocking current packs.
+	private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
-		// Clear all previously loaded resources.
-		Renderer.spriteLinker.resetSprites();
-		Localization.resetLocalizations();
-		BookData.resetBooks();
-		Sound.resetSounds();
-		SpriteAnimation.resetMetadata();
+	private static class ResourcePackLoadingDisplay extends Display {
+		private double progress = 0;
+		private double displaying = 0;
+		private double prevDisplay = 0;
 
-		for (ResourcePack pack : loadedPacks) {
-			ResourcePackLoader loader = ResourcePackLoader.getFormatSuitableResourcePackLoader(pack.getPackFormat());
-			try (ResourcePack.PackResourceStream stream = pack.loadPack()) {
-				loader.loadResources(stream);
-			} catch (IOException | IllegalStateException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load pack {}, the loaded contents might not be complete; skipping...", pack.getName());
+		ResourcePackLoadingDisplay() {
+			super(true, false, new Menu.Builder(true, 0, RelPos.CENTER)
+				.setSize(31 * 8, 16)
+				.createMenu());
+		}
+
+		@Override
+		public void render(Screen screen) {
+			super.render(screen);
+			int offset = Screen.w/2 - 15 * 8 + (Screen.h/2 - 4) * Screen.w;
+			for (int i = 0; i < 31 * 8; i++) {
+				for (int j = 0; j < 16; j++) {
+					screen.pixels[offset - 4 + i + (j - 4) * Screen.w] = Color.BLUE;
+				}
+			}
+
+			for (int i = 0; i < displaying * 30 * 8; i++) {
+				for (int j = 0; j < 8; j++)
+					screen.pixels[offset + i + j * Screen.w] = 0x1FFFFFF;
 			}
 		}
 
-		SpriteAnimation.refreshAnimations();
-		Renderer.spriteLinker.updateLinkedSheets();
-		Localization.loadLanguage();
-		ArrayList<Localization.LocaleInformation> options = new ArrayList<>(Arrays.asList(Localization.getLocales()));
-		options.sort(Comparator.comparing(Localization.LocaleInformation::toString));
-		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
+		@Override
+		public void tick(InputHandler input) {
+			if (progress > displaying) {
+				double diff = progress - prevDisplay;
+				double chge = displaying - prevDisplay;
+				displaying += -(chge+diff/4)*(chge-diff); // Quadratic curve.
+				displaying = new BigDecimal(displaying).setScale(5, RoundingMode.HALF_EVEN).doubleValue();
+				if (displaying > progress)
+					displaying = progress;
+			}
 
-		// Refreshing skins.
-		SkinDisplay.refreshSkins();
-		SkinDisplay.releaseSkins();
+			if (displaying == 1) {
+				executorService.submit(() -> {
+					Game.exitDisplay(); // Completed.
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException ignored) {}
+					Game.exitDisplay();
+				});
+			}
+		}
+
+		private void toProgress(double progress) {
+			prevDisplay = displaying;
+			this.progress = progress;
+		}
 	}
 }
