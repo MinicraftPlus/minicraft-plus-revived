@@ -7,7 +7,7 @@ import minicraft.gfx.Color;
 import minicraft.level.Level;
 
 public enum PotionType {
-	None (Color.get(1, 41, 51, 255), 0),
+	Awkward (Color.get(1, 41, 51, 255), 0),
 
 	Speed (Color.get(1, 105, 209, 105), 4200) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
@@ -62,8 +62,7 @@ public enum PotionType {
 	PotionType(int col, int dur) {
 		dispColor = col;
 		duration = dur;
-		if(this.toString().equals("None")) name = "Potion";
-		else name = this + " Potion";
+		name = this + " Potion";
 	}
 
 	public boolean toggleEffect(Player player, boolean addEffect) {
