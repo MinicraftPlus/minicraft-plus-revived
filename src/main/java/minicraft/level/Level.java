@@ -463,7 +463,9 @@ public class Level {
 		int h = (Screen.h + 15) >> 4;
 
 		screen.setOffset(xScroll, yScroll);
-		int r = 4;
+		
+		// this specifies the maximum radius that the game will stop rendering the light from the source object once off screen
+		int r = 8;
 
 		List<Entity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
 		for (Entity e: entities) {
