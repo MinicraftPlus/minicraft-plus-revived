@@ -41,6 +41,13 @@ public class ClothingItem extends StackableItem {
 		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
+			ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
+				.findAny().orElse(null);
+			if (lastClothing == null)
+				lastClothing = (ClothingItem) Items.get("Reg Clothes");
+			lastClothing = lastClothing.clone();
+			lastClothing.count = 1;
+			player.tryAddToInvOrDrop(lastClothing);
 			player.shirtColor = playerCol;
 			return super.interactOn(true);
 		}

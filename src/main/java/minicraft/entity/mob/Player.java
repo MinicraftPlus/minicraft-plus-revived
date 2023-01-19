@@ -1123,4 +1123,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public String getDebugHunger() { return hungerStamCnt + "_" + stamHungerTicks; }
+
+	/**
+	 * Trying to add item(s) to the player inventory.
+	 * If no more item(s) can be added to the inventory, drop the item(s) near the player.
+	 */
+	public void tryAddToInvOrDrop(@Nullable Item item) {
+		if (item != null) {
+			int returned = inventory.add(0, item);
+			if (item instanceof StackableItem) {
+				if (((StackableItem)item).count > 0) {
+					getLevel().dropItem(x, y, item);
+				}
+			} else if (returned == 0) {
+				getLevel().dropItem(x, y, item);
+			}
+		}
+	}
 }
