@@ -1,25 +1,30 @@
 package minicraft.core;
 
-import java.awt.*;
+import minicraft.core.io.FileHandler;
+import minicraft.core.io.Settings;
+import minicraft.util.Logging;
+import minicraft.util.TinylogLoggingProvider;
+import org.jetbrains.annotations.Nullable;
+import org.tinylog.provider.ProviderRegistry;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.LinearGradientPaint;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import minicraft.core.io.FileHandler;
-import minicraft.util.Logging;
-import minicraft.util.TinylogLoggingProvider;
-
-import org.jetbrains.annotations.Nullable;
-import org.tinylog.provider.ProviderRegistry;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 public class Initializer extends Game {
 	private Initializer() {}
@@ -31,6 +36,7 @@ public class Initializer extends Game {
 	static LogoSplashCanvas logoSplash = new LogoSplashCanvas();
 	static int fra, tik; // These store the number of frames and ticks in the previous second; used for fps, at least.
 
+	public static JFrame getFrame() { return frame; }
 	public static int getCurFps() { return fra; }
 
 	static void parseArgs(String[] args) {
@@ -85,17 +91,18 @@ public class Initializer extends Game {
 				unprocessed--;
 			}
 
-			if ((now - lastRender) / 1.0E9 > 1.0 / MAX_FPS) {
+			if (MAX_FPS == Settings.FPS_UNLIMITED || now - lastRender >= 1E9D / MAX_FPS) {
 				frames++;
 				lastRender = System.nanoTime();
 				Renderer.render();
 			}
 
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
-				lastTimer1 += 1000; // Adds a second to the timer
+				long interval = System.currentTimeMillis() - lastTimer1;
+				lastTimer1 = System.currentTimeMillis(); // Adds a second to the timer
 
-				fra = frames; // Saves total frames in last second
-				tik = ticks; // Saves total ticks in last second
+				fra = (int) (frames * 1000 / interval); // Saves total frames in last second
+				tik = (int) (ticks * 1000 / interval); // Saves total ticks in last second
 				frames = 0; // Resets frames
 				ticks = 0; // Resets ticks; ie, frames and ticks only are per second
 			}
