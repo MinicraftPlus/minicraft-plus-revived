@@ -19,7 +19,7 @@ public class FishingData {
     public static List<String> getData(String name) {
         List<String> data;
         try {
-            data = Load.loadFile("/resources/fishing/" + name + "_loot.txt");
+            data = Load.loadFile("/resources/data/fishing/" + name + "_loot.txt");
         } catch (IOException e) {
             e.printStackTrace();
             data = new ArrayList<>();

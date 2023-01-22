@@ -191,7 +191,7 @@ public class SkinDisplay extends Display {
 			String skinPath = file.getName();
 			String name = skinPath.substring(0, skinPath.length() - 4);
 			if (file.exists()) try {
-				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 32);
+				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 16);
 				Renderer.spriteLinker.setSkin("skin." + name, sheet);
 				skins.put(name, Mob.compileMobSpriteAnimations(0, 0, "skin." + name));
 			} catch (IOException e) {
