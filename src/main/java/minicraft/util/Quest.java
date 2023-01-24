@@ -28,7 +28,6 @@ public class Quest {
 
 	public static class QuestSeries {
 		public final String id, description;
-		public final boolean tutorial;
 		public final QuestReward reward;
 		public boolean unlocked;
 		public Action callback;
@@ -36,15 +35,13 @@ public class Quest {
 		private final String[] unlocks;
 		private final ArrayList<Quest> quests;
 
-		public QuestSeries(String id, String desc, ArrayList<Quest> quests, QuestReward reward, boolean unlocked, String[] unlocks) { this(id, desc, quests, reward, unlocked, false, unlocks); }
-		public QuestSeries(String id, String desc, ArrayList<Quest> quests, QuestReward reward, boolean unlocked, boolean tutorial, String[] unlocks) {
+		public QuestSeries(String id, String desc, ArrayList<Quest> quests, QuestReward reward, boolean unlocked, String[] unlocks) {
 			this.id = id;
 			this.description = desc;
 			this.quests = quests;
 			quests.forEach(q -> q.series = this);
 			this.reward = reward;
 			this.unlocked = unlocked;
-			this.tutorial = tutorial;
 			this.unlocks = unlocks;
 		}
 

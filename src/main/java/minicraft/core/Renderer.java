@@ -43,6 +43,7 @@ import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
@@ -387,11 +388,13 @@ public class Renderer extends Game {
 			}
 		}
 
+		TutorialDisplayHandler.render(screen);
 		renderQuestsDisplay();
 		renderDebugInfo();
 	}
 
 	private static void renderQuestsDisplay() {
+		if (!TutorialDisplayHandler.inQuests()) return;
 		if (!(boolean) Settings.get("showquests")) return;
 
 		boolean expanding = Game.player.questExpanding > 0;
@@ -402,11 +405,10 @@ public class Renderer extends Game {
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			if (!doneQuests.contains(q)) {
 				QuestSeries series = q.getSeries();
-				if (!(!series.tutorial && (boolean) Settings.get("tutorials"))) // Hide normal quests when tutorial is on.
-					questsShown.add(expanding?
-						new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE, false):
-						new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE, false)
-					);
+				questsShown.add(expanding?
+					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), Color.WHITE, false):
+					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", Color.WHITE, false)
+				);
 
 				if (questsShown.size() >= length) break;
 			}

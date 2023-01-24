@@ -1,0 +1,145 @@
+{
+  "minicraft.advancements.recipes.workbench": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Workbench_1": ["Wood_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.torch": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Torch_2": ["Wood_1", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.plank": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "plank_2": ["Wood_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.plank_wall": {
+    "criteria": {
+      "has_plank": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "plank"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_plank"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Plank Wall_1": ["plank_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_door": {
+    "criteria": {
+      "has_plank": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "plank"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_plank"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Door_1": ["plank_5"]
+      }
+    }
+  }
+}

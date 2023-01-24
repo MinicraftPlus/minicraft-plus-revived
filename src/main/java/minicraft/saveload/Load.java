@@ -19,6 +19,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
 import minicraft.screen.*;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 
 import org.jetbrains.annotations.Nullable;
@@ -522,50 +523,52 @@ public class Load {
 			}
 		}
 
-		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
-			if (new File(location+"Quests.json").exists()) {
-				try {
-					JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
-					JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
-					JSONArray doneQuests = questsObj.getJSONArray("done");
-					JSONObject questData = questsObj.getJSONObject("data");
-					JSONObject lockedRecipes = questsObj.getJSONObject("lockedRecipes");
+		if (new File(location+"quests.json").exists()) {
+			try {
+				JSONObject questsObj = new JSONObject(loadFromFile(location + "quests.json", true));
+				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
+				JSONArray doneQuests = questsObj.getJSONArray("done");
+				JSONObject questData = questsObj.getJSONObject("data");
+				JSONObject unlockedRecipes = questsObj.getJSONObject("unlockedRecipes");
+				@SuppressWarnings("unused")
+				Version dataVersion = new Version(questsObj.getString("Version"));
+				TutorialDisplayHandler.load(questsObj);
+				AdvancementElement.loadRecipeUnlockingElements(questsObj);
 
-					ArrayList<String> unlocked = new ArrayList<>();
-					ArrayList<String> done = new ArrayList<>();
-					ArrayList<Recipe> recipeLocks = new ArrayList<>();
+				ArrayList<String> unlocked = new ArrayList<>();
+				ArrayList<String> done = new ArrayList<>();
+				ArrayList<Recipe> recipes = new ArrayList<>();
 
-					for (int i = 0; i < unlockedQuests.length(); i++) {
-						unlocked.add(unlockedQuests.getString(i));
-					}
-
-					for (int i = 0; i < doneQuests.length(); i++) {
-						done.add(doneQuests.getString(i));
-					}
-
-					for (String i : lockedRecipes.keySet()) {
-						JSONArray costsJson = lockedRecipes.getJSONArray(i);
-						String[] costs = new String[costsJson.length()];
-						for (int j = 0; j < costsJson.length(); j++) {
-							costs[j] = costsJson.getString(j);
-						}
-
-						recipeLocks.add(new Recipe(i, costs));
-					}
-
-					QuestsDisplay.loadGameQuests(unlocked, done, questData);
-					CraftingDisplay.loadLockedRecipes(recipeLocks);
-
-				} catch (IOException e) {
-					e.printStackTrace();
-					Logging.SAVELOAD.error("Unable to load Quests.json, loading default quests instead.");
-					QuestsDisplay.resetGameQuests();
+				for (int i = 0; i < unlockedQuests.length(); i++) {
+					unlocked.add(unlockedQuests.getString(i));
 				}
 
-			} else {
-				Logging.SAVELOAD.debug("Quests.json not found, loading default quests instead.");
+				for (int i = 0; i < doneQuests.length(); i++) {
+					done.add(doneQuests.getString(i));
+				}
+
+				for (String i : unlockedRecipes.keySet()) {
+					JSONArray costsJson = unlockedRecipes.getJSONArray(i);
+					String[] costs = new String[costsJson.length()];
+					for (int j = 0; j < costsJson.length(); j++) {
+						costs[j] = costsJson.getString(j);
+					}
+
+					recipes.add(new Recipe(i, costs));
+				}
+
+				QuestsDisplay.loadGameQuests(unlocked, done, questData);
+				CraftingDisplay.loadUnlockedRecipes(recipes);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logging.SAVELOAD.error("Unable to load quests.json, loading default quests instead.");
 				QuestsDisplay.resetGameQuests();
 			}
+
+		} else {
+			Logging.SAVELOAD.debug("quests.json not found, loading default quests instead.");
+			QuestsDisplay.resetGameQuests();
 		}
 	}
 

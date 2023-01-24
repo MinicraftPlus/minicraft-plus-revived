@@ -48,26 +48,25 @@ public class QuestsDisplay extends Display {
 
 
 	static {
-		try {
-			loadQuestFile("/resources/quests.json", false);
-			loadQuestFile("/resources/tutorials.json", true);
+		try { // TODO Data pack support.
+			loadQuestFile("/resources/quests.json");
 		} catch (IOException e) {
 			e.printStackTrace();
 			Logging.QUEST.error("Failed to load quests.");
 		}
 
 		// TODO Localize this class
-		// TODO Setting callback messages for some tutorials
+		// TODO Migrating Quest class as a subclass of AdvancementElement.
 	}
 
-	private static void loadQuestFile(String filename, boolean tutorial) throws IOException {
+	private static void loadQuestFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
 		JSONObject json = new JSONObject(String.join("", Load.loadFile(filename)));
 		for (String id : json.keySet()) {
-			loadSeries(id, json.getJSONObject(id), tutorial);
+			loadSeries(id, json.getJSONObject(id));
 		}
 	}
 
-	private static void loadSeries(String id, JSONObject json, boolean tutorial) {
+	private static void loadSeries(String id, JSONObject json) {
 		boolean unlocked = json.optBoolean("unlocked", false); // Is unlocked initially
 		JSONArray unlocksJson = json.optJSONArray("leads_to");
 		JSONArray questsJson = json.getJSONArray("quests");
@@ -90,7 +89,7 @@ public class QuestsDisplay extends Display {
 			quests.put(quest.id, quest);
 		}
 
-		series.put(id, new QuestSeries(id, json.getString("desc"), seriesQuests, loadReward(json.optJSONObject("reward")), unlocked, tutorial, unlocks));
+		series.put(id, new QuestSeries(id, json.getString("desc"), seriesQuests, loadReward(json.optJSONObject("reward")), unlocked, unlocks));
 	}
 
 	private static QuestReward loadReward(JSONObject json) {
@@ -219,7 +218,6 @@ public class QuestsDisplay extends Display {
 				new StringEntry("Status: Locked (" + completedQuestNum + "/" + tQuestNum + ")", Color.GRAY) // Locked series would not been shown...?
 			);
 
-			entries.add(new StringEntry("Tutorial: " + (series.tutorial ? "Yes" : "No"), series.tutorial ? Color.CYAN : Color.WHITE));
 			entries.addAll(Arrays.asList(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
 
 			ArrayList<Quest> ongoingQuests = getOngoingSeriesQuests(series);
@@ -227,31 +225,6 @@ public class QuestsDisplay extends Display {
 
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new QuestListDisplay(series.getSeriesQuests()))));
-
-			if (series.tutorial) {
-				entries.add(new SelectEntry("Skip this tutorial series", () -> Game.setDisplay(new Display(false, true, new Menu.Builder(true, 1, RelPos.CENTER)
-					.setSelectable(false)
-					.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.tutorial_skip.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
-					.createMenu()) {
-						@Override
-						public void tick(InputHandler input) {
-							super.tick(input);
-							if (input.getKey("select").clicked) {
-								skipSeries(series);
-								display.reloadEntries();
-								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
-									display.menus[0].setSelection(display.seriesEntries[display.selectedEntry].length - 1);
-								}
-
-								if (display.previousSelection > display.seriesEntries[display.selectedEntry ^ 1].length) {
-									display.previousSelection = display.seriesEntries[display.selectedEntry ^ 1].length - 1;
-								}
-
-								Game.exitDisplay();
-							}
-						}
-				})));
-			}
 
 			menus = new Menu[] {
 				new Menu.Builder(true, 0, RelPos.CENTER)
@@ -417,14 +390,6 @@ public class QuestsDisplay extends Display {
 			unlockSeries(series.get(un));
 		}
 
-		if ((boolean) Settings.get("tutorials") &&
-			series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logging.QUEST.debug("Tutorial completed.");
-			tutorialOff(); // Turns off tutorial
-
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
-		}
-
 		if (questSeries.callback != null) questSeries.callback.act();
 	}
 
@@ -449,14 +414,6 @@ public class QuestsDisplay extends Display {
 		for (String un : series.getUnlocks()) {
 			unlockSeries(QuestsDisplay.series.get(un));
 		}
-
-		if ((boolean) Settings.get("tutorials") &&
-			QuestsDisplay.series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logging.QUEST.debug("Tutorial completed.");
-			tutorialOff(); // Turns off tutorial
-
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
-		}
 	}
 
 	private static void sendReward(QuestReward reward) { sendReward(reward, false); }
@@ -480,45 +437,13 @@ public class QuestsDisplay extends Display {
 		}
 	}
 
-	/** Call only when the tutorial is completed or turned off. */
-	public static void tutorialOff() {
-		Settings.set("tutorials", false);
-
-		// Locks all uncompleted tutorial series and quests.
-		for (Quest quest : unlockedQuests.stream().filter(q -> !completedQuest.contains(q) && q.getSeries().tutorial).collect(Collectors.toList())) {
-			quest.unlocked = false;
-			unlockedQuests.remove(quest);
-			quest.getSeries().unlocked = false;
-			unlockedSeries.remove(quest.getSeries());
-		}
-
-		CraftingDisplay.unlockLeft();
-		if ((boolean) Settings.get("quests")) { // Unlock initial quests
-			for (QuestSeries qSeries : series.values()) {
-				if (initiallyUnlocked.contains(qSeries.id) && !unlockedSeries.contains(qSeries)) {
-					unlockSeries(qSeries);
-				}
-			}
-		}
-	}
-
 	public static void resetGameQuests() {
 		unlockedQuests.clear();
 		completedQuest.clear();
 		unlockedQuests.clear();
 		completedQuest.clear();
 		questStatus.clear();
-
 		quests.values().forEach(q -> q.unlocked = false);
-		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
-			for (QuestSeries questSeries : series.values()) {
-				if (initiallyUnlocked.contains(questSeries.id) && ((boolean) Settings.get("tutorials") && questSeries.tutorial || (boolean) Settings.get("quests") && !questSeries.tutorial)) {
-					unlockSeries(questSeries, true);
-				} else {
-					questSeries.unlocked = false;
-				}
-			}
-		}
 	}
 
 	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed) { loadGameQuests(unlocked, completed, new JSONObject()); }

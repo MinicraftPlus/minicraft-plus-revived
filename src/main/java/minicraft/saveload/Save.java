@@ -19,6 +19,7 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.screen.*;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 
@@ -237,12 +238,15 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
+		{
 			JSONObject fileObj = new JSONObject();
 			JSONArray unlockedQuests = new JSONArray();
 			JSONArray doneQuests = new JSONArray();
 			JSONObject questData = new JSONObject(QuestsDisplay.getStatusQuests());
-			JSONObject lockedRecipes = new JSONObject();
+			JSONObject unlockedRecipes = new JSONObject();
+			fileObj.put("Version", Game.VERSION.toString());
+			TutorialDisplayHandler.save(fileObj);
+			AdvancementElement.saveRecipeUnlockingElements(fileObj);
 
 			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 				unlockedQuests.put(q.id);
@@ -252,23 +256,22 @@ public class Save {
 				doneQuests.put(q.id);
 			}
 
-			for (Recipe recipe : CraftingDisplay.getLockedRecipes()) {
+			for (Recipe recipe : CraftingDisplay.getUnlockedRecipes()) {
 				JSONArray costs = new JSONArray();
 				recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
-				lockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+				unlockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
 			}
 
 			fileObj.put("unlocked", unlockedQuests);
 			fileObj.put("done", doneQuests);
 			fileObj.put("data", questData);
-			fileObj.put("lockedRecipes", lockedRecipes);
+			fileObj.put("unlockedRecipes", unlockedRecipes);
 
 			try {
-				writeJSONToFile(location + "Quests.json", fileObj.toString());
-
+				writeJSONToFile(location + "quests.json", fileObj.toString());
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				Logging.SAVELOAD.error("Unable to write Quests.json.");
+				Logging.SAVELOAD.error("Unable to write quests.json.");
 			}
 		}
 	}

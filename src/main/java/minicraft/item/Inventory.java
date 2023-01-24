@@ -17,6 +17,10 @@ public class Inventory {
 	protected int maxItem = 27;
 	protected boolean unlimited = false;
 
+	public int getMaxSlots() {
+		return maxItem;
+	}
+
 	/**
 	 * Returns all the items which are in this inventory.
 	 * @return ArrayList containing all the items in the inventory.
