@@ -46,7 +46,7 @@ public class Localization {
 			if (Game.debug) {
 				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-					Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+					Logger.tag("LOC").trace(new Throwable("Tracing"), "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
 					knownUnlocalizedStrings.get(selectedLocale).add(key);
 				}
 			}
@@ -56,7 +56,7 @@ public class Localization {
 			if (localString == null && Game.debug) {
 				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-					Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+					Logger.tag("LOC").trace(new Throwable("Tracing"), "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
 					knownUnlocalizedStrings.get(selectedLocale).add(key);
 				}
 			}
