@@ -63,9 +63,7 @@ public class TinylogLoggingConfiguration {
 			java.util.ServiceLoader.load(Writer.class); // Workaround for ProGuard (see issue #126)
 		}
 
-		HashMap<Writer, WriterConfig> writers = new HashMap<>();
-
-		writers.putAll(generateConsoleWriters());
+		HashMap<Writer, WriterConfig> writers = new HashMap<>(generateConsoleWriters());
 
 		ServiceLoader<Writer> loader = new ServiceLoader<Writer>(Writer.class, Map.class);
 
