@@ -61,14 +61,11 @@ public class TutorialDisplayHandler {
 	private static ControlGuide currentGuide = null;
 
 	static {
-		controlGuides.add(new ControlGuide(180, "move-up",
-			() -> Localization.getLocalized("minicraft.control_guide.move_up", Game.input.getMapping("move-up"))));
-		controlGuides.add(new ControlGuide(180, "move-down",
-			() -> Localization.getLocalized("minicraft.control_guide.move_down", Game.input.getMapping("move-down"))));
-		controlGuides.add(new ControlGuide(180, "move-left",
-			() -> Localization.getLocalized("minicraft.control_guide.move_left", Game.input.getMapping("move-left"))));
-		controlGuides.add(new ControlGuide(180, "move-right",
-			() -> Localization.getLocalized("minicraft.control_guide.move_right", Game.input.getMapping("move-right"))));
+		controlGuides.add(new ControlGuide(120, "move-up|move-down|move-left|move-right",
+			() -> Localization.getLocalized("minicraft.control_guide.move",
+				String.format("%s|%s|%s|%s", Game.input.getMapping("move-up"),
+					Game.input.getMapping("move-left"), Game.input.getMapping("move-down"),
+					Game.input.getMapping("move-right")))));
 		controlGuides.add(new ControlGuide(1, "attack",
 			() -> Localization.getLocalized("minicraft.control_guide.attack", Game.input.getMapping("attack"))));
 		controlGuides.add(new ControlGuide(1, "menu",
@@ -81,7 +78,7 @@ public class TutorialDisplayHandler {
 		private static int animation = 60;
 
 		private final int duration; // The duration pressing the key; in ticks.
-		private final String key;
+		private final String key; // From mapping.
 		private final Supplier<String> display;
 		private int interactedDuration = 0;
 
@@ -92,7 +89,16 @@ public class TutorialDisplayHandler {
 		}
 
 		private void tick() {
-			if (Game.input.getKey(key).down)
+			if (this.key.contains("|")) {
+				InputHandler.Key key = Game.input.new Key();
+				for (String keyposs: this.key.split("\\|")) {
+					InputHandler.Key aKey = Game.input.getKey(keyposs);
+					key.down = key.down || aKey.down;
+					key.clicked = key.clicked || aKey.clicked;
+				}
+
+				if (key.down) interactedDuration++;
+			} else if (Game.input.getKey(key).down)
 				interactedDuration++;
 		}
 	}
