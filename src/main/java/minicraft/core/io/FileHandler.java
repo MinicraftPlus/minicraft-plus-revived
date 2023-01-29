@@ -170,13 +170,13 @@ public class FileHandler extends Game {
 		try {
 			path = Paths.get(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI());
 		} catch (URISyntaxException e) {
-			throw new RuntimeException(e); // FATAL ERROR
+			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
 		} catch (FileSystemNotFoundException e) {
 			try {
 				FileSystem fs = FileSystems.newFileSystem(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI(), Collections.emptyMap());
 				path = fs.getPath("/assets/");
 			} catch (URISyntaxException | IOException ee1) {
-				throw new RuntimeException(ee1); // FATAL ERROR
+				throw new RuntimeException(ee1); // CRITICAL ERROR (GAME ASSETS)
 			}
 		}
 
@@ -186,7 +186,7 @@ public class FileHandler extends Game {
 			paths.forEach(p -> names.add(finalPath.getParent().relativize(p).toString()));
 			return names;
 		} catch (IOException e) {
-			throw new RuntimeException(e); // FATAL ERROR
+			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
 		}
 	}
 
