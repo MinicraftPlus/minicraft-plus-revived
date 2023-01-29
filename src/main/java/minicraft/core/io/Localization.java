@@ -1,15 +1,20 @@
 package minicraft.core.io;
 
 import minicraft.core.Game;
+import minicraft.saveload.Load;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class Localization {
 
@@ -23,6 +28,16 @@ public class Localization {
 	private static Locale selectedLocale = DEFAULT_LOCALE;
 	private static final HashMap<Locale, ArrayList<String>> unloadedLocalization = new HashMap<>();
 	private static final HashMap<Locale, LocaleInformation> localeInfo = new HashMap<>();
+	private static final Set<String> DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE;
+
+	static {
+		try {
+			DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE =
+				new JSONObject(String.join("", Load.loadFile("/assets/localization/en-us.json"))).keySet();
+		} catch (IOException e) {
+			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
+		}
+	}
 
 	/**
 	 * Get the provided key's localization for the currently selected language.
@@ -97,9 +112,34 @@ public class Localization {
 	 * @param newLanguage The language-country code of the language to load.
 	 */
 	public static void changeLanguage(@NotNull String newLanguage) {
-		selectedLocale = Locale.forLanguageTag(newLanguage);
-
+		changeLanguage(Locale.forLanguageTag(newLanguage));
+	}
+	/** @see #changeLanguage(String) */
+	public static void changeLanguage(@NotNull Locale newLanguage) {
+		selectedLocale = newLanguage;
 		loadLanguage();
+	}
+
+	public static int getNumMatchedLocalization(@NotNull Locale lang) {
+		if (lang.equals(DEBUG_LOCALE)) return getNumDefaultLocalization();
+		ArrayList<String> localizations = unloadedLocalization.get(lang);
+		if (localizations == null) return 0;
+		return (int) localizations.stream().flatMap(t -> new JSONObject(t).keySet().stream()).distinct()
+			.filter(DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE::contains).count();
+	}
+
+	public static int getNumDefaultLocalization() {
+		return DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE.size();
+	}
+
+	public static Set<String> getUnlocalizedKeys(@NotNull Locale lang) {
+		if (lang.equals(DEBUG_LOCALE) || lang.equals(DEFAULT_LOCALE)) return new HashSet<>();
+		ArrayList<String> localizations = unloadedLocalization.get(lang);
+		if (localizations == null) return new HashSet<>();
+		TreeSet<String> keys = new TreeSet<>(DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE);
+		keys.removeAll(localizations.stream().flatMap(t -> new JSONObject(t).keySet().stream()).distinct()
+			.filter(DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE::contains).collect(Collectors.toSet()));
+		return keys;
 	}
 
 	/**
