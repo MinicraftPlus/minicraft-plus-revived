@@ -67,9 +67,6 @@ public class PlantTile extends FarmTile {
         }
 
         level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get(name));
-		if (count > 0) {
-			QuestsDisplay.questCompleted("minicraft.quest.tutorial.farming.harvest");
-		}
 
         if (age >= maxAge && entity instanceof Player) {
             ((Player)entity).addScore(random.nextInt(5) + 1);

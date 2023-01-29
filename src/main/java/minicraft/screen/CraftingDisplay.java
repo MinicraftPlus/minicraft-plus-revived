@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class CraftingDisplay extends Display {
 		ArrayList<ItemListing> costList = new ArrayList<>();
 		if (recipes.length == 0) return new ItemListing[0];
 
-		TreeMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
+		Map<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
 			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
@@ -137,18 +138,6 @@ public class CraftingDisplay extends Display {
 					selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
 					selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
-				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Axe"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.craft_wooden_axe");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Pickaxe"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.craft_wooden_pickaxe");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Stone Pickaxe"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_stone_pickaxe");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Torch"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_torches");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Furnace"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.tutorial.underground.craft_furnace");
-				} else if (selectedRecipe.getProduct().equals(Items.get("Iron Armor"))) {
-					QuestsDisplay.questCompleted("minicraft.quest.stronger.iron_armor");
 				}
 
 				selectedRecipe.craft(player);
@@ -172,7 +161,6 @@ public class CraftingDisplay extends Display {
 
 	public static void resetRecipeUnlocks() {
 		unlockedRecipes.clear();
-		refreshInstanceIfNeeded();
 	}
 
 	public static void unlockRecipe(@NotNull Recipe recipe) {
@@ -185,8 +173,7 @@ public class CraftingDisplay extends Display {
 	}
 
 	public static void loadUnlockedRecipes(Collection<Recipe> recipes) {
-		unlockedRecipes.clear();
+		resetRecipeUnlocks();
 		unlockedRecipes.addAll(recipes);
-		refreshInstanceIfNeeded();
 	}
 }

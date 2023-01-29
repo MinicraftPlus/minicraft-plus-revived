@@ -1,14 +1,16 @@
 package minicraft.item;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 
 public class Recipe {
-	private TreeMap<String, Integer> costs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);  // A list of costs for the recipe
-	private String product; // The result item of the recipe
-	private int amount;
+	private final TreeMap<String, Integer> costs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);  // A list of costs for the recipe
+	private final String product; // The result item of the recipe
+	private final int amount;
 	private boolean canCraft; // Checks if the player can craft the recipe
 
 	public Recipe(String createdItem, String... reqItems) {
@@ -17,19 +19,19 @@ public class Recipe {
 		product = sep[0].toUpperCase(); // Assigns the result item
 		amount = Integer.parseInt(sep[1]);
 
-		for (int i = 0; i < reqItems.length; i++) {
-			 String[] curSep = reqItems[i].split("_");
-			 String curItem = curSep[0].toUpperCase(); // The current cost that's being added to costs.
-			 int amt = Integer.parseInt(curSep[1]);
-			 boolean added = false;
+		for (String reqItem : reqItems) {
+			String[] curSep = reqItem.split("_");
+			String curItem = curSep[0].toUpperCase(); // The current cost that's being added to costs.
+			int amt = Integer.parseInt(curSep[1]);
+			boolean added = false;
 
-			for (String cost: costs.keySet().toArray(new String[0])) { // Loop through the costs that have already been added
-				 if (cost.equals(curItem)) {
-					 costs.put(cost, costs.get(cost)+amt);
-					 added = true;
-					 break;
-				 }
-			 }
+			for (String cost : costs.keySet().toArray(new String[0])) { // Loop through the costs that have already been added
+				if (cost.equals(curItem)) {
+					costs.put(cost, costs.get(cost) + amt);
+					added = true;
+					break;
+				}
+			}
 
 			if (added) continue;
 			costs.put(curItem, amt);
@@ -39,7 +41,7 @@ public class Recipe {
 	public Item getProduct() {
 		return Items.get(product);
 	}
-	public TreeMap<String, Integer> getCosts() { return costs; }
+	public Map<String, Integer> getCosts() { return new HashMap<>(costs); }
 
 	public int getAmount() { return amount; }
 	public boolean getCanCraft() { return canCraft; }
@@ -91,5 +93,13 @@ public class Recipe {
 				this.costs.equals(r.costs);
 		} else
 			return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = costs.hashCode();
+		result = 31 * result + product.hashCode();
+		result = 31 * result + amount;
+		return result;
 	}
 }

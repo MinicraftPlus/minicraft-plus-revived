@@ -238,41 +238,17 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		{
-			JSONObject fileObj = new JSONObject();
-			JSONArray unlockedQuests = new JSONArray();
-			JSONArray doneQuests = new JSONArray();
-			JSONObject questData = new JSONObject(QuestsDisplay.getStatusQuests());
-			JSONObject unlockedRecipes = new JSONObject();
-			fileObj.put("Version", Game.VERSION.toString());
-			TutorialDisplayHandler.save(fileObj);
-			AdvancementElement.saveRecipeUnlockingElements(fileObj);
+		JSONObject fileObj = new JSONObject();
+		fileObj.put("Version", Game.VERSION.toString());
+		TutorialDisplayHandler.save(fileObj);
+		AdvancementElement.saveRecipeUnlockingElements(fileObj);
+		QuestsDisplay.save(fileObj);
 
-			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-				unlockedQuests.put(q.id);
-			}
-
-			for (Quest q : QuestsDisplay.getCompletedQuest()) {
-				doneQuests.put(q.id);
-			}
-
-			for (Recipe recipe : CraftingDisplay.getUnlockedRecipes()) {
-				JSONArray costs = new JSONArray();
-				recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
-				unlockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
-			}
-
-			fileObj.put("unlocked", unlockedQuests);
-			fileObj.put("done", doneQuests);
-			fileObj.put("data", questData);
-			fileObj.put("unlockedRecipes", unlockedRecipes);
-
-			try {
-				writeJSONToFile(location + "quests.json", fileObj.toString());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				Logging.SAVELOAD.error("Unable to write quests.json.");
-			}
+		try {
+			writeJSONToFile(location + "advancements.json", fileObj.toString(4));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Logging.SAVELOAD.error("Unable to write advancements.json.");
 		}
 	}
 
@@ -307,6 +283,14 @@ public class Save {
 		data.add(subdata.toString());
 
 		data.add(String.valueOf(player.shirtColor));
+
+		JSONObject unlockedRecipes = new JSONObject();
+		for (Recipe recipe : CraftingDisplay.getUnlockedRecipes()) {
+			JSONArray costs = new JSONArray();
+			recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
+			unlockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+		}
+		data.add(unlockedRecipes.toString());
 	}
 
 	private void writeInventory(String filename, Player player) {

@@ -1,7 +1,6 @@
 package minicraft.util;
 
 import minicraft.core.World;
-import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Chest;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -28,30 +27,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/** World-wide. */
 public class AdvancementElement {
-	private static final ArrayList<AdvancementElement> recipeUnlockingElements;
+	private static final HashSet<AdvancementElement> recipeUnlockingElements;
 
 	static {
 		try {
-			recipeUnlockingElements = loadTutorialFile("/resources/recipes.json", false);
+			recipeUnlockingElements = loadAdvancementFile("/resources/recipes.json", false);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static ArrayList<AdvancementElement> loadTutorialFile(String filename, boolean displayable) throws IOException {
-		ArrayList<AdvancementElement> elements = new ArrayList<>();
+	public static HashSet<AdvancementElement> loadAdvancementFile(String filename, boolean displayable) throws IOException {
+		HashSet<AdvancementElement> elements = new HashSet<>();
 		JSONObject json = new JSONObject(String.join("", Load.loadFile(filename)));
 		for (String key : json.keySet()) {
-			loadTutorialElement(elements, key, json.getJSONObject(key), displayable);
+			loadAdvancementElement(elements, key, json.getJSONObject(key), displayable);
 		}
 
 		return elements;
 	}
 
-	public static void loadTutorialElement(ArrayList<AdvancementElement> elements, String criterionName, JSONObject json, boolean displayable) {
+	public static void loadAdvancementElement(Collection<AdvancementElement> elements, String criterionName, JSONObject json, boolean displayable) {
 		HashMap<String, AdvancementElement.ElementCriterion> criteria = new HashMap<>();
 		JSONObject criteriaJson = json.getJSONObject("criteria");
+		if (criteriaJson.isEmpty()) throw new IndexOutOfBoundsException("criteria is empty.");
 		for (String key : criteriaJson.keySet()) {
 			JSONObject criterion = criteriaJson.getJSONObject(key);
 			criteria.put(key, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
@@ -70,9 +71,32 @@ public class AdvancementElement {
 			}
 		}
 
+		HashMap<String, AdvancementElement.ElementCriterion> unlockingCriteria = new HashMap<>();
+		JSONObject unlockingCriteriaJson = json.optJSONObject("unlocking_criteria");
+		if (unlockingCriteriaJson != null) {
+			for (String key : unlockingCriteriaJson.keySet()) {
+				JSONObject criterion = unlockingCriteriaJson.getJSONObject(key);
+				unlockingCriteria.put(key, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
+			}
+		}
+
+		HashSet<HashSet<String>> unlockingRequirements = new HashSet<>();
+		JSONArray unlockingRequirementsJson = json.optJSONArray("unlocking_requirements");
+		if (unlockingRequirementsJson != null) {
+			for (int i = 0; i < unlockingRequirementsJson.length(); i++) {
+				HashSet<String> req = new HashSet<>();
+				JSONArray reqJson = unlockingRequirementsJson.getJSONArray(i);
+				for (int j = 0; j < reqJson.length(); j++) {
+					req.add(reqJson.getString(j));
+				}
+				unlockingRequirements.add(req);
+			}
+		}
+
 		ElementRewards rewards = loadRewards(json.optJSONObject("rewards"));
 		elements.add(new AdvancementElement(criterionName,
-			displayable ? json.getString("description"): null, criteria, rewards, requirements));
+			displayable ? json.getString("description"): null, criteria,
+			rewards, requirements, unlockingCriteria, unlockingRequirements));
 	}
 
 	public static ElementRewards loadRewards(JSONObject json) {
@@ -127,16 +151,23 @@ public class AdvancementElement {
 	protected final HashMap<String, ElementCriterion> criteria = new HashMap<>();
 	protected final @Nullable ElementRewards rewards;
 	protected final HashSet<HashSet<String>> requirements = new HashSet<>();
-	protected boolean isCompleted = false;
+	protected final HashMap<String, ElementCriterion> unlockingCriteria = new HashMap<>();
+	protected final HashSet<HashSet<String>> unlockingRequirements = new HashSet<>();
+	protected boolean completed = false;
+	protected boolean unlocked = false;
 
 	public AdvancementElement(String key, String description, Map<String, ElementCriterion> criteria,
-							  @Nullable ElementRewards rewards, Set<HashSet<String>> requirements) {
+							  @Nullable ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
+							  @NotNull Map<String, ElementCriterion> unlockingCriteria,
+							  @NotNull Set<HashSet<String>> unlockingRequirements) {
 		this.key = key;
 		this.description = description;
 		this.criteria.putAll(criteria);
 		this.criteria.forEach((k, criterion) -> criterion.element = this);
 		this.rewards = rewards;
 		this.requirements.addAll(requirements);
+		this.unlockingCriteria.putAll(unlockingCriteria);
+		this.unlockingRequirements.addAll(unlockingRequirements);
 	}
 
 	public static class ElementCriterion {
@@ -149,7 +180,19 @@ public class AdvancementElement {
 		public ElementCriterion(String trigger, JSONObject conditions) {
 			this.trigger = AdvancementTrigger.getTrigger(trigger);
 			this.conditions = this.trigger.conditions.createCriterionConditions(conditions);
-			this.trigger.register(this);
+		}
+
+		protected void registerCriterion() {
+			if (completionTime == null)
+				this.trigger.register(this);
+		}
+
+		public boolean isCompleted() {
+			return completionTime != null;
+		}
+
+		public @Nullable LocalDateTime getCompletionTime() {
+			return completionTime;
 		}
 
 		/**
@@ -168,8 +211,6 @@ public class AdvancementElement {
 
 		public void reset() {
 			completionTime = null;
-			if ((boolean) Settings.get("tutorials"))
-				trigger.register(this);
 		}
 	}
 
@@ -186,35 +227,97 @@ public class AdvancementElement {
 		public ArrayList<Recipe> getRecipe() { return new ArrayList<>(recipes); }
 	}
 
-	public ElementRewards getRewardRecipes() {
+	@SuppressWarnings("unused")
+	public @Nullable ElementRewards getRewards() {
 		return rewards;
 	}
 
 	public void markAsCompleted(boolean inLoad) {
-		if (!isCompleted) {
-			isCompleted = true;
+		if (!completed) {
+			completed = true;
 			if (!inLoad)
 				update();
 		}
 	}
 
+	protected boolean checkIsUnlocked() {
+		if (unlocked) return true;
+		return isUnlockable();
+	}
+
+	protected void registerUnlockingCriteria() {
+		unlockingCriteria.values().forEach(criterion -> {
+			if (criterion.completionTime == null)
+				criterion.registerCriterion();
+		});
+	}
+
+	protected void registerCriteria() {
+		criteria.values().forEach(criterion -> {
+			if (criterion.completionTime == null)
+				criterion.registerCriterion();
+		});
+	}
+
 	public boolean isCompleted() {
-		return isCompleted;
+		return completed;
+	}
+
+	public boolean isUnlocked() {
+		return unlocked;
+	}
+
+	/** Is unlocked but not completed. */
+	public boolean isDisplayableAtStatus() {
+		return unlocked && !completed;
+	}
+
+	public int getNumCriteriaCompleted() {
+		return (int) criteria.values().stream().filter(ElementCriterion::isCompleted).count();
+	}
+	public int getTotalNumCriteria() {
+		return criteria.size();
+	}
+	public boolean shouldAllCriteriaBeCompleted() {
+		return requirements.isEmpty();
+	}
+
+	protected boolean isUnlockable() {
+		if (unlocked) return true;
+		return unlockingRequirements.isEmpty() && unlockingCriteria.values().stream().allMatch(criterion -> criterion.completionTime != null) ||
+			!unlockingRequirements.isEmpty() && unlockingRequirements.stream().allMatch(sublist -> sublist.stream().anyMatch(k -> {
+				ElementCriterion criterion = criteria.get(k);
+				return criterion != null && criterion.completionTime != null;
+			}));
+	}
+
+	protected boolean checkIsCompleted() {
+		return requirements.isEmpty() && criteria.values().stream().allMatch(criterion -> criterion.completionTime != null) ||
+			!requirements.isEmpty() && requirements.stream().allMatch(sublist -> sublist.stream().anyMatch(k -> {
+				ElementCriterion criterion = criteria.get(k);
+				return criterion != null && criterion.completionTime != null;
+			}));
 	}
 
 	/** Updating and refreshing by the data in this element. */
 	public void update() {
-		if (!isCompleted) {
-			if (requirements.isEmpty() && criteria.values().stream().allMatch(criterion -> criterion.completionTime != null) ||
-				!requirements.isEmpty() && requirements.stream().allMatch(sublist -> sublist.stream().anyMatch(k -> {
-					ElementCriterion criterion = criteria.get(k);
-					return criterion != null && criterion.completionTime != null;
-				})))
+		if (isUnlockable())
+			registerUnlockingCriteria();
+
+		if (!unlocked) {
+			unlocked = checkIsUnlocked();
+		}
+
+		if (unlocked) registerCriteria();
+		if (!completed && unlocked) {
+			if (checkIsCompleted()) {
 				markAsCompleted(true); // To not call #update() again.
+				sendRewards();
+			}
 		}
 	}
 
-	private void sendRewards() {
+	protected void sendRewards() {
 		if (rewards != null) {
 			ArrayList<Item> items = rewards.getItems();
 			if (items.size() > 0) {
@@ -232,15 +335,20 @@ public class AdvancementElement {
 		}
 	}
 
-	public void reset() {
-		isCompleted = false;
+	public void reset() { reset(true); }
+	protected void reset(boolean update) {
+		completed = false;
+		unlocked = false;
 		criteria.values().forEach(ElementCriterion::reset);
+		if (update) update();
 	}
 
 	/** Loading from a JSONObject of an element. */
 	public void load(JSONObject json) {
+		reset(false);
+		completed = json.optBoolean("done");
+		unlocked = json.optBoolean("unlocked");
 		JSONObject criteriaJson = json.optJSONObject("criteria");
-		isCompleted = json.optBoolean("done");
 		if (criteriaJson != null) {
 			for (String k : criteriaJson.keySet()) {
 				ElementCriterion criterion = criteria.get(k);
@@ -249,21 +357,45 @@ public class AdvancementElement {
 				}
 			}
 		}
+
+		JSONObject unlockingCriteriaJson = json.optJSONObject("unlockingCriteria");
+		if (unlockingCriteriaJson != null) {
+			for (String k : unlockingCriteriaJson.keySet()) {
+				ElementCriterion criterion = unlockingCriteria.get(k);
+				if (criterion != null) {
+					criterion.markAsCompleted(true, LocalDateTime.parse(unlockingCriteriaJson.getString(k)));
+				}
+			}
+		}
+
+		update();
 	}
 
 	/** Saving and writing data to the root JSONObject */
 	public void save(JSONObject json) {
+		JSONObject elementJson = new JSONObject();
 		JSONObject criteriaJson = new JSONObject();
 		criteria.forEach((k, criterion) -> {
 			if (criterion.completionTime != null)
 				criteriaJson.put(k, criterion.completionTime.toString());
 		});
 		if (!criteriaJson.isEmpty()) {
-			JSONObject elementJson = new JSONObject();
 			elementJson.put("criteria", criteriaJson);
-			elementJson.put("done", isCompleted);
-			json.put(key, elementJson);
+			elementJson.put("done", completed);
 		}
+
+		JSONObject unlockingCriteriaJson = new JSONObject();
+		unlockingCriteria.forEach((k, criterion) -> {
+			if (criterion.completionTime != null)
+				unlockingCriteriaJson.put(k, criterion.completionTime.toString());
+		});
+		if (!unlockingCriteriaJson.isEmpty()) {
+			elementJson.put("unlockingCriteria", unlockingCriteriaJson);
+			elementJson.put("unlocked", unlocked);
+		}
+
+		if (!elementJson.isEmpty())
+			json.put(key, elementJson);
 	}
 
 	public static abstract class AdvancementTrigger {
@@ -296,6 +428,7 @@ public class AdvancementElement {
 
 		public abstract void trigger(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions);
 
+		@SuppressWarnings("unused")
 		@NotNull
 		public AdvancementElement.AdvancementTrigger.AdvancementTriggerConditionHandler getConditions() {
 			return conditions;

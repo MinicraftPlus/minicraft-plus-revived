@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -400,28 +401,25 @@ public class Renderer extends Game {
 		boolean expanding = Game.player.questExpanding > 0;
 		int length = expanding ? 5 : 2;
 		ArrayList<ListEntry> questsShown = new ArrayList<>();
-		ArrayList<Quest> doneQuests = QuestsDisplay.getCompletedQuest();
-		JSONObject questStatus = QuestsDisplay.getStatusQuests();
-		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-			if (!doneQuests.contains(q)) {
-				QuestSeries series = q.getSeries();
-				questsShown.add(expanding?
-					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), Color.WHITE, false):
-					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", Color.WHITE, false)
-				);
+		HashSet<Quest> quests = QuestsDisplay.getDisplayableQuests();
+		for (Quest q : quests) {
+			QuestSeries series = q.getSeries();
 
-				if (questsShown.size() >= length) break;
-			}
+			questsShown.add(expanding?
+				new StringEntry(q.key, Color.WHITE, false):
+				new StringEntry(q.shouldAllCriteriaBeCompleted() && q.getTotalNumCriteria() > 1 ?
+					String.format("%s (%d/%d)", Localization.getLocalized(series.key),  q.getNumCriteriaCompleted(), q.getTotalNumCriteria()) :
+					Localization.getLocalized(series.key), Color.WHITE, false)
+			);
+
+			if (questsShown.size() >= length) break;
 		}
 
 		if (questsShown.size() > 0) {
 			potionRenderOffset = 9 + (Math.min(questsShown.size(), 3)) * 8 + 8 * 2;
-			new Menu.Builder(true, 0, RelPos.RIGHT)
+			new Menu.Builder(true, 0, RelPos.RIGHT, questsShown)
 				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-				.setDisplayLength(Math.min(questsShown.size(), length))
 				.setTitle("Quests")
-				.setSelectable(false)
-				.setEntries(questsShown)
 				.createMenu()
 				.render(screen);
 		} else {

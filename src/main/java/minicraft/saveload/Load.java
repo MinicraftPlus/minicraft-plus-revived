@@ -22,15 +22,22 @@ import minicraft.screen.*;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class Load {
 
@@ -169,8 +176,9 @@ public class Load {
 		String total;
 		try {
 			total = loadFromFile(filename, true);
-			if (total.length() > 0)
-				data.addAll(Arrays.asList(total.split(",")));
+			if (total.length() > 0) { // Safe splitting with JSON styled element.
+				data.addAll(splitUnwrappedCommas(total));
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -185,6 +193,60 @@ public class Load {
 		}
 
 		LoadingDisplay.progress(percentInc);
+	}
+
+	/** Source: Note: This method is copied from MiniMods. */
+	private static ArrayList<String> splitUnwrappedCommas(String input) {
+		ArrayList<String> out = new ArrayList<>();
+		int lastIdx = 0;
+		// 0 {}; 1 []; 2 ()
+		Stack<Integer> bracketCounter = new Stack<>();
+		char openBracket0 = '{';
+		char openBracket1 = '[';
+		char openBracket2 = '(';
+		char closeBracket0 = '}';
+		char closeBracket1 = ']';
+		char closeBracket2 = ')';
+		char commaChar = ',';
+		Predicate<Integer> checkDiff = ch -> {
+			if (bracketCounter.isEmpty()) return true;
+			return !bracketCounter.peek().equals(ch);
+		};
+
+		for (int i = 0; i < input.length(); i++) {
+			char ch = input.charAt(i);
+			if (ch == commaChar && bracketCounter.isEmpty()) {
+				String str = input.substring(lastIdx + (input.charAt(lastIdx) == commaChar ? 1 : 0), i).trim();
+				lastIdx = i;
+				if (!str.isEmpty()) out.add(str);
+			} else if (ch == openBracket0) {
+				bracketCounter.push(0);
+			} else if (ch == closeBracket0) {
+				if (checkDiff.test(0)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				bracketCounter.pop();
+			} else if (ch == openBracket1) {
+				bracketCounter.push(1);
+			} else if (ch == closeBracket1) {
+				if (checkDiff.test(1)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				bracketCounter.pop();
+			} else if (ch == openBracket2) {
+				bracketCounter.push(2);
+			} else if (ch == closeBracket2) {
+				if (checkDiff.test(2)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				bracketCounter.pop();
+			}
+		}
+
+		String str = input.substring(lastIdx).trim();
+		if (!str.isEmpty() && !str.chars().allMatch(Character::isWhitespace) &&
+			!(str.length() == 1 && str.charAt(0) == commaChar)) {
+			out.add(str);
+		}
+
+		if (bracketCounter.size() > 0)
+			throw new RuntimeException(String.format("Bracket not closed. Input: \"%s\"", input));
+
+		return out;
 	}
 
 	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
@@ -523,51 +585,35 @@ public class Load {
 			}
 		}
 
-		if (new File(location+"quests.json").exists()) {
+		if (new File(location+"Quests.json").exists()){
+			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
 			try {
-				JSONObject questsObj = new JSONObject(loadFromFile(location + "quests.json", true));
-				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
-				JSONArray doneQuests = questsObj.getJSONArray("done");
-				JSONObject questData = questsObj.getJSONObject("data");
-				JSONObject unlockedRecipes = questsObj.getJSONObject("unlockedRecipes");
+				Files.move(Paths.get(location, "Quests.json"), Paths.get(location, "Quests.json_old"), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				Logging.SAVELOAD.warn("Quest.json renamed failed.");
+			}
+		}
+
+		boolean advancementsLoadSucceeded = false;
+		if (new File(location+"advancements.json").exists()) {
+			try {
+				JSONObject questsObj = new JSONObject(loadFromFile(location + "advancements.json", true));
 				@SuppressWarnings("unused")
 				Version dataVersion = new Version(questsObj.getString("Version"));
 				TutorialDisplayHandler.load(questsObj);
 				AdvancementElement.loadRecipeUnlockingElements(questsObj);
-
-				ArrayList<String> unlocked = new ArrayList<>();
-				ArrayList<String> done = new ArrayList<>();
-				ArrayList<Recipe> recipes = new ArrayList<>();
-
-				for (int i = 0; i < unlockedQuests.length(); i++) {
-					unlocked.add(unlockedQuests.getString(i));
-				}
-
-				for (int i = 0; i < doneQuests.length(); i++) {
-					done.add(doneQuests.getString(i));
-				}
-
-				for (String i : unlockedRecipes.keySet()) {
-					JSONArray costsJson = unlockedRecipes.getJSONArray(i);
-					String[] costs = new String[costsJson.length()];
-					for (int j = 0; j < costsJson.length(); j++) {
-						costs[j] = costsJson.getString(j);
-					}
-
-					recipes.add(new Recipe(i, costs));
-				}
-
-				QuestsDisplay.loadGameQuests(unlocked, done, questData);
-				CraftingDisplay.loadUnlockedRecipes(recipes);
-
+				QuestsDisplay.load(questsObj);
+				advancementsLoadSucceeded = true;
 			} catch (IOException e) {
-				e.printStackTrace();
-				Logging.SAVELOAD.error("Unable to load quests.json, loading default quests instead.");
-				QuestsDisplay.resetGameQuests();
+				Logging.SAVELOAD.error(e, "Unable to load advancements.json, loading default quests instead.");
 			}
-
 		} else {
-			Logging.SAVELOAD.debug("quests.json not found, loading default quests instead.");
+			Logging.SAVELOAD.debug("advancements.json not found, loading default quests instead.");
+		}
+
+		if (!advancementsLoadSucceeded) {
+			TutorialDisplayHandler.reset(false);
+			AdvancementElement.resetRecipeUnlockingElements();
 			QuestsDisplay.resetGameQuests();
 		}
 	}
@@ -656,6 +702,24 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.1.0")) < 0) {
 			data.remove(0);
 		}
+
+		// Loading unlocked recipes.
+		if (worldVer.compareTo(new Version("2.2.0-dev3")) >= 0) {
+			ArrayList<Recipe> recipes = new ArrayList<>();
+			JSONObject unlockedRecipes = new JSONObject(data.remove(0));
+			for (String key : unlockedRecipes.keySet()) {
+				JSONArray costsJson = unlockedRecipes.getJSONArray(key);
+				String[] costs = new String[costsJson.length()];
+				for (int j = 0; j < costsJson.length(); j++) {
+					costs[j] = costsJson.getString(j);
+				}
+
+				recipes.add(new Recipe(key, costs));
+			}
+
+			CraftingDisplay.loadUnlockedRecipes(recipes);
+		} else
+			CraftingDisplay.resetRecipeUnlocks();
 	}
 
 	protected static String subOldName(String name, Version worldVer) {

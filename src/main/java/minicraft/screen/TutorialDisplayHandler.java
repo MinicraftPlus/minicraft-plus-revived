@@ -48,6 +48,7 @@ public class TutorialDisplayHandler {
 	private static void loadTutorialElement(String criterionName, JSONObject json) {
 		HashMap<String, AdvancementElement.ElementCriterion> criteria = new HashMap<>();
 		JSONObject criteriaJson = json.getJSONObject("criteria");
+		if (criteriaJson.isEmpty()) throw new IndexOutOfBoundsException("criteria is empty.");
 		for (String key : criteriaJson.keySet()) {
 			JSONObject criterion = criteriaJson.getJSONObject(key);
 			criteria.put(key, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));

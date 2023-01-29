@@ -1,4 +1,22 @@
 {
+  "minicraft.quest.test": {
+    "description": "minicraft.quest.test.description",
+    "quests": {
+
+    },
+    "unlocking_criteria": {
+      "": {
+        "trigger": "",
+        "conditions": {
+
+        }
+      }
+    }
+  }
+}
+
+
+{
   "minicraft.quest.stronger": {
     "desc": "minicraft.quest.stronger.desc",
     "leads_to": ["minicraft.quest.road_of_gem"],
