@@ -502,7 +502,8 @@ public class AdvancementElement {
 			}
 
 			/** Modified from {@link #test(List, List)}. */
-			private static boolean isConditionalMatch(ArrayList<Item> items, HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
+			private static boolean isConditionalMatch(ArrayList<Item> items,
+													  HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
 				Set<HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String>> combinations = new HashSet<>();
 				List<List<String>> combinationsOutput = new ArrayList<>();
 				List<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> conditionsList = new ArrayList<>();
@@ -523,10 +524,10 @@ public class AdvancementElement {
 				}
 
 				if (combinations.isEmpty()) {
-					return allMatch(items, itemConditions, new HashMap<>());
+					return allMatch(items, new HashSet<>(itemConditions), new HashMap<>());
 				} else {
 					for (HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> c : combinations) {
-						if (allMatch(items, itemConditions, c))
+						if (allMatch(items, new HashSet<>(itemConditions), c))
 							return true;
 					}
 					return false;

@@ -15,6 +15,8 @@ import minicraft.screen.entry.StringEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
 
 public class OptionsWorldDisplay extends Display {
 	public OptionsWorldDisplay() {
@@ -32,7 +34,13 @@ public class OptionsWorldDisplay extends Display {
 				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 					TutorialDisplayHandler.turnOffTutorials();
-					Game.exitDisplay();
+					Executors.newCachedThreadPool().submit(() -> {
+						Game.exitDisplay();
+						try {
+							Thread.sleep(50);
+						} catch (InterruptedException ignored) {}
+						Game.exitDisplay();
+					});
 					return true;
 				}));
 
