@@ -141,5 +141,1071 @@
         "Wood Door_1": ["plank_5"]
       }
     }
+  },
+  "minicraft.advancements.recipes.lantern": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_slime": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "slime"
+              ]
+            }
+          ]
+        }
+      },
+      "has_glass": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "glass"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_slime",
+        "has_glass"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Lantern_1": ["Wood_8", "slime_4", "glass_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.stone_brick": {
+    "criteria": {
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Stone Brick_1": ["Stone_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.ornate_stone": {
+    "criteria": {
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Stone Brick_1": ["Stone_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.stone_wall": {
+    "criteria": {
+      "has_stone_brick": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone brick"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone_brick"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Stone Wall_1": ["Stone Brick_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.stone_door": {
+    "criteria": {
+      "has_stone_brick": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone brick"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone_brick"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Stone Door_1": ["Stone Brick_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.obsidian_brick": {
+    "criteria": {
+      "has_raw_obsidian": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "raw obsidian"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_raw_obsidian"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Obsidian Brick_1": ["Raw Obsidian_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.ornate_obsidian": {
+    "criteria": {
+      "has_raw_obsidian": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "raw obsidian"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_raw_obsidian"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Ornate Obsidian_1": ["Raw Obsidian_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.obsidian_wall": {
+    "criteria": {
+      "has_obsidian_brick": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "obsidian brick"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_obsidian_brick"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Obsidian Wall_1": ["Obsidian Brick_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.obsidian_door": {
+    "criteria": {
+      "has_obsidian_brick": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "obsidian brick"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_obsidian_brick"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Obsidian Door_1": ["Obsidian Brick_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.oven": {
+    "criteria": {
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Oven_1": ["Stone_15"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.furnace": {
+    "criteria": {
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Furnace_1": ["Stone_20"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.enchanter": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_string",
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Enchanter_1": ["Wood_5", "String_2", "Lapis_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.chest": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Chest_1": ["Wood_20"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.anvil": {
+    "criteria": {
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_iron"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Anvil_1": ["iron_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.tnt": {
+    "criteria": {
+      "has_gunpowder": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gunpowder"
+              ]
+            }
+          ]
+        }
+      },
+      "has_sand": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "sand"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_gunpowder",
+        "has_sand"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Tnt_1": ["Gunpowder_10", "Sand_8"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.loom": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_wool"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Loom_1": ["Wood_10", "Wool_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_fishing_rod": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Fishing Rod_1": ["Wood_10", "String_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_fishing_rod": {
+    "criteria": {
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_iron",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Iron Fishing Rod_1": ["Iron_10", "String_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_fishing_rod": {
+    "criteria": {
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_gold",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Fishing Rod_1": ["Gold_10", "String_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_fishing_rod": {
+    "criteria": {
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_gem",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Fishing Rod_1": ["Gem_10", "String_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_sword": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Sword_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_axe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Axe_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_hoe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Hoe_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_pickaxe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Pickaxe_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Shovel_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Bow_1": ["Wood_5", "string_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_sword": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Sword_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_axe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Sword_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_hoe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Axe_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_pickaxe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Pickaxe_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Shovel_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Bow_1": ["Wood_5", "Stone_5", "string_2"]
+      }
+    }
   }
 }

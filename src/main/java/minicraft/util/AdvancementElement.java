@@ -21,11 +21,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** World-wide. */
 public class AdvancementElement {
@@ -399,6 +403,19 @@ public class AdvancementElement {
 	}
 
 	public static abstract class AdvancementTrigger {
+		// Used for threaded trigger handling.
+		private static final Set<ElementCriterion> pendingCompletedCriteria = Collections.synchronizedSet(new HashSet<>());
+
+		public static void tick() {
+			for (Iterator<ElementCriterion> it = pendingCompletedCriteria.iterator(); it.hasNext();) {
+				ElementCriterion criterion = it.next();
+				criterion.markAsCompleted(false, null);
+				it.remove(); // Action done.
+			}
+		}
+
+		private static final ExecutorService executorService = Executors.newCachedThreadPool();
+
 		protected final AdvancementTriggerConditionHandler conditions;
 
 		protected AdvancementTrigger(AdvancementTriggerConditionHandler conditions) {
@@ -426,7 +443,22 @@ public class AdvancementElement {
 			registeredCriteria.add(criterion);
 		}
 
-		public abstract void trigger(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions);
+		/** This should be called by another thread if method {@link #singleThreadNeeded()} is not
+		 * implemented to return true. If false, this should use {@link #pendingCompletedCriteria}
+		 * to mark completed criteria instead of calling it directly as this method should be called
+		 * by the global game tick updater to ensure the synchronization. */
+		protected abstract void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions);
+
+		/** @return {@code true} if this trigger implementation requires single thread as the global game tick updater. */
+		protected boolean singleThreadNeeded() {
+			return false;
+		}
+
+		/** Triggering and checking passes by another thread. */
+		public void trigger(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
+			if (!singleThreadNeeded()) executorService.submit(() -> trigger0(conditions));
+			else trigger0(conditions);
+		}
 
 		@SuppressWarnings("unused")
 		@NotNull
@@ -457,7 +489,7 @@ public class AdvancementElement {
 			public void register(ElementCriterion criterion) {} // No action.
 
 			@Override
-			public void trigger(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {} // No action.
+			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {} // No action.
 
 			public static class ImpossibleTriggerConditionHandler extends AdvancementTriggerConditionHandler {
 
@@ -474,7 +506,7 @@ public class AdvancementElement {
 			}
 
 			@Override
-			public void trigger(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
+			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
 				if (conditions instanceof InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) {
 					ArrayList<Item> items = ((InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) conditions).items;
 					int maxSlots = ((InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) conditions).maxSlots;
@@ -495,7 +527,7 @@ public class AdvancementElement {
 							if (!criterionConditions.items.isEmpty() && !isConditionalMatch(items, criterionConditions.items)) {
 								continue;
 							}
-							criterion.markAsCompleted(false, null); // All conditions passed.
+							pendingCompletedCriteria.add(criterion); // All conditions passed.
 						}
 					}
 				}
