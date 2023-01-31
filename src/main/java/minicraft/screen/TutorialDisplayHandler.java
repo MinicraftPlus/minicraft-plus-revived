@@ -40,6 +40,8 @@ public class TutorialDisplayHandler {
 
 	private static void loadTutorialFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
 		JSONObject json = new JSONObject(String.join("", Load.loadFile(filename)));
+		for (int i = 0; i < json.length(); i++)
+			tutorialElements.add(null);
 		for (String key : json.keySet()) {
 			loadTutorialElement(key, json.getJSONObject(key));
 		}
@@ -55,7 +57,8 @@ public class TutorialDisplayHandler {
 		}
 
 		AdvancementElement.ElementRewards rewards = AdvancementElement.loadRewards(json.optJSONObject("rewards"));
-		tutorialElements.add(new TutorialElement(criterionName, json.getString("description"), criteria, rewards));
+		// Index is required as the JSONObject is using unordered map.
+		tutorialElements.set(json.getInt("index"), new TutorialElement(criterionName, json.getString("description"), criteria, rewards));
 	}
 
 	private static final ArrayList<ControlGuide> controlGuides = new ArrayList<>();
@@ -123,16 +126,25 @@ public class TutorialDisplayHandler {
 					currentOngoingElement = completed;
 				}
 			}
+			if (currentOngoingElement != null && currentOngoingElement.isCompleted()) {
+				getNextTutorial();
+			}
+		}
+	}
+
+	private static void getNextTutorial() {
+		currentOngoingElement.deregisterCriteria(); // Completely disable the element.
+		if (tutorialElements.indexOf(currentOngoingElement) < tutorialElements.size() - 1) {
+			currentOngoingElement = tutorialElements.get(tutorialElements.indexOf(currentOngoingElement) + 1);
+			currentOngoingElement.update();
+		} else {
+			turnOffTutorials(); // Completed tutorials.
 		}
 	}
 
 	public static void skipCurrent() {
 		if (currentOngoingElement != null) {
-			if (tutorialElements.indexOf(currentOngoingElement) < tutorialElements.size() - 1) {
-				currentOngoingElement = tutorialElements.get(tutorialElements.indexOf(currentOngoingElement) + 1);
-			} else {
-				turnOffTutorials(); // Completed tutorials.
-			}
+			getNextTutorial();
 		}
 	}
 
@@ -153,8 +165,10 @@ public class TutorialDisplayHandler {
 
 	private static void turnOffGuides() {
 		currentGuide = null; // Completed guide.
-		if ((boolean) Settings.get("tutorials"))
+		if ((boolean) Settings.get("tutorials")) {
 			currentOngoingElement = tutorialElements.get(0);
+			currentOngoingElement.update();
+		}
 	}
 
 	public static void tick(InputHandler input) {
@@ -181,7 +195,7 @@ public class TutorialDisplayHandler {
 		}
 
 		if (currentOngoingElement != null) {
-			if (input.getKey("expandQuestDisplay").clicked) {
+			if (input.getKey("expandQuestDisplay").clicked && Game.getDisplay() == null) {
 				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(currentOngoingElement.key, null, 4),
 					currentOngoingElement.description));
 			}
@@ -191,7 +205,7 @@ public class TutorialDisplayHandler {
 	/** Rendering directly on the GUI/HUD. */
 	public static void render(Screen screen) {
 		if (currentGuide != null) { // Is ongoing.
-			String[] lines = Font.getLines(currentGuide.display.get(), Screen.w, Screen.h, 0);
+			String[] lines = Font.getLines(Localization.getLocalized(currentGuide.display.get()), Screen.w, Screen.h, 0);
 			if (ControlGuide.animation > 0) {
 				int textWidth = Font.textWidth(lines);
 				int xPadding = Screen.w/2 - (textWidth + 8)/2;
@@ -225,12 +239,18 @@ public class TutorialDisplayHandler {
 				}
 			}
 		} else if (currentOngoingElement != null) { // Is ongoing.
-			new Menu.Builder(true, 0, RelPos.RIGHT)
+			Menu menu = new Menu.Builder(true, 0, RelPos.RIGHT)
 				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
 				.setSelectable(false)
-				.setEntries(StringEntry.useLines(Color.WHITE, false, currentOngoingElement.key))
-				.createMenu()
-				.render(screen);
+				.setEntries(StringEntry.useLines(Color.WHITE, true, currentOngoingElement.key))
+				.createMenu();
+			menu.render(screen);
+			Rectangle bounds = menu.getBounds();
+			String text = Localization.getLocalized("minicraft.displays.tutorial_display_handler.display.element_examine_help",
+				Game.input.getMapping("expandQuestDisplay"));
+			String[] lines = Font.getLines(text, Screen.w*2/3, Screen.h, 0);
+			for (int i = 0; i < lines.length; i++)
+				Font.draw(lines[i], screen, bounds.getRight() - Font.textWidth(lines[i]), bounds.getBottom() + 8 * (1+i), Color.GRAY);
 		}
 	}
 
@@ -255,6 +275,8 @@ public class TutorialDisplayHandler {
 			tutorialElements.stream().filter(e -> e.key.equals(k))
 				.findFirst().ifPresent(element -> element.load(json.getJSONObject(k)));
 		}
+
+		if (currentOngoingElement != null) currentOngoingElement.update();
 	}
 
 	/** Saving and writing all data into the given JSONObject. */

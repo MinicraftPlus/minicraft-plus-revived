@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -263,6 +264,14 @@ public class AdvancementElement {
 		});
 	}
 
+	/** Warning: This method should be used carefully as this could impact
+	 * the gaming experience deeply on the progress. */
+	public void deregisterCriteria() {
+		criteria.values().forEach(criterion -> {
+			criterion.trigger.registeredCriteria.remove(criterion);
+		});
+	}
+
 	public boolean isCompleted() {
 		return completed;
 	}
@@ -404,7 +413,7 @@ public class AdvancementElement {
 
 	public static abstract class AdvancementTrigger {
 		// Used for threaded trigger handling.
-		private static final Set<ElementCriterion> pendingCompletedCriteria = Collections.synchronizedSet(new HashSet<>());
+		private static final Set<ElementCriterion> pendingCompletedCriteria = ConcurrentHashMap.newKeySet();
 
 		public static void tick() {
 			for (Iterator<ElementCriterion> it = pendingCompletedCriteria.iterator(); it.hasNext();) {
@@ -748,6 +757,14 @@ public class AdvancementElement {
 							if (min == null) return max >= value;
 							if (max == null) return min <= value;
 							return max >= value && min <= value;
+						}
+
+						@Override
+						public String toString() {
+							return isAbsent(this) ? "<unspecified range>" :
+								min == null ? "max: " + max :
+								max == null ? "min: " + min :
+								String.format("min: %d;max: %d", min, max);
 						}
 					}
 

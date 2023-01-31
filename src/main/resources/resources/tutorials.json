@@ -1,108 +1,113 @@
 {
-  "minicraft.tutorial.test": {
-    "description": "minicraft.tutorial.test.desc",
+  "minicraft.tutorial.start_getting_wood": {
+    "index": 0,
+    "description": "minicraft.tutorial.start_getting_wood.desc",
     "criteria": {
-      "": {
+      "has_wood": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                ""
-              ],
-              "count": 1
+                "wood"
+              ]
             }
           ]
         }
       }
     }
-  }
-}
-
-{
-  "minicraft.quest.tutorial.get_started": {
-    "desc": "minicraft.quest.tutorial.get_started.desc",
-    "leads_to": ["minicraft.quest.tutorial.farming", "minicraft.quest.tutorial.underground"],
-    "quests": [
-      {
-        "id": "minicraft.quest.tutorial.get_started.kill_tree",
-        "desc": "minicraft.quest.tutorial.get_started.kill_tree.desc",
-        "leads_to": ["minicraft.quest.tutorial.get_started.craft_wooden_axe"],
-        "reward": {
-          "recipes": {
-            "Workbench_1": ["Wood_10"],
-            "Wood Axe_1": ["Wood_5"]
-          }
+  },
+  "minicraft.tutorial.getting_wood": {
+    "index": 1,
+    "description": "minicraft.tutorial.getting_wood.desc",
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ],
+              "count": {
+                "min": 10
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "minicraft.tutorial.getting_workbench": {
+    "index": 2,
+    "description": "minicraft.tutorial.getting_workbench.desc",
+    "criteria": {
+      "has_workbench": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "workbench"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "minicraft.tutorial.getting_wooden_pickaxe": {
+    "index": 3,
+    "description": "minicraft.tutorial.getting_wooden_pickaxe.desc",
+    "criteria": {
+      "has_wooden_pickaxe": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood pickaxe"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "minicraft.tutorial.getting_rocks": {
+    "index": 4,
+    "description": "minicraft.tutorial.getting_rocks.desc",
+    "criteria": {
+      "has_rock": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ],
+              "count": {
+                "min": 5
+              }
+            }
+          ]
         }
       },
-      {
-        "id": "minicraft.quest.tutorial.get_started.craft_wooden_axe",
-        "desc": "minicraft.quest.tutorial.get_started.craft_wooden_axe.desc",
-        "leads_to": ["minicraft.quest.tutorial.get_started.craft_wooden_pickaxe"],
-        "reward": {
-          "recipes": {
-            "Wood Pickaxe_1": ["Wood_5"]
-          }
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ],
+              "count": {
+                "min": 5
+              }
+            }
+          ]
         }
-      },
-      {
-        "id": "minicraft.quest.tutorial.get_started.craft_wooden_pickaxe",
-        "desc": "minicraft.quest.tutorial.get_started.craft_wooden_pickaxe.desc",
-        "leads_to": ["minicraft.quest.tutorial.get_started.break_rocks"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.get_started.break_rocks",
-        "desc": "minicraft.quest.tutorial.get_started.break_rocks.desc"
       }
-    ],
-    "unlocked": true
-  },
-  "minicraft.quest.tutorial.farming": {
-    "desc": "minicraft.quest.tutorial.farming.desc",
-    "quests": [
-      {
-        "id": "minicraft.quest.tutorial.farming.get_seeds",
-        "desc": "minicraft.quest.tutorial.farming.get_seeds.desc",
-        "leads_to": ["minicraft.quest.tutorial.farming.harvest"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.farming.harvest",
-        "desc": "minicraft.quest.tutorial.farming.harvest.desc"
-      }
-    ]
-  },
-  "minicraft.quest.tutorial.underground": {
-    "desc": "minicraft.quest.tutorial.underground.desc",
-    "quests": [
-      {
-        "id": "minicraft.quest.tutorial.underground.craft_stone_pickaxe",
-        "desc": "minicraft.quest.tutorial.underground.craft_stone_pickaxe.desc",
-        "leads_to": ["minicraft.quest.tutorial.underground.get_coal"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.underground.get_coal",
-        "desc": "minicraft.quest.tutorial.underground.get_coal.desc",
-        "leads_to": ["minicraft.quest.tutorial.underground.craft_torches"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.underground.craft_torches",
-        "desc": "minicraft.quest.tutorial.underground.craft_torches.desc",
-        "leads_to": ["minicraft.quest.tutorial.underground.get_iron_ore"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.underground.get_iron_ore",
-        "desc": "minicraft.quest.tutorial.underground.get_iron_ore.desc",
-        "leads_to": ["minicraft.quest.tutorial.underground.craft_furnace"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.underground.craft_furnace",
-        "desc": "minicraft.quest.tutorial.underground.craft_furnace.desc",
-        "leads_to": ["minicraft.quest.tutorial.underground.get_iron"]
-      },
-      {
-        "id": "minicraft.quest.tutorial.underground.get_iron",
-        "desc": "minicraft.quest.tutorial.underground.get_iron.desc"
-      }
-    ]
+    }
   }
 }
