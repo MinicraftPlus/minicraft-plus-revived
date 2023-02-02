@@ -1,7 +1,7 @@
 {
   "minicraft.tutorial.start_getting_wood": {
     "index": 0,
-    "description": "minicraft.tutorial.start_getting_wood.desc",
+    "description": "minicraft.tutorial.start_getting_wood.description",
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -19,7 +19,7 @@
   },
   "minicraft.tutorial.getting_wood": {
     "index": 1,
-    "description": "minicraft.tutorial.getting_wood.desc",
+    "description": "minicraft.tutorial.getting_wood.description",
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -40,7 +40,7 @@
   },
   "minicraft.tutorial.getting_workbench": {
     "index": 2,
-    "description": "minicraft.tutorial.getting_workbench.desc",
+    "description": "minicraft.tutorial.getting_workbench.description",
     "criteria": {
       "has_workbench": {
         "trigger": "inventory_changed",
@@ -58,7 +58,7 @@
   },
   "minicraft.tutorial.getting_wooden_pickaxe": {
     "index": 3,
-    "description": "minicraft.tutorial.getting_wooden_pickaxe.desc",
+    "description": "minicraft.tutorial.getting_wooden_pickaxe.description",
     "criteria": {
       "has_wooden_pickaxe": {
         "trigger": "inventory_changed",
@@ -76,7 +76,7 @@
   },
   "minicraft.tutorial.getting_rocks": {
     "index": 4,
-    "description": "minicraft.tutorial.getting_rocks.desc",
+    "description": "minicraft.tutorial.getting_rocks.description",
     "criteria": {
       "has_rock": {
         "trigger": "inventory_changed",
