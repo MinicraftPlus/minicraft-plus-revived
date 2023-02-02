@@ -459,7 +459,7 @@ public class Load {
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
-		Settings.set("fps", json.getInt("fps"));
+		Settings.set("fps", json.getString("fps"));
 		Settings.set("showquests", json.optBoolean("showquests", true));
 
 		if (json.has("lang")) {
