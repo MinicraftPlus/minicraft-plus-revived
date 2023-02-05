@@ -126,7 +126,6 @@
   "minicraft.displays.key_input.title": "Controls",
   "minicraft.displays.language_settings.title": "Language...",
   "minicraft.displays.language_settings.popup_display.confirm_warning": "Warning: %d%% of the text is not translated.",
-  "minicraft.displays.language_settings.popup_display.debug_display": "SHIFT-ENTER to debug localization",
   "minicraft.displays.language_settings.debug_popup_display": "Unlocalized localization keys",
   "minicraft.displays.language_settings.debug_popup_display.counting": "%d entries",
   "minicraft.displays.language_settings.display.accuracy": "(Language translations may not be 100%% accurate)",

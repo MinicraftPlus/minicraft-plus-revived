@@ -1,13 +1,10 @@
 package minicraft.screen;
 
-import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.Insets;
 import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -18,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,40 +67,6 @@ public class LanguageSettingsDisplay extends Display {
 		int cur = Localization.getNumMatchedLocalization(locale.locale);
 		if (cur < total) { // Not fully translated.
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
-			if (Game.debug)
-				callbacks.add(new PopupDisplay.PopupActionCallback("shift-enter", popup -> {
-					ArrayList<ListEntry> entries = new ArrayList<>();
-					Set<String> keys  = Localization.getUnlocalizedKeys(locale.locale);
-					keys.forEach(key -> entries.add(new SelectEntry(key, () -> {}, false)));
-					Game.setDisplay(new Display(new Menu.Builder(false, 2, RelPos.CENTER, entries)
-						.setPositioning(new Point(Screen.w/2, Screen.h/2), RelPos.CENTER)
-						.setDisplayLength(10)
-						.createMenu()) {
-						private final Menu frame;
-
-						{
-							Insets border = new Insets(8, 16, 8, 8);
-							Rectangle bounds = border.addTo(menus[0].getBounds());
-							bounds.setSize(bounds.getWidth(), bounds.getHeight() + 10, RelPos.BOTTOM);
-							frame = new Menu.Builder(true, 0, RelPos.CENTER,
-								new StringEntry(Localization.getLocalized("minicraft.displays.language_settings.debug_popup_display.counting", entries.size()),
-									Color.tint(Color.GRAY, 1, true), false))
-								.setBounds(bounds)
-								.setTitle("minicraft.displays.language_settings.debug_popup_display")
-								.createMenu();
-						}
-
-						@Override
-						public void render(Screen screen) {
-							getParent().render(screen);
-							frame.render(screen);
-							for (Menu menu : menus)
-								menu.render(screen);
-						}
-					});
-					return true;
-				}));
-
 			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 				Localization.changeLanguage(locale.locale);
 				executorService.submit(() -> {
@@ -120,8 +82,6 @@ public class LanguageSettingsDisplay extends Display {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			Collections.addAll(entries, StringEntry.useLines(Color.RED, false,
 				Localization.getLocalized("minicraft.displays.language_settings.popup_display.confirm_warning", (total - cur)*100 / total)));
-			if (Game.debug) Collections.addAll(entries, StringEntry.useLines(Color.GRAY,
-				"minicraft.displays.language_settings.popup_display.debug_display"));
 			Collections.addAll(entries, StringEntry.useLines(Color.RED,
 				"minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"));
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig("minicraft.display.popup.title_confirm",
