@@ -414,7 +414,7 @@ public class Renderer extends Game {
 			QuestSeries series = q.getSeries();
 
 			questsShown.add(!expanding?
-				new StringEntry(q.key, Color.WHITE, false):
+				new StringEntry(Localization.getLocalized(q.key), Color.WHITE, false):
 				new StringEntry(q.shouldAllCriteriaBeCompleted() && q.getTotalNumCriteria() > 1 ?
 					String.format("%s (%d/%d)", Localization.getLocalized(series.key),  q.getNumCriteriaCompleted(), q.getTotalNumCriteria()) :
 					Localization.getLocalized(series.key), Color.WHITE, false)
