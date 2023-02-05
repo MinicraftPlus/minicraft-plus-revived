@@ -32,12 +32,19 @@ public class Quest extends AdvancementElement {
 	@Override
 	protected boolean isUnlockable() {
 		if (unlocked) return true;
+		if (!series.unlocked) return false;
 		Quest parent = getParent();
 		return super.isUnlockable() && (parent == null || parent.isCompleted());
 	}
 
 	@Override
 	public void update() {
+		super.update();
+		series.update();
+		QuestsDisplay.refreshDisplayableQuests();
+	}
+
+	private void update0() {
 		super.update();
 		QuestsDisplay.refreshDisplayableQuests();
 	}
@@ -64,6 +71,7 @@ public class Quest extends AdvancementElement {
 		@Override
 		public void update() {
 			super.update();
+			quests.values().forEach(Quest::update0);
 			QuestsDisplay.refreshDisplayableQuests();
 		}
 	}

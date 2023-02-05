@@ -11,6 +11,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.util.AdvancementElement;
 
 public class GrassTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
@@ -50,21 +51,29 @@ public class GrassTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) == 0) { // 20% chance to drop Grass seeds
 						level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, Items.get("Grass Seeds"));
 					}
+					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
 						level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Wheat Seeds"));
 					}
+					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}

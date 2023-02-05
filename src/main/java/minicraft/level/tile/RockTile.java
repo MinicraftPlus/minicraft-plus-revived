@@ -19,6 +19,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.QuestsDisplay;
+import minicraft.util.AdvancementElement;
 
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
@@ -55,9 +56,13 @@ public class RockTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe && player.payStamina(5 - tool.level) && tool.payDurability()) {
+				int data = level.getData(xt, yt);
 				// Drop coal since we use a pickaxe.
 				dropCoal = true;
 				hurt(level, xt, yt, tool.getDamage());
+				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+						item, this, data, xt, yt, level.depth));
 				return true;
 			}
 		}

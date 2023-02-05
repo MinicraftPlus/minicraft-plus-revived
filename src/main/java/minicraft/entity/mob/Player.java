@@ -146,7 +146,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
 		inventory = new Inventory() { // Registering all triggers to InventoryChanged.
 			private void triggerTrigger() {
-				AdvancementElement.AdvancementTrigger.getTrigger("inventory_changed").trigger(
+				AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions(this)
 				);
 			}

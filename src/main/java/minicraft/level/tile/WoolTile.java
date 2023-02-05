@@ -11,6 +11,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.util.AdvancementElement;
 
 public class WoolTile extends Tile {
 
@@ -23,9 +24,13 @@ public class WoolTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shears) {
 				if (player.payStamina(3 - tool.level) && tool.payDurability()) {
+					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(name));
+					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}

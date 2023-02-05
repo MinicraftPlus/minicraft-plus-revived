@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.World;
@@ -29,6 +30,7 @@ import minicraft.util.Quest.QuestSeries;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +40,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiPredicate;
+import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
 
 public class QuestsDisplay extends Display {
@@ -146,10 +150,12 @@ public class QuestsDisplay extends Display {
 		}
 
 		HashMap<String, AdvancementElement.ElementCriterion> unlockingCriteria = new HashMap<>();
-		JSONObject unlockingCriteriaJson = json.getJSONObject("unlocking_criteria");
-		for (String k : unlockingCriteriaJson.keySet()) {
-			JSONObject criterion = unlockingCriteriaJson.getJSONObject(k);
-			unlockingCriteria.put(k, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
+		JSONObject unlockingCriteriaJson = json.optJSONObject("unlocking_criteria");
+		if (unlockingCriteriaJson != null) {
+			for (String k : unlockingCriteriaJson.keySet()) {
+				JSONObject criterion = unlockingCriteriaJson.getJSONObject(k);
+				unlockingCriteria.put(k, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
+			}
 		}
 
 		HashSet<HashSet<String>> unlockingRequirements = new HashSet<>();
@@ -319,9 +325,7 @@ public class QuestsDisplay extends Display {
 
 					// THIS LOOPS FOR EVERY PIXEL
 					for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
-						if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
 						for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
-							if (x + xp < 0 || x + xp >= w) continue; // Skip rest if out of bounds.
 							int col = sheet.pixels[toffs + x + y * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 							boolean isTransparent = (col >> 24 == 0);
 							if (!isTransparent) {
@@ -356,10 +360,10 @@ public class QuestsDisplay extends Display {
 				super(false, true);
 				menus = new Menu[] {
 					new Menu.Builder(true, 0, RelPos.CENTER, StringEntry.useLines("minicrat.displays.quests", series.key))
-						.setPositioning(new Point(Screen.w/2, 10), RelPos.BOTTOM)
+						.setPositioning(new Point(Screen.w/2, 6), RelPos.BOTTOM)
 						.createMenu(),
 					new Menu.Builder(true, 0, RelPos.CENTER)
-						.setPositioning(new Point(Screen.w/2, 25), RelPos.BOTTOM)
+						.setPositioning(new Point(Screen.w/2, 40), RelPos.BOTTOM)
 						.setSize(Screen.w - 16, Screen.h - 60)
 						.createMenu()
 				};
@@ -434,13 +438,13 @@ public class QuestsDisplay extends Display {
 					if (input.getKey("shift").down) { // Browsing mode.
 						inBrowsing = true;
 						if (input.getKey("shift-down").clicked)
-							yScroll++;
+							yScroll += 3;
 						else if (input.getKey("shift-up").clicked)
-							yScroll--;
+							yScroll -= 3;
 						else if (input.getKey("shift-right").clicked)
-							xScroll++;
+							xScroll += 3;
 						else if (input.getKey("shift-left").clicked)
-							xScroll--;
+							xScroll -= 3;
 					} else {
 						if (inBrowsing) {
 							scrollIfNeeded();
@@ -485,8 +489,7 @@ public class QuestsDisplay extends Display {
 			private void scrollIfNeeded() {
 				if (xScroll > treeDimensions[cursorY][cursorX].getLeft() - entryGap)
 					xScroll = treeDimensions[cursorY][cursorX].getLeft() - entryGap;
-				else if (treeDimensions[cursorY][cursorX].getWidth() + entryGap*2 <= rasterWidth && // Preventing tearing.
-					xScroll + rasterWidth < treeDimensions[cursorY][cursorX].getRight() + entryGap)
+				else if (xScroll + rasterWidth < treeDimensions[cursorY][cursorX].getRight() + entryGap)
 					xScroll = treeDimensions[cursorY][cursorX].getRight() + entryGap - rasterWidth;
 
 				if (yScroll > treeDimensions[cursorY][cursorX].getTop() - entryGap)
@@ -519,6 +522,13 @@ public class QuestsDisplay extends Display {
 			}
 
 			private void renderRaster() {
+				if (questsTree.length == 0) {
+					String text = Localization.getLocalized("minicraft.displays.quests.display.no_quest");
+					Font.draw(text, simulatedRasterScreen, xScroll + rasterWidth/2 - Font.textWidth(text)/2,
+						yScroll + rasterHeight/2 - Font.textHeight()/2, Color.GRAY);
+					return;
+				}
+
 				// Tree relations.
 				for (int r = 0; r < questsTree.length; r++) {
 					for (int c = 0; c < questsTree[r].length; c++) {
@@ -546,16 +556,19 @@ public class QuestsDisplay extends Display {
 						}
 
 						// Parent is always higher than this.
-						Point p0 = rec.getCenter();
-						Point p1 = parentRec.getCenter();
+						Point p0 = parentRec.getCenter();
+						Point p1 = rec.getCenter();
+						int x0 = p0.x;
+						int x1 = p1.x;
+						int y0 = p0.y;
+						int y1 = p1.y;
 						boolean selected = c == cursorX && r == cursorY;
 						boolean parentSelected = parentX == cursorX && parentY == cursorY;
 						int color = selected ? Color.CYAN : parentSelected ? Color.GREEN : Color.tint(Color.GRAY, -1, true);
-						double m = ((double) p0.y-p1.y)/(p0.x-p1.x);
-						for (int y = parentRec.getBottom(); y < rec.getTop(); y++) {
-							int x = (int) Math.round((p0.y-m*p0.x-y)/-m); // Linear equation.
-							renderRasterPixel(x, y, color);
-						}
+
+						// Bresenham's line algorithm
+						Rectangle finalParentRec = parentRec;
+						plotLine(x0, y0, x1, y1, yy -> yy >= finalParentRec.getBottom() && yy <= rec.getTop(), color);
 					}
 				}
 
@@ -568,12 +581,14 @@ public class QuestsDisplay extends Display {
 						int y = rec.getTop();
 						boolean selected = c == cursorX && r == cursorY;
 						Font.draw(Localization.getLocalized(quest.key), simulatedRasterScreen, x + entryPadding, y + entryPadding,
-							selected ? Color.WHITE : Color.tint(Color.GRAY, 1, true));
+							selected ? (quest.isCompleted() ? Color.tint(Color.GREEN, 1, true) :
+								Color.WHITE) : Color.tint(Color.GRAY, 1, true));
 						for (int i = 0; i < rec.getWidth(); i++) { // Border.
 							for (int j = 0; j < rec.getHeight(); j++) {
 								if (i == 0 || i == rec.getWidth() - 1 || j == 0 || j == rec.getHeight() - 1)
 									renderRasterPixel(x + i, y + j,
-										selected ? Color.tint(Color.GRAY, 2, true) : Color.GRAY);
+										selected ? (quest.isCompleted() ? Color.tint(Color.GREEN, -1, true) :
+											Color.tint(Color.GRAY, 2, true)) : Color.GRAY);
 							}
 						}
 					}
@@ -584,6 +599,61 @@ public class QuestsDisplay extends Display {
 				y -= yScroll;
 				if (x < 0 || x >= rasterWidth || y < 0 || y >= rasterHeight) return; // Out of bounds.
 				rasterPixels[x + y * rasterWidth] = color;
+			}
+
+			// Parts of Bresenham's line algorithm
+			void plotLineLow(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
+				int dx = x1 - x0;
+				int dy = y1 - y0;
+				int yi = 1;
+				if (dy < 0) {
+					yi = -1;
+					dy = -dy;
+				}
+				int D = (2 * dy) - dx;
+				int y = y0;
+
+				for (int x = x0; x <= x1; x++) {
+					if (yRange.test(y)) renderRasterPixel(x, y, color);
+					if (D > 0) {
+						y = y + yi;
+						D = D + (2 * (dy - dx));
+					} else
+						D = D + 2*dy;
+				}
+			}
+			void plotLineHigh(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
+				int dx = x1 - x0;
+				int dy = y1 - y0;
+				int xi = 1;
+				if (dx < 0) {
+					xi = -1;
+					dx = -dx;
+				}
+				int D = (2 * dx) - dy;
+				int x = x0;
+
+				for (int y = y0; y <= y1; y++) {
+					if (yRange.test(y)) renderRasterPixel(x, y, color);
+					if (D > 0) {
+						x = x + xi;
+						D = D + (2 * (dx - dy));
+					} else
+						D = D + 2*dx;
+				}
+			}
+			void plotLine(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
+				if (Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
+					if (x0 > x1)
+						plotLineLow(x1, y1, x0, y0, yRange, color);
+					else
+						plotLineLow(x0, y0, x1, y1, yRange, color);
+				} else {
+					if (y0 > y1)
+						plotLineHigh(x1, y1, x0, y0, yRange, color);
+					else
+						plotLineHigh(x0, y0, x1, y1, yRange, color);
+				}
 			}
 
 			private static class QuestInformationDisplay extends Display {
@@ -603,7 +673,7 @@ public class QuestsDisplay extends Display {
 							.createMenu(),
 						new Menu.Builder(true, 2, RelPos.CENTER,
 							StringEntry.useLines(Localization.getLocalized(quest.description)))
-							.setPositioning(new Point(Screen.w / 2, 40), RelPos.BOTTOM)
+							.setPositioning(new Point(Screen.w / 2, 52), RelPos.BOTTOM)
 							.setSelectable(false)
 							.createMenu()
 					};

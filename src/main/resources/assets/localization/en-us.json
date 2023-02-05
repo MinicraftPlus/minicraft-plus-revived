@@ -109,7 +109,7 @@
   "minicraft.displays.quests": "Quests",
   "minicraft.displays.quests.display.header.completed": "Completed",
   "minicraft.displays.quests.display.header.unlocked": "Unlocked",
-  "minicraft.displays.quests.display.no_quest_desc": "No quest",
+  "minicraft.displays.quests.display.no_quest": "No quest unlocked",
   "minicraft.displays.resource_packs.display.help.move": "Use %s and %s to move.",
   "minicraft.displays.resource_packs.display.help.select": "%s to examine.",
   "minicraft.displays.resource_packs.display.help.position": "SHIFT-[LEFT|RIGHT|UP|DOWN] to move packs. ",

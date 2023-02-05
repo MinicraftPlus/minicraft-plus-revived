@@ -8,6 +8,7 @@ import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
+import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.screen.CraftingDisplay;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -172,6 +172,7 @@ public class AdvancementElement {
 		this.rewards = rewards;
 		this.requirements.addAll(requirements);
 		this.unlockingCriteria.putAll(unlockingCriteria);
+		this.unlockingCriteria.forEach((k, criterion) -> criterion.element = this);
 		this.unlockingRequirements.addAll(unlockingRequirements);
 	}
 
@@ -196,6 +197,7 @@ public class AdvancementElement {
 			return completionTime != null;
 		}
 
+		@SuppressWarnings("unused")
 		public @Nullable LocalDateTime getCompletionTime() {
 			return completionTime;
 		}
@@ -314,8 +316,7 @@ public class AdvancementElement {
 
 	/** Updating and refreshing by the data in this element. */
 	public void update() {
-		if (isUnlockable())
-			registerUnlockingCriteria();
+		registerUnlockingCriteria();
 
 		if (!unlocked) {
 			unlocked = checkIsUnlocked();
@@ -432,18 +433,18 @@ public class AdvancementElement {
 		}
 
 		private static final HashMap<String, AdvancementTrigger> triggers = new HashMap<>();
-		@SuppressWarnings("StaticInitializerReferencesSubClass")
-		private static final AdvancementTrigger IMPOSSIBLE_TRIGGER = new ImpossibleTrigger();
 
 		static {
-			triggers.put("impossible", IMPOSSIBLE_TRIGGER);
+			triggers.put("impossible", ImpossibleTrigger.INSTANCE);
+			triggers.put("inventory_changed", InventoryChangedTrigger.INSTANCE);
+			triggers.put("placed_tile", PlacedTileTrigger.INSTANCE);
 			//noinspection StaticInitializerReferencesSubClass
-			triggers.put("inventory_changed", new InventoryChangedTrigger());
+			triggers.put("item_used_on_tile", ItemUsedOnTileTrigger.INSTANCE);
 		}
 
 		@NotNull
 		public static AdvancementElement.AdvancementTrigger getTrigger(String key) {
-			return triggers.getOrDefault(key, AdvancementTrigger.IMPOSSIBLE_TRIGGER);
+			return triggers.getOrDefault(key, ImpossibleTrigger.INSTANCE);
 		}
 
 		protected final HashSet<ElementCriterion> registeredCriteria = new HashSet<>();
@@ -460,7 +461,7 @@ public class AdvancementElement {
 
 		/** @return {@code true} if this trigger implementation requires single thread as the global game tick updater. */
 		protected boolean singleThreadNeeded() {
-			return false;
+			return true;
 		}
 
 		/** Triggering and checking passes by another thread. */
@@ -486,10 +487,178 @@ public class AdvancementElement {
 
 			public abstract static class AdvancementCriterionConditions {
 				protected AdvancementCriterionConditions() {}
+
+				public static class Rangeable<T extends Number & Comparable<T>> {
+					public final @Nullable T min;
+					public final @Nullable T max;
+					public Rangeable(@Nullable T min, @Nullable T max) {
+						this.min = min;
+						this.max = max;
+					}
+
+					@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+					public static boolean isAbsent(@Nullable Rangeable<?> rangeable) {
+						if (rangeable == null) return true;
+						return rangeable.min == null && rangeable.max == null;
+					}
+
+					@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+					private boolean inRange(T value) {
+						if (min == null && max == null) return true; // The range is not ranged.
+						if (min == null) return max.compareTo(value) >= 0;
+						if (max == null) return min.compareTo(value) <= 0;
+						return max.compareTo(value) >= 0 && min.compareTo(value) <= 0;
+					}
+
+					@Override
+					public String toString() {
+						return isAbsent(this) ? "<unspecified range>" :
+							min == null ? "max: " + max :
+							max == null ? "min: " + min :
+							String.format("min: %s;max: %s", min, max);
+					}
+				}
+
+				public static class ItemConditions {
+					private final HashSet<String> items = new HashSet<>();
+					private final @Nullable Rangeable<Integer> count;
+					private final @Nullable Rangeable<Integer> durability;
+					private ItemConditions(Set<String> items, @Nullable Rangeable<Integer> count, @Nullable Rangeable<Integer> durability) {
+						this.items.addAll(items);
+						this.count = count;
+						this.durability = durability;
+					}
+
+					/**
+					 * @param json The JSON object by the {@code item} key.
+					 * @return {@code null} if the object is {@code null}.
+					 */
+					private static ItemConditions getFromJson(JSONObject json) {
+						if (json == null) return null;
+						HashSet<String> items = new HashSet<>();
+						Rangeable<Integer> count = null;
+						Rangeable<Integer> durability = null;
+						JSONArray itemItemsJson = json.optJSONArray("items");
+						if (itemItemsJson != null) for (int j = 0; j < itemItemsJson.length(); j++) {
+							items.add(itemItemsJson.getString(j));
+						}
+
+						if (json.has("count")) try {
+							int val = json.getInt("count");
+							count = new Rangeable<>(val, val);
+						} catch (JSONException e) { // Not an integer.
+							JSONObject val = json.getJSONObject("count");
+							count = new Rangeable<>(val.has("min") ? val.getInt("min") : null,
+								val.has("max") ? val.getInt("max") : null);
+						}
+
+						if (json.has("durability")) try {
+							int val = json.getInt("durability");
+							durability = new Rangeable<>(val, val);
+						} catch (JSONException e) { // Not an integer.
+							JSONObject val = json.getJSONObject("durability");
+							durability = new Rangeable<>(val.has("min") ? val.getInt("min") : null,
+								val.has("max") ? val.getInt("max") : null);
+						}
+
+						return new ItemConditions(items, count, durability);
+					}
+
+					@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+					private boolean matches(Item item) {
+						if (!Rangeable.isAbsent(count))
+							if (!count.inRange(item instanceof StackableItem ? ((StackableItem) item).count : 1))
+								return false;
+						if (!Rangeable.isAbsent(durability) && item instanceof ToolItem)
+							if (!durability.inRange(((ToolItem) item).dur))
+								return false;
+						return items.isEmpty() || items.stream().anyMatch(s -> s.equalsIgnoreCase(item.getName()));
+					}
+				}
+
+				/** Tile location. */
+				public static class LocationConditions {
+					private final HashSet<String> tiles = new HashSet<>();
+					private final @Nullable Integer level;
+					private final @Nullable Integer data;
+					private final @Nullable Rangeable<Double> x;
+					private final @Nullable Rangeable<Double> y;
+
+					private LocationConditions(Set<String> tiles, @Nullable Integer level, @Nullable Integer data,
+											   @Nullable Rangeable<Double> x, @Nullable Rangeable<Double> y) {
+						this.tiles.addAll(tiles);
+						this.level = level;
+						this.data = data;
+						this.x = x;
+						this.y = y;
+					}
+
+					private static LocationConditions getFromJson(JSONObject json) {
+						if (json == null) return null;
+						HashSet<String> tiles = new HashSet<>();
+						Integer level = null;
+						Integer data = null;
+						Rangeable<Double> x = null;
+						Rangeable<Double> y = null;
+						JSONObject tileJson = json.optJSONObject("tile");
+						if (tileJson != null) {
+							JSONArray tilesJson = tileJson.optJSONArray("tiles");
+							if (tilesJson != null) for (int j = 0; j < tilesJson.length(); j++) {
+								tiles.add(tilesJson.getString(j));
+							}
+
+							try {
+								data = tileJson.getInt("data");
+							} catch (JSONException ignored) {}
+						}
+
+						try {
+							level = json.getInt("level");
+						} catch (JSONException ignored) {}
+
+						JSONObject positionJson = json.optJSONObject("position");
+						if (json.has("x")) try {
+							double val = positionJson.getDouble("x");
+							x = new Rangeable<>(val, val);
+						} catch (JSONException e) { // Not an integer.
+							JSONObject val = positionJson.getJSONObject("x");
+							x = new Rangeable<>(val.has("min") ? val.getDouble("min") : null,
+								val.has("max") ? val.getDouble("max") : null);
+						}
+
+						if (json.has("y")) try {
+							double val = positionJson.getDouble("y");
+							y = new Rangeable<>(val, val);
+						} catch (JSONException e) { // Not an integer.
+							JSONObject val = positionJson.getJSONObject("y");
+							y = new Rangeable<>(val.has("min") ? val.getDouble("min") : null,
+								val.has("max") ? val.getDouble("max") : null);
+						}
+
+						return new LocationConditions(tiles, level, data, x, y);
+					}
+
+					@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+					private boolean matches(Tile tile, int data, int x, int y, int level) {
+						if (this.level != null && !this.level.equals(level))
+							return false;
+						if (this.data != null && !this.data.equals(data))
+							return false;
+						if (!Rangeable.isAbsent(this.x))
+							if (!this.x.inRange((double) x))
+								return false;
+						if (!Rangeable.isAbsent(this.y))
+							if (!this.y.inRange((double) y))
+								return false;
+						return tiles.isEmpty() || tiles.stream().anyMatch(s -> s.equalsIgnoreCase(tile.name));
+					}
+				}
 			}
 		}
 
 		public static class ImpossibleTrigger extends AdvancementTrigger {
+			public static final ImpossibleTrigger INSTANCE = new ImpossibleTrigger();
+
 			protected ImpossibleTrigger() {
 				super(new ImpossibleTriggerConditionHandler());
 			}
@@ -510,8 +679,15 @@ public class AdvancementElement {
 		}
 
 		public static class InventoryChangedTrigger extends AdvancementTrigger {
+			public static final InventoryChangedTrigger INSTANCE = new InventoryChangedTrigger();
+
 			protected InventoryChangedTrigger() {
 				super(new InventoryChangedTriggerConditionHandler());
+			}
+
+			@Override
+			protected boolean singleThreadNeeded() {
+				return false;
 			}
 
 			@Override
@@ -523,17 +699,17 @@ public class AdvancementElement {
 						if (criterion.conditions instanceof InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions) {
 							InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions criterionConditions =
 								(InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions) criterion.conditions;
-							if (!InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsEmpty))
+							if (!AdvancementTriggerConditionHandler.AdvancementCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsEmpty))
 								if (!criterionConditions.slotsEmpty.inRange(maxSlots - items.size()))
 									continue;
-							if (!InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsFull))
+							if (!AdvancementTriggerConditionHandler.AdvancementCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsFull))
 								if (!criterionConditions.slotsFull.inRange((int) items.stream().filter(i ->
 									!(i instanceof StackableItem) || ((StackableItem) i).count >= ((StackableItem) i).maxCount).count()))
 									continue;
-							if (!InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsOccupied))
+							if (!AdvancementTriggerConditionHandler.AdvancementCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsOccupied))
 								if (!criterionConditions.slotsOccupied.inRange(items.size()))
 									continue;
-							if (!criterionConditions.items.isEmpty() && !isConditionalMatch(items, criterionConditions.items)) {
+							if (!criterionConditions.items.isEmpty() && !isConditionalMatched(items, criterionConditions.items)) {
 								continue;
 							}
 							pendingCompletedCriteria.add(criterion); // All conditions passed.
@@ -543,8 +719,8 @@ public class AdvancementElement {
 			}
 
 			/** Modified from {@link #test(List, List)}. */
-			private static boolean isConditionalMatch(ArrayList<Item> items,
-													  HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
+			private static boolean isConditionalMatched(ArrayList<Item> items,
+														HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
 				Set<HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String>> combinations = new HashSet<>();
 				List<List<String>> combinationsOutput = new ArrayList<>();
 				List<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> conditionsList = new ArrayList<>();
@@ -576,15 +752,10 @@ public class AdvancementElement {
 			}
 
 			/** Used by {@link #allMatch(Collection, Collection, HashMap)} for conditional check for each element. */
-			private static boolean isMatch(Item item, InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions itemConditions,
-										   @Nullable String selectedItem) {
-				if (!InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.Rangeable.isAbsent(itemConditions.count))
-					if (!itemConditions.count.inRange(item instanceof StackableItem ? ((StackableItem) item).count : 1))
-						return false;
-				if (!InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.Rangeable.isAbsent(itemConditions.durability) &&
-					item instanceof ToolItem)
-					if (!itemConditions.durability.inRange(((ToolItem) item).dur))
-						return false;
+			private static boolean isMatched(Item item, InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions itemConditions,
+											 @Nullable String selectedItem) {
+				if (!itemConditions.matches(item))
+					return false;
 				return selectedItem == null || item.getName().equalsIgnoreCase(selectedItem);
 			}
 
@@ -592,7 +763,7 @@ public class AdvancementElement {
 			private static boolean allMatch(Collection<Item> source, Collection<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> target,
 											HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> selectedItems) {
 				for (Item e : source) {
-					target.removeIf(conditions1 -> isMatch(e, conditions1, selectedItems.get(conditions1)));
+					target.removeIf(conditions1 -> isMatched(e, conditions1, selectedItems.get(conditions1)));
 					if (target.isEmpty()) {
 						return true;
 					}
@@ -652,44 +823,16 @@ public class AdvancementElement {
 			}
 
 			public static class InventoryChangedTriggerConditionHandler extends AdvancementTriggerConditionHandler {
-
 				@Override
-				public @NotNull AdvancementElement.AdvancementTrigger.AdvancementTriggerConditionHandler.AdvancementCriterionConditions createCriterionConditions(JSONObject json) throws JSONException {
+				public @NotNull AdvancementCriterionConditions createCriterionConditions(JSONObject json) throws JSONException {
 					HashSet<InventoryChangedCriterionConditions.ItemConditions> items = new HashSet<>();
-					InventoryChangedCriterionConditions.Rangeable slotsEmpty = null;
-					InventoryChangedCriterionConditions.Rangeable slotsFull = null;
-					InventoryChangedCriterionConditions.Rangeable slotsOccupied = null;
+					InventoryChangedCriterionConditions.Rangeable<Integer> slotsEmpty = null;
+					InventoryChangedCriterionConditions.Rangeable<Integer> slotsFull = null;
+					InventoryChangedCriterionConditions.Rangeable<Integer> slotsOccupied = null;
 					JSONArray itemsJson = json.optJSONArray("items");
 					if (itemsJson != null) {
 						for (int i = 0; i < itemsJson.length(); i++) {
-							JSONObject obj = itemsJson.getJSONObject(i);
-							HashSet<String> itemItems = new HashSet<>();
-							InventoryChangedCriterionConditions.Rangeable count = null;
-							InventoryChangedCriterionConditions.Rangeable durability = null;
-							JSONArray itemItemsJson = obj.optJSONArray("items");
-							if (itemItemsJson != null) for (int j = 0; j < itemItemsJson.length(); j++) {
-								itemItems.add(itemItemsJson.getString(j));
-							}
-
-							if (obj.has("count")) try {
-								int val = obj.getInt("count");
-								count = new InventoryChangedCriterionConditions.Rangeable(val, val);
-							} catch (JSONException e) { // Not an integer.
-								JSONObject val = obj.getJSONObject("count");
-								count = new InventoryChangedCriterionConditions.Rangeable(val.has("min") ? val.getInt("min") : null,
-									val.has("max") ? val.getInt("max") : null);
-							}
-
-							if (obj.has("durability")) try {
-								int val = obj.getInt("durability");
-								durability = new InventoryChangedCriterionConditions.Rangeable(val, val);
-							} catch (JSONException e) { // Not an integer.
-								JSONObject val = obj.getJSONObject("durability");
-								durability = new InventoryChangedCriterionConditions.Rangeable(val.has("min") ? val.getInt("min") : null,
-									val.has("max") ? val.getInt("max") : null);
-							}
-
-							items.add(new InventoryChangedCriterionConditions.ItemConditions(itemItems, count, durability));
+							items.add(InventoryChangedCriterionConditions.ItemConditions.getFromJson(itemsJson.getJSONObject(i)));
 						}
 					}
 
@@ -697,28 +840,28 @@ public class AdvancementElement {
 					if (slotsJson != null) {
 						if (slotsJson.has("empty")) try {
 							int val = slotsJson.getInt("empty");
-							slotsEmpty = new InventoryChangedCriterionConditions.Rangeable(val, val);
+							slotsEmpty = new InventoryChangedCriterionConditions.Rangeable<>(val, val);
 						} catch (JSONException e) { // Not an integer.
 							JSONObject val = slotsJson.getJSONObject("empty");
-							slotsEmpty = new InventoryChangedCriterionConditions.Rangeable(val.has("min") ? val.getInt("min") : null,
+							slotsEmpty = new InventoryChangedCriterionConditions.Rangeable<>(val.has("min") ? val.getInt("min") : null,
 								val.has("max") ? val.getInt("max") : null);
 						}
 
 						if (slotsJson.has("full")) try {
 							int val = slotsJson.getInt("full");
-							slotsFull = new InventoryChangedCriterionConditions.Rangeable(val, val);
+							slotsFull = new InventoryChangedCriterionConditions.Rangeable<>(val, val);
 						} catch (JSONException e) { // Not an integer.
 							JSONObject val = slotsJson.getJSONObject("full");
-							slotsFull = new InventoryChangedCriterionConditions.Rangeable(val.has("min") ? val.getInt("min") : null,
+							slotsFull = new InventoryChangedCriterionConditions.Rangeable<>(val.has("min") ? val.getInt("min") : null,
 								val.has("max") ? val.getInt("max") : null);
 						}
 
 						if (slotsJson.has("occupied")) try {
 							int val = slotsJson.getInt("occupied");
-							slotsOccupied = new InventoryChangedCriterionConditions.Rangeable(val, val);
+							slotsOccupied = new InventoryChangedCriterionConditions.Rangeable<>(val, val);
 						} catch (JSONException e) { // Not an integer.
 							JSONObject val = slotsJson.getJSONObject("occupied");
-							slotsOccupied = new InventoryChangedCriterionConditions.Rangeable(val.has("min") ? val.getInt("min") : null,
+							slotsOccupied = new InventoryChangedCriterionConditions.Rangeable<>(val.has("min") ? val.getInt("min") : null,
 								val.has("max") ? val.getInt("max") : null);
 						}
 					}
@@ -737,58 +880,170 @@ public class AdvancementElement {
 				}
 
 				public static class InventoryChangedCriterionConditions extends AdvancementCriterionConditions {
-					public static class Rangeable {
-						public final @Nullable Integer min;
-						public final @Nullable Integer max;
-						public Rangeable(@Nullable Integer min, @Nullable Integer max) {
-							this.min = min;
-							this.max = max;
-						}
-
-						@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-						public static boolean isAbsent(@Nullable Rangeable rangeable) {
-							if (rangeable == null) return true;
-							return rangeable.min == null && rangeable.max == null;
-						}
-
-						@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-						public boolean inRange(int value) {
-							if (min == null && max == null) return true; // The range is not ranged.
-							if (min == null) return max >= value;
-							if (max == null) return min <= value;
-							return max >= value && min <= value;
-						}
-
-						@Override
-						public String toString() {
-							return isAbsent(this) ? "<unspecified range>" :
-								min == null ? "max: " + max :
-								max == null ? "min: " + min :
-								String.format("min: %d;max: %d", min, max);
-						}
-					}
-
-					private static class ItemConditions {
-						private final HashSet<String> items = new HashSet<>();
-						private final @Nullable Rangeable count;
-						private final @Nullable Rangeable durability;
-						private ItemConditions(Set<String> items, @Nullable Rangeable count, @Nullable Rangeable durability) {
-							this.items.addAll(items);
-							this.count = count;
-							this.durability = durability;
-						}
-					}
-
 					private final HashSet<ItemConditions> items = new HashSet<>();
-					private final @Nullable Rangeable slotsEmpty;
-					private final @Nullable Rangeable slotsFull;
-					private final @Nullable Rangeable slotsOccupied;
-					private InventoryChangedCriterionConditions(Set<ItemConditions> items, @Nullable Rangeable slotsEmpty,
-																@Nullable Rangeable slotsFull, @Nullable Rangeable slotsOccupied) {
+					private final @Nullable Rangeable<Integer> slotsEmpty;
+					private final @Nullable Rangeable<Integer> slotsFull;
+					private final @Nullable Rangeable<Integer> slotsOccupied;
+					private InventoryChangedCriterionConditions(Set<ItemConditions> items, @Nullable Rangeable<Integer> slotsEmpty,
+																@Nullable Rangeable<Integer> slotsFull, @Nullable Rangeable<Integer> slotsOccupied) {
 						this.items.addAll(items);
 						this.slotsEmpty = slotsEmpty;
 						this.slotsFull = slotsFull;
 						this.slotsOccupied = slotsOccupied;
+					}
+				}
+			}
+		}
+
+		public static class PlacedTileTrigger extends AdvancementTrigger {
+			public static final PlacedTileTrigger INSTANCE = new PlacedTileTrigger();
+
+			protected PlacedTileTrigger() {
+				super(new PlacedTileTriggerConditionHandler());
+			}
+
+			@Override
+			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
+				if (conditions instanceof PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) {
+					Item item = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).item;
+					Tile tile = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).tile;
+					int data = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).data;
+					int x = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).x;
+					int y = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).y;
+					int level = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).level;
+					for (ElementCriterion criterion : new HashSet<>(registeredCriteria)) {
+						if (criterion.conditions instanceof PlacedTileTriggerConditionHandler.PlacedTileCriterionConditions) {
+							PlacedTileTriggerConditionHandler.PlacedTileCriterionConditions criterionConditions =
+								(PlacedTileTriggerConditionHandler.PlacedTileCriterionConditions) criterion.conditions;
+							if (criterionConditions.tile != null && !criterionConditions.tile.equalsIgnoreCase(tile.name))
+								continue;
+							if (criterionConditions.item != null && !criterionConditions.item.matches(item))
+								continue;
+							if (criterionConditions.location != null && !criterionConditions.location.matches(tile, data, x, y, level))
+								continue;
+							if (criterionConditions.data != null && !criterionConditions.data.equals(data))
+								continue;
+							criterion.markAsCompleted(false, null); // All conditions passed.
+						}
+					}
+				}
+			}
+
+			public static class PlacedTileTriggerConditionHandler extends AdvancementTriggerConditionHandler {
+				@Override
+				public @NotNull AdvancementCriterionConditions createCriterionConditions(JSONObject json) throws JSONException {
+					String tile = json.optString("tile", null);
+					AdvancementCriterionConditions.ItemConditions item =
+						AdvancementCriterionConditions.ItemConditions.getFromJson(json.optJSONObject("item"));
+					AdvancementCriterionConditions.LocationConditions location =
+						AdvancementCriterionConditions.LocationConditions.getFromJson(json.optJSONObject("location"));
+					Integer data = null;
+					try {
+						data = json.getInt("data");
+					} catch (JSONException ignored) {}
+					return new PlacedTileCriterionConditions(tile, item, location, data);
+				}
+
+				public static class PlacedTileTriggerConditions extends AdvancementTriggerConditions {
+					private final Item item;
+					private final Tile tile;
+					private final int data;
+					private final int x;
+					private final int y;
+					private final int level;
+
+					public PlacedTileTriggerConditions(Item item, Tile tile, int data, int x, int y, int level) {
+						this.item = item;
+						this.tile = tile;
+						this.data = data;
+						this.x = x;
+						this.y = y;
+						this.level = level;
+					}
+				}
+
+				public static class PlacedTileCriterionConditions extends AdvancementCriterionConditions {
+					private final @Nullable String tile;
+					private final @Nullable ItemConditions item;
+					private final @Nullable LocationConditions location;
+					private final @Nullable Integer data;
+
+					private PlacedTileCriterionConditions(@Nullable String tile, @Nullable ItemConditions item,
+														  @Nullable LocationConditions location, @Nullable Integer data) {
+						this.tile = tile;
+						this.item = item;
+						this.location = location;
+						this.data = data;
+					}
+				}
+			}
+		}
+
+		public static class ItemUsedOnTileTrigger extends AdvancementTrigger {
+			public static final ItemUsedOnTileTrigger INSTANCE = new ItemUsedOnTileTrigger();
+
+			protected ItemUsedOnTileTrigger() {
+				super(new ItemUsedOnTileTriggerConditionHandler());
+			}
+
+			@Override
+			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
+				if (conditions instanceof ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) {
+					Item item = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).item;
+					Tile tile = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).tile;
+					int data = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).data;
+					int x = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).x;
+					int y = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).y;
+					int level = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).level;
+					for (ElementCriterion criterion : new HashSet<>(registeredCriteria)) {
+						if (criterion.conditions instanceof ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileCriterionConditions) {
+							ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileCriterionConditions criterionConditions =
+								(ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileCriterionConditions) criterion.conditions;
+							if (criterionConditions.location != null && !criterionConditions.location.matches(tile, data, x, y, level))
+								continue;
+							if (criterionConditions.item != null && !criterionConditions.item.matches(item))
+								continue;
+							criterion.markAsCompleted(false, null); // All conditions passed.
+						}
+					}
+				}
+			}
+
+			public static class ItemUsedOnTileTriggerConditionHandler extends AdvancementTriggerConditionHandler {
+				@Override
+				public @NotNull AdvancementCriterionConditions createCriterionConditions(JSONObject json) throws JSONException {
+					AdvancementTriggerConditionHandler.AdvancementCriterionConditions.LocationConditions location =
+						AdvancementTriggerConditionHandler.AdvancementCriterionConditions.LocationConditions.getFromJson(json.optJSONObject("location"));
+					AdvancementTriggerConditionHandler.AdvancementCriterionConditions.ItemConditions item =
+						AdvancementTriggerConditionHandler.AdvancementCriterionConditions.ItemConditions.getFromJson(json.optJSONObject("item"));
+					return new ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileCriterionConditions(location, item);
+				}
+
+				public static class ItemUsedOnTileTriggerConditions extends AdvancementTriggerConditions {
+					private final Item item;
+					private final Tile tile;
+					private final int data;
+					private final int x;
+					private final int y;
+					private final int level;
+
+					public ItemUsedOnTileTriggerConditions(Item item, Tile tile, int data, int x, int y, int level) {
+						this.item = item;
+						this.tile = tile;
+						this.data = data;
+						this.x = x;
+						this.y = y;
+						this.level = level;
+					}
+				}
+
+				public static class ItemUsedOnTileCriterionConditions extends AdvancementCriterionConditions {
+					private final @Nullable LocationConditions location;
+					private final @Nullable ItemConditions item;
+
+					private ItemUsedOnTileCriterionConditions(@Nullable LocationConditions location, @Nullable ItemConditions item) {
+						this.location = location;
+						this.item = item;
 					}
 				}
 			}

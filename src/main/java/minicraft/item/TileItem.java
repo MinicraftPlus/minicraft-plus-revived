@@ -15,6 +15,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.util.AdvancementElement;
 import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
@@ -90,6 +91,10 @@ public class TileItem extends StackableItem {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
+				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(
+						this, level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth
+					));
 
 				Sound.play("craft");
 
