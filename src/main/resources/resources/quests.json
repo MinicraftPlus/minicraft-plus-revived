@@ -74,8 +74,8 @@
           }
         }
       },
-      "minicraft.quest.farming.harvesting_wheat": {
-        "description": "minicraft.quest.farming.harvesting_wheat.description",
+      "minicraft.quest.farming.getting_wheat": {
+        "description": "minicraft.quest.farming.getting_wheat.description",
         "parent": "minicraft.quest.farming.planting_wheat",
         "criteria": {
           "has_wheat": {
@@ -228,7 +228,13 @@
                 }
               ]
             }
-          },
+          }
+        }
+      },
+      "minicraft.quest.iron_equipments.iron_armor": {
+        "description": "minicraft.quest.iron_equipments.iron_armor.description",
+        "parent": "minicraft.quest.iron_equipments.getting_more_iron",
+        "criteria": {
           "has_armor": {
             "trigger": "inventory_changed",
             "conditions": {
@@ -284,6 +290,7 @@
       },
       "minicraft.quest.potions.powerful_potions": {
         "description": "minicraft.quest.potions.powerful_potions.description",
+        "parent": "minicraft.quest.potions.awkward_potions",
         "criteria": {
           "has_speed": {
             "trigger": "inventory_changed",
@@ -337,6 +344,7 @@
       },
       "minicraft.quest.potions.all_potions_prepared": {
         "description": "minicraft.quest.potions.all_potions_prepared.description",
+        "parent": "minicraft.quest.potions.powerful_potions",
         "criteria": {
           "has_potions": {
             "trigger": "inventory_changed",
@@ -370,11 +378,6 @@
                 {
                   "items": [
                     "health potion"
-                  ]
-                },
-                {
-                  "items": [
-                    "time potion"
                   ]
                 },
                 {
@@ -445,6 +448,7 @@
       },
       "minicraft.quest.gems.gem_claymore": {
         "description": "minicraft.quest.gems.gem_claymore.description",
+        "parent": "minicraft.quest.gems.gem_armor",
         "criteria": {
           "has_claymore": {
             "trigger": "inventory_changed",

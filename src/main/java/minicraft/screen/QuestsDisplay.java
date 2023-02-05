@@ -251,7 +251,7 @@ public class QuestsDisplay extends Display {
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, 10), RelPos.CENTER)
-				.setEntries(new StringEntry(Settings.getEntry("quests") + "; " + Settings.getEntry("tutorials"), Color.WHITE))
+				.setEntries(new StringEntry(Settings.getEntry("quests").toString(), Color.WHITE))
 				.setSelectable(false)
 				.createMenu()
 		};
