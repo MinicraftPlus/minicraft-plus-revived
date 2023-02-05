@@ -132,16 +132,6 @@ public class Localization {
 		return DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE.size();
 	}
 
-	public static Set<String> getUnlocalizedKeys(@NotNull Locale lang) {
-		if (lang.equals(DEBUG_LOCALE) || lang.equals(DEFAULT_LOCALE)) return new HashSet<>();
-		ArrayList<String> localizations = unloadedLocalization.get(lang);
-		if (localizations == null) return new HashSet<>();
-		TreeSet<String> keys = new TreeSet<>(DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE);
-		keys.removeAll(localizations.stream().flatMap(t -> new JSONObject(t).keySet().stream()).distinct()
-			.filter(DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE::contains).collect(Collectors.toSet()));
-		return keys;
-	}
-
 	/**
 	 * This method gets the currently selected locale and loads it if it exists. If not, it loads the default locale.
 	 * The loaded file is then parsed, and all the entries are added to a hashmap.
