@@ -122,18 +122,9 @@ public class WorldSelectDisplay extends Display {
 					Game.exitDisplay();
 				} else {
 					Executors.newCachedThreadPool().submit(() -> {
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
+						Game.exitDisplay(); // Exiting popup.
+						Game.exitDisplay(); // Exiting world select display.
+						Game.exitDisplay(); // Exiting world options between selection and creation.
 						Game.setDisplay(new WorldGenDisplay());
 					});
 				}
@@ -181,18 +172,9 @@ public class WorldSelectDisplay extends Display {
 					Game.exitDisplay();
 				} else {
 					Executors.newCachedThreadPool().submit(() -> {
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
+						Game.exitDisplay(); // Exiting popup.
+						Game.exitDisplay(); // Exiting world select display.
+						Game.exitDisplay(); // Exiting world options between selection and creation.
 						Game.setDisplay(new WorldGenDisplay());
 					});
 				}
@@ -236,18 +218,9 @@ public class WorldSelectDisplay extends Display {
 					}
 				} else {
 					Executors.newCachedThreadPool().submit(() -> {
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
-						Game.exitDisplay();
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
+						Game.exitDisplay(); // Exiting popup.
+						Game.exitDisplay(); // Exiting world select display.
+						Game.exitDisplay(); // Exiting world options between selection and creation.
 						Game.setDisplay(new WorldGenDisplay());
 					});
 				}

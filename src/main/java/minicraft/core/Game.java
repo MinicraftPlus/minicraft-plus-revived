@@ -35,12 +35,12 @@ public class Game {
 	static Display display = null, newDisplay = null;
 	public static void setDisplay(@Nullable Display display) { newDisplay = display; }
 	public static void exitDisplay() {
-		if (display == null) {
+		if (newDisplay == null) {
 			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
 		Sound.play("craft");
-		newDisplay = display.getParent();
+		newDisplay = newDisplay.getParent();
 	}
 	@Nullable
 	public static Display getDisplay() { return newDisplay; }
