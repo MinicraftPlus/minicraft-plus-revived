@@ -2,11 +2,15 @@ package minicraft.level;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import minicraft.level.tile.TreeTile;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -36,7 +40,7 @@ public class LevelGen {
 		}
 
 		int stepSize = featureSize;
-		double scale = 2 / w;
+		double scale = 2.0 / w;
 		double scaleMod = 1;
 		do {
 			int halfStep = stepSize / 2;
@@ -47,7 +51,7 @@ public class LevelGen {
 					double c = sample(x, y + stepSize); // Fetches the next value down, possibly looping back to the top of the column.
 					double d = sample(x + stepSize, y + stepSize); // Fetches the value one down, one right.
 
-					/**
+					/*
 					 * This could probably use some explaining... Note: the number values are probably only good the first time around...
 					 *
 					 * This starts with taking the average of the four numbers from before (they form a little square in adjacent tiles), each of which holds a value from -1 to 1.
@@ -81,7 +85,7 @@ public class LevelGen {
 				}
 			}
 
-			/**
+			/*
 			 * THEN... this stuff is set to repeat the system all over again!
 			 * The featureSize is halved, allowing access to further unset mids, and the scale changes...
 			 * The scale increases the first time, x1.8, but the second time it's x1.1, and after that probably a little less than 1. So, it generally increases a bit, maybe to 4 / w at tops. This results in the 5th random value being more significant than the first 4 ones in later iterations.
@@ -97,7 +101,7 @@ public class LevelGen {
 	} // This merely returns the value, like Level.getTile(x, y).
 
 	private void setSample(int x, int y, double value) {
-		/**
+		/*
 		 * This method is short, but difficult to understand. This is what I think it does:
 		 *
 		 * The values array is like a 2D array, but formatted into a 1D array; so the basic "x + y * w" is used to access a given value.
@@ -113,8 +117,7 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
-	@Nullable
-	static short[][] createAndValidateMap(int w, int h, int level, long seed) {
+	static short[] @Nullable [] createAndValidateMap(int w, int h, int level, long seed) {
 		worldSeed = seed;
 
 		if (level == 1)
@@ -144,7 +147,7 @@ public class LevelGen {
 			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("sand").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("grass").id & 0xffff] < 100) continue;
-			if (count[Tiles.get("tree").id & 0xffff] < 100) continue;
+			if (TreeTile.treeIDs.stream().map(id -> count[id & 0xffff]).reduce(0, Integer::sum) < 100) continue;
 
 			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 21)
 				continue; // Size 128 = 6 stairs min
@@ -154,7 +157,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[] @Nullable [] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
 			short[][] result = createUndergroundMap(w, h, depth);
@@ -195,7 +198,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateSkyMap(int w, int h) {
+	private static short[] @Nullable [] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 
 		do {
@@ -241,7 +244,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val += 1 - dist*20;
@@ -355,6 +358,9 @@ public class LevelGen {
 			}
 		}
 
+		ArrayList<Short> treeIDs = new ArrayList<>(TreeTile.treeIDs);
+		Supplier<Short> treeRandom = () -> treeIDs.get(random.nextInt(treeIDs.size()));
+
 		if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
 			for (int i = 0; i < w * h / 200; i++) {
 				int x = random.nextInt(w);
@@ -364,7 +370,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
+							map[xx + yy * w] = treeRandom.get();
 						}
 					}
 				}
@@ -379,7 +385,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
+							map[xx + yy * w] = treeRandom.get();
 						}
 					}
 				}
@@ -395,7 +401,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
+							map[xx + yy * w] = treeRandom.get();
 						}
 					}
 				}
@@ -410,7 +416,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
+							map[xx + yy * w] = treeRandom.get();
 						}
 					}
 				}
@@ -436,7 +442,7 @@ public class LevelGen {
 		for (int i = 0; i < w * h / 100; i++) {
 			int xx = random.nextInt(w);
 			int yy = random.nextInt(h);
-			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+			if (xx < w && yy < h) {
 				if (map[xx + yy * w] == Tiles.get("sand").id) {
 					map[xx + yy * w] = Tiles.get("cactus").id;
 				}
@@ -495,7 +501,7 @@ public class LevelGen {
 				double yd = y / (h - 1.1) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -566,11 +572,11 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = Math.pow(dist, 8);
 				val += 1 - dist * 20;
 
-				if (val > -1 && wval < -1 + (depth) / 2 * 3) {
+				if (val > -1 && wval < -1 + (depth) / 2.0 * 3) {
 					if (depth == 3) map[i] = Tiles.get("lava").id;
 					else if (depth == 1) map[i] = Tiles.get("dirt").id;
 					else map[i] = Tiles.get("water").id;
@@ -669,7 +675,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -751,7 +757,6 @@ public class LevelGen {
 
 		if (!valid) {
 			maplvls = new int[1];
-			maplvls[0] = 0;
 		}
 
 		//noinspection InfiniteLoopStatement
@@ -759,6 +764,7 @@ public class LevelGen {
 			int w = 128;
 			int h = 128;
 
+			//noinspection ConstantConditions
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 

@@ -31,8 +31,8 @@ public final class Tiles {
 		tiles.put((short)17, new LavaTile("Lava"));
 
 		tiles.put((short)7, new RockTile("Rock"));
-		tiles.put((short)8, new TreeTile("Tree"));
-		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
+		tiles.put((short)8, new TreeTile(TreeTile.TreeType.OAK));
+		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Oak")));
 		tiles.put((short)10, new SandTile("Sand"));
 		tiles.put((short)11, new CactusTile("Cactus"));
 		tiles.put((short)12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
@@ -69,6 +69,12 @@ public final class Tiles {
 		tiles.put((short)44, new MaterialTile(Tile.Material.Obsidian));
 		tiles.put((short)45, new DecorTile(Tile.Material.Stone));
 		tiles.put((short)46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short)47, new TreeTile(TreeTile.TreeType.SPRUCE));
+		tiles.put((short)48, new TreeTile(TreeTile.TreeType.BIRCH));
+		tiles.put((short)49, new TreeTile(TreeTile.TreeType.ASH));
+		tiles.put((short)50, new TreeTile(TreeTile.TreeType.ASPEN));
+		tiles.put((short)51, new TreeTile(TreeTile.TreeType.FIR));
+		tiles.put((short)52, new TreeTile(TreeTile.TreeType.WILLOW));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());

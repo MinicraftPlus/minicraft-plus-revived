@@ -22,12 +22,54 @@ import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.QuestsDisplay;
 
-public class TreeTile extends Tile {
-	private static LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
-	private static LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-	protected TreeTile(String name) {
-		super(name, (SpriteAnimation)null);
+public class TreeTile extends Tile {
+	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
+	private static final LinkedSprite oakSpriteFull = new LinkedSprite(SpriteType.Tile, "oak_full");
+	private static final LinkedSprite spruceSprite = new LinkedSprite(SpriteType.Tile, "spruce");
+	private static final LinkedSprite spruceSpriteFull = new LinkedSprite(SpriteType.Tile, "spruce_full");
+	private static final LinkedSprite birchSprite = new LinkedSprite(SpriteType.Tile, "birch");
+	private static final LinkedSprite birchSpriteFull = new LinkedSprite(SpriteType.Tile, "birch_full");
+	private static final LinkedSprite ashSprite = new LinkedSprite(SpriteType.Tile, "ash");
+	private static final LinkedSprite ashSpriteFull = new LinkedSprite(SpriteType.Tile, "ash_full");
+	private static final LinkedSprite aspenSprite = new LinkedSprite(SpriteType.Tile, "aspen");
+	private static final LinkedSprite aspenSpriteFull = new LinkedSprite(SpriteType.Tile, "aspen_full");
+	private static final LinkedSprite firSprite = new LinkedSprite(SpriteType.Tile, "fir");
+	private static final LinkedSprite firSpriteFull = new LinkedSprite(SpriteType.Tile, "fir_full");
+	private static final LinkedSprite willowSprite = new LinkedSprite(SpriteType.Tile, "willow");
+	private static final LinkedSprite willowSpriteFull = new LinkedSprite(SpriteType.Tile, "willow_full");
+
+	private final TreeType type;
+
+	public static final Set<Short> treeIDs = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+		(short) 8, (short) 47, (short) 48, (short) 49, (short) 50, (short) 51, (short) 52)));
+
+	public enum TreeType {
+		OAK(oakSprite, oakSpriteFull),
+		SPRUCE(spruceSprite, spruceSpriteFull),
+		BIRCH(birchSprite, birchSpriteFull),
+		ASH(ashSprite, ashSpriteFull),
+		ASPEN(aspenSprite, aspenSpriteFull),
+		FIR(firSprite, firSpriteFull),
+		WILLOW(willowSprite, willowSpriteFull),
+		;
+
+		private final LinkedSprite treeSprite;
+		private final LinkedSprite treeSpriteFull;
+
+		TreeType(LinkedSprite treeSprite, LinkedSprite treeSpriteFull) {
+			this.treeSprite = treeSprite;
+			this.treeSpriteFull = treeSpriteFull;
+		}
+	}
+
+	protected TreeTile(TreeType type) {
+		super(type.name().toLowerCase(), null);
+		this.type = type;
 		connectsToGrass = true;
 	}
 
@@ -43,25 +85,25 @@ public class TreeTile extends Tile {
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
 
-		Sprite sprite = treeSprite.getSprite();
-		Sprite spriteFull = treeSpriteFull.getSprite();
+		Sprite sprite = type.treeSprite.getSprite();
+		Sprite spriteFull = type.treeSpriteFull.getSprite();
 
 		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, spriteFull.spritePixels[0][1]);
+			screen.render(x * 16, y * 16, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, sprite.spritePixels[0][0]);
+			screen.render(x * 16, y * 16, sprite.spritePixels[0][0]);
 		}
 
 		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, spriteFull.spritePixels[0][0]);
+			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, sprite.spritePixels[0][1]);
+			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
 		}
 
 		if (d && dl && l) {
-			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
+			screen.render(x * 16, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
+			screen.render(x * 16, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
 		if (d && dr && r) {
