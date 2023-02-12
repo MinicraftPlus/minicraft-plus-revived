@@ -463,7 +463,7 @@ public class Level {
 		int h = (Screen.h + 15) >> 4;
 
 		screen.setOffset(xScroll, yScroll);
-		
+
 		// this specifies the maximum radius that the game will stop rendering the light from the source object once off screen
 		int r = 8;
 
@@ -766,7 +766,7 @@ public class Level {
 			for (int xp = x-rx; xp <= x+rx; xp++)
 				if (xp >= 0 && xp < w && yp >= 0 && yp < h)
 					local.add(new Point(xp, yp));
-		return local.toArray(new Point[local.size()]);
+		return local.toArray(new Point[0]);
 	}
 
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }

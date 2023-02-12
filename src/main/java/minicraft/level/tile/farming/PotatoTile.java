@@ -11,7 +11,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class PotatoTile extends PlantTile {
-	private LinkedSprite[] spritStages = new LinkedSprite[] {
+	private final LinkedSprite[] spritStages = new LinkedSprite[] {
 		new LinkedSprite(SpriteType.Tile, "potato_stage0"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage1"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage2"),
@@ -21,42 +21,20 @@ public class PotatoTile extends PlantTile {
 	};
 
     public PotatoTile(String name) {
-        super(name);
-    }
-
-    static {
-        maxAge = 70;
+        super(name, null);
     }
 
     @Override
     public void render(Screen screen, Level level, int x, int y) {
-        int age = level.getData(x, y);
-        int icon = age / (maxAge / 5);
-
+        int age = (level.getData(x, y) >> 3) & maxStage;
         Tiles.get("Farmland").render(screen, level, x, y);
-		screen.render(x * 16, y * 16, spritStages[icon]);
-    }
-
-    @Override
-    protected void harvest(Level level, int x, int y, Entity entity) {
-        int age = level.getData(x, y);
-
-        int count = 0;
-        if (age >= maxAge) {
-            count = random.nextInt(3) + 2;
-        } else if (age >= maxAge - maxAge / 5) {
-            count = random.nextInt(2);
-        }
-
-        level.dropItem(x * 16 + 8, y * 16 + 8, count + 1, Items.get("Potato"));
-
-        if (age >= maxAge && entity instanceof Player) {
-            ((Player)entity).addScore(random.nextInt(4) + 1);
-        }
-
-		// Play sound.
-		Sound.play("monsterhurt");
-
-        level.setTile(x, y, Tiles.get("Dirt"));
+		int stage;
+		if (age < 1) stage = 0;
+		else if (age < 3) stage = 1;
+		else if (age < 4) stage = 2;
+		else if (age < 5) stage = 3;
+		else if (age < 7) stage = 4;
+		else stage = 5;
+		screen.render(x * 16, y * 16, spritStages[stage]);
     }
 }

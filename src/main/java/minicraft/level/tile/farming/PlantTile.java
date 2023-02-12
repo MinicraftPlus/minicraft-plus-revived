@@ -9,71 +9,105 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.WaterTile;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 public class PlantTile extends FarmTile {
-    protected static int maxAge = 100;
+	protected final @Nullable String seed;
 
-    protected PlantTile(String name) {
-        super(name, null);
-    }
+	protected int maxStage = 7; // Must be a bit mask.
 
-    @Override
-    public void steppedOn(Level level, int xt, int yt, Entity entity) {
-        super.steppedOn(level, xt, yt, entity);
-        harvest(level, xt, yt, entity);
-    }
+	protected PlantTile(String name, @Nullable String seed) {
+		super(name, null);
+		this.seed = seed;
+	}
 
-    @Override
-    public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-        harvest(level, x, y, source);
-        return true;
-    }
+	@Override
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+		harvest(level, x, y, source);
+		return true;
+	}
 
-    @Override
-    public boolean tick(Level level, int xt, int yt) {
-        if (random.nextInt(2) == 0) return false;
+	@Override
+	public boolean tick(Level level, int xt, int yt) {
+		int data = level.getData(xt, yt);
+		int moisture = data & 0b111;
+		boolean successful = false;
+		if (Arrays.stream(level.getAreaTiles(xt, yt, 4)).anyMatch(t -> t instanceof WaterTile)) { // Contains water.
+			if (moisture < 7 && random.nextInt(10) == 0) { // hydrating
+				level.setData(xt, yt, data = (data & ~3) + moisture++);
+				successful = true;
+			}
+		} else if (moisture > 0 && random.nextInt(10) == 0) { // drying
+			level.setData(xt, yt, data = (data & ~3) + moisture--);
+			successful = true;
+		}
 
-        int age = level.getData(xt, yt);
-        if (age < maxAge) {
-            if (!IfWater(level, xt, yt)) level.setData(xt, yt, age + 1);
-            else if (IfWater(level, xt, yt)) level.setData(xt, yt, age + 2);
-            return true;
-        }
+		int stage = (data >> 3) & maxStage;
+		if (stage < maxStage) {
+			double points = moisture > 0 ? 4 : 2;
+			for (int i = -1; i < 2; i++)
+				for (int j = -1; j < 2; j++) {
+					Tile t = level.getTile(xt + i, yt + j);
+					if ((i != 0 || j != 0) && t instanceof FarmTile) {
+						points += (level.getData(xt + i, yt + j) & 0b111) > 0 ? 0.75 : 0.25;
+					}
+				}
 
-        return false;
-    }
+			boolean u = level.getTile(xt, yt - 1) == this;
+			boolean d = level.getTile(xt, yt + 1) == this;
+			boolean l = level.getTile(xt - 1, yt) == this;
+			boolean r = level.getTile(xt + 1, yt) == this;
+			boolean ul = level.getTile(xt - 1, yt - 1) == this;
+			boolean dl = level.getTile(xt - 1, yt + 1) == this;
+			boolean ur = level.getTile(xt + 1, yt - 1) == this;
+			boolean dr = level.getTile(xt + 1, yt + 1) == this;
+			if (u && d && l && r && ul && dl && ur && dr)
+				points /= 2;
+			else {
+				if (u && d && l && r)
+					points *= 0.75;
+				if (u && (d && (l || r) || l && r) || d && l && r) // Either 3 of 4 directions.
+					points *= 0.85;
+				if (ul && (dr || dl || ur) || dl && (ur || dr) || ur && dr) // Either 2 of 4 directions.
+					points *= 0.9;
+				if (ul) points *= 0.98125;
+				if (dl) points *= 0.98125;
+				if (ur) points *= 0.98125;
+				if (dr) points *= 0.98125;
+			}
 
-    protected boolean IfWater(Level level, int xs, int ys) {
-        Tile[] areaTiles = level.getAreaTiles(xs, ys, 1);
-        for(Tile t: areaTiles)
-            if(t == Tiles.get("Water"))
-                return true;
+			if (random.nextInt((int) (100/points) + 1) == 0)
+				level.setData(xt, yt, (data & ~(maxStage << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
+			return true;
+		}
 
-        return false;
-    }
+		return successful;
+	}
 
-    /** Default harvest method, used for everything that doesn't really need any special behavior. */
-    protected void harvest(Level level, int x, int y, Entity entity) {
-        int age = level.getData(x, y);
+	/** Default harvest method, used for everything that doesn't really need any special behavior. */
+	protected void harvest(Level level, int x, int y, Entity entity) {
+		int data = level.getData(x, y);
+		int age = (data >> 3) & maxStage;
 
-        level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(name + " Seeds"));
+		if (seed != null)
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(seed));
 
-        int count = 0;
-        if (age >= maxAge) {
-            count = random.nextInt(3) + 2;
-        } else if (age >= maxAge - maxAge / 5) {
-            count = random.nextInt(2) + 1;
-        }
+		if (age == maxStage) {
+			level.dropItem(x * 16 + 8, y * 16 + 8, random.nextInt(3) + 2, Items.get(name));
+		} else if (seed == null) {
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(name));
+		}
 
-        level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get(name));
-
-        if (age >= maxAge && entity instanceof Player) {
-            ((Player)entity).addScore(random.nextInt(5) + 1);
-        }
+		if (age == maxStage && entity instanceof Player) {
+			((Player)entity).addScore(random.nextInt(5) + 1);
+		}
 
 		// Play sound.
 		Sound.play("monsterhurt");
 
-        level.setTile(x, y, Tiles.get("Dirt"));
-    }
+		level.setTile(x, y, Tiles.get("farmland"), data & 0b111);
+	}
 }

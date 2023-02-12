@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import minicraft.core.CrashHandler;
+import minicraft.level.tile.farming.BeetrootTile;
+import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
@@ -32,6 +34,14 @@ public final class Tiles {
 
 		tiles.put((short)7, new RockTile("Rock"));
 		tiles.put((short)8, new TreeTile(TreeTile.TreeType.OAK));
+		// These are out of order because of the multiple tree types.
+		tiles.put((short)47, new TreeTile(TreeTile.TreeType.SPRUCE));
+		tiles.put((short)48, new TreeTile(TreeTile.TreeType.BIRCH));
+		tiles.put((short)49, new TreeTile(TreeTile.TreeType.ASH));
+		tiles.put((short)50, new TreeTile(TreeTile.TreeType.ASPEN));
+		tiles.put((short)51, new TreeTile(TreeTile.TreeType.FIR));
+		tiles.put((short)52, new TreeTile(TreeTile.TreeType.WILLOW));
+
 		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Oak")));
 		tiles.put((short)10, new SandTile("Sand"));
 		tiles.put((short)11, new CactusTile("Cactus"));
@@ -69,12 +79,8 @@ public final class Tiles {
 		tiles.put((short)44, new MaterialTile(Tile.Material.Obsidian));
 		tiles.put((short)45, new DecorTile(Tile.Material.Stone));
 		tiles.put((short)46, new DecorTile(Tile.Material.Obsidian));
-		tiles.put((short)47, new TreeTile(TreeTile.TreeType.SPRUCE));
-		tiles.put((short)48, new TreeTile(TreeTile.TreeType.BIRCH));
-		tiles.put((short)49, new TreeTile(TreeTile.TreeType.ASH));
-		tiles.put((short)50, new TreeTile(TreeTile.TreeType.ASPEN));
-		tiles.put((short)51, new TreeTile(TreeTile.TreeType.FIR));
-		tiles.put((short)52, new TreeTile(TreeTile.TreeType.WILLOW));
+		tiles.put((short)53, new BeetrootTile("Beetroot"));
+		tiles.put((short)54, new CarrotTile("Carrot"));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
