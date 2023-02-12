@@ -81,6 +81,10 @@ public final class Tiles {
 		tiles.put((short)46, new DecorTile(Tile.Material.Obsidian));
 		tiles.put((short)53, new BeetrootTile("Beetroot"));
 		tiles.put((short)54, new CarrotTile("Carrot"));
+		tiles.put((short)55, new TallGrassTile("Tall Grass", TallGrassTile.TallGrassType.GRASS));
+		tiles.put((short)56, new TallGrassTile("Double Tall Grass", TallGrassTile.TallGrassType.TALL_GRASS));
+		tiles.put((short)57, new TallGrassTile("Fern", TallGrassTile.TallGrassType.FERN));
+		tiles.put((short)58, new TallGrassTile("Large Fern", TallGrassTile.TallGrassType.LARGE_FERN));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());

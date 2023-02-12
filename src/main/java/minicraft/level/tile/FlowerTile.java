@@ -18,7 +18,7 @@ public class FlowerTile extends Tile {
 	private static final SpriteAnimation flowerSprite1 = new SpriteAnimation(SpriteType.Tile, "flower_shape1");
 
 	protected FlowerTile(String name) {
-		super(name, (SpriteAnimation) null);
+		super(name, null);
 		connectsToGrass = true;
 		maySpawn = true;
 	}

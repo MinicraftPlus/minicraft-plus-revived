@@ -11,7 +11,6 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
@@ -24,8 +23,7 @@ import minicraft.screen.QuestsDisplay;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class TreeTile extends Tile {
 	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
@@ -45,8 +43,8 @@ public class TreeTile extends Tile {
 
 	private final TreeType type;
 
-	public static final Set<Short> treeIDs = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-		(short) 8, (short) 47, (short) 48, (short) 49, (short) 50, (short) 51, (short) 52)));
+	public static final List<Short> treeIDs = Collections.unmodifiableList(Arrays.asList(
+		(short) 8, (short) 47, (short) 48, (short) 49, (short) 50, (short) 51, (short) 52));
 
 	public enum TreeType {
 		OAK(oakSprite, oakSpriteFull),
