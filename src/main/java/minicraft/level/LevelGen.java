@@ -833,8 +833,11 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)));
-			LevelGen.worldSeed++;
+			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed "+worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] {"Next", "0x100", "0xAAFF20"}, "Next");
+			if (op == 1) LevelGen.worldSeed = 0x100;
+			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
+			else LevelGen.worldSeed++;
 		}
 	}
 }
