@@ -25,4 +25,12 @@ public class BeetrootTile extends PlantTile {
 		Tiles.get("Farmland").render(screen, level, x, y);
 		screen.render(x * 16, y * 16, spritStages[age]);
 	}
+
+	@Override
+	public void performBonemeal(Level level, int x, int y) {
+		int data = level.getData(x, y);
+		int stage = (data >> 3) & maxStage;
+		if (stage < maxStage && random.nextInt(4) == 0)
+			level.setData(x, y, (data & ~(maxStage << 3)) + ((stage + 1) << 3));
+	}
 }

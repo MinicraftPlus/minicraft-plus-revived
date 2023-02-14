@@ -51,13 +51,12 @@ public class TileItem extends StackableItem {
 
 		items.add(new TileItem("Sand", new LinkedSprite(SpriteType.Item, "sand"), new TileModel("sand"), "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", new LinkedSprite(SpriteType.Item, "cactus"), new TileModel("cactus Sapling"), "sand"));
-		items.add(new TileItem("Bone", new LinkedSprite(SpriteType.Item, "bone"), new TileModel("tree"), "tree Sapling"));
 		items.add(new TileItem("Cloud", new LinkedSprite(SpriteType.Item, "cloud"), new TileModel("cloud"), "Infinite Fall"));
 
-		items.add(new TileItem("Wheat Seeds", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "seed"), new TileModel("wheat", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Potato", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "potato"), new TileModel("potato", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Carrot", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "carrot"), new TileModel("carrot", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Beetroot Seeds", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "seed"), new TileModel("beetroot", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Wheat Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("wheat", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Potato", new LinkedSprite(SpriteType.Item, "potato"), new TileModel("potato", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Carrot", new LinkedSprite(SpriteType.Item, "carrot"), new TileModel("carrot", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Beetroot Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("beetroot", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
 
 		// Creative mode available tiles:

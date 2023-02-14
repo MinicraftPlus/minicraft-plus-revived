@@ -37,6 +37,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Cloud Ore", new LinkedSprite(SpriteType.Item, "cloud_ore")));
 		items.add(new StackableItem("Glass Bottle", new LinkedSprite(SpriteType.Item, "glass_bottle")));
 		items.add(new StackableItem("Beetroot", new LinkedSprite(SpriteType.Item, "beetroot")));
+		items.add(new StackableItem("Bone", new LinkedSprite(SpriteType.Item, "bone")));
 
 		return items;
 	}

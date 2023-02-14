@@ -7,6 +7,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.item.Items;
 import minicraft.level.Level;
+import minicraft.level.tile.BonemealableTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class PlantTile extends FarmTile {
+public class PlantTile extends FarmTile implements BonemealableTile {
 	protected final @Nullable String seed;
 
 	protected int maxStage = 7; // Must be a bit mask.
@@ -109,5 +110,22 @@ public class PlantTile extends FarmTile {
 		Sound.play("monsterhurt");
 
 		level.setTile(x, y, Tiles.get("farmland"), data & 0b111);
+	}
+
+	@Override
+	public boolean isValidBonemealTarget(Level level, int x, int y) {
+		return true;
+	}
+
+	@Override
+	public boolean isBonemealSuccess(Level level, int x, int y) {
+		return true;
+	}
+
+	@Override
+	public void performBonemeal(Level level, int x, int y) {
+		int data = level.getData(x, y);
+		int stage = (data >> 3) & maxStage;
+		level.setData(x, y, (data & ~(maxStage << 3)) + (Math.min(stage + random.nextInt(4) + 2, maxStage) << 3));
 	}
 }

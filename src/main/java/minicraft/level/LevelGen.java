@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
@@ -361,7 +360,7 @@ public class LevelGen {
 		BiFunction<Integer, Integer, Short> treeRandom;
 		{
 			List<Short> treeIDs = TreeTile.treeIDs;
-			treeRandom = (x, y) -> {
+			treeRandom = (x, y) -> { // Randomly selecting a tree type.
 				int i = x + y * w;
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 				// This calculates a sort of distance based on the current coordinate.
@@ -376,9 +375,10 @@ public class LevelGen {
 				val += 1.5; // Assuming the range of value is from 0 to 2.
 				val *= treeIDs.size() / 2.0;
 				val += 1; // Incrementing index.
+				// The original val mainly falls in small interval instead of averagely.
 				val = 1.0/(3 * treeIDs.size()) * Math.pow(val - 5, 2); // Quadratically bloating the value.
 				int idx = (int) Math.round(val - 1); // Decrementing index.
-				if (idx >= treeIDs.size() || idx < 0) return (short) 8; // Oak
+				if (idx >= treeIDs.size() || idx < 0) return (short) 8; // Oak in default.
 				return treeIDs.get(idx);
 			};
 		}

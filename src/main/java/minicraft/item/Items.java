@@ -43,6 +43,7 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
+		addAll(BoneMealItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {
