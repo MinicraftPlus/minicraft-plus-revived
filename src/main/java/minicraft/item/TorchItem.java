@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.TorchTile;
+import org.jetbrains.annotations.NotNull;
 
 public class TorchItem extends TileItem {
 
@@ -39,7 +40,7 @@ public class TorchItem extends TileItem {
 	@Override
 	public int hashCode() { return 8931; }
 
-	public TorchItem copy() {
+	public @NotNull TorchItem copy() {
 		return new TorchItem(count);
 	}
 }

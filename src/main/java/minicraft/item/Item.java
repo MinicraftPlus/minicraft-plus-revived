@@ -10,6 +10,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class Item {
 
@@ -60,6 +61,7 @@ public abstract class Item {
 	public int hashCode() { return name.hashCode(); }
 
 	/** This returns a copy of this item, in all necessary detail. */
+	@NotNull
 	public abstract Item copy();
 
 	@Override

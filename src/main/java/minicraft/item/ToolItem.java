@@ -9,6 +9,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.jetbrains.annotations.NotNull;
 
 public class ToolItem extends Item {
 
@@ -123,7 +124,7 @@ public class ToolItem extends Item {
 	@Override
 	public int hashCode() { return type.name().hashCode() + level; }
 
-	public ToolItem copy() {
+	public @NotNull ToolItem copy() {
 		ToolItem ti;
 		if (type.noLevel) {
 			ti = new ToolItem(type);

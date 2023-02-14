@@ -11,6 +11,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 import java.awt.Rectangle;
@@ -95,7 +96,7 @@ public class SummonItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public SummonItem copy() {
+	public @NotNull SummonItem copy() {
 		return new SummonItem(getName(), sprite, count, mob);
 	}
 }

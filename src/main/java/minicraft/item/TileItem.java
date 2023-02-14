@@ -16,6 +16,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
@@ -130,7 +131,7 @@ public class TileItem extends StackableItem {
 	@Override
 	public int hashCode() { return super.hashCode() + model.hashCode(); }
 
-	public TileItem copy() {
+	public @NotNull TileItem copy() {
 		return new TileItem(getName(), sprite, count, model, validTiles);
 	}
 }

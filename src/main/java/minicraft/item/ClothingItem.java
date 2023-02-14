@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 public class ClothingItem extends StackableItem {
 
@@ -56,7 +57,7 @@ public class ClothingItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public ClothingItem copy() {
+	public @NotNull ClothingItem copy() {
 		return new ClothingItem(getName(), count, sprite, playerCol);
 	}
 }

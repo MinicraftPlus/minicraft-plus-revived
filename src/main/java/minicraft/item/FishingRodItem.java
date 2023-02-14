@@ -11,6 +11,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.NotNull;
 
 public class FishingRodItem extends Item {
 
@@ -80,7 +81,7 @@ public class FishingRodItem extends Item {
     }
 
     @Override
-    public Item copy() {
+    public @NotNull Item copy() {
         FishingRodItem item = new FishingRodItem(this.level);
         item.uses = this.uses;
         return item;

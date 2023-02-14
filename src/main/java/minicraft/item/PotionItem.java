@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.AchievementsDisplay;
+import org.jetbrains.annotations.NotNull;
 
 public class PotionItem extends StackableItem {
 
@@ -73,7 +74,7 @@ public class PotionItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public PotionItem copy() {
+	public @NotNull PotionItem copy() {
 		return new PotionItem(type, count);
 	}
 }
