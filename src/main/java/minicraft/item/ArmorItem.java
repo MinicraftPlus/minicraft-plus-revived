@@ -49,7 +49,7 @@ public class ArmorItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public ArmorItem clone() {
+	public ArmorItem copy() {
 		return new ArmorItem(getName(), sprite, count, armor, level);
 	}
 }

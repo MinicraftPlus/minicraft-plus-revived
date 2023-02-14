@@ -44,7 +44,7 @@ public class BookItem extends Item {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public BookItem clone() {
+	public BookItem copy() {
 		return new BookItem(getName(), sprite, book, hasTitlePage);
 	}
 }

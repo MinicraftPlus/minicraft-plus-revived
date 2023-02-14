@@ -123,7 +123,7 @@ public class ToolItem extends Item {
 	@Override
 	public int hashCode() { return type.name().hashCode() + level; }
 
-	public ToolItem clone() {
+	public ToolItem copy() {
 		ToolItem ti;
 		if (type.noLevel) {
 			ti = new ToolItem(type);

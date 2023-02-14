@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import minicraft.screen.QuestsDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.entity.furniture.Furniture;
@@ -58,7 +57,7 @@ public class Inventory {
 	public int add(Item item, int num) {
 		int total = 0;
 		for (int i = 0; i < num; i++)
-			total += add(item.clone());
+			total += add(item.copy());
 		return total;
 	}
 
@@ -107,7 +106,7 @@ public class Inventory {
 				if (items.size() < maxItem) {
 					int c = (int) Math.ceil(toTake.count/100.0);
 					for (int i = 0; i < c; i++) {
-						StackableItem adding = toTake.clone();
+						StackableItem adding = toTake.copy();
 						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
 						if (adding.count == 0) break;
 						if (items.size() == maxItem) return total - toTake.count;
@@ -170,9 +169,9 @@ public class Inventory {
 	public void removeItem(Item i) {
 		//if (Game.debug) System.out.println("original item: " + i);
 		if (i instanceof StackableItem)
-			removeItems(i.clone(), ((StackableItem)i).count);
+			removeItems(i.copy(), ((StackableItem)i).count);
 		else
-			removeItems(i.clone(), 1);
+			removeItems(i.copy(), 1);
 	}
 
 	/**
@@ -256,7 +255,7 @@ public class Inventory {
 		if (!allOrNothing || random.nextInt(chance) == 0)
 			for (int i = 0; i < num; i++)
 				if (allOrNothing || random.nextInt(chance) == 0)
-					add(item.clone());
+					add(item.copy());
 	}
 	public void tryAdd(int chance, @Nullable Item item, int num) {
 		if (item == null) return;

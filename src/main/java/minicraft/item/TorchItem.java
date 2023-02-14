@@ -39,7 +39,7 @@ public class TorchItem extends TileItem {
 	@Override
 	public int hashCode() { return 8931; }
 
-	public TorchItem clone() {
+	public TorchItem copy() {
 		return new TorchItem(count);
 	}
 }

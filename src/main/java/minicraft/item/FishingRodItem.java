@@ -80,7 +80,7 @@ public class FishingRodItem extends Item {
     }
 
     @Override
-    public Item clone() {
+    public Item copy() {
         FishingRodItem item = new FishingRodItem(this.level);
         item.uses = this.uses;
         return item;

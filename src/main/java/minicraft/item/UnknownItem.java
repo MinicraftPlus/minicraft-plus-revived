@@ -9,7 +9,7 @@ public class UnknownItem extends StackableItem {
 		super(reqName, SpriteLinker.missingTexture(SpriteType.Item));
 	}
 
-	public UnknownItem clone() {
+	public UnknownItem copy() {
 		return new UnknownItem(getName());
 	}
 }

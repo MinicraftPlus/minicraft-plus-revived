@@ -60,7 +60,7 @@ public abstract class Item {
 	public int hashCode() { return name.hashCode(); }
 
 	/** This returns a copy of this item, in all necessary detail. */
-	public abstract Item clone();
+	public abstract Item copy();
 
 	@Override
 	public String toString() {

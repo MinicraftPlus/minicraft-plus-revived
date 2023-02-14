@@ -96,7 +96,7 @@ public class BucketItem extends StackableItem {
 	@Override
 	public int hashCode() { return super.hashCode() + filling.offset * 31; }
 
-	public BucketItem clone() {
+	public BucketItem copy() {
 		return new BucketItem(filling, count);
 	}
 }

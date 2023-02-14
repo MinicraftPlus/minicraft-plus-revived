@@ -82,7 +82,7 @@ public class FurnitureItem extends Item {
 		return placed;
 	}
 
-	public FurnitureItem clone() {
+	public FurnitureItem copy() {
 		// in case the item is a spawner, it will use the sprite position (sx, sy)
 		// instead if it is not, the constructor will obtain said sprite
 		return new FurnitureItem(furniture.clone());

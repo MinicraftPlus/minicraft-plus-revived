@@ -73,7 +73,7 @@ public class PotionItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public PotionItem clone() {
+	public PotionItem copy() {
 		return new PotionItem(type, count);
 	}
 }

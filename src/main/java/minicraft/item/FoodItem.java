@@ -52,7 +52,7 @@ public class FoodItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public FoodItem clone() {
+	public FoodItem copy() {
 		return new FoodItem(getName(), sprite, count, feed);
 	}
 }

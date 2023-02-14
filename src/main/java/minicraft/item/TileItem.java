@@ -130,7 +130,7 @@ public class TileItem extends StackableItem {
 	@Override
 	public int hashCode() { return super.hashCode() + model.hashCode(); }
 
-	public TileItem clone() {
+	public TileItem copy() {
 		return new TileItem(getName(), sprite, count, model, validTiles);
 	}
 }

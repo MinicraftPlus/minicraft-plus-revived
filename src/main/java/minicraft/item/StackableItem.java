@@ -68,7 +68,7 @@ public class StackableItem extends Item {
 	}
 
 	@Override
-	public StackableItem clone() {
+	public StackableItem copy() {
 		return new StackableItem(getName(), sprite, count);
 	}
 

@@ -95,7 +95,7 @@ public class SummonItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public SummonItem clone() {
+	public SummonItem copy() {
 		return new SummonItem(getName(), sprite, count, mob);
 	}
 }

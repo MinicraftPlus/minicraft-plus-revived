@@ -40,7 +40,7 @@ public class OreTile extends Tile {
 		}
 
 		private Item getOre() {
-			return drop.clone();
+			return drop.copy();
 		}
     }
 
