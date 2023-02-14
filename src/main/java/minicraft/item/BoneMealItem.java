@@ -36,7 +36,7 @@ public class BoneMealItem extends StackableItem {
 				for (int i = 0; i < 5; i++) {
 					double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
 					double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
-					level.add(new Particle((int) x, (int) y, 120 + random.nextInt(40) - 20, particleSprite));
+					level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 				}
 				return super.interactOn(true);
 			}

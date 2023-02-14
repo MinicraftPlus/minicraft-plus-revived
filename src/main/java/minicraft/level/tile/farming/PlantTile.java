@@ -38,11 +38,17 @@ public class PlantTile extends FarmTile implements BonemealableTile {
 		boolean successful = false;
 		if (Arrays.stream(level.getAreaTiles(xt, yt, 4)).anyMatch(t -> t instanceof WaterTile)) { // Contains water.
 			if (moisture < 7 && random.nextInt(10) == 0) { // hydrating
-				level.setData(xt, yt, data = (data & ~3) + moisture++);
+				level.setData(xt, yt, data = (data & ~0b111) + moisture++);
 				successful = true;
 			}
 		} else if (moisture > 0 && random.nextInt(10) == 0) { // drying
-			level.setData(xt, yt, data = (data & ~3) + moisture--);
+			level.setData(xt, yt, data = (data & ~0b111) + moisture--);
+			successful = true;
+		}
+
+		int fertilization = getFertilization(data);
+		if (fertilization > 0) {
+			level.setData(xt, yt, data = (data & (0b111 + (maxStage << 3))) + (fertilization-- << (3 + (maxStage + 1)/2)));
 			successful = true;
 		}
 
@@ -80,7 +86,7 @@ public class PlantTile extends FarmTile implements BonemealableTile {
 				if (dr) points *= 0.98125;
 			}
 
-			if (random.nextInt((int) (100/points) + 1) == 0)
+			if (random.nextInt((int) (100/points) + 1) < (fertilization/30 + 1)) // fertilization >= 0
 				level.setData(xt, yt, (data & ~(maxStage << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
 			return true;
 		}
@@ -110,6 +116,23 @@ public class PlantTile extends FarmTile implements BonemealableTile {
 		Sound.play("monsterhurt");
 
 		level.setTile(x, y, Tiles.get("farmland"), data & 0b111);
+	}
+
+	public int getFertilization(int data) {
+		return data >> (3 + (maxStage + 1)/2);
+	}
+
+	/**
+	 * Fertilization: Each magnitude of fertilization (by 1) increases the chance of growth by 1/30.
+	 * (The addition by fertilization is rounded down to the nearest integer in chance calculation)
+	 * For example, if the chance is originally 10% (1/10), the final chance with 30 fertilization will be 20% (2/10).
+	 */
+	public void fertilize(Level level, int x, int y, int amount) {
+		int data = level.getData(x, y);
+		int fertilization = getFertilization(data);
+		fertilization += amount;
+		if (fertilization < 0) fertilization = 0;
+		level.setData(x, y, (data & (0b111 + (maxStage << 3))) + (fertilization << (3 + (maxStage + 1)/2)));
 	}
 
 	@Override
