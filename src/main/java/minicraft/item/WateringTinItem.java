@@ -11,7 +11,6 @@ import minicraft.level.tile.farming.PlantTile;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.function.ToIntFunction;
 
 public class WateringTinItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
@@ -52,12 +51,11 @@ public class WateringTinItem extends Item {
 				Random random = new Random();
 				for (int i = 0; i < 4; i++) {
 					SpriteLinker.LinkedSprite splash = spriteSplash[random.nextInt(spriteSplash.length)];
-					// 2-pixel deviation?
+					// 2-pixel deviation for centering particle sprites.
 					int destX = player.x - 2 + 12 * attackDir.getX() + random.nextInt(9) - 4;
 					int destY = player.y - 2 + 12 * attackDir.getY() + random.nextInt(9) - 4;
 					int x = player.x - 2 + 4 * attackDir.getX() + random.nextInt(5) - 2;
 					int y = player.y - 2 + 4 * attackDir.getY() + random.nextInt(5) - 2;
-					System.out.println("DEST "+destX+";"+destY);
 					level.add(new WaterParticle(x, y, 80 + random.nextInt(61) - 30, splash, destX, destY));
 					renderingTick = 0;
 				}
@@ -77,6 +75,11 @@ public class WateringTinItem extends Item {
 
 	private void updateSprite() {
 		super.sprite = content > 0 ? spriteFilled : sprite;
+	}
+
+	@Override
+	public String getData() {
+		return super.getData() + "_" + content;
 	}
 
 	@Override

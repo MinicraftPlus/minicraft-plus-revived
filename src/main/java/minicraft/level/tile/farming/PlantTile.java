@@ -47,11 +47,6 @@ public class PlantTile extends FarmTile implements BonemealableTile {
 		}
 
 		int fertilization = getFertilization(data);
-		if (fertilization > 0) {
-			level.setData(xt, yt, data = (data & (0b111 + (maxStage << 3))) + (fertilization-- << (3 + (maxStage + 1)/2)));
-			successful = true;
-		}
-
 		int stage = (data >> 3) & maxStage;
 		if (stage < maxStage) {
 			double points = moisture > 0 ? 4 : 2;
@@ -87,8 +82,13 @@ public class PlantTile extends FarmTile implements BonemealableTile {
 			}
 
 			if (random.nextInt((int) (100/points) + 1) < (fertilization/30 + 1)) // fertilization >= 0
-				level.setData(xt, yt, (data & ~(maxStage << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
-			return true;
+				level.setData(xt, yt, data = (data & ~(maxStage << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
+			successful = true;
+		}
+
+		if (fertilization > 0) {
+			level.setData(xt, yt, (data & (0b111 + (maxStage << 3))) + ((fertilization - 1) << (3 + (maxStage + 1)/2)));
+			successful = true;
 		}
 
 		return successful;

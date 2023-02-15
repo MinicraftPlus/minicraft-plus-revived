@@ -108,6 +108,8 @@ public class Items {
 				((StackableItem)i).count = data;
 			if (i instanceof ToolItem && hadUnderscore)
 				((ToolItem)i).dur = data;
+			if (i instanceof WateringTinItem)
+				((WateringTinItem) i).content = data;
 			return i;
 		} else {
 			Logging.ITEMS.error("Requested invalid item with name: '{}'", name);
