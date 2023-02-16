@@ -3,9 +3,13 @@ package minicraft.item;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.Particle;
+import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
+import minicraft.level.tile.DirtTile;
+import minicraft.level.tile.GrassTile;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import minicraft.level.tile.farming.PlantTile;
 
@@ -64,6 +68,23 @@ public class WateringTinItem extends Item {
 				int fertilization = ((PlantTile) tile).getFertilization(level.getData(xt, yt));
 				if (fertilization < 150) { // Maximum of 5 levels watering tin can fertilize.
 					((PlantTile) tile).fertilize(level, xt, yt, 1);
+				}
+			} else if (tile instanceof DirtTile) {
+				for (Tile t : level.getAreaTiles(xt, yt, 1)) {
+					if (t instanceof GrassTile) { // Grass tile exists.
+						if (new Random().nextInt(10) == 0)
+							level.setTile(xt, yt, Tiles.get("grass")); // Grass extends.
+						break; // Operation finished.
+					}
+				}
+			} else if (tile instanceof GrassTile) {
+				for (Point p : level.getAreaTilePositions(xt, yt, 1)) {
+					Tile t = level.getTile(p.x, p.y);
+					if (t instanceof DirtTile) { // Dirt tile exists.
+						if (new Random().nextInt(15) == 0)
+							level.setTile(p.x, p.y, Tiles.get("grass")); // Grass extends.
+						break; // Operation finished.
+					}
 				}
 			}
 

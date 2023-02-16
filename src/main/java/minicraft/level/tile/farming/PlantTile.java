@@ -132,6 +132,8 @@ public class PlantTile extends FarmTile implements BonemealableTile {
 		int fertilization = getFertilization(data);
 		fertilization += amount;
 		if (fertilization < 0) fertilization = 0;
+		if (fertilization > 511) fertilization = 511; // The maximum possible value to be reached.
+		// If this value exceeds 511, the final value would be greater than the hard maximum value that short can be.
 		level.setData(x, y, (data & (0b111 + (maxStage << 3))) + (fertilization << (3 + (maxStage + 1)/2)));
 	}
 

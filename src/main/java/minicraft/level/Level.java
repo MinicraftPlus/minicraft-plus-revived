@@ -735,7 +735,7 @@ public class Level {
 	}
 
 	public Player[] getPlayers() {
-		return players.toArray(new Player[players.size()]);
+		return players.toArray(new Player[0]);
 	}
 
 	public Player getClosestPlayer(int x, int y) {
@@ -776,7 +776,7 @@ public class Level {
 		for (Point p: getAreaTilePositions(x, y, rx, ry))
 			 local.add(getTile(p.x, p.y));
 
-		return local.toArray(new Tile[local.size()]);
+		return local.toArray(new Tile[0]);
 	}
 
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }

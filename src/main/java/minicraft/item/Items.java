@@ -45,6 +45,7 @@ public class Items {
 		addAll(SummonItem.getAllInstances());
 		addAll(BoneMealItem.getAllInstances());
 		addAll(WateringTinItem.getAllInstances());
+		addAll(FertilizerItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {
