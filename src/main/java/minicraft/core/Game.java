@@ -12,6 +12,7 @@ import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,18 +33,29 @@ public class Game {
 	public static int MAX_FPS;
 
 	// DISPLAY
-	static Display display = null, newDisplay = null;
-	public static void setDisplay(@Nullable Display display) { newDisplay = display; }
+	static Display curDisplay = null;
+	static final ArrayDeque<Display> displayQuery = new ArrayDeque<>();
+	public static void setDisplay(@Nullable Display display) {
+		if (display == null)
+			displayQuery.clear();
+		else
+			displayQuery.add(display);
+	}
 	public static void exitDisplay() {
-		if (newDisplay == null) {
+		if (displayQuery.isEmpty()) {
 			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
 		Sound.play("craft");
-		newDisplay = newDisplay.getParent();
+		assert displayQuery.peekLast() != null;
+		Display parent = displayQuery.peekLast().getParent();
+		if (parent == null)
+			displayQuery.clear();
+		else
+			displayQuery.add(parent);
 	}
 	@Nullable
-	public static Display getDisplay() { return newDisplay; }
+	public static Display getDisplay() { return displayQuery.isEmpty() ? null : displayQuery.peekLast(); }
 
 	// GAMEMODE
 	public static boolean isMode(String mode) { return ((String)Settings.get("mode")).equalsIgnoreCase(mode); }
