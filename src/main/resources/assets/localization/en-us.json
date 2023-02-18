@@ -31,6 +31,8 @@
   "minicraft.achievement.airwizard.desc": "Defeat the first Air Wizard!",
   "minicraft.achievement.skin": "Fashion Show",
   "minicraft.achievement.skin.desc": "Change your skin.",
+  "minicraft.achievement.plant_seed": "A Seedy Place",
+  "minicraft.achievement.plant_seed.desc": "Plant a seed and watch it grow.",
   "minicraft.display.entries.boolean.false": "Off",
   "minicraft.display.entries.boolean.true": "On",
   "minicraft.display.gui.link_opening": "Opening with browser...",

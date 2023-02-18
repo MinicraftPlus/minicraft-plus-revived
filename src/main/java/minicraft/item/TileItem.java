@@ -15,6 +15,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.AchievementsDisplay;
 import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
@@ -53,10 +54,14 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Cactus", new LinkedSprite(SpriteType.Item, "cactus"), new TileModel("cactus Sapling"), "sand"));
 		items.add(new TileItem("Cloud", new LinkedSprite(SpriteType.Item, "cloud"), new TileModel("cloud"), "Infinite Fall"));
 
-		items.add(new TileItem("Wheat Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("wheat", TileModel.KEEP_DATA), "farmland"));
+		TileModel.TileDataGetter seedPlanting = (model1, target, level, xt, yt, player, attackDir) -> {
+			AchievementsDisplay.setAchievement("minicraft.achievement.plant_seed", true);
+			return TileModel.KEEP_DATA.getTileData(model1, target, level, xt, yt, player, attackDir);
+		};
+		items.add(new TileItem("Wheat Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("wheat", seedPlanting), "farmland"));
 		items.add(new TileItem("Potato", new LinkedSprite(SpriteType.Item, "potato"), new TileModel("potato", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Carrot", new LinkedSprite(SpriteType.Item, "carrot"), new TileModel("carrot", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Beetroot Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("beetroot", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Beetroot Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("beetroot", seedPlanting), "farmland"));
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
 
 		// Creative mode available tiles:

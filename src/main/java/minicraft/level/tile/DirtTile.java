@@ -12,6 +12,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.AchievementsDisplay;
 
 public class DirtTile extends Tile {
 	private static SpriteAnimation[] levelSprite = new SpriteAnimation[] {

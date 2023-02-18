@@ -11,6 +11,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.AchievementsDisplay;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;

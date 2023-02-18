@@ -73,5 +73,10 @@
     "id": "minicraft.achievement.skin",
     "desc": "minicraft.achievement.skin.desc",
     "score": 10
+  },
+  {
+    "id": "minicraft.achievement.plant_seed",
+    "desc": "minicraft.achievement.plant_seed.desc",
+    "score": 20
   }
 ]
