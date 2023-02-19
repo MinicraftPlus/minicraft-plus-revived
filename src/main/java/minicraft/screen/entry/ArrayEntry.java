@@ -9,8 +9,8 @@ import minicraft.gfx.Font;
 
 public class ArrayEntry<T> extends ListEntry {
 
-	private String label;
-	private T[] options;
+	private final String label;
+	protected T[] options;
 	private boolean[] optionVis;
 
 	private int selection;
