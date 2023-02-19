@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.ItemHolder;
@@ -9,6 +10,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
+import minicraft.screen.entry.InputEntry;
 
 public class ContainerDisplay extends Display {
 
@@ -24,10 +26,16 @@ public class ContainerDisplay extends Display {
 		this.player = player;
 		this.chest = chest;
 
+		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.setVisible(false);
+
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 
 		if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 	}
+
+	OnScreenKeyboardMenu onScreenKeyboardMenu;
 
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
@@ -43,63 +51,101 @@ public class ContainerDisplay extends Display {
 	private int getOtherIdx() { return selection ^ 1; }
 
 	@Override
-	public void tick(InputHandler input) {
-		super.tick(input);
+	public void render(Screen screen) {
+		super.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
+	}
 
-		if(input.getKey("menu").clicked || chest.isRemoved()) {
-			Game.setDisplay(null);
-			return;
-		}
+	@Override
+	public void tick(InputHandler input) {
+		boolean acted = false; // Checks if typing action is needed to be handled.
+		boolean mainMethod = false;
 
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
+		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
+			super.tick(input);
 
-		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
-			if (curMenu.getEntries().length == 0) return;
-			// switch inventories
-			Inventory from, to;
-			if(selection == 0) {
-				from = chest.getInventory();
-				to = player.getInventory();
-			} else {
-				from = player.getInventory();
-				to = chest.getInventory();
+			if (input.inputPressed("menu") || chest.isRemoved()) {
+				Game.setDisplay(null);
+				return;
 			}
 
-			int toSel = menus[otherIdx].getSelection();
-			int fromSel = curMenu.getSelection();
+			curMenu = menus[selection];
+			mainMethod = true;
+		} else {
+			try {
+				onScreenKeyboardMenu.tick(input);
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
+					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+				acted = true;
+			}
 
-			Item fromItem = from.get(fromSel);
+			if (!acted)
+				curMenu.tick(input);
 
-			boolean transferAll = input.getKey("shift-enter").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+			if (input.getKey("menu").clicked || chest.isRemoved()) {
+				Game.setDisplay(null);
+				return;
+			}
 
-			Item toItem = fromItem.clone();
-
-			if (fromItem instanceof StackableItem) {
-				int move = 1;
-				if (!transferAll) {
-					((StackableItem)toItem).count = 1;
-				} else {
-					move = ((StackableItem)fromItem).count;
+			if (curMenu.isSearcherBarActive()) {
+				if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
+					onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
 				}
-
-				int moved = to.add(toSel, toItem);
-				if (moved < move) {
-					((StackableItem)fromItem).count -= moved;
-				} else if (!transferAll) {
-					((StackableItem)fromItem).count--;
-				} else {
-					from.remove(fromSel);
-				}
-				update();
 			} else {
-				int moved = to.add(toSel, toItem);
-				if (moved == 1) {
-					from.remove(fromSel);
-					update();
-				}
+				onScreenKeyboardMenu.setVisible(false);
 			}
 		}
+
+		if (mainMethod || !onScreenKeyboardMenu.isVisible())
+			if (input.inputPressed("attack") || input.getKey("shift-enter").clicked) {
+				if (curMenu.getEntries().length == 0) return;
+				// switch inventories
+				Inventory from, to;
+				if(selection == 0) {
+					from = chest.getInventory();
+					to = player.getInventory();
+				} else {
+					from = player.getInventory();
+					to = chest.getInventory();
+				}
+
+				int toSel = menus[otherIdx].getSelection();
+				int fromSel = curMenu.getSelection();
+
+				Item fromItem = from.get(fromSel);
+
+				boolean transferAll = input.getKey("shift-enter").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+
+				Item toItem = fromItem.clone();
+
+				if (fromItem instanceof StackableItem) {
+					int move = 1;
+					if (!transferAll) {
+						((StackableItem)toItem).count = 1;
+					} else {
+						move = ((StackableItem)fromItem).count;
+					}
+
+					int moved = to.add(toSel, toItem);
+					if (moved < move) {
+						((StackableItem)fromItem).count -= moved;
+					} else if (!transferAll) {
+						((StackableItem)fromItem).count--;
+					} else {
+						from.remove(fromSel);
+					}
+					update();
+				} else {
+					int moved = to.add(toSel, toItem);
+					if (moved == 1) {
+						from.remove(fromSel);
+						update();
+					}
+				}
+			}
 	}
 
 	public void onInvUpdate(ItemHolder holder) {
