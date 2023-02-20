@@ -23,7 +23,7 @@ public enum PotionType {
 
 	Health (Color.get(1, 194, 56, 84), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
-			if(addEffect) player.heal(5);
+			if (addEffect) player.heal(5);
 			return true;
 		}
 	},

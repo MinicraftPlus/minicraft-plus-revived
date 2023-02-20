@@ -99,7 +99,7 @@ public class Level {
 	private void updateMobCap() {
 		maxMobCount = 150 + 150 * Settings.getIdx("diff");
 		if (depth == 1) maxMobCount /= 2;
-		if (depth == 0 || depth == -4) maxMobCount = maxMobCount * 2 / 3;
+		if (depth == 0 || depth == -4 || depth == -5) maxMobCount = maxMobCount * 2 / 3;
 	}
 
 	public Level(int w, int h, long seed, int level, Level parentLevel, boolean makeWorld) {
@@ -139,14 +139,17 @@ public class Level {
 		if (level == 0)
 			generateVillages();
 
+		if (level == -4)
+			generateDungeonStructures();
 
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't a sky level)
 			for (int y = 0; y < h; y++) { // Loop through height
 				for (int x = 0; x < w; x++) { // Loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level == -4) /// Make the obsidian wall formation around the stair in the dungeon level
-							Structure.dungeonGate.draw(this, x, y);
-
+						if (level == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
+							Structure.dungeonGate.draw(this, x, y); // Te gate should not intersect with the boss room.
+							Structure.dungeonBossRoom.draw(this, w/2, h/2); // Generating the boss room at the center.
+						}
 						else if (level == 0) { // Surface
 							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
@@ -250,18 +253,18 @@ public class Level {
 				// Pick a random tile:
 				int x2 = random.nextInt(16 * w) / 16;
 				int y2 = random.nextInt(16 * h) / 16;
-				if (getTile(x2, y2) == Tiles.get("Obsidian")) {
+				if (getTile(x2, y2) == Tiles.get("Grass")) {
 					boolean xaxis = random.nextBoolean();
 					if (xaxis) {
 						for (int s = x2; s < w - s; s++) {
-							if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
+							if (getTile(s, y2) == Tiles.get("Obsidian Wall") || getTile(s, y2) == Tiles.get("Ornate Obsidian")) {
 								d.x = s * 20 - 16;
 								d.y = y2 * 24 - 14;
 							}
 						}
 					} else { // y axis
 						for (int s = y2; s < y2 - s; s++) {
-							if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
+							if (getTile(x2, s) == Tiles.get("Obsidian Wall") || getTile(x2, s) == Tiles.get("Ornate Obsidian")) {
 								d.x = x2 * 23 - 14;
 								d.y = s * 21 - 16;
 							}
@@ -270,9 +273,6 @@ public class Level {
 					if (d.x == 0 && d.y == 0) {
 						d.x = x2 * 16 - 8;
 						d.y = y2 * 16 - 8;
-					}
-					if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
-						setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
 					}
 
 					add(d);
@@ -412,11 +412,11 @@ public class Level {
 	}
 	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
-			 dropItem(x, y, items);
+			dropItem(x, y, items);
 	}
 	public void dropItem(int x, int y, Item... items) {
 		for (Item i: items)
-			 dropItem(x, y, i);
+			dropItem(x, y, i);
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
 		int ranx, rany;
@@ -747,9 +747,9 @@ public class Level {
 		int xd = closest.x - x;
 		int yd = closest.y - y;
 		for (int i = 1; i < players.length; i++) {
-			 int curxd = players[i].x - x;
-			 int curyd = players[i].y - y;
-			 if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
+			int curxd = players[i].x - x;
+			int curyd = players[i].y - y;
+			if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
 				closest = players[i];
 				xd = curxd;
 				yd = curyd;
@@ -774,7 +774,7 @@ public class Level {
 		ArrayList<Tile> local = new ArrayList<>();
 
 		for (Point p: getAreaTilePositions(x, y, rx, ry))
-			 local.add(getTile(p.x, p.y));
+			local.add(getTile(p.x, p.y));
 
 		return local.toArray(new Tile[local.size()]);
 	}
@@ -831,75 +831,134 @@ public class Level {
 	}
 
 	private void generateSpawnerStructures() {
-		for (int i = 0; i < 18 / -depth * (w / 128); i++) {
+		if (depth != -4) {
+			for (int i = 0; i < 18 / -depth * (w / 128); i++) {
 
-			/// For generating spawner dungeons
-			MobAi m;
-			int r = random.nextInt(5);
+				/// For generating spawner dungeons
+				MobAi m;
+				int r = random.nextInt(5);
 
-			if (r == 1) {
-				m = new Skeleton(-depth);
-			} else if (r == 2 || r == 0) {
-				m = new Slime(-depth);
-			} else {
-				m = new Zombie(-depth);
-			}
-
-			Spawner sp = new Spawner(m);
-			int x3 = random.nextInt(16 * w) / 16;
-			int y3 = random.nextInt(16 * h) / 16;
-			if (getTile(x3, y3) == Tiles.get("dirt")) {
-				boolean xaxis2 = random.nextBoolean();
-
-				if (xaxis2) {
-					for (int s2 = x3; s2 < w - s2; s2++) {
-						if (getTile(s2, y3) == Tiles.get("rock")) {
-							sp.x = s2 * 16 - 24;
-							sp.y = y3 * 16 - 24;
-						}
-					}
+				if (r == 1) {
+					m = new Skeleton(-depth);
+				} else if (r == 2 || r == 0) {
+					m = new Slime(-depth);
 				} else {
-					for (int s2 = y3; s2 < y3 - s2; s2++) {
-						if (getTile(x3, s2) == Tiles.get("rock")) {
-							sp.x = x3 * 16 - 24;
-							sp.y = s2 * 16 - 24;
+					m = new Zombie(-depth);
+				}
+
+				Spawner sp = new Spawner(m);
+				int x3 = random.nextInt(16 * w) / 16;
+				int y3 = random.nextInt(16 * h) / 16;
+				if (getTile(x3, y3) == Tiles.get("dirt")) {
+					boolean xaxis2 = random.nextBoolean();
+
+					if (xaxis2) {
+						for (int s2 = x3; s2 < w - s2; s2++) {
+							if (getTile(s2, y3) == Tiles.get("rock")) {
+								sp.x = s2 * 16 - 24;
+								sp.y = y3 * 16 - 24;
+							}
+						}
+					} else {
+						for (int s2 = y3; s2 < y3 - s2; s2++) {
+							if (getTile(x3, s2) == Tiles.get("rock")) {
+								sp.x = x3 * 16 - 24;
+								sp.y = s2 * 16 - 24;
+							}
 						}
 					}
+
+					if (sp.x == 0 && sp.y == 0) {
+						sp.x = x3 * 16 - 8;
+						sp.y = y3 * 16 - 8;
+					}
+
+					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
+						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					}
+
+					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+
+					if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+					}
+					if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+					}
+					if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
+						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+					}
+					if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
+						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
+					}
+
+					add(sp);
+					for (int rpt = 0; rpt < 2; rpt++) {
+						if (random.nextInt(2) != 0) continue;
+						Chest c = new Chest();
+						int chance = -depth;
+
+						c.populateInvRandom("minidungeon", chance);
+
+						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+					}
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < 18 * (w / 128); i++) {
+
+				/// For generating spawner dungeons
+				MobAi m;
+				int r = random.nextInt(2);
+
+				if (r == 1) {
+					m = new Knight(2);
+				} else {
+					m = new Snake(2);
 				}
 
-				if (sp.x == 0 && sp.y == 0) {
-					sp.x = x3 * 16 - 8;
-					sp.y = y3 * 16 - 8;
-				}
+				Spawner sp = new Spawner(m);
+				int x3 = random.nextInt(16 * w) / 16;
+				int y3 = random.nextInt(16 * h) / 16;
+				if (getTile(x3, y3) == Tiles.get("Obsidian")) {
+					boolean xaxis2 = random.nextBoolean();
 
-				if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-					setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
-				}
+					if (xaxis2) {
+						for (int s2 = x3; s2 < w - s2; s2++) {
+							if (getTile(s2, y3) == Tiles.get("Obsidian Wall")) {
+								sp.x = s2 * 16 - 24;
+								sp.y = y3 * 16 - 24;
+							}
+						}
+					} else {
+						for (int s2 = y3; s2 < y3 - s2; s2++) {
+							if (getTile(x3, s2) == Tiles.get("Obsidian Wall")) {
+								sp.x = x3 * 16 - 24;
+								sp.y = s2 * 16 - 24;
+							}
+						}
+					}
 
-				Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+					if (sp.x == 0 && sp.y == 0) {
+						sp.x = x3 * 16 - 8;
+						sp.y = y3 * 16 - 8;
+					}
 
-				if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
-					Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
-				}
-				if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
-					Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
-				}
-				if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
-					Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
-				}
-				if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
-					Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
-				}
+					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("Obsidian Wall")) {
+						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					}
 
-				add(sp);
-				for (int rpt = 0; rpt < 2; rpt++) {
-					 if (random.nextInt(2) != 0) continue;
-					 Chest c = new Chest();
-					 int chance = -depth;
+					Structure.dungeonSpawner.draw(this, sp.x / 16, sp.y / 16);
 
-					 c.populateInvRandom("minidungeon", chance);
+					add(sp);
+					for (int rpt = 0; rpt < 2; rpt++) {
+						if (random.nextInt(2) != 0) continue;
+						DungeonChest c = new DungeonChest(true);
+						chestCount++;
 
-					 add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
+					}
 				}
 			}
 		}
@@ -961,6 +1020,37 @@ public class Level {
 					}
 
 					break;
+				}
+			}
+		}
+	}
+
+	private void generateDungeonStructures() {
+		for (int i = 0; i < Math.sqrt(w); i++) {
+			int x = random.nextInt(w - 2) + 1;
+			int y = random.nextInt(h - 2) + 1;
+
+			if (x > 8 && y > 8) {
+				if (x < w - 8 && y < w - 8) {
+					if (random.nextInt(2) == 1) {
+						Structure.dungeonGarden.draw(this, x, y);
+					} else {
+						Structure.dungeonChest.draw(this, x, y);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Regenerating/repairing the boss room in the dungeon.
+	 */
+	public void regenerateBossRoom() {
+		if (depth == -4) {
+			Structure.dungeonBossRoom.draw(tiles, w/2, h/2, w); // Generating the boss room at the center.
+			for (int x = w/2-4; x < w/2+5; x++) { // Resetting tile data.
+				for (int y = h/2-4; y < h/2+5; y++) {
+					setData(x, y, 0);
 				}
 			}
 		}

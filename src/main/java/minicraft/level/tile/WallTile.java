@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -29,8 +30,9 @@ public class WallTile extends Tile {
 	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
 	protected Material type;
 
-	protected WallTile(Material type) {
-		super(type.name() + " Wall", (SpriteAnimation) null);
+	protected WallTile(Material type) { this(type, null); }
+	protected WallTile(Material type, String name) {
+		super(type.name() + " " + (name == null ? "Wall" : name), null);
 		this.type = type;
 		switch (type) {
 			case Wood: sprite = wood; break;
@@ -46,10 +48,10 @@ public class WallTile extends Tile {
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
+			hurt(level, x, y, 0);
 			return true;
 		} else {
-			Game.notifications.add(obrickMsg);
+			Game.notifications.add(Localization.getLocalized(obrickMsg));
 			return false;
 		}
 	}

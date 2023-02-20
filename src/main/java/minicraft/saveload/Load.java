@@ -8,6 +8,7 @@ import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.FireSpark;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Spark;
 import minicraft.entity.furniture.Bed;
@@ -15,6 +16,7 @@ import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.furniture.Lantern;
 import minicraft.entity.furniture.Spawner;
 import minicraft.entity.furniture.Tnt;
@@ -25,6 +27,7 @@ import minicraft.entity.mob.EnemyMob;
 import minicraft.entity.mob.Knight;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.MobAi;
+import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Pig;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.Sheep;
@@ -51,11 +54,14 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.PopupDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.util.AdvancementElement;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -76,6 +82,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Predicate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Load {
 
@@ -129,6 +136,58 @@ public class Load {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
+
+			if (worldVer.compareTo(new Version("2.2.0-dev2")) < 0) {
+				Logging.SAVELOAD.trace("Old version dungeon detected.");
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.0"),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.1"),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.2")
+				)));
+
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.3", Game.input.getMapping("select")),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.4", Game.input.getMapping("exit"))
+				)));
+
+				AtomicBoolean acted = new AtomicBoolean(false);
+				AtomicBoolean continues = new AtomicBoolean(false);
+
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					Game.exitDisplay();
+					acted.set(true);
+					continues.set(true);
+					return true;
+				}));
+
+				callbacks.add(new PopupDisplay.PopupActionCallback("exit", popup -> {
+					Game.exitDisplay();
+					acted.set(true);
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+
+				while (true) {
+					if (acted.get()) {
+						if (continues.get()) {
+							Logging.SAVELOAD.trace("Regenerating dungeon (B4)...");
+							LoadingDisplay.setMessage("minicraft.displays.loading.message.dungeon_regeneration");
+							int lvlidx = World.lvlIdx(-4);
+							boolean reAdd = Game.player.getLevel().depth == -4;
+							Level oriLevel = World.levels[lvlidx];
+							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
+							if (reAdd) World.levels[lvlidx].add(Game.player);
+						} else {
+							throw new RuntimeException(new InterruptedException("World loading interrupted."));
+						}
+
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -148,13 +207,13 @@ public class Load {
 		if (new File(location + "Preferences.json").exists()) {
 			loadPrefs("Preferences");
 
-		// Check if Preferences.miniplussave exists. (old version)
+			// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
 			loadPrefsOld("Preferences");
 			Logging.SAVELOAD.info("Upgrading preferences to JSON.");
 			resave = true;
 
-		// No preferences file found.
+			// No preferences file found.
 		} else {
 			Logging.SAVELOAD.warn("No preferences found, creating new file.");
 			resave = true;
@@ -623,6 +682,8 @@ public class Load {
 			}
 		}
 
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.quests");
+
 		if (new File(location+"Quests.json").exists()){
 			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
 			try {
@@ -668,6 +729,8 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
+		if (worldVer.compareTo(new Version("2.2.0-dev2")) >= 0)
+			player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
@@ -897,7 +960,7 @@ public class Load {
 			if (sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
-				Logging.SAVELOAD.error("Failed to load spark; owner id doesn't point to a correct entity");
+				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
 				return null;
 			}
 		} else {
@@ -915,6 +978,17 @@ public class Load {
 			}
 
 			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
+		}
+
+		if (entityName.equals("FireSpark") && !isLocalSave) {
+			int obID = Integer.parseInt(info.get(2));
+			Entity sparkOwner = Network.getEntity(obID);
+			if (sparkOwner instanceof ObsidianKnight)
+				newEntity = new FireSpark((ObsidianKnight)sparkOwner, x, y);
+			else {
+				Logging.SAVELOAD.error("Failed to load FireSpark; owner id doesn't point to a correct entity");
+				return null;
+			}
 		}
 
 		if (newEntity == null)
@@ -987,6 +1061,9 @@ public class Load {
 				newEntity = new Spawner(mob);
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+		} else if (newEntity instanceof KnightStatue) {
+			int health = Integer.parseInt(info.get(2));
+			newEntity = new KnightStatue(health);
 		}
 
 		if (!isLocalSave) {
@@ -1063,6 +1140,8 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
+			case "KnightStatue": return new KnightStatue(0);
+			case "ObsidianKnight": return  new ObsidianKnight(0);
 			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}

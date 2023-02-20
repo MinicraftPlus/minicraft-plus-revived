@@ -6,10 +6,7 @@ import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
-import minicraft.entity.Arrow;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
+import minicraft.entity.*;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.entity.particle.Particle;
@@ -164,6 +161,7 @@ public class Save {
 		data.add(String.valueOf(AirWizard.beaten));
 		data.add(String.valueOf(Settings.get("quests")));
 		data.add(String.valueOf(Settings.get("tutorials")));
+		data.add(String.valueOf(ObsidianKnight.beaten));
 		writeToFile(location + filename + extension, data);
 	}
 
@@ -265,6 +263,7 @@ public class Save {
 		data.add(String.valueOf(player.spawnx));
 		data.add(String.valueOf(player.spawny));
 		data.add(String.valueOf(player.health));
+		data.add(String.valueOf(player.extraHealth));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
 		data.add(String.valueOf(player.armorDamageBuffer));
@@ -330,7 +329,7 @@ public class Save {
 
 		// Don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 
-		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
+		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof FireSpark  || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
 			return "";
 
 		if (!isLocalSave)
@@ -370,6 +369,10 @@ public class Save {
 
 		if (e instanceof Crafter) {
 			name = ((Crafter)e).type.name();
+		}
+
+		if (e instanceof KnightStatue) {
+			extradata.append(":").append(((KnightStatue) e).getBossHealth());
 		}
 
 		if (!isLocalSave) {

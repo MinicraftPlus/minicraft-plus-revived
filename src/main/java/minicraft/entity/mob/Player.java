@@ -82,7 +82,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	// The maximum stats that the player can have.
 	public static final int maxStat = 10;
-	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
+	public static final int maxHealth = 30, maxStamina = maxStat, maxHunger = maxStat;
+	public static int extraHealth = 0;
+	public static int baseHealth = 10;
 	public static final int maxArmor = 100;
 
 	public static LinkedSprite[][] sprites;
@@ -138,7 +140,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// Note: the player's health & max health are inherited from Mob.java
 
 	public Player(@Nullable Player previousInstance, InputHandler input) {
-		super(null, Player.maxHealth);
+		super(null, Player.baseHealth);
 
 		x = 24;
 		y = 24;
@@ -271,6 +273,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		tickMultiplier();
 
+		if ((baseHealth + extraHealth) > maxHealth) {
+			extraHealth = maxHealth - 10;
+			Logging.PLAYER.warn("Current Max Health is greater than Max Health, downgrading.");
+		}
+
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {
 			for (PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
 				if (potioneffects.get(potionType) <= 1) // If time is zero (going to be set to 0 in a moment)...
@@ -391,7 +398,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			/// System that heals you depending on your hunger
-			if (health < maxHealth && hunger > maxHunger/2) {
+			if (health < (baseHealth + extraHealth) && hunger > maxHunger/2) {
 				hungerChargeDelay++;
 				if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
 					health++;

@@ -11,6 +11,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.item.Items;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
@@ -21,6 +22,8 @@ public class AirWizard extends EnemyMob {
 	};
 
 	public static boolean beaten = false;
+	public static boolean active = true;
+	public static AirWizard entity = null;
 
 	private int attackDelay = 0;
 	private int attackTime = 0;
@@ -37,8 +40,10 @@ public class AirWizard extends EnemyMob {
 	public AirWizard() {
 		super(1, sprites, 2000, false, 16 * 8, -1, 10, 50);
 
+		active = true;
 		speed = 2;
 		walkTime = 2;
+		entity = this;
 	}
 
 	@Override
@@ -154,14 +159,17 @@ public class AirWizard extends EnemyMob {
 	public void die() {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // If the player is still here
-			for (Player p: players)
-				 p.addScore(100000); // Give the player 100K points.
+			for (Player p: players) {
+				p.addScore(100000); // Give the player 100K points.
+				dropItem(5, 10, Items.get("cloud ore")); // Drop cloud ore to guarantee respawn.
+			}
 		}
 
 		Sound.play("bossdeath");
 
 		Analytics.AirWizardDeath.ping();
 		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
+
 
 		// If this is the first time we beat the air wizard.
 		if (!beaten) {
@@ -172,6 +180,8 @@ public class AirWizard extends EnemyMob {
 		}
 
 		beaten = true;
+		active = false;
+		entity = null;
 
 		super.die(); // Calls the die() method in EnemyMob.java
 	}

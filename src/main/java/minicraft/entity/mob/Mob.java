@@ -1,9 +1,11 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Tnt;
+import minicraft.entity.particle.BurnParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -21,7 +23,7 @@ public abstract class Mob extends Entity {
 	int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
 	private int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
 	public int health;
-	final int maxHealth; // The amount of health we currently have, and the maximum.
+	public final int maxHealth; // The amount of health we currently have, and the maximum.
 	int walkTime;
 	public int speed;
 	int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
@@ -51,6 +53,23 @@ public abstract class Mob extends Entity {
 
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
+
+		if (canBurn()) {
+			if (this.burningDuration > 0) {
+				if (level.getTile(x / 16, y / 16) == Tiles.get("water")) this.burningDuration = 0;
+				if (this.burningDuration % 10 == 0)
+					level.add(new BurnParticle(x - 8 + (random.nextInt(8) - 4), y - 8 + (random.nextInt(8) - 4)));
+				this.burningDuration--;
+				if (this instanceof Player) {
+					if (this.burningDuration % 70 == 0 && !Renderer.player.potioneffects.containsKey(PotionType.Lava))
+						hurt(this, 1, Direction.NONE); //burning damage
+				} else {
+					if (this.burningDuration % 70 == 0)
+						hurt(this, 2, Direction.NONE); //burning damage
+				}
+			}
+		}
+
 		if (health <= 0) die(); // Die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 
@@ -203,6 +222,14 @@ public abstract class Mob extends Entity {
 	}
 
 	/**
+	 *
+	 * @param sec duration in seconds
+	 */
+	public void burn(int sec) {
+		this.burningDuration = sec * 60;
+	}
+
+	/**
 	 * Executed when a TNT bomb explodes near this mob.
 	 * @param tnt The TNT exploding.
 	 * @param dmg The amount of damage the explosion does.
@@ -235,10 +262,19 @@ public abstract class Mob extends Entity {
 
 		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
-		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
+		if (health > (Player.baseHealth + Player.extraHealth)) health = (Player.baseHealth + Player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum
 	}
 
 	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
 		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
+	}
+
+	/**
+	 * This checks how the {@code attacker} can damage this mob.
+	 * @param attacker The attacker entity.
+	 * @return The calculated damage.
+	 */
+	public int calculateEntityDamage(Entity attacker, int damage) {
+		return damage;
 	}
 }

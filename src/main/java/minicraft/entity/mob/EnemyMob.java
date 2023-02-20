@@ -129,7 +129,7 @@ public class EnemyMob extends MobAi {
 
 		Tile t = level.getTile(x, y);
 
-		if(level.depth == -4) {
+		if (level.depth == -4) {
 			if (t != Tiles.get("Obsidian")) return false;
 		} else if (t != Tiles.get("Stone Door") && t != Tiles.get("Wood Door") && t != Tiles.get("Obsidian Door") && t != Tiles.get("wheat") && t != Tiles.get("farmland")) {
 			// Prevents mobs from spawning on lit tiles, farms, or doors (unless in the dungeons)
