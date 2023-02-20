@@ -1,5 +1,15 @@
 package minicraft.screen;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
+import com.studiohartman.jamepad.ControllerButton;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
@@ -721,12 +731,12 @@ public class QuestsDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
+		if (input.inputPressed("cursor-left")) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.getKey("cursor-right").clicked) if (selectedEntry < 1) {
+		if (input.inputPressed("cursor-right")) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}

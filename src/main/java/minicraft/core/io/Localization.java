@@ -32,7 +32,7 @@ public class Localization {
 	 */
 	@NotNull
 	public static String getLocalized(String key, Object... arguments) {
-		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
+		if (key.matches("^ *$")) return key; // Blank, or just whitespace
 
 		try {
 			Double.parseDouble(key);

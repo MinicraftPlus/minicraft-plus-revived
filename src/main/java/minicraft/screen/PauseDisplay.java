@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
@@ -71,7 +72,7 @@ public class PauseDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
-		if (input.getKey("pause").clicked)
+		if (input.inputPressed("pause"))
 			Game.exitDisplay();
 	}
 }

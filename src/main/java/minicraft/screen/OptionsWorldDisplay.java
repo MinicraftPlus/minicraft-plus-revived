@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Localization.LocaleInformation;
@@ -15,7 +14,6 @@ import minicraft.screen.entry.StringEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 
 public class OptionsWorldDisplay extends Display {
@@ -66,6 +64,7 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			Settings.getEntry("language"),
 			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))

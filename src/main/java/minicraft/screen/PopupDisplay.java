@@ -1,24 +1,27 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
+import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 /** Light-weighted exitable display with single menu. */
 public class PopupDisplay extends Display {
-	// TODO Turn all popups into PopupDisplay, including weird BookDisplay uses.
 	// Using Color codes for coloring in title and plain text messages.
 
 	private final ArrayList<PopupActionCallback> callbacks;
 
 	public PopupDisplay(@Nullable PopupConfig config, String... messages) { this(config, false, messages); }
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, String... messages) { this(config, clearScreen, true, messages); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, String... messages) { this(config, clearScreen, StringEntry.useLines(messages)); }
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, String... messages) { this(config, clearScreen, menuFrame, StringEntry.useLines(messages)); }
 	public PopupDisplay(@Nullable PopupConfig config, ListEntry... entries) { this(config, false, entries); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, ListEntry... entries) { this(config, false, true, entries); }
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, ListEntry... entries) { this(config, clearScreen, true, entries); }
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, ListEntry... entries) {
 		super(clearScreen, true);
 
@@ -33,24 +36,77 @@ public class PopupDisplay extends Display {
 			this.callbacks = null;
 		}
 
-		menus = new Menu[] {builder.createMenu()};
+		if (Stream.of(entries).anyMatch(e -> e instanceof InputEntry))
+			onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
+		if (onScreenKeyboardMenu == null)
+			menus = new Menu[] { builder.createMenu() };
+		else
+			menus = new Menu[] { onScreenKeyboardMenu, builder.createMenu() };
 	}
+
+	OnScreenKeyboardMenu onScreenKeyboardMenu;
 
 	@Override
 	public void tick(InputHandler input) {
+		boolean acted = false; // Checks if typing action is needed to be handled.
+		boolean takeExitHandle = true;
+		boolean handleMenu = false;
+		if (onScreenKeyboardMenu == null) {
+			if (!tickCallbacks(input))
+				super.tick(input); // Continues with this if no callback returns true.
+		} else {
+			try {
+				onScreenKeyboardMenu.tick(input);
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted e) {
+				acted = true;
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+				takeExitHandle = false;
+				acted = true;
+			}
+
+			if (takeExitHandle && input.inputPressed("exit")) {
+				Game.exitDisplay();
+				return;
+			}
+
+			if (menus[1].getCurEntry() instanceof InputEntry) {
+				if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
+					onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
+					if (!onScreenKeyboardMenu.isVisible())
+						selection = 1;
+					else
+						selection = 0;
+				}
+
+				if (!acted)
+					handleMenu = true;
+			} else if (selection == 0) {
+				onScreenKeyboardMenu.setVisible(false);
+				selection = 1;
+				handleMenu = true;
+			} else {
+				handleMenu = true;
+			}
+
+			if (handleMenu)
+				if (!tickCallbacks(input))
+					menus[1].tick(input); // Continues with this if no callback returns true.
+		}
+	}
+
+	private boolean tickCallbacks(InputHandler input) {
 		if (callbacks != null) {
 			for (PopupActionCallback callback : callbacks) {
 				if (callback.key == null || input.getKey(callback.key).clicked) {
 					if (callback.callback != null && callback.callback.acts(menus[0])) {
 						// This overrides the original #tick check.
-						return;
+						return true;
 					}
 				}
 			}
 		}
 
-		// Continues with this if no callback returns true.
-		super.tick(input);
+		return false;
 	}
 
 	public static class PopupActionCallback {

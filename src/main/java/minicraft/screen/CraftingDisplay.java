@@ -1,11 +1,13 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
@@ -63,6 +65,10 @@ public class CraftingDisplay extends Display {
 
 		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
 		refreshData();
+
+		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.setVisible(false);
 	}
 
 	private void refreshData() {
@@ -97,59 +103,100 @@ public class CraftingDisplay extends Display {
 		return costList.toArray(new ItemListing[0]);
 	}
 
+	OnScreenKeyboardMenu onScreenKeyboardMenu;
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+		onScreenKeyboardMenu.render(screen);
+	}
+
 	@Override
 	public void tick(InputHandler input) {
-		int previousSelection = recipeMenu.getSelection();
-		super.tick(input);
-		if (previousSelection != recipeMenu.getSelection()) {
-			refreshData();
-		}
+		boolean acted = false; // Checks if typing action is needed to be handled.
+		boolean mainMethod = false;
 
-		if (input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
-			Game.exitDisplay();
-			return;
-		}
+		if (onScreenKeyboardMenu == null || !recipeMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
+			if (input.inputPressed("menu") || (isPersonalCrafter && input.inputPressed("craft"))) {
+				Game.exitDisplay();
+				return;
+			}
 
-		if ((input.getKey("select").clicked || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
-			// check the selected recipe
-			if (recipes.length == 0) return;
-			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
-			if (selectedRecipe.getCanCraft()) {
-				if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
-					AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
-				} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
-					AchievementsDisplay.setAchievement("minicraft.achievement.planks",true);
-				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
-					AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
-				} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
-					selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
-					selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
-					selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
-					selectedRecipe.getProduct().equals(Items.get("Rock Hoe")) ||
-					selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
-					selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
-					AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
-				} else if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
-					selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
-					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
+			mainMethod = true;
+		} else {
+			try {
+				onScreenKeyboardMenu.tick(input);
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
+					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+				acted = true;
+			}
+
+			if (!acted)
+				recipeMenu.tick(input);
+
+			if (input.getKey("menu").clicked || (isPersonalCrafter && input.inputPressed("craft"))) {
+				Game.exitDisplay();
+				return;
+			}
+
+			if (recipeMenu.isSearcherBarActive()) {
+				if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
+					onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
 				}
+			} else {
+				onScreenKeyboardMenu.setVisible(false);
+			}
+		}
 
-				selectedRecipe.craft(player);
-
-				Sound.play("craft");
-
+		if (mainMethod || !onScreenKeyboardMenu.isVisible()) {
+			int previousSelection = recipeMenu.getSelection();
+			super.tick(input);
+			if (previousSelection != recipeMenu.getSelection()) {
 				refreshData();
-				for (Recipe recipe : recipes) {
-					recipe.checkCanCraft(player);
+			}
+
+			if ((input.inputPressed("select") || input.inputPressed("attack")) && recipeMenu.getSelection() >= 0) {
+				// check the selected recipe
+				if (recipes.length == 0) return;
+				Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
+				if (selectedRecipe.getCanCraft()) {
+					if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
+						AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
+						AchievementsDisplay.setAchievement("minicraft.achievement.planks",true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
+						AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Hoe")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
+					}
+
+					selectedRecipe.craft(player);
+
+					Sound.play("craft");
+
+					refreshData();
+					for (Recipe recipe : recipes) {
+						recipe.checkCanCraft(player);
+					}
 				}
 			}
 		}
+
 	}
 
 	private static void refreshInstanceIfNeeded() {

@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -41,82 +42,120 @@ public class PlayerInvDisplay extends Display {
 		} else creativeInv = null;
 
 		this.player = player;
+
+		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.setVisible(false);
 	}
+
+	OnScreenKeyboardMenu onScreenKeyboardMenu;
 
 	@Override
 	public void tick(InputHandler input) {
-		super.tick(input);
+		boolean acted = false; // Checks if typing action is needed to be handled.
+		boolean mainMethod = false;
 
-		if(input.getKey("menu").clicked) {
-			Game.exitDisplay();
-			return;
+		Menu curMenu = menus[selection];
+		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
+			super.tick(input);
+
+			if (input.inputPressed("menu")) {
+				Game.exitDisplay();
+				return;
+			}
+
+			curMenu = menus[selection];
+			mainMethod = true;
+		} else {
+			try {
+				onScreenKeyboardMenu.tick(input);
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
+					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+				acted = true;
+			}
+
+			if (!acted)
+				curMenu.tick(input);
+
+			if (input.getKey("menu").clicked) { // Should not listen button press.
+				Game.exitDisplay();
+				return;
+			}
+
+			if (curMenu.isSearcherBarActive()) {
+				if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
+					onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
+				}
+			} else {
+				onScreenKeyboardMenu.setVisible(false);
+			}
 		}
 
-		if (creativeMode) {
-			Menu curMenu = menus[selection];
-			int otherIdx = getOtherIdx();
+		if (mainMethod || !onScreenKeyboardMenu.isVisible())
+			if (creativeMode) {
+				int otherIdx = getOtherIdx();
 
-			if (curMenu.getNumOptions() == 0) return;
+				if (curMenu.getNumOptions() == 0) return;
 
-			Inventory from, to;
-			if (selection == 0) {
-				if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
-					player.activeItem = player.getInventory().remove(menus[0].getSelection());
-					Game.exitDisplay();
-					return;
-				}
+				Inventory from, to;
+				if (selection == 0) {
+					if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+						player.activeItem = player.getInventory().remove(menus[0].getSelection());
+						Game.exitDisplay();
+						return;
+					}
 
-				from = player.getInventory();
-				to = creativeInv;
+					from = player.getInventory();
+					to = creativeInv;
 
-				int fromSel = curMenu.getSelection();
-				Item fromItem = from.get(fromSel);
+					int fromSel = curMenu.getSelection();
+					Item fromItem = from.get(fromSel);
 
-				boolean deleteAll;
-				if (input.getKey("SHIFT-D").clicked) {
-					deleteAll = true;
-				} else if (input.getKey("D").clicked) {
-					deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
-				} else return;
+					boolean deleteAll;
+					if (input.getKey("SHIFT-D").clicked || input.buttonPressed(ControllerButton.Y)) {
+						deleteAll = true;
+					} else if (input.getKey("D").clicked || input.buttonPressed(ControllerButton.X)) {
+						deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+					} else return;
 
-				if (deleteAll) {
-					from.remove(fromSel);
+					if (deleteAll) {
+						from.remove(fromSel);
+					} else {
+						((StackableItem)fromItem).count--; // this is known to be valid.
+					}
+
+					update();
+
 				} else {
-					((StackableItem)fromItem).count--; // this is known to be valid.
-				}
+					from = creativeInv;
+					to = player.getInventory();
 
-				update();
+					int toSel = menus[otherIdx].getSelection();
+					int fromSel = curMenu.getSelection();
+
+					Item fromItem = from.get(fromSel);
+
+					boolean transferAll;
+					if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
+						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+					} else return;
+
+					Item toItem = fromItem.clone();
+
+					if (!transferAll) {
+						((StackableItem)toItem).count = 1;
+					}
+
+					to.add(toSel, toItem);
+					update();
+				}
 
 			} else {
-				from = creativeInv;
-				to = player.getInventory();
-
-				int toSel = menus[otherIdx].getSelection();
-				int fromSel = curMenu.getSelection();
-
-				Item fromItem = from.get(fromSel);
-
-				boolean transferAll;
-				if (input.getKey("attack").clicked) { // If stack limit is available, this can transfer whole stack
-					transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
-				} else return;
-
-				Item toItem = fromItem.clone();
-
-				if (!transferAll) {
-					((StackableItem)toItem).count = 1;
+				if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+					player.activeItem = player.getInventory().remove(menus[0].getSelection());
+					Game.exitDisplay();
 				}
-
-				to.add(toSel, toItem);
-				update();
 			}
-
-		} else {
-			if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
-				player.activeItem = player.getInventory().remove(menus[0].getSelection());
-				Game.exitDisplay();
-			}
-		}
 	}
 
 	@Override
@@ -127,6 +166,9 @@ public class PlayerInvDisplay extends Display {
 		String text = Localization.getLocalized("minicraft.displays.player_inv.display.help", Game.input.getMapping("SEARCHER-BAR"));
 
 		Font.draw(text, screen, 12, Screen.h/ 2 + 8, Color.WHITE);
+
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
 	}
 
 	@Override
