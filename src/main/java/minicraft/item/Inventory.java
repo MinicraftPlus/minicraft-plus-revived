@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.jetbrains.annotations.NotNull;
+import minicraft.screen.QuestsDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.entity.furniture.Furniture;
@@ -16,6 +16,10 @@ public class Inventory {
 
 	protected int maxItem = 27;
 	protected boolean unlimited = false;
+
+	public int getMaxSlots() {
+		return maxItem;
+	}
 
 	/**
 	 * Returns all the items which are in this inventory.

@@ -125,8 +125,11 @@ public class ResourcePackDisplay extends Display {
 				Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
 				if (zip.exists()) zip.delete(); // Delete if exists.
 				try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-					for (String name : FileHandler.listResources()) { // Copy only assets and pack configuration.
-						if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
+					ArrayList<String> assets = FileHandler.listAssets();
+					assets.add("pack.json");
+					assets.add("pack.png");
+					for (String name : assets) { // Copy only assets and pack configuration.
+						if (name.startsWith("assets/")) {
 							out.putNextEntry(new ZipEntry(name));
 							if (!name.endsWith("/")) {
 								int b;

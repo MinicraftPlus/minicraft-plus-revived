@@ -11,6 +11,7 @@ import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.util.AdvancementElement;
 
 public class LavaBrickTile extends Tile {
 	protected LavaBrickTile(String name) {
@@ -22,8 +23,12 @@ public class LavaBrickTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Lava"));
 					Sound.play("monsterhurt");
+					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}

@@ -17,6 +17,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraft.util.AdvancementElement;
 
 public class WallTile extends Tile {
 	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
@@ -63,7 +64,11 @@ public class WallTile extends Tile {
 			if (tool.type == type.getRequiredTool()) {
 				if (level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+						int data = level.getData(xt, yt);
 						hurt(level, xt, yt, tool.getDamage());
+						AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+							new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+								item, this, data, xt, yt, level.depth));
 						return true;
 					}
 				} else {
