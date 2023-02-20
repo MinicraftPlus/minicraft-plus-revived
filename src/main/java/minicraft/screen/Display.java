@@ -91,13 +91,7 @@ public class Display {
 		if (clearScreen)
 			screen.clear(0);
 		else if (setParent && parent != null) {
-			if (parent.setParent) {
-				parent.setParent = false;
-				parent.render(screen); // Renders the parent display as background.
-				parent.setParent = true;
-			} else {
-				parent.render(screen); // Renders the parent display as background.
-			}
+			parent.render(screen); // Renders the parent display as background.
 		}
 
 		if (menus.length == 0)

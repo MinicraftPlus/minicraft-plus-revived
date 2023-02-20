@@ -75,7 +75,9 @@ public class Font {
 		draw(msg, screen, x, y, whiteTint);
 	}
 
-	public static int textWidth(String text) { return text.length() * 8; }
+	public static int textWidth(String text) { // Filtering out coloring codes.
+		return (int) (Math.max(text.length() - text.chars().filter(ch -> ch == Color.COLOR_CHAR).count() * 5, 0) * 8);
+	}
 	public static int textWidth(String[] para) {
 		// This returns the maximum length of all the lines.
 		if (para == null || para.length == 0) return 0;

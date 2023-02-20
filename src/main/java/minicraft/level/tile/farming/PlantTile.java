@@ -9,6 +9,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.QuestsDisplay;
 
 public class PlantTile extends FarmTile {
     protected static int maxAge = 100;

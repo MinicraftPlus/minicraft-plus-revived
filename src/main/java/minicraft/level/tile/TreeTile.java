@@ -21,13 +21,14 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.QuestsDisplay;
+import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {
 	private static LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
 	private static LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
 
 	protected TreeTile(String name) {
-		super(name, (SpriteAnimation)null);
+		super(name, null);
 		connectsToGrass = true;
 	}
 
@@ -98,7 +99,11 @@ public class TreeTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(xt, yt);
 					hurt(level, xt, yt, tool.getDamage());
+					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}
@@ -123,7 +128,6 @@ public class TreeTile extends Tile {
 			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
-			QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.kill_tree");
 		} else {
 			level.setData(x, y, damage);
 		}

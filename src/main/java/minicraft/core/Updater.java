@@ -11,7 +11,9 @@ import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 
 import java.awt.*;
@@ -170,6 +172,8 @@ public class Updater extends Game {
 			gameTime++;
 
 			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			TutorialDisplayHandler.tick(input);
+			AdvancementElement.AdvancementTrigger.tick();
 
 			if (display != null) {
 				// A menu is active.

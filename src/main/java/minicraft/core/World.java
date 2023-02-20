@@ -7,6 +7,7 @@ import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.screen.*;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 
 import java.util.Random;
@@ -140,7 +141,9 @@ public class World extends Game {
 			player.findStartPos(level, seed); // Finds the start level for the player
 			level.add(player);
 			QuestsDisplay.resetGameQuests();
-			CraftingDisplay.resetUnlocks();
+			CraftingDisplay.resetRecipeUnlocks();
+			TutorialDisplayHandler.reset(true);
+			AdvancementElement.resetRecipeUnlockingElements();
 		}
 
 		Renderer.readyToRenderGameplay = true;
