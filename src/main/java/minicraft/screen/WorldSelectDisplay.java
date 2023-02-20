@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
@@ -79,7 +80,7 @@ public class WorldSelectDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("SHIFT-C").clicked) {
+		if (input.getKey("SHIFT-C").clicked || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.BLUE));
@@ -127,7 +128,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-R").clicked) {
+		} else if (input.getKey("SHIFT-R").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			names.remove(worldName);
@@ -174,7 +175,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-D").clicked) {
+		} else if (input.getKey("SHIFT-D").clicked || input.leftTriggerPressed() && input.rightTriggerPressed()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
 				Color.toStringCode(Color.tint(Color.RED, 1, true)), worldNames.get(menus[0].getSelection()),
@@ -238,9 +239,9 @@ public class WorldSelectDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.0", Game.input.getMapping("select")), screen, Screen.h - 60, Color.GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.1", Game.input.getMapping("exit")), screen, Screen.h - 40, Color.GRAY);
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.2"), screen, Screen.h - 24, Color.BLUE);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.3"), screen, Screen.h - 16, Color.GREEN);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.4"), screen, Screen.h - 8, Color.RED);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.2", Game.input.selectMapping("SHIFT-C", "LEFTBUMPER")), screen, Screen.h - 24, Color.BLUE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.3", Game.input.selectMapping("SHIFT-R", "RIGHTBUMPER")), screen, Screen.h - 16, Color.GREEN);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.4", Game.input.selectMapping("SHIFT-D", "LEFTRIGHTTRIGGER")), screen, Screen.h - 8, Color.RED);
 
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.select_world"), screen, 0, Color.WHITE);
 	}
