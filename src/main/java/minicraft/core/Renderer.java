@@ -4,6 +4,8 @@ import minicraft.core.CrashHandler.ErrorInfo;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Ellipsis;
@@ -27,11 +29,13 @@ import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
-import org.json.JSONObject;
+
+import javax.imageio.ImageIO;
 
 import java.awt.AWTException;
 import java.awt.Canvas;
@@ -47,14 +51,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.imageio.ImageIO;
-
 public class Renderer extends Game {
-	private Renderer() {}
+	private Renderer() {
+	}
 
 	public static int HEIGHT = 192;
 	public static int WIDTH = 288;
@@ -119,7 +123,9 @@ public class Renderer extends Game {
 	}
 
 
-	/** Renders the current screen. Called in game loop, a bit after tick(). */
+	/**
+	 * Renders the current screen. Called in game loop, a bit after tick().
+	 */
 	public static void render() {
 		if (screen == null) return; // No point in this if there's no gui... :P
 
@@ -131,7 +137,8 @@ public class Renderer extends Game {
 		if (curDisplay != null) // Renders menu, if present.
 			curDisplay.render(screen);
 
-		if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!canvas.hasFocus())
+			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
@@ -216,7 +223,7 @@ public class Renderer extends Game {
 		level.renderSprites(screen, xScroll, yScroll); // Renders level sprites on screen
 
 		// This creates the darkness in the caves
-		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength/4 || Updater.tickCount > Updater.dayLength/2) && !isMode("minicraft.settings.mode.creative")) {
+		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength / 4 || Updater.tickCount > Updater.dayLength / 2) && !isMode("minicraft.settings.mode.creative")) {
 			lightScreen.clear(0); // This doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // Brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
 			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
@@ -225,7 +232,9 @@ public class Renderer extends Game {
 	}
 
 
-	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
+	/**
+	 * Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.)
+	 */
 	private static void renderGui() {
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
@@ -240,10 +249,9 @@ public class Renderer extends Game {
 		}
 
 
-
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
+			if (((ToolItem) player.activeItem).type == ToolType.Bow) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
 				if (isMode("minicraft.settings.mode.creative") || ac >= 10000)
@@ -256,7 +264,8 @@ public class Renderer extends Game {
 		}
 
 		ArrayList<String> permStatus = new ArrayList<>();
-		if (Updater.saving) permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.saving", Math.round(LoadingDisplay.getPercentage())));
+		if (Updater.saving)
+			permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.saving", Math.round(LoadingDisplay.getPercentage())));
 		if (Bed.sleeping()) permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.sleeping"));
 		if (Bed.inBed(Game.player)) {
 			permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.sleep_cancel", input.getMapping("exit")));
@@ -291,14 +300,14 @@ public class Renderer extends Game {
 
 			// Draw each current notification, with shadow text effect.
 			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false)
-				.setYPos(Screen.h*2/5).setRelTextPos(RelPos.TOP, false);
+				.setYPos(Screen.h * 2 / 5).setRelTextPos(RelPos.TOP, false);
 			Font.drawParagraph(print, screen, style, 0);
 		}
 
 
 		// SCORE MODE ONLY:
 		if (isMode("minicraft.settings.mode.score")) {
-			int seconds = (int)Math.ceil(Updater.scoreTime / (double)Updater.normSpeed);
+			int seconds = (int) Math.ceil(Updater.scoreTime / (double) Updater.normSpeed);
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
 			minutes %= 60;
@@ -309,7 +318,7 @@ public class Renderer extends Game {
 			else if (Updater.scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 
-			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left", hours > 0 ? hours + "h " : "", minutes, seconds), screen, Screen.w / 2-9 * 8, 2, timeCol);
+			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left", hours > 0 ? hours + "h " : "", minutes, seconds), screen, Screen.w / 2 - 9 * 8, 2, timeCol);
 
 			String scoreString = Localization.getLocalized("minicraft.display.gui.score.current_score", player.getScore());
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, Color.WHITE);
@@ -317,7 +326,7 @@ public class Renderer extends Game {
 			if (player.getMultiplier() > 1) {
 				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : Color.RED;
 				String mult = "X" + player.getMultiplier();
-				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2 * 8, multColor);
+				Font.draw(mult, screen, Screen.w - Font.textWidth(mult) - 2, 4 + 2 * 8, multColor);
 			}
 		}
 
@@ -326,7 +335,7 @@ public class Renderer extends Game {
 			// Draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
-			int green = (int)(dura * 2.55f); // Let duration show as normal.
+			int green = (int) (dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
@@ -356,19 +365,27 @@ public class Renderer extends Game {
 
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!isMode("minicraft.settings.mode.creative")) {
+			for (int i = 1; i <= 30; i++) {
+				// Renders your current red default hearts, golden hearts for 20 HP, obsidian hearts for 30 HP, or black hearts for damaged health.
+				if (i < 11) {
+					screen.render((i - 1) * 8, Screen.h - 16, 0, 1, 0, hudSheet.getSheet()); // Empty Hearts
+				}
+				if (i < player.health + 1 && i < 11) {
+					screen.render((i - 1) * 8, Screen.h - 16, 0, 0, 0, hudSheet.getSheet());  // Red Hearts
+				}
+				if (i < player.health + 1 && i < 21 && i >= 11) {
+					screen.render((i - 11) * 8, Screen.h - 16, 0, 2, 0, hudSheet.getSheet()); // Yellow Hearts
+				}
+				if (i < player.health + 1 && i >= 21) {
+					screen.render((i - 21) * 8, Screen.h - 16, 0, 3, 0, hudSheet.getSheet()); // Obsidian Hearts
+				}
+			}
 			for (int i = 0; i < Player.maxStat; i++) {
 
 				// Renders armor
 				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
 					screen.render(i * 8, Screen.h - 24, player.curArmor.sprite);
-				}
-
-				// Renders your current red hearts, or black hearts for damaged health.
-				if (i < player.health) {
-					screen.render(i * 8, Screen.h - 16, 0, 0, 0, hudSheet.getSheet());
-				} else {
-					screen.render(i * 8, Screen.h - 16, 0, 1, 0, hudSheet.getSheet());
 				}
 
 				if (player.staminaRechargeDelay > 0) {
@@ -396,36 +413,80 @@ public class Renderer extends Game {
 			}
 		}
 
+		// Renders the bossbar
+		if (!player.isRemoved()) {
+			if (AirWizard.active && (player.getLevel().depth == 1)) {
+				AirWizard boss = AirWizard.entity;
+				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100), "Air wizard");
+			} else if (ObsidianKnight.active && (player.getLevel().depth == -4)) {
+				ObsidianKnight boss = ObsidianKnight.entity;
+				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100), "Obsidian Knight");
+			}
+		}
+
+		TutorialDisplayHandler.render(screen);
 		renderQuestsDisplay();
 		renderDebugInfo();
 	}
 
+	public static void renderBossbar(int length, String title) {
+
+		int x = Screen.w / 4 - 24;
+		int y = Screen.h / 8 - 24;
+
+		int max_bar_length = 100;
+		int bar_length = length; // Bossbar size.
+
+		int INACTIVE_BOSSBAR = 4; // sprite x position
+		int ACTIVE_BOSSBAR = 5; // sprite x position
+
+
+		screen.render(x + (max_bar_length * 2), y, 0, INACTIVE_BOSSBAR, 1, hudSheet.getSheet()); // left corner
+
+		// The middle
+		for (int bx = 0; bx < max_bar_length; bx++) {
+			for (int by = 0; by < 1; by++) {
+				screen.render(x + bx * 2, y + by * 8, 3, INACTIVE_BOSSBAR, 0, hudSheet.getSheet());
+			}
+		}
+
+		screen.render(x - 5 , y , 0, ACTIVE_BOSSBAR, 0, hudSheet.getSheet()); // right corner
+
+		for (int bx = 0; bx < bar_length; bx++) {
+			for (int by = 0; by < 1; by++) {
+				screen.render(x + bx * 2, y + by * 8, 3, ACTIVE_BOSSBAR, 0, hudSheet.getSheet());
+			}
+		}
+
+		Font.drawCentered(title, screen, y + 8, Color.WHITE);
+	}
+
 	private static void renderQuestsDisplay() {
+		if (!TutorialDisplayHandler.inQuests()) return;
 		if (!(boolean) Settings.get("showquests")) return;
 
 		boolean expanding = Game.player.questExpanding > 0;
 		int length = expanding ? 5 : 2;
 		ArrayList<ListEntry> questsShown = new ArrayList<>();
-		ArrayList<Quest> doneQuests = QuestsDisplay.getCompletedQuest();
-		JSONObject questStatus = QuestsDisplay.getStatusQuests();
-		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-			if (!doneQuests.contains(q)) {
-				QuestSeries series = q.getSeries();
-				questsShown.add(expanding?
-					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
-					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE)
-				);
-			}
+		HashSet<Quest> quests = QuestsDisplay.getDisplayableQuests();
+		for (Quest q : quests) {
+			QuestSeries series = q.getSeries();
+
+			questsShown.add(!expanding?
+				new StringEntry(Localization.getLocalized(q.key), Color.WHITE, false):
+				new StringEntry(q.shouldAllCriteriaBeCompleted() && q.getTotalNumCriteria() > 1 ?
+					String.format("%s (%d/%d)", Localization.getLocalized(series.key),  q.getNumCriteriaCompleted(), q.getTotalNumCriteria()) :
+					Localization.getLocalized(series.key), Color.WHITE, false)
+			);
+
+			if (questsShown.size() >= length) break;
 		}
 
 		if (questsShown.size() > 0) {
-			potionRenderOffset = 9 + (questsShown.size() > 3 ? 3 : questsShown.size()) * 8 + 8 * 2;
-			new Menu.Builder(true, 0, RelPos.RIGHT)
+			potionRenderOffset = 9 + (Math.min(questsShown.size(), 3)) * 8 + 8 * 2;
+			new Menu.Builder(true, 0, RelPos.RIGHT, questsShown)
 				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-				.setDisplayLength(questsShown.size() > length ? length : questsShown.size())
 				.setTitle("Quests")
-				.setSelectable(false)
-				.setEntries(questsShown)
 				.createMenu()
 				.render(screen);
 		} else {
@@ -481,7 +542,9 @@ public class Renderer extends Game {
 		}
 	}
 
-	/** Renders the "Click to focus" box when you click off the screen. */
+	/**
+	 * Renders the "Click to focus" box when you click off the screen.
+	 */
 	private static void renderFocusNagger() {
 
 		String msg = "Click to focus!"; // The message when you click off the screen.
@@ -493,24 +556,24 @@ public class Renderer extends Game {
 		int h = 1;
 
 		// Renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0, 3, 0, hudSheet.getSheet());
-		screen.render(xx + w * 8, yy - 8, 0, 3, 1, hudSheet.getSheet());
-		screen.render(xx - 8, yy + 8, 0, 3, 2, hudSheet.getSheet());
-		screen.render(xx + w * 8, yy + 8, 0, 3, 3, hudSheet.getSheet());
+		screen.render(xx - 8, yy - 8, 0, 6, 0, hudSheet.getSheet());
+		screen.render(xx + w * 8, yy - 8, 0, 6, 1, hudSheet.getSheet());
+		screen.render(xx - 8, yy + 8, 0, 6, 2, hudSheet.getSheet());
+		screen.render(xx + w * 8, yy + 8, 0, 6, 3, hudSheet.getSheet());
 
 		// Renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1, 3, 0, hudSheet.getSheet()); // ...Top part
-			screen.render(xx + x * 8, yy + 8, 1, 3, 2, hudSheet.getSheet()); // ...Bottom part
+			screen.render(xx + x * 8, yy - 8, 1, 6, 0, hudSheet.getSheet()); // ...Top part
+			screen.render(xx + x * 8, yy + 8, 1, 6, 2, hudSheet.getSheet()); // ...Bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2, 3, 0, hudSheet.getSheet()); // ...Left part
-			screen.render(xx + w * 8, yy + y * 8, 2, 3, 1, hudSheet.getSheet()); // ...Right part
+			screen.render(xx - 8, yy + y * 8, 2, 6, 0, hudSheet.getSheet()); // ...Left part
+			screen.render(xx + w * 8, yy + y * 8, 2, 6, 1, hudSheet.getSheet()); // ...Right part
 		}
 
 		// The middle
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy, 3, 3, 0, hudSheet.getSheet());
+			screen.render(xx + x * 8, yy, 3, 6, 0, hudSheet.getSheet());
 		}
 
 		// Renders the focus nagger text with a flash effect...

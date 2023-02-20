@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -13,6 +16,9 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -159,38 +165,28 @@ public class FileHandler extends Game {
 			deleteFolder(origFolder.toFile());
 	}
 
-	/** https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275 */
-	public static ArrayList<String> listResources() {
-		ArrayList<String> names = new ArrayList<>();
+	public static ArrayList<String> listAssets() {
+		Path path;
 		try {
-			CodeSource src = Game.class.getProtectionDomain().getCodeSource();
-			if (src != null) {
-				URL jar = src.getLocation();
-				ZipInputStream zip = new ZipInputStream(jar.openStream());
-				int reads = 0;
-				while (zip.available() == 1) {
-					ZipEntry e = zip.getNextEntry();
-
-					// e is either null if there are no entries left, or if
-					// we're running this from an ide
-					if (e == null) {
-						if (reads > 0) break;
-						else {
-							return listResourcesUsingIDE();
-						}
-					}
-					reads++;
-					names.add(e.getName());
-				}
-			} else {
-				Logging.RESOURCEHANDLER_LOCALIZATION.error("Failed to get code source.");
-				return names;
+			path = Paths.get(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
+		} catch (FileSystemNotFoundException e) {
+			try {
+				FileSystem fs = FileSystems.newFileSystem(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI(), Collections.emptyMap());
+				path = fs.getPath("/assets/");
+			} catch (URISyntaxException | IOException ee1) {
+				throw new RuntimeException(ee1); // CRITICAL ERROR (GAME ASSETS)
 			}
+		}
 
+		ArrayList<String> names = new ArrayList<>();
+		try (Stream<Path> paths = Files.walk(path)) {
+			Path finalPath = path;
+			paths.forEach(p -> names.add(finalPath.getParent().relativize(p).toString()));
 			return names;
 		} catch (IOException e) {
-			CrashHandler.errorHandle(e);
-			return names;
+			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
 		}
 	}
 
@@ -213,6 +209,14 @@ public class FileHandler extends Game {
         		.forEach(p -> {
 					names.add(folderPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
 				});
+
+			if (!names.contains("resources")) { // Providing a simple resolution when the previous location is invalid, the gradle build path is used.
+				Path fPath = folderPath.resolve("../../../resources/main");
+				Files.walk(fPath)
+					.forEach(p -> {
+						names.add(fPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
+					});
+			}
 		} catch (IOException | URISyntaxException e) {
 			CrashHandler.errorHandle(e);
 		}

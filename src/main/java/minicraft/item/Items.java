@@ -13,12 +13,12 @@ public class Items {
 	// ...well, that used to be true...
 
 	/**
-		Ok, so here's the actual big idea:
+	 Ok, so here's the actual big idea:
 
-		This class is meant to define all the different kinds of items in minicraft. Item(Type).java might be what maps the different item sprites in the spritesheet to a name, but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
+	 This class is meant to define all the different kinds of items in minicraft. Item(Type).java might be what maps the different item sprites in the spritesheet to a name, but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
 
-		If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
-	*/
+	 If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
+	 */
 	private static ArrayList<Item> items = new ArrayList<>();
 
 	private static void add(Item i) {
@@ -43,6 +43,7 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
+		addAll(HeartItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {

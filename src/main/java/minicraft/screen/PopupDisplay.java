@@ -7,6 +7,7 @@ import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -135,7 +136,7 @@ public class PopupDisplay extends Display {
 		public ArrayList<PopupActionCallback> callbacks;
 		public int entrySpacing;
 
-		public PopupConfig(String title, ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
+		public PopupConfig(@Nullable String title, @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
 			this.title = title;
 			this.callbacks = callbacks;
 			this.entrySpacing = entrySpacing;

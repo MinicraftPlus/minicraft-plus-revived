@@ -1,44 +1,487 @@
 {
-  "minicraft.quest.stronger": {
-    "desc": "minicraft.quest.stronger.desc",
-    "leads_to": ["minicraft.quest.road_of_gem"],
-    "quests": [
-      {
-        "id": "minicraft.quest.stronger.iron_armor",
-        "desc": "minicraft.quest.stronger.iron_armor.desc",
-        "leads_to": ["minicraft.quest.stronger.first_potion"]
+  "minicraft.quest.farming": {
+    "description": "minicraft.quest.farming.description",
+    "quests": {
+      "minicraft.quest.farming.crafting_hoe": {
+        "description": "minicraft.quest.farming.crafting_hoe.description",
+        "criteria": {
+          "has_hoe": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "wood hoe",
+                    "iron hoe",
+                    "gold hoe",
+                    "gem hoe"
+                  ]
+                }
+              ]
+            }
+          }
+        }
       },
-      {
-        "id": "minicraft.quest.stronger.first_potion",
-        "desc": "minicraft.quest.stronger.first_potion.desc"
+      "minicraft.quest.farming.making_farmland": {
+        "description": "minicraft.quest.farming.making_farmland.description",
+        "parent": "minicraft.quest.farming.crafting_hoe",
+        "criteria": {
+          "has_hoe": {
+            "trigger": "item_used_on_tile",
+            "conditions": {
+              "location": {
+                "tile": {
+                  "tiles": [
+                    "dirt"
+                  ]
+                }
+              },
+              "item": {
+                "items": [
+                  "wood hoe",
+                  "iron hoe",
+                  "gold hoe",
+                  "gem hoe"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "minicraft.quest.farming.planting_wheat": {
+        "description": "minicraft.quest.farming.planting_wheat.description",
+        "parent": "minicraft.quest.farming.making_farmland",
+        "criteria": {
+          "plant_wheat": {
+            "trigger": "placed_tile",
+            "conditions": {
+              "tile": "wheat"
+            }
+          }
+        },
+        "unlocking_criteria": {
+          "has_seeds": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "wheat seeds"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "minicraft.quest.farming.getting_wheat": {
+        "description": "minicraft.quest.farming.getting_wheat.description",
+        "parent": "minicraft.quest.farming.planting_wheat",
+        "criteria": {
+          "has_wheat": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "wheat"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "rewards": {
+          "items": [
+            "wheat seeds_8"
+          ]
+        }
+      },
+      "minicraft.quest.farming.planting_potato": {
+        "description": "minicraft.quest.farming.planting_potato.description",
+        "parent": "minicraft.quest.farming.making_farmland",
+        "criteria": {
+          "plant_potato": {
+            "trigger": "placed_tile",
+            "conditions": {
+              "tile": "potato"
+            }
+          }
+        },
+        "unlocking_criteria": {
+          "has_seeds": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "potato"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "rewards": {
+          "items": [
+            "potato_8"
+          ]
+        }
       }
-    ],
-    "unlocked": true
+    },
+    "unlocking_criteria": {
+      "has_seeds": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wheat seeds",
+                "potato"
+              ],
+              "count": {
+                "min": 5
+              }
+            }
+          ]
+        }
+      }
+    }
   },
-  "minicraft.quest.road_of_gem": {
-    "desc": "minicraft.quest.road_of_gem.desc",
-    "quests": [
-      {
-        "id": "minicraft.quest.road_of_gem.get_gem",
-        "desc": "minicraft.quest.road_of_gem.get_gem.desc",
-        "leads_to": ["minicraft.quest.road_of_gem.gem_armor"]
+  "minicraft.quest.iron_equipments": {
+    "description": "minicraft.quest.iron_equipments.description",
+    "quests": {
+      "minicraft.quest.iron_equipments.upgrading_pickaxe": {
+        "description": "minicraft.quest.iron_equipments.upgrading_pickaxe.description",
+        "criteria": {
+          "has_pickaxe": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "iron pickaxe"
+                  ]
+                }
+              ]
+            }
+          }
+        }
       },
-      {
-        "id": "minicraft.quest.road_of_gem.gem_armor",
-        "desc": "minicraft.quest.road_of_gem.gem_armor.desc"
+      "minicraft.quest.iron_equipments.getting_more_iron": {
+        "description": "minicraft.quest.iron_equipments.getting_more_iron.description",
+        "parent": "minicraft.quest.iron_equipments.upgrading_pickaxe",
+        "criteria": {
+          "has_iron": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "iron"
+                  ],
+                  "iron": {
+                    "min": 30
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "minicraft.quest.iron_equipments.iron_tools": {
+        "description": "minicraft.quest.iron_equipments.iron_tools.description",
+        "parent": "minicraft.quest.iron_equipments.getting_more_iron",
+        "criteria": {
+          "has_sword": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "iron sword"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_axe": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "iron axe"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_shovel": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "iron shovel"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "minicraft.quest.iron_equipments.iron_armor": {
+        "description": "minicraft.quest.iron_equipments.iron_armor.description",
+        "parent": "minicraft.quest.iron_equipments.getting_more_iron",
+        "criteria": {
+          "has_armor": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "iron armor"
+                  ]
+                }
+              ]
+            }
+          }
+        }
       }
-    ],
-    "rewards": {
-      "recipes": {
-        "Gem Armor_1": ["gem_65"],
-        "Gem Sword_1": ["Wood_5", "gem_50"],
-        "Gem Claymore_1": ["Gem Sword_1", "shard_15"],
-        "Gem Axe_1": ["Wood_5", "gem_50"],
-        "Gem Hoe_1": ["Wood_5", "gem_50"],
-        "Gem Pickaxe_1": ["Wood_5", "gem_50"],
-        "Gem Shovel_1": ["Wood_5", "gem_50"],
-        "Gem Bow_1": ["Wood_5", "gem_50", "string_2"],
-        "Totem of Air_1": ["gold_10", "gem_10", "Lapis_5","Cloud Ore_5"]
+    },
+    "unlocking_criteria": {
+      "has_iron_ingots": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ],
+              "count": {
+                "min": 5
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "minicraft.quest.potions": {
+    "description": "minicraft.quest.potions.description",
+    "quests": {
+      "minicraft.quest.potions.awkward_potions": {
+        "description": "minicraft.quest.potions.awkward_potions.description",
+        "criteria": {
+          "has_potions": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "awkward potion"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "minicraft.quest.potions.powerful_potions": {
+        "description": "minicraft.quest.potions.powerful_potions.description",
+        "parent": "minicraft.quest.potions.awkward_potions",
+        "criteria": {
+          "has_speed": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "speed potion"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_energy": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "energy potion"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_health": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "health potion"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_shield": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "shield potion"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "minicraft.quest.potions.all_potions_prepared": {
+        "description": "minicraft.quest.potions.all_potions_prepared.description",
+        "parent": "minicraft.quest.potions.powerful_potions",
+        "criteria": {
+          "has_potions": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "speed potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "light potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "swim potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "energy potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "regen potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "health potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "lava potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "shield potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "haste potion"
+                  ]
+                },
+                {
+                  "items": [
+                    "escape potion"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "rewards": {
+          "items": [
+            "lapis_10"
+          ]
+        }
+      }
+    },
+    "unlocking_criteria": {
+      "has_iron_ingots": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "enchanter"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "minicraft.quest.gems": {
+    "description": "minicraft.quest.gems.description",
+    "quests": {
+      "minicraft.quest.gems.gem_armor": {
+        "description": "minicraft.quest.gems.gem_armor.description",
+        "criteria": {
+          "has_armor": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "gem armor"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "minicraft.quest.gems.gem_claymore": {
+        "description": "minicraft.quest.gems.gem_claymore.description",
+        "parent": "minicraft.quest.gems.gem_armor",
+        "criteria": {
+          "has_claymore": {
+            "trigger": "inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "gem claymore"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "rewards": {
+          "items": [
+            "gem_10"
+          ]
+        }
+      }
+    },
+    "unlocking_criteria": {
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
       }
     }
   }

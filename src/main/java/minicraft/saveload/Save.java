@@ -6,10 +6,7 @@ import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
-import minicraft.entity.Arrow;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
+import minicraft.entity.*;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.entity.particle.Particle;
@@ -19,6 +16,7 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.screen.*;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 
@@ -163,6 +161,7 @@ public class Save {
 		data.add(String.valueOf(AirWizard.beaten));
 		data.add(String.valueOf(Settings.get("quests")));
 		data.add(String.valueOf(Settings.get("tutorials")));
+		data.add(String.valueOf(ObsidianKnight.beaten));
 		writeToFile(location + filename + extension, data);
 	}
 
@@ -237,39 +236,17 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
-			JSONObject fileObj = new JSONObject();
-			JSONArray unlockedQuests = new JSONArray();
-			JSONArray doneQuests = new JSONArray();
-			JSONObject questData = new JSONObject(QuestsDisplay.getStatusQuests());
-			JSONObject lockedRecipes = new JSONObject();
+		JSONObject fileObj = new JSONObject();
+		fileObj.put("Version", Game.VERSION.toString());
+		TutorialDisplayHandler.save(fileObj);
+		AdvancementElement.saveRecipeUnlockingElements(fileObj);
+		QuestsDisplay.save(fileObj);
 
-			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-				unlockedQuests.put(q.id);
-			}
-
-			for (Quest q : QuestsDisplay.getCompletedQuest()) {
-				doneQuests.put(q.id);
-			}
-
-			for (Recipe recipe : CraftingDisplay.getLockedRecipes()) {
-				JSONArray costs = new JSONArray();
-				recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
-				lockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
-			}
-
-			fileObj.put("unlocked", unlockedQuests);
-			fileObj.put("done", doneQuests);
-			fileObj.put("data", questData);
-			fileObj.put("lockedRecipes", lockedRecipes);
-
-			try {
-				writeJSONToFile(location + "Quests.json", fileObj.toString());
-
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				Logging.SAVELOAD.error("Unable to write Quests.json.");
-			}
+		try {
+			writeJSONToFile(location + "advancements.json", fileObj.toString(4));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Logging.SAVELOAD.error("Unable to write advancements.json.");
 		}
 	}
 
@@ -286,6 +263,7 @@ public class Save {
 		data.add(String.valueOf(player.spawnx));
 		data.add(String.valueOf(player.spawny));
 		data.add(String.valueOf(player.health));
+		data.add(String.valueOf(player.extraHealth));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
 		data.add(String.valueOf(player.armorDamageBuffer));
@@ -304,6 +282,14 @@ public class Save {
 		data.add(subdata.toString());
 
 		data.add(String.valueOf(player.shirtColor));
+
+		JSONObject unlockedRecipes = new JSONObject();
+		for (Recipe recipe : CraftingDisplay.getUnlockedRecipes()) {
+			JSONArray costs = new JSONArray();
+			recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
+			unlockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+		}
+		data.add(unlockedRecipes.toString());
 	}
 
 	private void writeInventory(String filename, Player player) {
@@ -343,7 +329,7 @@ public class Save {
 
 		// Don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 
-		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
+		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof FireSpark  || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
 			return "";
 
 		if (!isLocalSave)
@@ -383,6 +369,10 @@ public class Save {
 
 		if (e instanceof Crafter) {
 			name = ((Crafter)e).type.name();
+		}
+
+		if (e instanceof KnightStatue) {
+			extradata.append(":").append(((KnightStatue) e).getBossHealth());
 		}
 
 		if (!isLocalSave) {

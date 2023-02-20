@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -81,13 +82,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	// The maximum stats that the player can have.
 	public static final int maxStat = 10;
-	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
+	public static final int maxHealth = 30, maxStamina = maxStat, maxHunger = maxStat;
+	public static int extraHealth = 0;
+	public static int baseHealth = 10;
 	public static final int maxArmor = 100;
 
 	public static LinkedSprite[][] sprites;
 	public static LinkedSprite[][] carrySprites;
 
-	private Inventory inventory;
+	private final Inventory inventory;
 
 	public Item activeItem;
 	Item attackItem; // attackItem is useful again b/c of the power glove.
@@ -137,13 +140,51 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// Note: the player's health & max health are inherited from Mob.java
 
 	public Player(@Nullable Player previousInstance, InputHandler input) {
-		super(null, Player.maxHealth);
+		super(null, Player.baseHealth);
 
 		x = 24;
 		y = 24;
 		this.input = input;
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
-		inventory = new Inventory();
+		inventory = new Inventory() { // Registering all triggers to InventoryChanged.
+			private void triggerTrigger() {
+				AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions(this)
+				);
+			}
+
+			@Override
+			public void clearInv() {
+				super.clearInv();
+				triggerTrigger();
+			}
+
+			@Override
+			public Item remove(int idx) {
+				Item item = super.remove(idx);
+				triggerTrigger();
+				return item;
+			}
+
+			@Override
+			public int add(int slot, Item item) {
+				int res = super.add(slot, item);
+				triggerTrigger();
+				return res;
+			}
+
+			@Override
+			public void removeItems(Item given, int count) {
+				super.removeItems(given, count);
+				triggerTrigger();
+			}
+
+			@Override
+			public void updateInv(String items) {
+				super.updateInv(items);
+				triggerTrigger();
+			}
+		};
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -231,6 +272,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		super.tick(); // Ticks Mob.java
 
 		tickMultiplier();
+
+		if ((baseHealth + extraHealth) > maxHealth) {
+			extraHealth = maxHealth - 10;
+			Logging.PLAYER.warn("Current Max Health is greater than Max Health, downgrading.");
+		}
 
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {
 			for (PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
@@ -352,7 +398,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			/// System that heals you depending on your hunger
-			if (health < maxHealth && hunger > maxHunger/2) {
+			if (health < (baseHealth + extraHealth) && hunger > maxHunger/2) {
 				hungerChargeDelay++;
 				if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
 					health++;
