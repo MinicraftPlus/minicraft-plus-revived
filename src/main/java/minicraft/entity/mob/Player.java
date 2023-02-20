@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -87,7 +88,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static LinkedSprite[][] sprites;
 	public static LinkedSprite[][] carrySprites;
 
-	private Inventory inventory;
+	private final Inventory inventory;
 
 	public Item activeItem;
 	Item attackItem; // attackItem is useful again b/c of the power glove.
@@ -143,7 +144,45 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		y = 24;
 		this.input = input;
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
-		inventory = new Inventory();
+		inventory = new Inventory() { // Registering all triggers to InventoryChanged.
+			private void triggerTrigger() {
+				AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions(this)
+				);
+			}
+
+			@Override
+			public void clearInv() {
+				super.clearInv();
+				triggerTrigger();
+			}
+
+			@Override
+			public Item remove(int idx) {
+				Item item = super.remove(idx);
+				triggerTrigger();
+				return item;
+			}
+
+			@Override
+			public int add(int slot, Item item) {
+				int res = super.add(slot, item);
+				triggerTrigger();
+				return res;
+			}
+
+			@Override
+			public void removeItems(Item given, int count) {
+				super.removeItems(given, count);
+				triggerTrigger();
+			}
+
+			@Override
+			public void updateInv(String items) {
+				super.updateInv(items);
+				triggerTrigger();
+			}
+		};
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;

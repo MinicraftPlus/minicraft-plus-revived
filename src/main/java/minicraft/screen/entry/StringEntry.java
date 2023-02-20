@@ -39,7 +39,8 @@ public class StringEntry extends ListEntry {
 	public StringEntry(String text) {
 		this(text, DEFAULT_COLOR);
 	}
-	public StringEntry(String text, int color) { this(text, color, true); } // This should be always true with the new localization IDs
+	public StringEntry(String text, boolean localize) { this(text, DEFAULT_COLOR, localize); } // This might be false as the text might have been localized already.
+	public StringEntry(String text, int color) { this(text, color, true); } // This should be always true with the new localization IDs.
 	public StringEntry(String text, int color, boolean localize) {
 		setSelectable(false);
 		this.text = text;

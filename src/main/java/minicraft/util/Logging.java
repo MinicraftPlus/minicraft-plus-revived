@@ -28,6 +28,7 @@ public final class Logging {
 	public static final TaggedLogger TILES = Logger.tag("Tiles");
 	public static final TaggedLogger NETWORK = Logger.tag("Network");
 	public static final TaggedLogger QUEST = Logger.tag("Quest");
+	public static final TaggedLogger TUTORIAL = Logger.tag("Tutorial");
 	public static final TaggedLogger SPRITE = Logger.tag("Sprite");
 	public static final TaggedLogger CONTROLLER = Logger.tag("Controller");
 

@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.QuestsDisplay;
 
 public class PotatoTile extends PlantTile {
 	private LinkedSprite[] spritStages = new LinkedSprite[] {

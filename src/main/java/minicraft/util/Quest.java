@@ -1,67 +1,78 @@
 package minicraft.util;
 
-import java.util.ArrayList;
+import minicraft.screen.QuestsDisplay;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import minicraft.core.Action;
-import minicraft.item.Item;
-import minicraft.item.Recipe;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-public class Quest {
-    public final String id, description;
-	public final QuestReward reward;
-    public boolean unlocked;
-	public Action callback;
+public class Quest extends AdvancementElement {
+	private QuestSeries series = null;
+	private final @Nullable String parent;
 
-    private final String[] unlocks;
-	private QuestSeries series;
-
-	public Quest(String name, String des, QuestReward reward, boolean unlocked, String[] unlocks) {
-		this.id = name;
-		description = des;
-		this.reward = reward;
-		this.unlocked = unlocked;
-		this.unlocks = unlocks;
+	public Quest(String key, String description, Map<String, ElementCriterion> criteria, @Nullable AdvancementElement.ElementRewards rewards,
+				 @NotNull Set<HashSet<String>> requirements, @Nullable String parent,
+				 @NotNull HashMap<String, ElementCriterion> unlockingCriteria, @NotNull Set<HashSet<String>> unlockingRequirements) {
+		super(key, description, criteria, rewards, requirements, unlockingCriteria, unlockingRequirements);
+		this.parent = parent;
 	}
 
-	public String[] getUnlocks() { return unlocks.clone(); }
 	public QuestSeries getSeries() { return series; }
-
-	public static class QuestSeries {
-		public final String id, description;
-		public final boolean tutorial;
-		public final QuestReward reward;
-		public boolean unlocked;
-		public Action callback;
-
-		private final String[] unlocks;
-		private final ArrayList<Quest> quests;
-
-		public QuestSeries(String id, String desc, ArrayList<Quest> quests, QuestReward reward, boolean unlocked, String[] unlocks) { this(id, desc, quests, reward, unlocked, false, unlocks); }
-		public QuestSeries(String id, String desc, ArrayList<Quest> quests, QuestReward reward, boolean unlocked, boolean tutorial, String[] unlocks) {
-			this.id = id;
-			this.description = desc;
-			this.quests = quests;
-			quests.forEach(q -> q.series = this);
-			this.reward = reward;
-			this.unlocked = unlocked;
-			this.tutorial = tutorial;
-			this.unlocks = unlocks;
+	public @Nullable Quest getParent() {
+		if (parent != null && series != null) {
+			return series.quests.get(parent);
 		}
 
-		public String[] getUnlocks() { return unlocks.clone(); }
-		public ArrayList<Quest> getSeriesQuests() { return new ArrayList<>(quests); }
+		return null;
 	}
 
-	public static class QuestReward {
-		private final ArrayList<Item> items;
-		private final ArrayList<Recipe> recipes;
+	@Override
+	protected boolean isUnlockable() {
+		if (unlocked) return true;
+		if (!series.unlocked) return false;
+		Quest parent = getParent();
+		return super.isUnlockable() && (parent == null || parent.isCompleted());
+	}
 
-		public QuestReward(ArrayList<Item> items, ArrayList<Recipe> recipes) {
-			this.items = items;
-			this.recipes = recipes;
+	@Override
+	public void update() {
+		super.update();
+		series.update();
+		QuestsDisplay.refreshDisplayableQuests();
+	}
+
+	private void update0() {
+		super.update();
+		QuestsDisplay.refreshDisplayableQuests();
+	}
+
+	public static class QuestSeries extends AdvancementElement {
+		private final HashMap<String, Quest> quests = new HashMap<>();
+
+		public QuestSeries(String key, String description, Map<String, AdvancementElement.ElementCriterion> criteria,
+						   @Nullable AdvancementElement.ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
+						   @NotNull Map<String, Quest> quests, @NotNull HashMap<String, ElementCriterion> unlockingCriteria,
+						   @NotNull Set<HashSet<String>> unlockingRequirements) {
+			super(key, description, criteria, rewards, requirements, unlockingCriteria, unlockingRequirements);
+			this.quests.putAll(quests);
+			quests.values().forEach(q -> q.series = this);
 		}
 
-		public ArrayList<Item> getItems() { return new ArrayList<>(items); }
-		public ArrayList<Recipe> getRecipe() { return new ArrayList<>(recipes); }
+		public HashMap<String, Quest> getSeriesQuests() { return new HashMap<>(quests); }
+
+		@Override
+		protected boolean checkIsCompleted() {
+			return quests.values().stream().allMatch(quest -> quest.completed) && super.checkIsCompleted();
+		}
+
+		@Override
+		public void update() {
+			super.update();
+			quests.values().forEach(Quest::update0);
+			QuestsDisplay.refreshDisplayableQuests();
+		}
 	}
 }

@@ -281,7 +281,7 @@ public class WorldSelectDisplay extends Display {
 				File folder2 = new File(path);
 				folder2.mkdirs();
 				String[] files = folder2.list();
-				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
+				if (files != null && files.length > 0 && Arrays.stream(files).anyMatch(f -> f.endsWith(Save.extension))) {
 					String name = file.getName();
 					worldNames.add(name);
 					worldVersions.add(new Load(name, false).getWorldVersion());
