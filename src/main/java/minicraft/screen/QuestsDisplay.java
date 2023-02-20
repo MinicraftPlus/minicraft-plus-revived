@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import com.studiohartman.jamepad.ControllerButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -236,7 +237,7 @@ public class QuestsDisplay extends Display {
 						@Override
 						public void tick(InputHandler input) {
 							super.tick(input);
-							if (input.getKey("select").clicked) {
+							if (input.inputPressed("select")) {
 								skipSeries(series);
 								display.reloadEntries();
 								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
@@ -552,12 +553,12 @@ public class QuestsDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
+		if (input.inputPressed("cursor-left")) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.getKey("cursor-right").clicked) if (selectedEntry < 1) {
+		if (input.inputPressed("cursor-right")) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}

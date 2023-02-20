@@ -1,21 +1,5 @@
 package minicraft.core;
 
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import minicraft.core.CrashHandler.ErrorInfo;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -24,17 +8,17 @@ import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Ellipsis;
+import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
+import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -49,10 +33,27 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
+import org.json.JSONObject;
+
+import java.awt.AWTException;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
-
-import org.json.JSONObject;
 
 public class Renderer extends Game {
 	private Renderer() {
@@ -108,7 +109,15 @@ public class Renderer extends Game {
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		Initializer.startCanvasRendering();
-		canvas.createBufferStrategy(3);
+		try { // Reference: https://stackoverflow.com/a/61843644.
+			canvas.createBufferStrategy(3, GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getDefaultScreenDevice()
+				.getDefaultConfiguration()
+				.getBufferCapabilities());
+		} catch (AWTException e) {
+			CrashHandler.crashHandle(e, new ErrorInfo("Canvas Initialization Failure", ErrorInfo.ErrorType.UNEXPECTED, true, "The canvas is unable to be initialized."));
+		}
+
 		canvas.requestFocus();
 	}
 

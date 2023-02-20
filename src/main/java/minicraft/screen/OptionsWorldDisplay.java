@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -50,11 +51,11 @@ public class OptionsWorldDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		if (confirmOff) {
-			if (input.getKey("exit").clicked) {
+			if (input.inputPressed("exit")) {
 				confirmOff = false;
 				menus[1].shouldRender = false;
 				selection = 0;
-			} else if (input.getKey("select").clicked) {
+			} else if (input.inputPressed("select")) {
 				confirmOff = false;
 				QuestsDisplay.tutorialOff();
 
@@ -77,6 +78,7 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("autosave"),
 			Settings.getEntry("showquests"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			Settings.getEntry("language"),
 			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
@@ -87,6 +89,6 @@ public class OptionsWorldDisplay extends Display {
 	public void onExit() {
 		Localization.changeLanguage(((LocaleInformation)Settings.get("language")).locale.toLanguageTag());
 		new Save();
-		Game.MAX_FPS = (int)Settings.get("fps");
+		Game.MAX_FPS = Settings.getFPS();
 	}
 }

@@ -2,8 +2,8 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.core.io.Localization.LocaleInformation;
+import minicraft.core.io.Settings;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
 
@@ -17,6 +17,7 @@ public class OptionsMainMenuDisplay extends Display {
 			Settings.getEntry("sound"),
 			Settings.getEntry("showquests"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			Settings.getEntry("language"),
 			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
@@ -33,6 +34,6 @@ public class OptionsMainMenuDisplay extends Display {
     public void onExit() {
         Localization.changeLanguage(((LocaleInformation)Settings.get("language")).locale.toLanguageTag());
         new Save();
-        Game.MAX_FPS = (int)Settings.get("fps");
+        Game.MAX_FPS = Settings.getFPS();
     }
 }

@@ -1,6 +1,8 @@
 package minicraft.core.io;
 
+import com.studiohartman.jamepad.*;
 import minicraft.core.Game;
+import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 public class InputHandler implements KeyListener {
 	/**
@@ -42,6 +45,11 @@ public class InputHandler implements KeyListener {
 	public String keyToChange = null; // This is used when listening to change key bindings.
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
+
+	private ControllerManager controllerManager = new ControllerManager();
+	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
+	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
+	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
 
 	public String getChangedKey() {
 		String key = keyChanged + ";" + keymap.get(keyChanged);
@@ -76,16 +84,34 @@ public class InputHandler implements KeyListener {
 	private String lastKeyTyped = ""; // Used for things like typing world names.
 	private String keyTypedBuffer = ""; // Used to store the last key typed before putting it into the main var during tick().
 
+	private final LastInputActivityListener lastInputActivityListener = new LastInputActivityListener();
+
 	public InputHandler() {
 		keymap = new LinkedHashMap<>(); // Stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); // Stores physical keyboard keys; auto-generated :D
 
 		initKeyMap(); // This is seperate so I can make a "restore defaults" option.
+		initButtonMap();
+		for (ControllerButton btn : ControllerButton.values()) {
+			controllerButtonBooleanMap.put(btn, false);
+			controllerButtonBooleanMapJust.put(btn, false);
+		}
 
 		// I'm not entirely sure if this is necessary... but it doesn't hurt.
 		keyboard.put("SHIFT", new Key(true));
 		keyboard.put("CTRL", new Key(true));
 		keyboard.put("ALT", new Key(true));
+
+		controllerManager.initSDLGamepad();
+		controllerIndex = controllerManager.getControllerIndex(0);
+		controllerManager.update();
+		try {
+			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
+		} catch (ControllerUnpluggedException e) {
+			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
+		}
+
+		lastInputActivityListener.start();
 	}
 	public InputHandler(Component inputSource) {
 		this();
@@ -137,6 +163,35 @@ public class InputHandler implements KeyListener {
 		keymap.put("FULLSCREEN", "F11");
 	}
 
+	// The button mapping should not be modifiable.
+	private final HashMap<String, ControllerButton> buttonMap = new HashMap<>();
+	private void initButtonMap() {
+		buttonMap.put("MOVE-UP", ControllerButton.DPAD_UP);
+		buttonMap.put("MOVE-DOWN", ControllerButton.DPAD_DOWN);
+		buttonMap.put("MOVE-LEFT", ControllerButton.DPAD_LEFT);
+		buttonMap.put("MOVE-RIGHT", ControllerButton.DPAD_RIGHT);
+
+		buttonMap.put("CURSOR-UP", ControllerButton.DPAD_UP);
+		buttonMap.put("CURSOR-DOWN", ControllerButton.DPAD_DOWN);
+		buttonMap.put("CURSOR-LEFT", ControllerButton.DPAD_LEFT);
+		buttonMap.put("CURSOR-RIGHT", ControllerButton.DPAD_RIGHT);
+
+		buttonMap.put("SELECT", ControllerButton.A);
+		buttonMap.put("EXIT", ControllerButton.B);
+
+		buttonMap.put("ATTACK", ControllerButton.A);
+		buttonMap.put("MENU", ControllerButton.X);
+		buttonMap.put("CRAFT", ControllerButton.Y);
+		buttonMap.put("PICKUP", ControllerButton.LEFTBUMPER);
+
+		buttonMap.put("SEARCHER-BAR", ControllerButton.START);
+
+		buttonMap.put("PAUSE", ControllerButton.START);
+
+		buttonMap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
+		buttonMap.put("DROP-STACK", ControllerButton.RIGHTSTICK);
+	}
+
 	public void resetKeyBindings() {
 		keymap.clear();
 		initKeyMap();
@@ -150,6 +205,22 @@ public class InputHandler implements KeyListener {
 			for (Key key: keyboard.values())
 				key.tick(); // Call tick() for each key.
 		}
+
+		// Also update the controller button state.
+		for (ControllerButton btn : ControllerButton.values()) {
+			try {
+				controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
+			} catch (ControllerUnpluggedException e) {
+				controllerButtonBooleanMapJust.put(btn, false);
+			} try {
+				controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
+			} catch (ControllerUnpluggedException e) {
+				controllerButtonBooleanMap.put(btn, false);
+			}
+		}
+
+		if (leftTriggerCooldown > 0) leftTriggerCooldown--;
+		if (rightTriggerCooldown > 0) rightTriggerCooldown--;
 	}
 
 	// The Key class.
@@ -223,10 +294,39 @@ public class InputHandler implements KeyListener {
 	/** Simply returns the mapped value of key in keymap. */
 	public String getMapping(String actionKey) {
 		actionKey = actionKey.toUpperCase();
+		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp) {
+			if (buttonMap.containsKey(actionKey))
+				return buttonMap.get(actionKey).toString().replace("_", "-");
+		}
+
 		if (keymap.containsKey(actionKey))
 			return keymap.get(actionKey).replace("|", "/");
 
 		return "NO_KEY";
+	}
+
+	/**
+	 * Returning the corresponding mapping depends on the device last acted.
+	 * @param keyMap The keyboard mapping.
+	 * @param buttonMap The controller mapping
+	 * @return The selected mapping.
+	 */
+	public String selectMapping(String keyMap, String buttonMap) {
+		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp)
+			return buttonMap;
+		else
+			return keyMap;
+	}
+
+	/**
+	 * Getting the last input device type.
+	 * @return The input device type: 0 for keyboard, 1 for controller.
+	 */
+	public int getLastInputType() {
+		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp)
+			return 1;
+		else
+			return 0;
 	}
 
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
@@ -324,9 +424,11 @@ public class InputHandler implements KeyListener {
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keyList = new ArrayList<>(keyboard.size());
 
-		for (Entry<String, Key> entry : keyboard.entrySet()) {
-			if (entry.getValue().down) {
-				keyList.add(entry.getKey());
+		synchronized ("lock") {
+			for (Entry<String, Key> entry : keyboard.entrySet()) {
+				if (entry.getValue().down) {
+					keyList.add(entry.getKey());
+				}
 			}
 		}
 
@@ -416,15 +518,131 @@ public class InputHandler implements KeyListener {
 		if (lastKeyTyped.length() > 0) {
 			String letter = lastKeyTyped;
 			lastKeyTyped = "";
-			if ( letter.matches(control) && (pattern == null || letter.matches(pattern)) )
+			if ( letter.matches(control) && (pattern == null || letter.matches(pattern)) || letter.equals("\b") )
 				typing += letter;
 		}
 
-		if (getKey("backspace").clicked && typing.length() > 0) {
-			// Backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
-			typing = typing.substring(0, typing.length()-1);
+		// Erasing characters by \b. Reference: https://stackoverflow.com/a/30174028
+		Stack<Character> stack = new Stack<>();
+
+		// for-each character in the string
+		for (int i = 0; i < typing.length(); i++) {
+			char c = typing.charAt(i);
+
+			// push if it's not a backspace
+			if (c != '\b') {
+				stack.push(c);
+				// else pop if possible
+			} else if (!stack.empty()) {
+				stack.pop();
+			}
 		}
 
+		// convert stack to string
+		StringBuilder builder = new StringBuilder(stack.size());
+
+		for (Character c : stack) {
+			builder.append(c);
+		}
+
+		typing = builder.toString();
 		return typing;
+	}
+
+	public boolean anyControllerConnected() {
+		return controllerManager.getNumControllers() > 0;
+	}
+
+	public boolean buttonPressed(ControllerButton button) {
+		return controllerButtonBooleanMapJust.get(button);
+	}
+
+	public boolean buttonDown(ControllerButton button) {
+		return controllerButtonBooleanMap.get(button);
+	}
+
+	public ArrayList<ControllerButton> getAllPressedButtons() {
+		ArrayList<ControllerButton> btnList = new ArrayList<>();
+		for (ControllerButton btn : ControllerButton.values()) {
+			if (controllerButtonBooleanMap.get(btn))
+				btnList.add(btn);
+		}
+
+		return btnList;
+	}
+
+	public boolean inputPressed(String mapping) {
+		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
+		return getKey(mapping).clicked || (buttonMap.containsKey(mapping) && buttonPressed(buttonMap.get(mapping)));
+	}
+
+	public boolean inputDown(String mapping) {
+		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
+		return getKey(mapping).down || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
+	}
+
+	/**
+	 * Vibrate the controller using the new rumble API
+	 * This will return false if the controller doesn't support vibration or if SDL was unable to start
+	 * vibration (maybe the controller doesn't support left/right vibration, maybe it was unplugged in the
+	 * middle of trying, etc...)
+	 *
+	 * @param leftMagnitude The speed for the left motor to vibrate (this should be between 0 and 1)
+	 * @param rightMagnitude The speed for the right motor to vibrate (this should be between 0 and 1)
+	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
+	 */
+	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
+		try {
+			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+		} catch (ControllerUnpluggedException ignored) {
+			return false;
+		}
+	}
+
+	private int leftTriggerCooldown = 0;
+	private int rightTriggerCooldown = 0;
+
+	public boolean leftTriggerPressed() {
+		try {
+			if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
+				leftTriggerCooldown = 8;
+				return true;
+			} else
+				return false;
+		} catch (ControllerUnpluggedException e) {
+			return false;
+		}
+	}
+	public boolean rightTriggerPressed() {
+		try {
+			if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
+				rightTriggerCooldown = 8;
+				return true;
+			} else
+				return false;
+		} catch (ControllerUnpluggedException e) {
+			return false;
+		}
+	}
+
+	private class LastInputActivityListener extends Thread {
+		public long lastKeyActivityTimestamp = 0;
+		public long lastButtonActivityTimestamp = 0;
+
+		public LastInputActivityListener() {
+			super("LastInputActivityListener");
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				if (getAllPressedKeys().size() > 0)
+					lastKeyActivityTimestamp = System.currentTimeMillis();
+				if (getAllPressedButtons().size() > 0)
+					lastButtonActivityTimestamp = System.currentTimeMillis();
+				if (isInterrupted())
+					return;
+			}
+		}
 	}
 }

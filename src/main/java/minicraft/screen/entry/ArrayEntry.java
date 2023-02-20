@@ -2,6 +2,7 @@ package minicraft.screen.entry;
 
 import java.util.Arrays;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -9,8 +10,8 @@ import minicraft.gfx.Font;
 
 public class ArrayEntry<T> extends ListEntry {
 
-	private String label;
-	private T[] options;
+	private final String label;
+	protected T[] options;
 	private boolean[] optionVis;
 
 	private int selection;
@@ -103,8 +104,8 @@ public class ArrayEntry<T> extends ListEntry {
 		int prevSel = selection;
 		int selection = this.selection;
 
-		if(input.getKey("cursor-left").clicked) selection--;
-		if(input.getKey("cursor-right").clicked) selection++;
+		if(input.inputPressed("cursor-left")) selection--;
+		if(input.inputPressed("cursor-right")) selection++;
 
 		if(prevSel != selection) {
 			Sound.play("select");
