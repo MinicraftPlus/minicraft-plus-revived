@@ -120,18 +120,6 @@ public class Localization {
 		loadLanguage();
 	}
 
-	public static int getNumMatchedLocalization(@NotNull Locale lang) {
-		if (lang.equals(DEBUG_LOCALE)) return getNumDefaultLocalization();
-		ArrayList<String> localizations = unloadedLocalization.get(lang);
-		if (localizations == null) return 0;
-		return (int) localizations.stream().flatMap(t -> new JSONObject(t).keySet().stream()).distinct()
-			.filter(DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE::contains).count();
-	}
-
-	public static int getNumDefaultLocalization() {
-		return DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE.size();
-	}
-
 	/**
 	 * This method gets the currently selected locale and loads it if it exists. If not, it loads the default locale.
 	 * The loaded file is then parsed, and all the entries are added to a hashmap.

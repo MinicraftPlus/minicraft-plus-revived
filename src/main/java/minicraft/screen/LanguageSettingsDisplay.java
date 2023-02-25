@@ -63,33 +63,8 @@ public class LanguageSettingsDisplay extends Display {
 	private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
 	private static void languageSelected(Localization.LocaleInformation locale) {
-		int total = Localization.getNumDefaultLocalization();
-		int cur = Localization.getNumMatchedLocalization(locale.locale);
-		if (cur < total) { // Not fully translated.
-			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
-			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
-				Localization.changeLanguage(locale.locale);
-				executorService.submit(() -> {
-					Game.exitDisplay();
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException ignored) {}
-					Game.exitDisplay();
-				});
-				return true;
-			}));
-
-			ArrayList<ListEntry> entries = new ArrayList<>();
-			Collections.addAll(entries, StringEntry.useLines(Color.RED, false,
-				Localization.getLocalized("minicraft.displays.language_settings.popup_display.confirm_warning", (total - cur)*100 / total)));
-			Collections.addAll(entries, StringEntry.useLines(Color.RED,
-				"minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"));
-			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig("minicraft.display.popup.title_confirm",
-				callbacks, 4), entries.toArray(new ListEntry[0])));
-		} else {
-			Localization.changeLanguage(locale.locale);
-			Game.exitDisplay();
-		}
+		Localization.changeLanguage(locale.locale);
+		Game.exitDisplay();
 	}
 
 	@Override

@@ -37,6 +37,11 @@ Head over [releases](https://github.com/minicraftplus/minicraft-plus-revived/rel
 There, you can find an file called `minicraft_plus.jar`. Click the file, and after you have downloaded the file, you must double-click the file in downloads folder to open it.
 You must first confirm that you have [Java](https://www.java.com/en/download/) (at least version 8) installed on your computer.
 
+## Localization
+This project is running with an external localization platform called POEditor. You can contribute localization by clicking the image below!
+
+[![Minicraft+ POEditor Stats](https://raw.githubusercontent.com/BenCheung0422/MinicraftPlus-POEditor-Stats/main/docs/poeditor_stats.svg)](https://poeditor.com/join/project/xvtwoWhNXe)
+
 ## How to build/run in development
 Because this project uses a build tool called gradle it is very easy to build or run the project from the source code.
 
