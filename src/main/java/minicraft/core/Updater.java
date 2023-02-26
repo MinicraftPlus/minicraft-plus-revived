@@ -11,7 +11,9 @@ import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 
 import java.awt.*;
@@ -94,7 +96,6 @@ public class Updater extends Game {
 
 		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
 			Game.setDisplay(new LevelTransitionDisplay(1));
-
 		}
 
 		if (input.getKey("FULLSCREEN").clicked) {
@@ -170,6 +171,8 @@ public class Updater extends Game {
 			gameTime++;
 
 			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			TutorialDisplayHandler.tick(input);
+			AdvancementElement.AdvancementTrigger.tick();
 
 			if (display != null) {
 				// A menu is active.
@@ -217,9 +220,6 @@ public class Updater extends Game {
 					}
 
 					// Host-only cheats.
-					if (input.getKey("Shift-r").clicked)
-						World.initWorld(); // For single-player use only.
-
 					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
 					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
 					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);

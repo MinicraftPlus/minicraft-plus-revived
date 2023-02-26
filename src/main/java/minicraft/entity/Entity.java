@@ -9,7 +9,6 @@ import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.network.Network;
 import minicraft.util.Logging;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public abstract class Entity implements Tickable {
 	public Level getLevel() { return level; }
 
 	/** Returns a Rectangle instance using the defined bounds of the entity. */
-	protected Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
+	protected Rectangle getBounds() { return new Rectangle(x, y, xr * 2, yr * 2, Rectangle.CENTER_DIMS); }
 
 	/** Returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
@@ -91,6 +90,13 @@ public abstract class Entity implements Tickable {
 
 	public boolean canSwim() { return false; } // Determines if the entity can swim (extended in sub-classes)
 	public boolean canWool() { return false; } // This, strangely enough, determines if the entity can walk on wool; among some other things..?
+	public boolean canBurn() {
+		return true;
+	} // Determines if the entity can burn.
+	public boolean canBeAffectedByLava() {
+		return true;
+	} // Determines if the entity can burn in lava.
+	public int burningDuration = 0;
 
 	public int getLightRadius() { return 0; } // Used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
 
@@ -215,7 +221,7 @@ public abstract class Entity implements Tickable {
 	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
 		if (level != this.level) {
-			if(Game.debug) Logging.ENTITY.debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
+			if (Game.debug) Logging.ENTITY.debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
 		} else {
 			removed = true; // Should already be set.
 			this.level = null;

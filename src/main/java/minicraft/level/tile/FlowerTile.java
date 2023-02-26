@@ -12,6 +12,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.util.AdvancementElement;
 
 public class FlowerTile extends Tile {
 	private static final SpriteAnimation flowerSprite0 = new SpriteAnimation(SpriteType.Tile, "flower_shape0");
@@ -51,10 +52,14 @@ public class FlowerTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
 					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.play("monsterhurt");
 					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Flower"));
 					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Rose"));
+					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}

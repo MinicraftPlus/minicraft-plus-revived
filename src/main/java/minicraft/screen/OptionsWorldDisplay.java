@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Localization.LocaleInformation;
@@ -15,59 +14,48 @@ import minicraft.screen.entry.StringEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class OptionsWorldDisplay extends Display {
-	private boolean confirmOff = false;
-
 	public OptionsWorldDisplay() {
 		super(true);
 
 		List<ListEntry> entries = getEntries();
 
-		if ((boolean) Settings.get("tutorials")) {
+		if (TutorialDisplayHandler.inTutorial()) {
+			entries.add(new SelectEntry("minicraft.displays.options_world.skip_current_tutorial", () -> {
+				TutorialDisplayHandler.skipCurrent();
+				Game.exitDisplay();
+			}));
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("minicraft.displays.options_world.turn_off_tutorials", () -> {
-				confirmOff = true;
-				selection = 1;
-				menus[selection].shouldRender = true;
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					TutorialDisplayHandler.turnOffTutorials();
+					Executors.newCachedThreadPool().submit(() -> {
+						Game.exitDisplay();
+						try {
+							Thread.sleep(50);
+						} catch (InterruptedException ignored) {}
+						Game.exitDisplay();
+					});
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig("minicraft.display.popup.title_confirm", callbacks, 4), StringEntry.useLines(Color.RED,
+					"minicraft.displays.options_world.off_tutorials_confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel")));
 			}));
+		}
+
+		if (TutorialDisplayHandler.inQuests()) {
+			entries.add(4, Settings.getEntry("showquests"));
 		}
 
 		menus = new Menu[] {
 			new Menu.Builder(false, 6, RelPos.LEFT, entries)
-					.setTitle("minicraft.displays.options_world")
-					.createMenu(),
-			new Menu.Builder(true, 4, RelPos.CENTER)
-				.setShouldRender(false)
-				.setSelectable(false)
-				.setEntries(StringEntry.useLines(Color.RED, "minicraft.displays.options_world.off_tutorials_confirm_popup",
-					"minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
-				.setTitle("minicraft.display.popup.title_confirm")
+				.setTitle("minicraft.displays.options_world")
 				.createMenu()
 		};
-	}
-
-	@Override
-	public void tick(InputHandler input) {
-		if (confirmOff) {
-			if (input.getKey("exit").clicked) {
-				confirmOff = false;
-				menus[1].shouldRender = false;
-				selection = 0;
-			} else if (input.getKey("select").clicked) {
-				confirmOff = false;
-				QuestsDisplay.tutorialOff();
-
-				menus[1].shouldRender = false;
-				menus[0].setEntries(getEntries());
-				menus[0].setSelection(0);
-				selection = 0;
-			}
-
-			return;
-		}
-
-		super.tick(input); // ticks menu
 	}
 
 	private List<ListEntry> getEntries() {
@@ -75,8 +63,8 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
-			Settings.getEntry("showquests"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			Settings.getEntry("language"),
 			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))

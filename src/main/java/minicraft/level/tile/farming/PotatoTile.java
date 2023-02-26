@@ -5,6 +5,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.QuestsDisplay;
 
 public class PotatoTile extends CropTile {
 	private final LinkedSprite[] spritStages = new LinkedSprite[] {

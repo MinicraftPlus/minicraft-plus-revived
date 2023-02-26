@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.*;
@@ -84,8 +85,8 @@ public class BookDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("exit").clicked) Game.exitDisplay(); // Close the menu.
-		if (input.getKey("cursor-left").clicked) turnPage(-1); // This is what turns the page back
-		if (input.getKey("cursor-right").clicked) turnPage(1); // This is what turns the page forward
+		if (input.inputPressed("menu") || input.inputPressed("exit")) Game.exitDisplay(); // Close the menu.
+		if (input.inputPressed("cursor-left")) turnPage(-1); // This is what turns the page back
+		if (input.inputPressed("cursor-right")) turnPage(1); // This is what turns the page forward
 	}
 }

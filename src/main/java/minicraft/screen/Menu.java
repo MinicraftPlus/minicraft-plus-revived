@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -146,6 +147,8 @@ public class Menu {
 	boolean isSelectable() { return selectable; }
 	boolean shouldRender() { return shouldRender; }
 
+	public boolean isSearcherBarActive() { return searcherBarActive; }
+
 	/** @noinspection SameParameterValue*/
 	void translate(int xoff, int yoff) {
 		bounds.translate(xoff, yoff);
@@ -157,8 +160,8 @@ public class Menu {
 		if(!selectable || entries.size() == 0) return;
 
 		int prevSel = selection;
-		if (input.getKey("cursor-up").clicked) selection--;
-		if (input.getKey("cursor-down").clicked) selection++;
+		if (input.inputPressed("cursor-up")) selection--;
+		if (input.inputPressed("cursor-down")) selection++;
 		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
 		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
 		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
@@ -284,12 +287,12 @@ public class Menu {
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
-					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 3, 0, hudSheet.getSheet());
+					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 6, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else {
 				for (int i = 0; i < title.length(); i++) {
-					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 3, 0, hudSheet.getSheet());
+					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 6, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
 				}
 			}
@@ -308,7 +311,7 @@ public class Menu {
 
 			for (int i = 0; i < typingSearcher.length() + 4; i++) {
 				if (hasFrame) {
-					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 3, 0, hudSheet.getSheet());
+					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 6, 0, hudSheet.getSheet());
 				}
 
 				Font.draw("> " + typingSearcher + " <", screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
@@ -383,7 +386,7 @@ public class Menu {
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 
-				screen.render(x, y, spriteoffset, 3, mirrors, hudSheet.getSheet());
+				screen.render(x, y, spriteoffset, 6, mirrors, hudSheet.getSheet());
 
 				if(x < right && x + MinicraftImage.boxWidth > right)
 					x = right - MinicraftImage.boxWidth;

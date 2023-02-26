@@ -5,6 +5,7 @@ import java.util.List;
 import minicraft.core.Game;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
@@ -12,8 +13,9 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Spark extends Entity {
-	private int lifeTime; // How much time until the spark disappears
-	private double xa, ya; // The x and y acceleration
+	private final int lifeTime; // How much time until the spark disappears
+	private final double xa;
+	private final double ya; // The x and y acceleration
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
 	private final AirWizard owner; // The AirWizard that created this spark
@@ -51,9 +53,10 @@ public class Spark extends Entity {
 		x = (int) xx;
 		y = (int) yy;
 
-		// If the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // Gets the entities in the current position to hit.
-		toHit.forEach(entity -> ((Mob) entity).hurt(owner, 1));
+		Player player = getClosestPlayer();
+		if (player.isWithin(0,this)) {
+			player.hurt(owner,1);
+		}
 	}
 
 	/** Can this entity block you? Nope. */

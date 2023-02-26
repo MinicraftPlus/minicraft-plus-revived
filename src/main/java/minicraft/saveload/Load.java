@@ -1,35 +1,88 @@
 package minicraft.saveload;
 
 import minicraft.core.Game;
-import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
-import minicraft.entity.*;
-import minicraft.entity.furniture.*;
-import minicraft.entity.mob.*;
+import minicraft.entity.Arrow;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.FireSpark;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Spark;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DeathChest;
+import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.KnightStatue;
+import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.Spawner;
+import minicraft.entity.furniture.Tnt;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.Cow;
+import minicraft.entity.mob.Creeper;
+import minicraft.entity.mob.EnemyMob;
+import minicraft.entity.mob.Knight;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.MobAi;
+import minicraft.entity.mob.ObsidianKnight;
+import minicraft.entity.mob.Pig;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.Sheep;
+import minicraft.entity.mob.Skeleton;
+import minicraft.entity.mob.Slime;
+import minicraft.entity.mob.Snake;
+import minicraft.entity.mob.Zombie;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.*;
+import minicraft.item.ArmorItem;
+import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.item.Recipe;
+import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
-import minicraft.screen.*;
+import minicraft.screen.AchievementsDisplay;
+import minicraft.screen.CraftingDisplay;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.PopupDisplay;
+import minicraft.screen.QuestsDisplay;
+import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.SkinDisplay;
+import minicraft.screen.TutorialDisplayHandler;
+import minicraft.util.AdvancementElement;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
-
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
+import java.util.function.Predicate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Load {
 
@@ -83,6 +136,58 @@ public class Load {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
+
+			if (worldVer.compareTo(new Version("2.2.0-dev2")) < 0) {
+				Logging.SAVELOAD.trace("Old version dungeon detected.");
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.0"),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.1"),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.2")
+				)));
+
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.3", Game.input.getMapping("select")),
+					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.4", Game.input.getMapping("exit"))
+				)));
+
+				AtomicBoolean acted = new AtomicBoolean(false);
+				AtomicBoolean continues = new AtomicBoolean(false);
+
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					Game.exitDisplay();
+					acted.set(true);
+					continues.set(true);
+					return true;
+				}));
+
+				callbacks.add(new PopupDisplay.PopupActionCallback("exit", popup -> {
+					Game.exitDisplay();
+					acted.set(true);
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+
+				while (true) {
+					if (acted.get()) {
+						if (continues.get()) {
+							Logging.SAVELOAD.trace("Regenerating dungeon (B4)...");
+							LoadingDisplay.setMessage("minicraft.displays.loading.message.dungeon_regeneration");
+							int lvlidx = World.lvlIdx(-4);
+							boolean reAdd = Game.player.getLevel().depth == -4;
+							Level oriLevel = World.levels[lvlidx];
+							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
+							if (reAdd) World.levels[lvlidx].add(Game.player);
+						} else {
+							throw new RuntimeException(new InterruptedException("World loading interrupted."));
+						}
+
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -102,13 +207,13 @@ public class Load {
 		if (new File(location + "Preferences.json").exists()) {
 			loadPrefs("Preferences");
 
-		// Check if Preferences.miniplussave exists. (old version)
+			// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
 			loadPrefsOld("Preferences");
 			Logging.SAVELOAD.info("Upgrading preferences to JSON.");
 			resave = true;
 
-		// No preferences file found.
+			// No preferences file found.
 		} else {
 			Logging.SAVELOAD.warn("No preferences found, creating new file.");
 			resave = true;
@@ -168,8 +273,9 @@ public class Load {
 		String total;
 		try {
 			total = loadFromFile(filename, true);
-			if (total.length() > 0)
-				data.addAll(Arrays.asList(total.split(",")));
+			if (total.length() > 0) { // Safe splitting with JSON styled element.
+				data.addAll(splitUnwrappedCommas(total));
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -184,6 +290,60 @@ public class Load {
 		}
 
 		LoadingDisplay.progress(percentInc);
+	}
+
+	/** Source: Note: This method is copied from MiniMods. */
+	private static ArrayList<String> splitUnwrappedCommas(String input) {
+		ArrayList<String> out = new ArrayList<>();
+		int lastIdx = 0;
+		// 0 {}; 1 []; 2 ()
+		Stack<Integer> bracketCounter = new Stack<>();
+		char openBracket0 = '{';
+		char openBracket1 = '[';
+		char openBracket2 = '(';
+		char closeBracket0 = '}';
+		char closeBracket1 = ']';
+		char closeBracket2 = ')';
+		char commaChar = ',';
+		Predicate<Integer> checkDiff = ch -> {
+			if (bracketCounter.isEmpty()) return true;
+			return !bracketCounter.peek().equals(ch);
+		};
+
+		for (int i = 0; i < input.length(); i++) {
+			char ch = input.charAt(i);
+			if (ch == commaChar && bracketCounter.isEmpty()) {
+				String str = input.substring(lastIdx + (input.charAt(lastIdx) == commaChar ? 1 : 0), i).trim();
+				lastIdx = i;
+				if (!str.isEmpty()) out.add(str);
+			} else if (ch == openBracket0) {
+				bracketCounter.push(0);
+			} else if (ch == closeBracket0) {
+				if (checkDiff.test(0)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				bracketCounter.pop();
+			} else if (ch == openBracket1) {
+				bracketCounter.push(1);
+			} else if (ch == closeBracket1) {
+				if (checkDiff.test(1)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				bracketCounter.pop();
+			} else if (ch == openBracket2) {
+				bracketCounter.push(2);
+			} else if (ch == closeBracket2) {
+				if (checkDiff.test(2)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				bracketCounter.pop();
+			}
+		}
+
+		String str = input.substring(lastIdx).trim();
+		if (!str.isEmpty() && !str.chars().allMatch(Character::isWhitespace) &&
+			!(str.length() == 1 && str.charAt(0) == commaChar)) {
+			out.add(str);
+		}
+
+		if (bracketCounter.size() > 0)
+			throw new RuntimeException(String.format("Bracket not closed. Input: \"%s\"", input));
+
+		return out;
 	}
 
 	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
@@ -524,50 +684,38 @@ public class Load {
 			}
 		}
 
-		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
-			if (new File(location+"Quests.json").exists()) {
-				try {
-					JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
-					JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
-					JSONArray doneQuests = questsObj.getJSONArray("done");
-					JSONObject questData = questsObj.getJSONObject("data");
-					JSONObject lockedRecipes = questsObj.getJSONObject("lockedRecipes");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.quests");
 
-					ArrayList<String> unlocked = new ArrayList<>();
-					ArrayList<String> done = new ArrayList<>();
-					ArrayList<Recipe> recipeLocks = new ArrayList<>();
-
-					for (int i = 0; i < unlockedQuests.length(); i++) {
-						unlocked.add(unlockedQuests.getString(i));
-					}
-
-					for (int i = 0; i < doneQuests.length(); i++) {
-						done.add(doneQuests.getString(i));
-					}
-
-					for (String i : lockedRecipes.keySet()) {
-						JSONArray costsJson = lockedRecipes.getJSONArray(i);
-						String[] costs = new String[costsJson.length()];
-						for (int j = 0; j < costsJson.length(); j++) {
-							costs[j] = costsJson.getString(j);
-						}
-
-						recipeLocks.add(new Recipe(i, costs));
-					}
-
-					QuestsDisplay.loadGameQuests(unlocked, done, questData);
-					CraftingDisplay.loadLockedRecipes(recipeLocks);
-
-				} catch (IOException e) {
-					e.printStackTrace();
-					Logging.SAVELOAD.error("Unable to load Quests.json, loading default quests instead.");
-					QuestsDisplay.resetGameQuests();
-				}
-
-			} else {
-				Logging.SAVELOAD.debug("Quests.json not found, loading default quests instead.");
-				QuestsDisplay.resetGameQuests();
+		if (new File(location+"Quests.json").exists()){
+			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
+			try {
+				Files.move(Paths.get(location, "Quests.json"), Paths.get(location, "Quests.json_old"), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				Logging.SAVELOAD.warn("Quest.json renamed failed.");
 			}
+		}
+
+		boolean advancementsLoadSucceeded = false;
+		if (new File(location+"advancements.json").exists()) {
+			try {
+				JSONObject questsObj = new JSONObject(loadFromFile(location + "advancements.json", true));
+				@SuppressWarnings("unused")
+				Version dataVersion = new Version(questsObj.getString("Version"));
+				TutorialDisplayHandler.load(questsObj);
+				AdvancementElement.loadRecipeUnlockingElements(questsObj);
+				QuestsDisplay.load(questsObj);
+				advancementsLoadSucceeded = true;
+			} catch (IOException e) {
+				Logging.SAVELOAD.error(e, "Unable to load advancements.json, loading default quests instead.");
+			}
+		} else {
+			Logging.SAVELOAD.debug("advancements.json not found, loading default quests instead.");
+		}
+
+		if (!advancementsLoadSucceeded) {
+			TutorialDisplayHandler.reset(false);
+			AdvancementElement.resetRecipeUnlockingElements();
+			QuestsDisplay.resetGameQuests();
 		}
 	}
 
@@ -583,6 +731,8 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
+		if (worldVer.compareTo(new Version("2.2.0-dev2")) >= 0)
+			player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
@@ -655,6 +805,24 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.1.0")) < 0) {
 			data.remove(0);
 		}
+
+		// Loading unlocked recipes.
+		if (worldVer.compareTo(new Version("2.2.0-dev3")) >= 0) {
+			ArrayList<Recipe> recipes = new ArrayList<>();
+			JSONObject unlockedRecipes = new JSONObject(data.remove(0));
+			for (String key : unlockedRecipes.keySet()) {
+				JSONArray costsJson = unlockedRecipes.getJSONArray(key);
+				String[] costs = new String[costsJson.length()];
+				for (int j = 0; j < costsJson.length(); j++) {
+					costs[j] = costsJson.getString(j);
+				}
+
+				recipes.add(new Recipe(key, costs));
+			}
+
+			CraftingDisplay.loadUnlockedRecipes(recipes);
+		} else
+			CraftingDisplay.resetRecipeUnlocks();
 	}
 
 	protected static String subOldName(String name, Version worldVer) {
@@ -794,7 +962,7 @@ public class Load {
 			if (sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
-				Logging.SAVELOAD.error("Failed to load spark; owner id doesn't point to a correct entity");
+				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
 				return null;
 			}
 		} else {
@@ -812,6 +980,17 @@ public class Load {
 			}
 
 			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
+		}
+
+		if (entityName.equals("FireSpark") && !isLocalSave) {
+			int obID = Integer.parseInt(info.get(2));
+			Entity sparkOwner = Network.getEntity(obID);
+			if (sparkOwner instanceof ObsidianKnight)
+				newEntity = new FireSpark((ObsidianKnight)sparkOwner, x, y);
+			else {
+				Logging.SAVELOAD.error("Failed to load FireSpark; owner id doesn't point to a correct entity");
+				return null;
+			}
 		}
 
 		if (newEntity == null)
@@ -884,6 +1063,9 @@ public class Load {
 				newEntity = new Spawner(mob);
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+		} else if (newEntity instanceof KnightStatue) {
+			int health = Integer.parseInt(info.get(2));
+			newEntity = new KnightStatue(health);
 		}
 
 		if (!isLocalSave) {
@@ -960,6 +1142,8 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
+			case "KnightStatue": return new KnightStatue(0);
+			case "ObsidianKnight": return  new ObsidianKnight(0);
 			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}

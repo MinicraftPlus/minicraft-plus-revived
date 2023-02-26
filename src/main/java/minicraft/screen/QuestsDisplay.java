@@ -6,144 +6,206 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import com.studiohartman.jamepad.ControllerButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import minicraft.core.Action;
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.furniture.Chest;
 import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
-import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.saveload.Load;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
-import minicraft.util.Quest.QuestReward;
 import minicraft.util.Quest.QuestSeries;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.awt.Graphics2D;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.BiPredicate;
+import java.util.function.IntPredicate;
+import java.util.stream.Collectors;
 
 public class QuestsDisplay extends Display {
-	private final static HashMap<String, Quest> quests = new HashMap<>();
-	private final static ArrayList<Quest> unlockedQuests = new ArrayList<>();
-	private final static ArrayList<Quest> completedQuest = new ArrayList<>();
-	private final static JSONObject questStatus = new JSONObject();
-	private final static HashMap<String, QuestSeries> series = new HashMap<>();
-	private final static ArrayList<QuestSeries> unlockedSeries = new ArrayList<>();
-	private final static ArrayList<QuestSeries> completedSeries = new ArrayList<>();
-	private final static ArrayList<String> initiallyUnlocked = new ArrayList<>();
+	/** Unlocked but uncompleted. */
+	private final static HashSet<Quest> displayableQuests = new HashSet<>(); // Temp set. Refreshed anytime.
+	private final static HashSet<QuestSeries> series = new HashSet<>();
 
 	private SelectEntry[][] seriesEntries;
 	private int selectedEntry = 0;
 	private QuestSeries[][] entrySeries;
 	private int previousSelection = 0;
 
-
 	static {
-		try {
-			loadQuestFile("/resources/quests.json", false);
-			loadQuestFile("/resources/tutorials.json", true);
+		try { // TODO Data pack support.
+			loadQuestFile("/resources/quests.json");
 		} catch (IOException e) {
 			e.printStackTrace();
 			Logging.QUEST.error("Failed to load quests.");
 		}
 
 		// TODO Localize this class
-		// TODO Setting callback messages for some tutorials
 	}
 
-	private static void loadQuestFile(String filename, boolean tutorial) throws IOException {
+	private static void loadQuestFile(@SuppressWarnings("SameParameterValue") String filename) throws IOException {
 		JSONObject json = new JSONObject(String.join("", Load.loadFile(filename)));
-		for (String id : json.keySet()) {
-			loadSeries(id, json.getJSONObject(id), tutorial);
+		for (String key : json.keySet()) {
+			loadSeries(key, json.getJSONObject(key));
 		}
 	}
 
-	private static void loadSeries(String id, JSONObject json, boolean tutorial) {
-		boolean unlocked = json.optBoolean("unlocked", false); // Is unlocked initially
-		JSONArray unlocksJson = json.optJSONArray("leads_to");
-		JSONArray questsJson = json.getJSONArray("quests");
-
-		String[] unlocks = new String[0];
-		if (unlocksJson != null) {
-			unlocks = new String[unlocksJson.length()];
-			for (int i = 0; i < unlocksJson.length(); i++) {
-				unlocks[i] = unlocksJson.getString(i);
+	private static void loadSeries(String key, JSONObject json) {
+		HashMap<String, AdvancementElement.ElementCriterion> criteria = new HashMap<>();
+		JSONObject criteriaJson = json.optJSONObject("criteria"); // Optional
+		if (criteriaJson != null) {
+			for (String k : criteriaJson.keySet()) {
+				JSONObject criterion = criteriaJson.getJSONObject(k);
+				criteria.put(k, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
 			}
 		}
 
-		if (unlocked)
-			initiallyUnlocked.add(id);
-
-		ArrayList<Quest> seriesQuests = new ArrayList<>();
-		for (int i = 0; i < questsJson.length(); i++) {
-			Quest quest = loadQuest(questsJson.getJSONObject(i));
-			seriesQuests.add(quest);
-			quests.put(quest.id, quest);
-		}
-
-		series.put(id, new QuestSeries(id, json.getString("desc"), seriesQuests, loadReward(json.optJSONObject("reward")), unlocked, tutorial, unlocks));
-	}
-
-	private static QuestReward loadReward(JSONObject json) {
-		ArrayList<Item> items = new ArrayList<>();
-		ArrayList<Recipe> recipes = new ArrayList<>();
-		if (json != null) {
-			JSONArray itemsJson = json.optJSONArray("items");
-			if (itemsJson != null) {
-				for (int i = 0; i < itemsJson.length(); i++) {
-					items.add(Items.get(itemsJson.getString(i)));
+		HashSet<HashSet<String>> requirements = new HashSet<>();
+		JSONArray requirementsJson = json.optJSONArray("requirements");
+		if (requirementsJson != null) {
+			for (int i = 0; i < requirementsJson.length(); i++) {
+				HashSet<String> req = new HashSet<>();
+				JSONArray reqJson = requirementsJson.getJSONArray(i);
+				for (int j = 0; j < reqJson.length(); j++) {
+					req.add(reqJson.getString(j));
 				}
+				requirements.add(req);
 			}
+		}
 
-			JSONArray recipesJson = json.optJSONArray("recipes");
-			if (recipesJson != null) {
-				for (String product : json.keySet()) {
-					JSONArray costsJson = json.getJSONArray(product);
-					String[] costs = new String[costsJson.length()];
-					for (int j = 0; j < costsJson.length(); j++) {
-						costs[j] = costsJson.getString(j);
-					}
+		HashMap<String, AdvancementElement.ElementCriterion> unlockingCriteria = new HashMap<>();
+		JSONObject unlockingCriteriaJson = json.getJSONObject("unlocking_criteria");
+		for (String k : unlockingCriteriaJson.keySet()) {
+			JSONObject criterion = unlockingCriteriaJson.getJSONObject(k);
+			unlockingCriteria.put(k, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
+		}
 
-					recipes.add(new Recipe(product, costs));
+		HashSet<HashSet<String>> unlockingRequirements = new HashSet<>();
+		JSONArray unlockingRequirementsJson = json.optJSONArray("unlocking_requirements");
+		if (requirementsJson != null) {
+			for (int i = 0; i < unlockingRequirementsJson.length(); i++) {
+				HashSet<String> req = new HashSet<>();
+				JSONArray reqJson = unlockingRequirementsJson.getJSONArray(i);
+				for (int j = 0; j < reqJson.length(); j++) {
+					req.add(reqJson.getString(j));
 				}
+				unlockingRequirements.add(req);
 			}
 		}
 
-		return new QuestReward(items, recipes);
+		HashMap<String, Quest> quests = new HashMap<>();
+		JSONObject questsJson = json.getJSONObject("quests");
+		for (String k : questsJson.keySet()) {
+			Quest quest = loadQuest(k, questsJson.getJSONObject(k));
+			quests.put(quest.key, quest);
+		}
+
+		AdvancementElement.ElementRewards rewards = AdvancementElement.loadRewards(json.optJSONObject("rewards"));
+		series.add(new QuestSeries(key, json.getString("description"), criteria,
+			rewards, requirements, quests, unlockingCriteria, unlockingRequirements));
 	}
 
-	private static Quest loadQuest(JSONObject json) {
-		JSONArray unlocksJson = json.optJSONArray("leads_to");
-		String[] unlocks = new String[0];
-		if (unlocksJson != null) {
-			unlocks = new String[unlocksJson.length()];
-			for (int i = 0; i < unlocksJson.length(); i++) {
-				unlocks[i] = unlocksJson.getString(i);
+	private static Quest loadQuest(String key, JSONObject json) {
+		HashMap<String, AdvancementElement.ElementCriterion> criteria = new HashMap<>();
+		JSONObject criteriaJson = json.getJSONObject("criteria");
+		if (criteriaJson.isEmpty()) throw new IndexOutOfBoundsException("criteria is empty.");
+		for (String k : criteriaJson.keySet()) {
+			JSONObject criterion = criteriaJson.getJSONObject(k);
+			criteria.put(k, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
+		}
+
+		HashSet<HashSet<String>> requirements = new HashSet<>();
+		JSONArray requirementsJson = json.optJSONArray("requirements");
+		if (requirementsJson != null) {
+			for (int i = 0; i < requirementsJson.length(); i++) {
+				HashSet<String> req = new HashSet<>();
+				JSONArray reqJson = requirementsJson.getJSONArray(i);
+				for (int j = 0; j < reqJson.length(); j++) {
+					req.add(reqJson.getString(j));
+				}
+				requirements.add(req);
 			}
 		}
 
-		return new Quest(json.getString("id"), json.getString("desc"), loadReward(json.optJSONObject("reward")), false, unlocks);
+		HashMap<String, AdvancementElement.ElementCriterion> unlockingCriteria = new HashMap<>();
+		JSONObject unlockingCriteriaJson = json.optJSONObject("unlocking_criteria");
+		if (unlockingCriteriaJson != null) {
+			for (String k : unlockingCriteriaJson.keySet()) {
+				JSONObject criterion = unlockingCriteriaJson.getJSONObject(k);
+				unlockingCriteria.put(k, new AdvancementElement.ElementCriterion(criterion.getString("trigger"), criterion.getJSONObject("conditions")));
+			}
+		}
+
+		HashSet<HashSet<String>> unlockingRequirements = new HashSet<>();
+		JSONArray unlockingRequirementsJson = json.optJSONArray("unlocking_requirements");
+		if (requirementsJson != null) {
+			for (int i = 0; i < unlockingRequirementsJson.length(); i++) {
+				HashSet<String> req = new HashSet<>();
+				JSONArray reqJson = unlockingRequirementsJson.getJSONArray(i);
+				for (int j = 0; j < reqJson.length(); j++) {
+					req.add(reqJson.getString(j));
+				}
+				unlockingRequirements.add(req);
+			}
+		}
+
+		AdvancementElement.ElementRewards rewards = AdvancementElement.loadRewards(json.optJSONObject("rewards"));
+		return new Quest(key, json.getString("description"), criteria,
+			rewards, requirements, json.optString("parent", null), unlockingCriteria, unlockingRequirements);
 	}
 
+	public static void refreshDisplayableQuests() {
+		displayableQuests.clear();
+		series.forEach(series -> {
+			if (series.isDisplayableAtStatus())
+				series.getSeriesQuests().values().forEach(quest -> {
+					if (quest.isDisplayableAtStatus())
+						displayableQuests.add(quest);
+				});
+		});
+	}
 
 	private void reloadEntries() {
 		ArrayList<SelectEntry> completed = new ArrayList<>();
 		ArrayList<SelectEntry> unlocked = new ArrayList<>();
 		ArrayList<QuestSeries> completedSeries = new ArrayList<>();
 		ArrayList<QuestSeries> unlockedSeries = new ArrayList<>();
-		for (QuestSeries questSeries : series.values()) {
-			boolean isCompleted = completedSeries.contains(questSeries);
-			boolean isUnlocked = questSeries.unlocked;
-			SelectEntry select = new SelectEntry(Localization.getLocalized(questSeries.id), () -> Game.setDisplay(new SeriesInfomationDisplay(this, questSeries)), true) {
+		for (QuestSeries questSeries : series) {
+			boolean isCompleted = questSeries.isCompleted();
+			boolean isUnlocked = questSeries.isUnlocked();
+			SelectEntry select = new SelectEntry(Localization.getLocalized(questSeries.key), () -> Game.setDisplay(new SeriesInformationDisplay(questSeries)), true) {
 				@Override
 				public int getColor(boolean isSelected) {
 					return isCompleted ? Color.GREEN : isUnlocked ? Color.WHITE : Color.GRAY;
@@ -199,7 +261,7 @@ public class QuestsDisplay extends Display {
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, 10), RelPos.CENTER)
-				.setEntries(new StringEntry(Settings.getEntry("quests") + "; " + Settings.getEntry("tutorials"), Color.WHITE))
+				.setEntries(new StringEntry(Settings.getEntry("quests").toString(), Color.WHITE))
 				.setSelectable(false)
 				.createMenu()
 		};
@@ -207,56 +269,30 @@ public class QuestsDisplay extends Display {
 		updateEntries();
 	}
 
-	public static class SeriesInfomationDisplay extends Display {
-		public SeriesInfomationDisplay(QuestsDisplay display, QuestSeries series) {
+	public static class SeriesInformationDisplay extends Display {
+		public SeriesInformationDisplay(QuestSeries series) {
 			super(false, true);
 			ArrayList<ListEntry> entries = new ArrayList<>();
 
-			int tQuestNum = series.getSeriesQuests().size();
-			int completedQuestNum = getSeriesQuestsCompleted(series);
-			entries.add(completedSeries.contains(series)? new StringEntry("Status: Completed (" + completedQuestNum + "/" + tQuestNum + ")", Color.GREEN):
-				series.unlocked? new StringEntry("Status: Unlocked (" + completedQuestNum + "/" + tQuestNum + ")", Color.WHITE):
-				new StringEntry("Status: Locked (" + completedQuestNum + "/" + tQuestNum + ")", Color.GRAY) // Locked series would not been shown...?
+			entries.add(series.isCompleted() ? new StringEntry("Status: Completed", Color.GREEN):
+				series.isUnlocked() ? new StringEntry("Status: Unlocked", Color.WHITE):
+				new StringEntry("Status: Locked", Color.GRAY) // Locked series would not been shown...?
 			);
 
-			entries.add(new StringEntry("Tutorial: " + (series.tutorial ? "Yes" : "No"), series.tutorial ? Color.CYAN : Color.WHITE));
-			entries.addAll(Arrays.asList(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
-
-			ArrayList<Quest> ongoingQuests = getOngoingSeriesQuests(series);
-			entries.addAll(Arrays.asList(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).collect(Collectors.toList())))));
+			entries.add(new StringEntry("Quests completed: " +
+				series.getSeriesQuests().values().stream().filter(AdvancementElement::isCompleted).count()));
+			entries.addAll(Arrays.asList(StringEntry.useLines(
+				"Description: " + Localization.getLocalized(series.description))));
+			entries.add(new StringEntry("Ongoing quests: " +
+				series.getSeriesQuests().values().stream().filter(AdvancementElement::isDisplayableAtStatus).count()));
 
 			entries.add(new BlankEntry());
-			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new QuestListDisplay(series.getSeriesQuests()))));
-
-			if (series.tutorial) {
-				entries.add(new SelectEntry("Skip this tutorial series", () -> Game.setDisplay(new Display(false, true, new Menu.Builder(true, 1, RelPos.CENTER)
-					.setSelectable(false)
-					.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.tutorial_skip.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
-					.createMenu()) {
-						@Override
-						public void tick(InputHandler input) {
-							super.tick(input);
-							if (input.getKey("select").clicked) {
-								skipSeries(series);
-								display.reloadEntries();
-								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
-									display.menus[0].setSelection(display.seriesEntries[display.selectedEntry].length - 1);
-								}
-
-								if (display.previousSelection > display.seriesEntries[display.selectedEntry ^ 1].length) {
-									display.previousSelection = display.seriesEntries[display.selectedEntry ^ 1].length - 1;
-								}
-
-								Game.exitDisplay();
-							}
-						}
-				})));
-			}
+			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new SeriesQuestViewerDisplay(series))));
 
 			menus = new Menu[] {
 				new Menu.Builder(true, 0, RelPos.CENTER)
 					.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
-					.setEntries(new StringEntry(Localization.getLocalized(series.id)))
+					.setEntries(new StringEntry(Localization.getLocalized(series.key)))
 					.setSelectable(false)
 					.createMenu(),
 				new Menu.Builder(true, 2, RelPos.CENTER)
@@ -269,45 +305,385 @@ public class QuestsDisplay extends Display {
 			selection = 1;
 		}
 
-		private static class QuestListDisplay extends Display {
-			public QuestListDisplay(ArrayList<Quest> quests) {
-				super(false, true,
-					new Menu.Builder(true, 0, RelPos.CENTER, quests.stream().map(q -> new SelectEntry(q.id, () -> Game.setDisplay(new QuestInformationDisplay(q)), true) {
-						@Override
-						public int getColor(boolean isSelected) {
-							return completedQuest.contains(q) ? Color.GREEN : q.unlocked ? Color.WHITE : Color.GRAY;
+		private static class SeriesQuestViewerDisplay extends Display {
+			private static final int entryPadding = 3;
+			private static final int entryGap = 5; // 2x for y-axis only when between entries.
+			private final Menu[] menus;
+			private final Quest[][] questsTree;
+			private final Rectangle[][] treeDimensions;
+			private final HashMap<Quest, Quest> parents = new HashMap<>();
+			private final int rasterWidth;
+			private final int rasterHeight;
+			private final int rasterX;
+			private final int rasterY;
+			private final int[] rasterPixels;
+			private final Screen simulatedRasterScreen = new Screen() {
+				@Override
+				public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+					if (sheet == null) return; // Verifying that sheet is not null.
+					// Ignoring mirror.
+					// Validation check
+					if (xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
+						sheet = Renderer.spriteLinker.missingSheet(SpriteLinker.SpriteType.Item);
+						xt = 0;
+						yt = 0;
+					}
+
+					int xTile = xt; // Gets x position of the spritesheet "tile"
+					int yTile = yt; // Gets y position
+					int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+
+					// THIS LOOPS FOR EVERY PIXEL
+					for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
+						for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
+							int col = sheet.pixels[toffs + x + y * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+							boolean isTransparent = (col >> 24 == 0);
+							if (!isTransparent) {
+								if (whiteTint != -1 && col == 0x1FFFFFF) {
+									// If this is white, write the whiteTint over it
+									renderRasterPixel(x + xp, y + yp, whiteTint & 0xFFFFFF);
+								} else {
+									// Inserts the colors into the image
+									if (fullbright) {
+										renderRasterPixel(x + xp, y + yp, Color.WHITE);
+									} else {
+										if (color != 0) {
+											renderRasterPixel(x + xp, y + yp, color);
+										} else {
+											renderRasterPixel(x + xp, y + yp, col & 0xFFFFFF);
+										}
+									}
+								}
+							}
 						}
-					}).toArray(SelectEntry[]::new))
-						.createMenu());
+					}
+				}
+			};
+
+			private int cursorX = 0;
+			private int cursorY = 0;
+			private int xScroll = 0;
+			private int yScroll = 0;
+			private boolean inBrowsing = false; // Simple check;
+
+			public SeriesQuestViewerDisplay(QuestSeries series) {
+				super(false, true);
+				menus = new Menu[] {
+					new Menu.Builder(true, 0, RelPos.CENTER, StringEntry.useLines("minicrat.displays.quests", series.key))
+						.setPositioning(new Point(Screen.w/2, 6), RelPos.BOTTOM)
+						.createMenu(),
+					new Menu.Builder(true, 0, RelPos.CENTER)
+						.setPositioning(new Point(Screen.w/2, 40), RelPos.BOTTOM)
+						.setSize(Screen.w - 16, Screen.h - 60)
+						.createMenu()
+				};
+
+				Map<String, Quest> quests = series.getSeriesQuests()
+					.entrySet().stream().filter(entry -> entry.getValue().isUnlocked()) // Showing unlocked only.
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+				if (!quests.isEmpty()) {
+					ArrayList<ArrayList<Quest>> questRowsList = new ArrayList<>();
+					ArrayList<Quest> topRow = quests.values().stream().filter(quest -> quest.getParent() == null).collect(Collectors.toCollection(ArrayList::new));
+					questRowsList.add(topRow);
+					HashMap<Quest, HashSet<Quest>> childQuests = new HashMap<>();
+					quests.values().forEach(quest -> {
+						Quest parent = quest.getParent();
+						if (parent != null) {
+							parents.put(quest, parent);
+							if (childQuests.containsKey(parent))
+								childQuests.get(parent).add(quest);
+							else
+								childQuests.put(parent, new HashSet<>(Collections.singletonList(quest)));
+						}
+					});
+
+					while (childQuests.size() > 0) {
+						for (Iterator<Map.Entry<Quest, HashSet<Quest>>> it = childQuests.entrySet().iterator(); it.hasNext();) {
+							Map.Entry<Quest, HashSet<Quest>> entry = it.next();
+							Quest parent = entry.getKey();
+							ArrayList<Quest> questRow = questRowsList.stream().filter(quests1 -> quests1.contains(parent)).findAny().orElse(null);
+							if (questRow != null) {
+								if (questRowsList.indexOf(questRow) < questRowsList.size() - 1) {
+									questRowsList.get(questRowsList.indexOf(questRow) + 1).addAll(entry.getValue());
+								} else { // The row is the last element.
+									questRowsList.add(new ArrayList<>(entry.getValue()));
+								}
+								it.remove();
+							}
+						}
+					}
+
+					questsTree = questRowsList.stream().map(quests1 -> quests1.toArray(new Quest[0])).toArray(Quest[][]::new);
+					treeDimensions = new Rectangle[questsTree.length][];
+					for (int i = 0; i < questsTree.length; i++) { // y-axis
+						treeDimensions[i] = new Rectangle[questsTree[i].length];
+						int height = Font.textHeight();
+						for (int j = 0; j < questsTree[i].length; j++) { // x-axis
+							int width = Font.textWidth(Localization.getLocalized(questsTree[i][j].key));
+							treeDimensions[i][j] = new Rectangle(entryGap, entryGap, entryPadding*2 + width, entryPadding*2 + height, 0);
+							if (j > 0)
+								treeDimensions[i][j].translate(treeDimensions[i][j-1].getRight() + entryGap, 0);
+							if (i > 0)
+								treeDimensions[i][j].translate(0, treeDimensions[i-1][0].getBottom() + entryGap*2);
+						}
+					}
+				} else {
+					questsTree = new Quest[0][];
+					treeDimensions = new Rectangle[0][];
+				}
+
+				Rectangle menuBounds = menus[1].getBounds();
+				rasterWidth = menuBounds.getWidth() - MinicraftImage.boxWidth*2;
+				rasterHeight = menuBounds.getHeight() - MinicraftImage.boxWidth*2;
+				rasterPixels = new int[rasterWidth * rasterHeight];
+				rasterX = menuBounds.getLeft() + MinicraftImage.boxWidth;
+				rasterY = menuBounds.getTop() + MinicraftImage.boxWidth;
+			}
+
+			@Override
+			public void tick(InputHandler input) {
+				super.tick(input);
+
+				if (questsTree.length > 0) {
+					if (input.getKey("shift").down) { // Browsing mode.
+						inBrowsing = true;
+						if (input.getKey("shift-down").clicked)
+							yScroll += 3;
+						else if (input.getKey("shift-up").clicked)
+							yScroll -= 3;
+						else if (input.getKey("shift-right").clicked)
+							xScroll += 3;
+						else if (input.getKey("shift-left").clicked)
+							xScroll -= 3;
+					} else {
+						if (inBrowsing) {
+							scrollIfNeeded();
+							inBrowsing = false;
+						}
+						if (input.getKey("cursor-down").clicked) {
+							if (cursorY < questsTree.length - 1) {
+								cursorY++;
+								if (cursorX >= questsTree[cursorY].length)
+									cursorX = questsTree[cursorY].length - 1;
+								Sound.play("select");
+								scrollIfNeeded();
+							}
+						} else if (input.getKey("cursor-up").clicked) {
+							if (cursorY > 0) {
+								cursorY--;
+								if (cursorX >= questsTree[cursorY].length)
+									cursorX = questsTree[cursorY].length - 1;
+								Sound.play("select");
+								scrollIfNeeded();
+							}
+						} else if (input.getKey("cursor-right").clicked) {
+							if (cursorX < questsTree[cursorY].length - 1) {
+								cursorX++;
+								Sound.play("select");
+								scrollIfNeeded();
+							}
+						} else if (input.getKey("cursor-left").clicked) {
+							if (cursorX > 0) {
+								cursorX--;
+								Sound.play("select");
+								scrollIfNeeded();
+							}
+						} else if (input.getKey("select").clicked) {
+							Sound.play("confirm");
+							Game.setDisplay(new QuestInformationDisplay(questsTree[cursorY][cursorX]));
+						}
+					}
+				}
+			}
+
+			private void scrollIfNeeded() {
+				if (xScroll > treeDimensions[cursorY][cursorX].getLeft() - entryGap)
+					xScroll = treeDimensions[cursorY][cursorX].getLeft() - entryGap;
+				else if (xScroll + rasterWidth < treeDimensions[cursorY][cursorX].getRight() + entryGap)
+					xScroll = treeDimensions[cursorY][cursorX].getRight() + entryGap - rasterWidth;
+
+				if (yScroll > treeDimensions[cursorY][cursorX].getTop() - entryGap)
+					yScroll = treeDimensions[cursorY][cursorX].getTop() - entryGap;
+				else if (yScroll + rasterHeight < treeDimensions[cursorY][cursorX].getBottom() + entryGap)
+					yScroll = treeDimensions[cursorY][cursorX].getBottom() + entryGap - rasterHeight;
+			}
+
+			@Override
+			public void render(Screen screen) {
+				super.render(screen);
+				for (Menu menu : menus)
+					menu.render(screen);
+				Arrays.fill(rasterPixels, Color.BLACK);
+				renderRaster();
+				final int xPadding = rasterX - 1;
+				final int yPadding = rasterY - 1;
+				for (int i = 0; i < rasterWidth + 2; i++) {
+					for (int j = 0; j < rasterHeight + 2; j++) {
+						final int pos = xPadding + i + (yPadding + j) * Screen.w;
+						if (i == 0 || i == rasterWidth + 1 || j == 0 || j == rasterHeight + 1)
+							screen.pixels[pos] = Color.WHITE; // Raster border.
+						else {
+							final int x = i - 1; // Also < rasterWidth.
+							final int y = j - 1; // Also < rasterHeight.
+							screen.pixels[pos] = rasterPixels[x + y * rasterWidth];
+						}
+					}
+				}
+			}
+
+			private void renderRaster() {
+				if (questsTree.length == 0) {
+					String text = Localization.getLocalized("minicraft.displays.quests.display.no_quest");
+					Font.draw(text, simulatedRasterScreen, xScroll + rasterWidth/2 - Font.textWidth(text)/2,
+						yScroll + rasterHeight/2 - Font.textHeight()/2, Color.GRAY);
+					return;
+				}
+
+				// Tree relations.
+				for (int r = 0; r < questsTree.length; r++) {
+					for (int c = 0; c < questsTree[r].length; c++) {
+						Quest quest = questsTree[r][c];
+						Quest parent = parents.get(quest);
+						if (parent == null) continue;
+						Rectangle rec = treeDimensions[r][c];
+						Rectangle parentRec = null;
+						int parentX = 0;
+						int parentY = 0;
+						for (int i = 0; i < treeDimensions.length; i++) {
+							for (int j = 0; j < treeDimensions[i].length; j++) {
+								if (questsTree[i][j] == parent) {
+									parentRec = treeDimensions[i][j];
+									parentX = j;
+									parentY = i;
+									break;
+								}
+							}
+						}
+
+						if (parentRec == null) { // Unexpected.
+							Logging.QUEST.warn("Unexpected situation: rectangle of parent quest not found.");
+							continue;
+						}
+
+						// Parent is always higher than this.
+						Point p0 = parentRec.getCenter();
+						Point p1 = rec.getCenter();
+						int x0 = p0.x;
+						int x1 = p1.x;
+						int y0 = p0.y;
+						int y1 = p1.y;
+						boolean selected = c == cursorX && r == cursorY;
+						boolean parentSelected = parentX == cursorX && parentY == cursorY;
+						int color = selected ? Color.CYAN : parentSelected ? Color.GREEN : Color.tint(Color.GRAY, -1, true);
+
+						// Bresenham's line algorithm
+						Rectangle finalParentRec = parentRec;
+						plotLine(x0, y0, x1, y1, yy -> yy >= finalParentRec.getBottom() && yy <= rec.getTop(), color);
+					}
+				}
+
+				// Tree elements.
+				for (int r = 0; r < questsTree.length; r++) {
+					for (int c = 0; c < questsTree[r].length; c++) {
+						Quest quest = questsTree[r][c];
+						Rectangle rec = treeDimensions[r][c];
+						int x = rec.getLeft();
+						int y = rec.getTop();
+						boolean selected = c == cursorX && r == cursorY;
+						Font.draw(Localization.getLocalized(quest.key), simulatedRasterScreen, x + entryPadding, y + entryPadding,
+							selected ? (quest.isCompleted() ? Color.tint(Color.GREEN, 1, true) :
+								Color.WHITE) : Color.tint(Color.GRAY, 1, true));
+						for (int i = 0; i < rec.getWidth(); i++) { // Border.
+							for (int j = 0; j < rec.getHeight(); j++) {
+								if (i == 0 || i == rec.getWidth() - 1 || j == 0 || j == rec.getHeight() - 1)
+									renderRasterPixel(x + i, y + j,
+										selected ? (quest.isCompleted() ? Color.tint(Color.GREEN, -1, true) :
+											Color.tint(Color.GRAY, 2, true)) : Color.GRAY);
+							}
+						}
+					}
+				}
+			}
+			private void renderRasterPixel(int x, int y, int color) {
+				x -= xScroll;
+				y -= yScroll;
+				if (x < 0 || x >= rasterWidth || y < 0 || y >= rasterHeight) return; // Out of bounds.
+				rasterPixels[x + y * rasterWidth] = color;
+			}
+
+			// Parts of Bresenham's line algorithm
+			void plotLineLow(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
+				int dx = x1 - x0;
+				int dy = y1 - y0;
+				int yi = 1;
+				if (dy < 0) {
+					yi = -1;
+					dy = -dy;
+				}
+				int D = (2 * dy) - dx;
+				int y = y0;
+
+				for (int x = x0; x <= x1; x++) {
+					if (yRange.test(y)) renderRasterPixel(x, y, color);
+					if (D > 0) {
+						y = y + yi;
+						D = D + (2 * (dy - dx));
+					} else
+						D = D + 2*dy;
+				}
+			}
+			void plotLineHigh(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
+				int dx = x1 - x0;
+				int dy = y1 - y0;
+				int xi = 1;
+				if (dx < 0) {
+					xi = -1;
+					dx = -dx;
+				}
+				int D = (2 * dx) - dy;
+				int x = x0;
+
+				for (int y = y0; y <= y1; y++) {
+					if (yRange.test(y)) renderRasterPixel(x, y, color);
+					if (D > 0) {
+						x = x + xi;
+						D = D + (2 * (dx - dy));
+					} else
+						D = D + 2*dx;
+				}
+			}
+			void plotLine(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
+				if (Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
+					if (x0 > x1)
+						plotLineLow(x1, y1, x0, y0, yRange, color);
+					else
+						plotLineLow(x0, y0, x1, y1, yRange, color);
+				} else {
+					if (y0 > y1)
+						plotLineHigh(x1, y1, x0, y0, yRange, color);
+					else
+						plotLineHigh(x0, y0, x1, y1, yRange, color);
+				}
 			}
 
 			private static class QuestInformationDisplay extends Display {
 				public QuestInformationDisplay(Quest quest) {
 					super(false, true);
-					ArrayList<ListEntry> entries = new ArrayList<>();
-
-					QuestSeries series = quest.getSeries();
-					int tQuestNum = series.getSeriesQuests().size();
-					int completedQuestNum = getSeriesQuestsCompleted(series);
-
-					boolean isCompleted = completedQuest.contains(quest);
-					String state = isCompleted ? "Completed" : quest.unlocked ? "Unlocked" : "Locked";
-					int color = isCompleted ? Color.GREEN : quest.unlocked ? Color.WHITE : Color.GRAY;
-
-					entries.add(new StringEntry("Status: " + (questStatus.get(quest.id) == null ? "None" : questStatus.get(quest.id).toString())));
-					entries.add(new BlankEntry());
-					entries.addAll(Arrays.asList(StringEntry.useLines(Localization.getLocalized(quest.description))));
-
+					String state = quest.isCompleted() ? "Completed" : quest.isUnlocked() ? "Unlocked" : "Locked";
+					int color = quest.isCompleted() ? Color.GREEN : quest.isUnlocked() ? Color.WHITE : Color.GRAY;
 					menus = new Menu[] {
 						new Menu.Builder(true, 1, RelPos.CENTER)
 							.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
-							.setEntries(new StringEntry(Localization.getLocalized(series.id) + " (" + completedQuestNum + "/" + tQuestNum + ")"),
-								new StringEntry(Localization.getLocalized(quest.id) + ": " + state, color))
+							.setEntries(new StringEntry(Localization.getLocalized(quest.getSeries().key)),
+								new StringEntry(Localization.getLocalized(quest.key) + ": " + state, color),
+								new StringEntry(quest.shouldAllCriteriaBeCompleted() ?
+									String.format("Progress: (%d/%d)", quest.getNumCriteriaCompleted(), quest.getTotalNumCriteria()) :
+									"Uncompleted"))
 							.setSelectable(false)
 							.createMenu(),
-						new Menu.Builder(true, 2, RelPos.CENTER)
-							.setPositioning(new Point(Screen.w / 2, 40), RelPos.BOTTOM)
-							.setEntries(entries)
+						new Menu.Builder(true, 2, RelPos.CENTER,
+							StringEntry.useLines(Localization.getLocalized(quest.description)))
+							.setPositioning(new Point(Screen.w / 2, 52), RelPos.BOTTOM)
 							.setSelectable(false)
 							.createMenu()
 					};
@@ -316,248 +692,51 @@ public class QuestsDisplay extends Display {
 		}
 	}
 
-	public static Quest getQuest(String id) {
-		return quests.get(id);
+	public static HashSet<Quest> getDisplayableQuests() {
+		return new HashSet<>(displayableQuests);
 	}
 
-	public static ArrayList<Quest> getQuests() {
-		return new ArrayList<>(quests.values());
-	}
-	public static ArrayList<Quest> getUnlockedQuests() {
-		return new ArrayList<>(unlockedQuests);
-	}
-	public static ArrayList<Quest> getCompletedQuest() {
-		return new ArrayList<>(completedQuest);
-	}
-	public static JSONObject getStatusQuests() {
-		return new JSONObject(questStatus.toMap());
+	public static void resetGameQuests() { resetGameQuests(true); }
+	private static void resetGameQuests(boolean update) {
+		series.forEach(AdvancementElement::reset);
+		if (update) refreshDisplayableQuests();
 	}
 
-	public static boolean isQuestDone(String id) {
-		return completedQuest.contains(getQuest(id));
-	}
-
-	public static Object getQuestData(String id) {
-		return questStatus.get(id);
-	}
-	public static void setQuestData(String id, Object val) {
-		questStatus.put(id, val);
-	}
-
-	public static int getSeriesQuestsCompleted(String id) { return getSeriesQuestsCompleted(series.get(id)); }
-	public static int getSeriesQuestsCompleted(QuestSeries series) {
-		int num = 0;
-		for (Quest quest : series.getSeriesQuests()) {
-			if (completedQuest.contains(quest)) num++;
-		}
-
-		return num;
-	}
-	public static ArrayList<Quest> getOngoingSeriesQuests(QuestSeries series) {
-		return new ArrayList<>(series.getSeriesQuests().stream().filter(q -> !completedQuest.contains(q) && q.unlocked).collect(Collectors.toList()));
-	}
-
-	public static void unlockQuest(String id) { unlockQuest(quests.get(id)); }
-	public static void unlockQuest(Quest quest) {
-		if (quest == null) return;
-		if (unlockedQuests.contains(quest)) return;
-
-		quest.unlocked = true;
-		unlockedQuests.add(quest);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + ": " + Localization.getLocalized(quest.id));
-	}
-	public static void refreshQuestLocks() {
-		for (Quest quest : quests.values()) {
-			if (unlockedQuests.contains(quest) && !quest.unlocked) {
-				unlockedQuests.remove(quest);
-			} else if (!unlockedQuests.contains(quest) && quest.unlocked) {
-				unlockedQuests.add(quest);
-			}
-		}
-	}
-	public static boolean questCompleted(String id) { return questCompleted(id, true); }
-	public static boolean questCompleted(String id, boolean mustUnlocked) {
-		Quest quest = quests.get(id);
-		if (quest == null) return false;
-		if (completedQuest.contains(quest)) return false;
-		if (mustUnlocked && !quest.unlocked) return false;
-
-		completedQuest.add(quest);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_completed") + ": " + Localization.getLocalized(id));
-		sendReward(quest.reward);
-		if (quest.getSeries().getSeriesQuests().stream().allMatch(q -> completedQuest.contains(q))) { // Checks if all the quests of the series are completed
-			seriesCompleted(quest.getSeries());
-		}
-
-		for (String q : quest.getUnlocks()) unlockQuest(q);
-
-		if (quest.callback != null) quest.callback.act();
-		return true;
-	}
-	public static void unlockSeries(QuestSeries series) {
-		if (series == null) return;
-		if (unlockedSeries.contains(series)) return;
-
-		series.unlocked = true;
-		unlockedSeries.add(series);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_series_unlocked") + ": " + Localization.getLocalized(series.id));
-		unlockQuest(series.getSeriesQuests().get(0));
-	}
-	public static void seriesCompleted(QuestSeries questSeries) {
-		if (questSeries == null) return;
-		if (completedSeries.contains(questSeries)) return;
-
-		completedSeries.add(questSeries);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_series_completed") + ": " + Localization.getLocalized(questSeries.id));
-		sendReward(questSeries.reward);
-
-		for (String un : questSeries.getUnlocks()) {
-			unlockSeries(series.get(un));
-		}
-
-		if ((boolean) Settings.get("tutorials") &&
-			series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logging.QUEST.debug("Tutorial completed.");
-			tutorialOff(); // Turns off tutorial
-
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
-		}
-
-		if (questSeries.callback != null) questSeries.callback.act();
-	}
-
-	private static void skipSeries(QuestSeries series) {
-		if (series == null) return;
-		if (completedSeries.contains(series)) {
-			seriesCompleted(series);
-			return;
-		}
-
-		series.unlocked = false;
-		unlockedSeries.remove(series);
-		sendReward(series.reward, true);
-		series.getSeriesQuests().stream().filter(q -> !completedQuest.contains(q)).map(q -> {
-			sendReward(q.reward, true);
-			return q;
-		}).filter(q -> q.unlocked).forEach(q -> {
-			q.unlocked = false;
-			unlockedQuests.remove(q);
-		});
-
-		for (String un : series.getUnlocks()) {
-			unlockSeries(QuestsDisplay.series.get(un));
-		}
-
-		if ((boolean) Settings.get("tutorials") &&
-			QuestsDisplay.series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logging.QUEST.debug("Tutorial completed.");
-			tutorialOff(); // Turns off tutorial
-
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
-		}
-	}
-
-	private static void sendReward(QuestReward reward) { sendReward(reward, false); }
-	private static void sendReward(QuestReward reward, boolean recipeOnly) {
-		if (reward == null) return;
-
-		if (!recipeOnly) {
-			ArrayList<Item> items = reward.getItems();
-			if (items.size() > 0) {
-				Chest chest = new Chest("Quest Series Reward");
-				chest.x = World.player.x;
-				chest.y = World.player.y;
-				for (Item item : items) chest.getInventory().add(item);
-				World.levels[World.currentLevel].add(chest);
-			}
-		}
-
-		ArrayList<Recipe> recipes = reward.getRecipe();
-		if (recipes.size() > 0) {
-			recipes.forEach(recipe -> CraftingDisplay.unlockRecipe(recipe));
-		}
-	}
-
-	/** Call only when the tutorial is completed or turned off. */
-	public static void tutorialOff() {
-		Settings.set("tutorials", false);
-
-		// Locks all uncompleted tutorial series and quests.
-		for (Quest quest : unlockedQuests.stream().filter(q -> !completedQuest.contains(q) && q.getSeries().tutorial).collect(Collectors.toList())) {
-			quest.unlocked = false;
-			unlockedQuests.remove(quest);
-			quest.getSeries().unlocked = false;
-			unlockedSeries.remove(quest.getSeries());
-		}
-
-		CraftingDisplay.unlockLeft();
-		if ((boolean) Settings.get("quests")) { // Unlock initial quests
-			for (QuestSeries qSeries : series.values()) {
-				if (initiallyUnlocked.contains(qSeries.id) && !unlockedSeries.contains(qSeries)) {
-					unlockSeries(qSeries);
-				}
-			}
-		}
-	}
-
-	public static void resetGameQuests() {
-		unlockedQuests.clear();
-		completedQuest.clear();
-		unlockedQuests.clear();
-		completedQuest.clear();
-		questStatus.clear();
-
-		quests.values().forEach(q -> q.unlocked = false);
-		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
-			for (QuestSeries questSeries : series.values()) {
-				if (initiallyUnlocked.contains(questSeries.id) && ((boolean) Settings.get("tutorials") && questSeries.tutorial || (boolean) Settings.get("quests") && !questSeries.tutorial)) {
-					unlockSeries(questSeries);
+	public static void load(JSONObject json) {
+		resetGameQuests(false);
+		for (String k : json.keySet()) {
+			series.forEach(series1 -> {
+				if (series1.key.equals(k)) {
+					series1.load(json.getJSONObject(k));
 				} else {
-					questSeries.unlocked = false;
+					series1.getSeriesQuests().forEach((key, value) -> {
+						if (key.equals(k))
+							value.load(json.getJSONObject(k));
+					});
 				}
-			}
+			});
 		}
+		refreshDisplayableQuests();
 	}
 
-	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed) { loadGameQuests(unlocked, completed, new JSONObject()); }
-	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> completed, JSONObject data) {
-		resetGameQuests();
-
-		for (String n : unlocked) {
-			Quest q = quests.get(n);
-			if (q != null && !unlockedQuests.contains(q))
-				unlockedQuests.add(q);
-
-			QuestSeries s = series.get(n);
-			if (s != null && !unlockedSeries.contains(s))
-				unlockedSeries.add(s);
-		}
-
-		for (String n : completed) {
-			Quest q = quests.get(n);
-			if (q != null)
-				completedQuest.add(q);
-
-			QuestSeries s = series.get(n);
-			if (s != null)
-				completedSeries.add(s);
-		}
-
-		for (String k : data.keySet()) {
-			questStatus.put(k, data.get(k));
-		}
+	/** Saving and writing all data into the given JSONObject. */
+	public static void save(JSONObject json) {
+		series.forEach(series1 -> {
+			series1.save(json);
+			series1.getSeriesQuests().values().forEach(quest -> quest.save(json));
+		});
 	}
 
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
+		if (input.inputPressed("cursor-left")) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.getKey("cursor-right").clicked) if (selectedEntry < 1) {
+		if (input.inputPressed("cursor-right")) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}

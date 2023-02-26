@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
@@ -24,9 +25,11 @@ public class PauseDisplay extends Display {
 				new BlankEntry(),
 				new SelectEntry("minicraft.displays.pause.return", () -> Game.setDisplay(null)),
 				new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsWorldDisplay())),
-				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
-				new SelectEntry("minicraft.displays.quests", () -> Game.setDisplay(new QuestsDisplay()))
+				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay()))
 		));
+
+		if (TutorialDisplayHandler.inQuests())
+			entries.add(new SelectEntry("minicraft.displays.quests", () -> Game.setDisplay(new QuestsDisplay())));
 
 		entries.add(new SelectEntry("minicraft.displays.pause.save", () -> {
 			Game.setDisplay(null);
@@ -69,7 +72,7 @@ public class PauseDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
-		if (input.getKey("pause").clicked)
+		if (input.inputPressed("pause"))
 			Game.exitDisplay();
 	}
 }

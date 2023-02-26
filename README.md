@@ -1,38 +1,33 @@
-# Minicraft Plus Revived
+# Minicraft+
 ![Minicraft+](https://user-images.githubusercontent.com/37084190/138313821-75ac3112-7044-45c1-bdbb-d89f2333c2c0.png)
 
-Minicraft+ is a modded version of Minicraft that adds many more features to the original version. The original Minicraft game was made by Markus "Notch" Persson in the Ludum Dare 22 contest.  To learn more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), talk to the community at the [Discord](https://discord.me/minicraft), or check out our [Fandom Wiki!](https://minicraft.fandom.com/wiki/Minicraft_Wiki)
+Minicraft+ is an overhaul mod of Minicraft, a game made by Markus "Notch" Persson in the Ludum Dare 22 contest. To learn more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), talk to the community at our [Discord](https://discord.me/minicraft), or check out our [Fandom Wiki](https://minicraft.fandom.com/wiki/Minicraft_Wiki).
 
 Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest version, or older versions.
 
 ## Major features
-* More game modes, including:
+* New game modes:
   * Creative
   * Hardcore
   * Score
   * Survival
-* Saving and loadings
-* Respawn
-* World creation and management options, such as name, size, and terrain type of world, and rename, delete, and copy world
+* Saving and loading
 * Multiplayer mode and an account system (Now supported by [El-Virus](https://www.github.com/ElVir-Software/minicraft-plus-online))
 * More mobs
-* More tiles
-* More tools, such as claymores and torches
-* More items, such as potions and buckets
-* Ability to drop items
 * Personal crafting menu
 * Beds
 * Mob spawners with loot
 * Ruined structures with loot
-* An expanded world: 4th dungeon level
-* Resizable screen size
+* An expanded storyline
 * Key binding customization
 * Tutorials
 * Achievements
-* Resource Packs
-* Much more gradual lighting
-* 4 Selectable built-in skins and custom skin support
+* Resource packs
+* Better rendering
+* Skins
+* Quests
 * Support for several languages
+* and many, many more!
 
 ## Current goals and ideas
 Take a look at the [ideas](ideas/) folder or the [issues](https://github.com/minicraftplus/minicraft-plus-revived/issues) page.

@@ -15,7 +15,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.AchievementsDisplay;
+import minicraft.util.AdvancementElement;
 import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
@@ -116,6 +116,11 @@ public class TileItem extends StackableItem {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
 				Tile t = Tiles.get(model.tile);
 				level.setTile(xt, yt, t, model.data.getTileData(t, tile, level, xt, yt, player, attackDir));
+				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(
+						this, level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth
+					));
+
 				Sound.play("craft");
 				return super.interactOn(true);
 			}

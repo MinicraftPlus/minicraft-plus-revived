@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -81,13 +82,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	// The maximum stats that the player can have.
 	public static final int maxStat = 10;
-	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
+	public static final int maxHealth = 30, maxStamina = maxStat, maxHunger = maxStat;
+	public static int extraHealth = 0;
+	public static int baseHealth = 10;
 	public static final int maxArmor = 100;
 
 	public static LinkedSprite[][] sprites;
 	public static LinkedSprite[][] carrySprites;
 
-	private Inventory inventory;
+	private final Inventory inventory;
 
 	public Item activeItem;
 	Item attackItem; // attackItem is useful again b/c of the power glove.
@@ -137,13 +140,51 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// Note: the player's health & max health are inherited from Mob.java
 
 	public Player(@Nullable Player previousInstance, InputHandler input) {
-		super(null, Player.maxHealth);
+		super(null, Player.baseHealth);
 
 		x = 24;
 		y = 24;
 		this.input = input;
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
-		inventory = new Inventory();
+		inventory = new Inventory() { // Registering all triggers to InventoryChanged.
+			private void triggerTrigger() {
+				AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions(this)
+				);
+			}
+
+			@Override
+			public void clearInv() {
+				super.clearInv();
+				triggerTrigger();
+			}
+
+			@Override
+			public Item remove(int idx) {
+				Item item = super.remove(idx);
+				triggerTrigger();
+				return item;
+			}
+
+			@Override
+			public int add(int slot, Item item) {
+				int res = super.add(slot, item);
+				triggerTrigger();
+				return res;
+			}
+
+			@Override
+			public void removeItems(Item given, int count) {
+				super.removeItems(given, count);
+				triggerTrigger();
+			}
+
+			@Override
+			public void updateInv(String items) {
+				super.updateInv(items);
+				triggerTrigger();
+			}
+		};
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -232,6 +273,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		tickMultiplier();
 
+		if ((baseHealth + extraHealth) > maxHealth) {
+			extraHealth = maxHealth - 10;
+			Logging.PLAYER.warn("Current Max Health is greater than Max Health, downgrading.");
+		}
+
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {
 			for (PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
 				if (potioneffects.get(potionType) <= 1) // If time is zero (going to be set to 0 in a moment)...
@@ -255,20 +301,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+		if (input.inputPressed("potionEffects") && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
 		}
 
-		if (input.getKey("simpPotionEffects").clicked) {
+		if (input.inputPressed("simpPotionEffects")) {
 			simpPotionEffects = !simpPotionEffects;
 		}
 
-		if (input.getKey("toggleHUD").clicked) {
+		if (input.inputPressed("toggleHUD")) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.getKey("expandQuestDisplay").clicked) {
+		if (input.inputPressed("expandQuestDisplay")) {
 			questExpanding = 30;
 		}
 
@@ -352,7 +398,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			/// System that heals you depending on your hunger
-			if (health < maxHealth && hunger > maxHunger/2) {
+			if (health < (baseHealth + extraHealth) && hunger > maxHunger/2) {
 				hungerChargeDelay++;
 				if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
 					health++;
@@ -396,10 +442,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
 				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
-				if (input.getKey("move-up").down) vec.y--;
-				if (input.getKey("move-down").down) vec.y++;
-				if (input.getKey("move-left").down) vec.x--;
-				if (input.getKey("move-right").down) vec.x++;
+				if (input.inputDown("move-up")) vec.y--;
+				if (input.inputDown("move-down")) vec.y++;
+				if (input.inputDown("move-left")) vec.x--;
+				if (input.inputDown("move-right")) vec.x++;
 
 
 			}
@@ -424,10 +470,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
 				Item drop = activeItem.clone();
 
-				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (input.inputPressed("drop-one") && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -438,14 +484,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.inputPressed("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.getKey("menu").clicked && activeItem != null) {
+			if (input.inputPressed("menu") && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -463,28 +509,28 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.inputPressed("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.getKey("pause").clicked)
+				if (input.inputPressed("pause"))
 					Game.setDisplay(new PauseDisplay());
-				if (input.getKey("craft").clicked && !use())
+				if (input.inputPressed("craft") && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
-				if (input.getKey("info").down) Game.setDisplay(new InfoDisplay());
+				if (input.inputDown("info")) Game.setDisplay(new InfoDisplay());
 
-				if (input.getKey("quicksave").down && !Updater.saving) {
+				if (input.inputDown("quicksave") && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.getKey("shift-p").down) { // Remove all potion effects
+				if (Game.debug && input.inputDown("shift-p")) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}
 				}
 
-				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending)) {
+				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.

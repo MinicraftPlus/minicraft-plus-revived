@@ -19,7 +19,11 @@ public class Recipes {
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
 
+		workbenchRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
+		workbenchRecipes.add(new Recipe("plank_2", "Wood_1"));
+		workbenchRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
+		workbenchRecipes.add(new Recipe("Wood Door_1", "plank_5"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
 		workbenchRecipes.add(new Recipe("Stone Brick_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Ornate Stone_1", "Stone_2"));
@@ -130,5 +134,6 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("Health Potion_1", "awkward potion_1", "GunPowder_2", "Leather Armor_1"));
 		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "GunPowder_3", "Lapis_7"));
 		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5"));
+		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5","Shard_15"));
 	}
 }

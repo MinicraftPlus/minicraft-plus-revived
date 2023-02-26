@@ -70,6 +70,11 @@
     "score": 25
   },
   {
+    "id": "minicraft.achievement.obsidianknight",
+    "desc": "minicraft.achievement.obsidianknight.desc",
+    "score": 35
+  },
+  {
     "id": "minicraft.achievement.skin",
     "desc": "minicraft.achievement.skin.desc",
     "score": 10

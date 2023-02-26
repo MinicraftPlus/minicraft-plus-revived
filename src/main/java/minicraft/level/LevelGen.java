@@ -17,6 +17,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiFunction;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import minicraft.gfx.Rectangle;
+import minicraft.screen.RelPos;
+import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
+
+import minicraft.core.Game;
+import minicraft.core.io.Settings;
+import minicraft.level.tile.Tiles;
+
 public class LevelGen {
 	private static long worldSeed = 0;
 	private static final Random random = new Random(worldSeed);
@@ -189,7 +201,7 @@ public class LevelGen {
 			for (int i = 0; i < w * h; i++) {
 				count[result[0][i] & 0xffff]++;
 			}
-			if (count[Tiles.get("Obsidian").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("Obsidian").id & 0xffff] + count[Tiles.get("dirt").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("Obsidian Wall").id & 0xffff] < 100) continue;
 
 			return result;
@@ -519,12 +531,11 @@ public class LevelGen {
 	}
 
 	private static short[][] createDungeon(int w, int h) {
-		LevelGen noise1 = new LevelGen(w, h, 8);
-		LevelGen noise2 = new LevelGen(w, h, 8);
+		LevelGen noise1 = new LevelGen(w, h, 10);
+		LevelGen noise2 = new LevelGen(w, h, 10);
 
 		short[] map = new short[w * h];
 		short[] data = new short[w * h];
-
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -541,29 +552,47 @@ public class LevelGen {
 				val = -val * 1 - 2.2;
 				val += 1 - dist * 2;
 
-				if (val < -0.35) {
+				if (val < -0.05) {
 					map[i] = Tiles.get("Obsidian Wall").id;
+				}else if(val>=-0.05 && val<-0.03){map[i] = Tiles.get("Lava").id;
 				} else {
-					map[i] = Tiles.get("Obsidian").id;
+					if (random.nextInt(2) == 1) {
+						if (random.nextInt(2) == 1) {
+							map[i] = Tiles.get("Obsidian").id;
+						} else {
+							map[i] = Tiles.get("Raw Obsidian").id;
+						}
+					}
+					else {
+						map[i] = Tiles.get("dirt").id;
+					}
 				}
 			}
 		}
 
-		lavaLoop:
+		decorLoop:
 		for (int i = 0; i < w * h / 450; i++) {
 			int x = random.nextInt(w - 2) + 1;
 			int y = random.nextInt(h - 2) + 1;
 
-			for (int yy = y - 1; yy <= y + 1; yy++)
+			for (int yy = y - 1; yy <= y + 1; yy++) {
 				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue lavaLoop;
+					if (map[xx + yy * w] != Tiles.get("Obsidian").id)
+						continue decorLoop;
 				}
+			}
 
-			Structure.lavaPool.draw(map, x, y, w);
+			if (x > 8 && y > 8) {
+				if (x < w - 8 && y < w - 8) {
+					if (random.nextInt(2) == 0)
+						Structure.ornateLavaPool.draw(map, x, y, w);
+				}
+			}
 		}
 
 		return new short[][]{map, data};
 	}
+
 
 	private static short[][] createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
@@ -650,21 +679,29 @@ public class LevelGen {
 			}
 		}
 
-		if (depth > 2) {
+		if (depth > 2) { // The level above dungeon.
 			int r = 1;
-			int xx = 60;
-			int yy = 60;
-			for (int i = 0; i < w * h / 380; i++) {
-				for (int j = 0; j < 10; j++) {
-					if (xx < w - r && yy < h - r) {
+			int xm = w/2;
+			int ym = h/2;
+			int side = 6; // The side of the lock is 5, and pluses margin with 1.
+			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
+			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
+			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
+				int xx = random.nextInt(w);
+				int yy = random.nextInt(h);
+				lockRect.setPosition(xx, yy, RelPos.CENTER);
+				if (lockRect.getTop() > edgeMargin && lockRect.getLeft() > edgeMargin &&
+					lockRect.getRight() < w - edgeMargin && lockRect.getBottom() < h - edgeMargin &&
+					!lockRect.intersects(bossRoomRect)) {
 
-						Structure.dungeonLock.draw(map, xx, yy, w);
+					Structure.dungeonLock.draw(map, xx, yy, w);
 
-						/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
-						map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
-					}
+					/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
+					map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
+					break; // The generation is successful.
 				}
-			}
+			} while (true);
 		}
 
 		if (depth < 3) {
@@ -773,7 +810,7 @@ public class LevelGen {
 		Tiles.initTileList();
 		// End of fixes
 
-		int idx = -1;
+		int idx = -2;
 
 		int[] maplvls = new int[args.length];
 		boolean valid = true;
@@ -830,6 +867,8 @@ public class LevelGen {
 					if (map[i] == Tiles.get("Stairs Down").id) pixels[i] = 0xffffffff;
 					if (map[i] == Tiles.get("Stairs Up").id) pixels[i] = 0xffffffff;
 					if (map[i] == Tiles.get("Cloud Cactus").id) pixels[i] = 0xffff00ff;
+					if (map[i] == Tiles.get("Ornate Obsidian").id) pixels[i] = 0x000f0a;
+					if (map[i] == Tiles.get("Raw Obsidian").id) pixels[i] = 0x0a0080;
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);

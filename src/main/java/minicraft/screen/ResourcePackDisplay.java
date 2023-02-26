@@ -32,6 +32,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.CrashHandler;
@@ -124,8 +125,11 @@ public class ResourcePackDisplay extends Display {
 				Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
 				if (zip.exists()) zip.delete(); // Delete if exists.
 				try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-					for (String name : FileHandler.listResources()) { // Copy only assets and pack configuration.
-						if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
+					ArrayList<String> assets = FileHandler.listAssets();
+					assets.add("pack.json");
+					assets.add("pack.png");
+					for (String name : assets) { // Copy only assets and pack configuration.
+						if (name.startsWith("assets/")) {
 							out.putNextEntry(new ZipEntry(name));
 							if (!name.endsWith("/")) {
 								int b;
@@ -388,6 +392,7 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.WHITE);
 
 		// Info text at the bottom.
+		if (Game.input.anyControllerConnected()) Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
