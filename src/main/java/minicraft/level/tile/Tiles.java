@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import minicraft.core.CrashHandler;
-import minicraft.level.tile.farming.BeetrootTile;
+import minicraft.level.tile.farming.TomatoTile;
 import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
@@ -79,7 +79,7 @@ public final class Tiles {
 		tiles.put((short)44, new MaterialTile(Tile.Material.Obsidian));
 		tiles.put((short)45, new DecorTile(Tile.Material.Stone));
 		tiles.put((short)46, new DecorTile(Tile.Material.Obsidian));
-		tiles.put((short)53, new BeetrootTile("Beetroot"));
+		tiles.put((short)53, new TomatoTile("Tomato"));
 		tiles.put((short)54, new CarrotTile("Carrot"));
 		tiles.put((short)55, new TallGrassTile("Tall Grass", TallGrassTile.TallGrassType.GRASS));
 		tiles.put((short)56, new TallGrassTile("Double Tall Grass", TallGrassTile.TallGrassType.TALL_GRASS));
@@ -96,7 +96,7 @@ public final class Tiles {
 	}
 
 
-	protected static void add(int id, Tile tile) {
+	static void add(int id, Tile tile) {
 		tiles.put((short)id, tile);
 		Logging.TILES.debug("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;
