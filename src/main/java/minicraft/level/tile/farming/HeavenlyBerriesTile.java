@@ -5,15 +5,15 @@ import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
-public class HeavenBerryTile extends CropTile {
+public class HeavenlyBerriesTile extends CropTile {
 	private final SpriteLinker.LinkedSprite[] spritStages = new SpriteLinker.LinkedSprite[] {
-		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heaven_berry_stage0"),
-		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heaven_berry_stage1"),
-		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heaven_berry_stage2"),
-		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heaven_berry_stage3")
+		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heavenly_berries_stage0"),
+		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heavenly_berries_stage1"),
+		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heavenly_berries_stage2"),
+		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "heavenly_berries_stage3")
 	};
 
-	public HeavenBerryTile(String name) {
+	public HeavenlyBerriesTile(String name) {
 		super(name, null);
 	}
 
