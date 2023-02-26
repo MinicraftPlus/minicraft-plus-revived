@@ -1,16 +1,12 @@
 package minicraft.level.tile.farming;
 
-import minicraft.core.io.Sound;
-import minicraft.entity.Entity;
-import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
-public class PotatoTile extends PlantTile {
+public class PotatoTile extends CropTile {
 	private final LinkedSprite[] spritStages = new LinkedSprite[] {
 		new LinkedSprite(SpriteType.Tile, "potato_stage0"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage1"),

@@ -15,12 +15,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class PlantTile extends FarmTile implements BonemealableTile {
+public class CropTile extends FarmTile implements BonemealableTile {
 	protected final @Nullable String seed;
 
 	protected int maxStage = 7; // Must be a bit mask.
 
-	protected PlantTile(String name, @Nullable String seed) {
+	protected CropTile(String name, @Nullable String seed) {
 		super(name, null);
 		this.seed = seed;
 	}

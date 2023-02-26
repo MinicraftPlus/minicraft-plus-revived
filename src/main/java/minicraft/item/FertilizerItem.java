@@ -5,7 +5,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.farming.PlantTile;
+import minicraft.level.tile.farming.CropTile;
 
 import java.util.ArrayList;
 
@@ -22,18 +22,18 @@ public class FertilizerItem extends StackableItem {
 
 	@Override
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (tile instanceof PlantTile) {
-			int fertilization = ((PlantTile) tile).getFertilization(level.getData(xt, yt));
+		if (tile instanceof CropTile) {
+			int fertilization = ((CropTile) tile).getFertilization(level.getData(xt, yt));
 			if (fertilization < 100) { // More fertilization, lower the buffer is applied.
-				((PlantTile) tile).fertilize(level, xt, yt, 40);
+				((CropTile) tile).fertilize(level, xt, yt, 40);
 			} else if (fertilization < 200) {
-				((PlantTile) tile).fertilize(level, xt, yt, 30);
+				((CropTile) tile).fertilize(level, xt, yt, 30);
 			} else if (fertilization < 300) {
-				((PlantTile) tile).fertilize(level, xt, yt, 25);
+				((CropTile) tile).fertilize(level, xt, yt, 25);
 			} else if (fertilization < 400) {
-				((PlantTile) tile).fertilize(level, xt, yt, 20);
+				((CropTile) tile).fertilize(level, xt, yt, 20);
 			} else {
-				((PlantTile) tile).fertilize(level, xt, yt, 10);
+				((CropTile) tile).fertilize(level, xt, yt, 10);
 			}
 
 			return super.interactOn(true);

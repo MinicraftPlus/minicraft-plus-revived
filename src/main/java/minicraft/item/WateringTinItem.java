@@ -11,7 +11,7 @@ import minicraft.level.tile.GrassTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
-import minicraft.level.tile.farming.PlantTile;
+import minicraft.level.tile.farming.CropTile;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -64,10 +64,10 @@ public class WateringTinItem extends Item {
 					renderingTick = 0;
 				}
 			}
-			if (tile instanceof PlantTile) {
-				int fertilization = ((PlantTile) tile).getFertilization(level.getData(xt, yt));
+			if (tile instanceof CropTile) {
+				int fertilization = ((CropTile) tile).getFertilization(level.getData(xt, yt));
 				if (fertilization < 150) { // Maximum of 5 levels watering tin can fertilize.
-					((PlantTile) tile).fertilize(level, xt, yt, 1);
+					((CropTile) tile).fertilize(level, xt, yt, 1);
 				}
 			} else if (tile instanceof DirtTile) {
 				for (Tile t : level.getAreaTiles(xt, yt, 1)) {

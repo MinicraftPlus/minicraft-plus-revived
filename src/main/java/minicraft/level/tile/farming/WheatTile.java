@@ -6,7 +6,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
-public class WheatTile extends PlantTile {
+public class WheatTile extends CropTile {
 	private final LinkedSprite[] spritStages = new LinkedSprite[] {
 		new LinkedSprite(SpriteType.Tile, "wheat_stage0"),
 		new LinkedSprite(SpriteType.Tile, "wheat_stage1"),
