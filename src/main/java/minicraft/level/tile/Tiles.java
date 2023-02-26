@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import minicraft.core.CrashHandler;
 import minicraft.level.tile.farming.HeavenlyBerriesTile;
+import minicraft.level.tile.farming.HellishBerriesTile;
 import minicraft.level.tile.farming.TomatoTile;
 import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
@@ -90,6 +91,7 @@ public final class Tiles {
 		tiles.put((short)60, new TallGrassTile("Fern", TallGrassTile.TallGrassType.FERN));
 		tiles.put((short)61, new TallGrassTile("Large Fern", TallGrassTile.TallGrassType.LARGE_FERN));
 		tiles.put((short)62, new HeavenlyBerriesTile("Heavenly Berries"));
+		tiles.put((short)63, new HellishBerriesTile("Hellish Berries"));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
