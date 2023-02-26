@@ -15,6 +15,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 import org.tinylog.Logger;
 
