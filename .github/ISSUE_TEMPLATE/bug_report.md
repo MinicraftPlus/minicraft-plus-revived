@@ -24,7 +24,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows]
- - Version [e.g. 2.0.7]
+ - Game version [e.g. 2.0.7]
 
 **Additional context**
 Add any other context about the problem here.
