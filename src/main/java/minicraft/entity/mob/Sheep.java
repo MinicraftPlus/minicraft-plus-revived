@@ -1,7 +1,5 @@
 package minicraft.entity.mob;
 
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
@@ -11,6 +9,10 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.level.tile.GrassTile;
+import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.Nullable;
 
 public class Sheep extends PassiveMob {
 	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
@@ -46,7 +48,14 @@ public class Sheep extends PassiveMob {
 	@Override
 	public void tick() {
 		super.tick();
-		if (age - ageWhenCut > WOOL_GROW_TIME) cut = false;
+		if (random.nextInt(1000) == 0) { // Grazing
+			Tile tile = level.getTile(x >> 4, y >> 4);
+			// If tall grasses are present, these are consumed and then turn into grass tiles.
+			if (tile instanceof GrassTile) {
+				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
+				cut = false;
+			}
+		}
 	}
 
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
