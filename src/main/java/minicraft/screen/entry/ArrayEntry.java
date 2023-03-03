@@ -49,14 +49,12 @@ public class ArrayEntry<T> extends ListEntry {
 		setSelection(getIndex(value)); // if it is -1, setSelection simply won't set the value.
 	}
 
-	/** Note that {@link T} should has implemented {@link T#equals(Object)} correctly. */
-	@SafeVarargs
-	public final void setOptions(T... options) {
-		T option = getValue();
+	@SuppressWarnings("unchecked")
+	public void setOptions(T... options) {
 		this.options = options;
 		optionVis = new boolean[options.length];
 		Arrays.fill(optionVis, true);
-		setValue(option);
+		setSelection(selection);
 	}
 
 	protected String getLabel() { return label; }
