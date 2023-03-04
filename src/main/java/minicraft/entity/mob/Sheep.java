@@ -18,10 +18,7 @@ public class Sheep extends PassiveMob {
 	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
 	private static final LinkedSprite[][] cutSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
 
-	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
-
 	public boolean cut = false;
-	private int ageWhenCut = 0;
 
 	/**
 	 * Creates a sheep entity.
@@ -65,7 +62,6 @@ public class Sheep extends PassiveMob {
 			if (((ToolItem) item).type == ToolType.Shears) {
 				cut = true;
 				dropItem(1, 3, Items.get("Wool"));
-				ageWhenCut = age;
 				((ToolItem) item).payDurability();
 				return true;
 			}
