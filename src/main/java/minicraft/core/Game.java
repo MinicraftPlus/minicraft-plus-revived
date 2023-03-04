@@ -33,7 +33,7 @@ public class Game {
 	public static int MAX_FPS;
 
 	// DISPLAY
-	static Display curDisplay = null;
+	static Display currentDisplay = null;
 	static final ArrayDeque<Display> displayQuery = new ArrayDeque<>();
 	public static void setDisplay(@Nullable Display display) {
 		if (display == null)
@@ -41,18 +41,21 @@ public class Game {
 		else
 			displayQuery.add(display);
 	}
-	public static void exitDisplay() {
+	public static void exitDisplay() { exitDisplay(1); }
+	public static void exitDisplay(int depth) {
+		if (depth < 1) return; // There is nothing needed to exit.
 		if (displayQuery.isEmpty()) {
 			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
 		Sound.play("craft");
-		assert displayQuery.peekLast() != null;
-		Display parent = displayQuery.peekLast().getParent();
-		if (parent == null)
-			displayQuery.clear();
-		else
-			displayQuery.add(parent);
+		for (int i = 0; i < depth && !displayQuery.isEmpty(); i++) {
+			Display parent = displayQuery.peekLast().getParent();
+			if (parent == null)
+				displayQuery.clear();
+			else
+				displayQuery.add(parent);
+		}
 	}
 	@Nullable
 	public static Display getDisplay() { return displayQuery.isEmpty() ? null : displayQuery.peekLast(); }

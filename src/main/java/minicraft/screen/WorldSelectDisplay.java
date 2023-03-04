@@ -122,9 +122,7 @@ public class WorldSelectDisplay extends Display {
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
 				} else {
-					Game.exitDisplay(); // Exiting popup.
-					Game.exitDisplay(); // Exiting world select display.
-					Game.exitDisplay(); // Exiting world options between selection and creation.
+					Game.exitDisplay(3); // Exiting to title display.
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
@@ -170,9 +168,7 @@ public class WorldSelectDisplay extends Display {
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
 				} else {
-					Game.exitDisplay(); // Exiting popup.
-					Game.exitDisplay(); // Exiting world select display.
-					Game.exitDisplay(); // Exiting world options between selection and creation.
+					Game.exitDisplay(3); // Exiting to title display.
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
@@ -214,9 +210,7 @@ public class WorldSelectDisplay extends Display {
 						menus[0].setSelection(worldNames.size() - 1);
 					}
 				} else {
-					Game.exitDisplay(); // Exiting popup.
-					Game.exitDisplay(); // Exiting world select display.
-					Game.exitDisplay(); // Exiting world options between selection and creation.
+					Game.exitDisplay(3); // Exiting to title display.
 					Game.setDisplay(new WorldGenDisplay());
 				}
 

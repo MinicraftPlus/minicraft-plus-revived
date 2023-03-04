@@ -108,25 +108,25 @@ public class Updater extends Game {
 			screenshot++;
 		}
 
-		if (curDisplay != displayQuery.peek() && !displayQuery.isEmpty()) {
-			Display prevDisplay = curDisplay; // For both null or not null.
-			curDisplay = displayQuery.peek();
-			assert curDisplay != null;
-			curDisplay.init(prevDisplay);
+		if (currentDisplay != displayQuery.peek() && !displayQuery.isEmpty()) {
+			Display prevDisplay = currentDisplay; // For both null or not null.
+			currentDisplay = displayQuery.peek();
+			assert currentDisplay != null;
+			currentDisplay.init(prevDisplay);
 		}
 
-		if (curDisplay != null && displayQuery.isEmpty()) {
-			curDisplay.onExit();
-			curDisplay = null;
+		if (currentDisplay != null && displayQuery.isEmpty()) {
+			currentDisplay.onExit();
+			currentDisplay = null;
 		}
 
-		assert curDisplay == displayQuery.peek(); // This should be true.
+		assert currentDisplay == displayQuery.peek(); // This should be true.
 		while (displayQuery.size() > 1) {
 			Display prevDisplay = displayQuery.pop();
 			// assert curDisplay == prevDisplay;
-			curDisplay = displayQuery.peek();
-			assert curDisplay != null;
-			curDisplay.init(prevDisplay);
+			currentDisplay = displayQuery.peek();
+			assert currentDisplay != null;
+			currentDisplay.init(prevDisplay);
 		}
 
 		Level level = levels[currentLevel];
@@ -186,11 +186,11 @@ public class Updater extends Game {
 			TutorialDisplayHandler.tick(input);
 			AdvancementElement.AdvancementTrigger.tick();
 
-			if (curDisplay != null) {
+			if (currentDisplay != null) {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				curDisplay.tick(input);
+				currentDisplay.tick(input);
 				paused = true;
 			} else {
 				// No menu, currently.
@@ -215,7 +215,7 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (curDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (currentDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 
