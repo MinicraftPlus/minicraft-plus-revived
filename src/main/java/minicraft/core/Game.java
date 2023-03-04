@@ -49,6 +49,8 @@ public class Game {
 			return;
 		}
 		Sound.play("craft");
+		// Exiting the display remaining and checking if there are more displays available.
+		// If there are more displays, displays with maximum amount exit.
 		for (int i = 0; i < depth && !displayQuery.isEmpty(); i++) {
 			Display parent = displayQuery.peekLast().getParent();
 			if (parent == null)
