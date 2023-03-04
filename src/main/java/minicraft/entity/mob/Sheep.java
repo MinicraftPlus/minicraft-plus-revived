@@ -1,5 +1,6 @@
 package minicraft.entity.mob;
 
+import minicraft.gfx.Color;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Updater;
@@ -18,7 +19,34 @@ public class Sheep extends PassiveMob {
 
 	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
 
+	public enum ColorSet {
+		BLACK(0x1_1D1D21),
+		RED(0x1_B02E26),
+		GREEN(0x1_5E7C16),
+		BROWN(0x1_835432),
+		BLUE(0x1_3C44AA),
+		PURPLE(0x1_8932B8),
+		CYAN(0x1_169C9C),
+		LIGHT_GRAY(0x1_9D9D97),
+		GRAY(0x1_474F52),
+		PINK(0x1_F38BAA),
+		LIME(0x1_80C71F),
+		YELLOW(0x1_FED83D),
+		LIGHT_BLUE(0x1_3AB3DA),
+		MAGENTA(0x1_C74EBD),
+		ORANGE(0x1_F9801D),
+		WHITE(0x1_F9FFFE),
+		;
+
+		public final int color;
+
+		ColorSet(int color) {
+			this.color = color;
+		}
+	}
+
 	public boolean cut = false;
+	public ColorSet color = ColorSet.WHITE;
 	private int ageWhenCut = 0;
 
 	/**

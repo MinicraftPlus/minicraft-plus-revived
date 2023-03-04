@@ -23,7 +23,7 @@ public class ClothingItem extends StackableItem {
 		items.add(new ClothingItem("Orange Clothes",  new LinkedSprite(SpriteType.Item, "orange_clothes"), Color.get(1, 255, 102, 0)));
 		items.add(new ClothingItem("Purple Clothes",  new LinkedSprite(SpriteType.Item, "purple_clothes"), Color.get(1, 102, 0, 153)));
 		items.add(new ClothingItem("Cyan Clothes",  new LinkedSprite(SpriteType.Item, "cyan_clothes"), Color.get(1, 0, 102, 153)));
-		items.add(new ClothingItem("Reg Clothes",  new LinkedSprite(SpriteType.Item, "reg_clothes"), Color.get(1, 51, 51, 0)));
+		items.add(new ClothingItem("Reg Clothes",  new LinkedSprite(SpriteType.Item, "reg_clothes"), Color.get(1, 51, 51, 0))); // Dark Green
 
 		return items;
 	}
