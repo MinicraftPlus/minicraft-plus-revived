@@ -25,6 +25,7 @@ import minicraft.util.AdvancementElement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class TreeTile extends Tile {
 	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
@@ -42,11 +43,6 @@ public class TreeTile extends Tile {
 	private static final LinkedSprite willowSprite = new LinkedSprite(SpriteType.Tile, "willow");
 	private static final LinkedSprite willowSpriteFull = new LinkedSprite(SpriteType.Tile, "willow_full");
 
-	private final TreeType type;
-
-	public static final List<Short> treeIDs = Collections.unmodifiableList(Arrays.asList(
-		(short) 8, (short) 47, (short) 48, (short) 49, (short) 50, (short) 51, (short) 52));
-
 	public enum TreeType {
 		OAK(oakSprite, oakSpriteFull),
 		SPRUCE(spruceSprite, spruceSpriteFull),
@@ -54,8 +50,7 @@ public class TreeTile extends Tile {
 		ASH(ashSprite, ashSpriteFull),
 		ASPEN(aspenSprite, aspenSpriteFull),
 		FIR(firSprite, firSpriteFull),
-		WILLOW(willowSprite, willowSpriteFull),
-		;
+		WILLOW(willowSprite, willowSpriteFull);
 
 		private final LinkedSprite treeSprite;
 		private final LinkedSprite treeSpriteFull;
@@ -66,9 +61,8 @@ public class TreeTile extends Tile {
 		}
 	}
 
-	protected TreeTile(TreeType type) {
-		super(type.name().toLowerCase(), null);
-		this.type = type;
+	protected TreeTile(String name) {
+		super(name, null);
 		connectsToGrass = true;
 	}
 
@@ -84,8 +78,8 @@ public class TreeTile extends Tile {
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
 
-		Sprite sprite = type.treeSprite.getSprite();
-		Sprite spriteFull = type.treeSpriteFull.getSprite();
+		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
+		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
 		if (u && ul && l) {
 			screen.render(x * 16, y * 16, spriteFull.spritePixels[0][1]);

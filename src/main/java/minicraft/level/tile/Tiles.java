@@ -35,14 +35,7 @@ public final class Tiles {
 		tiles.put((short)17, new LavaTile("Lava"));
 
 		tiles.put((short)7, new RockTile("Rock"));
-		tiles.put((short)8, new TreeTile(TreeTile.TreeType.OAK));
-		// These are out of order because of the multiple tree types.
-		tiles.put((short)50, new TreeTile(TreeTile.TreeType.SPRUCE));
-		tiles.put((short)51, new TreeTile(TreeTile.TreeType.BIRCH));
-		tiles.put((short)52, new TreeTile(TreeTile.TreeType.ASH));
-		tiles.put((short)53, new TreeTile(TreeTile.TreeType.ASPEN));
-		tiles.put((short)54, new TreeTile(TreeTile.TreeType.FIR));
-		tiles.put((short)55, new TreeTile(TreeTile.TreeType.WILLOW));
+		tiles.put((short)8, new TreeTile("Tree"));
 
 		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Oak")));
 		tiles.put((short)10, new SandTile("Sand"));
@@ -84,14 +77,14 @@ public final class Tiles {
 		tiles.put((short)47, new BossWallTile());
 		tiles.put((short)48, new BossFloorTile());
 		tiles.put((short)49, new BossDoorTile());
-		tiles.put((short)56, new TomatoTile("Tomato"));
-		tiles.put((short)57, new CarrotTile("Carrot"));
-		tiles.put((short)58, new TallGrassTile("Tall Grass", TallGrassTile.TallGrassType.GRASS));
-		tiles.put((short)59, new TallGrassTile("Double Tall Grass", TallGrassTile.TallGrassType.TALL_GRASS));
-		tiles.put((short)60, new TallGrassTile("Fern", TallGrassTile.TallGrassType.FERN));
-		tiles.put((short)61, new TallGrassTile("Large Fern", TallGrassTile.TallGrassType.LARGE_FERN));
-		tiles.put((short)62, new HeavenlyBerriesTile("Heavenly Berries"));
-		tiles.put((short)63, new HellishBerriesTile("Hellish Berries"));
+		tiles.put((short)50, new TomatoTile("Tomato"));
+		tiles.put((short)51, new CarrotTile("Carrot"));
+		tiles.put((short)52, new TallGrassTile("Tall Grass", TallGrassTile.TallGrassType.GRASS));
+		tiles.put((short)53, new TallGrassTile("Double Tall Grass", TallGrassTile.TallGrassType.TALL_GRASS));
+		tiles.put((short)54, new TallGrassTile("Fern", TallGrassTile.TallGrassType.FERN));
+		tiles.put((short)55, new TallGrassTile("Large Fern", TallGrassTile.TallGrassType.LARGE_FERN));
+		tiles.put((short)56, new HeavenlyBerriesTile("Heavenly Berries"));
+		tiles.put((short)57, new HellishBerriesTile("Hellish Berries"));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());

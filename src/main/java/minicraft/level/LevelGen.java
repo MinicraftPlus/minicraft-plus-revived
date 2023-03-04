@@ -148,7 +148,7 @@ public class LevelGen {
 			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("sand").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("grass").id & 0xffff] < 100) continue;
-			if (TreeTile.treeIDs.stream().map(id -> count[id & 0xffff]).reduce(0, Integer::sum) < 100) continue;
+			if (count[Tiles.get("tree").id & 0xffff] < 100) continue;
 
 			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 21)
 				continue; // Size 128 = 6 stairs min
@@ -359,32 +359,6 @@ public class LevelGen {
 			}
 		}
 
-		BiFunction<Integer, Integer, Short> treeRandom;
-		{
-			List<Short> treeIDs = TreeTile.treeIDs;
-			treeRandom = (x, y) -> { // Randomly selecting a tree type.
-				int i = x + y * w;
-				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
-				// This calculates a sort of distance based on the current coordinate.
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
-				val += 1 - dist*20;
-				val += 1.5; // Assuming the range of value is from 0 to 2.
-				val *= treeIDs.size() / 2.0;
-				val += 1; // Incrementing index.
-				// The original val mainly falls in small interval instead of averagely.
-				val = 1.0/(3 * treeIDs.size()) * Math.pow(val - 5, 2); // Quadratically bloating the value.
-				int idx = (int) Math.round(val - 1); // Decrementing index.
-				if (idx >= treeIDs.size() || idx < 0) return (short) 8; // Oak in default.
-				return treeIDs.get(idx);
-			};
-		}
-
 		if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
 			for (int i = 0; i < w * h / 200; i++) {
 				int x = random.nextInt(w);
@@ -394,7 +368,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = treeRandom.apply(xx, yy);
+							map[xx + yy * w] = Tiles.get("tree").id;
 						}
 					}
 				}
@@ -409,7 +383,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = treeRandom.apply(xx, yy);
+							map[xx + yy * w] = Tiles.get("tree").id;
 						}
 					}
 				}
@@ -425,7 +399,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = treeRandom.apply(xx, yy);
+							map[xx + yy * w] = Tiles.get("tree").id;
 						}
 					}
 				}
@@ -440,7 +414,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(15) - random.nextInt(15);
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = treeRandom.apply(xx, yy);
+							map[xx + yy * w] = Tiles.get("tree").id;
 						}
 					}
 				}
@@ -849,7 +823,7 @@ public class LevelGen {
 					if (map[i] == Tiles.get("dirt").id) pixels[i] = 0x604040;
 					if (map[i] == Tiles.get("sand").id) pixels[i] = 0xa0a040;
 					if (map[i] == Tiles.get("Stone Bricks").id) pixels[i] = 0xa0a040;
-					if (TreeTile.treeIDs.stream().anyMatch(id -> map[i] == id)) pixels[i] = 0x003000;
+					if (map[i] == Tiles.get("tree").id) pixels[i] = 0x003000;
 					if (map[i] == Tiles.get("Obsidian Wall").id) pixels[i] = 0x0aa0a0;
 					if (map[i] == Tiles.get("Obsidian").id) pixels[i] = 0x000000;
 					if (map[i] == Tiles.get("lava").id) pixels[i] = 0xffff2020;
