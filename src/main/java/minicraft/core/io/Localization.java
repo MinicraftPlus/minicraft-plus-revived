@@ -1,20 +1,15 @@
 package minicraft.core.io;
 
 import minicraft.core.Game;
-import minicraft.saveload.Load;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class Localization {
 
@@ -23,21 +18,10 @@ public class Localization {
 
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
-	private static final HashMap<String, String> fallbackLocalization = new HashMap<>();
 
 	private static Locale selectedLocale = DEFAULT_LOCALE;
 	private static final HashMap<Locale, ArrayList<String>> unloadedLocalization = new HashMap<>();
 	private static final HashMap<Locale, LocaleInformation> localeInfo = new HashMap<>();
-	private static final Set<String> DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE;
-
-	static {
-		try {
-			DEFAULT_LOCALIZATION_OF_DEFAULT_LOCALE =
-				new JSONObject(String.join("", Load.loadFile("/assets/localization/en-us.json"))).keySet();
-		} catch (IOException e) {
-			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
-		}
-	}
 
 	/**
 	 * Get the provided key's localization for the currently selected language.
@@ -59,16 +43,6 @@ public class Localization {
 
 		if (localString == null) {
 			if (Game.debug) {
-				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
-				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-					Logger.tag("LOC").trace(new Throwable("Tracing"), "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
-					knownUnlocalizedStrings.get(selectedLocale).add(key);
-				}
-			}
-
-			// Language fall back.
-			localString = fallbackLocalization.get(key);
-			if (localString == null && Game.debug) {
 				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
 					Logger.tag("LOC").trace(new Throwable("Tracing"), "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
@@ -127,7 +101,6 @@ public class Localization {
 	public static void loadLanguage() {
 		Logging.RESOURCEHANDLER_LOCALIZATION.trace("Loading language...");
 		localization.clear();
-		fallbackLocalization.clear();
 
 		if (selectedLocale == DEBUG_LOCALE) return; // DO NOT load any localization for debugging.
 
@@ -145,11 +118,14 @@ public class Localization {
 			}
 		}
 
-		for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) {
+		// Language fallback
+		if (!selectedLocale.equals(DEFAULT_LOCALE)) for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) {
 			json = new JSONObject(text); // This JSON has been verified before.
 			// Put all loc strings in a key-value set.
 			for (String key : json.keySet()) {
-				fallbackLocalization.put(key, json.getString(key));
+				if (!localization.containsKey(key)) {
+					localization.put(key, json.getString(key));
+				}
 			}
 		}
 	}
