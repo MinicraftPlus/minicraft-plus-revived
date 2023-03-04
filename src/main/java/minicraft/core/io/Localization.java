@@ -119,12 +119,14 @@ public class Localization {
 		}
 
 		// Language fallback
-		if (!selectedLocale.equals(DEFAULT_LOCALE)) for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) {
-			json = new JSONObject(text); // This JSON has been verified before.
-			// Put all loc strings in a key-value set.
-			for (String key : json.keySet()) {
-				if (!localization.containsKey(key)) {
-					localization.put(key, json.getString(key));
+		if (!selectedLocale.equals(DEFAULT_LOCALE)) {
+			for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) {
+				json = new JSONObject(text); // This JSON has been verified before.
+				// Put all loc strings in a key-value set.
+				for (String key : json.keySet()) {
+					if (!localization.containsKey(key)) {
+						localization.put(key, json.getString(key));
+					}
 				}
 			}
 		}
