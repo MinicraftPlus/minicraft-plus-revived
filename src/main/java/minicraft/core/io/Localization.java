@@ -32,7 +32,7 @@ public class Localization {
 	@NotNull
 	public static String getLocalized(String key, Object... arguments) {
 		if (key.matches("^ *$")) return key; // Blank, or just whitespace
-		if (selectedLocale == DEBUG_LOCALE) return key; // Debugging locale.
+		if (selectedLocale == DEBUG_LOCALE) return key;
 
 		try {
 			Double.parseDouble(key);
@@ -111,8 +111,7 @@ public class Localization {
 		// Attempt to load the string as a json object.
 		JSONObject json;
 		for (String text : unloadedLocalization.get(selectedLocale)) {
-			json = new JSONObject(text); // This JSON has been verified before.
-			// Put all loc strings in a key-value set.
+			json = new JSONObject(text);
 			for (String key : json.keySet()) {
 				localization.put(key, json.getString(key));
 			}
@@ -121,8 +120,7 @@ public class Localization {
 		// Language fallback
 		if (!selectedLocale.equals(DEFAULT_LOCALE)) {
 			for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) { // Getting default localization.
-				json = new JSONObject(text); // This JSON has been verified before.
-				// Put all loc strings in a key-value set.
+				json = new JSONObject(text);
 				for (String key : json.keySet()) {
 					if (!localization.containsKey(key)) { // The default localization is added only when the key is not existed.
 						localization.put(key, json.getString(key));
