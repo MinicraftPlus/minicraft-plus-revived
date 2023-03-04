@@ -34,8 +34,8 @@ Take a look at the [ideas](ideas/) folder or the [issues](https://github.com/min
 
 ## Getting the game and run the game
 Head over [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) and find the latest version of Minicraft+.
-There, you can find an asset called similarly `minicraft_plus.jar` and click the file. After you get the file downloaded, you can double-click the file in downloading folder.
-You must have first confirmed that you have Java (at least 8) installed on your computer.
+There, you can find an file called `minicraft_plus.jar`. Click the file, and after you have downloaded the file, you must double-click the file in downloads folder to open it.
+You must first confirm that you have [Java](https://www.java.com/en/download/) (at least version 8) installed on your computer.
 
 ## How to build/run in development
 Because this project uses a build tool called gradle it is very easy to build or run the project from the source code.
