@@ -120,11 +120,11 @@ public class Localization {
 
 		// Language fallback
 		if (!selectedLocale.equals(DEFAULT_LOCALE)) {
-			for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) {
+			for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) { // Getting default localization.
 				json = new JSONObject(text); // This JSON has been verified before.
 				// Put all loc strings in a key-value set.
 				for (String key : json.keySet()) {
-					if (!localization.containsKey(key)) {
+					if (!localization.containsKey(key)) { // The default localization is added only when the key is not existed.
 						localization.put(key, json.getString(key));
 					}
 				}
