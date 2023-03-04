@@ -35,8 +35,7 @@ public class Sheep extends PassiveMob {
 		LIGHT_BLUE(0x1_3AB3DA),
 		MAGENTA(0x1_C74EBD),
 		ORANGE(0x1_F9801D),
-		WHITE(0x1_F9FFFE),
-		;
+		WHITE(0x1_F9FFFE);
 
 		public final int color;
 
