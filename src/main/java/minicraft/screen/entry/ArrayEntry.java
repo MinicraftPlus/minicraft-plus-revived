@@ -49,14 +49,6 @@ public class ArrayEntry<T> extends ListEntry {
 		setSelection(getIndex(value)); // if it is -1, setSelection simply won't set the value.
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setOptions(T... options) {
-		this.options = options;
-		optionVis = new boolean[options.length];
-		Arrays.fill(optionVis, true);
-		setSelection(selection);
-	}
-
 	protected String getLabel() { return label; }
 	protected String getLocalizationOption(T option) { return option.toString(); }
 
