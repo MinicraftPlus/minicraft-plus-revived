@@ -12,7 +12,6 @@ import minicraft.screen.entry.StringEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class ControlsDisplay extends Display {
 	private ListEntry[] keyControls;

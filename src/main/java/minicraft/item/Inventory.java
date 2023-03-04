@@ -1,14 +1,12 @@
 package minicraft.item;
 
+import minicraft.entity.furniture.Furniture;
+import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import minicraft.screen.QuestsDisplay;
-import org.jetbrains.annotations.Nullable;
-
-import minicraft.entity.furniture.Furniture;
-import minicraft.util.Logging;
 
 public class Inventory {
 	private final Random random = new Random();

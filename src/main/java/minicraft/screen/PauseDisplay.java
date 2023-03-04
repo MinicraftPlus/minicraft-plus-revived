@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;

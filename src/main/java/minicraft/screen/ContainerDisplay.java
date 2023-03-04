@@ -10,7 +10,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
-import minicraft.screen.entry.InputEntry;
 
 public class ContainerDisplay extends Display {
 

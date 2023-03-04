@@ -1,12 +1,16 @@
 package minicraft.core.io;
 
-import com.studiohartman.jamepad.*;
+import com.studiohartman.jamepad.ControllerAxis;
+import com.studiohartman.jamepad.ControllerButton;
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 import minicraft.core.Game;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Field;

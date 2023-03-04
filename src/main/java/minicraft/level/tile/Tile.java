@@ -1,7 +1,5 @@
 package minicraft.level.tile;
 
-import java.util.Random;
-
 import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -12,6 +10,8 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+
+import java.util.Random;
 
 public abstract class Tile {
 	public static int tickCount = 0; // A global tickCount used in the Lava & water tiles.

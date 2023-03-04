@@ -1,13 +1,13 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+
+import java.util.ArrayList;
 
 public class FoodItem extends StackableItem {
 

@@ -18,7 +18,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.screen.QuestsDisplay;
 import minicraft.util.AdvancementElement;
 
 // This is the normal stone you see underground and on the surface, that drops coal and stone.

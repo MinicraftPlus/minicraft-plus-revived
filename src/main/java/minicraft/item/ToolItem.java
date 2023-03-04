@@ -1,14 +1,14 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ToolItem extends Item {
 

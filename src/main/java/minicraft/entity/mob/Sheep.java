@@ -1,6 +1,5 @@
 package minicraft.entity.mob;
 
-import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;

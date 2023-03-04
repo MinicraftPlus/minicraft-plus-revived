@@ -1,11 +1,11 @@
 package minicraft.item;
 
+import minicraft.core.Game;
+import minicraft.entity.mob.Player;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
-import minicraft.core.Game;
-import minicraft.entity.mob.Player;
 
 public class Recipe {
 	private final TreeMap<String, Integer> costs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);  // A list of costs for the recipe

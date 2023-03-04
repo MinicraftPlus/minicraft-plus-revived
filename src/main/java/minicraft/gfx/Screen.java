@@ -1,11 +1,11 @@
 package minicraft.gfx;
 
-import java.util.Arrays;
-
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+
+import java.util.Arrays;
 
 public class Screen {
 
