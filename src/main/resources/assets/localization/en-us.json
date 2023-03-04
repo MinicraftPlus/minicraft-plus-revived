@@ -125,7 +125,6 @@
   "minicraft.displays.key_input.popup_display.press_key_sequence": "Press the desired key sequence",
   "minicraft.displays.key_input.title": "Controls",
   "minicraft.displays.language_settings.title": "Language...",
-  "minicraft.displays.language_settings.display.accuracy": "(Language translations may not be 100%% accurate)",
   "minicraft.displays.loading.message.dungeon_regeneration": "Regenerating B4",
   "minicraft.displays.loading.message.entities": "Entities",
   "minicraft.displays.loading.message.generating": "Generating",

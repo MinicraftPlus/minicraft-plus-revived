@@ -22,7 +22,7 @@ public class LanguageSettingsDisplay extends Display {
 	private Map.Entry<ArrayList<ListEntry> ,Integer> getEntries() {
 		Localization.LocaleInformation[] locales = Localization.getLocales();
 		ArrayList<Localization.LocaleInformation> list = new ArrayList<>(Arrays.asList(locales));
-		list.sort((a, b) -> {
+		list.sort((a, b) -> { // Debug language is always on top.
 			if (a.locale.equals(Localization.DEBUG_LOCALE)) return -1;
 			if (b.locale.equals(Localization.DEBUG_LOCALE)) return 1;
 			return a.toString().compareTo(b.toString());
@@ -30,6 +30,7 @@ public class LanguageSettingsDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		int count = 0;
 		int index = 0;
+		// Getting the list of entries by the list of available languages.
 		for (Localization.LocaleInformation locale : list) {
 			boolean selected = Localization.getSelectedLanguage() == locale;
 			if (selected) index = count;
@@ -60,20 +61,8 @@ public class LanguageSettingsDisplay extends Display {
 		};
 	}
 
-	private static final ExecutorService executorService = Executors.newCachedThreadPool();
-
 	private static void languageSelected(Localization.LocaleInformation locale) {
 		Localization.changeLanguage(locale.locale);
 		Game.exitDisplay();
-	}
-
-	@Override
-	public void render(Screen screen) {
-		super.render(screen);
-
-		ArrayList<String> list = new ArrayList<>();
-		Collections.addAll(list, Font.getLines(Localization.getLocalized("minicraft.displays.language_settings.display.accuracy"), Screen.w, Screen.h, 0));
-		for (int i = 0; i < list.size(); i++)
-			Font.drawCentered(list.get(i), screen, Screen.h - 8 * (list.size() - i), Color.GRAY);
 	}
 }
