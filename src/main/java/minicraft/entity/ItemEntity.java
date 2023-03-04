@@ -1,11 +1,11 @@
 package minicraft.entity;
 
-import java.util.List;
-
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+
+import java.util.List;
 
 public class ItemEntity extends Entity implements ClientTickable {
 	private int lifeTime; // The life time of this entity in the level

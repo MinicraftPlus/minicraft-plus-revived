@@ -1,13 +1,13 @@
 package minicraft.gfx;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import minicraft.core.Renderer;
+import minicraft.util.Logging;
 
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
 
-import minicraft.core.Renderer;
-import minicraft.util.Logging;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SpriteLinker {
 	/** Buffering SpriteSheet for caching. */

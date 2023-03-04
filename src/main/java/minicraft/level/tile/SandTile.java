@@ -16,8 +16,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
-import java.util.function.Function;
-
 public class SandTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sand")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToSand)

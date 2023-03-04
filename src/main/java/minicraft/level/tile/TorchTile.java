@@ -1,8 +1,5 @@
 package minicraft.level.tile;
 
-import minicraft.util.AdvancementElement;
-import org.tinylog.Logger;
-
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -13,6 +10,8 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
+import minicraft.util.AdvancementElement;
+import org.tinylog.Logger;
 
 public class TorchTile extends Tile {
 	private Tile onType;

@@ -6,14 +6,20 @@ import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
-import minicraft.screen.*;
+import minicraft.screen.AchievementsDisplay;
+import minicraft.screen.CraftingDisplay;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.QuestsDisplay;
+import minicraft.screen.TutorialDisplayHandler;
+import minicraft.screen.WorldGenDisplay;
+import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
-
-import java.util.Random;
-
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+
+import java.util.Random;
 
 public class World extends Game {
 	private World() {}

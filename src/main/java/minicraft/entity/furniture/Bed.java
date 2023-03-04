@@ -1,7 +1,5 @@
 package minicraft.entity.furniture;
 
-import java.util.HashMap;
-
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
@@ -9,6 +7,8 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
+
+import java.util.HashMap;
 
 public class Bed extends Furniture {
 

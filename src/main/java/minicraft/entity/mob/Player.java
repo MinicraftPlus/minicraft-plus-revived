@@ -1,11 +1,5 @@
 package minicraft.entity.mob;
 
-import java.util.HashMap;
-import java.util.List;
-
-import minicraft.util.AdvancementElement;
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -59,8 +53,13 @@ import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;

@@ -1,11 +1,10 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
+import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import minicraft.util.Logging;
+import java.util.ArrayList;
 
 public class Items {
 

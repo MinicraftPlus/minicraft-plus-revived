@@ -1,12 +1,12 @@
 package minicraft.entity.particle;
 
-import javax.security.auth.DestroyFailedException;
-
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.util.Logging;
+
+import javax.security.auth.DestroyFailedException;
 
 public class Particle extends Entity implements ClientTickable {
 	private int time; // lifetime elapsed.

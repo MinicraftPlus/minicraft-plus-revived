@@ -7,6 +7,11 @@ import minicraft.util.TinylogLoggingProvider;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.provider.ProviderRegistry;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -20,11 +25,6 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 
 public class Initializer extends Game {
 	private Initializer() {}

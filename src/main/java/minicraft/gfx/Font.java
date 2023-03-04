@@ -1,12 +1,12 @@
 package minicraft.gfx;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
 import minicraft.gfx.SpriteLinker.SpriteType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)

@@ -1,17 +1,15 @@
 package minicraft.core.io;
 
+import minicraft.core.Game;
+import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+import org.tinylog.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
-
-import org.jetbrains.annotations.NotNull;
-
-import minicraft.core.Game;
-import minicraft.util.Logging;
-
-import org.json.JSONObject;
-import org.tinylog.Logger;
 
 public class Localization {
 

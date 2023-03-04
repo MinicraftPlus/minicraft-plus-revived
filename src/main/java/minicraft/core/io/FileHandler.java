@@ -1,5 +1,11 @@
 package minicraft.core.io;
 
+import minicraft.core.CrashHandler;
+import minicraft.core.Game;
+import minicraft.saveload.Save;
+import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,20 +20,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.jetbrains.annotations.Nullable;
-
-import minicraft.core.CrashHandler;
-import minicraft.core.Game;
-import minicraft.saveload.Save;
-import minicraft.util.Logging;
 
 public class FileHandler extends Game {
 	private FileHandler() {}

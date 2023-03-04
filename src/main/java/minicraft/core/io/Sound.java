@@ -1,8 +1,8 @@
 package minicraft.core.io;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
+import minicraft.core.CrashHandler;
+import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -13,10 +13,9 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.jetbrains.annotations.Nullable;
-
-import minicraft.core.CrashHandler;
-import minicraft.util.Logging;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class Sound {
 	// Creates sounds from their respective files
