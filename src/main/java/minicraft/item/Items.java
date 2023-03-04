@@ -45,7 +45,7 @@ public class Items {
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
 		addAll(BoneMealItem.getAllInstances());
-		addAll(WateringTinItem.getAllInstances());
+		addAll(WateringCanItem.getAllInstances());
 		addAll(FertilizerItem.getAllInstances());
 	}
 
@@ -110,8 +110,8 @@ public class Items {
 				((StackableItem)i).count = data;
 			if (i instanceof ToolItem && hadUnderscore)
 				((ToolItem)i).dur = data;
-			if (i instanceof WateringTinItem)
-				((WateringTinItem) i).content = data;
+			if (i instanceof WateringCanItem)
+				((WateringCanItem) i).content = data;
 			return i;
 		} else {
 			Logging.ITEMS.error("Requested invalid item with name: '{}'", name);

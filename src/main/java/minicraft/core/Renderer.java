@@ -23,7 +23,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.WateringTinItem;
+import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
@@ -340,10 +340,10 @@ public class Renderer extends Game {
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
-		// WATERING TIN CONTAINER STATUS
-		if (player.activeItem instanceof WateringTinItem) {
+		// WATERING CAN CONTAINER STATUS
+		if (player.activeItem instanceof WateringCanItem) {
 			// Draws the text
-			WateringTinItem tin = (WateringTinItem) player.activeItem;
+			WateringCanItem tin = (WateringCanItem) player.activeItem;
 			int dura = tin.content * 100 / tin.CAPACITY;
 			int green = (int)(dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));

@@ -16,10 +16,10 @@ import minicraft.level.tile.farming.CropTile;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class WateringTinItem extends Item {
+public class WateringCanItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
-		items.add(new WateringTinItem("Watering Tin"));
+		items.add(new WateringCanItem("Watering Can"));
 		return items;
 	}
 
@@ -37,7 +37,7 @@ public class WateringTinItem extends Item {
 	public int content = 0;
 	private int renderingTick = 0;
 
-	protected WateringTinItem(String name) {
+	protected WateringCanItem(String name) {
 		super(name, sprite);
 	}
 
@@ -66,7 +66,7 @@ public class WateringTinItem extends Item {
 			}
 			if (tile instanceof CropTile) {
 				int fertilization = ((CropTile) tile).getFertilization(level.getData(xt, yt));
-				if (fertilization < 150) { // Maximum of 5 levels watering tin can fertilize.
+				if (fertilization < 150) { // Maximum of 5 levels watering can can fertilize.
 					((CropTile) tile).fertilize(level, xt, yt, 1);
 				}
 			} else if (tile instanceof DirtTile) {
@@ -105,7 +105,7 @@ public class WateringTinItem extends Item {
 
 	@Override
 	public Item clone() {
-		return new WateringTinItem(getName());
+		return new WateringCanItem(getName());
 	}
 
 	private static class WaterParticle extends Particle {

@@ -9,17 +9,17 @@ import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import org.jetbrains.annotations.Nullable;
 
-public class Compostor extends Furniture {
-	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "compostor");
-	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "compostor_filled");
-	private static final SpriteLinker.LinkedSprite spriteFull = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "compostor_full");
-	private static final SpriteLinker.LinkedSprite itemSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "compostor");
+public class Composter extends Furniture {
+	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "composter");
+	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "composter_filled");
+	private static final SpriteLinker.LinkedSprite spriteFull = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "composter_full");
+	private static final SpriteLinker.LinkedSprite itemSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "composter");
 
 	private static final int MAX_COMPOST = 7;
 	private int compost = 0;
 
-	public Compostor() {
-		super("Compostor", sprite, itemSprite);
+	public Composter() {
+		super("Composter", sprite, itemSprite);
 	}
 
 	@Override
