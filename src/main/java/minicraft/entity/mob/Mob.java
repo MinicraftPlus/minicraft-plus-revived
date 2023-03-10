@@ -27,6 +27,7 @@ public abstract class Mob extends Entity {
 	int walkTime;
 	public int speed;
 	int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
+	int noActionTime = 0;
 
 	/**
 	 * Default constructor for a mob.
@@ -50,6 +51,7 @@ public abstract class Mob extends Entity {
 		tickTime++; // Increment our tick counter
 
 		if (isRemoved()) return;
+		noActionTime++;
 
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
@@ -123,6 +125,38 @@ public abstract class Mob extends Entity {
 		}
 
 		return moved;
+	}
+
+	/** The mob immediately despawns if the distance of the closest player is greater than the return value of this. */
+	protected int getDespawnDistance() {
+		return 80;
+	}
+
+	/** The mob randomly despawns if the distance of the closest player is greater than the return value of this. */
+	protected int getNoDespawnDistance() {
+		return 40;
+	}
+
+	/** @see #checkDespawn() */
+	protected boolean removeWhenFarAway(double distance) {
+		return true;
+	}
+
+	@Override
+	public void checkDespawn() {
+		double player = level.distanceOfClosestPlayer(this);
+		if (player > getDespawnDistance() && removeWhenFarAway(player)) {
+			remove();
+			return;
+		}
+
+		int noDespawnDistance = getNoDespawnDistance();
+		// Randomly despawns if the time elapsed longer than 30 seconds farer than noDespawnDistance.
+		if (noActionTime > 1800 && this.random.nextInt(800) == 0 && player > noDespawnDistance && removeWhenFarAway(player)) {
+			remove();
+		} else if (player < noDespawnDistance) {
+			noActionTime = 0;
+		}
 	}
 
 	/** This is an easy way to make a list of sprites that are all part of the same "Sprite", so they have similar parameters, but they're just at different locations on the spreadsheet. */
