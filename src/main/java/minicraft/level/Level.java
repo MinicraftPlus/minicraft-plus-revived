@@ -2,6 +2,7 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
@@ -551,55 +552,51 @@ public class Level {
 			entitiesToRemove.add(e);
 	}
 
+	/** Natural spawn. */
 	private void trySpawn() {
 		int spawnSkipChance = (int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2));
 		if (spawnSkipChance > 0 && random.nextInt(spawnSkipChance) != 0)
 			return; // Hopefully will make mobs spawn a lot slower.
 
 		boolean spawned = false;
-		for (int i = 0; i < 30 && !spawned; i++) {
-			int minLevel = 1, maxLevel = 1;
-			if (depth < 0) {
-				maxLevel = (-depth) + ((Math.random() > 0.75 && -depth != 4) ? 1 : 0);
-			}
-			if (depth > 0) {
-				minLevel = maxLevel = 4;
-			}
+		for (Player player : players) {
+			int lvl = World.lvlIdx(player.getLevel().depth);
+			for (int i = 0; i < 30 && !spawned; i++) {
+				int rnd = random.nextInt(100);
+				int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
+				double distance = Math.hypot(Math.abs(nx - player.x), Math.abs(ny - player.y));
+				if (distance < 10 || distance > 40) continue; // Spawns only between 10 and 40 tiles far from players.
 
+				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
-			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
-			int rnd = random.nextInt(100);
-			int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
+				// Spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
+				if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
 
-			//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
+					if (depth != -4) { // Normal mobs
+						if (rnd <= 40) add((new Slime(lvl)), nx, ny);
+						else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
+						else if (rnd >= 85) add((new Skeleton(lvl)), nx, ny);
+						else add((new Creeper(lvl)), nx, ny);
 
-			// Spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
-			if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
+					} else { // Special dungeon mobs
+						if (rnd <= 40) add((new Snake(lvl)), nx, ny);
+						else if (rnd <= 75) add((new Knight(lvl)), nx, ny);
+						else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
+						else add((new Knight(lvl)), nx, ny);
 
-				if (depth != -4) { // Normal mobs
-					if (rnd <= 40) add((new Slime(lvl)), nx, ny);
-					else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
-					else if (rnd >= 85) add((new Skeleton(lvl)), nx, ny);
-					else add((new Creeper(lvl)), nx, ny);
+					}
 
-				} else { // Special dungeon mobs
-					if (rnd <= 40) add((new Snake(lvl)), nx, ny);
-					else if (rnd <= 75) add((new Knight(lvl)), nx, ny);
-					else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
-					else add((new Knight(lvl)), nx, ny);
-
+					spawned = true;
 				}
 
-				spawned = true;
-			}
+				if (depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
+					// Spawns the friendly mobs.
+					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
+					else if (rnd >= 68) add((new Pig()), nx, ny);
+					else add((new Sheep()), nx, ny);
 
-			if (depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
-				// Spawns the friendly mobs.
-				if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
-				else if (rnd >= 68) add((new Pig()), nx, ny);
-				else add((new Sheep()), nx, ny);
-
-				spawned = true;
+					spawned = true;
+				}
 			}
 		}
 	}
