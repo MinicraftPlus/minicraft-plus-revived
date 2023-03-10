@@ -286,6 +286,7 @@ public class Level {
 	private void tickEntity(Entity entity) {
 		if (entity == null) return;
 
+		if (!entity.isRemoved()) entity.checkDespawn();
 		if (entity.isRemoved()) {
 			remove(entity);
 			return;
@@ -344,19 +345,6 @@ public class Level {
 			sparks.forEach(this::tickEntity);
 		}
 
-		while (count > maxMobCount) {
-			Entity removeThis = (Entity)entities.toArray()[(random.nextInt(entities.size()))];
-			if (removeThis instanceof MobAi) {
-				// Make sure there aren't any close players
-				boolean playerClose = entityNearPlayer(removeThis);
-
-				if (!playerClose) {
-					remove(removeThis);
-					count--;
-				}
-			}
-		}
-
 		while (entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 
@@ -389,6 +377,16 @@ public class Level {
 			}
 		}
 		return false;
+	}
+
+	public double distanceOfClosestPlayer(Entity entity) {
+		double distance = Math.hypot(w, h);
+		for (Player player : players) {
+			double d = Math.hypot(Math.abs(entity.x - player.x), Math.abs(entity.y - player.y));
+			if (d < distance) distance = d;
+		}
+
+		return distance;
 	}
 
 	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
@@ -463,7 +461,7 @@ public class Level {
 		int h = (Screen.h + 15) >> 4;
 
 		screen.setOffset(xScroll, yScroll);
-		
+
 		// this specifies the maximum radius that the game will stop rendering the light from the source object once off screen
 		int r = 8;
 
