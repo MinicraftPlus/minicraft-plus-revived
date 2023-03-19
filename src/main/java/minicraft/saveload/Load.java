@@ -664,7 +664,7 @@ public class Load {
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 
-			if (Game.debug) curLevel.printTileLocs(Tiles.get("Stairs Down"));
+			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
 			if (parent == null) continue;
 			/// confirm that there are stairs in all the places that should have stairs.

@@ -44,9 +44,7 @@ public class Initializer extends Game {
 		@Nullable
 		String saveDir = null;
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equalsIgnoreCase("--debug")) {
-				debug = true;
-			} else if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
+			if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
 				i++;
 				saveDir = args[i];
 			} else if (args[i].equalsIgnoreCase("--fullscreen")) {
@@ -57,6 +55,8 @@ public class Initializer extends Game {
 				Logging.logThread = true;
 			} else if (args[i].equalsIgnoreCase("--debug-log-trace")) {
 				Logging.logTrace = true;
+			} else if (args[i].equalsIgnoreCase("--debug-level")) {
+				Logging.logLevel = true;
 			} else if (args[i].equalsIgnoreCase("--debug-filelog-full")) {
 				Logging.fileLogFull = true;
 			}

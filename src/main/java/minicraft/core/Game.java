@@ -20,8 +20,6 @@ import java.util.List;
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
 
-	public static boolean debug = false;
-
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
 	public static final Version VERSION = new Version("2.2.0-dev3");

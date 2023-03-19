@@ -91,7 +91,7 @@ public class TutorialDisplayHandler {
 
 		private void tick() {
 			if (this.key.contains("|")) {
-				InputHandler.Key key = Game.input.new Key();
+				InputHandler.Key key = new InputHandler.Key();
 				for (String keyposs: this.key.split("\\|")) {
 					InputHandler.Key aKey = Game.input.getKey(keyposs);
 					key.down = key.down || aKey.down;

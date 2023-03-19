@@ -523,7 +523,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.inputDown("shift-p")) { // Remove all potion effects
+				if (input.inputDown("F3-p")) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}

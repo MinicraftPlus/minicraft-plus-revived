@@ -161,8 +161,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 		Consumer<Writer> addToThread = writer -> {
 			WriterConfig cfg = writers.get(writer);
-			if ((level.ordinal() <= Level.DEBUG.ordinal() && Game.debug || level.ordinal() > Level.DEBUG.ordinal()) &&
-					cfg.levels.contains(level) && cfg.tags.contains(tag))
+			if (cfg.levels.contains(level) && cfg.tags.contains(tag))
 				writingThread.add(writer, logEntry);
 		};
 

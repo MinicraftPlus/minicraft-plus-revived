@@ -39,7 +39,7 @@ public class Localization {
 
 		String localString = localization.get(key);
 
-		if (Game.debug && localString == null) {
+		if (localString == null) {
 			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
 				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
