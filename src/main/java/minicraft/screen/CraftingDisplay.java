@@ -108,7 +108,8 @@ public class CraftingDisplay extends Display {
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
-		onScreenKeyboardMenu.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
 	}
 
 	@Override
