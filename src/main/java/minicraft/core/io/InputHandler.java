@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -376,10 +377,15 @@ public class InputHandler implements KeyListener {
 		}
 
 		Key key = new Key();
-		for (Key k : keys) { // Checking for all keys.
-			key.down = key.down && k.down; // All keys down.
-			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
-			key.clicked = key.down && (key.clicked || k.clicked);
+		if (keys.size() > 0) {
+			Iterator<Key> it = keys.iterator();
+			key = it.next();
+			while (it.hasNext()) { // Checking for all keys.
+				Key k = it.next();
+				key.down = key.down && k.down; // All keys down.
+				// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
+				key.clicked = key.down && (key.clicked || k.clicked);
+			}
 		}
 
 		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
