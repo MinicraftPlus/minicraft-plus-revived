@@ -183,7 +183,8 @@ public class FileHandler extends Game {
 		ArrayList<String> names = new ArrayList<>();
 		try (Stream<Path> paths = Files.walk(path)) {
 			Path finalPath = path;
-			paths.forEach(p -> names.add(finalPath.getParent().relativize(p).toString()));
+			paths.forEach(p -> names.add(finalPath.getParent().relativize(p).toString().replace('\\', '/')+
+				(p.toFile().isDirectory() ? "/" : "")));
 			return names;
 		} catch (IOException e) {
 			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
