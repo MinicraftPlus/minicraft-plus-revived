@@ -206,6 +206,13 @@ public class WorldGenDisplay extends Display {
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
 
 	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
+	}
+
+	@Override
 	public void tick(InputHandler input) {
 		boolean acted = false; // Checks if typing action is needed to be handled.
 		boolean takeExitHandle = true;
