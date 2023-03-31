@@ -378,12 +378,15 @@ public class InputHandler implements KeyListener {
 
 		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
 
-		return keys.stream().reduce((k0, k1) -> {
+		Key key = new Key();
+		key.down = true; // The set is not empty, so this will not be returned directly.
+		key.clicked = false;
+		return keys.stream().reduce(key, (k0, k1) -> {
 			k0.down = k0.down && k1.down; // All keys down.
 			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
 			k0.clicked = k0.down && (k0.clicked || k1.clicked);
 			return k0;
-		}).orElse(new Key()); // Return the Key object.
+		}); // Return the Key object.
 	}
 
 	/// This method provides a way to press physical keys without actually generating a key event.
