@@ -15,8 +15,6 @@ import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -360,16 +358,18 @@ public class InputHandler implements KeyListener {
 		}
 
 		// Complex compound key binding support.
-		HashSet<Key> keys = new HashSet<>();
+		Key[] keys;
 		synchronized ("lock") {
-			for (String k : keytext.split("-")) {
-				if (keyboard.containsKey(k))
-					keys.add(keyboard.get(k)); // Gets the key object from keyboard, if if exists.
+			String[] split = keytext.split("-");
+			keys = new Key[split.length];
+			for (int i = 0; i < split.length; i++) {
+				if (keyboard.containsKey(split[i]))
+					keys[i] = keyboard.get(split[i]); // Gets the key object from keyboard, if if exists.
 				else {
 					// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
 					Key key = new Key(); // Make new key
-					keyboard.put(k, key); // Add it to keyboard
-					keys.add(key);
+					keyboard.put(split[i], key); // Add it to keyboard
+					keys[i] = key;
 
 					//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 				}
@@ -377,15 +377,15 @@ public class InputHandler implements KeyListener {
 		}
 
 		Key key = new Key();
-		if (keys.size() > 0) {
-			Iterator<Key> it = keys.iterator();
-			key = it.next();
-			while (it.hasNext()) { // Checking for all keys.
-				Key k = it.next();
-				key.down = key.down && k.down; // All keys down.
-				// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
-				key.clicked = key.down && (key.clicked || k.clicked);
-			}
+		key.clicked = keys[0].clicked;
+		key.down = keys[0].down;
+		int count = 1;
+		while (count < keys.length) { // Checking for all keys.
+			Key k = keys[count];
+			key.down = key.down && k.down; // All keys down.
+			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
+			key.clicked = key.down && (key.clicked || k.clicked);
+			count++;
 		}
 
 		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
@@ -448,8 +448,40 @@ public class InputHandler implements KeyListener {
 			keyToChange = null;
 			return;
 		}
+
 		getPhysKey(keytext).toggle(pressed);
+		// System.out.println(keytext+";"+getPhysKey(keytext).hashCode()+";"+pressed);
 	}
+
+//	static JFrame frame = new JFrame();
+//	static JTextArea textField = new JTextArea();
+//	static Thread liveTracking;
+//	static {
+//		frame.add(textField);
+//		textField.setText("INVALID");
+//		frame.setUndecorated(true);
+//		frame.pack();
+//		frame.setVisible(true);
+//		liveTracking = new Thread(new Runnable() {
+//			long lastTick = 0;
+//			@Override
+//			public void run() {
+//				while (true) {
+//					long tick = System.currentTimeMillis();
+//					if (tick - lastTick > 50) {
+//						synchronized ("lock") {
+//							if (Game.input == null) continue;
+//							textField.setText("F3: " + Game.input.getPhysKey("F3")
+//								+ "\nE: " + Game.input.getPhysKey("E"));
+//						}
+//						frame.pack();
+//						lastTick = tick;
+//					}
+//				}
+//			}
+//		}, "Live Debugging Value Tracker");
+//		liveTracking.start();
+//	}
 
 	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();
