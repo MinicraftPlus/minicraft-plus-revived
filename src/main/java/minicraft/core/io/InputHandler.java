@@ -15,6 +15,7 @@ import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -358,39 +359,31 @@ public class InputHandler implements KeyListener {
 		}
 
 		// Complex compound key binding support.
-		Key[] keys;
+		HashSet<Key> keys = new HashSet<>();
 		synchronized ("lock") {
 			String[] split = keytext.split("-");
-			keys = new Key[split.length];
-			for (int i = 0; i < split.length; i++) {
-				if (keyboard.containsKey(split[i]))
-					keys[i] = keyboard.get(split[i]); // Gets the key object from keyboard, if if exists.
+			for (String s : split) {
+				if (keyboard.containsKey(s))
+					keys.add(keyboard.get(s)); // Gets the key object from keyboard, if if exists.
 				else {
 					// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
 					Key key = new Key(); // Make new key
-					keyboard.put(split[i], key); // Add it to keyboard
-					keys[i] = key;
+					keyboard.put(s, key); // Add it to keyboard
+					keys.add(key);
 
 					//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 				}
 			}
 		}
 
-		Key key = new Key();
-		key.clicked = keys[0].clicked;
-		key.down = keys[0].down;
-		int count = 1;
-		while (count < keys.length) { // Checking for all keys.
-			Key k = keys[count];
-			key.down = key.down && k.down; // All keys down.
-			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
-			key.clicked = key.down && (key.clicked || k.clicked);
-			count++;
-		}
-
 		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
 
-		return key; // Return the Key object.
+		return keys.stream().reduce((k0, k1) -> {
+			k0.down = k0.down && k1.down; // All keys down.
+			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
+			k0.clicked = k0.down && (k0.clicked || k1.clicked);
+			return k0;
+		}).orElse(new Key()); // Return the Key object.
 	}
 
 	/// This method provides a way to press physical keys without actually generating a key event.
