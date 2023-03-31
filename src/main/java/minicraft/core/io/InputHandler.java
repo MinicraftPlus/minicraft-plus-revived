@@ -453,35 +453,36 @@ public class InputHandler implements KeyListener {
 		// System.out.println(keytext+";"+getPhysKey(keytext).hashCode()+";"+pressed);
 	}
 
-//	static JFrame frame = new JFrame();
-//	static JTextArea textField = new JTextArea();
-//	static Thread liveTracking;
-//	static {
-//		frame.add(textField);
-//		textField.setText("INVALID");
-//		frame.setUndecorated(true);
-//		frame.pack();
-//		frame.setVisible(true);
-//		liveTracking = new Thread(new Runnable() {
-//			long lastTick = 0;
-//			@Override
-//			public void run() {
-//				while (true) {
-//					long tick = System.currentTimeMillis();
-//					if (tick - lastTick > 50) {
-//						synchronized ("lock") {
-//							if (Game.input == null) continue;
-//							textField.setText("F3: " + Game.input.getPhysKey("F3")
-//								+ "\nE: " + Game.input.getPhysKey("E"));
-//						}
-//						frame.pack();
-//						lastTick = tick;
-//					}
-//				}
-//			}
-//		}, "Live Debugging Value Tracker");
-//		liveTracking.start();
-//	}
+	// This provides a way to inspect values during running with an external display.
+	/*static JFrame frame = new JFrame();
+	static JTextArea textField = new JTextArea();
+	static Thread liveTracking;
+	static {
+		frame.add(textField);
+		textField.setText("INVALID");
+		frame.setUndecorated(true);
+		frame.pack();
+		frame.setVisible(true);
+		liveTracking = new Thread(new Runnable() {
+			long lastTick = 0;
+			@Override
+			public void run() {
+				while (true) {
+					long tick = System.currentTimeMillis();
+					if (tick - lastTick > 50) {
+						synchronized ("lock") {
+							if (Game.input == null) continue;
+							textField.setText("F3: " + Game.input.getPhysKey("F3")
+								+ "\nE: " + Game.input.getPhysKey("E"));
+						}
+						frame.pack();
+						lastTick = tick;
+					}
+				}
+			}
+		}, "Live Debugging Value Tracker");
+		liveTracking.start();
+	}*/
 
 	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();
