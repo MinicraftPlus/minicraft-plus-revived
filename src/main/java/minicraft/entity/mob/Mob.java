@@ -137,13 +137,13 @@ public abstract class Mob extends Entity {
 		return 40;
 	}
 
-	/** @see #checkDespawn() */
+	/** @see #handleDespawn() */
 	protected boolean removeWhenFarAway(double distance) {
 		return true;
 	}
 
 	@Override
-	public void checkDespawn() {
+	public void handleDespawn() {
 		double player = level.distanceOfClosestPlayer(this);
 		if (player > getDespawnDistance() && removeWhenFarAway(player)) {
 			remove();

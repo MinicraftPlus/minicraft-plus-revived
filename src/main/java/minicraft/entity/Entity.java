@@ -203,7 +203,7 @@ public abstract class Entity implements Tickable {
 	}
 
 	/** Checks if the entity is able to naturally be despawned in general conditions. Handles (despawns) if true. */
-	public void checkDespawn() {}
+	public void handleDespawn() {}
 
 	/** This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items. */
 	public void die() { remove(); }
