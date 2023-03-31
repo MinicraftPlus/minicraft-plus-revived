@@ -287,7 +287,7 @@ public class Level {
 	private void tickEntity(Entity entity) {
 		if (entity == null) return;
 
-		if (!entity.isRemoved()) entity.checkDespawn();
+		if (!entity.isRemoved()) entity.handleDespawn();
 		if (entity.isRemoved()) {
 			remove(entity);
 			return;
