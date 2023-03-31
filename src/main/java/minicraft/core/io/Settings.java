@@ -133,6 +133,8 @@ public class Settings {
 
 		public FPSEntry(String label) {
 			super(label, false, getArray());
+			int rate = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+			setValue(rate == DisplayMode.REFRESH_RATE_UNKNOWN ? 60 : rate % 10 == 0 ? rate : rate - rate % 10);
 		}
 
 		/**
