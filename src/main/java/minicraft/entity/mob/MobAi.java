@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.furniture.Lantern;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
@@ -11,6 +12,10 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
+import minicraft.level.tile.TorchTile;
+
+import java.awt.Point;
+import java.util.Arrays;
 
 public abstract class MobAi extends Mob {
 
@@ -38,6 +43,32 @@ public abstract class MobAi extends Mob {
 		xmov = 0;
 		ymov = 0;
 		walkTime = 2;
+	}
+
+	@Override
+	public void handleDespawn() {
+		double player = level.distanceOfClosestPlayer(this);
+		if (player > getDespawnDistance() && removeWhenFarAway(player)) {
+			remove();
+			return;
+		}
+
+		int noDespawnDistance = getNoDespawnDistance();
+		// Randomly despawns if the time elapsed longer than 30 seconds farer than noDespawnDistance.
+		if (noActionTime > 1800 && this.random.nextInt(800) == 0 && player > noDespawnDistance && removeWhenFarAway(player)) {
+			remove();
+		} else if (player < noDespawnDistance) {
+			noActionTime = 0;
+		}
+	}
+
+	/**
+	 * Checking whether the mob is within any light. From tiles or from lanterns.
+	 * @return {@code true} if the mob is within any light.
+	 */
+	protected boolean isWithinLight() {
+		return Arrays.stream(level.getEntityArray()).anyMatch(e -> e instanceof Lantern && isWithin(e.getLightRadius(), e))
+			|| !level.getMatchingTiles((tile, x, y) -> Math.hypot(Math.abs(this.x - x), Math.abs(this.y - y)) <= tile.getLightRadius(level, x, y)).isEmpty();
 	}
 
 	/**
