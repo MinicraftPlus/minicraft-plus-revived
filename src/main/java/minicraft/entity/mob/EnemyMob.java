@@ -17,6 +17,15 @@ public class EnemyMob extends MobAi {
 	protected LinkedSprite[][][] lvlSprites;
 	public int detectDist;
 
+	@Override
+	public void handleDespawn() {
+		if (level.depth == 0 && Updater.tickCount >= Updater.dayLength / 4 && Updater.tickCount <= Updater.dayLength / 2)
+			if (isWithinLight()) // If it is now morning and on the surface, the mob despawns when it is within light.
+				super.handleDespawn();
+		else if (!isWithinLight()) // Otherwise, it despawns when it is not within light.
+			super.handleDespawn();
+	}
+
 	/**
 	 * Constructor for a hostile (enemy) mob. The level determines what the mob does. sprites contains all the graphics and animations for the mob.
 	 * lvlcols is the different color the mob has depending on its level. isFactor determines if the mob's health should be affected by the level and

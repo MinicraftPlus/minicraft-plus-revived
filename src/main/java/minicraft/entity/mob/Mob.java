@@ -138,25 +138,8 @@ public abstract class Mob extends Entity {
 	}
 
 	/** @see #handleDespawn() */
-	protected boolean removeWhenFarAway(double distance) {
+	protected boolean removeWhenFarAway(@SuppressWarnings("unused") double distance) {
 		return true;
-	}
-
-	@Override
-	public void handleDespawn() {
-		double player = level.distanceOfClosestPlayer(this);
-		if (player > getDespawnDistance() && removeWhenFarAway(player)) {
-			remove();
-			return;
-		}
-
-		int noDespawnDistance = getNoDespawnDistance();
-		// Randomly despawns if the time elapsed longer than 30 seconds farer than noDespawnDistance.
-		if (noActionTime > 1800 && this.random.nextInt(800) == 0 && player > noDespawnDistance && removeWhenFarAway(player)) {
-			remove();
-		} else if (player < noDespawnDistance) {
-			noActionTime = 0;
-		}
 	}
 
 	/** This is an easy way to make a list of sprites that are all part of the same "Sprite", so they have similar parameters, but they're just at different locations on the spreadsheet. */
