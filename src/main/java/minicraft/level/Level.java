@@ -570,7 +570,8 @@ public class Level {
 				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
 				// Spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
-				if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
+				if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)
+					&& !isLight(nx, ny)) { // if night or underground, with a valid tile and dim place, spawn an enemy mob.
 
 					if (depth != -4) { // Normal mobs
 						if (rnd <= 40) add((new Slime(lvl)), nx, ny);
@@ -587,6 +588,7 @@ public class Level {
 					}
 
 					spawned = true;
+					continue; // Only 1 mob is spawned at the same time.
 				}
 
 				if (depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
