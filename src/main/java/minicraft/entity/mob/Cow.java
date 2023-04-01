@@ -4,6 +4,7 @@ import minicraft.core.io.Settings;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 import minicraft.level.tile.GrassTile;
+import minicraft.level.tile.TallGrassTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
@@ -33,9 +34,10 @@ public class Cow extends PassiveMob {
 		super.tick();
 		if (random.nextInt(1000) == 0) { // Grazing without any benefits.
 			Tile tile = level.getTile(x >> 4, y >> 4);
-			// If tall grasses are present, these are consumed and then turn into grass tiles.
 			if (tile instanceof GrassTile) {
 				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
+			} else if (tile instanceof TallGrassTile) {
+				level.setTile(x >> 4, y >> 4, Tiles.get("grass"));
 			}
 		}
 	}
