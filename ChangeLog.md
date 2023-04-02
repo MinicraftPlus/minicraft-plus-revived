@@ -63,9 +63,13 @@ but some sections are changed to compliant this project.
 * Fixed lights disappearing when out of screen
 * Improved player's tile indicator
 * Improved FPS option entry
-  * Added V-Sync and Unlimited options
+  * Added VSync and Unlimited options
+    * `VSync` captures the framerate of the device as the value (is not really the VSync)
+    * `Unlimited` does not limit the frame updates
   * All numeral options are all multiple of 10
 * Cow and sheep now graze on grasses
+* Recipes are unlocked only when one of the materials obtained
+* A `clothes` item with the previous clothing color is returned when a new `clothes` item is applied
 
 ### Removals
 
@@ -75,6 +79,7 @@ but some sections are changed to compliant this project.
 
 * Fixed seed random problem
 * Fixed light rendering problem on lanterns
+* Fixed rendering positioning problem of color code styled texts
 
 ## [2.1.3]
 
