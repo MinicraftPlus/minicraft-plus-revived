@@ -819,7 +819,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		int yo = y - 11; // Vertical
 
 		// Renders swimming
-		if (isSwimming()) {
+		if (isSwimming() && onFallDelay <= 0) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 
@@ -864,22 +864,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		LinkedSprite curSprite;
 		if (onFallDelay > 0) {
 			// This makes falling look really cool.
-			float spriteToUse = onFallDelay / 2f;
-			while (spriteToUse > spriteSet.length - 1) {
-				spriteToUse -= 4;
-			}
-			curSprite = spriteSet[Math.round(spriteToUse)][(walkDist >> 3) & 1];
+			int spriteToUse = Math.round(onFallDelay / 2f) % carrySprites.length;
+			curSprite = carrySprites[spriteToUse][(walkDist >> 3) & 1];
+			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
-		}
-
-		// Render each corner of the sprite
-		if (isSwimming()) {
-			Sprite sprite = curSprite.getSprite();
-			screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
-			screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
-		} else { // Don't render the bottom half if swimming.
-			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			// Render each corner of the sprite
+			if (isSwimming()) {
+				Sprite sprite = curSprite.getSprite();
+				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
+				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
+			} else { // Don't render the bottom half if swimming.
+				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			}
 		}
 
 		// Renders slashes:
