@@ -267,6 +267,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void tick() {
 		if (level == null || isRemoved()) return;
 		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
+		if (input.getKey("F3-Y").clicked) {
+			World.scheduleLevelChange(1);
+			return;
+		} else if (input.getKey("F3-H").clicked) {
+			World.scheduleLevelChange(-1);
+			return;
+		}
 
 		super.tick(); // Ticks Mob.java
 
