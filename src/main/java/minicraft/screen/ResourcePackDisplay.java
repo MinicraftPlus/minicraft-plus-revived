@@ -129,7 +129,7 @@ public class ResourcePackDisplay extends Display {
 					assets.add("pack.json");
 					assets.add("pack.png");
 					for (String name : assets) { // Copy only assets and pack configuration.
-						if (name.startsWith("assets/")) {
+						if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
 							out.putNextEntry(new ZipEntry(name));
 							if (!name.endsWith("/")) {
 								int b;
