@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 public class Level {
 	private final Random random;
@@ -72,7 +73,12 @@ public class Level {
 	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 
 	// Creates a sorter for all the entities to be rendered.
-	private static final Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y);
+	//private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y); // Broken
+	@SuppressWarnings("Convert2Lambda")
+	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
+		@Override
+		public int applyAsInt(Entity e) { return e.y; }
+	});
 
 	public Entity[] getEntitiesToSave() {
 		Entity[] allEntities = new Entity[entities.size() + entitiesToAdd.size()];
