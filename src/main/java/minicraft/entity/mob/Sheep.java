@@ -76,10 +76,8 @@ public class Sheep extends PassiveMob {
 	}
 
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if (cut) return false;
-
 		if (item instanceof ToolItem) {
-			if (((ToolItem) item).type == ToolType.Shears) {
+			if (!cut && ((ToolItem) item).type == ToolType.Shears) {
 				cut = true;
 				dropItem(1, 3, Items.get("Wool"));
 				ageWhenCut = age;

@@ -48,4 +48,9 @@ public class DyeItem extends StackableItem {
 			this.color = color;
 		}
 	}
+
+	@Override
+	public DyeItem clone() {
+		return new DyeItem(getName(), sprite, color);
+	}
 }
