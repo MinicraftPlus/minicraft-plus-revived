@@ -44,6 +44,7 @@ public class Items {
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
+		addAll(DyeItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {

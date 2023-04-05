@@ -1,6 +1,7 @@
 package minicraft.entity.mob;
 
 import minicraft.gfx.Color;
+import minicraft.item.DyeItem;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Updater;
@@ -13,46 +14,44 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 
+import java.util.HashMap;
+
 public class Sheep extends PassiveMob {
-	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
-	private static final LinkedSprite[][] cutSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
+	private static final HashMap<DyeItem.DyeColor, LinkedSprite[][]> sprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, LinkedSprite[][]> cutSprites = new HashMap<>();
 
-	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
-
-	public enum ColorSet {
-		BLACK(0x1_1D1D21),
-		RED(0x1_B02E26),
-		GREEN(0x1_5E7C16),
-		BROWN(0x1_835432),
-		BLUE(0x1_3C44AA),
-		PURPLE(0x1_8932B8),
-		CYAN(0x1_169C9C),
-		LIGHT_GRAY(0x1_9D9D97),
-		GRAY(0x1_474F52),
-		PINK(0x1_F38BAA),
-		LIME(0x1_80C71F),
-		YELLOW(0x1_FED83D),
-		LIGHT_BLUE(0x1_3AB3DA),
-		MAGENTA(0x1_C74EBD),
-		ORANGE(0x1_F9801D),
-		WHITE(0x1_F9FFFE);
-
-		public final int color;
-
-		ColorSet(int color) {
-			this.color = color;
+	static {
+		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
+			LinkedSprite[][] mobSprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
+			for (LinkedSprite[] mobSprite : mobSprites) {
+				for (LinkedSprite linkedSprite : mobSprite) {
+					linkedSprite.setColor(color.color);
+				}
+			}
+			sprites.put(color, mobSprites);
+			mobSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
+			for (LinkedSprite[] mobSprite : mobSprites) {
+				for (LinkedSprite linkedSprite : mobSprite) {
+					linkedSprite.setColor(color.color);
+				}
+			}
+			cutSprites.put(color, mobSprites);
 		}
 	}
 
+	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
+
 	public boolean cut = false;
-	public ColorSet color = ColorSet.WHITE;
+	public DyeItem.DyeColor color;
 	private int ageWhenCut = 0;
 
 	/**
 	 * Creates a sheep entity.
 	 */
-	public Sheep() {
-		super(sprites);
+	public Sheep() { this(DyeItem.DyeColor.WHITE); }
+	public Sheep(DyeItem.DyeColor color) {
+		super(null);
+		this.color = color;
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class Sheep extends PassiveMob {
 		int xo = x - 8;
 		int yo = y - 11;
 
-		LinkedSprite[][] curAnim = cut ? cutSprites : sprites;
+		LinkedSprite[][] curAnim = cut ? cutSprites.get(color) : sprites.get(color);
 
 		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
@@ -87,6 +86,10 @@ public class Sheep extends PassiveMob {
 				((ToolItem) item).payDurability();
 				return true;
 			}
+		} else if (item instanceof DyeItem) {
+			color = ((DyeItem) item).color;
+			((DyeItem) item).count--;
+			return true;
 		}
 		return false;
 	}
