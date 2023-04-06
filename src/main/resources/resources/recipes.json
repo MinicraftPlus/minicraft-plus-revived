@@ -1208,6 +1208,32 @@
       }
     }
   },
+  "minicraft.advancements.recipes.bone_meal": {
+    "criteria": {
+      "has_bone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "bone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_bone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Bone Meal_3": ["Bone_1"]
+      }
+    }
+  },
   "minicraft.advancements.recipes.arrow": {
     "criteria": {
       "has_wood": {
@@ -1296,6 +1322,552 @@
     "rewards": {
       "recipes": {
         "Snake Armor_1": ["scale_15"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.white_dye": {
+    "criteria": {
+      "has_bone_meal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "bone meal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_bone_meal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "white dye_1": ["Bone Meal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.blue_dye": {
+    "criteria": {
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "blue dye_1": ["Lapis_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.green_dye": {
+    "criteria": {
+      "has_cactus": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cactus"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cactus"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "green dye_1": ["Cactus_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.yellow_dye": {
+    "criteria": {
+      "has_flower": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "flower"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_flower"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "yellow dye_1": ["Flower_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.black_dye": {
+    "criteria": {
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "black dye_1": ["Coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.red_dye": {
+    "criteria": {
+      "has_rose": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "rose"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_rose"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "red dye_1": ["Rose_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.orange_dye": {
+    "criteria": {
+      "has_red_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "red dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_yellow_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "yellow dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_red_dye",
+        "has_yellow_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "orange dye_1": ["red dye_1", "yellow dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.purple_dye": {
+    "criteria": {
+      "has_blue_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "blue dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_red_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "red dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_blue_dye",
+        "has_red_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "purple dye_1": ["blue dye_1", "red dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.cyan_dye": {
+    "criteria": {
+      "has_blue_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "blue dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_green_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "green dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_blue_dye",
+        "has_green_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "cyan dye_1": ["blue dye_1", "green dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.brown_dye": {
+    "criteria": {
+      "has_green_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "green dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_red_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "red dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_green_dye",
+        "has_red_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "brown dye_1": ["green dye_1", "red dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.pink_dye": {
+    "criteria": {
+      "has_white_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "white dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_red_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "red dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_red_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "pink dye_1": ["white dye_1", "red dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.light_blue_dye": {
+    "criteria": {
+      "has_white_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "white dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_blue_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "blue dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_blue_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "light blue dye_1": ["white dye_1", "blue dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.lime_dye": {
+    "criteria": {
+      "has_white_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "white dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_green_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "green dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_green_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "lime dye_1": ["white dye_1", "green dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gray_dye": {
+    "criteria": {
+      "has_white_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "white dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_black_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "black dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_black_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "gray dye_1": ["white dye_1", "black dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.light_gray_dye": {
+    "criteria": {
+      "has_white_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "white dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gray_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gray dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_gray_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "light gray dye_1": ["white dye_1", "gray dye_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.magenta_dye": {
+    "criteria": {
+      "has_purple_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "purple dye"
+              ]
+            }
+          ]
+        }
+      },
+      "has_pink_dye": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "pink dye"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_purple_dye",
+        "has_pink_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "magenta dye_1": ["purple dye_1", "pink dye_1"]
       }
     }
   },
