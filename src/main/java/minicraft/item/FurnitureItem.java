@@ -23,6 +23,7 @@ import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -98,7 +99,7 @@ public class FurnitureItem extends Item {
 		return placed;
 	}
 
-	public FurnitureItem clone() {
+	public @NotNull FurnitureItem copy() {
 		// in case the item is a spawner, it will use the sprite position (sx, sy)
 		// instead if it is not, the constructor will obtain said sprite
 		return new FurnitureItem(furniture.clone());

@@ -101,7 +101,7 @@ public class Items {
 		}
 
 		if (i != null) {
-			i = i.clone();
+			i = i.copy();
 			if (i instanceof StackableItem)
 				((StackableItem)i).count = data;
 			if (i instanceof ToolItem && hadUnderscore)
@@ -133,7 +133,7 @@ public class Items {
 		CreativeModeInventory() {
 			unlimited = true;
 			items.forEach(i -> {
-				if (!(i instanceof PowerGloveItem)) add(i.clone());
+				if (!(i instanceof PowerGloveItem)) add(i.copy());
 			});
 		}
 	}

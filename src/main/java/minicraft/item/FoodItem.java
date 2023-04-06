@@ -6,6 +6,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -52,7 +53,7 @@ public class FoodItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public FoodItem clone() {
+	public @NotNull FoodItem copy() {
 		return new FoodItem(getName(), sprite, count, feed);
 	}
 }

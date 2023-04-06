@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -68,7 +69,7 @@ public class StackableItem extends Item {
 	}
 
 	@Override
-	public StackableItem clone() {
+	public @NotNull StackableItem copy() {
 		return new StackableItem(getName(), sprite, count);
 	}
 

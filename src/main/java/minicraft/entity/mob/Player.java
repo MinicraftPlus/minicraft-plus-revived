@@ -470,7 +470,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
-				Item drop = activeItem.clone();
+				Item drop = activeItem.copy();
 
 				if (input.inputPressed("drop-one") && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
@@ -495,7 +495,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
 					if (stackable.count > 0) {
-						getLevel().dropItem(x, y, stackable.clone());
+						getLevel().dropItem(x, y, stackable.copy());
 					}
 
 					activeItem = null;
@@ -556,7 +556,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
 					if (((StackableItem)prevItem).count > 0) {
-						getLevel().dropItem(x, y, prevItem.clone());
+						getLevel().dropItem(x, y, prevItem.copy());
 					}
 				} else if (returned == 0) {
 					getLevel().dropItem(x, y, prevItem);

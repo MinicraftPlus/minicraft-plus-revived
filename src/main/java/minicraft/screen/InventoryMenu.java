@@ -36,7 +36,7 @@ class InventoryMenu extends ItemListMenu {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
 			Item invItem = entry.getItem();
-			Item drop = invItem.clone();
+			Item drop = invItem.copy();
 
 			if (!creativeInv) {
 				if (dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {

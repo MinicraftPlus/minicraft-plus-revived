@@ -902,7 +902,7 @@ public class Load {
 		int loaded = inventory.add(item);
 
 		if (loaded < total) {
-			deathChest.getInventory().add(item.clone());
+			deathChest.getInventory().add(item.copy());
 		}
 	}
 

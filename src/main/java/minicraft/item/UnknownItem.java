@@ -2,6 +2,7 @@ package minicraft.item;
 
 import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.jetbrains.annotations.NotNull;
 
 public class UnknownItem extends StackableItem {
 
@@ -9,7 +10,7 @@ public class UnknownItem extends StackableItem {
 		super(reqName, SpriteLinker.missingTexture(SpriteType.Item));
 	}
 
-	public UnknownItem clone() {
+	public @NotNull UnknownItem copy() {
 		return new UnknownItem(getName());
 	}
 }
