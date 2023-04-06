@@ -62,6 +62,23 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		workbenchRecipes.add(new Recipe("Snake Armor_1", "scale_15"));
 
+		workbenchRecipes.add(new Recipe("white dye_1", "Bone Meal_1"));
+		workbenchRecipes.add(new Recipe("blue dye_1", "Lapis_1"));
+		workbenchRecipes.add(new Recipe("green dye_1", "Cactus_1"));
+		workbenchRecipes.add(new Recipe("yellow dye_1", "Flower_1"));
+		workbenchRecipes.add(new Recipe("black dye_1", "Coal_1"));
+		workbenchRecipes.add(new Recipe("red dye_1", "Rose_1"));
+		workbenchRecipes.add(new Recipe("orange dye_1", "red dye_1", "yellow dye_1"));
+		workbenchRecipes.add(new Recipe("purple dye_1", "blue dye_1", "red dye_1"));
+		workbenchRecipes.add(new Recipe("cyan dye_1", "blue dye_1", "green dye_1"));
+		workbenchRecipes.add(new Recipe("brown dye_1", "green dye_1", "red dye_1"));
+		workbenchRecipes.add(new Recipe("pink dye_1", "white dye_1", "red dye_1"));
+		workbenchRecipes.add(new Recipe("light blue dye_1", "white dye_1", "blue dye_1"));
+		workbenchRecipes.add(new Recipe("lime dye_1", "white dye_1", "green dye_1"));
+		workbenchRecipes.add(new Recipe("gray dye_1", "white dye_1", "black dye_1"));
+		workbenchRecipes.add(new Recipe("light gray dye_1", "white dye_1", "gray dye_1"));
+		workbenchRecipes.add(new Recipe("magenta dye_1", "purple dye_1", "pink dye_1"));
+
 		loomRecipes.add(new Recipe("String_2", "Wool_1"));
 		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
 		loomRecipes.add(new Recipe("blue wool_1", "Wool_1", "Lapis_1"));

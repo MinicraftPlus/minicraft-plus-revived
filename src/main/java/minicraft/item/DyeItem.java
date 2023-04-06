@@ -10,7 +10,7 @@ public class DyeItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		for (DyeColor color : DyeColor.values()) {
-			items.add(new DyeItem(color.toString() + " Dye", new SpriteLinker.LinkedSprite(
+			items.add(new DyeItem(color.toString().replace('_', ' ') + " Dye", new SpriteLinker.LinkedSprite(
 				SpriteLinker.SpriteType.Item, color.toString().toLowerCase() + "_dye"), color));
 		}
 
