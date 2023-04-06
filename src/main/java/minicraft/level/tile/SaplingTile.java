@@ -8,8 +8,8 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
-public class SaplingTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
+public class SaplingTile extends Tile implements BonemealableTile {
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
 
 	private Tile onType;
 	private Tile growsTo;
@@ -46,5 +46,20 @@ public class SaplingTile extends Tile {
 		level.setTile(x, y, onType);
 		Sound.play("monsterhurt");
 		return true;
+	}
+
+	@Override
+	public boolean isValidBonemealTarget(Level level, int x, int y) {
+		return true;
+	}
+
+	@Override
+	public boolean isBonemealSuccess(Level level, int x, int y) {
+		return true;
+	}
+
+	@Override
+	public void performBonemeal(Level level, int x, int y) {
+		level.setData(x, y, Math.min(level.getData(x, y) + random.nextInt(30), 110));
 	}
 }

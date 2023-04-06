@@ -1,20 +1,23 @@
 package minicraft.level;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.Random;
-
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
+import minicraft.core.Game;
+import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
+import minicraft.level.tile.TallGrassTile;
+import minicraft.level.tile.Tiles;
+import minicraft.level.tile.TreeTile;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import minicraft.core.Game;
-import minicraft.core.io.Settings;
-import minicraft.level.tile.Tiles;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.Random;
+import java.util.function.BiFunction;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -38,7 +41,7 @@ public class LevelGen {
 		}
 
 		int stepSize = featureSize;
-		double scale = 2 / w;
+		double scale = 2.0 / w;
 		double scaleMod = 1;
 		do {
 			int halfStep = stepSize / 2;
@@ -49,7 +52,7 @@ public class LevelGen {
 					double c = sample(x, y + stepSize); // Fetches the next value down, possibly looping back to the top of the column.
 					double d = sample(x + stepSize, y + stepSize); // Fetches the value one down, one right.
 
-					/**
+					/*
 					 * This could probably use some explaining... Note: the number values are probably only good the first time around...
 					 *
 					 * This starts with taking the average of the four numbers from before (they form a little square in adjacent tiles), each of which holds a value from -1 to 1.
@@ -83,7 +86,7 @@ public class LevelGen {
 				}
 			}
 
-			/**
+			/*
 			 * THEN... this stuff is set to repeat the system all over again!
 			 * The featureSize is halved, allowing access to further unset mids, and the scale changes...
 			 * The scale increases the first time, x1.8, but the second time it's x1.1, and after that probably a little less than 1. So, it generally increases a bit, maybe to 4 / w at tops. This results in the 5th random value being more significant than the first 4 ones in later iterations.
@@ -99,7 +102,7 @@ public class LevelGen {
 	} // This merely returns the value, like Level.getTile(x, y).
 
 	private void setSample(int x, int y, double value) {
-		/**
+		/*
 		 * This method is short, but difficult to understand. This is what I think it does:
 		 *
 		 * The values array is like a 2D array, but formatted into a 1D array; so the basic "x + y * w" is used to access a given value.
@@ -115,8 +118,7 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
-	@Nullable
-	static short[][] createAndValidateMap(int w, int h, int level, long seed) {
+	static short[] @Nullable [] createAndValidateMap(int w, int h, int level, long seed) {
 		worldSeed = seed;
 
 		if (level == 1)
@@ -156,7 +158,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[] @Nullable [] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
 			short[][] result = createUndergroundMap(w, h, depth);
@@ -197,7 +199,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateSkyMap(int w, int h) {
+	private static short[] @Nullable [] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 
 		do {
@@ -414,6 +416,18 @@ public class LevelGen {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
 						}
+					}
+				}
+			}
+		}
+
+		for (int x = 0; x < w; x++) {
+			for (int y = 0; y < h; y++) {
+				int xx = x + random.nextInt(3) - random.nextInt(3);
+				int yy = y + random.nextInt(3) - random.nextInt(3);
+				if (xx >= 0 && yy >= 0 && xx < w && yy < h && random.nextInt(5) < 3) {
+					if (map[xx + yy * w] == Tiles.get("grass").id) {
+						map[xx + yy * w] = TallGrassTile.grassIDs.get(random.nextInt(TallGrassTile.grassIDs.size()));
 					}
 				}
 			}
@@ -696,7 +710,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -778,7 +792,6 @@ public class LevelGen {
 
 		if (!valid) {
 			maplvls = new int[1];
-			maplvls[0] = 0;
 		}
 
 		//noinspection InfiniteLoopStatement
@@ -786,6 +799,7 @@ public class LevelGen {
 			int w = 128;
 			int h = 128;
 
+			//noinspection ConstantConditions
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 
@@ -822,11 +836,11 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)));
-			if (LevelGen.worldSeed == 0x100)
-				LevelGen.worldSeed = 0xAAFF20;
-			else
-				LevelGen.worldSeed = 0x100;
+			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed "+worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] {"Next", "0x100", "0xAAFF20"}, "Next");
+			if (op == 1) LevelGen.worldSeed = 0x100;
+			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
+			else LevelGen.worldSeed++;
 		}
 	}
 }

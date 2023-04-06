@@ -40,6 +40,7 @@ public class FurnitureItem extends Item {
 
 		items.add(new FurnitureItem(new Tnt()));
 		items.add(new FurnitureItem(new Bed()));
+		items.add(new FurnitureItem(new Composter()));
 
 		return items;
 	}

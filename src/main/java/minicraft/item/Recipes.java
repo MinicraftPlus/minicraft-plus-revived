@@ -57,6 +57,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Rock Pickaxe_1", "Wood_5", "Stone_5"));
 		workbenchRecipes.add(new Recipe("Rock Shovel_1", "Wood_5", "Stone_5"));
 		workbenchRecipes.add(new Recipe("Rock Bow_1", "Wood_5", "Stone_5", "string_2"));
+		workbenchRecipes.add(new Recipe("Bone Meal_3", "Bone_1"));
 
 		workbenchRecipes.add(new Recipe("arrow_3", "Wood_2", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));

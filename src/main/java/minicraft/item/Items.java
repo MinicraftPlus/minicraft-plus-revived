@@ -19,7 +19,7 @@ public class Items {
 
 	 If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
 	 */
-	private static ArrayList<Item> items = new ArrayList<>();
+	private static final ArrayList<Item> items = new ArrayList<>();
 
 	private static void add(Item i) {
 		items.add(i);
@@ -44,6 +44,9 @@ public class Items {
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
+		addAll(BoneMealItem.getAllInstances());
+		addAll(WateringCanItem.getAllInstances());
+		addAll(FertilizerItem.getAllInstances());
 		addAll(DyeItem.getAllInstances());
 	}
 
@@ -108,6 +111,8 @@ public class Items {
 				((StackableItem)i).count = data;
 			if (i instanceof ToolItem && hadUnderscore)
 				((ToolItem)i).dur = data;
+			if (i instanceof WateringCanItem)
+				((WateringCanItem) i).content = data;
 			return i;
 		} else {
 			Logging.ITEMS.error("Requested invalid item with name: '{}'", name);

@@ -650,6 +650,8 @@ public class Load {
 								}
 							}
 						}
+					} else if (tilename.equalsIgnoreCase("Tree")) {
+						tilename = "Oak";
 					}
 
 					tiles[tileArrIdx] = Tiles.get(tilename).id;

@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import minicraft.core.CrashHandler;
+import minicraft.level.tile.farming.HeavenlyBerriesTile;
+import minicraft.level.tile.farming.HellishBerriesTile;
+import minicraft.level.tile.farming.TomatoTile;
+import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
@@ -32,7 +36,8 @@ public final class Tiles {
 
 		tiles.put((short)7, new RockTile("Rock"));
 		tiles.put((short)8, new TreeTile("Tree"));
-		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
+
+		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Oak")));
 		tiles.put((short)10, new SandTile("Sand"));
 		tiles.put((short)11, new CactusTile("Cactus"));
 		tiles.put((short)12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
@@ -72,6 +77,14 @@ public final class Tiles {
 		tiles.put((short)47, new BossWallTile());
 		tiles.put((short)48, new BossFloorTile());
 		tiles.put((short)49, new BossDoorTile());
+		tiles.put((short)50, new TomatoTile("Tomato"));
+		tiles.put((short)51, new CarrotTile("Carrot"));
+		tiles.put((short)52, new TallGrassTile("Tall Grass", TallGrassTile.TallGrassType.GRASS));
+		tiles.put((short)53, new TallGrassTile("Double Tall Grass", TallGrassTile.TallGrassType.TALL_GRASS));
+		tiles.put((short)54, new TallGrassTile("Fern", TallGrassTile.TallGrassType.FERN));
+		tiles.put((short)55, new TallGrassTile("Large Fern", TallGrassTile.TallGrassType.LARGE_FERN));
+		tiles.put((short)56, new HeavenlyBerriesTile("Heavenly Berries"));
+		tiles.put((short)57, new HellishBerriesTile("Hellish Berries"));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
@@ -83,7 +96,7 @@ public final class Tiles {
 	}
 
 
-	protected static void add(int id, Tile tile) {
+	static void add(int id, Tile tile) {
 		tiles.put((short)id, tile);
 		Logging.TILES.debug("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;

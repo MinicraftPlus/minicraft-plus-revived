@@ -18,6 +18,7 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
+import minicraft.level.tile.TreeTile;
 import minicraft.util.Logging;
 
 import java.util.*;
@@ -38,6 +39,8 @@ public class Level {
 
 	public short[] tiles; // An array of all the tiles in the world.
 	public short[] data; // An array of the data of the tiles in the world.
+
+	public TreeTile.TreeType[] treeTypes; // An array of tree types
 
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -132,6 +135,37 @@ public class Level {
 
 		tiles = maps[0]; // Assigns the tiles in the map
 		data = maps[1]; // Assigns the data of the tiles
+
+		treeTypes = new TreeTile.TreeType[w * h];
+		{
+			LevelGen noise1 = new LevelGen(w, h, 32);
+			LevelGen noise2 = new LevelGen(w, h, 32);
+			TreeTile.TreeType[] types = TreeTile.TreeType.values();
+			for (int y = 0; y < h; y++) { // Loop through height
+				for (int x = 0; x < w; x++) { // Loop through width
+					// Randomly selecting a tree type.
+					int i = x + y * w;
+					double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+					// This calculates a sort of distance based on the current coordinate.
+					double xd = x / (w - 1.0) * 2 - 1;
+					double yd = y / (h - 1.0) * 2 - 1;
+					if (xd < 0) xd = -xd;
+					if (yd < 0) yd = -yd;
+					double dist = Math.max(xd, yd);
+					dist = dist * dist * dist * dist;
+					dist = dist * dist * dist * dist;
+					val += 1 - dist*20;
+					val += 1.5; // Assuming the range of value is from 0 to 2.
+					val *= types.length / 2.0;
+					val += 1; // Incrementing index.
+					// The original val mainly falls in small interval instead of averagely.
+					val = 1.0/(3 * types.length) * Math.pow(val - 5, 2); // Quadratically bloating the value.
+					int idx = (int) Math.round(val - 1); // Decrementing index.
+					treeTypes[x + y * w] = (idx >= types.length || idx < 0) ? TreeTile.TreeType.OAK // Oak by default.
+						: types[idx];
+				}
+			}
+		}
 
 		if (level < 0)
 			generateSpawnerStructures();
@@ -463,7 +497,7 @@ public class Level {
 		int h = (Screen.h + 15) >> 4;
 
 		screen.setOffset(xScroll, yScroll);
-		
+
 		// this specifies the maximum radius that the game will stop rendering the light from the source object once off screen
 		int r = 8;
 
@@ -524,7 +558,7 @@ public class Level {
 
 	public int getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w] & 0xff;
+		return data[x + y * w];
 	}
 
 	public void setData(int x, int y, int val) {
@@ -735,7 +769,7 @@ public class Level {
 	}
 
 	public Player[] getPlayers() {
-		return players.toArray(new Player[players.size()]);
+		return players.toArray(new Player[0]);
 	}
 
 	public Player getClosestPlayer(int x, int y) {
@@ -766,7 +800,7 @@ public class Level {
 			for (int xp = x-rx; xp <= x+rx; xp++)
 				if (xp >= 0 && xp < w && yp >= 0 && yp < h)
 					local.add(new Point(xp, yp));
-		return local.toArray(new Point[local.size()]);
+		return local.toArray(new Point[0]);
 	}
 
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
@@ -776,7 +810,7 @@ public class Level {
 		for (Point p: getAreaTilePositions(x, y, rx, ry))
 			local.add(getTile(p.x, p.y));
 
-		return local.toArray(new Tile[local.size()]);
+		return local.toArray(new Tile[0]);
 	}
 
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }

@@ -620,7 +620,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			// If the interaction between you and an entity is successful, then return.
-			if (interact(getInteractionBox(INTERACT_DIST))) return;
+			if (interact(getInteractionBox(INTERACT_DIST))) {
+				if (activeItem.isDepleted())
+					activeItem = null;
+				return;
+			}
 
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
