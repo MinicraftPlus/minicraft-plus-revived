@@ -1,14 +1,12 @@
 package minicraft.core;
 
+import kong.unirest.Empty;
+import kong.unirest.HttpResponse;
 import minicraft.core.CrashHandler.ErrorInfo.ErrorType;
 import minicraft.core.io.ClipboardHandler;
 import minicraft.network.Analytics;
 import minicraft.util.Logging;
-
-import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.concurrent.Future;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -21,10 +19,13 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import org.jetbrains.annotations.Nullable;
-
-import kong.unirest.Empty;
-import kong.unirest.HttpResponse;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagLayout;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.concurrent.Future;
 
 public class CrashHandler {
 	public static void crashHandle(Thread thread, Throwable throwable) { crashHandle(throwable); }

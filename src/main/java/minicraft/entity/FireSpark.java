@@ -1,15 +1,11 @@
 package minicraft.entity;
 
 import minicraft.core.Game;
-import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
-
-import java.util.List;
 
 public class FireSpark extends Entity {
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "spark");

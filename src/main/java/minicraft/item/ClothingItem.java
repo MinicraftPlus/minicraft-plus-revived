@@ -1,7 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -10,6 +8,8 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 public class ClothingItem extends StackableItem {
 

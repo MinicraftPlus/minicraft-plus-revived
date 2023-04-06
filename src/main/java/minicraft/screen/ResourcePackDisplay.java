@@ -1,5 +1,33 @@
 package minicraft.screen;
 
+import minicraft.core.CrashHandler;
+import minicraft.core.Game;
+import minicraft.core.Renderer;
+import minicraft.core.io.FileHandler;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
+import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteAnimation;
+import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.saveload.Save;
+import minicraft.screen.entry.ArrayEntry;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
+import minicraft.util.BookData;
+import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -29,36 +57,6 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import javax.imageio.ImageIO;
-
-import com.studiohartman.jamepad.ControllerButton;
-import minicraft.core.io.FileHandler;
-import minicraft.core.io.InputHandler;
-import minicraft.core.CrashHandler;
-import minicraft.core.Game;
-import minicraft.core.Renderer;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
-import minicraft.core.io.Sound;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.MinicraftImage;
-import minicraft.gfx.Point;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker;
-import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.saveload.Save;
-import minicraft.screen.entry.ArrayEntry;
-import minicraft.screen.entry.ListEntry;
-import minicraft.screen.entry.SelectEntry;
-import minicraft.util.BookData;
-import minicraft.util.Logging;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ResourcePackDisplay extends Display {
 	/* Resource Pack

@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;

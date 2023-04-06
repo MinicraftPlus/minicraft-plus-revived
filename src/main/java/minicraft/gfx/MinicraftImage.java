@@ -1,10 +1,10 @@
 package minicraft.gfx;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
 import minicraft.core.CrashHandler;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * Although we have SpriteLinker, we still need SpriteSheet for buffering.

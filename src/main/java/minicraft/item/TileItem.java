@@ -1,9 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -18,6 +14,10 @@ import minicraft.level.tile.Tiles;
 import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TileItem extends StackableItem {
 

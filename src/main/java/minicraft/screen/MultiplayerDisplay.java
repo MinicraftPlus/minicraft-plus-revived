@@ -1,11 +1,20 @@
 package minicraft.screen;
 
-import kong.unirest.*;
+import kong.unirest.Callback;
+import kong.unirest.Empty;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraft.gfx.*;
+import minicraft.gfx.Color;
+import minicraft.gfx.Ellipsis;
 import minicraft.gfx.Ellipsis.SequentialEllipsis;
+import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
+import minicraft.gfx.Screen;
 import minicraft.network.Analytics;
 import minicraft.util.Logging;
 

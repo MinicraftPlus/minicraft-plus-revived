@@ -1,8 +1,5 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -13,6 +10,9 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PlayerDeathDisplay extends Display {
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
