@@ -14,6 +14,7 @@ import minicraft.entity.mob.*;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -633,7 +634,22 @@ public class Level {
 				// Spawns the friendly mobs.
 				if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 				else if (rnd >= 68) add((new Pig()), nx, ny);
-				else add((new Sheep()), nx, ny);
+				else { // Sheep spawning
+					double colorRnd = random.nextDouble();
+					if (colorRnd < 0.8) { // 80% for default color, i.e. white
+						add((new Sheep()), nx, ny);
+					} else if (colorRnd < 0.85) { // 5% for black
+						add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
+					} else if (colorRnd < 0.9) { // 5% for gray
+						add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
+					} else if (colorRnd < 0.95) { // 5% for light gray
+						add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
+					} else if (colorRnd < 0.98) { // 3% for brown
+						add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
+					} else { // 2% for pink
+						add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+					}
+				}
 
 				spawned = true;
 			}
