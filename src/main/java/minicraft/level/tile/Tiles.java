@@ -37,7 +37,7 @@ public final class Tiles {
 		tiles.put((short)7, new RockTile("Rock"));
 		tiles.put((short)8, new TreeTile("Tree"));
 
-		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Oak")));
+		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
 		tiles.put((short)10, new SandTile("Sand"));
 		tiles.put((short)11, new CactusTile("Cactus"));
 		tiles.put((short)12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));

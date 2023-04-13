@@ -69,14 +69,15 @@ public class TreeTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 
-		boolean u = level.getTile(x, y - 1) == this;
-		boolean l = level.getTile(x - 1, y) == this;
-		boolean r = level.getTile(x + 1, y) == this;
-		boolean d = level.getTile(x, y + 1) == this;
-		boolean ul = level.getTile(x - 1, y - 1) == this;
-		boolean ur = level.getTile(x + 1, y - 1) == this;
-		boolean dl = level.getTile(x - 1, y + 1) == this;
-		boolean dr = level.getTile(x + 1, y + 1) == this;
+		TreeType thisType = level.treeTypes[x + y * level.w];
+		boolean u = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
+		boolean l = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
+		boolean r = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
+		boolean d = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
+		boolean ul = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
+		boolean ur = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
+		boolean dl = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
+		boolean dr = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
 
 		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
