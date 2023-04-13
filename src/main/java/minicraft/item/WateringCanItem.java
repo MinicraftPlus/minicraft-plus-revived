@@ -12,6 +12,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import minicraft.level.tile.farming.CropTile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -104,7 +105,7 @@ public class WateringCanItem extends Item {
 	}
 
 	@Override
-	public Item clone() {
+	public @NotNull Item copy() {
 		return new WateringCanItem(getName());
 	}
 

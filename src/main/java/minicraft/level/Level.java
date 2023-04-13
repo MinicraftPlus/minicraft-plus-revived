@@ -61,7 +61,7 @@ public class Level {
 	public short[] tiles; // An array of all the tiles in the world.
 	public short[] data; // An array of the data of the tiles in the world.
 
-	public TreeTile.TreeType[] treeTypes; // An array of tree types
+	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -134,29 +134,6 @@ public class Level {
 		random = new Random(seed);
 		short[][] maps; // Multidimensional array (an array within a array), used for the map
 
-		if (level != -4 && level != 0)
-			monsterDensity = 8;
-
-		updateMobCap();
-
-		if(!makeWorld) {
-			int arrsize = w * h;
-			tiles = new short[arrsize];
-			data = new short[arrsize];
-			return;
-		}
-
-		Logging.WORLD.debug("Making level " + level + "...");
-
-		maps = LevelGen.createAndValidateMap(w, h, level, seed);
-		if (maps == null) {
-			Logging.WORLD.error("Level generation: Returned maps array is null");
-			return;
-		}
-
-		tiles = maps[0]; // Assigns the tiles in the map
-		data = maps[1]; // Assigns the data of the tiles
-
 		treeTypes = new TreeTile.TreeType[w * h];
 		{
 			LevelGen noise1 = new LevelGen(w, h, 32);
@@ -187,6 +164,30 @@ public class Level {
 				}
 			}
 		}
+
+		if (level != -4 && level != 0)
+			monsterDensity = 8;
+
+		updateMobCap();
+
+		if(!makeWorld) {
+			int arrsize = w * h;
+			tiles = new short[arrsize];
+			data = new short[arrsize];
+			return;
+		}
+
+		Logging.WORLD.debug("Making level " + level + "...");
+
+		maps = LevelGen.createAndValidateMap(w, h, level, seed);
+		if (maps == null) {
+			Logging.WORLD.error("Level generation: Returned maps array is null");
+			return;
+		}
+
+		tiles = maps[0]; // Assigns the tiles in the map
+		data = maps[1]; // Assigns the data of the tiles
+
 
 		if (level < 0)
 			generateSpawnerStructures();

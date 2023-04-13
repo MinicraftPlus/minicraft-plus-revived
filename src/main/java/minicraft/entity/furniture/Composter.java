@@ -26,7 +26,7 @@ public class Composter extends Furniture {
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (compost == MAX_COMPOST) {
 			compost = 0;
-			FertilizerItem i = (FertilizerItem) Items.get("Fertilizer").clone();
+			FertilizerItem i = (FertilizerItem) Items.get("Fertilizer").copy();
 			i.count = 1;
 			player.getLevel().dropItem(x, y, i);
 			refreshStatus();
