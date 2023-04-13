@@ -1,7 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -9,6 +7,9 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.TorchTile;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 public class TorchItem extends TileItem {
 
@@ -39,7 +40,7 @@ public class TorchItem extends TileItem {
 	@Override
 	public int hashCode() { return 8931; }
 
-	public TorchItem clone() {
+	public @NotNull TorchItem copy() {
 		return new TorchItem(count);
 	}
 }

@@ -19,7 +19,6 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
-import minicraft.screen.QuestsDisplay;
 import minicraft.util.AdvancementElement;
 
 import java.util.Arrays;

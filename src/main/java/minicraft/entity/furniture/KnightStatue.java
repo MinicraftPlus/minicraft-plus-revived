@@ -5,7 +5,6 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
 

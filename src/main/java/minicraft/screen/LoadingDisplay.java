@@ -1,7 +1,5 @@
 package minicraft.screen;
 
-import javax.swing.Timer;
-
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -13,6 +11,8 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
+
+import javax.swing.Timer;
 
 public class LoadingDisplay extends Display {
 

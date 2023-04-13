@@ -15,8 +15,14 @@ import org.tinylog.runtime.Timestamp;
 import org.tinylog.writers.ConsoleWriter;
 import org.tinylog.writers.Writer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class TinylogLoggingConfiguration {
 	public static class WriterConfig {

@@ -1,9 +1,12 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraft.gfx.*;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
+import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
 import minicraft.screen.entry.StringEntry;
 
 import java.util.ArrayList;

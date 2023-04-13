@@ -1,9 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -17,7 +13,12 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TileItem extends StackableItem {
 
@@ -156,7 +157,7 @@ public class TileItem extends StackableItem {
 	@Override
 	public int hashCode() { return super.hashCode() + model.hashCode(); }
 
-	public TileItem clone() {
+	public @NotNull TileItem copy() {
 		return new TileItem(getName(), sprite, count, model, validTiles);
 	}
 }

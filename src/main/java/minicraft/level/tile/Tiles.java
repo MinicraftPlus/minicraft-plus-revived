@@ -1,8 +1,5 @@
 package minicraft.level.tile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import minicraft.core.CrashHandler;
 import minicraft.level.tile.farming.HeavenlyBerriesTile;
 import minicraft.level.tile.farming.HellishBerriesTile;
@@ -12,6 +9,9 @@ import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M

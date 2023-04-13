@@ -4,14 +4,9 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
-import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 

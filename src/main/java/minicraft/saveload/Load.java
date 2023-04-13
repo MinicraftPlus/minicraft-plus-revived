@@ -59,9 +59,9 @@ import minicraft.screen.QuestsDisplay;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
-import minicraft.util.AdvancementElement;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -81,8 +81,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-import java.util.function.Predicate;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 public class Load {
 
@@ -902,7 +902,7 @@ public class Load {
 		int loaded = inventory.add(item);
 
 		if (loaded < total) {
-			deathChest.getInventory().add(item.clone());
+			deathChest.getInventory().add(item.copy());
 		}
 	}
 

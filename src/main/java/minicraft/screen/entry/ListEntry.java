@@ -1,11 +1,11 @@
 package minicraft.screen.entry;
 
-import java.util.Locale;
-
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+
+import java.util.Locale;
 
 public abstract class ListEntry {
 
