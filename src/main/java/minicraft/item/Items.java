@@ -48,6 +48,7 @@ public class Items {
 		addAll(WateringCanItem.getAllInstances());
 		addAll(FertilizerItem.getAllInstances());
 		addAll(DyeItem.getAllInstances());
+		addAll(WoolItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {

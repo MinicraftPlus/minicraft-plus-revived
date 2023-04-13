@@ -44,13 +44,6 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Obsidian Wall", new LinkedSprite(SpriteType.Item, "obsidian_wall"), new TileModel("Obsidian Wall"), "Obsidian"));
 		items.add(new TileItem("Obsidian Door", new LinkedSprite(SpriteType.Item, "obsidian_door"), new TileModel("Obsidian Door"), "Obsidian"));
 
-		items.add(new TileItem("Wool", new LinkedSprite(SpriteType.Item, "wool"), new TileModel("Wool"), "hole", "water"));
-		items.add(new TileItem("Red Wool", new LinkedSprite(SpriteType.Item, "red_wool"), new TileModel("Red Wool"), "hole", "water"));
-		items.add(new TileItem("Blue Wool", new LinkedSprite(SpriteType.Item, "blue_wool"), new TileModel("Blue Wool"), "hole", "water"));
-		items.add(new TileItem("Green Wool", new LinkedSprite(SpriteType.Item, "green_wool"), new TileModel("Green Wool"), "hole", "water"));
-		items.add(new TileItem("Yellow Wool", new LinkedSprite(SpriteType.Item, "yellow_wool"), new TileModel("Yellow Wool"), "hole", "water"));
-		items.add(new TileItem("Black Wool", new LinkedSprite(SpriteType.Item, "black_wool"), new TileModel("Black Wool"), "hole", "water"));
-
 		items.add(new TileItem("Sand", new LinkedSprite(SpriteType.Item, "sand"), new TileModel("sand"), "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", new LinkedSprite(SpriteType.Item, "cactus"), new TileModel("cactus Sapling"), "sand"));
 		items.add(new TileItem("Cloud", new LinkedSprite(SpriteType.Item, "cloud"), new TileModel("cloud"), "Infinite Fall"));

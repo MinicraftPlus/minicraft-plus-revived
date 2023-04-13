@@ -616,25 +616,29 @@ public class Load {
 						}
 					}
 
-					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
+					if (tilename.equalsIgnoreCase("Wool")) {
+						if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+							switch (Integer.parseInt(extradata.get(tileidx))) {
+								case 1:
+									tilename = "Red Wool";
+									break;
+								case 2:
+									tilename = "Yellow Wool";
+									break;
+								case 3:
+									tilename = "Green Wool";
+									break;
+								case 4:
+									tilename = "Blue Wool";
+									break;
+								case 5:
+									tilename = "Black Wool";
+									break;
+								default:
+									tilename = "White Wool";
+							}
+						} else if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
+							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if (Math.random() < 0.8) // don't replace *all* the lapis
@@ -853,6 +857,11 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
 			if (name.startsWith("Shear"))
 				name = name.replace("Shear", "Shears");
+		}
+
+		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
+			if (name.equalsIgnoreCase("Wool"))
+				name = name.replace("Wool", "White Wool");
 		}
 
 		return name;
