@@ -33,4 +33,4 @@
 12,cyan clothes
 12,purple clothes
 4,arrow,5
-:potion,1:coal,3:apple,3:dirt,7
+:awkward potion,1:coal,3:apple,3:dirt,7

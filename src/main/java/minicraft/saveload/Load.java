@@ -851,6 +851,11 @@ public class Load {
 				name = name.replace("Shear", "Shears");
 		}
 
+		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
+			if (name.startsWith("Potion"))
+				name = name.replace("Potion", "Awkward Potion");
+		}
+
 		return name;
 	}
 
@@ -950,7 +955,7 @@ public class Load {
 			}
 		}
 
-		Entity newEntity = null;
+		Entity newEntity;
 
 		if (entityName.equals("Spark") && !isLocalSave) {
 			int awID = Integer.parseInt(info.get(2));
@@ -963,10 +968,9 @@ public class Load {
 			}
 		} else {
 			int mobLvl = 1;
-			Class<?> c = null;
-			if (!Crafter.names.contains(entityName)) {
+			if (!Crafter.names.contains(entityName)) { // Entity missing debugging
 				try {
-					c = Class.forName("minicraft.entity.mob." + entityName);
+					Class.forName("minicraft.entity.mob." + entityName);
 				} catch (ClassNotFoundException ignored) {}
 			}
 
