@@ -84,6 +84,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("magenta dye_4", "pink dye_1", "red dye_1", "blue dye_1"));
 
 		loomRecipes.add(new Recipe("String_2", "white wool_1"));
+		loomRecipes.add(new Recipe("white wool_1", "String_3"));
 		loomRecipes.add(new Recipe("black wool_1", "white wool_1", "black dye_1"));
 		loomRecipes.add(new Recipe("red wool_1", "white wool_1", "red dye_1"));
 		loomRecipes.add(new Recipe("green wool_1", "white wool_1", "green dye_1"));
