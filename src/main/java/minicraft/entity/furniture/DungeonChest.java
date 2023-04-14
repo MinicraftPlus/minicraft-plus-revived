@@ -13,6 +13,7 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -42,7 +43,7 @@ public class DungeonChest extends Chest {
 	}
 
 	@Override
-	public Furniture clone() {
+	public @NotNull Furniture copy() {
 		return new DungeonChest(false, !this.isLocked);
 	}
 

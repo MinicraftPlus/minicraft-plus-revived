@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
@@ -47,8 +48,7 @@ public class Furniture extends Entity {
 		this.itemSprite = itemSprite;
 	}
 
-	@Override
-	public Furniture clone() {
+	public @NotNull Furniture copy() {
 		try {
 			return getClass().getDeclaredConstructor().newInstance();
 		} catch (Exception ex) {
