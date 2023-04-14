@@ -137,7 +137,7 @@ public class Load {
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
 
-			if (worldVer.compareTo(new Version("2.2.0-dev2")) < 0) {
+			if (worldVer.compareTo(new Version("2.2.0-dev3")) < 0) {
 				Logging.SAVELOAD.trace("Old version dungeon detected.");
 				ArrayList<ListEntry> entries = new ArrayList<>();
 				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
