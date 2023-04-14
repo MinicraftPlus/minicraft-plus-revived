@@ -40,6 +40,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
+import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -972,12 +973,19 @@ public class Load {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
 				return null;
 			}
+		} else if (entityName.contains(" Bed")) { // with a space, meaning that the bed has a color name in the front
+			String colorName = entityName.substring(0, entityName.length() - 4).toUpperCase().replace(' ', '_');
+			try {
+				newEntity = new Bed(DyeItem.DyeColor.valueOf(colorName));
+			} catch (IllegalArgumentException e) {
+				Logging.SAVELOAD.error("Invalid bed variant: `{}`, skipping.", entityName);
+				return null;
+			}
 		} else {
 			int mobLvl = 1;
-			Class<?> c = null;
-			if (!Crafter.names.contains(entityName)) {
+			if (!Crafter.names.contains(entityName)) { // Entity missing debugging
 				try {
-					c = Class.forName("minicraft.entity.mob." + entityName);
+					Class.forName("minicraft.entity.mob." + entityName);
 				} catch (ClassNotFoundException ignored) {}
 			}
 
@@ -1117,8 +1125,9 @@ public class Load {
 	@Nullable
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
-			case "Player": return null;
-			case "RemotePlayer": return null;
+			case "Player":
+			case "RemotePlayer":
+				return null;
 			case "Cow": return new Cow();
 			case "Sheep": return new Sheep();
 			case "Pig": return new Pig();
@@ -1151,7 +1160,7 @@ public class Load {
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
 			case "KnightStatue": return new KnightStatue(0);
 			case "ObsidianKnight": return  new ObsidianKnight(0);
-			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
+			default: Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}
