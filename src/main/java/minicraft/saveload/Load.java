@@ -858,7 +858,7 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
-			if (name.equalsIgnoreCase("Wool"))
+			if (name.startsWith("Wool"))
 				name = name.replace("Wool", "White Wool");
 		}
 
