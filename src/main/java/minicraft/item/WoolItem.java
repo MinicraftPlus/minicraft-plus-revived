@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.gfx.SpriteLinker;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class WoolItem extends TileItem {
 	}
 
 	@Override
-	public TileItem clone() {
+	public @NotNull TileItem copy() {
 		return new WoolItem(getName(), sprite, color);
 	}
 }
