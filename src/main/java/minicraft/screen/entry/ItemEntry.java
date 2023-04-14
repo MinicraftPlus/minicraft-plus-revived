@@ -1,10 +1,10 @@
 package minicraft.screen.entry;
 
-import java.util.List;
-
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+
+import java.util.List;
 
 public class ItemEntry extends ListEntry {
 

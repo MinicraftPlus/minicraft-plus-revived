@@ -32,7 +32,7 @@ public class TallGrassTile extends Tile {
 	}
 
 	public static final List<Short> grassIDs = Collections.unmodifiableList(Arrays.asList(
-		(short) 55, (short) 56, (short) 57, (short) 58));
+		(short) 52, (short) 53, (short) 54, (short) 55));
 
 	protected TallGrassTile(String name, TallGrassType type) {
 		super(name, type.sprite);

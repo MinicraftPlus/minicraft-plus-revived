@@ -1,13 +1,7 @@
 package minicraft.util;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.function.Consumer;
-
+import minicraft.core.Game;
+import minicraft.util.TinylogLoggingConfiguration.WriterConfig;
 import org.tinylog.Level;
 import org.tinylog.core.ConfigurationParser;
 import org.tinylog.core.LogEntry;
@@ -22,8 +16,13 @@ import org.tinylog.writers.ConsoleWriter;
 import org.tinylog.writers.FileWriter;
 import org.tinylog.writers.Writer;
 
-import minicraft.core.Game;
-import minicraft.util.TinylogLoggingConfiguration.WriterConfig;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 /** Originally copied from {@link org.tinylog.core.TinylogLoggingProvider} */
 public class TinylogLoggingProvider implements LoggingProvider {

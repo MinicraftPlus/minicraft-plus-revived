@@ -1,7 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -10,6 +8,9 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 public class BucketItem extends StackableItem {
 
@@ -96,7 +97,7 @@ public class BucketItem extends StackableItem {
 	@Override
 	public int hashCode() { return super.hashCode() + filling.offset * 31; }
 
-	public BucketItem clone() {
+	public @NotNull BucketItem copy() {
 		return new BucketItem(filling, count);
 	}
 }

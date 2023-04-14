@@ -27,6 +27,10 @@ but some sections are changed to compliant this project.
 + Added sand particle for sand
 + Added more support fonts (for `ÀÂÄÈÎÌÏÒÙÛÝ*«»£$&€§ªº`)
 + Added world-wide seed
++ Added controller support
+  + Added on-screen keyboard
++ Added logo splash screen
++ Added glass bottle and made potions return glass bottles when used
 
 ### Changes
 
@@ -44,6 +48,7 @@ but some sections are changed to compliant this project.
   * Changed some localization keys into IDs instead of words themselves
 * With optional flag `--savedir`, if present, no longer is appended an extra '.playminicraft/mods/Minecraft Plus' to it
 * Improved some textures
+  * Updated all ore-related and metal-related textures
 * Restructured the resources
 * Enhanced the rendering system for sprites
   * Added standard LinkedSprite, SpriteAnimation (also replaces the role of ConnectorSprite) for all sprite renderings
@@ -57,6 +62,14 @@ but some sections are changed to compliant this project.
 * Changed the height requirement on skin images from 32 pixels to 16 pixels
 * Fixed lights disappearing when out of screen
 * Improved player's tile indicator
+* Improved FPS option entry
+  * Added VSync and Unlimited options
+    * `VSync` captures the framerate of the device as the value (is not really the VSync)
+    * `Unlimited` does not limit the frame updates
+  * All numeral options are all multiple of 10
+* Cow and sheep now graze on grasses
+* Recipes are unlocked only when one of the materials obtained
+* A `clothes` item with the previous clothing color is returned when a new `clothes` item is applied
 
 ### Removals
 
@@ -65,6 +78,8 @@ but some sections are changed to compliant this project.
 ### Fixes
 
 * Fixed seed random problem
+* Fixed light rendering problem on lanterns
+* Fixed rendering positioning problem of color code styled texts
 
 ## [2.1.3]
 

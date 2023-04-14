@@ -6,7 +6,7 @@ Minicraft+ is an overhaul mod of Minicraft, a game made by Markus "Notch" Persso
 Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest version, or older versions.
 
 ## Major features
-* New game modes:
+* Four new gamemodes
   * Creative
   * Hardcore
   * Score

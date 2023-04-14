@@ -1,12 +1,11 @@
 package minicraft.screen.entry;
 
-import java.util.Arrays;
-
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Font;
+
+import java.util.Arrays;
 
 public class ArrayEntry<T> extends ListEntry {
 

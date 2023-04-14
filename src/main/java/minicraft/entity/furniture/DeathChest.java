@@ -46,7 +46,7 @@ public class DeathChest extends Chest {
 		this.x = player.x;
 		this.y = player.y;
 		for (Item i : player.getInventory().getItems()) {
-			inventory.add(i.clone());
+			inventory.add(i.copy());
 		}
 	}
 

@@ -1,13 +1,9 @@
 package minicraft.entity;
 
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;

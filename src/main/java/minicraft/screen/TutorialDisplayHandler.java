@@ -9,14 +9,11 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.item.Recipe;
 import minicraft.saveload.Load;
-import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.TutorialElement;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
