@@ -86,7 +86,7 @@ public class FurnitureItem extends Item {
 
 			level.add(furniture); // Adds the furniture to the world
 			if (Game.isMode("minicraft.settings.mode.creative"))
-				furniture = furniture.clone();
+				furniture = furniture.copy();
 			else
 				placed = true; // The value becomes true, which removes it from the player's active item
 
@@ -102,6 +102,6 @@ public class FurnitureItem extends Item {
 	public @NotNull FurnitureItem copy() {
 		// in case the item is a spawner, it will use the sprite position (sx, sy)
 		// instead if it is not, the constructor will obtain said sprite
-		return new FurnitureItem(furniture.clone());
+		return new FurnitureItem(furniture.copy());
 	}
 }
