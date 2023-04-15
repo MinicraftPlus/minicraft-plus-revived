@@ -127,7 +127,7 @@ public final class Tiles {
 		oldids.set(3, "flower");
 		oldids.set(4, "tree");
 		oldids.set(5, "dirt");
-		oldids.set(41, "wool");
+		oldids.set(41, "white wool");
 		oldids.set(42, "red wool");
 		oldids.set(43, "blue wool");
 		oldids.set(45, "green wool");
@@ -185,7 +185,7 @@ public final class Tiles {
 		oldids.set(116, "Obsidian door");
 		oldids.set(117, "Obsidian door");
 		oldids.set(119, "hole");
-		oldids.set(57, "wool");
+		oldids.set(57, "white wool");
 		oldids.set(58, "red wool");
 		oldids.set(59, "blue wool");
 		oldids.set(60, "green wool");

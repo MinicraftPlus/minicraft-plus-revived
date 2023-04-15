@@ -89,7 +89,7 @@ public class Sheep extends PassiveMob {
 		if (item instanceof ToolItem) {
 			if (!cut && ((ToolItem) item).type == ToolType.Shears) {
 				cut = true;
-				dropItem(1, 3, Items.get("Wool"));
+				dropItem(1, 3, Items.get(color.toString().replace('_', ' ') + " Wool"));
 				((ToolItem) item).payDurability();
 				return true;
 			}
@@ -107,7 +107,7 @@ public class Sheep extends PassiveMob {
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {min = 1; max = 2;}
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {min = 0; max = 2;}
 
-		if (!cut) dropItem(min, max, Items.get("wool"));
+		if (!cut) dropItem(min, max, Items.get(color.toString().replace('_', ' ') + " Wool"));
 		dropItem(min, max, Items.get("Raw Beef"));
 
 		super.die();

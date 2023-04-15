@@ -39,7 +39,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Chest_1", "Wood_20"));
 		workbenchRecipes.add(new Recipe("Anvil_1", "iron_5"));
 		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "Sand_8"));
-		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "Wool_5"));
+		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "White Wool_5"));
 		workbenchRecipes.add(new Recipe("Wood Fishing Rod_1", "Wood_10", "String_3"));
 		workbenchRecipes.add(new Recipe("Iron Fishing Rod_1", "Iron_10", "String_3"));
 		workbenchRecipes.add(new Recipe("Gold Fishing Rod_1", "Gold_10", "String_3"));
@@ -100,7 +100,7 @@ public class Recipes {
 		loomRecipes.add(new Recipe("light blue wool_1", "white wool_1", "light blue dye_1"));
 		loomRecipes.add(new Recipe("magenta wool_1", "white wool_1", "magenta dye_1"));
 		loomRecipes.add(new Recipe("orange wool_1", "white wool_1", "orange dye_1"));
-		loomRecipes.add(new Recipe("Bed_1", "Wood_5", "Wool_3"));
+		loomRecipes.add(new Recipe("Bed_1", "Wood_5", "White Wool_3"));
 
 		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "Lapis_1"));
 		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "Cactus_1"));
