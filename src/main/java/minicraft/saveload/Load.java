@@ -478,7 +478,6 @@ public class Load {
 			}
 
 			if (lang != null) {
-				Settings.set("language", lang);
 				Localization.changeLanguage(lang);
 			}
 		}
@@ -523,7 +522,6 @@ public class Load {
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
-			Settings.set("language", lang);
 			Localization.changeLanguage(lang);
 		}
 
