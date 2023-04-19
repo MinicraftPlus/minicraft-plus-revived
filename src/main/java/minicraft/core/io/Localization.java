@@ -16,6 +16,8 @@ public class Localization {
 	public static final Locale DEFAULT_LOCALE = Locale.US;
 	public static final Locale DEBUG_LOCALE = Locale.ROOT; // This locale is used for debugging;
 
+	public static boolean isDebugLocaleEnabled = false;
+
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
 
@@ -132,7 +134,7 @@ public class Localization {
 		// Clear array with localization files.
 		unloadedLocalization.clear();
 		localeInfo.clear();
-		if (Game.debug) { // Adding the debug locale as an option.
+		if (isDebugLocaleEnabled) { // Adding the debug locale as an option.
 			localeInfo.put(DEBUG_LOCALE, new LocaleInformation(DEBUG_LOCALE, "Debug", null));
 		}
 	}

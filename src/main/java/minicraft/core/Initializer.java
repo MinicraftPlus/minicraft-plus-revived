@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import minicraft.core.io.FileHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
@@ -59,6 +60,8 @@ public class Initializer extends Game {
 				Logging.logLevel = true;
 			} else if (args[i].equalsIgnoreCase("--debug-filelog-full")) {
 				Logging.fileLogFull = true;
+			} else if (args[i].equalsIgnoreCase("--debug-locale")) {
+				Localization.isDebugLocaleEnabled = true;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
