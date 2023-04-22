@@ -1,11 +1,11 @@
 package minicraft.screen.entry;
 
+import minicraft.core.io.ClipboardHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.core.io.ClipboardHandler;
 
 public class InputEntry extends ListEntry {
 

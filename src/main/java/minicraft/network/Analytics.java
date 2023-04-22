@@ -1,12 +1,15 @@
 package minicraft.network;
 
-import java.util.concurrent.*;
-
-import kong.unirest.*;
-
+import kong.unirest.Callback;
+import kong.unirest.Empty;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import minicraft.core.Game;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+
+import java.util.concurrent.Future;
 
 public enum Analytics {
 

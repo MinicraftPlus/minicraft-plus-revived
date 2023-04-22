@@ -11,7 +11,6 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
@@ -20,7 +19,6 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
-import minicraft.screen.QuestsDisplay;
 import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {

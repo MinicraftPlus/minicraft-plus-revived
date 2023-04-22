@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.OptionalLong;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
@@ -204,6 +203,13 @@ public class WorldGenDisplay extends Display {
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
+	}
 
 	@Override
 	public void tick(InputHandler input) {

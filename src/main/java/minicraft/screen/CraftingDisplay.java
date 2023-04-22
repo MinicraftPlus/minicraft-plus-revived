@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class CraftingDisplay extends Display {
@@ -108,7 +107,8 @@ public class CraftingDisplay extends Display {
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
-		onScreenKeyboardMenu.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
 	}
 
 	@Override

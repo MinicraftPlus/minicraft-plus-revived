@@ -1,7 +1,5 @@
 package minicraft.entity.furniture;
 
-import java.util.ArrayList;
-
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -9,6 +7,8 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
 import minicraft.screen.CraftingDisplay;
+
+import java.util.ArrayList;
 
 public class Crafter extends Furniture {
 

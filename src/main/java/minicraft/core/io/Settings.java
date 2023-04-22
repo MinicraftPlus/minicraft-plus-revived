@@ -3,9 +3,8 @@ package minicraft.core.io;
 import minicraft.core.Initializer;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
-import minicraft.screen.entry.RangeEntry;
 
-import java.awt.*;
+import java.awt.DisplayMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,9 +34,6 @@ public class Settings {
 		options.put("tutorials", new BooleanEntry("Tutorials", false));
 		options.put("quests", new BooleanEntry("Quests", false));
 		options.put("showquests", new BooleanEntry("Quests Panel", true));
-
-		options.put("language", new ArrayEntry<>("minicraft.settings.language", true, false, Localization.getLocales()));
-		options.get("language").setValue(Localization.getSelectedLanguage());
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))

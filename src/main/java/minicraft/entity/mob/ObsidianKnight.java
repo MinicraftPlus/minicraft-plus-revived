@@ -5,15 +5,16 @@ import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
-import minicraft.entity.*;
+import minicraft.entity.Arrow;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.FireSpark;
 import minicraft.entity.furniture.KnightStatue;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
-import minicraft.level.Level;
-import minicraft.level.Structure;
 import minicraft.screen.AchievementsDisplay;
 
 public class ObsidianKnight extends EnemyMob {

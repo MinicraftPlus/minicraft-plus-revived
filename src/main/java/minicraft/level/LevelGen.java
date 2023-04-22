@@ -1,20 +1,19 @@
 package minicraft.level;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.Random;
-
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
+import minicraft.core.Game;
+import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import minicraft.core.Game;
-import minicraft.core.io.Settings;
-import minicraft.level.tile.Tiles;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class LevelGen {
 	private static long worldSeed = 0;

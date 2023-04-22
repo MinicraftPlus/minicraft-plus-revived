@@ -1,12 +1,5 @@
 package minicraft.gfx;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.function.BiFunction;
-
-import javax.security.auth.DestroyFailedException;
-import javax.security.auth.Destroyable;
-
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -16,6 +9,13 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.util.Logging;
+
+import javax.security.auth.DestroyFailedException;
+import javax.security.auth.Destroyable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.function.BiFunction;
 
 /** This is not applicable for mob sprite animations. Only for generic sprite animations. */
 public class SpriteAnimation implements Destroyable {

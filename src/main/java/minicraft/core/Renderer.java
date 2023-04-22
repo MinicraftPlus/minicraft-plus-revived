@@ -100,8 +100,6 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {
-		ResourcePackDisplay.initPacks();
-		ResourcePackDisplay.reloadResources();
 		screen = new Screen();
 		lightScreen = new Screen();
 

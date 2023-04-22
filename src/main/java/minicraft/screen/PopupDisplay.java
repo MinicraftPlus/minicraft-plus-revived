@@ -3,11 +3,11 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -46,6 +46,13 @@ public class PopupDisplay extends Display {
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
+	}
 
 	@Override
 	public void tick(InputHandler input) {

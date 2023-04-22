@@ -1,7 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -9,6 +7,9 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 public class ClothingItem extends StackableItem {
 
@@ -45,7 +46,7 @@ public class ClothingItem extends StackableItem {
 				.findAny().orElse(null);
 			if (lastClothing == null)
 				lastClothing = (ClothingItem) Items.get("Reg Clothes");
-			lastClothing = lastClothing.clone();
+			lastClothing = lastClothing.copy();
 			lastClothing.count = 1;
 			player.tryAddToInvOrDrop(lastClothing);
 			player.shirtColor = playerCol;
@@ -56,7 +57,7 @@ public class ClothingItem extends StackableItem {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public ClothingItem clone() {
+	public @NotNull ClothingItem copy() {
 		return new ClothingItem(getName(), count, sprite, playerCol);
 	}
 }

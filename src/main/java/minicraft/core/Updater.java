@@ -16,7 +16,7 @@ import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 
-import java.awt.*;
+import java.awt.GraphicsDevice;
 
 public class Updater extends Game {
 	private Updater() {}

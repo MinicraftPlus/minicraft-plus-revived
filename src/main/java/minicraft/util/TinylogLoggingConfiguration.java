@@ -15,8 +15,14 @@ import org.tinylog.runtime.Timestamp;
 import org.tinylog.writers.ConsoleWriter;
 import org.tinylog.writers.Writer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class TinylogLoggingConfiguration {
 	public static class WriterConfig {
@@ -57,9 +63,7 @@ public class TinylogLoggingConfiguration {
 			java.util.ServiceLoader.load(Writer.class); // Workaround for ProGuard (see issue #126)
 		}
 
-		HashMap<Writer, WriterConfig> writers = new HashMap<>();
-
-		writers.putAll(generateConsoleWriters());
+		HashMap<Writer, WriterConfig> writers = new HashMap<>(generateConsoleWriters());
 
 		ServiceLoader<Writer> loader = new ServiceLoader<Writer>(Writer.class, Map.class);
 

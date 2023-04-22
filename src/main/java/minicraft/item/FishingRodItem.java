@@ -1,8 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -11,6 +8,10 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class FishingRodItem extends Item {
 
@@ -80,7 +81,7 @@ public class FishingRodItem extends Item {
     }
 
     @Override
-    public Item clone() {
+    public @NotNull Item copy() {
         FishingRodItem item = new FishingRodItem(this.level);
         item.uses = this.uses;
         return item;

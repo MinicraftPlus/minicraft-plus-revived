@@ -4,14 +4,14 @@ import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
-import minicraft.gfx.*;
 import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
+import minicraft.gfx.Screen;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Label;
 import java.awt.event.KeyEvent;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

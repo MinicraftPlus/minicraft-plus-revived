@@ -32,6 +32,12 @@ public class PassiveMob extends MobAi {
 	}
 
 	@Override
+	public void handleDespawn() {
+		if (isWithinLight()) return; // Do not despawn when it is within light.
+		super.handleDespawn();
+	}
+
+	@Override
 	public void render(Screen screen) {
 		super.render(screen);
 	}
