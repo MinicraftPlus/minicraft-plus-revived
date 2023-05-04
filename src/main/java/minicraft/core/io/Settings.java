@@ -5,6 +5,7 @@ import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 
 import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
