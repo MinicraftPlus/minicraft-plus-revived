@@ -7,6 +7,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
 import minicraft.screen.CraftingDisplay;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ public class Crafter extends Furniture {
 	}
 
 	@Override
-	public Furniture clone() {
+	public @NotNull Furniture copy() {
 		return new Crafter(type);
 	}
 

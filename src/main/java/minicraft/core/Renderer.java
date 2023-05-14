@@ -108,14 +108,7 @@ public class Renderer extends Game {
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		Initializer.startCanvasRendering();
-		try { // Reference: https://stackoverflow.com/a/61843644.
-			canvas.createBufferStrategy(3, GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getDefaultScreenDevice()
-				.getDefaultConfiguration()
-				.getBufferCapabilities());
-		} catch (AWTException e) {
-			CrashHandler.crashHandle(e, new ErrorInfo("Canvas Initialization Failure", ErrorInfo.ErrorType.UNEXPECTED, true, "The canvas is unable to be initialized."));
-		}
+		canvas.createBufferStrategy(3);
 
 		canvas.requestFocus();
 	}

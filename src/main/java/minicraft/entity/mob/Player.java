@@ -485,6 +485,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					((StackableItem)drop).count = 1;
 				} else {
 					activeItem = null; // Remove it from the "inventory"
+					if (isFishing) {
+						isFishing = false;
+						fishingTicks = maxFishingTicks;
+					}
 				}
 
 				level.dropItem(x, y, drop);
@@ -504,13 +508,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					if (stackable.count > 0) {
 						getLevel().dropItem(x, y, stackable.copy());
 					}
-
-					activeItem = null;
-				} else if (returned > 0) {
-					activeItem = null;
-				} else {
+				} else if (returned <= 0) {
 					getLevel().dropItem(x, y, activeItem);
-					activeItem = null;
+				}
+
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
 				}
 			}
 
@@ -539,6 +544,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
+						if (isFishing) {
+							isFishing = false;
+							fishingTicks = maxFishingTicks;
+						}
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
 					}
 					attack(); // Attack (with the power glove)

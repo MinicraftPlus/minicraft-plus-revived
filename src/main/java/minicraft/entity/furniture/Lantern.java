@@ -2,6 +2,7 @@ package minicraft.entity.furniture;
 
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.jetbrains.annotations.NotNull;
 
 public class Lantern extends Furniture {
 	public enum Type {
@@ -33,7 +34,7 @@ public class Lantern extends Furniture {
 	}
 
 	@Override
-	public Furniture clone() {
+	public @NotNull Furniture copy() {
 		return new Lantern(type);
 	}
 
