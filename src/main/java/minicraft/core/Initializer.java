@@ -6,6 +6,7 @@ import minicraft.core.io.Settings;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;
 
 import javax.imageio.ImageIO;
@@ -94,9 +95,10 @@ public class Initializer extends Game {
 				unprocessed--;
 			}
 
-			if (MAX_FPS == Settings.FPS_UNLIMITED || now - lastRender >= 1E9D / MAX_FPS) {
+			now = System.nanoTime();
+			if (MAX_FPS == Settings.FPS_UNLIMITED || now >= lastRender + 1E9D / MAX_FPS) {
 				frames++;
-				lastRender = System.nanoTime();
+				lastRender = now;
 				Renderer.render();
 			}
 
@@ -104,8 +106,8 @@ public class Initializer extends Game {
 				long interval = System.currentTimeMillis() - lastTimer1;
 				lastTimer1 = System.currentTimeMillis(); // Adds a second to the timer
 
-				fra = (int) (frames * 1000 / interval); // Saves total frames in last second
-				tik = (int) (ticks * 1000 / interval); // Saves total ticks in last second
+				fra = (int) Math.round(frames * 1000D / interval); // Saves total frames in last second
+				tik = (int) Math.round(ticks * 1000D / interval); // Saves total ticks in last second
 				frames = 0; // Resets frames
 				ticks = 0; // Resets ticks; ie, frames and ticks only are per second
 			}
