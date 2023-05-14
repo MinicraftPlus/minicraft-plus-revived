@@ -1,8 +1,5 @@
 package minicraft.entity.mob;
 
-import org.jetbrains.annotations.Nullable;
-
-import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;
@@ -11,15 +8,16 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.level.tile.GrassTile;
+import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.Nullable;
 
 public class Sheep extends PassiveMob {
 	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
 	private static final LinkedSprite[][] cutSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
 
-	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
-
 	public boolean cut = false;
-	private int ageWhenCut = 0;
 
 	/**
 	 * Creates a sheep entity.
@@ -46,7 +44,14 @@ public class Sheep extends PassiveMob {
 	@Override
 	public void tick() {
 		super.tick();
-		if (age - ageWhenCut > WOOL_GROW_TIME) cut = false;
+		Tile tile = level.getTile(x >> 4, y >> 4);
+		// If tall grasses are present, these are consumed and then turn into grass tiles.
+		if (tile instanceof GrassTile) {
+			if (random.nextInt(1000) == 0) { // Grazing
+				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
+				cut = false;
+			}
+		}
 	}
 
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
@@ -56,7 +61,6 @@ public class Sheep extends PassiveMob {
 			if (((ToolItem) item).type == ToolType.Shears) {
 				cut = true;
 				dropItem(1, 3, Items.get("Wool"));
-				ageWhenCut = age;
 				((ToolItem) item).payDurability();
 				return true;
 			}

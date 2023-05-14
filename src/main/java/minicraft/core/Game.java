@@ -1,6 +1,8 @@
 package minicraft.core;
 
-import minicraft.core.io.*;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -8,6 +10,7 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
+import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +21,6 @@ import java.util.List;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
-
-	public static boolean debug = false;
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
@@ -87,6 +88,9 @@ public class Game {
 
 		input = new InputHandler(Renderer.canvas);
 
+		ResourcePackDisplay.initPacks();
+		ResourcePackDisplay.reloadResources();
+
 		Tiles.initTileList();
 
 		// Load the selected language.
@@ -99,7 +103,7 @@ public class Game {
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
-		MAX_FPS = Settings.getFPS(); // DO NOT put this above.
+		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {

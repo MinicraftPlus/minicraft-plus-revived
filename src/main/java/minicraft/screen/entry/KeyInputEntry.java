@@ -1,12 +1,12 @@
 package minicraft.screen.entry;
 
-import java.util.Set;
-
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+
+import java.util.Set;
 
 public class KeyInputEntry extends SelectEntry {
 

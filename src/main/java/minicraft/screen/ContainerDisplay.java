@@ -10,7 +10,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
-import minicraft.screen.entry.InputEntry;
 
 public class ContainerDisplay extends Display {
 
@@ -119,7 +118,7 @@ public class ContainerDisplay extends Display {
 
 				boolean transferAll = input.getKey("shift-enter").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 
-				Item toItem = fromItem.clone();
+				Item toItem = fromItem.copy();
 
 				if (fromItem instanceof StackableItem) {
 					int move = 1;

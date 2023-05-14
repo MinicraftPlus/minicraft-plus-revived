@@ -8,7 +8,7 @@
 8,gem armor
 6,gold armor
 5,iron armor,2
-3,potion,10
+3,awkward potion,10
 4,speed potion,2
 6,speed potion,5
 3,light potion,2

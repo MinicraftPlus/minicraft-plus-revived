@@ -1,24 +1,11 @@
 package minicraft.screen;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-
-import com.studiohartman.jamepad.ControllerButton;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
-import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.furniture.Chest;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
@@ -26,8 +13,6 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
-import minicraft.item.Item;
-import minicraft.item.Recipe;
 import minicraft.saveload.Load;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
@@ -40,17 +25,14 @@ import minicraft.util.Quest.QuestSeries;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.BiPredicate;
 import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
 

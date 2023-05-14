@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.VersionInfo;
@@ -107,7 +106,7 @@ public class TitleDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked && Game.debug) rand = random.nextInt(splashes.length - 3) + 3;
+		if (input.getKey("F3-r").clicked) rand = random.nextInt(splashes.length - 3) + 3;
 
 		super.tick(input);
 	}

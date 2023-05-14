@@ -140,7 +140,7 @@ public class PlayerInvDisplay extends Display {
 						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 					} else return;
 
-					Item toItem = fromItem.clone();
+					Item toItem = fromItem.copy();
 
 					if (!transferAll) {
 						((StackableItem)toItem).count = 1;

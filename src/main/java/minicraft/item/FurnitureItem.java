@@ -3,10 +3,27 @@ package minicraft.item;
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.furniture.*;
-import minicraft.entity.mob.*;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Furniture;
+import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.Spawner;
+import minicraft.entity.furniture.Tnt;
+import minicraft.entity.mob.Cow;
+import minicraft.entity.mob.Creeper;
+import minicraft.entity.mob.Knight;
+import minicraft.entity.mob.Pig;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.Sheep;
+import minicraft.entity.mob.Skeleton;
+import minicraft.entity.mob.Slime;
+import minicraft.entity.mob.Snake;
+import minicraft.entity.mob.Zombie;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -69,7 +86,7 @@ public class FurnitureItem extends Item {
 
 			level.add(furniture); // Adds the furniture to the world
 			if (Game.isMode("minicraft.settings.mode.creative"))
-				furniture = furniture.clone();
+				furniture = furniture.copy();
 			else
 				placed = true; // The value becomes true, which removes it from the player's active item
 
@@ -82,9 +99,9 @@ public class FurnitureItem extends Item {
 		return placed;
 	}
 
-	public FurnitureItem clone() {
+	public @NotNull FurnitureItem copy() {
 		// in case the item is a spawner, it will use the sprite position (sx, sy)
 		// instead if it is not, the constructor will obtain said sprite
-		return new FurnitureItem(furniture.clone());
+		return new FurnitureItem(furniture.copy());
 	}
 }

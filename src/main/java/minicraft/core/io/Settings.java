@@ -1,20 +1,18 @@
 package minicraft.core.io;
 
-import minicraft.core.Initializer;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Settings {
+public final class Settings {
 
 	private static final HashMap<String, ArrayEntry<?>> options = new HashMap<>();
 
 	static {
-		options.put("fps", new FPSEntry("minicraft.settings.fps")); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
 		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20)); // The magnification of screenshot. I would want to see ultimate sized.
 		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
@@ -44,144 +42,60 @@ public class Settings {
 		);
 	}
 
-	// Returns the value of the specified option
+	/**
+	 * Returns the value of the specified option.
+	 * @param option The setting to get.
+	 * @return The value of the setting
+	 */
 	public static Object get(String option) { return options.get(option.toLowerCase()).getValue(); }
 
-	// Returns the index of the value in the list of values for the specified option
+	/**
+	 * Returns the index of the value in the list of values for the specified option.
+	 * @param option The setting to get.
+	 * @return The index of the setting.
+	 */
 	public static int getIdx(String option) { return options.get(option.toLowerCase()).getSelection(); }
 
-	// Return the ArrayEntry object associated with the given option name.
+	/**
+	 * Return the ArrayEntry object associated with the given option name.
+	 * @param option The setting to get.
+	 * @return The ArrayEntry.
+	 */
 	public static ArrayEntry<?> getEntry(String option) { return options.get(option.toLowerCase()); }
 
-	// Sets the value of the given option name, to the given value, provided it is a valid value for that option.
+	/**
+	 * Sets the value of the given option name, to the given value, provided it is a valid value for that option.
+	 * @param option The setting to edit.
+	 * @param value The value to change to.
+	 */
 	public static void set(String option, Object value) {
 		options.get(option.toLowerCase()).setValue(value);
 	}
 
-	// Sets the index of the value of the given option, provided it is a valid index
+	/**
+	 * Sets the index of the value of the given option, provided it is a valid index.
+	 * @param option The setting to edit.
+	 * @param idx Index to select.
+	 */
 	public static void setIdx(String option, int idx) {
 		options.get(option.toLowerCase()).setSelection(idx);
 	}
 
-	public static final int FPS_UNLIMITED = -1;
-
 	/**
-	 * Getting the set value for maximum framerate.
-	 * @return The set or device framerate value, or {@link #FPS_UNLIMITED} if unlimited.
+	 * Gets the refresh rate of the default monitor.
+	 * Safely handles headless environments (if that were to happen for some reason).
+	 * @return The refresh rate if successful. 60 if not.
 	 */
-	public static int getFPS() {
-		return ((FPSEntry) getEntry("fps")).getFPSValue();
-	}
-
-	private static class FPSEntry extends ArrayEntry<FPSEntry.FPSValue> {
-		public static class FPSValue {
-			private int fps = DisplayMode.REFRESH_RATE_UNKNOWN;
-			public enum ValueType { Normal, VSync, Unlimited; }
-			private final ValueType type;
-
-			public FPSValue(ValueType type) {
-				this.type = type == ValueType.Normal ? ValueType.Unlimited : type;
-			}
-			public FPSValue(int fps) {
-				type = ValueType.Normal;
-				if (fps > 300) fps = 300;
-				if (fps < 10) fps = 10;
-				this.fps = fps;
-			}
-
-			public int getFPS() {
-				if (type == ValueType.VSync) {
-					// There is currently no actual way to do VSync by only Swing/AWT.
-					// Instead, the device refresh rate is used.
-					int rate = Initializer.getFrame().getGraphicsConfiguration().getDevice().getDisplayMode().getRefreshRate();
-					return rate == DisplayMode.REFRESH_RATE_UNKNOWN ? FPS_UNLIMITED : rate;
-				} else if (type == ValueType.Unlimited) {
-					return FPS_UNLIMITED;
-				} else {
-					return fps;
-				}
-			}
-
-			@Override
-			public String toString() {
-				return type == ValueType.Normal ? String.valueOf(fps) : type.toString();
-			}
-
-			@Override
-			public boolean equals(Object obj) {
-				if (obj == null) return false;
-				if (this == obj) return true;
-				if (obj instanceof FPSValue)
-					return type == ((FPSValue) obj).type &&
-						fps == ((FPSValue) obj).fps;
-				return false;
-			}
-
-			@Override
-			public int hashCode() {
-				return type.ordinal() * fps + fps;
-			}
+	private static int getDefaultRefreshRate() {
+		int hz;
+		try {
+			hz = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+		} catch (HeadlessException e) {
+			return 60;
 		}
 
-		private static FPSValue[] getArray() {
-			ArrayList<FPSValue> list = new ArrayList<>();
-			for (int i = 10; i <= 300; i += 10) {
-				list.add(new FPSValue(i));
-			}
-
-			list.add(new FPSValue(FPSValue.ValueType.VSync));
-			list.add(new FPSValue(FPSValue.ValueType.Unlimited));
-
-			return list.toArray(new FPSValue[0]);
-		}
-
-		public FPSEntry(String label) {
-			super(label, false, getArray());
-		}
-
-		/**
-		 * Getting the set value for maximum framerate.
-		 * @return The set or device framerate value, or {@link #FPS_UNLIMITED} if unlimited.
-		 */
-		public int getFPSValue() {
-			return getValue().getFPS();
-		}
-
-		@Override
-		public void setValue(Object value) {
-			if (value instanceof FPSValue) {
-				super.setValue(value);
-			} else {
-				if (!(value instanceof FPSValue.ValueType)) try { // First tests if it is an integral value.
-					int v;
-					if (value instanceof Integer) v = (int) value;
-					else v = Integer.parseInt(value.toString());
-					if (v < 10) v = 10;
-					if (v > 300) v = 300;
-					v -= v % 10;
-					for (FPSValue val : options) {
-						if (val.fps == v) {
-							super.setValue(val);
-							return;
-						}
-					}
-				} catch (NumberFormatException ignored) {}
-
-				try { // Then falls back to enums.
-					FPSValue.ValueType type;
-					if (value instanceof FPSValue.ValueType) type = (FPSValue.ValueType) value;
-					else type = FPSValue.ValueType.valueOf(value.toString());
-					if (type != FPSValue.ValueType.Normal) for (FPSValue val : options) {
-						if (val.type == type) {
-							super.setValue(val);
-							return;
-						}
-					}
-				} catch (IllegalArgumentException ignored) {}
-
-				// Finally VSync is applied.
-				super.setValue(FPSValue.ValueType.VSync);
-			}
-		}
+		if (hz == DisplayMode.REFRESH_RATE_UNKNOWN) return 60;
+		if (hz > 300 || 10 >= hz) return 60;
+		return hz;
 	}
 }

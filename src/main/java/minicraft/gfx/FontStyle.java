@@ -1,10 +1,9 @@
 package minicraft.gfx;
 
-import java.util.Arrays;
-
+import minicraft.screen.RelPos;
 import org.tinylog.Logger;
 
-import minicraft.screen.RelPos;
+import java.util.Arrays;
 
 public class FontStyle {
 

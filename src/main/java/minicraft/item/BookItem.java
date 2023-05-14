@@ -1,7 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -9,8 +7,10 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.util.BookData;
 import minicraft.screen.BookDisplay;
+import org.jetbrains.annotations.NotNull;
+import minicraft.util.BookData;
+import java.util.ArrayList;
 
 public class BookItem extends Item {
 
@@ -44,7 +44,7 @@ public class BookItem extends Item {
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
-	public BookItem clone() {
+	public @NotNull BookItem copy() {
 		return new BookItem(getName(), sprite, book, hasTitlePage);
 	}
 }

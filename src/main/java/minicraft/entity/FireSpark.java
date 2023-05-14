@@ -1,23 +1,21 @@
 package minicraft.entity;
 
 import minicraft.core.Game;
-import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
-
-import java.util.List;
 
 public class FireSpark extends Entity {
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "spark");
 
-	private int lifeTime; // How much time until the spark disappears
-	private double xa, ya; // The x and y acceleration
+	private final int lifeTime; // How much time until the spark disappears
+	private final double xa, ya; // The x and y acceleration
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
+	private int stoppedTime;
+	private boolean stopped;
 	private final ObsidianKnight owner; // The Obsidian Knight that created this spark
 
 	/**
@@ -46,12 +44,27 @@ public class FireSpark extends Entity {
 			remove(); // Remove this from the world
 			return;
 		}
-		// Move the spark:
-		//if ()
-		xx += xa;
-		yy += ya;
-		x = (int) xx;
-		y = (int) yy;
+
+		if (stopped) {
+			stoppedTime++;
+			if (stoppedTime >= 50) { // Despawn if the spark has been stopped for 50 ticks.
+				remove();
+				return;
+			}
+		} else {
+			// Move the spark:
+			int x0 = (int) xx; // Original position
+			int y0 = (int) yy;
+			xx += xa; // Final position
+			yy += ya;
+			boolean stopped = true;
+			//noinspection RedundantIfStatement
+			if (move2(((int) xx) - x0, 0)) stopped = false; // This kind of difference is handled due to errors by flooring.
+			if (move2(0, ((int) yy) - y0)) stopped = false;
+			if (stopped) {
+				this.stopped = true;
+			}
+		}
 
 		Player player = getClosestPlayer();
 		if (player != null) { // Failsafe if player dies in a fire spark.

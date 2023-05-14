@@ -1,11 +1,5 @@
 package minicraft.entity.mob;
 
-import java.util.HashMap;
-import java.util.List;
-
-import minicraft.util.AdvancementElement;
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -59,8 +53,13 @@ import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
@@ -268,6 +267,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void tick() {
 		if (level == null || isRemoved()) return;
 		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
+		if (input.getKey("F3-Y").clicked) {
+			World.scheduleLevelChange(1);
+			return;
+		} else if (input.getKey("F3-H").clicked) {
+			World.scheduleLevelChange(-1);
+			return;
+		}
 
 		super.tick(); // Ticks Mob.java
 
@@ -471,7 +477,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
-				Item drop = activeItem.clone();
+				Item drop = activeItem.copy();
 
 				if (input.inputPressed("drop-one") && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
@@ -479,6 +485,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					((StackableItem)drop).count = 1;
 				} else {
 					activeItem = null; // Remove it from the "inventory"
+					if (isFishing) {
+						isFishing = false;
+						fishingTicks = maxFishingTicks;
+					}
 				}
 
 				level.dropItem(x, y, drop);
@@ -496,15 +506,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
 					if (stackable.count > 0) {
-						getLevel().dropItem(x, y, stackable.clone());
+						getLevel().dropItem(x, y, stackable.copy());
 					}
-
-					activeItem = null;
-				} else if (returned > 0) {
-					activeItem = null;
-				} else {
+				} else if (returned <= 0) {
 					getLevel().dropItem(x, y, activeItem);
-					activeItem = null;
+				}
+
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
 				}
 			}
 
@@ -524,7 +535,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.inputDown("shift-p")) { // Remove all potion effects
+				if (input.inputDown("F3-p")) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}
@@ -533,6 +544,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
+						if (isFishing) {
+							isFishing = false;
+							fishingTicks = maxFishingTicks;
+						}
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
 					}
 					attack(); // Attack (with the power glove)
@@ -557,7 +572,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
 					if (((StackableItem)prevItem).count > 0) {
-						getLevel().dropItem(x, y, prevItem.clone());
+						getLevel().dropItem(x, y, prevItem.copy());
 					}
 				} else if (returned == 0) {
 					getLevel().dropItem(x, y, prevItem);
@@ -819,7 +834,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		int yo = y - 11; // Vertical
 
 		// Renders swimming
-		if (isSwimming()) {
+		if (isSwimming() && onFallDelay <= 0) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 
@@ -864,22 +879,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		LinkedSprite curSprite;
 		if (onFallDelay > 0) {
 			// This makes falling look really cool.
-			float spriteToUse = onFallDelay / 2f;
-			while (spriteToUse > spriteSet.length - 1) {
-				spriteToUse -= 4;
-			}
-			curSprite = spriteSet[Math.round(spriteToUse)][(walkDist >> 3) & 1];
+			int spriteToUse = Math.round(onFallDelay / 2f) % carrySprites.length;
+			curSprite = carrySprites[spriteToUse][(walkDist >> 3) & 1];
+			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
-		}
-
-		// Render each corner of the sprite
-		if (isSwimming()) {
-			Sprite sprite = curSprite.getSprite();
-			screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
-			screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
-		} else { // Don't render the bottom half if swimming.
-			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			// Render each corner of the sprite
+			if (isSwimming()) {
+				Sprite sprite = curSprite.getSprite();
+				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
+				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
+			} else { // Don't render the bottom half if swimming.
+				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			}
 		}
 
 		// Renders slashes:

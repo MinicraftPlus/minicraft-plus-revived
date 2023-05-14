@@ -1,12 +1,16 @@
 package minicraft.level;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
-import minicraft.entity.furniture.*;
+import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Furniture;
+import minicraft.entity.furniture.KnightStatue;
+import minicraft.entity.furniture.Lantern;
 import minicraft.gfx.Point;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 // this stores structures that can be drawn at any location.
 public class Structure {
@@ -35,7 +39,7 @@ public class Structure {
 			 level.setTile(xt+p.x, yt+p.y, p.t);
 
 		for (Point p: furniture.keySet())
-			 level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
+			 level.add(furniture.get(p).copy(), xt+p.x, yt+p.y, true);
 	}
 
 	public void draw(short[] map, int xt, int yt, int mapWidth) {

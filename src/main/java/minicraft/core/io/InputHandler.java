@@ -1,17 +1,21 @@
 package minicraft.core.io;
 
-import com.studiohartman.jamepad.*;
-import minicraft.core.Game;
+import com.studiohartman.jamepad.ControllerAxis;
+import com.studiohartman.jamepad.ControllerButton;
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -150,9 +154,6 @@ public class InputHandler implements KeyListener {
 
 		keymap.put("PAUSE", "ESCAPE"); // Pause the Game.
 
-		keymap.put("SURVIVAL=debug", "SHIFT-1");
-		keymap.put("CREATIVE=debug", "SHIFT-2");
-
 		keymap.put("POTIONEFFECTS", "P"); // Toggle potion effect display
 		keymap.put("SIMPPOTIONEFFECTS", "O"); // Whether to simplify the potion effect display
 		keymap.put("EXPANDQUESTDISPLAY", "L"); // Expands the quest display
@@ -224,7 +225,7 @@ public class InputHandler implements KeyListener {
 	}
 
 	// The Key class.
-	public class Key {
+	public static class Key {
 		// presses = how many times the Key has been pressed.
 		// absorbs = how many key presses have been processed.
 		private int presses, absorbs;
@@ -287,7 +288,7 @@ public class InputHandler implements KeyListener {
 
 	/// This is meant for changing the default keys. Call it from the options menu, or something.
 	public void setKey(String keymapKey, String keyboardKey) {
-		if (keymapKey != null && keymap.containsKey(keymapKey) && (!keymapKey.contains("=debug") || Game.debug)) // The keyboardKey can be null, I suppose, if you want to disable a key...
+		if (keymapKey != null && keymap.containsKey(keymapKey)) // The keyboardKey can be null, I suppose, if you want to disable a key...
 			keymap.put(keymapKey, keyboardKey);
 	}
 
@@ -335,16 +336,8 @@ public class InputHandler implements KeyListener {
 		// If the passed-in key is blank, or null, then return null.
 		if (keytext == null || keytext.length() == 0) return new Key();
 
-		Key key; // Make a new key to return at the end
 		keytext = keytext.toUpperCase(java.util.Locale.ENGLISH); // Prevent errors due to improper "casing"
-
 		synchronized ("lock") {
-			// This should never be run, actually, b/c the "=debug" isn't used in other places in the code.
-			if(keymap.containsKey(keytext+"=debug")) {
-				if(!Game.debug) return new Key();
-				else keytext += "=debug";
-			}
-
 			if(getFromMap) { // If false, we assume that keytext is a physical key.
 				// If the passed-in key equals one in keymap, then replace it with it's match, a key in keyboard.
 				if (keymap.containsKey(keytext))
@@ -352,11 +345,9 @@ public class InputHandler implements KeyListener {
 			}
 		}
 
-		String fullKeytext = keytext;
-
 		if (keytext.contains("|")) {
 			/// Multiple key possibilities exist for this action; so, combine the results of each one!
-			key = new Key();
+			Key key = new Key();
 			for (String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
 				Key aKey = getKey(keyposs, false); // This time, do NOT attempt to fetch from keymap.
 
@@ -367,51 +358,35 @@ public class InputHandler implements KeyListener {
 			return key;
 		}
 
+		// Complex compound key binding support.
+		HashSet<Key> keys = new HashSet<>();
 		synchronized ("lock") {
-			if (keytext.contains("-")) // Truncate compound keys to only the base key, no modifiers
-				keytext = keytext.substring(keytext.lastIndexOf("-")+1);
+			String[] split = keytext.split("-");
+			for (String s : split) {
+				if (keyboard.containsKey(s))
+					keys.add(keyboard.get(s)); // Gets the key object from keyboard, if if exists.
+				else {
+					// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
+					Key key = new Key(); // Make new key
+					keyboard.put(s, key); // Add it to keyboard
+					keys.add(key);
 
-			if (keyboard.containsKey(keytext))
-				key = keyboard.get(keytext); // Gets the key object from keyboard, if if exists.
-			else {
-				// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
-				key = new Key(); // Make new key
-				keyboard.put(keytext, key); // Add it to keyboard
-
-				//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
-			}
-		} // "key" has been set to the appropriate key Object.
-
-		keytext = fullKeytext;
-
-		if (keytext.equals("SHIFT") || keytext.equals("CTRL") || keytext.equals("ALT"))
-			return key; // Nothing more must be done with modifier keys.
-
-		boolean foundS = false, foundC = false, foundA = false;
-		if (keytext.contains("-")) {
-			for (String keyname: keytext.split("-")) {
-				if (keyname.equals("SHIFT")) foundS = true;
-				if (keyname.equals("CTRL")) foundC = true;
-				if (keyname.equals("ALT")) foundA = true;
+					//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+				}
 			}
 		}
-		boolean modMatch =
-		  getKey("shift").down == foundS &&
-		  getKey("ctrl").down == foundC &&
-		  getKey("alt").down == foundA;
-
-		if (keytext.contains("-")) { // We want to return a compound key, but still care about the trigger key.
-			Key mainKey = key; // Move the fetched key to a different variable
-
-			key = new Key(); // Set up return key to have proper values
-			key.down = modMatch && mainKey.down;
-			key.clicked = modMatch && mainKey.clicked;
-		}
-		else if (!modMatch) key = new Key();
 
 		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
 
-		return key; // Return the Key object.
+		Key key = new Key();
+		key.down = true; // The set is not empty, so this will not be returned directly.
+		key.clicked = false;
+		return keys.stream().reduce(key, (k0, k1) -> {
+			k0.down = k0.down && k1.down; // All keys down.
+			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
+			k0.clicked = k0.down && (k0.clicked || k1.clicked);
+			return k0;
+		}); // Return the Key object.
 	}
 
 	/// This method provides a way to press physical keys without actually generating a key event.
@@ -449,7 +424,7 @@ public class InputHandler implements KeyListener {
 
 	// Called by KeyListener Event methods, below. Only accesses keyboard Keys.
 	private void toggle(int keycode, boolean pressed) {
-		String keytext = "NO_KEY";
+		String keytext;
 
 		if (keyNames.containsKey(keycode))
 			keytext = keyNames.get(keycode);
@@ -469,8 +444,41 @@ public class InputHandler implements KeyListener {
 			keyToChange = null;
 			return;
 		}
+
 		getPhysKey(keytext).toggle(pressed);
+		// System.out.println(keytext+";"+getPhysKey(keytext).hashCode()+";"+pressed);
 	}
+
+	// This provides a way to inspect values during running with an external display.
+	/*static JFrame frame = new JFrame();
+	static JTextArea textField = new JTextArea();
+	static Thread liveTracking;
+	static {
+		frame.add(textField);
+		textField.setText("INVALID");
+		frame.setUndecorated(true);
+		frame.pack();
+		frame.setVisible(true);
+		liveTracking = new Thread(new Runnable() {
+			long lastTick = 0;
+			@Override
+			public void run() {
+				while (true) {
+					long tick = System.currentTimeMillis();
+					if (tick - lastTick > 50) {
+						synchronized ("lock") {
+							if (Game.input == null) continue;
+							textField.setText("F3: " + Game.input.getPhysKey("F3")
+								+ "\nE: " + Game.input.getPhysKey("E"));
+						}
+						frame.pack();
+						lastTick = tick;
+					}
+				}
+			}
+		}, "Live Debugging Value Tracker");
+		liveTracking.start();
+	}*/
 
 	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();
@@ -488,8 +496,7 @@ public class InputHandler implements KeyListener {
 		ArrayList<String> keystore = new ArrayList<>(); // Make a list for keys
 
 		for (String keyname: keymap.keySet()) // Go though each mapping
-			if(!keyname.contains("=debug") || Game.debug)
-				keystore.add(keyname + ";" + keymap.get(keyname)); // Add the mapping values as one string, seperated by a semicolon.
+			keystore.add(keyname + ";" + keymap.get(keyname)); // Add the mapping values as one string, seperated by a semicolon.
 
 		return keystore.toArray(new String[0]); // Return the array of encoded key preferences.
 	}

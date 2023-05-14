@@ -5,9 +5,9 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
+import org.jetbrains.annotations.NotNull;
 
 public class KnightStatue extends Furniture {
 	private int touches = 0; // >= 0
@@ -46,7 +46,7 @@ public class KnightStatue extends Furniture {
 	public void tryPush(Player player) {} // Nothing happens.
 
 	@Override
-	public Furniture clone(){
+	public @NotNull Furniture copy(){
 		return new KnightStatue(bossHealth);
 	}
 

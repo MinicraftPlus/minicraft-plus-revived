@@ -2,15 +2,29 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.Spawner;
-import minicraft.entity.mob.*;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.Cow;
+import minicraft.entity.mob.Creeper;
+import minicraft.entity.mob.EnemyMob;
+import minicraft.entity.mob.Knight;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.MobAi;
+import minicraft.entity.mob.PassiveMob;
+import minicraft.entity.mob.Pig;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.Sheep;
+import minicraft.entity.mob.Skeleton;
+import minicraft.entity.mob.Slime;
+import minicraft.entity.mob.Snake;
+import minicraft.entity.mob.Zombie;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
@@ -20,7 +34,14 @@ import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.util.Logging;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
@@ -47,21 +68,21 @@ public class Level {
 
 	private final Object entityLock = new Object(); // I will be using this lock to avoid concurrency exceptions in entities and sparks set
 	private final Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
-	private final Set<Spark> sparks = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the sparks in the world
 	private final Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
 	private final List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 
 	// Creates a sorter for all the entities to be rendered.
 	//private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y); // Broken
+	@SuppressWarnings("Convert2Lambda")
 	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
 		@Override
 		public int applyAsInt(Entity e) { return e.y; }
 	});
 
 	public Entity[] getEntitiesToSave() {
-		Entity[] allEntities = new Entity[entities.size() + sparks.size() + entitiesToAdd.size()];
-		Entity[] toAdd = entitiesToAdd.toArray(new Entity[entitiesToAdd.size()]);
+		Entity[] allEntities = new Entity[entities.size() + entitiesToAdd.size()];
+		Entity[] toAdd = entitiesToAdd.toArray(new Entity[0]);
 		Entity[] current = getEntityArray();
 		System.arraycopy(current, 0, allEntities, 0, current.length);
 		System.arraycopy(toAdd, 0, allEntities, current.length, toAdd.length);
@@ -182,7 +203,7 @@ public class Level {
 
 		checkAirWizard();
 
-		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
+		if (Logging.logLevel) printTileLocs(Tiles.get("Stairs Down"));
 	}
 
 	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
@@ -263,7 +284,7 @@ public class Level {
 							}
 						}
 					} else { // y axis
-						for (int s = y2; s < y2 - s; s++) {
+						for (int s = y2; s < h - s; s++) {
 							if (getTile(x2, s) == Tiles.get("Obsidian Wall") || getTile(x2, s) == Tiles.get("Ornate Obsidian")) {
 								d.x = x2 * 23 - 14;
 								d.y = s * 21 - 16;
@@ -286,6 +307,7 @@ public class Level {
 	private void tickEntity(Entity entity) {
 		if (entity == null) return;
 
+		if (!entity.isRemoved()) entity.handleDespawn();
 		if (entity.isRemoved()) {
 			remove(entity);
 			return;
@@ -308,16 +330,12 @@ public class Level {
 			boolean inLevel = entities.contains(entity);
 
 			if (!inLevel) {
-				if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
+				if (Logging.logLevel) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 
 				synchronized (entityLock) {
-					if (entity instanceof Spark) {
-						sparks.add((Spark) entity);
-					} else {
-						entities.add(entity);
-						if (entity instanceof Player) {
-							players.add((Player) entity);
-						}
+					entities.add(entity);
+					if (entity instanceof Player) {
+						players.add((Player) entity);
 					}
 				}
 			}
@@ -339,36 +357,16 @@ public class Level {
 				tickEntity(e);
 				if (e instanceof Mob) count++;
 			}
-
-			// Spark loop
-			sparks.forEach(this::tickEntity);
-		}
-
-		while (count > maxMobCount) {
-			Entity removeThis = (Entity)entities.toArray()[(random.nextInt(entities.size()))];
-			if (removeThis instanceof MobAi) {
-				// Make sure there aren't any close players
-				boolean playerClose = entityNearPlayer(removeThis);
-
-				if (!playerClose) {
-					remove(removeThis);
-					count--;
-				}
-			}
 		}
 
 		while (entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 
-			if (Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
+			if (Logging.logLevel) printEntityStatus("Removing ", entity, "mob.Player");
 
 			entity.remove(this); // This will safely fail if the entity's level doesn't match this one.
 			synchronized (entityLock) {
-				if (entity instanceof Spark) {
-					sparks.remove(entity);
-				} else {
-					entities.remove(entity);
-				}
+				entities.remove(entity);
 			}
 
 			if (entity instanceof Player)
@@ -389,6 +387,16 @@ public class Level {
 			}
 		}
 		return false;
+	}
+
+	public double distanceOfClosestPlayer(Entity entity) {
+		double distance = Math.hypot(w, h);
+		for (Player player : players) {
+			double d = Math.hypot(Math.abs(entity.x - player.x), Math.abs(entity.y - player.y));
+			if (d < distance) distance = d;
+		}
+
+		return distance;
 	}
 
 	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
@@ -463,7 +471,7 @@ public class Level {
 		int h = (Screen.h + 15) >> 4;
 
 		screen.setOffset(xScroll, yScroll);
-		
+
 		// this specifies the maximum radius that the game will stop rendering the light from the source object once off screen
 		int r = 8;
 
@@ -553,55 +561,53 @@ public class Level {
 			entitiesToRemove.add(e);
 	}
 
+	/** Natural spawn. */
 	private void trySpawn() {
 		int spawnSkipChance = (int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2));
 		if (spawnSkipChance > 0 && random.nextInt(spawnSkipChance) != 0)
 			return; // Hopefully will make mobs spawn a lot slower.
 
 		boolean spawned = false;
-		for (int i = 0; i < 30 && !spawned; i++) {
-			int minLevel = 1, maxLevel = 1;
-			if (depth < 0) {
-				maxLevel = (-depth) + ((Math.random() > 0.75 && -depth != 4) ? 1 : 0);
-			}
-			if (depth > 0) {
-				minLevel = maxLevel = 4;
-			}
+		for (Player player : players) {
+			int lvl = World.lvlIdx(player.getLevel().depth);
+			for (int i = 0; i < 30 && !spawned; i++) {
+				int rnd = random.nextInt(100);
+				int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
+				double distance = Math.hypot(Math.abs(nx - player.x), Math.abs(ny - player.y));
+				if (distance < 10 || distance > 40) continue; // Spawns only between 10 and 40 tiles far from players.
 
+				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
-			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
-			int rnd = random.nextInt(100);
-			int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
+				// Spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
+				if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)
+					&& !isLight(nx, ny)) { // if night or underground, with a valid tile and dim place, spawn an enemy mob.
 
-			//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
+					if (depth != -4) { // Normal mobs
+						if (rnd <= 40) add((new Slime(lvl)), nx, ny);
+						else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
+						else if (rnd >= 85) add((new Skeleton(lvl)), nx, ny);
+						else add((new Creeper(lvl)), nx, ny);
 
-			// Spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
-			if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
+					} else { // Special dungeon mobs
+						if (rnd <= 40) add((new Snake(lvl)), nx, ny);
+						else if (rnd <= 75) add((new Knight(lvl)), nx, ny);
+						else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
+						else add((new Knight(lvl)), nx, ny);
 
-				if (depth != -4) { // Normal mobs
-					if (rnd <= 40) add((new Slime(lvl)), nx, ny);
-					else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
-					else if (rnd >= 85) add((new Skeleton(lvl)), nx, ny);
-					else add((new Creeper(lvl)), nx, ny);
+					}
 
-				} else { // Special dungeon mobs
-					if (rnd <= 40) add((new Snake(lvl)), nx, ny);
-					else if (rnd <= 75) add((new Knight(lvl)), nx, ny);
-					else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
-					else add((new Knight(lvl)), nx, ny);
-
+					spawned = true;
+					continue; // Only 1 mob is spawned at the same time.
 				}
 
-				spawned = true;
-			}
+				if (depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
+					// Spawns the friendly mobs.
+					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
+					else if (rnd >= 68) add((new Pig()), nx, ny);
+					else add((new Sheep()), nx, ny);
 
-			if (depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
-				// Spawns the friendly mobs.
-				if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
-				else if (rnd >= 68) add((new Pig()), nx, ny);
-				else add((new Sheep()), nx, ny);
-
-				spawned = true;
+					spawned = true;
+				}
 			}
 		}
 	}
@@ -623,13 +629,9 @@ public class Level {
 		int index = 0;
 
 		synchronized (entityLock) {
-			entityArray = new Entity[entities.size() + sparks.size()];
-
+			entityArray = new Entity[entities.size()];
 			for (Entity entity : entities) {
 				entityArray[index++] = entity;
-			}
-			for (Spark spark : sparks) {
-				entityArray[index++] = spark;
 			}
 		}
 
@@ -735,7 +737,7 @@ public class Level {
 	}
 
 	public Player[] getPlayers() {
-		return players.toArray(new Player[players.size()]);
+		return players.toArray(new Player[0]);
 	}
 
 	public Player getClosestPlayer(int x, int y) {
@@ -766,7 +768,7 @@ public class Level {
 			for (int xp = x-rx; xp <= x+rx; xp++)
 				if (xp >= 0 && xp < w && yp >= 0 && yp < h)
 					local.add(new Point(xp, yp));
-		return local.toArray(new Point[local.size()]);
+		return local.toArray(new Point[0]);
 	}
 
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
@@ -776,7 +778,7 @@ public class Level {
 		for (Point p: getAreaTilePositions(x, y, rx, ry))
 			local.add(getTile(p.x, p.y));
 
-		return local.toArray(new Tile[local.size()]);
+		return local.toArray(new Tile[0]);
 	}
 
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
@@ -860,7 +862,7 @@ public class Level {
 							}
 						}
 					} else {
-						for (int s2 = y3; s2 < y3 - s2; s2++) {
+						for (int s2 = y3; s2 < h - s2; s2++) {
 							if (getTile(x3, s2) == Tiles.get("rock")) {
 								sp.x = x3 * 16 - 24;
 								sp.y = s2 * 16 - 24;
@@ -932,7 +934,7 @@ public class Level {
 							}
 						}
 					} else {
-						for (int s2 = y3; s2 < y3 - s2; s2++) {
+						for (int s2 = y3; s2 < h - s2; s2++) {
 							if (getTile(x3, s2) == Tiles.get("Obsidian Wall")) {
 								sp.x = x3 * 16 - 24;
 								sp.y = s2 * 16 - 24;
@@ -1007,7 +1009,7 @@ public class Level {
 						// Make the village look ruined
 						if (overlay == 1) {
 							Structure.villageRuinedOverlay1.draw(this, x + xo, y + yo);
-						} else if (overlay == 2) {
+						} else { // overlay == 2
 							Structure.villageRuinedOverlay2.draw(this, x + xo, y + yo);
 						}
 

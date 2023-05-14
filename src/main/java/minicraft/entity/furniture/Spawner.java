@@ -21,7 +21,13 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.*;
+import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
+import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
+import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 import java.util.ArrayList;
@@ -221,5 +227,5 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	public Furniture clone() { return new Spawner(mob); }
+	public @NotNull Furniture copy() { return new Spawner(mob); }
 }

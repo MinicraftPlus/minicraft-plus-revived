@@ -1,14 +1,15 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ToolItem extends Item {
 
@@ -123,7 +124,7 @@ public class ToolItem extends Item {
 	@Override
 	public int hashCode() { return type.name().hashCode() + level; }
 
-	public ToolItem clone() {
+	public @NotNull ToolItem copy() {
 		ToolItem ti;
 		if (type.noLevel) {
 			ti = new ToolItem(type);

@@ -1,12 +1,12 @@
 package minicraft.screen.entry;
 
-import java.util.ArrayList;
-
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+
+import java.util.ArrayList;
 
 // an unselectable line.
 public class StringEntry extends ListEntry {

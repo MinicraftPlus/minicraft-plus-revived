@@ -1,18 +1,17 @@
 package minicraft.screen.entry;
 
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
-import java.io.IOException;
-import java.net.URI;
-
-import org.tinylog.Logger;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.screen.Menu;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.TempDisplay;
+import org.tinylog.Logger;
+
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
+import java.io.IOException;
+import java.net.URI;
 
 public class LinkEntry extends SelectEntry {
 

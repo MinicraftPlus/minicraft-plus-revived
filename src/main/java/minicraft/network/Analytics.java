@@ -1,12 +1,15 @@
 package minicraft.network;
 
-import java.util.concurrent.*;
-
-import kong.unirest.*;
-
+import kong.unirest.Callback;
+import kong.unirest.Empty;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import minicraft.core.Game;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+
+import java.util.concurrent.Future;
 
 public enum Analytics {
 
@@ -50,7 +53,6 @@ public enum Analytics {
 
 	@Nullable public Future<HttpResponse<Empty>> ping() { return ping(1); }
 	@Nullable public Future<HttpResponse<Empty>> ping(int value) {
-		if (Game.debug) return null;
 		final String url = "https://pingdat.io?t="+token+"&v="+value;
 
 		return Unirest.get(url).asEmptyAsync(new Callback<Empty>() {
