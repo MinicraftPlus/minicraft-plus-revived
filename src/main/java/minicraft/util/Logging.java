@@ -8,6 +8,7 @@ public final class Logging {
 	public static boolean logThread = false;
 	/** Applied only when debug mode is enabled */
 	public static boolean logTrace = false;
+	public static boolean logLevel = false;
 	public static boolean fileLogFull = false;
 
 	// (These) TaggedLogger would be more preferred (than directly Logger.(?:trace|debug|info|warn|error)).

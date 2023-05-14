@@ -224,7 +224,7 @@ public abstract class Entity implements Tickable {
 	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
 		if (level != this.level) {
-			if (Game.debug) Logging.ENTITY.debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
+			Logging.ENTITY.debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
 		} else {
 			removed = true; // Should already be set.
 			this.level = null;

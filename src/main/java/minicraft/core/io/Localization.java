@@ -16,6 +16,8 @@ public class Localization {
 	public static final Locale DEFAULT_LOCALE = Locale.US;
 	public static final Locale DEBUG_LOCALE = Locale.ROOT; // This locale is used for debugging;
 
+	public static boolean isDebugLocaleEnabled = false;
+
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
 
@@ -42,12 +44,10 @@ public class Localization {
 		String localString = localization.get(key);
 
 		if (localString == null) {
-			if (Game.debug) {
-				if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
-				if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-					Logger.tag("LOC").trace(new Throwable("Tracing"), "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
-					knownUnlocalizedStrings.get(selectedLocale).add(key);
-				}
+			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
+			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
+				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+				knownUnlocalizedStrings.get(selectedLocale).add(key);
 			}
 		}
 
@@ -134,7 +134,7 @@ public class Localization {
 		// Clear array with localization files.
 		unloadedLocalization.clear();
 		localeInfo.clear();
-		if (Game.debug) { // Adding the debug locale as an option.
+		if (isDebugLocaleEnabled) { // Adding the debug locale as an option.
 			localeInfo.put(DEBUG_LOCALE, new LocaleInformation(DEBUG_LOCALE, "Debug", null));
 		}
 	}

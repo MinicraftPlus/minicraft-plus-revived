@@ -267,6 +267,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void tick() {
 		if (level == null || isRemoved()) return;
 		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
+		if (input.getKey("F3-Y").clicked) {
+			World.scheduleLevelChange(1);
+			return;
+		} else if (input.getKey("F3-H").clicked) {
+			World.scheduleLevelChange(-1);
+			return;
+		}
 
 		super.tick(); // Ticks Mob.java
 
@@ -528,7 +535,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.inputDown("shift-p")) { // Remove all potion effects
+				if (input.inputDown("F3-p")) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}
