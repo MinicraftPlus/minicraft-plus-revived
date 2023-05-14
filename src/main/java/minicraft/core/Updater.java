@@ -8,6 +8,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
+import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
@@ -107,14 +108,25 @@ public class Updater extends Game {
 			screenshot++;
 		}
 
-		if (newDisplay != display) {
-			if (display != null && (newDisplay == null || newDisplay.getParent() != display))
-				display.onExit();
+		if (currentDisplay != displayQuery.peek() && !displayQuery.isEmpty()) {
+			Display prevDisplay = currentDisplay; // For both null or not null.
+			currentDisplay = displayQuery.peek();
+			assert currentDisplay != null;
+			currentDisplay.init(prevDisplay);
+		}
 
-			if (newDisplay != null && (display == null || newDisplay != display.getParent()))
-				newDisplay.init(display);
+		if (currentDisplay != null && displayQuery.isEmpty()) {
+			currentDisplay.onExit();
+			currentDisplay = null;
+		}
 
-			display = newDisplay;
+		assert currentDisplay == displayQuery.peek(); // This should be true.
+		while (displayQuery.size() > 1) {
+			Display prevDisplay = displayQuery.pop();
+			// assert curDisplay == prevDisplay;
+			currentDisplay = displayQuery.peek();
+			assert currentDisplay != null;
+			currentDisplay.init(prevDisplay);
 		}
 
 		Level level = levels[currentLevel];
@@ -174,11 +186,11 @@ public class Updater extends Game {
 			TutorialDisplayHandler.tick(input);
 			AdvancementElement.AdvancementTrigger.tick();
 
-			if (display != null) {
+			if (currentDisplay != null) {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				display.tick(input);
+				currentDisplay.tick(input);
 				paused = true;
 			} else {
 				// No menu, currently.
@@ -203,7 +215,7 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (currentDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 

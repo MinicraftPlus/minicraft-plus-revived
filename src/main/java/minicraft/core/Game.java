@@ -15,6 +15,7 @@ import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,18 +34,34 @@ public class Game {
 	public static int MAX_FPS;
 
 	// DISPLAY
-	static Display display = null, newDisplay = null;
-	public static void setDisplay(@Nullable Display display) { newDisplay = display; }
-	public static void exitDisplay() {
-		if (display == null) {
+	static Display currentDisplay = null;
+	static final ArrayDeque<Display> displayQuery = new ArrayDeque<>();
+	public static void setDisplay(@Nullable Display display) {
+		if (display == null)
+			displayQuery.clear();
+		else
+			displayQuery.add(display);
+	}
+	public static void exitDisplay() { exitDisplay(1); }
+	public static void exitDisplay(int depth) {
+		if (depth < 1) return; // There is nothing needed to exit.
+		if (displayQuery.isEmpty()) {
 			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
 		Sound.play("craft");
-		newDisplay = display.getParent();
+		// Exiting the display remaining and checking if there are more displays available.
+		// If there are more displays, displays with maximum amount exit.
+		for (int i = 0; i < depth && !displayQuery.isEmpty(); i++) {
+			Display parent = displayQuery.peekLast().getParent();
+			if (parent == null)
+				displayQuery.clear();
+			else
+				displayQuery.add(parent);
+		}
 	}
 	@Nullable
-	public static Display getDisplay() { return newDisplay; }
+	public static Display getDisplay() { return displayQuery.isEmpty() ? null : displayQuery.peekLast(); }
 
 	// GAMEMODE
 	public static boolean isMode(String mode) { return ((String)Settings.get("mode")).equalsIgnoreCase(mode); }

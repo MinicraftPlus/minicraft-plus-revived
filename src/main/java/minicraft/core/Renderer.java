@@ -125,8 +125,8 @@ public class Renderer extends Game {
 			if (player.renderGUI) renderGui();
 		}
 
-		if (display != null) // Renders menu, if present.
-			display.render(screen);
+		if (currentDisplay != null) // Renders menu, if present.
+			currentDisplay.render(screen);
 
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
