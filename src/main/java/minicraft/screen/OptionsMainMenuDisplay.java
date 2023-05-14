@@ -27,6 +27,6 @@ public class OptionsMainMenuDisplay extends Display {
     @Override
     public void onExit() {
         new Save();
-        Game.MAX_FPS = Settings.getFPS();
+        Game.MAX_FPS = (int) Settings.get("fps");
     }
 }

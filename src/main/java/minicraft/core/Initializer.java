@@ -96,7 +96,7 @@ public class Initializer extends Game {
 			}
 
 			now = System.nanoTime();
-			if (MAX_FPS == Settings.FPS_UNLIMITED || now >= lastRender + 1E9D / MAX_FPS) {
+			if (now >= lastRender + 1E9D / MAX_FPS) {
 				frames++;
 				lastRender = now;
 				Renderer.render();

@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class ArrayEntry<T> extends ListEntry {
 
 	private final String label;
-	protected T[] options;
+	private T[] options;
 	private boolean[] optionVis;
 
 	private int selection;
