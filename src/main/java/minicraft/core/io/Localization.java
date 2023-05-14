@@ -14,6 +14,9 @@ import java.util.Locale;
 public class Localization {
 
 	public static final Locale DEFAULT_LOCALE = Locale.US;
+	public static final Locale DEBUG_LOCALE = Locale.ROOT; // This locale is used for debugging;
+
+	public static boolean isDebugLocaleEnabled = false;
 
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
@@ -31,6 +34,7 @@ public class Localization {
 	@NotNull
 	public static String getLocalized(String key, Object... arguments) {
 		if (key.matches("^ *$")) return key; // Blank, or just whitespace
+		if (selectedLocale == DEBUG_LOCALE) return key;
 
 		try {
 			Double.parseDouble(key);
@@ -39,7 +43,7 @@ public class Localization {
 
 		String localString = localization.get(key);
 
-		if (Game.debug && localString == null) {
+		if (localString == null) {
 			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
 				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
@@ -82,8 +86,11 @@ public class Localization {
 	 * @param newLanguage The language-country code of the language to load.
 	 */
 	public static void changeLanguage(@NotNull String newLanguage) {
-		selectedLocale = Locale.forLanguageTag(newLanguage);
-
+		changeLanguage(Locale.forLanguageTag(newLanguage));
+	}
+	/** @see #changeLanguage(String) */
+	public static void changeLanguage(@NotNull Locale newLanguage) {
+		selectedLocale = newLanguage;
 		loadLanguage();
 	}
 
@@ -95,6 +102,8 @@ public class Localization {
 		Logging.RESOURCEHANDLER_LOCALIZATION.trace("Loading language...");
 		localization.clear();
 
+		if (selectedLocale == DEBUG_LOCALE) return; // DO NOT load any localization for debugging.
+
 		// Check if selected localization exists.
 		if (!unloadedLocalization.containsKey(selectedLocale))
 			selectedLocale = DEFAULT_LOCALE;
@@ -102,10 +111,21 @@ public class Localization {
 		// Attempt to load the string as a json object.
 		JSONObject json;
 		for (String text : unloadedLocalization.get(selectedLocale)) {
-			json = new JSONObject(text); // This JSON has been verified before.
-			// Put all loc strings in a key-value set.
+			json = new JSONObject(text);
 			for (String key : json.keySet()) {
 				localization.put(key, json.getString(key));
+			}
+		}
+
+		// Language fallback
+		if (!selectedLocale.equals(DEFAULT_LOCALE)) {
+			for (String text : unloadedLocalization.get(DEFAULT_LOCALE)) { // Getting default localization.
+				json = new JSONObject(text);
+				for (String key : json.keySet()) {
+					if (!localization.containsKey(key)) { // The default localization is added only when the key is not existed.
+						localization.put(key, json.getString(key));
+					}
+				}
 			}
 		}
 	}
@@ -114,6 +134,9 @@ public class Localization {
 		// Clear array with localization files.
 		unloadedLocalization.clear();
 		localeInfo.clear();
+		if (isDebugLocaleEnabled) { // Adding the debug locale as an option.
+			localeInfo.put(DEBUG_LOCALE, new LocaleInformation(DEBUG_LOCALE, "Debug", null));
+		}
 	}
 
 	public static class LocaleInformation {
@@ -129,7 +152,18 @@ public class Localization {
 
 		@Override
 		public String toString() {
+			if (region == null) return name;
 			return String.format("%s (%s)", name, region);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (obj instanceof LocaleInformation)
+				return locale.equals(((LocaleInformation) obj).locale) &&
+					name.equals(((LocaleInformation) obj).name) &&
+					region.equals(((LocaleInformation) obj).region);
+			return false;
 		}
 	}
 

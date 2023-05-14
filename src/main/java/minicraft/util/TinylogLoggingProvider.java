@@ -12,6 +12,7 @@ import org.tinylog.format.MessageFormatter;
 import org.tinylog.provider.ContextProvider;
 import org.tinylog.provider.InternalLogger;
 import org.tinylog.provider.LoggingProvider;
+import org.tinylog.runtime.RuntimeProvider;
 import org.tinylog.writers.ConsoleWriter;
 import org.tinylog.writers.FileWriter;
 import org.tinylog.writers.Writer;
@@ -80,16 +81,13 @@ public class TinylogLoggingProvider implements LoggingProvider {
 		writingThread.start();
 
 		if (ConfigurationParser.isAutoShutdownEnabled()) {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					try {
-						shutdown();
-					} catch (InterruptedException ex) {
-						InternalLogger.log(Level.ERROR, ex, "Interrupted while waiting for shutdown");
-					}
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				try {
+					shutdown();
+				} catch (InterruptedException ex) {
+					InternalLogger.log(Level.ERROR, ex, "Interrupted while waiting for shutdown");
 				}
-			});
+			}));
 		}
 	}
 
@@ -122,14 +120,34 @@ public class TinylogLoggingProvider implements LoggingProvider {
 	@Override
 	public void log(final int depth, final String tag, final Level level, final Throwable exception, final MessageFormatter formatter,
 		final Object obj, final Object... arguments) {
-		StackTraceElement stackTraceElement = null; // Currently there is no use.
+		StackTraceElement stackTraceElement;
+		if (fullStackTraceRequired.get(currentConsoleWriter) || tag.equals("LOC")) {
+			stackTraceElement = RuntimeProvider.getCallerStackTraceElement(depth + 1);
+		} else {
+			stackTraceElement = null;
+		}
+
+		if (stackTraceElement == null) {
+			stackTraceElement = new StackTraceElement(RuntimeProvider.getCallerClassName(depth + 1), "<unknown>", null, -1);
+		}
+
 		output(stackTraceElement, tag, level, exception, formatter, obj, arguments);
 	}
 
 	@Override
 	public void log(final String loggerClassName, final String tag, final Level level, final Throwable exception,
 		final MessageFormatter formatter, final Object obj, final Object... arguments) {
-		StackTraceElement stackTraceElement = null; // Currently there is no use.
+		StackTraceElement stackTraceElement;
+		if (fullStackTraceRequired.get(currentConsoleWriter) || tag.equals("LOC")) {
+			stackTraceElement = RuntimeProvider.getCallerStackTraceElement(loggerClassName);
+		} else {
+			stackTraceElement = null;
+		}
+
+		if (stackTraceElement == null) {
+			stackTraceElement = new StackTraceElement(RuntimeProvider.getCallerClassName(loggerClassName), "<unknown>", null, -1);
+		}
+
 		output(stackTraceElement, tag, level, exception, formatter, obj, arguments);
 	}
 
@@ -161,8 +179,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 		Consumer<Writer> addToThread = writer -> {
 			WriterConfig cfg = writers.get(writer);
-			if ((level.ordinal() <= Level.DEBUG.ordinal() && Game.debug || level.ordinal() > Level.DEBUG.ordinal()) &&
-					cfg.levels.contains(level) && cfg.tags.contains(tag))
+			if (cfg.levels.contains(level) && cfg.tags.contains(tag))
 				writingThread.add(writer, logEntry);
 		};
 

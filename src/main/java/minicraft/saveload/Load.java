@@ -138,7 +138,7 @@ public class Load {
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
 
-			if (worldVer.compareTo(new Version("2.2.0-dev2")) < 0) {
+			if (worldVer.compareTo(new Version("2.2.0-dev3")) < 0) {
 				Logging.SAVELOAD.trace("Old version dungeon detected.");
 				ArrayList<ListEntry> entries = new ArrayList<>();
 				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
@@ -479,7 +479,6 @@ public class Load {
 			}
 
 			if (lang != null) {
-				Settings.set("language", lang);
 				Localization.changeLanguage(lang);
 			}
 		}
@@ -524,7 +523,6 @@ public class Load {
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
-			Settings.set("language", lang);
 			Localization.changeLanguage(lang);
 		}
 
@@ -669,7 +667,7 @@ public class Load {
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 
-			if (Game.debug) curLevel.printTileLocs(Tiles.get("Stairs Down"));
+			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
 			if (parent == null) continue;
 			/// confirm that there are stairs in all the places that should have stairs.
@@ -734,7 +732,7 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
-		if (worldVer.compareTo(new Version("2.2.0-dev2")) >= 0)
+		if (worldVer.compareTo(new Version("2.2.0-dev3")) >= 0)
 			player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
@@ -861,6 +859,8 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
 			if (name.startsWith("Wool"))
 				name = name.replace("Wool", "White Wool");
+			if (name.startsWith("Potion"))
+				name = name.replace("Potion", "Awkward Potion");
 		}
 
 		return name;
@@ -962,7 +962,7 @@ public class Load {
 			}
 		}
 
-		Entity newEntity = null;
+		Entity newEntity;
 
 		if (entityName.equals("Spark") && !isLocalSave) {
 			int awID = Integer.parseInt(info.get(2));

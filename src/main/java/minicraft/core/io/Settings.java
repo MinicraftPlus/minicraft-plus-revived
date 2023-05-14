@@ -5,6 +5,7 @@ import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 
 import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,9 +35,6 @@ public class Settings {
 		options.put("tutorials", new BooleanEntry("Tutorials", false));
 		options.put("quests", new BooleanEntry("Quests", false));
 		options.put("showquests", new BooleanEntry("Quests Panel", true));
-
-		options.put("language", new ArrayEntry<>("minicraft.settings.language", true, false, Localization.getLocales()));
-		options.get("language").setValue(Localization.getSelectedLanguage());
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
@@ -136,6 +134,8 @@ public class Settings {
 
 		public FPSEntry(String label) {
 			super(label, false, getArray());
+			int rate = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+			setValue(rate == DisplayMode.REFRESH_RATE_UNKNOWN ? 60 : rate % 10 == 0 ? rate : rate - rate % 10);
 		}
 
 		/**

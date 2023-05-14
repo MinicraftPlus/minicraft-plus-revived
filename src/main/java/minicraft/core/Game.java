@@ -10,6 +10,7 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
+import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +20,6 @@ import java.util.List;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
-
-	public static boolean debug = false;
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
@@ -71,6 +70,9 @@ public class Game {
 		Analytics.GameStartup.ping();
 
 		input = new InputHandler(Renderer.canvas);
+
+		ResourcePackDisplay.initPacks();
+		ResourcePackDisplay.reloadResources();
 
 		Tiles.initTileList();
 

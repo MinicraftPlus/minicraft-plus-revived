@@ -239,7 +239,7 @@ public class Level {
 
 		checkAirWizard();
 
-		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
+		if (Logging.logLevel) printTileLocs(Tiles.get("Stairs Down"));
 	}
 
 	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
@@ -366,7 +366,7 @@ public class Level {
 			boolean inLevel = entities.contains(entity);
 
 			if (!inLevel) {
-				if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
+				if (Logging.logLevel) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 
 				synchronized (entityLock) {
 					entities.add(entity);
@@ -398,7 +398,7 @@ public class Level {
 		while (entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 
-			if (Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
+			if (Logging.logLevel) printEntityStatus("Removing ", entity, "mob.Player");
 
 			entity.remove(this); // This will safely fail if the entity's level doesn't match this one.
 			synchronized (entityLock) {

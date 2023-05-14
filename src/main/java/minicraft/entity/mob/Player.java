@@ -267,6 +267,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void tick() {
 		if (level == null || isRemoved()) return;
 		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
+		if (input.getKey("F3-Y").clicked) {
+			World.scheduleLevelChange(1);
+			return;
+		} else if (input.getKey("F3-H").clicked) {
+			World.scheduleLevelChange(-1);
+			return;
+		}
 
 		super.tick(); // Ticks Mob.java
 
@@ -478,6 +485,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					((StackableItem)drop).count = 1;
 				} else {
 					activeItem = null; // Remove it from the "inventory"
+					if (isFishing) {
+						isFishing = false;
+						fishingTicks = maxFishingTicks;
+					}
 				}
 
 				level.dropItem(x, y, drop);
@@ -497,13 +508,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					if (stackable.count > 0) {
 						getLevel().dropItem(x, y, stackable.copy());
 					}
-
-					activeItem = null;
-				} else if (returned > 0) {
-					activeItem = null;
-				} else {
+				} else if (returned <= 0) {
 					getLevel().dropItem(x, y, activeItem);
-					activeItem = null;
+				}
+
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
 				}
 			}
 
@@ -523,7 +535,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					new Save(WorldSelectDisplay.getWorldName());
 				}
 				//debug feature:
-				if (Game.debug && input.inputDown("shift-p")) { // Remove all potion effects
+				if (input.inputDown("F3-p")) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
 					}
@@ -532,6 +544,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
+						if (isFishing) {
+							isFishing = false;
+							fishingTicks = maxFishingTicks;
+						}
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
 					}
 					attack(); // Attack (with the power glove)
