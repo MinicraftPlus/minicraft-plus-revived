@@ -31,6 +31,9 @@ but some sections are changed to compliant this project.
   + Added on-screen keyboard
 + Added logo splash screen
 + Added glass bottle and made potions return glass bottles when used
++ Added colored sheep, and it is now available in natural spawn with small chance.
++ Added dyes
++ Added a new recipe - `string * 3 -> white wool * 1`
 
 ### Changes
 
@@ -70,6 +73,8 @@ but some sections are changed to compliant this project.
 * Cow and sheep now graze on grasses
 * Recipes are unlocked only when one of the materials obtained
 * A `clothes` item with the previous clothing color is returned when a new `clothes` item is applied
+* Sheep and beds are now color-able
+* 16 colors are implemented in dyes, wools, and color-able items and furniture
 
 ### Removals
 
