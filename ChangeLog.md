@@ -11,75 +11,56 @@ but some sections are changed to compliant this project.
 
 ### Additions
 
-+ Added quests and tutorial
-+ Added obsidian knight as the second boss
-+ Added limitation to inventories
-+ Added limitation to stackable items
-+ Added 4 new debug arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`
-+ Added a toggle for HUD display
-+ Added a toggle for simplified effect display
-+ Added a new menu for creative mode
-+ Added a few creative mode only items for tile placement
-+ Added a standard PopupDisplay for all popups
-+ Added a crash handler and a better look of dialog.
-+ Added a simple ability for screenshots
-+ Added dynamic for sounds
-+ Added sand particle for sand
-+ Added more support fonts (for `ÀÂÄÈÎÌÏÒÙÛÝ*«»£$&€§ªº`)
-+ Added world-wide seed
-+ Added controller support
-  + Added on-screen keyboard
-+ Added logo splash screen
-+ Added glass bottle and made potions return glass bottles when used
+* Added a quest system
+* Added tutorial
+* Added obsidian knight as the second boss
+* Added limitation to inventories
+* Added limitation to stackable items
+* Added four new debug arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`
+* Added a toggle for HUD display
+* Added a toggle for simplified effect display
+* Added a new menu for creative mode
+* Added a few creative mode only items for tile placement
+* Added a standard PopupDisplay for all popups
+* Added a crash handler and a better look of dialog.
+* Added a simple ability for screenshots
+* Added dynamic for sounds
+* Added sand particle for sand
+* Added characters to the font (`ÀÂÄÈÎÌÏÒÙÛÝ*«»£$&€§ªº`)
+* Added world-wide seed
+* Added controller support
+* Added on-screen keyboard
+* Added logo splash screen
+* Added glass bottle and made potions return glass bottles when used
+* Added dyes (#445)
+* Added coloured sheep (#445)
+* Added ability to dye sheep and beds (#445)
+* Cow and sheep now graze on grasses
 
 ### Changes
 
-* Changed the display of world edit
-  * Removed another display for world edits
-* Greatly improved the resource pack system
-  * The past versions of resource packs are unsupported
-  * Changed the structure of resource pack
-  * Improved the handling of skins
-* Split the images of textures
+* Changed the folder structure of resource packs
 * Changed the UI of crash popup
-* Changed a better logging
-* Improved the localization support
-  * Updated the localization for displays and for parameterized localizations
-  * Changed some localization keys into IDs instead of words themselves
-* With optional flag `--savedir`, if present, no longer is appended an extra '.playminicraft/mods/Minecraft Plus' to it
-* Improved some textures
-  * Updated all ore-related and metal-related textures
-* Restructured the resources
-* Enhanced the rendering system for sprites
-  * Added standard LinkedSprite, SpriteAnimation (also replaces the role of ConnectorSprite) for all sprite renderings
-  * Removed ConnectorSprite for tiles, MobSprite for mobs (with more standard way)
-  * Renamed SpriteSheet into MinicraftImage
-* Slightly standardized all the resource handlers
-  * For localizations, sounds, textures, books
-  * Does not rule out the possibility of addition of a standard resource manager
-* Reapplied the role of seeds (the sameness with same seed)
-* Now renders the parent display as background
 * Changed the height requirement on skin images from 32 pixels to 16 pixels
-* Fixed lights disappearing when out of screen
-* Improved player's tile indicator
-* Improved FPS option entry
-  * Added VSync and Unlimited options
-    * `VSync` captures the framerate of the device as the value (is not really the VSync)
-    * `Unlimited` does not limit the frame updates
-  * All numeral options are all multiple of 10
-* Cow and sheep now graze on grasses
-* Recipes are unlocked only when one of the materials obtained
-* A `clothes` item with the previous clothing color is returned when a new `clothes` item is applied
+* Move each texture in the sprite sheets to its own file
+* If the application flag `--savedir` is present, '.playminicraft/mods/Minecraft Plus' will no longer be appended
+* Updated all ore-related and metal-related textures
+* Made the parent display render in the background
+* Made recipies unlockable
+* Made you reobtain your old clothes when putting on new clothing
+* Made languages fallback to English
+* Improved the tile place indicator
+* Overhauled debugging actions
 
 ### Removals
 
-- Removed stepped sand texture
+* Removed stepped sand texture
 
 ### Fixes
 
 * Fixed seed random problem
-* Fixed light rendering problem on lanterns
 * Fixed rendering positioning problem of color code styled texts
+* Fixed lights disappearing when out of screen
 
 ## [2.1.3]
 
