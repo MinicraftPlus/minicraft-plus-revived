@@ -65,16 +65,15 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("autosave"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
-			Settings.getEntry("language"),
+			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("screenshot"),
-			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
+			new SelectEntry("minicraft.display.options_display.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		));
 	}
 
 	@Override
 	public void onExit() {
-		Localization.changeLanguage(((LocaleInformation)Settings.get("language")).locale.toLanguageTag());
 		new Save();
-		Game.MAX_FPS = Settings.getFPS();
+		Game.MAX_FPS = (int) Settings.get("fps");
 	}
 }

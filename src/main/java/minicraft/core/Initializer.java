@@ -1,10 +1,12 @@
 package minicraft.core;
 
 import minicraft.core.io.FileHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;
 
 import javax.imageio.ImageIO;
@@ -44,9 +46,7 @@ public class Initializer extends Game {
 		@Nullable
 		String saveDir = null;
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equalsIgnoreCase("--debug")) {
-				debug = true;
-			} else if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
+			if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
 				i++;
 				saveDir = args[i];
 			} else if (args[i].equalsIgnoreCase("--fullscreen")) {
@@ -57,8 +57,12 @@ public class Initializer extends Game {
 				Logging.logThread = true;
 			} else if (args[i].equalsIgnoreCase("--debug-log-trace")) {
 				Logging.logTrace = true;
+			} else if (args[i].equalsIgnoreCase("--debug-level")) {
+				Logging.logLevel = true;
 			} else if (args[i].equalsIgnoreCase("--debug-filelog-full")) {
 				Logging.fileLogFull = true;
+			} else if (args[i].equalsIgnoreCase("--debug-locale")) {
+				Localization.isDebugLocaleEnabled = true;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
@@ -82,7 +86,7 @@ public class Initializer extends Game {
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / Updater.normSpeed; // Nanosecs per sec divided by ticks per sec = nanosecs per tick
-			if (display == null) nsPerTick /= Updater.gamespeed;
+			if (currentDisplay == null) nsPerTick /= Updater.gamespeed;
 			unprocessed += (now - lastTick) / nsPerTick; // Figures out the unprocessed time between now and lastTick.
 			lastTick = now;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
@@ -91,9 +95,10 @@ public class Initializer extends Game {
 				unprocessed--;
 			}
 
-			if (MAX_FPS == Settings.FPS_UNLIMITED || now - lastRender >= 1E9D / MAX_FPS) {
+			now = System.nanoTime();
+			if (now >= lastRender + 1E9D / MAX_FPS) {
 				frames++;
-				lastRender = System.nanoTime();
+				lastRender = now;
 				Renderer.render();
 			}
 
@@ -101,8 +106,8 @@ public class Initializer extends Game {
 				long interval = System.currentTimeMillis() - lastTimer1;
 				lastTimer1 = System.currentTimeMillis(); // Adds a second to the timer
 
-				fra = (int) (frames * 1000 / interval); // Saves total frames in last second
-				tik = (int) (ticks * 1000 / interval); // Saves total ticks in last second
+				fra = (int) Math.round(frames * 1000D / interval); // Saves total frames in last second
+				tik = (int) Math.round(ticks * 1000D / interval); // Saves total ticks in last second
 				frames = 0; // Resets frames
 				ticks = 0; // Resets ticks; ie, frames and ticks only are per second
 			}

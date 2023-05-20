@@ -8,6 +8,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
+import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
@@ -107,14 +108,25 @@ public class Updater extends Game {
 			screenshot++;
 		}
 
-		if (newDisplay != display) {
-			if (display != null && (newDisplay == null || newDisplay.getParent() != display))
-				display.onExit();
+		if (currentDisplay != displayQuery.peek() && !displayQuery.isEmpty()) {
+			Display prevDisplay = currentDisplay; // For both null or not null.
+			currentDisplay = displayQuery.peek();
+			assert currentDisplay != null;
+			currentDisplay.init(prevDisplay);
+		}
 
-			if (newDisplay != null && (display == null || newDisplay != display.getParent()))
-				newDisplay.init(display);
+		if (currentDisplay != null && displayQuery.isEmpty()) {
+			currentDisplay.onExit();
+			currentDisplay = null;
+		}
 
-			display = newDisplay;
+		assert currentDisplay == displayQuery.peek(); // This should be true.
+		while (displayQuery.size() > 1) {
+			Display prevDisplay = displayQuery.pop();
+			// assert curDisplay == prevDisplay;
+			currentDisplay = displayQuery.peek();
+			assert currentDisplay != null;
+			currentDisplay.init(prevDisplay);
 		}
 
 		Level level = levels[currentLevel];
@@ -174,11 +186,11 @@ public class Updater extends Game {
 			TutorialDisplayHandler.tick(input);
 			AdvancementElement.AdvancementTrigger.tick();
 
-			if (display != null) {
+			if (currentDisplay != null) {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				display.tick(input);
+				currentDisplay.tick(input);
 				paused = true;
 			} else {
 				// No menu, currently.
@@ -203,14 +215,13 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (currentDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 
 				// For debugging only
-				if (debug) {
-
-					if (input.getKey("ctrl-p").clicked) {
+				{
+					if (input.getKey("F3-L").clicked) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
 						for (Level value : levels) {
@@ -220,46 +231,56 @@ public class Updater extends Game {
 					}
 
 					// Host-only cheats.
-					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
-					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
-					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
-					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
+					if (input.getKey("F3-T-1").clicked) changeTimeOfDay(Time.Morning);
+					if (input.getKey("F3-T-2").clicked) changeTimeOfDay(Time.Day);
+					if (input.getKey("F3-T-3").clicked) changeTimeOfDay(Time.Evening);
+					if (input.getKey("F3-T-4").clicked) changeTimeOfDay(Time.Night);
 
 					String prevMode = (String)Settings.get("mode");
-					if (input.getKey("creative").clicked) {
+					if (input.getKey("F3-F4-2").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.creative");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
 					}
-					if (input.getKey("survival").clicked) Settings.set("mode", "minicraft.settings.mode.survival");
-					if (input.getKey("shift-t").clicked) Settings.set("mode", "minicraft.settings.mode.score");
+					if (input.getKey("F3-F4-1").clicked) {
+						Settings.set("mode", "minicraft.settings.mode.survival");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
+					}
+					if (input.getKey("F3-F4-3").clicked) {
+						Settings.set("mode", "minicraft.settings.mode.score");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
+					}
 
-					if (isMode("minicraft.settings.mode.score") && input.getKey("ctrl-t").clicked) {
+					if (isMode("minicraft.settings.mode.score") && input.getKey("F3-SHIFT-T").clicked) {
 						scoreTime = normSpeed * 5; // 5 seconds
 					}
 
 					float prevSpeed = gamespeed;
-					if (input.getKey("shift-0").clicked)
+					if (input.getKey("F3-S-0").clicked) {
 						gamespeed = 1;
-
-					if (input.getKey("shift-equals").clicked) {
+						Logging.WORLDNAMED.trace("Tick speed reset from {} into 1.", prevSpeed);
+					}
+					if (input.getKey("F3-S-equals").clicked) {
 						if (gamespeed < 1) gamespeed *= 2;
 						else if (normSpeed*gamespeed < 2000) gamespeed++;
+						Logging.WORLDNAMED.trace("Tick speed increased from {} into {}.", prevSpeed, gamespeed);
 					}
-					if (input.getKey("shift-minus").clicked) {
+					if (input.getKey("F3-S-minus").clicked) {
 						if (gamespeed > 1) gamespeed--;
 						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
+						Logging.WORLDNAMED.trace("Tick speed decreased from {} into {}.", prevSpeed, gamespeed);
 					}
 
-					if (input.getKey("ctrl-h").clicked) player.health--;
-					if (input.getKey("ctrl-b").clicked) player.hunger--;
+					if (input.getKey("F3-h").clicked) player.health--;
+					if (input.getKey("F3-b").clicked) player.hunger--;
 
-					if (input.getKey("0").clicked) player.moveSpeed = 1;
-					if (input.getKey("equals").clicked) player.moveSpeed++;
-					if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
+					if (input.getKey("F3-M-0").clicked) player.moveSpeed = 1;
+					if (input.getKey("F3-M-equals").clicked) player.moveSpeed++;
+					if (input.getKey("F3-M-minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
 
-					if (input.getKey("shift-u").clicked) {
+					if (input.getKey("F3-u").clicked) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
 					}
-					if (input.getKey("shift-d").clicked) {
+					if (input.getKey("F3-d").clicked) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
 					}
 				} // End debug only cond.

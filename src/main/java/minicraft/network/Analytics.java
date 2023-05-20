@@ -53,7 +53,6 @@ public enum Analytics {
 
 	@Nullable public Future<HttpResponse<Empty>> ping() { return ping(1); }
 	@Nullable public Future<HttpResponse<Empty>> ping(int value) {
-		if (Game.debug) return null;
 		final String url = "https://pingdat.io?t="+token+"&v="+value;
 
 		return Unirest.get(url).asEmptyAsync(new Callback<Empty>() {

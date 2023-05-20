@@ -101,8 +101,6 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {
-		ResourcePackDisplay.initPacks();
-		ResourcePackDisplay.reloadResources();
 		screen = new Screen();
 		lightScreen = new Screen();
 
@@ -111,14 +109,7 @@ public class Renderer extends Game {
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		Initializer.startCanvasRendering();
-		try { // Reference: https://stackoverflow.com/a/61843644.
-			canvas.createBufferStrategy(3, GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getDefaultScreenDevice()
-				.getDefaultConfiguration()
-				.getBufferCapabilities());
-		} catch (AWTException e) {
-			CrashHandler.crashHandle(e, new ErrorInfo("Canvas Initialization Failure", ErrorInfo.ErrorType.UNEXPECTED, true, "The canvas is unable to be initialized."));
-		}
+		canvas.createBufferStrategy(3);
 
 		canvas.requestFocus();
 	}
@@ -135,8 +126,8 @@ public class Renderer extends Game {
 			if (player.renderGUI) renderGui();
 		}
 
-		if (display != null) // Renders menu, if present.
-			display.render(screen);
+		if (currentDisplay != null) // Renders menu, if present.
+			currentDisplay.render(screen);
 
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.

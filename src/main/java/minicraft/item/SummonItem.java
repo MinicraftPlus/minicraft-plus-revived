@@ -66,7 +66,7 @@ public class SummonItem extends StackableItem {
 				// Check if we are on the right level and tile
 				if (level.depth == -4) {
 					// If the player nears the center.
-					if (new Rectangle(level.w/2-1, level.h/2-1, 3, 3).contains(player.x >> 4, player.y >> 4)) {
+					if (new Rectangle(level.w/2-3, level.h/2-3, 7, 7).contains(player.x >> 4, player.y >> 4)) {
 						if (!ObsidianKnight.active) {
 
 							// Pay stamina

@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 public class WorldSelectDisplay extends Display {
 
@@ -119,8 +122,7 @@ public class WorldSelectDisplay extends Display {
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
 				} else {
-					Game.exitDisplay();
-					Game.exitDisplay();
+					Game.exitDisplay(3); // Exiting to title display.
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
@@ -166,8 +168,7 @@ public class WorldSelectDisplay extends Display {
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
 				} else {
-					Game.exitDisplay();
-					Game.exitDisplay();
+					Game.exitDisplay(3); // Exiting to title display.
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
@@ -209,8 +210,7 @@ public class WorldSelectDisplay extends Display {
 						menus[0].setSelection(worldNames.size() - 1);
 					}
 				} else {
-					Game.exitDisplay();
-					Game.exitDisplay();
+					Game.exitDisplay(3); // Exiting to title display.
 					Game.setDisplay(new WorldGenDisplay());
 				}
 
