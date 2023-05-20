@@ -33,9 +33,8 @@ public class LoadingDisplay extends Display {
 			} catch (RuntimeException ex) {
 				Throwable t = ex.getCause();
 				if (t instanceof InterruptedException) {
-					Game.exitDisplay();
 					World.onWorldExits();
-					Game.exitDisplay();
+					Game.exitDisplay(); // Exits the loading display and returns to world select display.
 					Game.setDisplay(new PopupDisplay(null, "minicraft.displays.loading.regeneration_cancellation_popup.display"));
 				} else
 					throw ex;
@@ -46,6 +45,7 @@ public class LoadingDisplay extends Display {
 
 	@Override
 	public void init(Display parent) {
+		if (parent != null && parent.getParent() == this) return; // Undefined behaviour
 		super.init(parent);
 		percentage = 0;
 		progressType = "minicraft.displays.loading.message.world";
