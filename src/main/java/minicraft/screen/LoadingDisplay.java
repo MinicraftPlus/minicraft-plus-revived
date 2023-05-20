@@ -26,7 +26,7 @@ public class LoadingDisplay extends Display {
 
 	public LoadingDisplay() {
 		super(true, false);
-		t = new Timer(500, e -> {
+		t = new Timer(500, e -> new Thread(() -> { // A new thread is required as this blocks the running thread.
 			try {
 				World.initWorld();
 				Game.setDisplay(null);
@@ -40,7 +40,7 @@ public class LoadingDisplay extends Display {
 				} else
 					throw ex;
 			}
-		});
+		}, "World Initialization Thread").start());
 		t.setRepeats(false);
 	}
 
