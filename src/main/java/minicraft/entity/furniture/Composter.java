@@ -40,9 +40,8 @@ public class Composter extends Furniture {
 				refreshStatus();
 				return true;
 			} else if (item.getName().equalsIgnoreCase("Wheat") || item.getName().equalsIgnoreCase("Rose") ||
-				item.getName().equalsIgnoreCase("Beetroot") || item.getName().equalsIgnoreCase("Flower") ||
-				item.getName().equalsIgnoreCase("Apple") || item.getName().equalsIgnoreCase("Potato") ||
-				item.getName().equalsIgnoreCase("Carrot")) {
+				item.getName().equalsIgnoreCase("Flower") || item.getName().equalsIgnoreCase("Apple") ||
+				item.getName().equalsIgnoreCase("Potato") || item.getName().equalsIgnoreCase("Carrot")) {
 				if (random.nextInt(4) != 0) { // 75%
 					compost++;
 					((StackableItem) item).count--;
@@ -50,8 +49,7 @@ public class Composter extends Furniture {
 					return true;
 				}
 			} else if (item.getName().equalsIgnoreCase("Acorn") || item.getName().equalsIgnoreCase("Cactus") ||
-				item.getName().equalsIgnoreCase("Wheat Seeds") || item.getName().equalsIgnoreCase("Beetroot Seeds") ||
-				item.getName().equalsIgnoreCase("Grass Seeds")) {
+				item.getName().equalsIgnoreCase("Wheat Seeds") || item.getName().equalsIgnoreCase("Grass Seeds")) {
 				if (random.nextInt(3) != 0) { // 66.7%
 					compost++;
 					((StackableItem) item).count--;
