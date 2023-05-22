@@ -17,7 +17,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class GrassTile extends Tile implements BonemealableTile {
+public class GrassTile extends Tile implements BoostablePlantTile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
 		.setSingletonWithConnective(true);
@@ -89,17 +89,17 @@ public class GrassTile extends Tile implements BonemealableTile {
 	}
 
 	@Override
-	public boolean isValidBonemealTarget(Level level, int x, int y) {
+	public boolean isValidBoostablePlantTarget(Level level, int x, int y) {
 		return true;
 	}
 
 	@Override
-	public boolean isBonemealSuccess(Level level, int x, int y) {
+	public boolean isPlantBoostSuccess(Level level, int x, int y) {
 		return true;
 	}
 
 	@Override
-	public void performBonemeal(Level level, int x, int y) {
+	public void performPlantBoost(Level level, int x, int y) {
 		label:
 		for (int i = 0; i < 128; i++) {
 			int xx = x;
@@ -114,22 +114,22 @@ public class GrassTile extends Tile implements BonemealableTile {
 			}
 
 			if (level.getTile(xx, yy) == this && random.nextInt(10) == 0) {
-				performBonemeal(level, xx, yy);
+				performPlantBoost(level, xx, yy);
 			}
 
 			if (level.getTile(xx, yy) != this) continue; // Further confirming the tile is still grass tile.
-			Map.Entry<Short, Short> plant = bonemealPerformingPlants.get(random.nextInt(bonemealPerformingPlants.size()));
+			Map.Entry<Short, Short> plant = boostPerformingPlants.get(random.nextInt(boostPerformingPlants.size()));
 			level.setTile(xx, yy, Tiles.get(plant.getKey()), plant.getValue());
 		}
 	}
 
-	private static final ArrayList<Map.Entry<Short, Short>> bonemealPerformingPlants = new ArrayList<>();
+	private static final ArrayList<Map.Entry<Short, Short>> boostPerformingPlants = new ArrayList<>();
 	static {
-		bonemealPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 0));
-		bonemealPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 1));
-		bonemealPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 55, (short) 0));
-		bonemealPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 56, (short) 0));
-		bonemealPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 57, (short) 0));
-		bonemealPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 58, (short) 0));
+		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 0));
+		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 1));
+		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 52, (short) 0));
+		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 53, (short) 0));
+		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 54, (short) 0));
+		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 55, (short) 0));
 	}
 }

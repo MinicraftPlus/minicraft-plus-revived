@@ -5,20 +5,21 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
-import minicraft.level.tile.BonemealableTile;
+import minicraft.level.tile.BoostablePlantTile;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class BoneMealItem extends StackableItem {
+public class ArcaneFertilizerItem extends StackableItem {
 	public static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
-		items.add(new BoneMealItem("Bone Meal", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "bone_meal")));
+		items.add(new ArcaneFertilizerItem("Arcane Fertilizer", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "arcane_fertilizer")));
 		return items;
 	}
 
-	protected BoneMealItem(String name, SpriteLinker.LinkedSprite sprite) {
+	protected ArcaneFertilizerItem(String name, SpriteLinker.LinkedSprite sprite) {
 		super(name, sprite);
 	}
 
@@ -26,10 +27,10 @@ public class BoneMealItem extends StackableItem {
 
 	@Override
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (tile instanceof BonemealableTile) {
-			if (((BonemealableTile) tile).isValidBonemealTarget(level, xt, yt)) {
-				if (((BonemealableTile) tile).isBonemealSuccess(level, xt, yt)) {
-					((BonemealableTile) tile).performBonemeal(level, xt, yt);
+		if (tile instanceof BoostablePlantTile) {
+			if (((BoostablePlantTile) tile).isValidBoostablePlantTarget(level, xt, yt)) {
+				if (((BoostablePlantTile) tile).isPlantBoostSuccess(level, xt, yt)) {
+					((BoostablePlantTile) tile).performPlantBoost(level, xt, yt);
 				}
 
 				Random random = new Random();
@@ -46,7 +47,7 @@ public class BoneMealItem extends StackableItem {
 	}
 
 	@Override
-	public StackableItem clone() {
-		return new BoneMealItem(getName(), sprite);
+	public @NotNull StackableItem copy() {
+		return new ArcaneFertilizerItem(getName(), sprite);
 	}
 }

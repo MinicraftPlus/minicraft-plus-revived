@@ -6,6 +6,7 @@ import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.farming.CropTile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class FertilizerItem extends StackableItem {
 	}
 
 	@Override
-	public StackableItem clone() {
+	public @NotNull StackableItem copy() {
 		return new FertilizerItem(getName(), sprite);
 	}
 }
