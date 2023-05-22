@@ -3,7 +3,10 @@ package minicraft.screen.entry;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
@@ -75,6 +78,14 @@ public abstract class ListEntry {
 	 */
 	public static int getHeight() {
 		return Font.textHeight();
+	}
+
+	/**
+	 * Calculates the rendering displacement of the entry in the menu.
+	 * @return a 2D point denoting the x and y displacement respectively.
+	 */
+	public @Nullable Point getRenderingDisplacement() {
+		return null;
 	}
 
 	/**

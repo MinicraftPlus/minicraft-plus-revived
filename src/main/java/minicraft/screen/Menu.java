@@ -343,7 +343,10 @@ public class Menu {
 			ListEntry entry = entries.get(idx);
 
 			if(!(entry instanceof BlankEntry)) {
-				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+				Point displacement = entry.getRenderingDisplacement();
+				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()),
+					(displacement != null) ? new Rectangle(entryBounds.getLeft() + displacement.x, y + displacement.y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS) :
+						new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 				boolean selected = idx == selection;
 				if (searcherBarActive && useSearcherBar) {
 					entry.render(screen, pos.x, pos.y, selected, typingSearcher, Color.YELLOW);

@@ -8,10 +8,13 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -29,6 +32,7 @@ public class WorldGenDisplay extends Display {
 		if (FileHandler.OS.contains("windows")) {
 			// Reference: https://stackoverflow.com/a/6804755
 			worldNameRegex = "[^<>:\"/\\\\|?*\\x00-\\x1F]+";
+			//noinspection RegExpRepeatedSpace
 			detailedFilenamePattern = Pattern.compile(
 			"# Match a valid Windows filename (unspecified file system).          \n" +
 				"^                                # Anchor to start of string.        \n" +
@@ -78,8 +82,8 @@ public class WorldGenDisplay extends Display {
 		return OptionalLong.of(seed);
 	}
 
-	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue, boolean isGen) {
-		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
+	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue) {
+		return new InputEntry(prompt, worldNameRegex, 255, initValue) {
 			private String lastName;
 
 			@Override
@@ -127,11 +131,32 @@ public class WorldGenDisplay extends Display {
 				return super.getUserInput().toLowerCase(Localization.getSelectedLocale());
 			}
 
+			private int maxXDisplacement = 0; // Relative maximum rendering displacement.
+			private int renderingX = 0; // Relative rendering displacement.
+
+			{
+				setChangeListener(i -> renderingX = maxXDisplacement = getUserInput().length() > 9 ? -(getUserInput().length()-9) * 8 : 0);
+			}
+
 			@Override
-			public void render(Screen screen, int x, int y, boolean isSelected) {
-				super.render(screen, isGen?
-					(getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x):
-					x, y, isSelected);
+			public @NotNull Point getRenderingDisplacement() {
+				return new Point(renderingX, 0);
+			}
+
+			@Override
+			public void tick(InputHandler input) {
+				super.tick(input);
+				if (input.getKey("cursor-right").clicked) {
+					if (renderingX > maxXDisplacement) { // Enough space on the left.
+						renderingX -= 8;
+						if (renderingX < maxXDisplacement) renderingX = maxXDisplacement;
+					}
+				} else if (input.getKey("cursor-left").clicked) {
+					if (renderingX < 0) {
+						renderingX += 8;
+						if (renderingX > 0) renderingX = 0;
+					}
+				}
 			}
 		};
 	}
@@ -139,7 +164,7 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true);
+		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "");
 
 		SelectEntry nameHelp = new SelectEntry("minicraft.displays.world_gen.troublesome_input", () -> Game.setDisplay(new PopupDisplay(null, "minicraft.displays.world_gen.troublesome_input.msg"))) {
 			@Override

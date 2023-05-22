@@ -22,9 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 public class WorldSelectDisplay extends Display {
 
@@ -87,7 +84,7 @@ public class WorldSelectDisplay extends Display {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.BLUE));
-			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName, false));
+			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName));
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
@@ -135,7 +132,7 @@ public class WorldSelectDisplay extends Display {
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			names.remove(worldName);
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.GREEN));
-			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName, false));
+			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName));
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
