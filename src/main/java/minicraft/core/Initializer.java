@@ -183,6 +183,7 @@ public class Initializer extends Game {
 		private volatile boolean display = false;
 		private volatile boolean inAnimation = false;
 		private volatile boolean interruptWhenAnimated = false;
+		private volatile int ticksElapsed = 0; // Ticks elapsed after faded in
 
 		public Thread renderer = new Thread(() -> {
 			long lastTick = System.nanoTime();
@@ -246,11 +247,14 @@ public class Initializer extends Game {
 					if (transparency < 255) transparency += 5;
 					else inAnimation = false;
 				}
+			} else if (display) {
+				//noinspection NonAtomicOperationOnVolatileField
+				ticksElapsed++;
 			}
 		}
 
 		public  void setDisplay(boolean display) {
-			while (inAnimation) {} // Waiting for animation to finish.
+			while (inAnimation || this.display && ticksElapsed <= 80) {} // Waiting for animation to finish for at least 80 ticks, i.e., 800ms.
 			this.display = display;
 			inAnimation = true;
 		}
