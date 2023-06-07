@@ -3,6 +3,7 @@ package minicraft.level.tile.farming;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.item.Items;
@@ -20,6 +21,7 @@ public class PlantTile extends FarmTile {
     @Override
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
         super.steppedOn(level, xt, yt, entity);
+		if (entity instanceof ItemEntity) return;
         harvest(level, xt, yt, entity);
     }
 
