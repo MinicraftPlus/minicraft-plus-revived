@@ -1,6 +1,5 @@
 package minicraft.entity;
 
-import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.function.IntSupplier;
 
 public abstract class Entity implements Tickable {
 
@@ -122,8 +122,8 @@ public abstract class Entity implements Tickable {
 
 		boolean stopped = true; // Used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
 		//noinspection RedundantIfStatement
-		if (move2(xd, Axis2D.X)) stopped = false; // Becomes false if horizontal movement was successful.
-		if (move2(yd, Axis2D.Y)) stopped = false; // Becomes false if vertical movement was successful.
+		if (moveX(xd)) stopped = false; // Becomes false if horizontal movement was successful.
+		if (moveY(yd)) stopped = false; // Becomes false if vertical movement was successful.
 		if (!stopped) {
 			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
@@ -134,124 +134,88 @@ public abstract class Entity implements Tickable {
 	}
 
 	/**
-	 * Moves the entity a long only one direction without "teleporting".
-	 * If xd != 0 then ya should be 0.
-	 * If xd = 0 then ya should be != 0.
+	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.
 	 * @param d Displacement relative to the axis.
-	 * @param axis Reference axis.
 	 * @return true if the move was successful, false if not.
 	 */
-	protected boolean move2(int d, Axis2D axis) {
+	protected boolean moveX(int d) {
 		if (d == 0) return true; // Was not stopped
 
 		//boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 
 		// Taking the axis of movement (towards) as the front axis, and the horizontal axis with another axis.
-		// Signs taking front axis' directions.
-		// Horizontal directions taking the number line directions.
-		int sgn = (int) Math.signum(d); // -1 for UP and LEFT; +1 for DOWN and RIGHT
-		int hitBoxLeft;
-		int hitBoxRight;
-		int hitBoxFront;
-		int hitBoxFront1; // After maximum movement
-		int hitBoxLeftTile;
-		int hitBoxRightTile;
-		int hitBoxFrontTile;
-		int hitBoxFrontTile1;
-		int maxFront; // Maximum position can be reached with front hit box
-		int maxFrontTile;
+		// Signs taking front axis' directions, i.e. the x-axis.
+		// Horizontal directions taking the number line directions, i.e. the y-axis.
+		int sgn = (int) Math.signum(d); // -1 for LEFT; +1 for RIGHT
+		int hitBoxLeft = y - yr;
+		int hitBoxRight = y + yr;
+		int hitBoxFront = x + xr * sgn;
+		int maxFront = Level.calculateMaxFrontClosestTile(sgn, d, hitBoxLeft, hitBoxRight, hitBoxFront,
+			(front, horTile) -> level.getTile(front, horTile).mayPass(level, front, horTile, this)); // Maximum position can be reached with front hit box
+		if (maxFront == hitBoxFront) return false; // No movement can be made.
+		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x + sgn, () -> y, () -> x += sgn);
+	}
+
+	/**
+	 * Moves the entity a long only on X axis without "teleporting".
+	 * Will throw exception otherwise.
+	 * @param d Displacement relative to the axis.
+	 * @return true if the move was successful, false if not.
+	 */
+	protected boolean moveY(int d) {
+		if (d == 0) return true; // Was not stopped
+
+		//boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
+
+		// Taking the axis of movement (towards) as the front axis, and the horizontal axis with another axis.
+		// Signs taking front axis' directions, i.e. the y-axis.
+		// Horizontal directions taking the number line directions, i.e. the x-axis.
+		int sgn = (int) Math.signum(d); // -1 for UP; +1 for DOWN
+		int hitBoxLeft = x - xr;
+		int hitBoxRight = x + xr;
+		int hitBoxFront = y + yr * sgn;
+		int maxFront = Level.calculateMaxFrontClosestTile(sgn, d, hitBoxLeft, hitBoxRight, hitBoxFront,
+			(front, horTile) -> level.getTile(horTile, front).mayPass(level, horTile, front, this)); // Maximum position can be reached with front hit box
+		if (maxFront == hitBoxFront) return false; // No movement can be made.
+		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x, () -> y + sgn, () -> y += sgn);
+	}
+
+	/**
+	 * Moves the entity by checking entity hit boxes being interacted with the given possible length of straight path.
+	 * @param sgn One-dimensional direction of displacement
+	 * @param hitBoxFront The front boundary of hit box
+	 * @param maxFront Maximum position can be reached with front hit box (firstly checked by tile hot box)
+	 * @param xMove The value of the willing x movement
+	 * @param yMove The value of the willing y movement
+	 * @param incrementMove The movement call when the movement is possible
+	 * @return {@code true} if the movement is successful, {@code false} otherwise.
+	 * @see #moveByEntityHitBoxChecks(int, int, int, IntSupplier, IntSupplier, Runnable)
+	 */
+	protected boolean moveByEntityHitBoxChecks(int sgn, int hitBoxFront, int maxFront, IntSupplier xMove,
+											   IntSupplier yMove, Runnable incrementMove) {
 		boolean successful = false;
-		if (axis == Axis2D.Y) {
-			hitBoxLeft = x - xr;
-			hitBoxRight = x + xr;
-			hitBoxFront = y + yr * sgn;
-			hitBoxFront1 = hitBoxFront + d;
-			hitBoxLeftTile = hitBoxLeft >> 4;
-			hitBoxRightTile = hitBoxRight >> 4;
-			hitBoxFrontTile = hitBoxFront >> 4;
-			hitBoxFrontTile1 = hitBoxFront1 >> 4;
-			maxFrontTile = hitBoxFrontTile1; // Value for full tile movement
-			// Skips the current tile by adding 1.
-			for (int front = hitBoxFrontTile + sgn; sgn < 0 ? front >= hitBoxFrontTile1 : front <= hitBoxFrontTile1; front += sgn) {
-				for (int horTile = hitBoxLeftTile; horTile <= hitBoxRightTile; horTile++) {
-					if (!level.getTile(horTile, front).mayPass(level, horTile, front, this)) {
-						maxFrontTile = front - sgn; // Rolls back a tile by subtracting 1.
-						break; // Tile hit box check stops.
-					}
-				}
-			}
 
-			maxFront = hitBoxFront +
-				(sgn > 0 ? Math.min(d, (maxFrontTile << 4) - hitBoxFront + (1 << 4) - 1) : Math.max(d, (maxFrontTile << 4) - hitBoxFront));
-			if (maxFront == hitBoxFront) return false; // No movement can be made.
-
-			// These lists are named as if the entity has already moved-- it hasn't, though.
-			HashSet<Entity> wasInside = new HashSet<>(level.getEntitiesInRect(getBounds())); // Gets all the entities that are inside this entity (aka: colliding) before moving.
-			for (int front = hitBoxFront; sgn < 0 ? front > maxFront : front < maxFront; front += sgn) {
-				boolean blocked = false; // If the entity prevents this one from movement, no movement.
-				for (Entity e : level.getEntitiesInRect(new Rectangle(x, y + sgn, xr * 2, yr * 2, Rectangle.CENTER_DIMS))) {
-					if (!wasInside.contains(e)) { // Skips entities that were touched.
-						if (e != this) {
-							if (!blocked) blocked = e.blocks(this);
-							if (e instanceof Player) {
-								touchedBy(e);
-							} else {
-								e.touchedBy(this);
-							}
+		// These lists are named as if the entity has already moved-- it hasn't, though.
+		HashSet<Entity> wasInside = new HashSet<>(level.getEntitiesInRect(getBounds())); // Gets all the entities that are inside this entity (aka: colliding) before moving.
+		for (int front = hitBoxFront; sgn < 0 ? front > maxFront : front < maxFront; front += sgn) {
+			boolean blocked = false; // If the entity prevents this one from movement, no movement.
+			for (Entity e : level.getEntitiesInRect(new Rectangle(xMove.getAsInt(), yMove.getAsInt(), xr * 2, yr * 2, Rectangle.CENTER_DIMS))) {
+				if (!wasInside.contains(e)) { // Skips entities that were touched.
+					if (e != this) {
+						if (!blocked) blocked = e.blocks(this);
+						if (e instanceof Player) {
+							touchedBy(e);
+						} else {
+							e.touchedBy(this);
 						}
-						wasInside.add(e); // Add entity into list.
 					}
-				}
-				if (blocked) break;
-				y += sgn; // Movement successful
-				successful = true;
-			}
-		} else { // X axis
-			hitBoxLeft = y - yr;
-			hitBoxRight = y + yr;
-			hitBoxFront = x + xr * sgn;
-			hitBoxFront1 = hitBoxFront + d;
-			hitBoxLeftTile = hitBoxLeft >> 4;
-			hitBoxRightTile = hitBoxRight >> 4;
-			hitBoxFrontTile = hitBoxFront >> 4;
-			hitBoxFrontTile1 = hitBoxFront1 >> 4;
-			maxFrontTile = hitBoxFrontTile1; // Value for full tile movement
-			// Skips the current tile by adding 1.
-			for (int front = hitBoxFrontTile + sgn; sgn < 0 ? front >= hitBoxFrontTile1 : front <= hitBoxFrontTile1; front += sgn) {
-				for (int horTile = hitBoxLeftTile; horTile <= hitBoxRightTile; horTile++) {
-					if (!level.getTile(front, horTile).mayPass(level, front, horTile, this)) {
-						maxFrontTile = front - sgn; // Rolls back a tile by subtracting 1.
-						break; // Tile hit box check stops.
-					}
+					wasInside.add(e); // Add entity into list.
 				}
 			}
-
-			maxFront = hitBoxFront +
-				(sgn > 0 ? Math.min(d, (maxFrontTile << 4) - hitBoxFront + (1 << 4) - 1) : Math.max(d, (maxFrontTile << 4) - hitBoxFront));
-			if (maxFront == hitBoxFront) return false; // No movement can be made.
-
-			// These lists are named as if the entity has already moved-- it hasn't, though.
-			HashSet<Entity> wasInside = new HashSet<>(level.getEntitiesInRect(getBounds())); // Gets all the entities that are inside this entity (aka: colliding) before moving.
-			for (int front = hitBoxFront; sgn < 0 ? front > maxFront : front < maxFront; front += sgn) {
-				boolean blocked = false; // If the entity prevents this one from movement, no movement.
-				for (Entity e : level.getEntitiesInRect(new Rectangle(x + sgn, y, xr * 2, yr * 2, Rectangle.CENTER_DIMS))) {
-					if (!wasInside.contains(e)) { // Skips entities that were touched.
-						if (e != this) {
-							if (!blocked) blocked = e.blocks(this);
-							if (e instanceof Player) {
-								touchedBy(e);
-							} else {
-								e.touchedBy(this);
-							}
-						}
-						wasInside.add(e); // Add entity into list.
-					}
-				}
-				if (blocked) break;
-				x += sgn; // Movement successful
-				successful = true;
-			}
+			if (blocked) break;
+			incrementMove.run(); // Movement successful
+			successful = true;
 		}
 
 		return successful;
