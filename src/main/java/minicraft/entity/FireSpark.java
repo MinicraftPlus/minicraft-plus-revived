@@ -59,8 +59,8 @@ public class FireSpark extends Entity {
 			yy += ya;
 			boolean stopped = true;
 			//noinspection RedundantIfStatement
-			if (move2(((int) xx) - x0, Axis2D.X)) stopped = false; // This kind of difference is handled due to errors by flooring.
-			if (move2(((int) yy) - y0, Axis2D.Y)) stopped = false;
+			if (moveX(((int) xx) - x0)) stopped = false; // This kind of difference is handled due to errors by flooring.
+			if (moveY(((int) yy) - y0)) stopped = false;
 			if (stopped) {
 				this.stopped = true;
 			}
