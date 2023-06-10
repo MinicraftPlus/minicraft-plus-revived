@@ -21,13 +21,8 @@ public class PlantTile extends FarmTile {
     @Override
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
 		if (entity instanceof ItemEntity) return;
-		// Very low chance because steppedOn gets called every tick of movement on the tile.
 		if (random.nextInt(100) != 0) return;
 		harvest(level, xt, yt, entity);
-		if (random.nextInt(10) != 0)
-			level.setTile(xt, yt, Tiles.get("Farmland"));
-		else
-			level.setTile(xt, yt, Tiles.get("Dirt"));
     }
 
     @Override
@@ -81,6 +76,9 @@ public class PlantTile extends FarmTile {
 		// Play sound.
 		Sound.play("monsterhurt");
 
-        level.setTile(x, y, Tiles.get("Dirt"));
+        if (random.nextInt(7) == 0)
+			level.setTile(x, y, Tiles.get("Farmland"));
+		else
+			level.setTile(x, y, Tiles.get("Dirt"));
     }
 }
