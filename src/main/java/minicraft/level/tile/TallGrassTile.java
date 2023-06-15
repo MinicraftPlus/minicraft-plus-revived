@@ -18,9 +18,7 @@ import java.util.List;
 public class TallGrassTile extends Tile {
 	public enum TallGrassType {
 		GRASS(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "tall_grass")),
-		FERN(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "fern")),
-		TALL_GRASS(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "double_tall_grass")),
-		LARGE_FERN(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "large_fern"));
+		TALL_GRASS(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "double_tall_grass"));
 
 		private final SpriteAnimation sprite;
 
@@ -31,7 +29,7 @@ public class TallGrassTile extends Tile {
 	}
 
 	public static final List<Short> grassIDs = Collections.unmodifiableList(Arrays.asList(
-		(short) 52, (short) 53, (short) 54, (short) 55));
+		(short) 52, (short) 53));
 
 	protected TallGrassTile(String name, TallGrassType type) {
 		super(name, type.sprite);

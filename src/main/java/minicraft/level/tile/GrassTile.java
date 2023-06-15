@@ -132,7 +132,5 @@ public class GrassTile extends Tile implements BoostablePlant {
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 1));
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 52, (short) 0));
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 53, (short) 0));
-		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 54, (short) 0));
-		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 55, (short) 0));
 	}
 }

@@ -81,10 +81,8 @@ public final class Tiles {
 		tiles.put((short)51, new CarrotTile("Carrot"));
 		tiles.put((short)52, new TallGrassTile("Tall Grass", TallGrassTile.TallGrassType.GRASS));
 		tiles.put((short)53, new TallGrassTile("Double Tall Grass", TallGrassTile.TallGrassType.TALL_GRASS));
-		tiles.put((short)54, new TallGrassTile("Fern", TallGrassTile.TallGrassType.FERN));
-		tiles.put((short)55, new TallGrassTile("Large Fern", TallGrassTile.TallGrassType.LARGE_FERN));
-		tiles.put((short)56, new HeavenlyBerriesTile("Heavenly Berries"));
-		tiles.put((short)57, new HellishBerriesTile("Hellish Berries"));
+		tiles.put((short)54, new HeavenlyBerriesTile("Heavenly Berries"));
+		tiles.put((short)55, new HellishBerriesTile("Hellish Berries"));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
