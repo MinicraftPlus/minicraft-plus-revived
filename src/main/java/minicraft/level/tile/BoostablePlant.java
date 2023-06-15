@@ -2,7 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.level.Level;
 
-public interface BoostablePlantTile {
+public interface BoostablePlant {
 	/**
 	 * Whether arcane fertilizer is able to be performed on the tile.
 	 */

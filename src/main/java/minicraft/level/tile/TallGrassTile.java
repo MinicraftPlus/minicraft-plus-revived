@@ -20,8 +20,7 @@ public class TallGrassTile extends Tile {
 		GRASS(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "tall_grass")),
 		FERN(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "fern")),
 		TALL_GRASS(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "double_tall_grass")),
-		LARGE_FERN(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "large_fern")),
-		;
+		LARGE_FERN(new SpriteAnimation(SpriteLinker.SpriteType.Tile, "large_fern"));
 
 		private final SpriteAnimation sprite;
 

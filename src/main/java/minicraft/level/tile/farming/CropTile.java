@@ -7,7 +7,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.item.Items;
 import minicraft.level.Level;
-import minicraft.level.tile.BoostablePlantTile;
+import minicraft.level.tile.BoostablePlant;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
@@ -15,10 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class CropTile extends FarmTile implements BoostablePlantTile {
+public class CropTile extends FarmTile implements BoostablePlant {
 	protected final @Nullable String seed;
 
-	protected int maxStage = 7; // Must be a bit mask.
+	protected int maxAge = 0b111; // Must be a bit mask.
 
 	protected CropTile(String name, @Nullable String seed) {
 		super(name, null);
@@ -47,8 +47,8 @@ public class CropTile extends FarmTile implements BoostablePlantTile {
 		}
 
 		int fertilization = getFertilization(data);
-		int stage = (data >> 3) & maxStage;
-		if (stage < maxStage) {
+		int stage = (data >> 3) & maxAge;
+		if (stage < maxAge) {
 			double points = moisture > 0 ? 4 : 2;
 			for (int i = -1; i < 2; i++)
 				for (int j = -1; j < 2; j++) {
@@ -82,12 +82,12 @@ public class CropTile extends FarmTile implements BoostablePlantTile {
 			}
 
 			if (random.nextInt((int) (100/points) + 1) < (fertilization/30 + 1)) // fertilization >= 0
-				level.setData(xt, yt, data = (data & ~(maxStage << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
+				level.setData(xt, yt, data = (data & ~(maxAge << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
 			successful = true;
 		}
 
 		if (fertilization > 0) {
-			level.setData(xt, yt, (data & (0b111 + (maxStage << 3))) + ((fertilization - 1) << (3 + (maxStage + 1)/2)));
+			level.setData(xt, yt, (data & (0b111 + (maxAge << 3))) + ((fertilization - 1) << (3 + (maxAge + 1)/2)));
 			successful = true;
 		}
 
@@ -97,18 +97,18 @@ public class CropTile extends FarmTile implements BoostablePlantTile {
 	/** Default harvest method, used for everything that doesn't really need any special behavior. */
 	protected void harvest(Level level, int x, int y, Entity entity) {
 		int data = level.getData(x, y);
-		int age = (data >> 3) & maxStage;
+		int age = (data >> 3) & maxAge;
 
 		if (seed != null)
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(seed));
 
-		if (age == maxStage) {
+		if (age == maxAge) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, random.nextInt(3) + 2, Items.get(name));
 		} else if (seed == null) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(name));
 		}
 
-		if (age == maxStage && entity instanceof Player) {
+		if (age == maxAge && entity instanceof Player) {
 			((Player)entity).addScore(random.nextInt(5) + 1);
 		}
 
@@ -119,7 +119,7 @@ public class CropTile extends FarmTile implements BoostablePlantTile {
 	}
 
 	public int getFertilization(int data) {
-		return data >> (3 + (maxStage + 1)/2);
+		return data >> (3 + (maxAge + 1)/2);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class CropTile extends FarmTile implements BoostablePlantTile {
 		if (fertilization < 0) fertilization = 0;
 		if (fertilization > 511) fertilization = 511; // The maximum possible value to be reached.
 		// If this value exceeds 511, the final value would be greater than the hard maximum value that short can be.
-		level.setData(x, y, (data & (0b111 + (maxStage << 3))) + (fertilization << (3 + (maxStage + 1)/2)));
+		level.setData(x, y, (data & (0b111 + (maxAge << 3))) + (fertilization << (3 + (maxAge + 1)/2)));
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class CropTile extends FarmTile implements BoostablePlantTile {
 	@Override
 	public void performPlantBoost(Level level, int x, int y) {
 		int data = level.getData(x, y);
-		int stage = (data >> 3) & maxStage;
-		level.setData(x, y, (data & ~(maxStage << 3)) + (Math.min(stage + random.nextInt(4) + 2, maxStage) << 3));
+		int stage = (data >> 3) & maxAge;
+		level.setData(x, y, (data & ~(maxAge << 3)) + (Math.min(stage + random.nextInt(4) + 2, maxAge) << 3));
 	}
 }

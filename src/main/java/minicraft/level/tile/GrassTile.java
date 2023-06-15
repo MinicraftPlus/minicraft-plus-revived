@@ -17,7 +17,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class GrassTile extends Tile implements BoostablePlantTile {
+public class GrassTile extends Tile implements BoostablePlant {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
 		.setSingletonWithConnective(true);
@@ -72,6 +72,9 @@ public class GrassTile extends Tile implements BoostablePlantTile {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.play("monsterhurt");
+					if (random.nextInt(2) != 0) { // 50% chance to drop Wheat seeds
+						level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Wheat Seeds"));
+					}
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));
@@ -124,7 +127,7 @@ public class GrassTile extends Tile implements BoostablePlantTile {
 	}
 
 	private static final ArrayList<Map.Entry<Short, Short>> boostPerformingPlants = new ArrayList<>();
-	static {
+	static { // The left-hand-sided data is tile id; the right-hand-sided data is tile data.
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 0));
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 1));
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 52, (short) 0));

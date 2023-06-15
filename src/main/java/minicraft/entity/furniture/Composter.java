@@ -34,11 +34,14 @@ public class Composter extends Furniture {
 		}
 
 		if (item instanceof StackableItem) {
+			// 100% compost as they are heavy food
 			if (item.getName().equalsIgnoreCase("Baked Potato") || item.getName().equalsIgnoreCase("Bread")) {
 				compost++;
 				((StackableItem) item).count--;
 				refreshStatus();
 				return true;
+
+				// 75% compost as they are crop food
 			} else if (item.getName().equalsIgnoreCase("Wheat") || item.getName().equalsIgnoreCase("Rose") ||
 				item.getName().equalsIgnoreCase("Flower") || item.getName().equalsIgnoreCase("Apple") ||
 				item.getName().equalsIgnoreCase("Potato") || item.getName().equalsIgnoreCase("Carrot")) {
@@ -48,6 +51,8 @@ public class Composter extends Furniture {
 					refreshStatus();
 					return true;
 				}
+
+				// 66.7& compost as they are seeds
 			} else if (item.getName().equalsIgnoreCase("Acorn") || item.getName().equalsIgnoreCase("Cactus") ||
 				item.getName().equalsIgnoreCase("Wheat Seeds") || item.getName().equalsIgnoreCase("Grass Seeds")) {
 				if (random.nextInt(3) != 0) { // 66.7%

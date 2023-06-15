@@ -22,15 +22,9 @@ public class WheatTile extends CropTile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		int age = (level.getData(x, y) >> 3) & maxStage;
+		int age = (level.getData(x, y) >> 3) & maxAge;
 		Tiles.get("Farmland").render(screen, level, x, y);
-		int stage;
-		if (age < 1) stage = 0;
-		else if (age < 3) stage = 1;
-		else if (age < 4) stage = 2;
-		else if (age < 5) stage = 3;
-		else if (age < 7) stage = 4;
-		else stage = 5;
+		int stage = age / (maxAge / 5);
 		screen.render(x * 16, y * 16, spritStages[stage]);
 	}
 }

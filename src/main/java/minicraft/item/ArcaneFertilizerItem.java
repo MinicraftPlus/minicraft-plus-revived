@@ -5,7 +5,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
-import minicraft.level.tile.BoostablePlantTile;
+import minicraft.level.tile.BoostablePlant;
 import minicraft.level.tile.Tile;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,10 +27,10 @@ public class ArcaneFertilizerItem extends StackableItem {
 
 	@Override
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (tile instanceof BoostablePlantTile) {
-			if (((BoostablePlantTile) tile).isValidBoostablePlantTarget(level, xt, yt)) {
-				if (((BoostablePlantTile) tile).isPlantBoostSuccess(level, xt, yt)) {
-					((BoostablePlantTile) tile).performPlantBoost(level, xt, yt);
+		if (tile instanceof BoostablePlant) {
+			if (((BoostablePlant) tile).isValidBoostablePlantTarget(level, xt, yt)) {
+				if (((BoostablePlant) tile).isPlantBoostSuccess(level, xt, yt)) {
+					((BoostablePlant) tile).performPlantBoost(level, xt, yt);
 				}
 
 				Random random = new Random();

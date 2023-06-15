@@ -14,6 +14,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import java.util.ArrayList;
@@ -107,17 +108,22 @@ public class TileItem extends StackableItem {
 			int getTileData(Tile model, Tile target, Level level, int xt, int yt, Player player, Direction attackDir);
 		}
 
-		public TileModel(String tile) { this(tile, DEFAULT_DATA); }
-		public TileModel(String tile, TileDataGetter data) {
-			this.tile = tile.toUpperCase();
+		public TileModel(@Nullable String tile) { this(tile, DEFAULT_DATA); }
+		public TileModel(@Nullable String tile, TileDataGetter data) {
+			this.tile = tile != null ? tile.toUpperCase() : null;
 			this.data = data;
+		}
+
+		public Tile getTile() {
+			if (tile == null) return Tiles.get(0); // Default tile.
+			return Tiles.get(tile);
 		}
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
-				Tile t = Tiles.get(model.tile);
+				Tile t = model.getTile();
 				level.setTile(xt, yt, t, model.data.getTileData(t, tile, level, xt, yt, player, attackDir));
 				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(

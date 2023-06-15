@@ -2,7 +2,7 @@ package minicraft.item;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.entity.particle.Particle;
+import minicraft.entity.particle.WaterParticle;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
@@ -24,8 +24,8 @@ public class WateringCanItem extends Item {
 		return items;
 	}
 
-	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_tin");
-	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_tin_filled");
+	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_can");
+	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_can_filled");
 
 	private static final SpriteLinker.LinkedSprite[] spriteSplash = new SpriteLinker.LinkedSprite[] {
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_0"),
@@ -52,7 +52,7 @@ public class WateringCanItem extends Item {
 			content--;
 			updateSprite();
 			renderingTick++;
-			if (renderingTick == 8) {
+			if (renderingTick >= 8) {
 				Random random = new Random();
 				for (int i = 0; i < 4; i++) {
 					SpriteLinker.LinkedSprite splash = spriteSplash[random.nextInt(spriteSplash.length)];
@@ -70,21 +70,21 @@ public class WateringCanItem extends Item {
 				if (fertilization < 150) { // Maximum of 5 levels watering can can fertilize.
 					((CropTile) tile).fertilize(level, xt, yt, 1);
 				}
-			} else if (tile instanceof DirtTile) {
-				for (Tile t : level.getAreaTiles(xt, yt, 1)) {
-					if (t instanceof GrassTile) { // Grass tile exists.
-						if (new Random().nextInt(10) == 0)
-							level.setTile(xt, yt, Tiles.get("grass")); // Grass extends.
-						break; // Operation finished.
-					}
-				}
-			} else if (tile instanceof GrassTile) {
+			} else if (tile instanceof DirtTile || tile instanceof GrassTile) {
 				for (Point p : level.getAreaTilePositions(xt, yt, 1)) {
 					Tile t = level.getTile(p.x, p.y);
-					if (t instanceof DirtTile) { // Dirt tile exists.
-						if (new Random().nextInt(15) == 0)
-							level.setTile(p.x, p.y, Tiles.get("grass")); // Grass extends.
-						break; // Operation finished.
+					if (tile instanceof DirtTile) {
+						if (t instanceof GrassTile) { // Grass tile exists.
+							if (new Random().nextInt(10) == 0)
+								level.setTile(xt, yt, Tiles.get("grass")); // Grass extends.
+							break; // Operation finished.
+						}
+					} else { // tile instanceof GrassTile
+						if (t instanceof DirtTile) { // Dirt tile exists.
+							if (new Random().nextInt(15) == 0)
+								level.setTile(p.x, p.y, Tiles.get("grass")); // Grass extends.
+							break; // Operation finished.
+						}
 					}
 				}
 			}
@@ -107,59 +107,5 @@ public class WateringCanItem extends Item {
 	@Override
 	public @NotNull Item copy() {
 		return new WateringCanItem(getName());
-	}
-
-	private static class WaterParticle extends Particle {
-		private final int destX;
-		private final int destY;
-		private int count;
-		private boolean stopped;
-
-		public WaterParticle(int x, int y, int lifetime, SpriteLinker.LinkedSprite sprite, int destX, int destY) {
-			super(x, y, lifetime, sprite);
-			this.destX = destX;
-			this.destY = destY;
-			count = 0;
-			stopped = false;
-		}
-
-		@Override
-		public void tick() {
-			move:
-			if (!stopped) {
-				count++;
-				if (x == destX && y == destY) {
-					stopped = true;
-					break move;
-				}
-				if (count == 2) {
-					int diffX = destX - x;
-					int diffY = destY - y;
-					if (Math.abs(diffX) < 3 && Math.abs(diffY) < 3) {
-						move(destX, destY);
-						stopped = true;
-						break move;
-					}
-
-					double phi = Math.atan2(diffY, diffX);
-					double moveX = Math.cos(phi);
-					double moveY = Math.sin(phi);
-					int moveXI = 0;
-					int moveYI = 0;
-					if (Math.abs(moveX / moveY) > 1.4) moveXI = (int) Math.signum(moveX); // Difference in X is greater.
-					else if (Math.abs(moveY / moveX) > 1.4) moveYI = (int) Math.signum(moveY); // Difference in Y is greater.
-					else { // The difference is small.
-						moveXI = (int) Math.signum(moveX);
-						moveYI = (int) Math.signum(moveY);
-					}
-
-					if (!move(moveXI, moveYI))
-						stopped = true;
-					count = 0;
-				}
-			}
-
-			super.tick();
-		}
 	}
 }

@@ -65,6 +65,7 @@ public class TreeTile extends Tile {
 		connectsToGrass = true;
 	}
 
+	@SuppressWarnings("PointlessArithmeticExpression")
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 
@@ -82,9 +83,9 @@ public class TreeTile extends Tile {
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
 		if (u && ul && l) {
-			screen.render(x * 16, y * 16, spriteFull.spritePixels[0][1]);
+			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16, y * 16, sprite.spritePixels[0][0]);
+			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
 		}
 
 		if (u && ur && r) {
@@ -94,9 +95,9 @@ public class TreeTile extends Tile {
 		}
 
 		if (d && dl && l) {
-			screen.render(x * 16, y * 16 + 8, spriteFull.spritePixels[1][1]);
+			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16, y * 16 + 8, sprite.spritePixels[1][0]);
+			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
 		if (d && dr && r) {

@@ -14,19 +14,15 @@ public class CarrotTile extends CropTile {
 		new LinkedSprite(SpriteType.Tile, "carrot_stage3")
 	};
 
-    public CarrotTile(String name) {
-        super(name, null);
-    }
+	public CarrotTile(String name) {
+		super(name, null);
+	}
 
-    @Override
-    public void render(Screen screen, Level level, int x, int y) {
-        int age = (level.getData(x, y) >> 3) & maxStage;
-        Tiles.get("Farmland").render(screen, level, x, y);
-		int stage;
-		if (age < 2) stage = 0;
-		else if (age < 4) stage = 1;
-		else if (age < 7) stage = 2;
-		else stage = 3;
+	@Override
+	public void render(Screen screen, Level level, int x, int y) {
+		int age = (level.getData(x, y) >> 3) & maxAge;
+		Tiles.get("Farmland").render(screen, level, x, y);
+		int stage = age / (maxAge / 3);
 		screen.render(x * 16, y * 16, spritStages[stage]);
-    }
+	}
 }

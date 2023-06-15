@@ -8,7 +8,7 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
-public class SaplingTile extends Tile implements BoostablePlantTile {
+public class SaplingTile extends Tile implements BoostablePlant {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
 
 	private Tile onType;
