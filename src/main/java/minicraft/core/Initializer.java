@@ -63,6 +63,8 @@ public class Initializer extends Game {
 				Logging.fileLogFull = true;
 			} else if (args[i].equalsIgnoreCase("--debug-locale")) {
 				Localization.isDebugLocaleEnabled = true;
+			} else if (args[i].equalsIgnoreCase("--debug-unloc-tracing")) {
+				Localization.unlocalizedStringTracing = true;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
