@@ -79,7 +79,7 @@ public class TileItem extends StackableItem {
 		return items;
 	}
 
-	public final TileModel model;
+	public final @Nullable TileModel model;
 	public final List<String> validTiles;
 
 	protected TileItem(String name, LinkedSprite sprite, TileModel model, String... validTiles) {
@@ -88,7 +88,7 @@ public class TileItem extends StackableItem {
 	protected TileItem(String name, LinkedSprite sprite, int count, TileModel model, String... validTiles) {
 		this(name, sprite, count, model, Arrays.asList(validTiles));
 	}
-	protected TileItem(String name, LinkedSprite sprite, int count, TileModel model, List<String> validTiles) {
+	protected TileItem(String name, LinkedSprite sprite, int count, @Nullable TileModel model, List<String> validTiles) {
 		super(name, sprite, count);
 		this.model = model;
 		this.validTiles = new ArrayList<>();
@@ -100,7 +100,7 @@ public class TileItem extends StackableItem {
 		public static final TileDataGetter DEFAULT_DATA = ((model, target, level, xt, yt, player, attackDir) -> model.getDefaultData());
 		public static final TileDataGetter KEEP_DATA = ((model, target, level, xt, yt, player, attackDir) -> level.getData(xt, yt));
 
-		public final String tile;
+		public final @NotNull String tile;
 		public final TileDataGetter data;
 
 		@FunctionalInterface
@@ -108,23 +108,27 @@ public class TileItem extends StackableItem {
 			int getTileData(Tile model, Tile target, Level level, int xt, int yt, Player player, Direction attackDir);
 		}
 
-		public TileModel(@Nullable String tile) { this(tile, DEFAULT_DATA); }
-		public TileModel(@Nullable String tile, TileDataGetter data) {
-			this.tile = tile != null ? tile.toUpperCase() : null;
+		public TileModel(String tile) { this(tile, DEFAULT_DATA); }
+		public TileModel(String tile, TileDataGetter data) {
+			this.tile = tile.toUpperCase();
 			this.data = data;
 		}
 
-		public Tile getTile() {
-			if (tile == null) return Tiles.get(0); // Default tile.
-			return Tiles.get(tile);
+		public static Tile getTile(@Nullable TileModel model) {
+			return model == null ? Tiles.get(0) : Tiles.get(model.tile);
+		}
+
+		public static int getTileData(@Nullable TileModel model, Tile tile, Tile target, Level level, int xt, int yt, Player player, Direction attackDir) {
+			if (model == null) return DEFAULT_DATA.getTileData(tile, target, level, xt, yt, player, attackDir);
+			return model.data.getTileData(tile, target, level, xt, yt, player, attackDir);
 		}
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
-				Tile t = model.getTile();
-				level.setTile(xt, yt, t, model.data.getTileData(t, tile, level, xt, yt, player, attackDir));
+				Tile t = TileModel.getTile(model);
+				level.setTile(xt, yt, t, TileModel.getTileData(model, t, tile, level, xt, yt, player, attackDir));
 				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(
 						this, level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth
@@ -137,19 +141,21 @@ public class TileItem extends StackableItem {
 
 		Logger.tag("TileItem").debug("{} cannot be placed on {}.", model, tile.name);
 
-		String note = "";
-		if (model.tile.contains("WALL")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
-		}
-		else if (model.tile.contains("DOOR")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
-		}
-		else if ((model.tile.contains("BRICK") || model.tile.contains("PLANK") || model.tile.equals("STONE") || model.tile.contains("ORNATE"))) {
-			note = Localization.getLocalized("minicraft.notification.dig_hole");
-		}
+		if (model != null) {
+			String note = "";
+			if (model.tile.contains("WALL")) {
+				note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
+			}
+			else if (model.tile.contains("DOOR")) {
+				note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
+			}
+			else if ((model.tile.contains("BRICK") || model.tile.contains("PLANK") || model.tile.equals("STONE") || model.tile.contains("ORNATE"))) {
+				note = Localization.getLocalized("minicraft.notification.dig_hole");
+			}
 
-		if (note.length() > 0) {
-			Game.notifications.add(note);
+			if (note.length() > 0) {
+				Game.notifications.add(note);
+			}
 		}
 
 		return super.interactOn(false);
@@ -157,11 +163,11 @@ public class TileItem extends StackableItem {
 
 	@Override
 	public boolean equals(Item other) {
-		return super.equals(other) && model.equals(((TileItem)other).model);
+		return super.equals(other) && (model == null || model.equals(((TileItem)other).model));
 	}
 
 	@Override
-	public int hashCode() { return super.hashCode() + model.hashCode(); }
+	public int hashCode() { return super.hashCode() + (model == null ? 0xFF123 : model.hashCode()); }
 
 	public @NotNull TileItem copy() {
 		return new TileItem(getName(), sprite, count, model, validTiles);

@@ -97,11 +97,6 @@ public class GrassTile extends Tile implements BoostablePlant {
 	}
 
 	@Override
-	public boolean isPlantBoostSuccess(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
 	public void performPlantBoost(Level level, int x, int y) {
 		label:
 		for (int i = 0; i < 128; i++) {

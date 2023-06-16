@@ -143,11 +143,6 @@ public class CropTile extends FarmTile implements BoostablePlant {
 	}
 
 	@Override
-	public boolean isPlantBoostSuccess(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
 	public void performPlantBoost(Level level, int x, int y) {
 		int data = level.getData(x, y);
 		int stage = (data >> 3) & maxAge;

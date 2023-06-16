@@ -54,11 +54,6 @@ public class SaplingTile extends Tile implements BoostablePlant {
 	}
 
 	@Override
-	public boolean isPlantBoostSuccess(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
 	public void performPlantBoost(Level level, int x, int y) {
 		level.setData(x, y, Math.min(level.getData(x, y) + random.nextInt(30), 110));
 	}
