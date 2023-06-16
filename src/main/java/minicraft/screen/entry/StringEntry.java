@@ -7,6 +7,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 // an unselectable line.
 public class StringEntry extends ListEntry {
@@ -27,11 +28,11 @@ public class StringEntry extends ListEntry {
 	public static StringEntry[] useLines(int color, boolean localize, String... lines) {
 		ArrayList<String> lns = new ArrayList<>();
 		for (String l : lines) {
-			for (String ll : Font.getLines(localize? Localization.getLocalized(l): l, Screen.w-20, Screen.h*2, 0)) lns.add(ll);
+			lns.addAll(Arrays.asList(Font.getLines(localize ? Localization.getLocalized(l) : l, Screen.w - 20, Screen.h * 2, 0)));
 		}
 		StringEntry[] entries = new StringEntry[lns.size()];
 		for (int i = 0; i < lns.size(); i++)
-			entries[i] = new StringEntry(lns.get(i), color);
+			entries[i] = new StringEntry(lns.get(i), color, false);
 
 		return entries;
 	}

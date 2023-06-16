@@ -157,7 +157,7 @@ public class TutorialDisplayHandler {
 		currentOngoingElement = null;
 		Settings.set("tutorials", false);
 		Logging.TUTORIAL.debug("Tutorial completed.");
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
+		Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorials_completed"));
 	}
 
 	private static void turnOffGuides() {
@@ -202,7 +202,7 @@ public class TutorialDisplayHandler {
 	/** Rendering directly on the GUI/HUD. */
 	public static void render(Screen screen) {
 		if (currentGuide != null) { // Is ongoing.
-			String[] lines = Font.getLines(Localization.getLocalized(currentGuide.display.get()), Screen.w, Screen.h, 0);
+			String[] lines = Font.getLines(currentGuide.display.get(), Screen.w, Screen.h, 0);
 			if (ControlGuide.animation > 0) {
 				int textWidth = Font.textWidth(lines);
 				int xPadding = Screen.w/2 - (textWidth + 8)/2;

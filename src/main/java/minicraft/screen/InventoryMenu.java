@@ -20,9 +20,10 @@ class InventoryMenu extends ItemListMenu {
 	}
 
 	InventoryMenu(InventoryMenu model) {
-		super(ItemListMenu.getBuilder(), ItemEntry.useItems(model.inv.getItems()), model.getTitle());
+		super(ItemListMenu.getBuilder(), ItemEntry.useItems(model.inv.getItems()), model.getTitle(), false);
 		this.inv = model.inv;
 		this.holder = model.holder;
+		this.creativeInv = model.creativeInv;
 		setSelection(model.getSelection());
 	}
 

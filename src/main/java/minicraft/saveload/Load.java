@@ -585,7 +585,7 @@ public class Load {
 
 	private void loadWorld(String filename) {
 		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
-			LoadingDisplay.setMessage(Level.getDepthString(l));
+			LoadingDisplay.setMessage(Level.getDepthString(l), false);
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 

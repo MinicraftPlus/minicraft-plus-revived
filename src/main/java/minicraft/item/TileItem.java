@@ -62,11 +62,11 @@ public class TileItem extends StackableItem {
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), "farmland", "dirt", "grass", "hole"));
-		items.add(new TileItem("Exploded", SpriteLinker.missingTexture(SpriteType.Item), "explode", "dirt", "grass"));
-		items.add(new TileItem("hole", SpriteLinker.missingTexture(SpriteType.Item), "hole", "dirt", "grass"));
-		items.add(new TileItem("lava", SpriteLinker.missingTexture(SpriteType.Item), "lava", "dirt", "grass", "hole"));
-		items.add(new TileItem("path", SpriteLinker.missingTexture(SpriteType.Item), "path", "dirt", "grass", "hole"));
-		items.add(new TileItem("water", SpriteLinker.missingTexture(SpriteType.Item), "water", "dirt", "grass", "hole"));
+		items.add(new TileItem("Explode", SpriteLinker.missingTexture(SpriteType.Item), "explode", "dirt", "grass"));
+		items.add(new TileItem("Hole", SpriteLinker.missingTexture(SpriteType.Item), "hole", "dirt", "grass"));
+		items.add(new TileItem("Lava", SpriteLinker.missingTexture(SpriteType.Item), "lava", "dirt", "grass", "hole"));
+		items.add(new TileItem("Path", SpriteLinker.missingTexture(SpriteType.Item), "path", "dirt", "grass", "hole"));
+		items.add(new TileItem("Water", SpriteLinker.missingTexture(SpriteType.Item), "water", "dirt", "grass", "hole"));
 
 		return items;
 	}

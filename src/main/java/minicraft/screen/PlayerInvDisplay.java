@@ -192,9 +192,7 @@ public class PlayerInvDisplay extends Display {
 
 	private void update() {
 		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]) {{
-			creativeInv = true;
-		}};
+		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 	}

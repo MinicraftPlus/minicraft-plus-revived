@@ -421,6 +421,7 @@ public class Menu {
 
 		@NotNull private RelPos titlePos = RelPos.TOP;
 		private boolean fullTitleColor = false, setTitleColor = false;
+		private boolean localizeTitle = true;
 		private int titleCol = Color.YELLOW;
 
 		@NotNull private Point anchor = center;
@@ -465,7 +466,12 @@ public class Menu {
 
 		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
 
-		public Builder setTitle(String title) { menu.title = title; return this; }
+		public Builder setTitle(String title) { return setTitle(title, true); }
+		public Builder setTitle(String title, boolean localize) {
+			menu.title = title;
+			localizeTitle = localize;
+			return this;
+		}
 
 		public Builder setTitle(String title, int color) { return setTitle(title, color, false); }
 		public Builder setTitle(String title, int color, boolean fullColor) {
@@ -519,7 +525,7 @@ public class Menu {
 			if(b == this)
 				return copy().createMenu(this);
 
-			menu.title = Localization.getLocalized(menu.title);
+			if (localizeTitle) menu.title = Localization.getLocalized(menu.title);
 
 			// set default selectability
 			if(!setSelectable) {
