@@ -5,9 +5,13 @@ import com.studiohartman.jamepad.ControllerButton;
 import com.studiohartman.jamepad.ControllerIndex;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
+import minicraft.core.Game;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -231,9 +235,11 @@ public class InputHandler implements KeyListener {
 		private int presses, absorbs;
 		// down = if the key is currently physically being held down.
 		// clicked = if the key is still being processed at the current tick.
-		public boolean down, clicked;
+		// released = if the key has just been released at the current tick.
+		public boolean down, clicked, released;
 		// sticky = true if presses reaches 3, and the key continues to be held down.
-		private boolean sticky;
+		// justReleased = if the key has been changed from true to false in down.
+		private boolean sticky, justReleased;
 
 		boolean stayDown;
 
@@ -244,6 +250,7 @@ public class InputHandler implements KeyListener {
 
 		/** toggles the key down or not down. */
 		public void toggle(boolean pressed) {
+			if (down && !pressed) justReleased = true;
 			down = pressed; // Set down to the passed in value; the if statement is probably unnecessary...
 			if (pressed && !sticky) presses++; // Add to the number of total presses.
 		}
@@ -263,11 +270,19 @@ public class InputHandler implements KeyListener {
 				presses = 0;
 				absorbs = 0;
 			}
+
+			if (released) released = false;
+			if (justReleased) {
+				released = true;
+				justReleased = false;
+			}
 		}
 
 		public void release() {
 			down = false;
 			clicked = false;
+			released = false;
+			justReleased = false;
 			presses = 0;
 			absorbs = 0;
 			sticky = false;
@@ -275,7 +290,7 @@ public class InputHandler implements KeyListener {
 
 		// Custom toString() method, I used it for debugging.
 		public String toString() {
-			return "down:" + down + "; clicked:" + clicked + "; presses=" + presses + "; absorbs=" + absorbs;
+			return "down:" + down + "; clicked:" + clicked + "; released:" + released+";"+justReleased + "; presses=" + presses + "; absorbs=" + absorbs;
 		}
 	}
 
@@ -381,7 +396,10 @@ public class InputHandler implements KeyListener {
 		Key key = new Key();
 		key.down = true; // The set is not empty, so this will not be returned directly.
 		key.clicked = false;
+		key.released = false;
 		return keys.stream().reduce(key, (k0, k1) -> {
+			// If the whole key binding is released, then the all keys must be either down or released and at least one of these is/are just released.
+			k0.released = (k0.down || k0.released) && (k0.released || k1.released);
 			k0.down = k0.down && k1.down; // All keys down.
 			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
 			k0.clicked = k0.down && (k0.clicked || k1.clicked);
@@ -390,11 +408,11 @@ public class InputHandler implements KeyListener {
 	}
 
 	/// This method provides a way to press physical keys without actually generating a key event.
-	/*public void pressKey(String keyname, boolean pressed) {
+	public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);
 		key.toggle(pressed);
 		//System.out.println("Key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
-	}*/
+	}
 
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keyList = new ArrayList<>(keyboard.size());
@@ -450,7 +468,7 @@ public class InputHandler implements KeyListener {
 	}
 
 	// This provides a way to inspect values during running with an external display.
-	/*static JFrame frame = new JFrame();
+	static JFrame frame = new JFrame();
 	static JTextArea textField = new JTextArea();
 	static Thread liveTracking;
 	static {
@@ -469,7 +487,10 @@ public class InputHandler implements KeyListener {
 						synchronized ("lock") {
 							if (Game.input == null) continue;
 							textField.setText("F3: " + Game.input.getPhysKey("F3")
-								+ "\nE: " + Game.input.getPhysKey("E"));
+								+ "\nE: " + Game.input.getPhysKey("E")
+								+ "\nSPACE: " + Game.input.getPhysKey(" ")
+								+ "\nENTER: " + Game.input.getPhysKey("ENTER")
+								+ "\nESC: " + Game.input.getPhysKey("ESCAPE"));
 						}
 						frame.pack();
 						lastTick = tick;
@@ -478,7 +499,7 @@ public class InputHandler implements KeyListener {
 			}
 		}, "Live Debugging Value Tracker");
 		liveTracking.start();
-	}*/
+	}
 
 	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();

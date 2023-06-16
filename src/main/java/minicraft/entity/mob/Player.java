@@ -267,13 +267,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void tick() {
 		if (level == null || isRemoved()) return;
 		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
-		if (input.getKey("F3-Y").clicked) {
-			World.scheduleLevelChange(1);
-			return;
-		} else if (input.getKey("F3-H").clicked) {
-			World.scheduleLevelChange(-1);
-			return;
-		}
 
 		super.tick(); // Ticks Mob.java
 
@@ -448,10 +441,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
 				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
-				if (input.inputDown("move-up")) vec.y--;
-				if (input.inputDown("move-down")) vec.y++;
-				if (input.inputDown("move-left")) vec.x--;
-				if (input.inputDown("move-right")) vec.x++;
+				if (!input.getKey("F3").down) { // Preventing F3 key binding conflicts.
+					if (input.inputDown("move-up")) vec.y--;
+					if (input.inputDown("move-down")) vec.y++;
+					if (input.inputDown("move-left")) vec.x--;
+					if (input.inputDown("move-right")) vec.x++;
+				}
 
 
 			}

@@ -1,5 +1,6 @@
 package minicraft.core;
 
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -54,6 +55,8 @@ public class Updater extends Game {
 	public static boolean saving = false; // If the game is performing a save.
 	public static int savecooldown; // Prevents saving many times too fast, I think.
 	public static int screenshot = 0; // Counter for screenshot queries.
+
+	private static boolean F3KeyBindingProceeded = false;
 
 	public enum Time {
 		Morning (0),
@@ -215,12 +218,13 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (currentDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
-					Renderer.showDebugInfo = !Renderer.showDebugInfo;
+				if (currentDisplay == null && input.getKey("F3").released) { // Shows debug info in upper-left
+					if (!F3KeyBindingProceeded) Renderer.showDebugInfo = !Renderer.showDebugInfo;
+					else F3KeyBindingProceeded = false;
 				}
 
 				// For debugging only
-				{
+				if (input.getKey("F3").down) {
 					if (input.getKey("F3-L").clicked) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
@@ -228,60 +232,105 @@ public class Updater extends Game {
 							if (value == null) continue;
 							value.printEntityLocs(Player.class);
 						}
+						F3KeyBindingProceeded = true;
 					}
 
 					// Host-only cheats.
-					if (input.getKey("F3-T-1").clicked) changeTimeOfDay(Time.Morning);
-					if (input.getKey("F3-T-2").clicked) changeTimeOfDay(Time.Day);
-					if (input.getKey("F3-T-3").clicked) changeTimeOfDay(Time.Evening);
-					if (input.getKey("F3-T-4").clicked) changeTimeOfDay(Time.Night);
+					if (input.getKey("F3-T-1").clicked) {
+						changeTimeOfDay(Time.Morning);
+						F3KeyBindingProceeded = true;
+					}
+					if (input.getKey("F3-T-2").clicked) {
+						changeTimeOfDay(Time.Day);
+						F3KeyBindingProceeded = true;
+					}
+					if (input.getKey("F3-T-3").clicked) {
+						changeTimeOfDay(Time.Evening);
+						F3KeyBindingProceeded = true;
+					}
+					if (input.getKey("F3-T-4").clicked) {
+						changeTimeOfDay(Time.Night);
+						F3KeyBindingProceeded = true;
+					}
 
 					String prevMode = (String)Settings.get("mode");
 					if (input.getKey("F3-F4-2").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.creative");
 						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
+						F3KeyBindingProceeded = true;
 					}
 					if (input.getKey("F3-F4-1").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.survival");
 						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
+						F3KeyBindingProceeded = true;
 					}
 					if (input.getKey("F3-F4-3").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.score");
 						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
+						F3KeyBindingProceeded = true;
 					}
 
 					if (isMode("minicraft.settings.mode.score") && input.getKey("F3-SHIFT-T").clicked) {
 						scoreTime = normSpeed * 5; // 5 seconds
+						F3KeyBindingProceeded = true;
 					}
 
 					float prevSpeed = gamespeed;
 					if (input.getKey("F3-S-0").clicked) {
 						gamespeed = 1;
 						Logging.WORLDNAMED.trace("Tick speed reset from {} into 1.", prevSpeed);
+						F3KeyBindingProceeded = true;
 					}
 					if (input.getKey("F3-S-equals").clicked) {
 						if (gamespeed < 1) gamespeed *= 2;
 						else if (normSpeed*gamespeed < 2000) gamespeed++;
 						Logging.WORLDNAMED.trace("Tick speed increased from {} into {}.", prevSpeed, gamespeed);
+						F3KeyBindingProceeded = true;
 					}
 					if (input.getKey("F3-S-minus").clicked) {
 						if (gamespeed > 1) gamespeed--;
 						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
 						Logging.WORLDNAMED.trace("Tick speed decreased from {} into {}.", prevSpeed, gamespeed);
+						F3KeyBindingProceeded = true;
 					}
 
-					if (input.getKey("F3-h").clicked) player.health--;
-					if (input.getKey("F3-b").clicked) player.hunger--;
+					if (input.getKey("F3-h").clicked) {
+						player.health--;
+						F3KeyBindingProceeded = true;
+					}
+					if (input.getKey("F3-b").clicked) {
+						player.hunger--;
+						F3KeyBindingProceeded = true;
+					}
 
-					if (input.getKey("F3-M-0").clicked) player.moveSpeed = 1;
-					if (input.getKey("F3-M-equals").clicked) player.moveSpeed++;
-					if (input.getKey("F3-M-minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
+					if (input.getKey("F3-M-0").clicked) {
+						player.moveSpeed = 1;
+						F3KeyBindingProceeded = true;
+					}
+					if (input.getKey("F3-M-equals").clicked) {
+						player.moveSpeed++;
+						F3KeyBindingProceeded = true;
+					}
+					if (input.getKey("F3-M-minus").clicked && player.moveSpeed > 1) {
+						player.moveSpeed--; // -= 0.5D;
+						F3KeyBindingProceeded = true;
+					}
 
 					if (input.getKey("F3-u").clicked) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
+						F3KeyBindingProceeded = true;
 					}
 					if (input.getKey("F3-d").clicked) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
+						F3KeyBindingProceeded = true;
+					}
+
+					if (input.getKey("F3-Y").clicked) {
+						World.scheduleLevelChange(1);
+						F3KeyBindingProceeded = true;
+					} else if (input.getKey("F3-H").clicked) {
+						World.scheduleLevelChange(-1);
+						F3KeyBindingProceeded = true;
 					}
 				} // End debug only cond.
 			} // End "menu-null" conditional
