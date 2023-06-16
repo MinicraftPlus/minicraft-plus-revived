@@ -683,6 +683,7 @@ public class Menu {
 			b.titlePos = titlePos;
 			b.fullTitleColor = fullTitleColor;
 			b.setTitleColor = setTitleColor;
+			b.localizeTitle = localizeTitle;
 			b.titleCol = titleCol;
 			b.searcherBar = searcherBar;
 
