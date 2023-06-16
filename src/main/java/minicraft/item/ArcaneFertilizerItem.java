@@ -29,9 +29,7 @@ public class ArcaneFertilizerItem extends StackableItem {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile instanceof BoostablePlant) {
 			if (((BoostablePlant) tile).isValidBoostablePlantTarget(level, xt, yt)) {
-				if (((BoostablePlant) tile).isPlantBoostSuccess(level, xt, yt)) {
-					((BoostablePlant) tile).performPlantBoost(level, xt, yt);
-				}
+				((BoostablePlant) tile).performPlantBoost(level, xt, yt);
 
 				Random random = new Random();
 				for (int i = 0; i < 5; i++) {
