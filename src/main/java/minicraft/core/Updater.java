@@ -1,6 +1,5 @@
 package minicraft.core;
 
-import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;

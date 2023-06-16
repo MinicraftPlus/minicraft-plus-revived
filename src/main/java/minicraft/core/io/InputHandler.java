@@ -290,7 +290,7 @@ public class InputHandler implements KeyListener {
 
 		// Custom toString() method, I used it for debugging.
 		public String toString() {
-			return "down:" + down + "; clicked:" + clicked + "; released:" + released+";"+justReleased + "; presses=" + presses + "; absorbs=" + absorbs;
+			return "down:" + down + "; clicked:" + clicked + "; released:" + released + "; presses=" + presses + "; absorbs=" + absorbs;
 		}
 	}
 
@@ -408,11 +408,11 @@ public class InputHandler implements KeyListener {
 	}
 
 	/// This method provides a way to press physical keys without actually generating a key event.
-	public void pressKey(String keyname, boolean pressed) {
+	/*public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);
 		key.toggle(pressed);
 		//System.out.println("Key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
-	}
+	}*/
 
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keyList = new ArrayList<>(keyboard.size());
@@ -468,7 +468,7 @@ public class InputHandler implements KeyListener {
 	}
 
 	// This provides a way to inspect values during running with an external display.
-	static JFrame frame = new JFrame();
+	/*static JFrame frame = new JFrame();
 	static JTextArea textField = new JTextArea();
 	static Thread liveTracking;
 	static {
@@ -499,7 +499,7 @@ public class InputHandler implements KeyListener {
 			}
 		}, "Live Debugging Value Tracker");
 		liveTracking.start();
-	}
+	}*/
 
 	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();
