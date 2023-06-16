@@ -90,15 +90,6 @@ public class Updater extends Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-
-		// Quick Level change: move the player for -1, or 1 levels
-		if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
-			Game.setDisplay(new LevelTransitionDisplay(-1));
-
-		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
-			Game.setDisplay(new LevelTransitionDisplay(1));
-		}
-
 		if (input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
