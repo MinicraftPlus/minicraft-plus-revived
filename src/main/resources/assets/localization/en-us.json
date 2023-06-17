@@ -145,6 +145,7 @@
   "minicraft.displays.options_world": "World Options",
   "minicraft.displays.options_world.off_tutorials_confirm_popup": "Are you sure you want to turn off the tutorials forever?",
   "minicraft.displays.options_world.turn_off_tutorials": "Turn off tutorials",
+  "minicraft.displays.options_world.skip_current_tutorial": "Skip current tutorial",
   "minicraft.displays.pause": "Paused",
   "minicraft.displays.pause.display.exit_popup.0": "Are you sure you want to exit the game?",
   "minicraft.displays.pause.display.exit_popup.1": "All unsaved progress will be lost",
