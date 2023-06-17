@@ -6,7 +6,7 @@ plugins {
 }
 
 
-project.version = '2.2.0-dev3'
+project.version = '2.2.0-dev4'
 group = "java.minicraft"
 archivesBaseName = "minicraft-plus"
 

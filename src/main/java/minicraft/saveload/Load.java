@@ -60,6 +60,7 @@ import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.RangeEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
@@ -517,7 +518,18 @@ public class Load {
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
-		Settings.set("fps", json.getInt("fps"));
+		if (prefVer.compareTo(new Version("2.2.0-dev3")) == 0) { // Setting exists only in 2.2.0-dev3
+			String fps = json.getString("fps");
+			if (fps.equals("Unlimited")) {
+				Settings.set("fps", ((RangeEntry) Settings.getEntry("fps")).max);
+			} else if (fps.equals("VSync")) {
+				Settings.set("fps", Settings.getDefaultRefreshRate());
+			} else {
+				Settings.set("fps", Integer.parseInt(fps));
+			}
+		} else {
+			Settings.set("fps", json.getInt("fps"));
+		}
 		Settings.set("showquests", json.optBoolean("showquests", true));
 
 		if (json.has("lang")) {
