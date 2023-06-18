@@ -27,4 +27,4 @@ jobs:
         title: "Bleeding Edge (will break your saves)"
         files: |
           LICENSE
-          *.jar
+          build/lib/**.jar
