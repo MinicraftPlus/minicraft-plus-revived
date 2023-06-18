@@ -14,7 +14,7 @@ jobs:
         java-version: 8
         
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@2.4.2
+      uses: gradle/gradle-build-action@v2.4.2
     
     - name: Execute Gradle build
       run: ./gradlew build
@@ -24,7 +24,7 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Development Build"
+        title: "Bleeding Edge (will break your saves)"
         files: |
           LICENSE
           **-shadow.jar
