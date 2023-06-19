@@ -188,7 +188,7 @@ public class Initializer extends Game {
 		public Thread renderer = new Thread(() -> {
 			long lastTick = System.nanoTime();
 			do {
-				if (System.nanoTime() - lastTick >= 1E7) { // 10ms/tick
+				if (System.nanoTime() - lastTick >= 6E6) { // 6ms/tick
 					repaint();
 					lastTick = System.nanoTime();
 				}
@@ -202,40 +202,14 @@ public class Initializer extends Game {
 			super.paintComponent(g);
 			final int w = g.getClipBounds().width;
 			final int h = g.getClipBounds().height;
-
-			// Drawing background
-			// Drawing gradient border with width 100
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setPaint(new GradientPaint(100, 100, Color.WHITE, 0, 100, Color.GREEN)); // Left
-			g2d.fillRect(0, 100, 100, h - 200);
-			g2d.setPaint(new GradientPaint(w - 100, 100, Color.WHITE, w, 100, Color.GREEN)); // Right
-			g2d.fillRect(w - 100, 100, 100, h - 200);
-			g2d.setPaint(new GradientPaint(100, 100, Color.WHITE, 100, 0, Color.GREEN)); // Top
-			g2d.fillRect(100, 0, w - 200, 100);
-			g2d.setPaint(new GradientPaint(100, h - 100, Color.WHITE, 100, h, Color.GREEN)); // Bottom
-			g2d.fillRect(100, h - 100, w - 200, 100);
-			float[] fractions = new float[] { 0.0f, 1.0f };
-			Color[] colors = new Color[] { Color.WHITE, Color.GREEN };
-			g2d.setPaint(new RadialGradientPaint(new Rectangle(0, 0, 200, 200), fractions, colors, MultipleGradientPaint.CycleMethod.NO_CYCLE)); // Top Left
-			g2d.fillRect(0, 0, 100, 100);
-			g2d.setPaint(new RadialGradientPaint(new Rectangle(w - 200, 0, 200, 200), fractions, colors, MultipleGradientPaint.CycleMethod.NO_CYCLE)); // Top Right
-			g2d.fillRect(w - 100, 0, 100, 100);
-			g2d.setPaint(new RadialGradientPaint(new Rectangle(0, h - 200, 200, 200), fractions, colors, MultipleGradientPaint.CycleMethod.NO_CYCLE)); // Bottom Left
-			g2d.fillRect(0, h - 100, 100, 100);
-			g2d.setPaint(new RadialGradientPaint(new Rectangle(w - 200, h - 200, 200, 200), fractions, colors, MultipleGradientPaint.CycleMethod.NO_CYCLE)); // Bottom Right
-			g2d.fillRect(w - 100, h - 100, 100, 100);
-			// Drawing center white area
-			g.setColor(Color.WHITE);
-			g.fillRect(100, 100, w - 200, h - 200);
-
-			// Green Border Fading effect
-			g.setColor(new Color(255, 255, 255, Math.max(Math.min(255 - (int) (Math.pow(Math.cos(transparency/255.0 * Math.PI/2), 2) * 255), 255), 0)));
+			// Draw background
+			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, w, h);
 
 			// Drawing the centered logo
 			if (transparency < 255) g.drawImage(logo, w/2 - logo.getWidth(frame)*2, h/2 - logo.getHeight(frame)*2, logo.getWidth(frame)*4, logo.getHeight(frame)*4, frame);
 
-			// Overall Fading effect
+			// Fading effect
 			g.setColor(new Color(0, 0, 0, Math.max(Math.min(255 - (int) (Math.cos(transparency/255.0 * Math.PI/2) * 255), 255), 0)));
 			g.fillRect(0, 0, w, h);
 
@@ -254,7 +228,8 @@ public class Initializer extends Game {
 		}
 
 		public  void setDisplay(boolean display) {
-			while (inAnimation || this.display && ticksElapsed <= 80) {} // Waiting for animation to finish for at least 80 ticks, i.e., 800ms.
+			//noinspection StatementWithEmptyBody
+			while (inAnimation || this.display && ticksElapsed <= 30) {} // Waiting for animation to finish for at least 30 ticks, i.e., 180ms.
 			this.display = display;
 			inAnimation = true;
 		}
