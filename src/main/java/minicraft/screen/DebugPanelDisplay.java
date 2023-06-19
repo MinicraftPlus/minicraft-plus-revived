@@ -126,12 +126,12 @@ public class DebugPanelDisplay extends Display {
 			Game.exitDisplay();
 		}, false));
 		entries.add(new SelectEntry("Change level down (instant)", () -> {
-			Game.setDisplay(new LevelTransitionDisplay(-1));
 			Game.exitDisplay();
+			Game.setDisplay(new LevelTransitionDisplay(-1));
 		}, false));
 		entries.add(new SelectEntry("Change level up (instant)", () -> {
-			Game.setDisplay(new LevelTransitionDisplay(1));
 			Game.exitDisplay();
+			Game.setDisplay(new LevelTransitionDisplay(1));
 		}, false));
 		entries.add(new SelectEntry("Change level up", () -> {
 			World.scheduleLevelChange(1);
@@ -143,11 +143,5 @@ public class DebugPanelDisplay extends Display {
 		}, false));
 
 		return entries;
-	}
-
-	@Override
-	public void tick(InputHandler input) {
-		if (input.inputPressed("select") || input.inputPressed("exit"))
-			Game.exitDisplay();
 	}
 }
