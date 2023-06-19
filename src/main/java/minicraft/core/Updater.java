@@ -8,6 +8,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
+import minicraft.screen.DebugPanelDisplay;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
@@ -90,15 +91,6 @@ public class Updater extends Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-
-		// Quick Level change: move the player for -1, or 1 levels
-		if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
-			Game.setDisplay(new LevelTransitionDisplay(-1));
-
-		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
-			Game.setDisplay(new LevelTransitionDisplay(1));
-		}
-
 		if (input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
@@ -220,70 +212,9 @@ public class Updater extends Game {
 				}
 
 				// For debugging only
-				{
-					if (input.getKey("F3-L").clicked) {
-						// Print all players on all levels, and their coordinates.
-						Logging.WORLD.info("Printing players on all levels.");
-						for (Level value : levels) {
-							if (value == null) continue;
-							value.printEntityLocs(Player.class);
-						}
-					}
-
-					// Host-only cheats.
-					if (input.getKey("F3-T-1").clicked) changeTimeOfDay(Time.Morning);
-					if (input.getKey("F3-T-2").clicked) changeTimeOfDay(Time.Day);
-					if (input.getKey("F3-T-3").clicked) changeTimeOfDay(Time.Evening);
-					if (input.getKey("F3-T-4").clicked) changeTimeOfDay(Time.Night);
-
-					String prevMode = (String)Settings.get("mode");
-					if (input.getKey("F3-F4-2").clicked) {
-						Settings.set("mode", "minicraft.settings.mode.creative");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
-					}
-					if (input.getKey("F3-F4-1").clicked) {
-						Settings.set("mode", "minicraft.settings.mode.survival");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
-					}
-					if (input.getKey("F3-F4-3").clicked) {
-						Settings.set("mode", "minicraft.settings.mode.score");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
-					}
-
-					if (isMode("minicraft.settings.mode.score") && input.getKey("F3-SHIFT-T").clicked) {
-						scoreTime = normSpeed * 5; // 5 seconds
-					}
-
-					float prevSpeed = gamespeed;
-					if (input.getKey("F3-S-0").clicked) {
-						gamespeed = 1;
-						Logging.WORLDNAMED.trace("Tick speed reset from {} into 1.", prevSpeed);
-					}
-					if (input.getKey("F3-S-equals").clicked) {
-						if (gamespeed < 1) gamespeed *= 2;
-						else if (normSpeed*gamespeed < 2000) gamespeed++;
-						Logging.WORLDNAMED.trace("Tick speed increased from {} into {}.", prevSpeed, gamespeed);
-					}
-					if (input.getKey("F3-S-minus").clicked) {
-						if (gamespeed > 1) gamespeed--;
-						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
-						Logging.WORLDNAMED.trace("Tick speed decreased from {} into {}.", prevSpeed, gamespeed);
-					}
-
-					if (input.getKey("F3-h").clicked) player.health--;
-					if (input.getKey("F3-b").clicked) player.hunger--;
-
-					if (input.getKey("F3-M-0").clicked) player.moveSpeed = 1;
-					if (input.getKey("F3-M-equals").clicked) player.moveSpeed++;
-					if (input.getKey("F3-M-minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
-
-					if (input.getKey("F3-u").clicked) {
-						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
-					}
-					if (input.getKey("F3-d").clicked) {
-						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
-					}
-				} // End debug only cond.
+				if (currentDisplay == null && input.getKey("F4").clicked) {
+					Game.setDisplay(new DebugPanelDisplay());
+				}
 			} // End "menu-null" conditional
 		} // End hasfocus conditional
 	} // End tick()

@@ -28,7 +28,6 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
-import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
@@ -37,10 +36,8 @@ import minicraft.util.Quest.QuestSeries;
 
 import javax.imageio.ImageIO;
 
-import java.awt.AWTException;
 import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
