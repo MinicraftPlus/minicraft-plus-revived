@@ -1,10 +1,8 @@
 package minicraft.level.tile.farming;
 
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
+import minicraft.entity.*;
+import minicraft.entity.mob.*;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -19,8 +17,11 @@ public class PlantTile extends FarmTile {
 
     @Override
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
-        super.steppedOn(level, xt, yt, entity);
-        harvest(level, xt, yt, entity);
+		if (entity instanceof MobAi) return;
+		if (entity instanceof ItemEntity) return;
+		if (random.nextInt(60) != 0) return;
+		if (level.getData(xt, yt) < 5) return;
+		harvest(level, xt, yt, entity);
     }
 
     @Override
