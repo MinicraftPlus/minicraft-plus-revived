@@ -17,6 +17,7 @@ public class Localization {
 	public static final Locale DEBUG_LOCALE = Locale.ROOT; // This locale is used for debugging;
 
 	public static boolean isDebugLocaleEnabled = false;
+	public static boolean unlocalizedStringTracing = false;
 
 	private static final HashMap<Locale, HashSet<String>> knownUnlocalizedStrings = new HashMap<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
@@ -46,7 +47,7 @@ public class Localization {
 		if (localString == null) {
 			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
-				Logger.tag("LOC").trace("{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
+				Logger.tag("LOC").trace(unlocalizedStringTracing ? new Throwable("Tracing") : null, "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
 				knownUnlocalizedStrings.get(selectedLocale).add(key);
 			}
 		}

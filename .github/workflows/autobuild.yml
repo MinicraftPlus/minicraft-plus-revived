@@ -1,5 +1,7 @@
-name: Automatically build on main branch
-on: [push, workflow_dispatch]
+name: Nightly build
+on:
+  schedule:
+    - cron:  '0 0 * * *'
 jobs:
   gradle:
     strategy:
@@ -8,11 +10,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Release Configuration
+    - name: Change version name in build
       run: |
-        sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-SNAPSHOT/" build.gradle
-    
+        sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-nightly/" build.gradle
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -29,8 +29,8 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Latest Experimental SNAPSHOT"
-        generate_release_notes: This might contain uncertain features and bugs. Please be extra careful to local game files when using this.
+        title: "Nightly (breaking)"
+        generate_release_notes: Nightly release. Contains changes that almost certainly will break your saves. Uncertain if runs at all.
         files: |
           LICENSE
           build/libs/**.jar
