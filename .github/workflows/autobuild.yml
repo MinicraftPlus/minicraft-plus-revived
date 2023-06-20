@@ -1,5 +1,7 @@
-name: Automatically build on PR
-on: [pull_request, workflow_dispatch]
+name: Nightly build
+on:
+  schedule:
+    - cron:  '0 0 * * *'
 jobs:
   gradle:
     strategy:
@@ -8,6 +10,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
+    - name: Change version name in build
+      run: |
+        sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-nightly/" build.gradle
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -19,13 +24,14 @@ jobs:
     - name: Execute Gradle build
       run: ./gradlew build
       
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - uses: "dciborow/action-github-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Bleeding Edge (will break your saves)"
-        generate_release_notes: Bleeding edge release. Contains changes that almost certainly will break your saves. Uncertain if runs at all.
+        title: "Nightly (breaking)"
+        generate_release_notes: Nightly release. Contains changes that almost certainly will break your saves. Uncertain if runs at all.
         files: |
           LICENSE
           build/libs/**.jar
+        
