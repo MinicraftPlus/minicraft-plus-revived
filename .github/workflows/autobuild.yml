@@ -8,6 +8,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Release Configuration
+      run: |
+        sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-SNAPSHOT/" build.gradle
+    
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -19,12 +24,13 @@ jobs:
     - name: Execute Gradle build
       run: ./gradlew build
       
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - uses: "dciborow/action-github-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Bleeding Edge (will break your saves)"
+        title: "Latest Experimental SNAPSHOT"
+        generate_release_notes: This might contain uncertain features and bugs. Please be extra careful to local game files when using this.
         files: |
           LICENSE
-          build/lib/**.jar
+          build/libs/**.jar
