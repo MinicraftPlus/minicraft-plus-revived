@@ -19,8 +19,11 @@ public class PlantTile extends FarmTile {
 
     @Override
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
-        super.steppedOn(level, xt, yt, entity);
-        harvest(level, xt, yt, entity);
+		if (entity instanceof MobAi) return;
+		if (entity instanceof ItemEntity) return;
+		if (random.nextInt(60) != 0) return;
+		if (level.getData(xt, yt) < 5) return;
+		harvest(level, xt, yt, entity);
     }
 
     @Override
