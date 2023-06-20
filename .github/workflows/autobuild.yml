@@ -1,5 +1,5 @@
-name: Automatically build on PR
-on: [pull_request, workflow_dispatch]
+name: Automatically build on main branch
+on: [push, workflow_dispatch]
 jobs:
   gradle:
     strategy:
