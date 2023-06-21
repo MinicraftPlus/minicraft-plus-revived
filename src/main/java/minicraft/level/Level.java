@@ -43,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
@@ -794,6 +795,39 @@ public class Level {
 		}
 
 		return closest;
+	}
+
+	/**
+	 * Calculates maximum position can be reached by an entity with the front boundary of hit box by tile hit box.
+	 * @param sgn One-dimensional direction of displacement
+	 * @param d Displacement vector
+	 * @param hitBoxLeft The left boundary of hit box
+	 * @param hitBoxRight The right boundary of hit box
+	 * @param hitBoxFront The front boundary of hit box
+	 * @param frontTilePassableCheck The check of whether the front boundary of hit box hits the tile hit box;
+	 *                               the first parameter takes the front tile position and second one takes the horizontal position
+	 * @return The maximum front position can be reached by tile hit box check
+	 */
+	public static int calculateMaxFrontClosestTile(int sgn, int d, int hitBoxLeft, int hitBoxRight, int hitBoxFront,
+												   BiPredicate<Integer, Integer> frontTilePassableCheck) {
+		int hitBoxFront1 = hitBoxFront + d; // After maximum movement
+		int hitBoxLeftTile = hitBoxLeft >> 4;
+		int hitBoxRightTile = hitBoxRight >> 4;
+		int hitBoxFrontTile = hitBoxFront >> 4;
+		int hitBoxFrontTile1 = hitBoxFront1 >> 4;
+		int maxFrontTile = hitBoxFrontTile1; // Value for full tile movement
+		// Skips the current tile by adding 1.
+		for (int front = hitBoxFrontTile + sgn; sgn < 0 ? front >= hitBoxFrontTile1 : front <= hitBoxFrontTile1; front += sgn) {
+			for (int horTile = hitBoxLeftTile; horTile <= hitBoxRightTile; horTile++) {
+				if (!frontTilePassableCheck.test(front, horTile)) {
+					maxFrontTile = front - sgn; // Rolls back a tile by subtracting 1.
+					break; // Tile hit box check stops.
+				}
+			}
+		}
+
+		return hitBoxFront +
+			(sgn > 0 ? Math.min(d, (maxFrontTile << 4) - hitBoxFront + (1 << 4) - 1) : Math.max(d, (maxFrontTile << 4) - hitBoxFront));
 	}
 
 	public Point[] getAreaTilePositions(int x, int y, int r) { return getAreaTilePositions(x, y, r, r); }
