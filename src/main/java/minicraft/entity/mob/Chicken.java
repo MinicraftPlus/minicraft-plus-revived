@@ -3,7 +3,9 @@ package minicraft.entity.mob;
 import minicraft.gfx.SpriteLinker;
 
 public class Chicken extends PassiveMob {
-	public Chicken(SpriteLinker.LinkedSprite[][] sprites) {
+	private static final SpriteLinker.LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "chicken");
+
+	public Chicken() {
 		super(sprites);
 	}
 }
