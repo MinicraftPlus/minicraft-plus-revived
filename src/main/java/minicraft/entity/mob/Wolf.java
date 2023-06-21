@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class Wolf extends PassiveMob {
 	private static final SpriteLinker.LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "wolf");
-	private static final SpriteLinker.LinkedSprite[][] spritesTamed = Mob.compileMobSpriteAnimations(0, 0, "wolf_tame")
+	private static final SpriteLinker.LinkedSprite[][] spritesTamed = Mob.compileMobSpriteAnimations(0, 0, "wolf_tame");
 
 	private static final int WILD_HEALTH_FACTOR = 8;
 	private static final int TAMED_HEALTH_FACTOR = 20;
