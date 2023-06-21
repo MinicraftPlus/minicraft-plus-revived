@@ -5,6 +5,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.BucketItem;
+import minicraft.item.ClothingItem;
 import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -43,11 +44,19 @@ public class Cauldron extends Furniture {
 			} else if (item instanceof DyeItem) {
 				((DyeItem) item).count--;
 				if (color == -1) { // Transparent; initialize color with original colors
-					color = ((DyeItem) item).color.color;
+					color = ((DyeItem) item).color.color & 0xFFFFFF; // Converting to a 24-bit RGB value
 				} else { // Already dyed
 					color = combineColors(color, ((DyeItem) item).color.color);
 				}
 				return true;
+			} else if (item instanceof ClothingItem) {
+				if (filled) {
+					if (color == -1) {
+						((ClothingItem) item).setColor(0); // Clearing the dyeing
+					} else {
+						((ClothingItem) item).setColor(color);
+					}
+				}
 			}
 		}
 

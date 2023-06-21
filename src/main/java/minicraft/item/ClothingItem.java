@@ -12,52 +12,41 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class ClothingItem extends StackableItem {
+	private static final int DEFAULT_COLOR = Color.get(1, 51, 51, 0); // Dark Green
 
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new ClothingItem("Red Clothes", new LinkedSprite(SpriteType.Item, "red_clothes"), Color.get(1, 204, 0, 0)));
-		items.add(new ClothingItem("Blue Clothes", new LinkedSprite(SpriteType.Item, "blue_clothes"), Color.get(1, 0, 0, 204)));
-		items.add(new ClothingItem("Green Clothes",  new LinkedSprite(SpriteType.Item, "green_clothes"), Color.get(1, 0, 204, 0)));
-		items.add(new ClothingItem("Yellow Clothes",  new LinkedSprite(SpriteType.Item, "yellow_clothes"), Color.get(1, 204, 204, 0)));
-		items.add(new ClothingItem("Black Clothes",  new LinkedSprite(SpriteType.Item, "black_clothes"), Color.get(1, 51)));
-		items.add(new ClothingItem("Orange Clothes",  new LinkedSprite(SpriteType.Item, "orange_clothes"), Color.get(1, 255, 102, 0)));
-		items.add(new ClothingItem("Purple Clothes",  new LinkedSprite(SpriteType.Item, "purple_clothes"), Color.get(1, 102, 0, 153)));
-		items.add(new ClothingItem("Cyan Clothes",  new LinkedSprite(SpriteType.Item, "cyan_clothes"), Color.get(1, 0, 102, 153)));
-		items.add(new ClothingItem("Reg Clothes",  new LinkedSprite(SpriteType.Item, "reg_clothes"), Color.get(1, 51, 51, 0))); // Dark Green
+		items.add(new ClothingItem("Clothes", 0));
 
 		return items;
 	}
 
-	private int playerCol;
+	private int color;
 
-	private ClothingItem(String name, LinkedSprite sprite, int pcol) { this(name, 1, sprite, pcol); }
-	private ClothingItem(String name, int count, LinkedSprite sprite, int pcol) {
-		super(name, sprite, count);
-		playerCol = pcol;
+	private ClothingItem(String name, int color) {
+		super(name, new LinkedSprite(SpriteType.Item, "clothes").setColor(color == 0 ? DEFAULT_COLOR : color));
+		this.color = color;
+	}
+
+	public void setColor(int color) {
+		sprite.setColor((this.color = color) == 0 ? DEFAULT_COLOR : color);
 	}
 
 	// Put on clothes
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (player.shirtColor == playerCol) {
-			return false;
-		} else {
-			ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
-				.findAny().orElse(null);
-			if (lastClothing == null)
-				lastClothing = (ClothingItem) Items.get("Reg Clothes");
-			lastClothing = lastClothing.copy();
-			lastClothing.count = 1;
-			player.tryAddToInvOrDrop(lastClothing);
-			player.shirtColor = playerCol;
-			return super.interactOn(true);
-		}
+		ClothingItem lastClothing = (ClothingItem) Items.get("Clothes").copy();
+		lastClothing.count = 1;
+		lastClothing.setColor(player.shirtColor);
+		player.tryAddToInvOrDrop(lastClothing);
+		player.shirtColor = color;
+		return super.interactOn(true);
 	}
 
 	@Override
 	public boolean interactsWithWorld() { return false; }
 
 	public @NotNull ClothingItem copy() {
-		return new ClothingItem(getName(), count, sprite, playerCol);
+		return new ClothingItem(getName(), color);
 	}
 }
