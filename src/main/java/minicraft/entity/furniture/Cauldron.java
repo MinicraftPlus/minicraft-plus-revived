@@ -67,7 +67,7 @@ public class Cauldron extends Furniture {
 	public void render(Screen screen) {
 		if (!filled) screen.render(x-8, y-8, sprite);
 		else if (color == -1) screen.render(x-8, y-8, spriteFilled);
-		else screen.render(x-8, y-8, spriteColored.setColor(combineTransparentColor(0.8, color, BACKGROUND_COLOR)));
+		else screen.render(x-8, y-8, spriteColored.setColor(combineTransparentColor(0.6, color, BACKGROUND_COLOR)));
 	}
 
 	/**
