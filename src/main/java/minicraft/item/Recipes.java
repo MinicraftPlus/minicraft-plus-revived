@@ -57,7 +57,6 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Rock Pickaxe_1", "Wood_5", "Stone_5"));
 		workbenchRecipes.add(new Recipe("Rock Shovel_1", "Wood_5", "Stone_5"));
 		workbenchRecipes.add(new Recipe("Rock Bow_1", "Wood_5", "Stone_5", "string_2"));
-		workbenchRecipes.add(new Recipe("Bone Meal_3", "Bone_1"));
 
 		workbenchRecipes.add(new Recipe("arrow_3", "Wood_2", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
@@ -136,6 +135,6 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "GunPowder_3", "Lapis_7"));
 		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5", "Cloud Ore_5"));
 		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5", "Shard_15"));
-		enchantRecipes.add(new Recipe("Arcane Fertilizer_1", "Lapis_2", "Bone Meal_2"));
+		enchantRecipes.add(new Recipe("Arcane Fertilizer_3", "Lapis_6", "Bone_2"));
 	}
 }
