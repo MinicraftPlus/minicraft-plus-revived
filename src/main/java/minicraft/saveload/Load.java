@@ -40,6 +40,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
+import minicraft.item.ClothingItem;
 import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -886,7 +887,21 @@ public class Load {
 			if (item.contains("Power Glove")) continue; // Ignore the power glove.
 			if (item.contains("Totem of Wind")) continue;
 
-			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
+			if (item.endsWith(" Clothes")) {
+				ClothingItem newItem = (ClothingItem) Items.get("Clothes");
+				switch (item) { // Implementing clothing update
+					case "Red Clothes": newItem.setColor(Color.get(1, 204, 0, 0)); break;
+					case "Blue Clothes": newItem.setColor(Color.get(1, 0, 0, 204)); break;
+					case "Green Clothes": newItem.setColor(Color.get(1, 0, 204, 0)); break;
+					case "Yellow Clothes": newItem.setColor(Color.get(1, 204, 204, 0)); break;
+					case "Black Clothes": newItem.setColor(Color.get(1, 51)); break;
+					case "Orange Clothes": newItem.setColor(Color.get(1, 255, 102, 0)); break;
+					case "Purple Clothes": newItem.setColor(Color.get(1, 102, 0, 153)); break;
+					case "Cyan Clothes": newItem.setColor(Color.get(1, 0, 102, 153)); break;
+					case "Reg Clothes": newItem.setColor(Color.get(1, 51, 51, 0)); break;
+				}
+				loadItem(inventory, newItem);
+			} else if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
 

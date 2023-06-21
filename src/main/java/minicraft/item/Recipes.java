@@ -168,14 +168,7 @@ public class Recipes {
 		loomRecipes.add(new Recipe("magenta Bed_1", "White Bed_1", "magenta dye_1"));
 		loomRecipes.add(new Recipe("orange Bed_1", "White Bed_1", "orange dye_1"));
 
-		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "Lapis_1"));
-		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "Cactus_1"));
-		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "Flower_1"));
-		loomRecipes.add(new Recipe("black clothes_1", "cloth_5", "coal_1"));
-		loomRecipes.add(new Recipe("orange clothes_1", "cloth_5", "rose_1", "Flower_1"));
-		loomRecipes.add(new Recipe("purple clothes_1", "cloth_5", "Lapis_1", "rose_1"));
-		loomRecipes.add(new Recipe("cyan clothes_1", "cloth_5", "Lapis_1", "Cactus_1"));
-		loomRecipes.add(new Recipe("reg clothes_1", "cloth_5"));
+		loomRecipes.add(new Recipe("clothes_1", "cloth_5"));
 
 		loomRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 
