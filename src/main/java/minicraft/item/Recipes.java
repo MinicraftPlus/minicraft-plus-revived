@@ -251,7 +251,7 @@ public class Recipes {
 				item instanceof ToolItem ? name.replaceAll("(?i)wood", "wooden").replaceAll("(?i)rock", "stone") : name)
 				.toLowerCase().replace(' ', '_');
 		};
-		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurrs.
+		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurs.
 			Item item = recipe.getProduct();
 			String name = itemNameFixer.apply(item);
 			if (item instanceof DyeItem) {

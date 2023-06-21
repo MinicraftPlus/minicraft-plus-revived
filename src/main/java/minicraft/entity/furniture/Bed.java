@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.DyeItem;
 import minicraft.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -18,7 +19,7 @@ public class Bed extends Furniture {
 	private static final HashMap<DyeItem.DyeColor, LinkedSprite> itemSprites = new HashMap<>();
 
 	@Override
-	public Furniture clone() {
+	public @NotNull Furniture copy() {
 		return new Bed(color);
 	}
 
