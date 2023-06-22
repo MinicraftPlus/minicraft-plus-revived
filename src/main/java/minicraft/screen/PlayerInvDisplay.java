@@ -13,6 +13,7 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import minicraft.util.Logging;
 
 public class PlayerInvDisplay extends Display {
 
@@ -219,7 +220,9 @@ public class PlayerInvDisplay extends Display {
 						((StackableItem)toItem).count = 1;
 					}
 
-					to.add(toSel, toItem);
+					if (to.add(toSel, toItem) != null) {
+						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
+					}
 					update();
 				}
 

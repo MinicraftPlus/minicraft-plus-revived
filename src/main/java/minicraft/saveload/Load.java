@@ -749,7 +749,7 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));
 			if (worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount);
+				player.getInventory().add(Items.get("arrow"), arrowCount).forEach(deathChest.getInventory()::add);;
 		}
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
