@@ -11,9 +11,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Change version name in build
-      run: |
-        sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-nightly/" build.gradle
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
