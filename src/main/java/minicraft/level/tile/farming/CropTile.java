@@ -58,27 +58,27 @@ public class CropTile extends FarmTile implements BoostablePlant {
 					}
 				}
 
-			boolean u = level.getTile(xt, yt - 1) == this;
-			boolean d = level.getTile(xt, yt + 1) == this;
-			boolean l = level.getTile(xt - 1, yt) == this;
-			boolean r = level.getTile(xt + 1, yt) == this;
-			boolean ul = level.getTile(xt - 1, yt - 1) == this;
-			boolean dl = level.getTile(xt - 1, yt + 1) == this;
-			boolean ur = level.getTile(xt + 1, yt - 1) == this;
-			boolean dr = level.getTile(xt + 1, yt + 1) == this;
-			if (u && d && l && r && ul && dl && ur && dr)
+			boolean up = level.getTile(xt, yt - 1) == this;
+			boolean down = level.getTile(xt, yt + 1) == this;
+			boolean left = level.getTile(xt - 1, yt) == this;
+			boolean right = level.getTile(xt + 1, yt) == this;
+			boolean upLeft = level.getTile(xt - 1, yt - 1) == this;
+			boolean downLeft = level.getTile(xt - 1, yt + 1) == this;
+			boolean upRight = level.getTile(xt + 1, yt - 1) == this;
+			boolean downRight = level.getTile(xt + 1, yt + 1) == this;
+			if (up && down && left && right && upLeft && downLeft && upRight && downRight)
 				points /= 2;
 			else {
-				if (u && d && l && r)
+				if (up && down && left && right)
 					points *= 0.75;
-				if (u && (d && (l || r) || l && r) || d && l && r) // Either 3 of 4 directions.
+				if (up && (down && (left || right) || left && right) || down && left && right) // Either 3 of 4 directions.
 					points *= 0.85;
-				if (ul && (dr || dl || ur) || dl && (ur || dr) || ur && dr) // Either 2 of 4 directions.
+				if (upLeft && (downRight || downLeft || upRight) || downLeft && (upRight || downRight) || upRight && downRight) // Either 2 of 4 directions.
 					points *= 0.9;
-				if (ul) points *= 0.98125;
-				if (dl) points *= 0.98125;
-				if (ur) points *= 0.98125;
-				if (dr) points *= 0.98125;
+				if (upLeft) points *= 0.98125;
+				if (downLeft) points *= 0.98125;
+				if (upRight) points *= 0.98125;
+				if (downRight) points *= 0.98125;
 			}
 
 			if (random.nextInt((int) (100/points) + 1) < (fertilization/30 + 1)) // fertilization >= 0

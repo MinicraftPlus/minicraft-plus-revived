@@ -70,37 +70,37 @@ public class TreeTile extends Tile {
 		Tiles.get("Grass").render(screen, level, x, y);
 
 		TreeType thisType = level.treeTypes[x + y * level.w];
-		boolean u = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
-		boolean l = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
-		boolean r = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
-		boolean d = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
-		boolean ul = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
-		boolean ur = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
-		boolean dl = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
-		boolean dr = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
+		boolean up = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
+		boolean left = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
+		boolean right = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
+		boolean down = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
+		boolean upLeft = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
+		boolean upRight = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
+		boolean downLeft = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
+		boolean downRight = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
 
 		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
-		if (u && ul && l) {
+		if (up && upLeft && left) {
 			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
 		} else {
 			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
 		}
 
-		if (u && ur && r) {
+		if (up && upRight && right) {
 			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
 		} else {
 			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
 		}
 
-		if (d && dl && l) {
+		if (down && downLeft && left) {
 			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
 			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
-		if (d && dr && r) {
+		if (down && downRight && right) {
 			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
 		} else {
 			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
