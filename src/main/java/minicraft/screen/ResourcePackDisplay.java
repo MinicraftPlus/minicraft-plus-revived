@@ -6,7 +6,6 @@ import minicraft.core.Renderer;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -17,7 +16,6 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.saveload.Save;
-import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.util.BookData;
@@ -48,8 +46,8 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +62,7 @@ public class ResourcePackDisplay extends Display {
 	 * <root>
 	 * 	├──	pack.json
 	 * 	├──	pack.png
-	 * 	└──	assets TODO Restructure the structure with the new IDS later
+	 * 	└──	assets TODO Restructure the structure with the new IDs later
 	 * 		├──	books
 	 * 		│	└──	<name>.txt
 	 * 		├──	localization
@@ -102,16 +100,16 @@ public class ResourcePackDisplay extends Display {
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	private static final MinicraftImage defaultLogo;
-	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
-	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
+	private static final ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
+	private static final ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
 	private static final int padding = 10;
 
-	private WatcherThread fileWatcher;
-	private ArrayList<ListEntry> entries0 = new ArrayList<>();
-	private ArrayList<ListEntry> entries1 = new ArrayList<>();
-	private Menu.Builder builder0;
-	private Menu.Builder builder1;
+	private final WatcherThread fileWatcher;
+	private final ArrayList<ListEntry> entries0 = new ArrayList<>();
+	private final ArrayList<ListEntry> entries1 = new ArrayList<>();
+	private final Menu.Builder builder0;
+	private final Menu.Builder builder1;
 	private boolean changed = false;
 
 	static { // Initializing the default pack and logo.
@@ -120,8 +118,10 @@ public class ResourcePackDisplay extends Display {
 		if (Game.class.getProtectionDomain().getCodeSource().getLocation().toString().endsWith("/")) { // If the source is a directory.
 			try {
 				File zip = File.createTempFile("resources", ".zip");
-				Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
-				if (zip.exists()) zip.delete(); // Delete if exists.
+				Logging.RESOURCE_HANDLER__RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
+				if (zip.exists()) //noinspection ResultOfMethodCallIgnored
+					zip.delete(); // Delete if exists.
+				//noinspection IOStreamConstructor
 				try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
 					ArrayList<String> assets = FileHandler.listAssets();
 					assets.add("pack.json");
@@ -131,9 +131,10 @@ public class ResourcePackDisplay extends Display {
 							out.putNextEntry(new ZipEntry(name));
 							if (!name.endsWith("/")) {
 								int b;
-								InputStream stream = Game.class.getResourceAsStream("/" + name);
-								while ((b = stream.read()) != -1) // Write per byte.
-									out.write(b);
+								try (InputStream stream = Objects.requireNonNull(Game.class.getResourceAsStream("/" + name))) {
+									while ((b = stream.read()) != -1) // Write per byte.
+										out.write(b);
+								}
 							}
 
 							out.closeEntry();
@@ -157,10 +158,10 @@ public class ResourcePackDisplay extends Display {
 		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
 		loadedPacks.add(defaultPack);
 		try {
-			defaultLogo = new MinicraftImage(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
+			defaultLogo = new MinicraftImage(ImageIO.read(Objects.requireNonNull(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png"))));
 		} catch (IOException e) {
 			CrashHandler.crashHandle(e);
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -270,7 +271,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			start();
-			Logging.RESOURCEHANDLER_RESOURCEPACK.debug("WatcherThread started.");
+			Logging.RESOURCE_HANDLER__RESOURCEPACK.debug("WatcherThread started.");
 		}
 
 		@Override
@@ -290,22 +291,21 @@ public class ResourcePackDisplay extends Display {
 							urls.add(FOLDER_LOCATION.toPath().resolve(filename).toFile().toURI().toURL());
 						} catch (IOException e) {
 							e.printStackTrace();
-							continue;
 						}
 					}
 
 					if (urls.size() > 0) {
-						Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Refreshing resource packs.");
+						Logging.RESOURCE_HANDLER__RESOURCEPACK.debug("Refreshing resource packs.");
 						refreshResourcePacks(urls);
 						refreshEntries();
 					}
 				} catch (InterruptedException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
+					Logging.RESOURCE_HANDLER__RESOURCEPACK.trace("File watcher terminated.");
 					return;
 				}
 			}
 
-			Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
+			Logging.RESOURCE_HANDLER__RESOURCEPACK.trace("File watcher terminated.");
 		}
 
 		@Override
@@ -397,7 +397,6 @@ public class ResourcePackDisplay extends Display {
 
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
-			@SuppressWarnings("resource")
 			MinicraftImage logo = packs.get(menus[selection].getSelection()).logo;
 			int h = logo.height / 8;
 			int w = logo.width / 8;
@@ -415,10 +414,10 @@ public class ResourcePackDisplay extends Display {
 
 	/** The object representation of resource pack. */
 	private static class ResourcePack implements Closeable {
-		private URL packRoot;
+		private final URL packRoot;
 
 		/** 0 - before 2.2.0; 1 - 2.2.0-latest */
-		@SuppressWarnings("unused")
+		@SuppressWarnings({"unused", "FieldCanBeLocal"})
 		private final int packFormat; // The pack format of the pack.
 		private final String name; // The name of the pack.
 		private final String description; // The description of the pack.
@@ -452,18 +451,18 @@ public class ResourcePackDisplay extends Display {
 						throw new IOException(String.format("Unacceptable logo size: %s;%s", w, h));
 					}
 				} else {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found in pack: {}, loading default logo instead.", name);
+					Logging.RESOURCE_HANDLER__RESOURCEPACK.trace("Pack logo not found in pack: {}, loading default logo instead.", name);
 					logo = defaultLogo;
 				}
 				close();
 
 			} catch (IOException | NullPointerException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to load logo in pack: {}, loading default logo instead.", name);
+				Logging.RESOURCE_HANDLER__RESOURCEPACK.warn(e, "Unable to load logo in pack: {}, loading default logo instead.", name);
 				if (this == defaultPack) {
 					try {
-						logo = new MinicraftImage(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
-					} catch (IOException e1) {
-						CrashHandler.crashHandle(e1);
+						logo = new MinicraftImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/resources/logo.png"))));
+					} catch (IOException ex) {
+						CrashHandler.crashHandle(ex);
 					}
 				} else logo = defaultLogo;
 			}
@@ -508,8 +507,8 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		@FunctionalInterface
-		private static interface FilesFilter { // Literally functioned.
-			public abstract boolean check(Path path, boolean isDir);
+		private interface FilesFilter { // Literally functioned.
+			boolean check(Path path, boolean isDir);
 		}
 
 		/**
@@ -571,7 +570,7 @@ public class ResourcePackDisplay extends Display {
 	public static void initPacks() {
 		// Generate resource packs folder
 		if (FOLDER_LOCATION.mkdirs()) {
-			Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created resource packs folder at {}.", FOLDER_LOCATION);
+			Logging.RESOURCE_HANDLER__RESOURCEPACK.info("Created resource packs folder at {}.", FOLDER_LOCATION);
 		}
 
 		ArrayList<URL> urls = new ArrayList<>();
@@ -606,6 +605,7 @@ public class ResourcePackDisplay extends Display {
 	 * @param url The url for query.
 	 * @return The found resource pack. {@code null} if not found.
 	 */
+	@SuppressWarnings("EqualsHashCodeCalledOnUrl")
 	private static ResourcePack findPackByURL(URL url) {
 		for (ResourcePack pack : resourcePacks) {
 			if (pack.packRoot.equals(url)) {
@@ -638,7 +638,7 @@ public class ResourcePackDisplay extends Display {
 						loadedPacks.remove(pack);
 					}
 				} catch (URISyntaxException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Resource pack URL not found.");
+					Logging.RESOURCE_HANDLER__RESOURCEPACK.debug(e, "Resource pack URL not found.");
 					resourcePacks.remove(pack);
 					loadedPacks.remove(pack);
 				}
@@ -650,7 +650,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
+		resourcePacks.sort(Comparator.comparing(p -> p.name));
 	}
 
 	/** Releasing the unloaded packs. */
@@ -672,7 +672,7 @@ public class ResourcePackDisplay extends Display {
 					}
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug("URL invalid.");
+					Logging.RESOURCE_HANDLER__RESOURCEPACK.debug("URL invalid.");
 				}
 			}
 		}
@@ -698,7 +698,6 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	/** Reloading all the resources with the currently packs to be loaded. */
-	@SuppressWarnings("unchecked")
 	public static void reloadResources() {
 		loadQuery.clear();
 		loadQuery.addAll(loadedPacks);
@@ -753,9 +752,8 @@ public class ResourcePackDisplay extends Display {
 	 * Loading the categories of textures from the pack.
 	 * @param pack The pack to be loaded.
 	 * @param type The category of textures.
-	 * @throws IOException if I/O exception occurs.
 	 */
-	private static void loadTextures(ResourcePack pack, SpriteType type) throws IOException {
+	private static void loadTextures(ResourcePack pack, SpriteType type) {
 		String path = "assets/textures/";
 		switch (type) {
 			case Entity: path += "entity/"; break;
@@ -771,7 +769,9 @@ public class ResourcePackDisplay extends Display {
 				try {
 					JSONObject obj = new JSONObject(readStringFromInputStream(pack.getResourceAsStream(m)));
 					SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
+					//noinspection DuplicateExpressions
 					pngs.remove(m.substring(0, m.length() - 5));
+					//noinspection DuplicateExpressions
 					BufferedImage image = ImageIO.read(pack.getResourceAsStream(m.substring(0, m.length() - 5)));
 
 					// Applying animations.
@@ -781,10 +781,11 @@ public class ResourcePackDisplay extends Display {
 						meta.frametime = animation.getInt("frametime");
 						meta.frames = image.getHeight() / 16;
 						if (meta.frames == 0) throw new IOException(new IllegalArgumentException(String.format(
-							"Invalid frames 0 detected with {} in pack: {}", m, pack.name)));
+							"Invalid frames 0 detected with %s in pack: %s", m, pack.name)));
 						sheet = new MinicraftImage(image, 16, 16 * meta.frames);
 					} else
 						sheet = new MinicraftImage(image, 16, 16);
+					//noinspection DuplicateExpressions
 					Renderer.spriteLinker.setSprite(type, m.substring(path.length(), m.length() - 9), sheet);
 
 					JSONObject borderObj = obj.optJSONObject("border");
@@ -797,7 +798,7 @@ public class ResourcePackDisplay extends Display {
 							try {
 								Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
 							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
+								Logging.RESOURCE_HANDLER__RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
 								meta.border = null;
 							}
 						}
@@ -810,15 +811,16 @@ public class ResourcePackDisplay extends Display {
 							try {
 								Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
 							} catch (IOException e) {
-								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
+								Logging.RESOURCE_HANDLER__RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
 								meta.corner = null;
 							}
 						}
 					}
 
+					//noinspection DuplicateExpressions
 					SpriteAnimation.setMetadata(m.substring(path.length(), m.length() - 9), meta);
 				} catch (JSONException | IOException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.name);
+					Logging.RESOURCE_HANDLER__RESOURCEPACK.warn(e, "Unable to read {} in pack: {}", m, pack.name);
 				}
 			}
 
@@ -839,7 +841,7 @@ public class ResourcePackDisplay extends Display {
 
 				Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
+				Logging.RESOURCE_HANDLER__RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
 			}
 		}
 	}
@@ -853,7 +855,7 @@ public class ResourcePackDisplay extends Display {
 		try {
 			langJSON = new JSONObject(readStringFromInputStream(pack.getResourceAsStream("pack.json"))).optJSONObject("language");
 		} catch (JSONException | IOException e1) {
-			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
+			Logging.RESOURCE_HANDLER__RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
 		}
 
 		if (langJSON != null) {
@@ -863,7 +865,7 @@ public class ResourcePackDisplay extends Display {
 					JSONObject info = langJSON.getJSONObject(loc);
 					Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")));
 				} catch (JSONException e) {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.name);
+					Logging.RESOURCE_HANDLER__RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.name);
 				}
 			}
 		}
@@ -880,9 +882,9 @@ public class ResourcePackDisplay extends Display {
 				// Add verified localization.
 				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)), json);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
+				Logging.RESOURCE_HANDLER__LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
 			} catch (JSONException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.name);
+				Logging.RESOURCE_HANDLER__LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.name);
 			}
 		}
 	}
@@ -903,7 +905,7 @@ public class ResourcePackDisplay extends Display {
 					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
 				}
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
+				Logging.RESOURCE_HANDLER__LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
 			}
 		}
 	}
@@ -918,7 +920,7 @@ public class ResourcePackDisplay extends Display {
 			try {
 				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.name);
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
+				Logging.RESOURCE_HANDLER__LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
 			}
 		}
 	}

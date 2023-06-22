@@ -36,32 +36,34 @@ public class InputHandler implements KeyListener {
 			keymap contains a HashMap of string keys, to string values. The keys are the names of the actions,
 			and the values are the names of the keyboard keys you physically press to do them.
 
-			-To get whether a key is pressed or not, use input.getKey("key"), where "key" is the name of the key, either physical or virtual. If virtual, all it does is then fetch the corrosponding key from keyboard anyway; but it allows one to change the controls while still making the same key requests in the code.
+			-To get whether a key is pressed or not, use input.getKey("key"), where "key" is the name of the key, either physical or virtual. If virtual, all it does is then fetch the corresponding key from keyboard anyway; but it allows one to change the controls while still making the same key requests in the code.
 
-		-If you want to have multiple possibilities at once when it comes to which key to press to do something, you can! just put a "|" between the mappings. For example, say you wanted both "wasd" and arrow key controls to work, at the same time. How you do this is in the construstor below, where it says "keymap.put(" UP, DOWN, LEFT, and RIGHT.
+		-If you want to have multiple possibilities at once when it comes to which key to press to do something, you can! just put a "|" between the mappings. For example, say you wanted both "wasd" and arrow key controls to work, at the same time. How you do this is in the constructor below, where it says "keymap.put(" UP, DOWN, LEFT, and RIGHT.
 
-		-This class supports modifier keys as inputs. To specify a "compound" key (one using modifiders), write "MOD1-MOD2-KEY", that is, "SHIFT-ALT-D" or "ALT-F", with a "-" between the keys. ALWAYS put the actual trigger key last, after all modifiers (the modifiers are: shift, ctrl, and alt).
+		-This class supports modifier keys as inputs. To specify a "compound" key (one using modifiers), write "MOD1-MOD2-KEY", that is, "SHIFT-ALT-D" or "ALT-F", with a "-" between the keys. ALWAYS put the actual trigger key last, after all modifiers (the modifiers are: shift, ctrl, and alt).
 
-			--All the magic happens in the getKey() method: If the String keyname input has hyphens("-"), then it's a compound key, and it splits it up between the hyphens. Then, it compares which modifiers are currently being pressed, and which are being requested. Then, a Key object is created, which if the modifiers match, reflects the non-modifier key's "down" and "clicked" values; otherwise they're both false.
-			--If a key with no hyph is requested, it skips most of that and just gives you the Key, generating it if needed.
+			--All the magic happens in the getKey() method: If the String key-name input has hyphens("-"), then it's a compound key, and it splits it up between the hyphens. Then, it compares which modifiers are currently being pressed, and which are being requested. Then, a Key object is created, which if the modifiers match, reflects the non-modifier key's "down" and "clicked" values; otherwise they're both false.
+			--If a key with no hyphen is requested, it skips most of that and just gives you the Key, generating it if needed.
 
 	*/
 	public String keyToChange = null; // This is used when listening to change key bindings.
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
 
-	private ControllerManager controllerManager = new ControllerManager();
-	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
-	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
-	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
+	private final ControllerManager controllerManager = new ControllerManager();
+	private final ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
+	private final HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
+	private final HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
 
+	/** @deprecated This should have already been replaced and handled. */
+	@SuppressWarnings("unused")
 	public String getChangedKey() {
 		String key = keyChanged + ";" + keymap.get(keyChanged);
 		keyChanged = null;
 		return key;
 	}
 
-	private static HashMap<Integer, String> keyNames = new HashMap<>();
+	private static final HashMap<Integer, String> keyNames = new HashMap<>();
 	static {
 		Field[] keyEventFields = KeyEvent.class.getFields();
 		ArrayList<Field> keyConstants = new ArrayList<>();
@@ -78,13 +80,13 @@ public class InputHandler implements KeyListener {
 			} catch(IllegalAccessException ignored) {}
 		}
 
-		// For compatibility becuase I'm lazy. :P
+		// For compatibility because I'm lazy. :P
 		keyNames.put(KeyEvent.VK_BACK_SPACE, "BACKSPACE");
 		keyNames.put(KeyEvent.VK_CONTROL, "CTRL");
 	}
 
-	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
-	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
+	private final HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
+	private final HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
 	private String lastKeyTyped = ""; // Used for things like typing world names.
 	private String keyTypedBuffer = ""; // Used to store the last key typed before putting it into the main var during tick().
 
@@ -94,7 +96,7 @@ public class InputHandler implements KeyListener {
 		keymap = new LinkedHashMap<>(); // Stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); // Stores physical keyboard keys; auto-generated :D
 
-		initKeyMap(); // This is seperate so I can make a "restore defaults" option.
+		initKeyMap(); // This is separate, so I can make a "restore defaults" option.
 		initButtonMap();
 		for (ControllerButton btn : ControllerButton.values()) {
 			controllerButtonBooleanMap.put(btn, false);
@@ -235,7 +237,7 @@ public class InputHandler implements KeyListener {
 		// sticky = true if presses reaches 3, and the key continues to be held down.
 		private boolean sticky;
 
-		boolean stayDown;
+		final boolean stayDown;
 
 		public Key() { this(false); }
 		public Key(boolean stayDown) {
@@ -596,8 +598,9 @@ public class InputHandler implements KeyListener {
 	 *
 	 * @param leftMagnitude The speed for the left motor to vibrate (this should be between 0 and 1)
 	 * @param rightMagnitude The speed for the right motor to vibrate (this should be between 0 and 1)
-	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
+	 * @return Whether the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
 		try {
 			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);

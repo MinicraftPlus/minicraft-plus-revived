@@ -13,7 +13,7 @@ import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
 public class BossWallTile extends WallTile {
-	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
+	private static final SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
 		.setConnectChecker((tile, side) -> tile.getClass() == BossWallTile.class);
 
 	private static final String wallMsg = "minicraft.notification.defeat_obsidian_knight_first";

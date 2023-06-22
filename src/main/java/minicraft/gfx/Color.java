@@ -1,5 +1,6 @@
 package minicraft.gfx;
 
+@SuppressWarnings("unused") // Fields reserved
 public class Color {
 
 	/* To explain this class, you have to know how Bit-Shifting works.
@@ -25,6 +26,8 @@ public class Color {
 		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
 
+	// Future suggestion: standardization of 25/24/32-bit RGB values is recommended.
+
 	public static final int TRANSPARENT = Color.get(0, 0);
 	public static final int WHITE = Color.get(1, 255);
 	public static final int GRAY = Color.get(1, 153);
@@ -37,7 +40,8 @@ public class Color {
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
 	public static final int CYAN = Color.get(1, 90, 204, 204);
 
-	public static final char COLOR_CHAR = '\u00A7';
+	@SuppressWarnings("UnnecessaryUnicodeEscape")
+	public static final char COLOR_CHAR = '\u00A7'; // §
 
 	public static final String TRANSPARENT_CODE = Color.toStringCode(Color.TRANSPARENT);
 	public static final String WHITE_CODE = Color.toStringCode(Color.WHITE);
@@ -76,6 +80,7 @@ public class Color {
 		return Color.get(color.charAt(leading), color.charAt(1 + leading), color.charAt(2 + leading), color.charAt(3 + leading));
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private static int limit(int num, int min, int max) {
 		if (num < min) num = min;
 		if (num > max) num = max;
@@ -113,7 +118,7 @@ public class Color {
 		return rgb[0] * 36 + rgb[1] * 6 + rgb[2]; // This is: rgbByte
 	}
 
-	/** seperates a 4-part sprite color (rgb4Sprite) into it's original 4 component colors (which are each rgbBytes) */
+	/** separates a 4-part sprite color (rgb4Sprite) into it's original 4 component colors (which are each rgbBytes) */
 	/// Reverse of Color.get(a, b, c, d).
 	public static int[] separateEncodedSprite(int rgb4Sprite) { return separateEncodedSprite(rgb4Sprite, false); }
 	public static int[] separateEncodedSprite(int rgb4Sprite, boolean convertToReadable) {

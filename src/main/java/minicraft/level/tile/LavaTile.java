@@ -7,7 +7,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class LavaTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "lava")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "lava")
 		.setConnectChecker((tile, side) -> tile.connectsToFluid)
 		.setSingletonWithConnective(true);
 

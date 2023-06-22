@@ -8,9 +8,9 @@ import java.util.Arrays;
 public class FontStyle {
 
 	/// this specifies the x and y offsets for each binary value in the "shadow location byte", and is what causes each value to progress in a circle.
-	private static int[] shadowPosMap = {	 0,  1,  1,  1,  0, -1, -1, -1,
+	private static final int[] shadowPosMap = {	 0,  1,  1,  1,  0, -1, -1, -1,
 										-1, -1,  0,  1,  1,  1,  0, -1};
-	/**
+	/*
 		The shadowing technique uses binary strings to specify where to outline a string of text. It was going to be a straight byte, since there are 8 positions, but since it's going to be a string anyway, I decided to make it accept a string.
 		Each position is specified fairly simply: it goes clockwise, starting from the top. Then it goes top right, right, bottom right, bottom, etc. up to top left. It's kind of like a compass, with a position for N, NE, E, etc.
 		For an example, for the default shadow, the string is "00010000". though, becuase of the way it's designed, the trailing zeros may be dropped, so it could just be "0001". This doesn't quite read like binary, but it doesn't have to, so whatever. :P
@@ -29,6 +29,7 @@ public class FontStyle {
 	private Rectangle paraBounds;
 	private int padX = 0, padY = 0;
 
+	@SuppressWarnings("unused") // Reserved
 	public FontStyle() { this(Color.WHITE); }
 	public FontStyle(int mainColor) {
 		this.mainColor = mainColor;
@@ -36,11 +37,12 @@ public class FontStyle {
 		shadowType = "";
 		anchor = new Point(Screen.w/2, Screen.h/2);
 
-		/// By default, the styling is set so as to center the text in the middle of the screen, with no shadow.
+		/// By default, the styling is set to center the text in the middle of the screen, with no shadow.
 	}
 
 
 	// TODO make a constructor that takes another FontStyle and just copies all the protected fields.
+	// A review is required for the necessary of this.
 
 
 	/// Actually draws the text.

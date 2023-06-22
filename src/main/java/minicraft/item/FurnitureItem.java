@@ -61,8 +61,8 @@ public class FurnitureItem extends Item {
 		return items;
 	}
 
-	public Furniture furniture; // The furniture of this item
-	public boolean placed; // Value if the furniture has been placed or not.
+	public final Furniture furniture; // The furniture of this item
+	private boolean placed; // Value if the furniture has been placed or not.
 
 	public FurnitureItem(Furniture furniture) {
 		super(furniture.name, furniture.itemSprite);
@@ -84,11 +84,12 @@ public class FurnitureItem extends Item {
 			furniture.x = xt * 16 + 8;
 			furniture.y = yt * 16 + 8;
 
-			level.add(furniture); // Adds the furniture to the world
-			if (Game.isMode("minicraft.settings.mode.creative"))
-				furniture = furniture.copy();
-			else
+			if (Game.isMode("minicraft.settings.mode.creative")) {
+				level.add(furniture.copy()); // Adds the furniture to the world
+			} else {
+				level.add(furniture); // Adds the furniture to the world
 				placed = true; // The value becomes true, which removes it from the player's active item
+			}
 
 			return true;
 		}

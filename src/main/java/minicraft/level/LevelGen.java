@@ -18,7 +18,7 @@ import java.util.Random;
 public class LevelGen {
 	private static long worldSeed = 0;
 	private static final Random random = new Random(worldSeed);
-	public double[] values; // An array of doubles, used to help making noise for the map
+	private final double[] values; // An array of doubles, used to help making noise for the map
 	private final int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
 
@@ -37,7 +37,7 @@ public class LevelGen {
 		}
 
 		int stepSize = featureSize;
-		double scale = 2 / w;
+		double scale = 2.0 / w;
 		double scaleMod = 1;
 		do {
 			int halfStep = stepSize / 2;
@@ -48,7 +48,7 @@ public class LevelGen {
 					double c = sample(x, y + stepSize); // Fetches the next value down, possibly looping back to the top of the column.
 					double d = sample(x + stepSize, y + stepSize); // Fetches the value one down, one right.
 
-					/**
+					/*
 					 * This could probably use some explaining... Note: the number values are probably only good the first time around...
 					 *
 					 * This starts with taking the average of the four numbers from before (they form a little square in adjacent tiles), each of which holds a value from -1 to 1.
@@ -82,7 +82,7 @@ public class LevelGen {
 				}
 			}
 
-			/**
+			/*
 			 * THEN... this stuff is set to repeat the system all over again!
 			 * The featureSize is halved, allowing access to further unset mids, and the scale changes...
 			 * The scale increases the first time, x1.8, but the second time it's x1.1, and after that probably a little less than 1. So, it generally increases a bit, maybe to 4 / w at tops. This results in the 5th random value being more significant than the first 4 ones in later iterations.
@@ -90,7 +90,7 @@ public class LevelGen {
 			stepSize /= 2;
 			scale *= (scaleMod + 0.8);
 			scaleMod *= 0.3;
-		} while (stepSize > 1); // This stops when the stepsize is < 1, aka 0 b/c it's an int. At this point there are no more mid values.
+		} while (stepSize > 1); // This stops when the stepSize is < 1, aka 0 b/c it's an int. At this point there are no more mid values.
 	}
 
 	private double sample(int x, int y) {
@@ -98,7 +98,7 @@ public class LevelGen {
 	} // This merely returns the value, like Level.getTile(x, y).
 
 	private void setSample(int x, int y, double value) {
-		/**
+		/*
 		 * This method is short, but difficult to understand. This is what I think it does:
 		 *
 		 * The values array is like a 2D array, but formatted into a 1D array; so the basic "x + y * w" is used to access a given value.
@@ -114,7 +114,6 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
-	@Nullable
 	static short[][] createAndValidateMap(int w, int h, int level, long seed) {
 		worldSeed = seed;
 
@@ -155,7 +154,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
 			short[][] result = createUndergroundMap(w, h, depth);
@@ -196,7 +195,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateSkyMap(int w, int h) {
+	private static short[] @Nullable [] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 
 		do {
@@ -629,7 +628,6 @@ public class LevelGen {
 		}
 
 		if (depth > 2) { // The level above dungeon.
-			int r = 1;
 			int xm = w/2;
 			int ym = h/2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
@@ -695,7 +693,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -777,7 +775,6 @@ public class LevelGen {
 
 		if (!valid) {
 			maplvls = new int[1];
-			maplvls[0] = 0;
 		}
 
 		//noinspection InfiniteLoopStatement

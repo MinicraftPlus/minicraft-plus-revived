@@ -25,9 +25,9 @@ public class FishingRodItem extends Item {
         return items;
     }
     private int uses = 0; // The more uses, the higher the chance of breaking
-    public int level; // The higher the level the lower the chance of breaking
+    public final int level; // The higher the level the lower the chance of breaking
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     /* These numbers are a bit confusing, so here's an explanation
     * If you want to know the percent chance of a category (let's say tool, which is third)
@@ -46,7 +46,7 @@ public class FishingRodItem extends Item {
             "Gem"
     };
 
-    public FishingRodItem(int level) {
+    private FishingRodItem(int level) {
         super(LEVEL_NAMES[level] + " Fishing Rod", new LinkedSprite(SpriteType.Item,
 			LEVEL_NAMES[level].toLowerCase().replace("wood", "wooden") + "_fishing_rod"));
         this.level = level;

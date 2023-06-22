@@ -8,7 +8,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		new LinkedSprite[][] {Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "slime")},
 		new LinkedSprite[][] {Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "slime")},
 		new LinkedSprite[][] {Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "slime")},

@@ -12,16 +12,14 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
-import minicraft.level.tile.TorchTile;
-
-import java.awt.Point;
-import java.util.Arrays;
 
 public abstract class MobAi extends Mob {
 
-	int randomWalkTime, randomWalkChance, randomWalkDuration;
+	int randomWalkTime;
+	final int randomWalkChance;
+	final int randomWalkDuration;
 	int xmov, ymov;
-	private int lifetime;
+	private final int lifetime;
 	protected int age = 0; // Not private because it is used in Sheep.java.
 
 	private boolean slowtick = false;
@@ -67,7 +65,7 @@ public abstract class MobAi extends Mob {
 	 * @return {@code true} if the mob is within any light.
 	 */
 	protected boolean isWithinLight() {
-		return Arrays.stream(level.getEntityArray()).anyMatch(e -> e instanceof Lantern && isWithin(e.getLightRadius(), e))
+		return level.getEntitySet().stream().anyMatch(e -> e instanceof Lantern && isWithin(e.getLightRadius(), e))
 			|| !level.getMatchingTiles((tile, x, y) -> Math.hypot(Math.abs(this.x - x), Math.abs(this.y - y)) <= tile.getLightRadius(level, x, y)).isEmpty();
 	}
 
@@ -86,7 +84,7 @@ public abstract class MobAi extends Mob {
 		if (lifetime > 0) {
 			age++;
 			if (age > lifetime) {
-				boolean playerClose = getLevel().entityNearPlayer((Entity) this);
+				boolean playerClose = getLevel().entityNearPlayer(this);
 
 				if (!playerClose) {
 					remove();
@@ -184,7 +182,7 @@ public abstract class MobAi extends Mob {
 	 * @param mincount Least amount of items to add.
 	 * @param maxcount Most amount of items to add.
 	 * @param items Which items should be added.
-	 */
+	 */// This should be handled in different class.
 	protected void dropItem(int mincount, int maxcount, Item... items) {
 		int count = random.nextInt(maxcount-mincount+1) + mincount;
 		for (int i = 0; i < count; i++)
@@ -201,6 +199,7 @@ public abstract class MobAi extends Mob {
 	 * This is multiplied by the monster density of the level
 	 * @return true if the mob can spawn, false if not.
 	 */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
 		Player player = level.getClosestPlayer(x, y);
 		if (player != null) {

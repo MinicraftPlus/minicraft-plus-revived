@@ -3,6 +3,7 @@ package minicraft.entity.furniture;
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Cow;
 import minicraft.entity.mob.Creeper;
 import minicraft.entity.mob.EnemyMob;
@@ -34,6 +35,18 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Spawner extends Furniture {
+	private static final LinkedSprite furnitureSprite = new LinkedSprite(SpriteType.Entity, "spawner");
+	private static final LinkedSprite cowItemSprite = new LinkedSprite(SpriteType.Item, "cow_spawner");
+	private static final LinkedSprite pigItemSprite = new LinkedSprite(SpriteType.Item, "pig_spawner");
+	private static final LinkedSprite sheepItemSprite = new LinkedSprite(SpriteType.Item, "sheep_spawner");
+	private static final LinkedSprite slimeItemSprite = new LinkedSprite(SpriteType.Item, "slime_spawner");
+	private static final LinkedSprite zombieItemSprite = new LinkedSprite(SpriteType.Item, "zombie_spawner");
+	private static final LinkedSprite creeperItemSprite = new LinkedSprite(SpriteType.Item, "creeper_spawner");
+	private static final LinkedSprite skeletonItemSprite = new LinkedSprite(SpriteType.Item, "skeleton_spawner");
+	private static final LinkedSprite snakeItemSprite = new LinkedSprite(SpriteType.Item, "snake_spawner");
+	private static final LinkedSprite knightItemSprite = new LinkedSprite(SpriteType.Item, "knight_spawner");
+	private static final LinkedSprite airWizardItemSprite = new LinkedSprite(SpriteType.Item, "air_wizard_spawner");
+	private static final LinkedSprite defaultItemSprite = new LinkedSprite(SpriteType.Item, "spawner");
 
 	private final Random rnd = new Random();
 
@@ -71,16 +84,16 @@ public class Spawner extends Furniture {
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSprite(SpriteType.Item, "cow_spawner"):
-			m instanceof Pig ? new LinkedSprite(SpriteType.Item, "pig_spawner"):
-			m instanceof Sheep ? new LinkedSprite(SpriteType.Item, "sheep_spawner"):
-			m instanceof Slime ? new LinkedSprite(SpriteType.Item, "slime_spawner"):
-			m instanceof Zombie ? new LinkedSprite(SpriteType.Item, "zombie_spawner"):
-			m instanceof Creeper ? new LinkedSprite(SpriteType.Item, "creeper_spawner"):
-			m instanceof Skeleton ? new LinkedSprite(SpriteType.Item, "skeleton_spawner"):
-			m instanceof Snake ? new LinkedSprite(SpriteType.Item, "snake_spawner"):
-			m instanceof Knight ? new LinkedSprite(SpriteType.Item, "knight_spawner"):
-			new LinkedSprite(SpriteType.Item, "air_wizard_spawner"), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", furnitureSprite, m instanceof Cow ? cowItemSprite :
+			m instanceof Pig ? pigItemSprite :
+			m instanceof Sheep ? sheepItemSprite :
+			m instanceof Slime ? slimeItemSprite :
+			m instanceof Zombie ? zombieItemSprite :
+			m instanceof Creeper ? creeperItemSprite :
+			m instanceof Skeleton ? skeletonItemSprite :
+			m instanceof Snake ? snakeItemSprite :
+			m instanceof Knight ? knightItemSprite :
+				m instanceof AirWizard ? airWizardItemSprite : defaultItemSprite, 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();

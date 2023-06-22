@@ -80,10 +80,12 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+// TODO replacing CSV-formatted save files with custom binary or JSON-based files.
 public class Load {
 
 	private String location = Game.gameDir;
@@ -91,8 +93,8 @@ public class Load {
 	private static final String extension = Save.extension;
 	private float percentInc;
 
-	private ArrayList<String> data;
-	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
+	private final ArrayList<String> data;
+	private final ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 
 	private Version worldVer;
 
@@ -132,7 +134,7 @@ public class Load {
 			loadInventory("Inventory", Game.player.getInventory());
 			loadPlayer("Player", Game.player);
 
-			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
+			if (deathChest != null && deathChest.getInventory().getInvSize() > 0) {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
@@ -253,14 +255,12 @@ public class Load {
 	public static ArrayList<String> loadFile(String filename) throws IOException {
 		ArrayList<String> lines = new ArrayList<>();
 
-		InputStream fileStream = Load.class.getResourceAsStream(filename);
-
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
-
-			String line;
-			while ((line = br.readLine()) != null)
-				lines.add(line);
-
+		try (InputStream fileStream = Load.class.getResourceAsStream(filename)) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(fileStream, filename + " is not existed")))) {
+				String line;
+				while ((line = br.readLine()) != null)
+					lines.add(line);
+			}
 		}
 
 		return lines;
@@ -292,7 +292,7 @@ public class Load {
 		LoadingDisplay.progress(percentInc);
 	}
 
-	/** Source: Note: This method is copied from MiniMods. */
+	/** Note: This method is copied from MiniMods. */
 	private static ArrayList<String> splitUnwrappedCommas(String input) {
 		ArrayList<String> out = new ArrayList<>();
 		int lastIdx = 0;
@@ -358,6 +358,7 @@ public class Load {
 		return total.toString();
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 
@@ -425,6 +426,7 @@ public class Load {
 		Settings.setIdx("mode", mode);
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadPrefsOld(String filename) {
 		loadFromFile(location + filename + extension);
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
@@ -502,6 +504,7 @@ public class Load {
 		}
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadPrefs(String filename) {
 		JSONObject json;
 		try {
@@ -512,6 +515,7 @@ public class Load {
 		}
 
 		/* Start of the parsing */
+		//noinspection unused Reserved
 		Version prefVer = new Version(json.getString("version"));
 
 		// Settings
@@ -554,6 +558,7 @@ public class Load {
 		ResourcePackDisplay.releaseUnloadedPacks();
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadUnlocksOld(String filename) {
 		loadFromFile(location + filename + extension);
 
@@ -565,6 +570,7 @@ public class Load {
 		}
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadUnlocks(String filename) {
 		JSONObject json;
 		try {
@@ -583,6 +589,7 @@ public class Load {
 			AchievementsDisplay.unlockAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadWorld(String filename) {
 		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			LoadingDisplay.setMessage(Level.getDepthString(l));
@@ -606,8 +613,8 @@ public class Load {
 					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
 					if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
 						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
-						if (Tiles.oldids.get(tileID) != null)
-							tilename = Tiles.oldids.get(tileID);
+						if (Tiles.oldids.get((short) tileID) != null)
+							tilename = Tiles.oldids.get((short) tileID);
 						else {
 							Logging.SAVELOAD.warn("Tile list doesn't contain tile " + tileID);
 							tilename = "grass";
@@ -909,6 +916,7 @@ public class Load {
 		}
 	}
 
+	@SuppressWarnings("SameParameterValue") // Reserved; I am not sure about this.
 	private void loadEntities(String filename) {
 		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
 		loadFromFile(location + filename + extension);
@@ -927,10 +935,9 @@ public class Load {
 		}
 	}
 
-	@Nullable
-	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
+	public static void loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
-		if (entityData.length() == 0) return null;
+		if (entityData.length() == 0) return;
 
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":"); // This gets everything inside the "[...]" after the entity name.
 		List<String> info = new ArrayList<>(Arrays.asList(stuff));
@@ -951,7 +958,7 @@ public class Load {
 				// Existing one is out of date; replace it.
 				existing.remove();
 				Game.levels[Game.currentLevel].add(existing);
-				return null;
+				return;
 			}
 		}
 
@@ -964,7 +971,7 @@ public class Load {
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
-				return null;
+				return;
 			}
 		} else {
 			int mobLvl = 1;
@@ -989,12 +996,12 @@ public class Load {
 				newEntity = new FireSpark((ObsidianKnight)sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load FireSpark; owner id doesn't point to a correct entity");
-				return null;
+				return;
 			}
 		}
 
 		if (newEntity == null)
-			return null;
+			return;
 
 		if (newEntity instanceof Mob) { // This is structured the same way as in Save.java.
 			Mob mob = (Mob)newEntity;
@@ -1017,8 +1024,6 @@ public class Load {
 				} else if (enemyMob.lvl > enemyMob.getMaxLevel()) {
 					enemyMob.lvl = enemyMob.getMaxLevel();
 				}
-
-				mob = enemyMob;
 			} else if (worldVer.compareTo(new Version("2.0.7-dev1")) >= 0) { // If the version is more or equal to 2.0.7-dev1
 				if (newEntity instanceof Sheep) {
 					Sheep sheep = ((Sheep) mob);
@@ -1026,12 +1031,8 @@ public class Load {
 
 						sheep.cut = true;
 					}
-
-					mob = sheep;
 				}
 			}
-
-			newEntity = mob;
 		} else if (newEntity instanceof Chest) {
 			Chest chest = (Chest)newEntity;
 			boolean isDeathChest = chest instanceof DeathChest;
@@ -1055,8 +1056,6 @@ public class Load {
 				((DungeonChest)chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1)));
 				if (((DungeonChest)chest).isLocked()) World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
 			}
-
-			newEntity = chest;
 		} else if (newEntity instanceof Spawner) {
 			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".") + 1), Integer.parseInt(info.get(3)));
 			if (mob != null)
@@ -1103,15 +1102,14 @@ public class Load {
 		if (World.levels[curLevel] != null) {
 			World.levels[curLevel].add(newEntity, x, y);
 		}
-
-		return newEntity;
 	}
 
 	@Nullable
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
-			case "Player": return null;
-			case "RemotePlayer": return null;
+			case "Player":
+			case "RemotePlayer":
+				return null;
 			case "Cow": return new Cow();
 			case "Sheep": return new Sheep();
 			case "Pig": return new Pig();

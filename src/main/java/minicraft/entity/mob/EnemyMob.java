@@ -15,7 +15,7 @@ public class EnemyMob extends MobAi {
 
 	public int lvl;
 	protected LinkedSprite[][][] lvlSprites;
-	public int detectDist;
+	public final int detectDist;
 
 	@Override
 	public void handleDespawn() {
@@ -139,6 +139,7 @@ public class EnemyMob extends MobAi {
 		Tile t = level.getTile(x, y);
 
 		if (level.depth == -4) {
+			//noinspection RedundantIfStatement
 			if (t != Tiles.get("Obsidian")) return false;
 		} else if (t != Tiles.get("Stone Door") && t != Tiles.get("Wood Door") && t != Tiles.get("Obsidian Door") && t != Tiles.get("wheat") && t != Tiles.get("farmland")) {
 			// Prevents mobs from spawning on lit tiles, farms, or doors (unless in the dungeons)

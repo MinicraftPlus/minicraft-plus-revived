@@ -10,9 +10,9 @@ import javax.security.auth.DestroyFailedException;
 
 public class Particle extends Entity implements ClientTickable {
 	private int time; // lifetime elapsed.
-	private int lifetime;
+	private final int lifetime;
 
-	protected LinkedSprite sprite;
+	protected final LinkedSprite sprite;
 
 	/**
 	 * Creates an particle entity at the given position. The particle has a x and y radius = 1.
@@ -40,11 +40,7 @@ public class Particle extends Entity implements ClientTickable {
 		time++;
 		if (time > lifetime) {
 			remove();
-			if (sprite != null) try {
-				sprite.destroy();
-			} catch (DestroyFailedException e) {
-				Logging.SPRITE.trace(e);
-			}
+			if (sprite != null) sprite.destroy();
 		}
 	}
 

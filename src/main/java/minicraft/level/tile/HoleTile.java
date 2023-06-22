@@ -6,8 +6,9 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
+// TODO This should be handled in different way.
 public class HoleTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hole")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hole")
 		.setConnectChecker((tile, side) -> tile.connectsToLiquid())
 		.setSingletonWithConnective(true);
 

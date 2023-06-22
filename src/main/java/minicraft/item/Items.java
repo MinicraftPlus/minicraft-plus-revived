@@ -11,14 +11,15 @@ public class Items {
 	// I've checked -- this is only used for making the creative inventory, and in Load.java.
 	// ...well, that used to be true...
 
-	/**
+	/*
 	 Ok, so here's the actual big idea:
 
-	 This class is meant to define all the different kinds of items in minicraft. Item(Type).java might be what maps the different item sprites in the spritesheet to a name, but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
+	 This class is meant to define all the different kinds of items in minicraft. Item(Type).java might be what maps the different item sprites in the spritesheet to a name,
+	  but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
 
 	 If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
-	 */
-	private static ArrayList<Item> items = new ArrayList<>();
+	 */// Registration system and static final fields are suggested as of resource handling standardization and preventing runtime errors.
+	private static final ArrayList<Item> items = new ArrayList<>();
 
 	private static void add(Item i) {
 		items.add(i);
@@ -113,8 +114,9 @@ public class Items {
 		}
 	}
 
-	public static Item arrowItem = get("arrow");
+	public static final Item arrowItem = get("arrow");
 
+	@SuppressWarnings("unused") // Reserved; this should be used for simplification.
 	public static int getCount(Item item) {
 		if (item instanceof StackableItem) {
 			return ((StackableItem) item).count;
@@ -125,13 +127,13 @@ public class Items {
 		}
 	}
 
-	public static CreativeModeInventory getCreativeModeInventory() {
+	public static Inventory getCreativeModeInventory() {
 		return new CreativeModeInventory();
 	}
 
-	public static class CreativeModeInventory extends Inventory {
+	private static class CreativeModeInventory extends Inventory {
 		CreativeModeInventory() {
-			unlimited = true;
+			super(true);
 			items.forEach(i -> {
 				if (!(i instanceof PowerGloveItem)) add(i.copy());
 			});

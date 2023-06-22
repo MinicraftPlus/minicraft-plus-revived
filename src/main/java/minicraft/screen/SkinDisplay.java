@@ -23,9 +23,9 @@ import javax.imageio.ImageIO;
 import javax.security.auth.DestroyFailedException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
@@ -47,7 +47,7 @@ public class SkinDisplay extends Display {
 	private static String selectedSkin;
 
 	private int step;
-	private WatcherThread thread;
+	private final WatcherThread thread;
 
 	static {
 		// Load the default sprite sheet.
@@ -60,7 +60,7 @@ public class SkinDisplay extends Display {
 		defaultSkins.add("minicraft.skin.minecraft_alex");
 		selectedSkin = defaultSkins.get(0);
 
-		Logging.RESOURCEHANDLER_SKIN.debug("Refreshing skins.");
+		Logging.RESOURCE_HANDLER__SKIN.debug("Refreshing skins.");
 		refreshSkins();
 	}
 
@@ -96,7 +96,7 @@ public class SkinDisplay extends Display {
 
 		// Create folder, and see if it was successful.
 		if (FOLDER_LOCATION.mkdirs()) {
-			Logging.RESOURCEHANDLER_SKIN.info("Created skin folder at {}.", FOLDER_LOCATION);
+			Logging.RESOURCE_HANDLER__SKIN.info("Created skin folder at {}.", FOLDER_LOCATION);
 		}
 
 		// Read and add the .png file to the skins list.
@@ -126,11 +126,7 @@ public class SkinDisplay extends Display {
 				Renderer.spriteLinker.setSkin("skin." + skin, null);
 				if (skins.containsKey(skin)) for (LinkedSprite[] a : skins.remove(skin)) {
 					for (LinkedSprite b : a) {
-						try {
-							b.destroy();
-						} catch (DestroyFailedException e) {
-							Logging.RESOURCEHANDLER_SKIN.trace(e);
-						}
+						b.destroy();
 					}
 				}
 			}
@@ -153,7 +149,7 @@ public class SkinDisplay extends Display {
 			}
 
 			start();
-			Logging.RESOURCEHANDLER_SKIN.debug("WatcherThread started.");
+			Logging.RESOURCE_HANDLER__SKIN.debug("WatcherThread started.");
 		}
 
 		@Override
@@ -172,17 +168,17 @@ public class SkinDisplay extends Display {
 					}
 
 					if (files.size() > 0) {
-						Logging.RESOURCEHANDLER_SKIN.debug("Refreshing resource packs.");
+						Logging.RESOURCE_HANDLER__SKIN.debug("Refreshing resource packs.");
 						refreshSkinFiles(files);
 						refreshEntries();
 					}
 				} catch (InterruptedException e) {
-					Logging.RESOURCEHANDLER_SKIN.trace("File watcher terminated.");
+					Logging.RESOURCE_HANDLER__SKIN.trace("File watcher terminated.");
 					return;
 				}
 			}
 
-			Logging.RESOURCEHANDLER_SKIN.trace("File watcher terminated.");
+			Logging.RESOURCE_HANDLER__SKIN.trace("File watcher terminated.");
 		}
 
 		public void close() {
@@ -195,22 +191,18 @@ public class SkinDisplay extends Display {
 			String skinPath = file.getName();
 			String name = skinPath.substring(0, skinPath.length() - 4);
 			if (file.exists()) try {
-				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 16);
+				MinicraftImage sheet = new MinicraftImage(ImageIO.read(Files.newInputStream(file.toPath())), 64, 16);
 				Renderer.spriteLinker.setSkin("skin." + name, sheet);
 				skins.put(name, Mob.compileMobSpriteAnimations(0, 0, "skin." + name));
 			} catch (IOException e) {
-				Logging.RESOURCEHANDLER_SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", skinPath);
+				Logging.RESOURCE_HANDLER__SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", skinPath);
 			} catch (SecurityException e) {
-				Logging.RESOURCEHANDLER_SKIN.error("Access to file located at {} was denied. Check if game is given permission.", skinPath);
+				Logging.RESOURCE_HANDLER__SKIN.error("Access to file located at {} was denied. Check if game is given permission.", skinPath);
 			} else {
 				Renderer.spriteLinker.setSkin("skin." + name, null);
 				if (skins.containsKey(name)) for (LinkedSprite[] a : skins.remove(name)) {
 					for (LinkedSprite b : a) {
-						try {
-							b.destroy();
-						} catch (DestroyFailedException e) {
-							Logging.RESOURCEHANDLER_SKIN.trace(e);
-						}
+						b.destroy();
 					}
 				}
 			}
@@ -282,7 +274,7 @@ public class SkinDisplay extends Display {
 	public static LinkedSprite[][][] getSkinAsMobSprite() {
 		LinkedSprite[][][] mobSprites = new LinkedSprite[2][][];
 
-		if (!skins.keySet().contains(selectedSkin)) selectedSkin = defaultSkins.get(0);
+		if (!skins.containsKey(selectedSkin)) selectedSkin = defaultSkins.get(0);
 		if (defaultSkins.contains(selectedSkin)) {
 			mobSprites[0] = Mob.compileMobSpriteAnimations(0, defaultSkins.indexOf(selectedSkin) * 4, "skin." + selectedSkin);
 			mobSprites[1] = Mob.compileMobSpriteAnimations(0, defaultSkins.indexOf(selectedSkin) * 4 + 2, "skin." + selectedSkin);

@@ -28,7 +28,6 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
-import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
@@ -37,10 +36,8 @@ import minicraft.util.Quest.QuestSeries;
 
 import javax.imageio.ImageIO;
 
-import java.awt.AWTException;
 import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
@@ -51,23 +48,23 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Renderer extends Game {
-	private Renderer() {
-	}
+	private Renderer() {}
 
-	public static int HEIGHT = 192;
-	public static int WIDTH = 288;
+	public static final int HEIGHT = 192;
+	public static final int WIDTH = 288;
 	static float SCALE = 3;
 
 	public static Screen screen; // Creates the main screen
-	public static SpriteLinker spriteLinker = new SpriteLinker(); // The sprite linker for sprites
+	public static final SpriteLinker spriteLinker = new SpriteLinker(); // The sprite linker for sprites
 
-	static Canvas canvas = new Canvas();
+	static final Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
 
 	private static Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
@@ -75,7 +72,8 @@ public class Renderer extends Game {
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
 
-	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
+	@SuppressWarnings("unused") // It is uncertain that how this should be used.
+	private static final Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
 	private static int potionRenderOffset = 0;
 
@@ -90,7 +88,7 @@ public class Renderer extends Game {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
 			return null;
-		} catch (IOException | IllegalArgumentException e) {
+		} catch (IllegalArgumentException | IOException e) {
 			// If there is an error reading the file.
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
@@ -155,6 +153,7 @@ public class Renderer extends Game {
 
 		// Screen capturing.
 		if (Updater.screenshot > 0) {
+			//noinspection ResultOfMethodCallIgnored
 			new File(Game.gameDir + "/screenshots/").mkdirs();
 			int count = 1;
 			LocalDateTime datetime = LocalDateTime.now();
@@ -285,8 +284,7 @@ public class Renderer extends Game {
 			}
 			List<String> print = new ArrayList<>();
 			for (String n : notifications) {
-				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
-					print.add(l);
+				print.addAll(Arrays.asList(Font.getLines(n, Screen.w, Screen.h, 0)));
 			}
 
 			// Draw each current notification, with shadow text effect.
@@ -420,33 +418,28 @@ public class Renderer extends Game {
 		renderDebugInfo();
 	}
 
-	public static void renderBossbar(int length, String title) {
+	public static void renderBossbar(int barLength, String title) {
 
 		int x = Screen.w / 4 - 24;
 		int y = Screen.h / 8 - 24;
 
-		int max_bar_length = 100;
-		int bar_length = length; // Bossbar size.
+		int maxBarLength = 100;
 
 		int INACTIVE_BOSSBAR = 4; // sprite x position
 		int ACTIVE_BOSSBAR = 5; // sprite x position
 
 
-		screen.render(x + (max_bar_length * 2), y, 0, INACTIVE_BOSSBAR, 1, hudSheet.getSheet()); // left corner
+		screen.render(x + (maxBarLength * 2), y, 0, INACTIVE_BOSSBAR, 1, hudSheet.getSheet()); // left corner
 
 		// The middle
-		for (int bx = 0; bx < max_bar_length; bx++) {
-			for (int by = 0; by < 1; by++) {
-				screen.render(x + bx * 2, y + by * 8, 3, INACTIVE_BOSSBAR, 0, hudSheet.getSheet());
-			}
+		for (int bx = 0; bx < maxBarLength; bx++) {
+			screen.render(x + bx * 2, y, 3, INACTIVE_BOSSBAR, 0, hudSheet.getSheet());
 		}
 
 		screen.render(x - 5 , y , 0, ACTIVE_BOSSBAR, 0, hudSheet.getSheet()); // right corner
 
-		for (int bx = 0; bx < bar_length; bx++) {
-			for (int by = 0; by < 1; by++) {
-				screen.render(x + bx * 2, y + by * 8, 3, ACTIVE_BOSSBAR, 0, hudSheet.getSheet());
-			}
+		for (int bx = 0; bx < barLength; bx++) {
+			screen.render(x + bx * 2, y, 3, ACTIVE_BOSSBAR, 0, hudSheet.getSheet());
 		}
 
 		Font.drawCentered(title, screen, y + 8, Color.WHITE);

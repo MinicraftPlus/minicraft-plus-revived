@@ -1,6 +1,8 @@
 package minicraft.screen.entry;
 
+import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;
@@ -16,7 +18,7 @@ public class RecipeEntry extends ItemEntry {
 		return entries;
 	}
 
-	private Recipe recipe;
+	private final Recipe recipe;
 
 	public RecipeEntry(Recipe r) {
 		super(r.getProduct());
@@ -32,6 +34,12 @@ public class RecipeEntry extends ItemEntry {
 			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
 			screen.render(x, y, getItem().sprite);
 		}
+	}
+
+	@Override
+	public int getColor(boolean isSelected) {
+		return recipe.checkCanCraft(Game.player) ? super.getColor(isSelected) :
+			isSelected ? Color.tint(Color.RED, 1, true) : Color.RED;
 	}
 
 	@Override

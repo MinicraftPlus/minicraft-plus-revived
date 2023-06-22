@@ -8,19 +8,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.jetbrains.annotations.Nullable;
-import minicraft.entity.furniture.Furniture;
-import minicraft.util.Logging;
-
 public class Inventory {
+	private static final int DEFAULT_MAX_SLOT = 27;
 	private final Random random = new Random();
 	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 
-	protected int maxItem = 27;
-	protected boolean unlimited = false;
+	protected final int maxSlots;
+	protected final boolean unlimited;
+
+	public Inventory() { this(DEFAULT_MAX_SLOT); }
+	public Inventory(boolean unlimited) {
+		this.maxSlots = DEFAULT_MAX_SLOT;
+		this.unlimited = unlimited;
+	}
+	public Inventory(int maxSlots) {
+		this.maxSlots = maxSlots;
+		this.unlimited = false;
+	}
 
 	public int getMaxSlots() {
-		return maxItem;
+		return maxSlots;
 	}
 
 	/**
@@ -29,7 +36,7 @@ public class Inventory {
 	 */
 	public List<Item> getItems() { return new ArrayList<>(items); }
 	public void clearInv() { items.clear(); }
-	public int invSize() { return items.size(); }
+	public int getInvSize() { return items.size(); }
 
 	/**
 	 * Get one item in this inventory.
@@ -106,13 +113,13 @@ public class Inventory {
 			}
 
 			if (!unlimited) {
-				if (items.size() < maxItem) {
+				if (items.size() < maxSlots) {
 					int c = (int) Math.ceil(toTake.count/100.0);
 					for (int i = 0; i < c; i++) {
 						StackableItem adding = toTake.copy();
 						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
 						if (adding.count == 0) break;
-						if (items.size() == maxItem) return total - toTake.count;
+						if (items.size() == maxSlots) return total - toTake.count;
 						items.add(adding); // Add the item to the items list
 						toTake.count -= adding.count;
 					}
@@ -127,7 +134,7 @@ public class Inventory {
 		}
 
 		if (!unlimited) {
-			if (items.size() < maxItem) {
+			if (items.size() < maxSlots) {
 				items.add(slot, item); // Add the item to the items list
 				return 1;
 			} else {
@@ -220,6 +227,7 @@ public class Inventory {
 	/**
 	 * Generates a string representation of all the items in the inventory which can be sent
 	 * over the network.
+	 * @deprecated Not in use. This has already been replaced and handled in {@link minicraft.saveload.Save}.
 	 * @return String representation of all the items in the inventory.
 	 */
 	public String getItemData() {
@@ -235,6 +243,7 @@ public class Inventory {
 
 	/**
 	 * Replaces all the items in the inventory with the items in the string.
+	 * @deprecated Not in use. This has already been replaced and handled in {@link minicraft.saveload.Load}.
 	 * @param items String representation of an inventory.
 	 */
 	public void updateInv(String items) {
@@ -248,6 +257,7 @@ public class Inventory {
 
 	/**
 	 * Tries to add an item to the inventory.
+	 * @deprecated Some {@code #tryAdd} methods are not in use. All these functions should not be handled by {@link Inventory}.
 	 * @param chance Chance for the item to be added.
 	 * @param item Item to be added.
 	 * @param num How many of the item.
@@ -269,9 +279,6 @@ public class Inventory {
 			tryAdd(chance, item, num, false);
 	}
 	public void tryAdd(int chance, @Nullable Item item) { tryAdd(chance, item, 1); }
-	public void tryAdd(int chance, ToolType type, int lvl) {
-		tryAdd(chance, new ToolItem(type, lvl));
-	}
 
 	/**
 	 * Tries to add an Furniture to the inventory.

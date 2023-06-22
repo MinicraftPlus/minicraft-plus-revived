@@ -22,7 +22,7 @@ public class PotionItem extends StackableItem {
 		return items;
 	}
 
-	public PotionType type;
+	public final PotionType type;
 
 	private PotionItem(PotionType type) { this(type, 1); }
 	private PotionItem(PotionType type, int count) {
@@ -45,6 +45,7 @@ public class PotionItem extends StackableItem {
 	}
 
 	/// Only ever called to load from file
+	@SuppressWarnings("UnusedReturnValue") // Reserved
 	public static boolean applyPotion(Player player, PotionType type, int time) {
 		boolean result = applyPotion(player, type, time > 0);
 		if (result && time > 0) player.addPotionEffect(type, time); // Overrides time

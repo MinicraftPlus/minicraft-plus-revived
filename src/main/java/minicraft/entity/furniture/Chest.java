@@ -18,17 +18,20 @@ import java.io.IOException;
 import java.util.List;
 
 public class Chest extends Furniture implements ItemHolder {
-	private Inventory inventory; // Inventory of the chest
+	private static final LinkedSprite normSprite = new LinkedSprite(SpriteType.Entity, "chest");
+	private static final LinkedSprite itemSprite = new LinkedSprite(SpriteType.Item, "chest");
+
+	private final Inventory inventory; // Inventory of the chest
 
 	public Chest() { this("Chest"); }
 
-	public Chest(String name) { this(name, new LinkedSprite(SpriteType.Item, "chest")); }
+	public Chest(String name) { this(name, itemSprite); }
 	/**
 	 * Creates a chest with a custom name.
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
-		super(name, new LinkedSprite(SpriteType.Entity, "chest"), itemSprite, 3, 3); // Name of the chest
+		super(name, normSprite, itemSprite, 3, 3); // Name of the chest
 
 		inventory = new Inventory(); // Initialize the inventory.
 	}
@@ -39,7 +42,7 @@ public class Chest extends Furniture implements ItemHolder {
 		return true;
 	}
 
-	public void populateInvRandom(String lootTable, int depth) {
+	public void populateInvRandom(String lootTable, @SuppressWarnings("unused") int depth) { // The purpose of parameter depth is unknown
 		try {
 			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[]{});
 
@@ -48,7 +51,7 @@ public class Chest extends Furniture implements ItemHolder {
 				String[] data = line.split(",");
 				if (!line.startsWith(":")) {
 					inventory.tryAdd(Integer.parseInt(data[0]), Items.get(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
-				} else if (inventory.invSize() == 0) {
+				} else if (inventory.getInvSize() == 0) {
 					// Adds the "fallback" items to ensure there's some stuff
 					String[] fallbacks = line.substring(1).split(":");
 					for (String item : fallbacks) {
@@ -63,7 +66,7 @@ public class Chest extends Furniture implements ItemHolder {
 
 	@Override
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if (inventory.invSize() == 0)
+		if (inventory.getInvSize() == 0)
 			return super.interact(player, item, attackDir);
 		return false;
 	}
@@ -77,7 +80,7 @@ public class Chest extends Furniture implements ItemHolder {
 	public void die() {
 		if (level != null) {
 			List<Item> items = inventory.getItems();
-			level.dropItem(x, y, items.toArray(new Item[items.size()]));
+			level.dropItem(x, y, items.toArray(new Item[0]));
 		}
 		super.die();
 	}

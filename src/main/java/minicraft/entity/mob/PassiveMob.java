@@ -3,7 +3,6 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
-import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -35,11 +34,6 @@ public class PassiveMob extends MobAi {
 	public void handleDespawn() {
 		if (isWithinLight()) return; // Do not despawn when it is within light.
 		super.handleDespawn();
-	}
-
-	@Override
-	public void render(Screen screen) {
-		super.render(screen);
 	}
 
 	@Override

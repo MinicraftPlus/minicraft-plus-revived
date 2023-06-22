@@ -269,9 +269,7 @@ public class AdvancementElement {
 	/** Warning: This method should be used carefully as this could impact
 	 * the gaming experience deeply on the progress. */
 	public void deregisterCriteria() {
-		criteria.values().forEach(criterion -> {
-			criterion.trigger.registeredCriteria.remove(criterion);
-		});
+		criteria.values().forEach(criterion -> criterion.trigger.registeredCriteria.remove(criterion));
 	}
 
 	public boolean isCompleted() {

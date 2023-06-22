@@ -54,14 +54,14 @@ import java.util.List;
 public class Save {
 
 	public String location = Game.gameDir;
-	File folder;
+	final File folder;
 
 	// Used to indent the .json files
 	private static final int indent = 4;
 
-	public static String extension = ".miniplussave";
+	public static final String extension = ".miniplussave";
 
-	List<String> data;
+	final List<String> data;
 
 	/**
 	 * This is the main save method. Called by all Save() methods.
@@ -88,6 +88,7 @@ public class Save {
 		folder = worldFolder;
 		location = worldFolder.getPath() + "/";
 
+		//noinspection ResultOfMethodCallIgnored
 		folder.mkdirs();
 	}
 
@@ -325,7 +326,7 @@ public class Save {
 
 		Inventory inventory = player.getInventory();
 
-		for (int i = 0; i < inventory.invSize(); i++) {
+		for (int i = 0; i < inventory.getInvSize(); i++) {
 			data.add(inventory.get(i).getData());
 		}
 	}
@@ -368,7 +369,7 @@ public class Save {
 		if (e instanceof Chest) {
 			Chest chest = (Chest)e;
 
-			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
+			for(int ii = 0; ii < chest.getInventory().getInvSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
 				extradata.append(":").append(item.getData());
 			}

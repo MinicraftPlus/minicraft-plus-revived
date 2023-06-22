@@ -15,7 +15,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class DoorTile extends Tile {
-	protected Material type;
+	protected final Material type;
 	private SpriteAnimation closedSprite;
 	private SpriteAnimation openSprite;
 

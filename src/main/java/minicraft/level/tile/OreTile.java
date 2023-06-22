@@ -32,11 +32,11 @@ public class OreTile extends Tile {
 		Cloud (Items.get("Cloud Ore"), new SpriteAnimation(SpriteType.Tile, "cloud_ore"));
 
 		private final Item drop;
-		public final SpriteAnimation sheet;
+		private final SpriteAnimation sprite;
 
-		OreType(Item drop, SpriteAnimation sheet) {
+		OreType(Item drop, SpriteAnimation sprite) {
 			this.drop = drop;
-			this.sheet = sheet;
+			this.sprite = sprite;
 		}
 
 		private Item getOre() {
@@ -45,7 +45,7 @@ public class OreTile extends Tile {
     }
 
 	protected OreTile(OreType o) {
-		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), o.sheet);
+		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), o.sprite);
         this.type = o;
 	}
 
@@ -117,7 +117,9 @@ public class OreTile extends Tile {
 		}
 	}
 
+	@SuppressWarnings("EmptyMethod")
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
+		// TODO implement this?
 		/// this was used at one point to hurt the player if they touched the ore; that's probably why the sprite is so spikey-looking.
 	}
 }

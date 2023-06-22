@@ -17,7 +17,9 @@ import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TileItem extends StackableItem {
 
@@ -83,15 +85,13 @@ public class TileItem extends StackableItem {
 	protected TileItem(String name, LinkedSprite sprite, int count, String model, List<String> validTiles) {
 		super(name, sprite, count);
 		this.model = model.toUpperCase();
-		this.validTiles = new ArrayList<>();
-		for (String tile: validTiles)
-			 this.validTiles.add(tile.toUpperCase());
+		this.validTiles = Collections.unmodifiableList(validTiles.stream().map(String::toUpperCase).collect(Collectors.toList()));
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
-				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
+				level.setTile(xt, yt, model); // TODO include data in saved tile state
 				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(
 						this, level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth

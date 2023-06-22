@@ -102,6 +102,7 @@ public class PopupDisplay extends Display {
 		}
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private boolean tickCallbacks(InputHandler input) {
 		if (callbacks != null) {
 			for (PopupActionCallback callback : callbacks) {
@@ -122,8 +123,8 @@ public class PopupDisplay extends Display {
 		public final ActionCallback callback;
 
 		@FunctionalInterface
-		public static interface ActionCallback {
-			public boolean acts(Menu popupMenu);
+		public interface ActionCallback {
+			boolean acts(Menu popupMenu);
 		}
 
 		/**
@@ -139,9 +140,9 @@ public class PopupDisplay extends Display {
 	}
 
 	public static class PopupConfig {
-		public String title;
-		public ArrayList<PopupActionCallback> callbacks;
-		public int entrySpacing;
+		public final String title;
+		public final ArrayList<PopupActionCallback> callbacks;
+		public final int entrySpacing;
 
 		public PopupConfig(@Nullable String title, @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
 			this.title = title;

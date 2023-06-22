@@ -5,6 +5,8 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class FireParticle extends Particle {
 	/// This is used for Spawners, when they spawn an entity.
+	private static final LinkedSprite sprite = new LinkedSprite(SpriteType.Gui, "hud")
+		.setSpriteDim(4, 2, 1, 1); // It is suggested to make this a dedicated entity sprite.
 
 	/**
 	 * Creates a new particle at the given position. It has a lifetime of 30 ticks
@@ -14,6 +16,6 @@ public class FireParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public FireParticle(int x, int y) {
-		super(x, y, 30, new LinkedSprite(SpriteType.Gui, "hud").setSpriteDim(4, 2, 1, 1));
+		super(x, y, 30, sprite);
 	}
 }

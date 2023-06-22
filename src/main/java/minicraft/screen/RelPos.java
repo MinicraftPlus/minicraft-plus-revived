@@ -57,6 +57,7 @@ public enum RelPos {
 	}
 
 	// the point is returned as a rectangle with the given dimension and the found location, within the provided dummy rectangle.
+	@SuppressWarnings("UnusedReturnValue") // Reserved; this might be used in the future.
 	public Rectangle positionRect(Dimension rectSize, Rectangle container, Rectangle dummy) {
 		Point pos = positionRect(rectSize, container);
 		dummy.setSize(rectSize, RelPos.TOP_LEFT);

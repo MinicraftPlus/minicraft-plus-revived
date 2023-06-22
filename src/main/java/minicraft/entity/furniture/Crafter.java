@@ -21,10 +21,10 @@ public class Crafter extends Furniture {
 		Enchanter (new LinkedSprite(SpriteType.Entity, "enchanter"), new LinkedSprite(SpriteType.Item, "enchanter"), 7, 2, Recipes.enchantRecipes),
 		Loom (new LinkedSprite(SpriteType.Entity, "loom"), new LinkedSprite(SpriteType.Item, "loom"), 7, 2, Recipes.loomRecipes);
 
-		public ArrayList<Recipe> recipes;
-		protected LinkedSprite sprite;
-		protected LinkedSprite itemSprite;
-		protected int xr, yr;
+		public final ArrayList<Recipe> recipes;
+		private final LinkedSprite sprite;
+		private final LinkedSprite itemSprite;
+		private final int xr, yr;
 
 		Type(LinkedSprite sprite, LinkedSprite itemSprite, int xr, int yr, ArrayList<Recipe> list) {
 			this.sprite = sprite;
@@ -35,9 +35,9 @@ public class Crafter extends Furniture {
 			Crafter.names.add(this.name());
 		}
 	}
-	public static ArrayList<String> names = new ArrayList<>();
+	public static final ArrayList<String> names = new ArrayList<>();
 
-	public Crafter.Type type;
+	public final Crafter.Type type;
 
 	/**
 	 * Creates a crafter of a given type.

@@ -11,7 +11,6 @@ import minicraft.screen.entry.StringEntry;
 public class InfoDisplay extends Display {
 
 	public InfoDisplay() {
-		//noinspection SuspiciousNameCombination
 		super(new Menu.Builder(true, 4, RelPos.LEFT, StringEntry.useLines(
 				"----------------------------",
 				Localization.getLocalized("minicraft.displays.info.display.time", getTimeString()),
@@ -21,7 +20,7 @@ public class InfoDisplay extends Display {
 			))
 			.setTitle("minicraft.displays.info.title")
 			.setTitlePos(RelPos.TOP_LEFT)
-			.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth), RelPos.BOTTOM_RIGHT)
+			.setPositioning(new Point(MinicraftImage.boxSize, MinicraftImage.boxSize), RelPos.BOTTOM_RIGHT)
 			.createMenu()
 		);
 	}

@@ -9,16 +9,17 @@ import minicraft.gfx.Screen;
 
 public class InputEntry extends ListEntry {
 
-	private String prompt;
-	private String regex;
-	private int maxLength;
+	private final String prompt;
+	private final String regex;
+	private final int maxLength;
 
 	private String userInput;
 
 	private ChangeListener listener;
 
-	private ClipboardHandler clipboardHandler = new ClipboardHandler();
+	private final ClipboardHandler clipboardHandler = new ClipboardHandler();
 
+	@SuppressWarnings("unused") // Reserved; this might not be used.
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);
 	}

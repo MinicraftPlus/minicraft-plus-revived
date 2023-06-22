@@ -11,10 +11,10 @@ public class LevelTransitionDisplay extends Display {
 
 	private static final int DURATION = 30;
 
-	private int dir; // Direction that you are changing levels. (going up or down stairs)
+	private final int dir; // Direction that you are changing levels. (going up or down stairs)
 	private int time = 0; // Time it spends on this menu
 
-	private LinkedSprite hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
+	private final LinkedSprite hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 	public LevelTransitionDisplay(int dir) {
 		super(false,false);

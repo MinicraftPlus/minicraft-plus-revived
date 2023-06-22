@@ -23,13 +23,13 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class Tnt extends Furniture implements ActionListener {
-	private static int FUSE_TIME = 90;
-	private static int BLAST_RADIUS = 32;
-	private static int BLAST_DAMAGE = 75;
+	private static final int FUSE_TIME = 90;
+	private static final int BLAST_RADIUS = 32;
+	private static final int BLAST_DAMAGE = 75;
 
-	private int ftik = 0;
-	private boolean fuseLit = false;
-	private Timer explodeTimer;
+	private int ftik;
+	private boolean fuseLit;
+	private final Timer explodeTimer;
 	private Level levelSave;
 
 	private final String[] explosionBlacklist = new String[]{ "hard rock", "obsidian wall", "stairs up", "stairs down" };

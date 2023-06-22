@@ -13,8 +13,9 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 import org.tinylog.Logger;
 
+// TODO The way of handle should be rewritten.
 public class TorchTile extends Tile {
-	private Tile onType;
+	private final Tile onType;
 
 	public static TorchTile getTorchTile(Tile onTile) {
 		int id = onTile.id & 0xFFFF;

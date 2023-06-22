@@ -3,6 +3,7 @@ package minicraft.util;
 import org.tinylog.Logger;
 import org.tinylog.TaggedLogger;
 
+/** Note: Untagged loggers should not be used in best practice. */
 public final class Logging {
 	public static boolean logTime = false;
 	public static boolean logThread = false;
@@ -11,16 +12,15 @@ public final class Logging {
 	public static boolean logLevel = false;
 	public static boolean fileLogFull = false;
 
-	// (These) TaggedLogger would be more preferred (than directly Logger.(?:trace|debug|info|warn|error)).
-	public static final TaggedLogger UNTAGGED = Logger.tags();
-	public static final TaggedLogger GAMEHANDLER = Logger.tag("Game Handler");
-	public static final TaggedLogger CRASHHANDLER = Logger.tag("Crash Handler");
+	// (These) TaggedLogger would be more preferred (than directly (untagged) Logger.(?:trace|debug|info|warn|error)).
+	public static final TaggedLogger GAME_HANDLER = Logger.tag("Game Handler");
+	public static final TaggedLogger CRASH_HANDLER = Logger.tag("Crash Handler");
 	public static final TaggedLogger WORLD = Logger.tag("World");
-	public static final TaggedLogger RESOURCEHANDLER = Logger.tag("Resource Handler");
-	public static final TaggedLogger RESOURCEHANDLER_LOCALIZATION = Logger.tag("Resource Handler/Localization");
-	public static final TaggedLogger RESOURCEHANDLER_SOUND = Logger.tag("Resource Handler/Sound");
-	public static final TaggedLogger RESOURCEHANDLER_SKIN = Logger.tag("Resource Handler/Skin");
-	public static final TaggedLogger RESOURCEHANDLER_RESOURCEPACK = Logger.tag("Resource Handler/Resource Pack");
+	public static final TaggedLogger RESOURCE_HANDLER = Logger.tag("Resource Handler");
+	public static final TaggedLogger RESOURCE_HANDLER__LOCALIZATION = Logger.tag("Resource Handler/Localization");
+	public static final TaggedLogger RESOURCE_HANDLER__SOUND = Logger.tag("Resource Handler/Sound");
+	public static final TaggedLogger RESOURCE_HANDLER__SKIN = Logger.tag("Resource Handler/Skin");
+	public static final TaggedLogger RESOURCE_HANDLER__RESOURCEPACK = Logger.tag("Resource Handler/Resource Pack");
 	public static final TaggedLogger SAVELOAD = Logger.tag("SaveLoad");
 	public static final TaggedLogger ACHIEVEMENT = Logger.tag("Achievement");
 	public static final TaggedLogger ENTITY = Logger.tag("Entity");
@@ -33,7 +33,8 @@ public final class Logging {
 	public static final TaggedLogger SPRITE = Logger.tag("Sprite");
 	public static final TaggedLogger CONTROLLER = Logger.tag("Controller");
 	public static final TaggedLogger PLAYER = Logger.tag("Player");
+	public static final TaggedLogger GFX = Logger.tag("GFX");
 
 	/** This is defined dynamically. */
-	public static TaggedLogger WORLDNAMED = Logger.tag(null);
+	public static TaggedLogger WORLD_NAMED = Logger.tag(null);
 }

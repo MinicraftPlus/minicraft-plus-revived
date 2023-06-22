@@ -1,6 +1,5 @@
 package minicraft.util;
 
-import minicraft.core.Game;
 import minicraft.util.TinylogLoggingConfiguration.WriterConfig;
 import org.tinylog.Level;
 import org.tinylog.core.ConfigurationParser;
@@ -194,6 +193,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 	 *
 	 * @return All writers
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public Collection<Writer> getWriters() {
 		return writers.keySet();
 	}

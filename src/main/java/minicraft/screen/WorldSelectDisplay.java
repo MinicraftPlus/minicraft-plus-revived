@@ -22,9 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 public class WorldSelectDisplay extends Display {
 
@@ -102,13 +99,14 @@ public class WorldSelectDisplay extends Display {
 
 				// Do the action.
 				entry = (InputEntry) popup.getCurEntry();
-				if (!entry.isValid())
+				if (entry == null || !entry.isValid())
 					return false;
 				//user hits enter with a valid new name; copy is created here.
 				String newname = entry.getUserInput();
 				File newworld = new File(worldsDir + newname);
+				//noinspection ResultOfMethodCallIgnored
 				newworld.mkdirs();
-				Logging.GAMEHANDLER.debug("Copying world {} to world {}.", world, newworld);
+				Logging.GAME_HANDLER.debug("Copying world {} to world {}.", world, newworld);
 				// walk file tree
 				try {
 					FileHandler.copyFolderContents(world.toPath(), newworld.toPath(), FileHandler.REPLACE_EXISTING, false);
@@ -148,7 +146,7 @@ public class WorldSelectDisplay extends Display {
 
 				// Do the action.
 				InputEntry entry = (InputEntry) popup.getCurEntry();
-				if (!entry.isValid())
+				if (entry == null || !entry.isValid())
 					return false;
 
 				// User hits enter with a vaild new name; name is set here:
@@ -156,10 +154,10 @@ public class WorldSelectDisplay extends Display {
 
 				// Try to rename the file, if it works, return
 				if (world.renameTo(new File(worldsDir + name))) {
-					Logging.GAMEHANDLER.debug("Renaming world {} to new name: {}", world, name);
+					Logging.GAME_HANDLER.debug("Renaming world {} to new name: {}", world, name);
 					WorldSelectDisplay.updateWorlds();
 				} else {
-					Logging.GAMEHANDLER.error("Rename failed in WorldEditDisplay.");
+					Logging.GAME_HANDLER.error("Rename failed in WorldEditDisplay.");
 				}
 
 				Sound.play("confirm");
@@ -194,12 +192,8 @@ public class WorldSelectDisplay extends Display {
 				File world = new File(worldsDir + worldNames.get(menus[0].getSelection()));
 
 				// Do the action.
-				Logging.GAMEHANDLER.debug("Deleting world: " + world);
-				File[] list = world.listFiles();
-				for (File file : list) {
-					file.delete();
-				}
-				world.delete();
+				Logging.GAME_HANDLER.debug("Deleting world: " + world);
+				FileHandler.deleteFolder(world);
 
 				Sound.play("confirm");
 				updateWorlds();
@@ -247,21 +241,21 @@ public class WorldSelectDisplay extends Display {
 	}
 
 	public static void updateWorlds() {
-		Logging.GAMEHANDLER.debug("Updating worlds list.");
+		Logging.GAME_HANDLER.debug("Updating worlds list.");
 
 		// Get folder containing the worlds and load them.
 		File worldSavesFolder = new File(worldsDir);
 
 		// Try to create the saves folder if it doesn't exist.
 		if (worldSavesFolder.mkdirs()) {
-			Logging.GAMEHANDLER.trace("World save folder created.");
+			Logging.GAME_HANDLER.trace("World save folder created.");
 		}
 
 		// Get all the files (worlds) in the folder.
 		File[] worlds = worldSavesFolder.listFiles();
 
 		if (worlds == null) {
-			Logging.GAMEHANDLER.error("Game location file folder is null, somehow...");
+			Logging.GAME_HANDLER.error("Game location file folder is null, somehow...");
 			return;
 		}
 
@@ -270,7 +264,7 @@ public class WorldSelectDisplay extends Display {
 
 		// Check if there are no files in folder.
 		if (worlds.length == 0) {
-			Logging.GAMEHANDLER.debug("No worlds in folder. Won't bother loading.");
+			Logging.GAME_HANDLER.debug("No worlds in folder. Won't bother loading.");
 			return;
 		}
 
@@ -279,6 +273,7 @@ public class WorldSelectDisplay extends Display {
 			if (file.isDirectory()) {
 				String path = worldsDir + file.getName() + "/";
 				File folder2 = new File(path);
+				//noinspection ResultOfMethodCallIgnored
 				folder2.mkdirs();
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && Arrays.stream(files).anyMatch(f -> f.endsWith(Save.extension))) {

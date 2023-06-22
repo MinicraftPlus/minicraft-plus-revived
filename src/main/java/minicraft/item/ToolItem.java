@@ -28,14 +28,14 @@ public class ToolItem extends Item {
 		return items;
 	}
 
-	private Random random = new Random();
+	private final Random random = new Random(); // TODO All random player behaviours should be randomized by player's random instance
 
 	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"}; // The names of the different levels. A later level means a stronger tool.
 
-	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
+	public final ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
 	public int dur; // The durability of the tool
-	private int damage; // The damage of the tool
+	private int damage; // The damage to the tool
 
 	private static String getSpriteName(String typeName, String level) {
 		level = level.toLowerCase().replace("wood", "wooden").replace("rock", "stone");
@@ -43,7 +43,7 @@ public class ToolItem extends Item {
 	}
 
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
-	public ToolItem(ToolType type, int level) {
+	private ToolItem(ToolType type, int level) {
 		super(LEVEL_NAMES[level] + " " + type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")));
 
 		this.type = type;

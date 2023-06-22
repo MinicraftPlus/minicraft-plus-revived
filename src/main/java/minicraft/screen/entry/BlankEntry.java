@@ -18,7 +18,7 @@ public class BlankEntry extends ListEntry {
 
 	@Override
 	public int getWidth() {
-		return MinicraftImage.boxWidth;
+		return MinicraftImage.boxSize;
 	}
 
 	@Override

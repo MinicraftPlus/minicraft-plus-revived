@@ -14,16 +14,16 @@ import java.util.ArrayList;
 
 public class BucketItem extends StackableItem {
 
-	public enum Fill {
+	public enum Filling {
 		Empty (Tiles.get("hole"), 2),
 		Water (Tiles.get("water"), 0),
 		Lava (Tiles.get("lava"), 1);
 
-		public Tile contained;
-		public int offset;
+		public final Tile tile;
+		public final int offset;
 
-		Fill(Tile contained, int offset) {
-			this.contained = contained;
+		Filling(Tile tile, int offset) {
+			this.tile = tile;
 			this.offset = offset;
 		}
 	}
@@ -31,46 +31,46 @@ public class BucketItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		for (Fill fill: Fill.values())
-			items.add(new BucketItem(fill));
+		for (Filling filling : Filling.values())
+			items.add(new BucketItem(filling));
 
 		return items;
 	}
 
-	private static Fill getFilling(Tile tile) {
-		for (Fill fill: Fill.values())
-			if (fill.contained.id == tile.id)
-				return fill;
+	private static Filling getFilling(Tile tile) {
+		for (Filling filling : Filling.values())
+			if (filling.tile.id == tile.id)
+				return filling;
 
 		return null;
 	}
 
-	private Fill filling;
+	private final Filling filling;
 
-	private BucketItem(Fill fill) { this(fill, 1); }
-	private BucketItem(Fill fill, int count) {
-		super(fill.toString() + " Bucket", new LinkedSprite(SpriteType.Item, fill == Fill.Empty ? "bucket" :
-			fill == Fill.Lava ? "lava_bucket" : "water_bucket"), count);
-		this.filling = fill;
+	private BucketItem(Filling filling) { this(filling, 1); }
+	private BucketItem(Filling filling, int count) {
+		super(filling.toString() + " Bucket", new LinkedSprite(SpriteType.Item, filling == Filling.Empty ? "bucket" :
+			filling == Filling.Lava ? "lava_bucket" : "water_bucket"), count);
+		this.filling = filling;
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		Fill fill = getFilling(tile);
-		if (fill == null) return false;
+		Filling filling = getFilling(tile);
+		if (filling == null) return false;
 
-		if (filling != Fill.Empty) {
-			if (fill == Fill.Empty) {
-				level.setTile(xt, yt, filling.contained);
-				if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, Fill.Empty);
+		if (this.filling != Filling.Empty) {
+			if (filling == Filling.Empty) {
+				level.setTile(xt, yt, this.filling.tile);
+				if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, Filling.Empty);
 				return true;
-			} else if (fill == Fill.Lava && filling == Fill.Water) {
+			} else if (filling == Filling.Lava && this.filling == Filling.Water) {
 				level.setTile(xt, yt, Tiles.get("Obsidian"));
-				if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, Fill.Empty);
+				if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, Filling.Empty);
 				return true;
 			}
 		} else { // This is an empty bucket
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, fill);
+			if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, filling);
 			return true;
 		}
 
@@ -78,14 +78,14 @@ public class BucketItem extends StackableItem {
 	}
 
 	/** This method exists due to the fact that buckets are stackable, but only one should be changed at one time. */
-	private BucketItem editBucket(Player player, Fill newFill) {
+	private BucketItem editBucket(Player player, Filling newFilling) {
 		if (count == 0) return null; // This honestly should never happen...
-		if (count == 1) return new BucketItem(newFill);
+		if (count == 1) return new BucketItem(newFilling);
 
 		// This item object is a stack of buckets.
 		count--;
-		if (player.getInventory().add(new BucketItem(newFill)) == 0) {
-			player.getLevel().dropItem(player.x, player.y, new BucketItem(newFill));
+		if (player.getInventory().add(new BucketItem(newFilling)) == 0) {
+			player.getLevel().dropItem(player.x, player.y, new BucketItem(newFilling));
 		}
 		return this;
 	}

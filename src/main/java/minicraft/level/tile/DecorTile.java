@@ -13,10 +13,10 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class DecorTile extends Tile {
-	private static SpriteAnimation stoneSprite = new SpriteAnimation(SpriteType.Tile, "ornate_stone");
-	private static SpriteAnimation obsidianSprite = new SpriteAnimation(SpriteType.Tile, "ornate_obsidian");
+	private static final SpriteAnimation stoneSprite = new SpriteAnimation(SpriteType.Tile, "ornate_stone");
+	private static final SpriteAnimation obsidianSprite = new SpriteAnimation(SpriteType.Tile, "ornate_obsidian");
 
-	protected Material type;
+	protected final Material type;
 
 	protected DecorTile(Material type) {
 		super((type == Material.Obsidian ? "Ornate Obsidian" : type == Material.Stone ? "Ornate Stone" : "Decorated " + type.name()),
@@ -25,7 +25,8 @@ public class DecorTile extends Tile {
 		maySpawn = true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir)
+		throws IllegalStateException {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {

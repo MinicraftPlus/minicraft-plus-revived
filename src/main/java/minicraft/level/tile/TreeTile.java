@@ -22,14 +22,15 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {
-	private static LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
-	private static LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
+	private static final LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
+	private static final LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
 
 	protected TreeTile(String name) {
 		super(name, null);
 		connectsToGrass = true;
 	}
 
+	@SuppressWarnings("PointlessArithmeticExpression")
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 

@@ -21,7 +21,7 @@ import minicraft.util.AdvancementElement;
 
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hardrock")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hardrock")
 		.setConnectChecker((tile, side) -> tile.getClass() == HardRockTile.class)
 		.setSingletonWithConnective(true);
 

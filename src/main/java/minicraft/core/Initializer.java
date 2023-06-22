@@ -2,11 +2,9 @@ package minicraft.core;
 
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;
 
 import javax.imageio.ImageIO;
@@ -38,7 +36,9 @@ public class Initializer extends Game {
 	static LogoSplashCanvas logoSplash = new LogoSplashCanvas();
 	static int fra, tik; // These store the number of frames and ticks in the previous second; used for fps, at least.
 
+	@SuppressWarnings("unused") // Might be used for debugging
 	public static JFrame getFrame() { return frame; }
+	@SuppressWarnings("unused") // Might be used for debugging
 	public static int getCurFps() { return fra; }
 
 	static void parseArgs(String[] args) {
@@ -131,7 +131,7 @@ public class Initializer extends Game {
 		frame.pack(); // Squishes everything into the preferredSize.
 
 		try {
-			BufferedImage logo = ImageIO.read(Game.class.getResourceAsStream("/resources/logo.png")); // Load the window logo
+			BufferedImage logo = ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/logo.png"))); // Load the window logo
 			frame.setIconImage(logo);
 		} catch (IOException e) {
 			CrashHandler.errorHandle(e);
@@ -153,9 +153,9 @@ public class Initializer extends Game {
 			public void windowIconified(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
 			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) { Logging.GAMEHANDLER.debug("Window closed"); }
+			public void windowClosed(WindowEvent e) { Logging.GAME_HANDLER.debug("Window closed"); }
 			public void windowClosing(WindowEvent e) {
-				Logging.GAMEHANDLER.info("Window closing");
+				Logging.GAME_HANDLER.info("Window closing");
 				quit();
 			}
 		});
@@ -166,7 +166,7 @@ public class Initializer extends Game {
 	}
 
 	private static class LogoSplashCanvas extends JPanel {
-		private Image logo;
+		private final Image logo;
 
 		{
 			try {
@@ -181,7 +181,7 @@ public class Initializer extends Game {
 		private boolean inAnimation = false;
 		private boolean interruptWhenAnimated = false;
 
-		public Thread renderer = new Thread(() -> {
+		public final Thread renderer = new Thread(() -> {
 			do {
 				repaint();
 				if (interruptWhenAnimated && !inAnimation) break;
@@ -257,6 +257,7 @@ public class Initializer extends Game {
 	 *	extracted.
 	 * @return String with provided Throwable's stack trace.
 	 */
+	@SuppressWarnings("unused") // Might be used for debugging
 	public static String getExceptionTrace(final Throwable throwable) {
 		final java.io.ByteArrayOutputStream bytestream = new java.io.ByteArrayOutputStream();
 		final java.io.PrintStream printStream = new java.io.PrintStream(bytestream);

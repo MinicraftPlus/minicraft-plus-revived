@@ -44,7 +44,7 @@ public class OnScreenKeyboardMenu extends Menu {
 		return null;
 	}
 
-	public class VirtualKey {
+	private static class VirtualKey {
 		public final char output;
 
 		public VirtualKey(char out) {
@@ -56,7 +56,7 @@ public class OnScreenKeyboardMenu extends Menu {
 		}
 	}
 
-	public class StickyVirtualKey extends VirtualKey {
+	private static class StickyVirtualKey extends VirtualKey {
 		private boolean sticky = false;
 		private final Consumer<Boolean> stickyListener;
 
@@ -86,8 +86,6 @@ public class OnScreenKeyboardMenu extends Menu {
 	private int keyPressed = 0; // Controls whether to render the selected key as pressed.
 
 	private void initKeyboard() {
-		InputHandler input = Game.input;
-
 		spaceBar = new VirtualKey(' ');
 		backspace = new VirtualKey('\b');
 		shiftKey = new StickyVirtualKey(this::setShiftPressed);
@@ -96,7 +94,7 @@ public class OnScreenKeyboardMenu extends Menu {
 		keysF[0] = new VirtualKey[10];
 		keysF[1] = new VirtualKey[10];
 		keysF[2] = new VirtualKey[9];
-		keysF[3] = new VirtualKey[3];
+		keysF[3] = new VirtualKey[4];
 		keysF[0][0] = new VirtualKey('Q');
 		keysF[0][1] = new VirtualKey('W');
 		keysF[0][2] = new VirtualKey('E');
@@ -128,9 +126,9 @@ public class OnScreenKeyboardMenu extends Menu {
 		keysF[2][8] = shiftKey;
 		keysF[3][0] = new VirtualKey('/');
 		keysF[3][1] = new VirtualKey('?');
-//		keysF[3][2] = new VirtualKey("`", input.getKey("`"));
-//		keysF[3][3] = new VirtualKey("~", input.getKey("~"));
-		keysF[3][2] = spaceBar;
+		keysF[3][2] = new VirtualKey('§');
+//		keysF[3][3] = new VirtualKey("~", input.getKey("~")); Non-render-able
+		keysF[3][3] = spaceBar;
 
 		keysB = new VirtualKey[4][10];
 		keysB[0][0] = new VirtualKey('1');
@@ -251,6 +249,7 @@ public class OnScreenKeyboardMenu extends Menu {
 
 		keyPressed = 0;
 	}
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isVisible() {
 		return visible;
 	}

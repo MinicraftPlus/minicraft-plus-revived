@@ -29,7 +29,7 @@ public class Updater extends Game {
 	public static boolean paused = true; // If the game is paused.
 
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
-	static int time = 0; // Facilites time of day / sunlight.
+	static int time = 0; // Facilities time of day / sunlight.
 	public static final int dayLength = 64800; // This value determines how long one game day is.
 	public static final int sleepEndTime = dayLength/8; // This value determines when the player "wakes up" in the morning.
 	public static final int sleepStartTime = dayLength/2+dayLength/8; // This value determines when the player allowed to sleep.
@@ -61,7 +61,7 @@ public class Updater extends Game {
 		Evening (dayLength/2),
 		Night (dayLength/4*3);
 
-		public int tickTime;
+		public final int tickTime;
 
 		Time(int ticks) {
 			tickTime = ticks;
@@ -135,7 +135,7 @@ public class Updater extends Game {
 			if (gamespeed != 20) {
 				gamespeed = 20;
 			}
-			if (tickCount > sleepEndTime) {
+			if (tickCount > dayLength) {
 				Logging.WORLD.trace("Passing midnight in bed.");
 				pastDay1 = true;
 				tickCount = 0;
@@ -152,7 +152,6 @@ public class Updater extends Game {
 			asTick++;
 		if (asTick > astime) {
 			if ((boolean) Settings.get("autosave") && !gameOver && player.health > 0) {
-
 				new Save(WorldSelectDisplay.getWorldName());
 			}
 
@@ -239,15 +238,15 @@ public class Updater extends Game {
 					String prevMode = (String)Settings.get("mode");
 					if (input.getKey("F3-F4-2").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.creative");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
+						Logging.WORLD_NAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
 					}
 					if (input.getKey("F3-F4-1").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.survival");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
+						Logging.WORLD_NAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
 					}
 					if (input.getKey("F3-F4-3").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.score");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
+						Logging.WORLD_NAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
 					}
 
 					if (isMode("minicraft.settings.mode.score") && input.getKey("F3-SHIFT-T").clicked) {
@@ -257,17 +256,17 @@ public class Updater extends Game {
 					float prevSpeed = gamespeed;
 					if (input.getKey("F3-S-0").clicked) {
 						gamespeed = 1;
-						Logging.WORLDNAMED.trace("Tick speed reset from {} into 1.", prevSpeed);
+						Logging.WORLD_NAMED.trace("Tick speed reset from {} into 1.", prevSpeed);
 					}
 					if (input.getKey("F3-S-equals").clicked) {
 						if (gamespeed < 1) gamespeed *= 2;
 						else if (normSpeed*gamespeed < 2000) gamespeed++;
-						Logging.WORLDNAMED.trace("Tick speed increased from {} into {}.", prevSpeed, gamespeed);
+						Logging.WORLD_NAMED.trace("Tick speed increased from {} into {}.", prevSpeed, gamespeed);
 					}
 					if (input.getKey("F3-S-minus").clicked) {
 						if (gamespeed > 1) gamespeed--;
 						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
-						Logging.WORLDNAMED.trace("Tick speed decreased from {} into {}.", prevSpeed, gamespeed);
+						Logging.WORLD_NAMED.trace("Tick speed decreased from {} into {}.", prevSpeed, gamespeed);
 					}
 
 					if (input.getKey("F3-h").clicked) player.health--;
@@ -309,6 +308,7 @@ public class Updater extends Game {
 		setTime(t.tickTime);
 	}
 	// This one works too.
+	/** @deprecated Not in use. This should be entirely replaced by {@link #changeTimeOfDay(Time)} in best practice. */
 	public static void changeTimeOfDay(int t) {
 		Time[] times = Time.values();
 		if (t > 0 && t < times.length)

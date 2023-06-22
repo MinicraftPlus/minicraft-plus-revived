@@ -15,7 +15,7 @@ public class Spark extends Entity {
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
 	private final AirWizard owner; // The AirWizard that created this spark
-	private LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "spark");
+	private final LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "spark");
 
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
@@ -70,8 +70,6 @@ public class Spark extends Entity {
 			if (time >= lifeTime - 6 * 20) {
 				if (time / 6 % 2 == 0) return; // If time is divisible by 12, then skip the rest of the code.
 			}
-
-
 
 			randmirror = random.nextInt(4);
 		}

@@ -20,8 +20,8 @@ public class Screen {
 	private int yOffset;
 
 	// Used for mirroring an image:
-	private static final int BIT_MIRROR_X = 0x01; // Written in hexadecimal; binary: 01
-	private static final int BIT_MIRROR_Y = 0x02; // Binary: 10
+	private static final int BIT_MIRROR_X = 0b01; // Written in binary
+	private static final int BIT_MIRROR_Y = 0b10;
 
 	public int[] pixels; // Pixels on the screen
 
@@ -55,18 +55,18 @@ public class Screen {
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		for (int r = 0; r < sprite.spritePixels.length; r++) {
 			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
-				Sprite.Px px = sprite.spritePixels[r][c];
+				MinicraftImage.Px px = sprite.spritePixels[r][c];
 				render(xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
 			}
 		}
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel) { render(xp, yp, pixel, -1); }
-	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
-		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
+	public void render(int xp, int yp, MinicraftImage.Px pixel) { render(xp, yp, pixel, -1); }
+	public void render(int xp, int yp, MinicraftImage.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
+	public void render(int xp, int yp, MinicraftImage.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
+	public void render(int xp, int yp, MinicraftImage.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
+	public void render(int xp, int yp, MinicraftImage.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
+		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.getSheet(), whiteTint, fullbright, color);
 	}
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
@@ -82,7 +82,7 @@ public class Screen {
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
 
 		// Validation check
-		if (sheet == null || xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
+		if (xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
 			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
 			xt = 0;
 			yt = 0;
@@ -145,7 +145,7 @@ public class Screen {
 		These values represent the minimum light level, on a scale from 0 to 25 (255/10), 0 being no light, 25 being full light (which will be portrayed as transparent on the overlay lightScreen pixels) that a pixel must have in order to remain lit (not black).
 		each row and column is repeated every 4 pixels in the proper direction, so the pixel lightness minimum varies. It's highly worth note that, as the rows progress and loop, there's two sets or rows (1,4 and 2,3) whose values in the same column add to 15. The exact same is true for columns (sets are also 1,4 and 2,3), execpt the sums of values in the same row and set differ for each row: 10, 18, 12, 20. Which... themselves... are another set... adding to 30... which makes sense, sort of, since each column totals 15+15=30.
 		In the end, "every other every row", will need, for example in column 1, 15 light to be lit, then 0 light to be lit, then 12 light to be lit, then 3 light to be lit. So, the pixels of lower light levels will generally be lit every other pixel, while the brighter ones appear more often. The reason for the variance in values is to provide EVERY number between 0 and 15, so that all possible light levels (below 16) are represented fittingly with their own pattern of lit and not lit.
-		16 is the minimum pixel lighness required to ensure that the pixel will always remain lit.
+		16 is the minimum pixel lightness required to ensure that the pixel will always remain lit.
 	*/
 	private static final int[] dither = new int[] {
 		0, 8, 2, 10,

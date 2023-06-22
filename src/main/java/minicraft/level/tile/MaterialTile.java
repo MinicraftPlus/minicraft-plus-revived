@@ -13,10 +13,10 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class MaterialTile extends Tile {
-	protected Material type;
+	protected final Material type;
 
 	protected MaterialTile(Material type) {
-		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (SpriteAnimation) null);
+		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" : type.name()), null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {

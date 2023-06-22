@@ -10,7 +10,8 @@ import java.util.Set;
 
 public class KeyInputEntry extends SelectEntry {
 
-	private String action, mapping, buffer;
+	private final String action;
+	private String mapping, buffer;
 
 	public KeyInputEntry(String key, Set<String> duplicated) {
 		super("", null);
@@ -26,11 +27,11 @@ public class KeyInputEntry extends SelectEntry {
 		for (int spaces = 0; spaces < Screen.w/Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
 			buffer.append(" ");
 
-		String newMapping = "";
+		StringBuilder newMapping = new StringBuilder();
 		for (String k : mapping.split("\\|")) {
 			if (duplicated.contains(k)) k = Color.RED_CODE + k;
 			k = Color.GRAY_CODE + k + Color.WHITE_CODE;
-			newMapping += k + "|";
+			newMapping.append(k).append("|");
 		}
 
 		this.mapping = newMapping.substring(0, newMapping.length() - 1);

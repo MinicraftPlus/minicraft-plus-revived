@@ -5,7 +5,6 @@ import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
-import minicraft.core.Game;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 

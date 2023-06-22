@@ -19,13 +19,13 @@ public class FlowerTile extends Tile {
 	private static final SpriteAnimation flowerSprite1 = new SpriteAnimation(SpriteType.Tile, "flower_shape1");
 
 	protected FlowerTile(String name) {
-		super(name, (SpriteAnimation) null);
+		super(name, null);
 		connectsToGrass = true;
 		maySpawn = true;
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		// TODO revise this method.
+		// TODO revise this method. This works as same as Grass#tick except chancing.
 		if (random.nextInt(30) != 0) return false; // Skips every 31 tick.
 
 		int xn = xt;

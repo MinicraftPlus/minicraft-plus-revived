@@ -3,20 +3,15 @@ package minicraft.screen;
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
-import minicraft.screen.entry.StringEntry;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LanguageSettingsDisplay extends Display {
 	private Map.Entry<ArrayList<ListEntry> ,Integer> getEntries() {

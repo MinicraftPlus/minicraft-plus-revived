@@ -23,14 +23,13 @@ import minicraft.util.AdvancementElement;
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
 		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class)
 		.setSingletonWithConnective(true);
 
-	private boolean dropCoal = false;
-	private int maxHealth = 50;
+	private static final int MAX_HEALTH = 50;
 
-	private int damage;
+	private boolean dropCoal = false;
 
 	protected RockTile(String name) {
 		super(name, sprite);
@@ -69,18 +68,18 @@ public class RockTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		damage = level.getData(x, y) + dmg;
+		int damage = level.getData(x, y) + dmg;
 
 		if (Game.isMode("minicraft.settings.mode.creative")) {
-			dmg = damage = maxHealth;
+			dmg = damage = MAX_HEALTH;
 			dropCoal = true;
 		}
 
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= maxHealth) {
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
+		if (damage >= MAX_HEALTH) {
 			int stone = 1;
 			if (dropCoal) {
 				stone += random.nextInt(3) + 1;
@@ -101,7 +100,7 @@ public class RockTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		damage = level.getData(xt, yt);
+		int damage = level.getData(xt, yt);
 		if (damage > 0) {
 			level.setData(xt, yt, damage - 1);
 			return true;

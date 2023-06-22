@@ -47,20 +47,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/// This class is simply a way to seperate all the old, compatibility complications into a seperate file.
+/// This class is simply a way to separate all the old, compatibility complications into a separate file.
+// TODO standardize all save loading behaviours tacking with versioning for each versions, rather than comparing versions. (Schema)
 public class LegacyLoad {
 
 	String location = Game.gameDir;
 
 	private static final String extension = Save.extension;
 
-	ArrayList<String> data;
-	ArrayList<String> extradata;
+	final ArrayList<String> data;
+	final ArrayList<String> extradata;
 
-	public boolean hasloadedbigworldalready;
-	Version currentVer, worldVer;
+	public final boolean hasloadedbigworldalready;
+	final Version currentVer;
+	Version worldVer;
 	boolean oldSave = false;
 
+	@SuppressWarnings("unused") // This class should indeed be instantiated to have optimized class structure.
 	Game game = null;
 
 	private DeathChest deathChest;
@@ -82,6 +85,7 @@ public class LegacyLoad {
 			worldVer = new Version("1.8");
 			oldSave = true;
 		} else
+			//noinspection ResultOfMethodCallIgnored
 			testFile.delete(); // We don't care about it anymore anyway.
 
 		// This is used in loadInventory().
@@ -93,7 +97,7 @@ public class LegacyLoad {
 		loadEntities("Entities", Game.player);
 		LoadingDisplay.setPercentage(0); // reset
 
-		if (deathChest != null && deathChest.getInventory().invSize() > 0) {
+		if (deathChest != null && deathChest.getInventory().getInvSize() > 0) {
 			Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 			Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 		}
@@ -113,7 +117,6 @@ public class LegacyLoad {
 			br = new BufferedReader(new FileReader(filename));
 
 			String curLine;StringBuilder total = new StringBuilder();
-			ArrayList<String> curData;
 			while ((curLine = br.readLine()) != null)
 				total.append(curLine);
 			data.addAll(Arrays.asList(total.toString().split(",")));
@@ -162,6 +165,7 @@ public class LegacyLoad {
 			data.set(i, data.get(i).replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime"));
 		}
 
+		//noinspection ResultOfMethodCallIgnored
 		file.delete();
 
 		try {
@@ -176,6 +180,7 @@ public class LegacyLoad {
 		}
 	}
 
+	// Was this used for statistics?
 	private int playerac = 0; // This is a temp storage var for use to restore player arrow count.
 
 	public void loadGame(String filename) {
@@ -231,7 +236,7 @@ public class LegacyLoad {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
+					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get((short) Integer.parseInt(data.get(tileidx + 3)))).id;
 					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
 				}
 			}
@@ -295,8 +300,8 @@ public class LegacyLoad {
 		if (hasEffects) {
 			String[] effects = data.get(potionIdx).replace("PotionEffects[", "").replace("]", "").split(":");
 
-			for (int i = 0; i < effects.length; i++) {
-				String[] effect = effects[i].split(";");
+			for (String s : effects) {
+				String[] effect = s.split(";");
 				String pName = effect[0];
 				if (oldSave) pName = pName.replace("P.", "Potion");
 				PotionItem.applyPotion(player, Enum.valueOf(PotionType.class, pName), Integer.parseInt(effect[1]));
@@ -369,17 +374,17 @@ public class LegacyLoad {
 			World.levels[i].clearEntities();
 		}
 
-		for (int i = 0; i < data.size(); i++) {
-			List<String> info = Arrays.asList(data.get(i).substring(data.get(i).indexOf("[") + 1, data.get(i).indexOf("]")).split(":")); // This gets everything inside the "[...]" after the entity name.
+		for (String datum : data) {
+			List<String> info = Arrays.asList(datum.substring(datum.indexOf("[") + 1, datum.indexOf("]")).split(":")); // This gets everything inside the "[...]" after the entity name.
 
-			String entityName = data.get(i).substring(0, data.get(i).indexOf("[")).replace("bed", "Bed").replace("II", ""); // This gets the text before "[", which is the entity name.
+			String entityName = datum.substring(0, datum.indexOf("[")).replace("bed", "Bed").replace("II", ""); // This gets the text before "[", which is the entity name.
 			int x = Integer.parseInt(info.get(0));
 			int y = Integer.parseInt(info.get(1));
 
 			int mobLvl = 0;
 			try {
 				if (Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
-					mobLvl = Integer.parseInt(info.get(info.size()-2));
+					mobLvl = Integer.parseInt(info.get(info.size() - 2));
 			} catch (ClassNotFoundException ignored) {}
 
 			Entity newEntity = getEntity(entityName, player, mobLvl);
@@ -387,15 +392,15 @@ public class LegacyLoad {
 			if (newEntity != null) { // the method never returns null, but...
 				int currentlevel;
 				if (newEntity instanceof Mob) {
-					Mob mob = (Mob)newEntity;
+					Mob mob = (Mob) newEntity;
 					mob.health = Integer.parseInt(info.get(2));
-					currentlevel = Integer.parseInt(info.get(info.size()-1));
+					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					World.levels[currentlevel].add(mob, x, y);
 				} else if (newEntity instanceof Chest) {
-					Chest chest = (Chest)newEntity;
+					Chest chest = (Chest) newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
 					boolean isDungeonChest = chest instanceof DungeonChest;
-					List<String> chestInfo = info.subList(2, info.size()-1);
+					List<String> chestInfo = info.subList(2, info.size() - 1);
 
 					int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
 					for (int idx = 0; idx < endIdx; idx++) {
@@ -406,13 +411,13 @@ public class LegacyLoad {
 					}
 
 					if (isDeathChest) {
-						((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1).replace("tl;", "")); // "tl;" is only for old save support
+						((DeathChest) chest).time = Integer.parseInt(chestInfo.get(chestInfo.size() - 1).replace("tl;", "")); // "tl;" is only for old save support
 					} else if (isDungeonChest) {
-						((DungeonChest)chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1)));
+						((DungeonChest) chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size() - 1)));
 					}
 
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					World.levels[currentlevel].add(chest instanceof DeathChest ? chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
+					World.levels[currentlevel].add(chest instanceof DeathChest ? chest : chest instanceof DungeonChest ? (DungeonChest) chest : chest, x, y);
 				} else if (newEntity instanceof Spawner) {
 					MobAi mob = (MobAi) getEntity(info.get(2), player, Integer.parseInt(info.get(3)));
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));

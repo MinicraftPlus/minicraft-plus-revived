@@ -22,6 +22,7 @@ public class BookData {
 		return content.replaceAll("\\\\0", "\0");
 	}
 
+	@SuppressWarnings({"unused", "EmptyMethod"}) // Reserved for future implementation
 	public static void saveBook(String bookTitle) {
 
 	}

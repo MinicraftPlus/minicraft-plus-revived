@@ -7,7 +7,7 @@ import minicraft.level.Level;
 
 /// This class is for tiles WHILE THEY ARE EXPLODING
 public class ExplodedTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "exploded")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "exploded")
 		.setConnectChecker((tile, side) -> tile.getClass() == ExplodedTile.class);
 
 	protected ExplodedTile(String name) {

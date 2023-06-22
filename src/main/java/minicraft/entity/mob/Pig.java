@@ -5,7 +5,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Pig extends PassiveMob {
-	private static LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "pig");
+	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "pig");
 
 	/**
 	 * Creates a pig.

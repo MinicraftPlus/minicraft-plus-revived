@@ -11,11 +11,14 @@ public class ItemEntity extends Entity implements ClientTickable {
 	private int lifeTime; // The life time of this entity in the level
 	private double xa, ya, za; // The x, y, and z accelerations.
 	private double xx, yy, zz; // The x, y, and z coordinates; in double precision.
-	public Item item; // The item that this entity is based off of.
+	public final Item item; // The item that this entity is based off of.
 	private int time = 0; // Time it has lasted in the level
 
 	// Solely for multiplayer use.
 	private boolean pickedUp = false;
+	/** @deprecated This should not be used as the entity is removed after being picked up, unless for interaction timestamp,
+	 * but most likely this would not be used. */
+	@SuppressWarnings("unused")
 	private long pickupTimestamp;
 
 	/**
@@ -66,7 +69,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 	}
 
 	/**
-	 * Returns a string representation of the itementity
+	 * Returns a string representation of the item-entity
 	 * @return string representation of this entity
 	 */
 	public String getData() {
@@ -80,7 +83,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 			remove(); // Remove from the world
 			return; // Skip the rest of the code
 		}
-		// Moves each coordinate by the its acceleration
+		// Moves each coordinate by the acceleration
 		xx += xa;
 		yy += ya;
 		zz += za;

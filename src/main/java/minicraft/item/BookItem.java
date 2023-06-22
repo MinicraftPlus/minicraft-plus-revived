@@ -8,25 +8,26 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.BookDisplay;
-import org.jetbrains.annotations.NotNull;
 import minicraft.util.BookData;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 public class BookItem extends Item {
 
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		items.add(new BookItem("Book", new LinkedSprite(SpriteType.Item, "book"), null));
-		items.add(new BookItem("Antidious", new LinkedSprite(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook.collect(), true));
+		items.add(new BookItem("Antidious", new LinkedSprite(SpriteType.Item, "antidious_book"), BookData.antVenomBook, true));
 		return items;
 	}
 
 	@FunctionalInterface
-	public static interface BookContent {
-		public abstract String collect();
+	public interface BookContent {
+		String collect();
 	}
 
-	protected BookContent book; // TODO this is not saved yet; it could be, for editable books.
+	protected final BookContent book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
 
 	private BookItem(String title, LinkedSprite sprite, BookContent book) { this(title, sprite, book, false); }

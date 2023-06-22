@@ -11,6 +11,8 @@ import minicraft.level.Level;
 import java.util.HashMap;
 
 public class Bed extends Furniture {
+	private static final LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "bed");
+	private static final LinkedSprite itemSprite = new LinkedSprite(SpriteType.Item, "bed");
 
 	private static int playersAwake = 1;
 	private static final HashMap<Player, Bed> sleepingPlayers = new HashMap<>();
@@ -19,7 +21,7 @@ public class Bed extends Furniture {
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
 	public Bed() {
-		super("Bed", new LinkedSprite(SpriteType.Entity, "bed"), new LinkedSprite(SpriteType.Item, "bed"), 3, 2);
+		super("Bed", sprite, itemSprite, 3, 2);
 	}
 
 	/** Called when the player attempts to get in bed. */
@@ -57,6 +59,7 @@ public class Bed extends Furniture {
 	public static boolean sleeping() { return playersAwake == 0; }
 
 	public static boolean inBed(Player player) { return sleepingPlayers.containsKey(player); }
+	@SuppressWarnings("unused") // Reserved; might not be used in the future
 	public static Level getBedLevel(Player player) {
 		Bed bed = sleepingPlayers.get(player);
 		if (bed == null)
@@ -65,6 +68,7 @@ public class Bed extends Furniture {
 	}
 
 	// Get the player "out of bed"; used on the client only.
+	@SuppressWarnings("unused") // Reserved
 	public static void removePlayer(Player player) {
 		sleepingPlayers.remove(player);
 	}
@@ -72,6 +76,7 @@ public class Bed extends Furniture {
 	public static void removePlayers() { sleepingPlayers.clear(); }
 
 	// Client should not call this.
+	@SuppressWarnings("unused") // Reserved
 	public static void restorePlayer(Player player) {
 		Bed bed = sleepingPlayers.remove(player);
 		if (bed != null) {

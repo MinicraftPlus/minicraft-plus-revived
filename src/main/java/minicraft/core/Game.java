@@ -46,7 +46,7 @@ public class Game {
 	public static void exitDisplay(int depth) {
 		if (depth < 1) return; // There is nothing needed to exit.
 		if (displayQuery.isEmpty()) {
-			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
+			Logging.GAME_HANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
 		Sound.play("craft");
@@ -79,7 +79,7 @@ public class Game {
 
 
 	public static void main(String[] args) {
-		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
+		Thread.setDefaultUncaughtExceptionHandler((thread, e) -> CrashHandler.crashHandle(e));
 
 		Initializer.parseArgs(args); // Parses the command line arguments
 		// Applying Game#debug first.
@@ -113,7 +113,7 @@ public class Game {
 		// Actually start the game.
 		Initializer.run();
 
-		Logging.GAMEHANDLER.debug("Main game loop ended; Terminating application...");
+		Logging.GAME_HANDLER.debug("Main game loop ended; Terminating application...");
 		System.exit(0);
 	}
 }

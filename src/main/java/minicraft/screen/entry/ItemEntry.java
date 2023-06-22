@@ -15,12 +15,13 @@ public class ItemEntry extends ListEntry {
 		return entries;
 	}
 
-	private Item item;
+	private final Item item;
 
 	public ItemEntry(Item i) { this.item = i; }
 
 	public Item getItem() { return item; }
 
+	@SuppressWarnings("EmptyMethod")
 	@Override
 	public void tick(InputHandler input) {}
 

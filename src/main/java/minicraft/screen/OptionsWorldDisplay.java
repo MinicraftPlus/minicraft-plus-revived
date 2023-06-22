@@ -1,8 +1,6 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Localization.LocaleInformation;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;

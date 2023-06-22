@@ -9,7 +9,7 @@ import minicraft.level.Level;
 // TODO Remove this.
 // IMPORTANT: This tile should never be used for anything, it only exists to allow tiles right next to the edge of the world to connect to it
 public class ConnectTile extends Tile {
-    public ConnectTile() {
+    ConnectTile() {
         super("connector tile", new SpriteAnimation(SpriteType.Tile, "missing_tile"));
     }
 

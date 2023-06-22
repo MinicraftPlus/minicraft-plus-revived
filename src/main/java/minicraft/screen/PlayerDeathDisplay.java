@@ -42,7 +42,7 @@ public class PlayerDeathDisplay extends Display {
 
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
-				.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth * 3), RelPos.BOTTOM_RIGHT)
+				.setPositioning(new Point(MinicraftImage.boxSize, MinicraftImage.boxSize * 3), RelPos.BOTTOM_RIGHT)
 				.setTitle("minicraft.displays.player_death.title")
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()

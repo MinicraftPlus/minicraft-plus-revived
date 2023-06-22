@@ -33,6 +33,7 @@ public class World extends Game {
 	static int pendingLevelChange; // Used to determine if the player should change levels or not.
 
 	private static long seed;
+	@SuppressWarnings("FieldCanBeLocal")
 	private static Random random;
 
 	@Nullable
@@ -116,7 +117,7 @@ public class World extends Game {
 
 		Logging.WORLD.trace("Initializing world non-client...");
 
-		Logging.WORLDNAMED = Logger.tag("World/" + WorldSelectDisplay.getWorldName().toUpperCase());
+		Logging.WORLD_NAMED = Logger.tag("World/" + WorldSelectDisplay.getWorldName().toUpperCase());
 
 		if (WorldSelectDisplay.hasLoadedWorld()) {
 			new Load(WorldSelectDisplay.getWorldName());
@@ -206,6 +207,7 @@ public class World extends Game {
 		lastWorldExitTime = System.currentTimeMillis();
 	}
 
+	@SuppressWarnings("unused") // Reserved for future use
 	public static long getLastWorldExitTime() { return lastWorldExitTime; }
 	public static long getLastWorldEnterTime() { return lastWorldEnterTime; }
 }

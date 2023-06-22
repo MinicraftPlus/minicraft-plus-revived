@@ -36,12 +36,15 @@ import minicraft.util.Logging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
@@ -55,7 +58,7 @@ public class Level {
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
-	public int w, h; // Width and height of the level
+	public final int w, h; // Width and height of the level
 	private final long seed; // The used seed that was used to generate the world
 
 	public short[] tiles; // An array of all the tiles in the world.
@@ -68,15 +71,15 @@ public class Level {
 	public int mobCount = 0;
 
 	private final Object entityLock = new Object(); // I will be using this lock to avoid concurrency exceptions in entities and sparks set
-	private final Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
-	private final Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
-	private final List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
-	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private final Set<Entity> entities = Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
+	private final Set<Player> players = Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
+	private final Set<Entity> entitiesToAdd = Collections.newSetFromMap(new ConcurrentHashMap<>()); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private final Set<Entity> entitiesToRemove = Collections.newSetFromMap(new ConcurrentHashMap<>()); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 
 	// Creates a sorter for all the entities to be rendered.
 	//private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y); // Broken
 	@SuppressWarnings("Convert2Lambda")
-	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
+	private static final Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
 		@Override
 		public int applyAsInt(Entity e) { return e.y; }
 	});
@@ -84,7 +87,7 @@ public class Level {
 	public Entity[] getEntitiesToSave() {
 		Entity[] allEntities = new Entity[entities.size() + entitiesToAdd.size()];
 		Entity[] toAdd = entitiesToAdd.toArray(new Entity[0]);
-		Entity[] current = getEntityArray();
+		Entity[] current = getEntitySet().toArray(new Entity[0]);
 		System.arraycopy(current, 0, allEntities, 0, current.length);
 		System.arraycopy(toAdd, 0, allEntities, current.length, toAdd.length);
 
@@ -97,7 +100,7 @@ public class Level {
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
 		String levelName = getLevelName(depth);
 
-		Logging.WORLDNAMED.info("{} on {} level ({}, {}){}", prefix, levelName, x, y, suffix);
+		Logging.WORLD_NAMED.info("{} on {} level ({}, {}){}", prefix, levelName, x, y, suffix);
 	}
 
 	public void printTileLocs(Tile t) {
@@ -108,14 +111,14 @@ public class Level {
 	}
 	public void printEntityLocs(Class<? extends Entity> c) {
 		int numfound = 0;
-		for (Entity entity: getEntityArray()) {
+		for (Entity entity: getEntitySet()) {
 			if (c.isAssignableFrom(entity.getClass())) {
 				printLevelLoc(entity.toString(), entity.x >> 4, entity.y >> 4);
 				numfound++;
 			}
 		}
 
-		Logging.WORLDNAMED.info("Found " + numfound + " entities in level of depth " + depth);
+		Logging.WORLD_NAMED.info("Found " + numfound + " entities in level of depth " + depth);
 	}
 
 	private void updateMobCap() {
@@ -221,24 +224,19 @@ public class Level {
 	}
 
 	public void checkAirWizard() {
-		checkAirWizard(true);
-	}
-	private void checkAirWizard(boolean check) {
 		if (depth == 1 && !AirWizard.beaten) { // Add the airwizard to the surface
 
 			boolean found = false;
-			if (check) {
-				for (Entity e: entitiesToAdd)
-					if (e instanceof AirWizard) {
-						found = true;
-						break;
-					}
-				for (Entity e: entities)
-					if (e instanceof AirWizard) {
-						found = true;
-						break;
-					}
-			}
+			for (Entity e: entitiesToAdd)
+				if (e instanceof AirWizard) {
+					found = true;
+					break;
+				}
+			for (Entity e: entities)
+				if (e instanceof AirWizard) {
+					found = true;
+					break;
+				}
 
 			if (!found) {
 				AirWizard aw = new AirWizard();
@@ -263,7 +261,7 @@ public class Level {
 			for (Entity e: entities)
 				if (e instanceof DungeonChest)
 					numChests++;
-			Logging.WORLDNAMED.debug("Found " + numChests + " chests.");
+			Logging.WORLD_NAMED.debug("Found " + numChests + " chests.");
 		}
 
 		/// Make DungeonChests!
@@ -326,11 +324,9 @@ public class Level {
 	public void tick(boolean fullTick) {
 		int count = 0;
 
-		while (entitiesToAdd.size() > 0) {
-			Entity entity = entitiesToAdd.get(0);
-			boolean inLevel = entities.contains(entity);
-
-			if (!inLevel) {
+		for (Iterator<Entity> it = entitiesToAdd.iterator(); it.hasNext(); ) {
+			Entity entity = it.next();
+			if (!entities.contains(entity)) {
 				if (Logging.logLevel) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 
 				synchronized (entityLock) {
@@ -341,7 +337,7 @@ public class Level {
 				}
 			}
 
-			entitiesToAdd.remove(entity);
+			it.remove();
 		}
 
 		if (fullTick) {
@@ -360,8 +356,8 @@ public class Level {
 			}
 		}
 
-		while (entitiesToRemove.size() > 0) {
-			Entity entity = entitiesToRemove.get(0);
+		for (Iterator<Entity> it = entitiesToRemove.iterator(); it.hasNext(); ) {
+			Entity entity = it.next();
 
 			if (Logging.logLevel) printEntityStatus("Removing ", entity, "mob.Player");
 
@@ -372,7 +368,7 @@ public class Level {
 
 			if (entity instanceof Player)
 				players.remove(entity);
-			entitiesToRemove.remove(entity);
+			it.remove();
 		}
 
 		mobCount = count;
@@ -473,7 +469,7 @@ public class Level {
 
 		screen.setOffset(xScroll, yScroll);
 
-		// this specifies the maximum radius that the game will stop rendering the light from the source object once off screen
+		// this specifies the maximum radius that the game will stop rendering the light from the source object once off-screen
 		int r = 8;
 
 		List<Entity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
@@ -506,7 +502,7 @@ public class Level {
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/ ) return Tiles.get("connector tile");
 		int id = tiles[x + y * w];
-		if(id < 0) id += 256;
+		if(id < 0) id += 32768;
 		return Tiles.get(id);
 	}
 
@@ -533,7 +529,7 @@ public class Level {
 
 	public int getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w] & 0xff;
+		return data[x + y * w];
 	}
 
 	public void setData(int x, int y, int val) {
@@ -552,14 +548,12 @@ public class Level {
 		entity.setLevel(this, x, y);
 
 		entitiesToRemove.remove(entity); // To make sure the most recent request is satisfied.
-		if (!entitiesToAdd.contains(entity))
-			entitiesToAdd.add(entity);
+		entitiesToAdd.add(entity);
 	}
 
 	public void remove(Entity e) {
 		entitiesToAdd.remove(e);
-		if (!entitiesToRemove.contains(e))
-			entitiesToRemove.add(e);
+		entitiesToRemove.add(e);
 	}
 
 	/** Natural spawn. */
@@ -613,8 +607,9 @@ public class Level {
 		}
 	}
 
+	@SuppressWarnings("unused") // Reserved; it seems that this was used for peaceful?
 	public void removeAllEnemies() {
-		for (Entity e: getEntityArray()) {
+		for (Entity e: getEntitySet()) {
 			if (e instanceof EnemyMob)
 				if (!(e instanceof AirWizard) || Game.isMode("minicraft.settings.mode.creative")) // Don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
@@ -622,21 +617,15 @@ public class Level {
 	}
 
 	public void clearEntities() {
-		entities.clear();
+		synchronized (entityLock) {
+			entities.clear();
+		}
 	}
 
-	public Entity[] getEntityArray() {
-		Entity[] entityArray;
-		int index = 0;
-
+	public Set<Entity> getEntitySet() {
 		synchronized (entityLock) {
-			entityArray = new Entity[entities.size()];
-			for (Entity entity : entities) {
-				entityArray[index++] = entity;
-			}
+			return Collections.unmodifiableSet(new HashSet<>(entities));
 		}
-
-		return entityArray;
 	}
 
 	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
@@ -666,7 +655,7 @@ public class Level {
 	@SafeVarargs
 	public final List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1, boolean includeGiven, Class<? extends Entity>... entityClasses) {
 		List<Entity> contained = new ArrayList<>();
-		for (Entity e: getEntityArray()) {
+		for (Entity e: getEntitySet()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
 
@@ -696,7 +685,7 @@ public class Level {
 	 * @return True if there is an entity on the tile.
 	 */
 	public final boolean isEntityOnTile(int x, int y) {
-		for (Entity e: getEntityArray()) {
+		for (Entity e: getEntitySet()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
 
@@ -709,13 +698,14 @@ public class Level {
 
 	public List<Entity> getEntitiesInRect(Rectangle area) {
 		List<Entity> result = new ArrayList<>();
-		for (Entity e: getEntityArray()) {
+		for (Entity e: getEntitySet()) {
 			if (e.isTouching(area))
 				result.add(e);
 		}
 		return result;
 	}
 
+	@SuppressWarnings("unused") // Reserved
 	public List<Entity> getEntitiesInRect(Predicate<Entity> filter, Rectangle area) {
 		List<Entity> result = new LinkedList<>();
 		for (Entity entity : entities) {
@@ -729,7 +719,7 @@ public class Level {
 	/// Finds all entities that are an instance of the given entity.
 	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
 		ArrayList<Entity> matches = new ArrayList<>();
-		for (Entity e: getEntityArray()) {
+		for (Entity e: getEntitySet()) {
 			if (targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
 		}
@@ -840,6 +830,7 @@ public class Level {
 	}
 
 	public List<Point> getMatchingTiles(Tile search) { return getMatchingTiles((t, x, y) -> t.equals(search)); }
+	@SuppressWarnings("unused") // Reserved
 	public List<Point> getMatchingTiles(Tile... search) {
 		return getMatchingTiles((t, x, y) -> {
 			for (Tile poss: search)
@@ -1047,7 +1038,7 @@ public class Level {
 							Structure.villageRuinedOverlay2.draw(this, x + xo, y + yo);
 						}
 
-						// Add a chest to some of the houses
+						// Add a chest to some houses
 						if (hasChest) {
 							Chest c = new Chest();
 							c.populateInvRandom("villagehouse", 1);
