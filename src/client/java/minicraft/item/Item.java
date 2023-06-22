@@ -74,6 +74,11 @@ public abstract class Item {
 		return name;
 	}
 
+	/** Gets the description used for display item information. */
+	public String getDescription() {
+		return getName();
+	}
+
 	public final String getName() { return name; }
 
 	// Returns the String that should be used to display this item in a menu or list.
