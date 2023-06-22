@@ -4,6 +4,7 @@ import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -57,25 +58,75 @@ public class PlayerInvDisplay extends Display {
 
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
-			if (selection == 0) { // Item slot movement; preventing up and down being proceeded before this
+			if (selection == 0) {
+				// Item slot movement; preventing up and down being proceeded before this
 				if (input.getKey("SHIFT").down && input.getKey("CURSOR-UP").clicked) {
 					int sel = menus[0].getSelection();
 					if (sel > 0) { // If there is an entry above.
 						Inventory inv = player.getInventory();
 						inv.add(sel - 1, inv.remove(sel));
 						menus[0].setSelection(sel - 1);
+						Sound.play("select");
 						update();
-						return;
 					}
+					return;
 				} else if (input.getKey("SHIFT").down && input.getKey("CURSOR-DOWN").clicked) {
 					int sel = menus[0].getSelection();
 					if (menus[0].getNumOptions() > sel + 1) { // If there is an entry below.
 						Inventory inv = player.getInventory();
 						inv.add(sel + 1, inv.remove(sel));
 						menus[0].setSelection(sel + 1);
+						Sound.play("select");
 						update();
-						return;
 					}
+					return;
+
+				} else if (input.getKey("CTRL").down && input.getKey("CURSOR-UP").clicked) { // StackableItem slot stacking
+					int sel = menus[0].getSelection();
+					if (sel > 0) { // If there is an entry above.
+						Inventory inv = player.getInventory();
+						Item item = inv.get(sel);
+						Item toItem = inv.get(sel - 1);
+						if (item instanceof StackableItem && ((StackableItem) item).stacksWith(toItem)) {
+							if (((StackableItem) toItem).count < ((StackableItem) toItem).maxCount) {
+								if (((StackableItem) toItem).count + ((StackableItem) item).count <= ((StackableItem) toItem).maxCount) {
+									((StackableItem) toItem).count += ((StackableItem) item).count;
+									inv.remove(sel);
+								} else {
+									((StackableItem) item).count -= ((StackableItem) toItem).maxCount - ((StackableItem) toItem).count;
+									((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
+								}
+
+								menus[0].setSelection(sel - 1);
+								Sound.play("select");
+								update();
+							}
+						}
+					}
+					return;
+				} else if (input.getKey("CTRL").down && input.getKey("CURSOR-DOWN").clicked) { // StackableItem slot stacking
+					int sel = menus[0].getSelection();
+					if (menus[0].getNumOptions() > sel + 1) { // If there is an entry below.
+						Inventory inv = player.getInventory();
+						Item item = inv.get(sel);
+						Item toItem = inv.get(sel + 1);
+						if (item instanceof StackableItem && ((StackableItem) item).stacksWith(toItem)) {
+							if (((StackableItem) toItem).count < ((StackableItem) toItem).maxCount) {
+								if (((StackableItem) toItem).count + ((StackableItem) item).count <= ((StackableItem) toItem).maxCount) {
+									((StackableItem) toItem).count += ((StackableItem) item).count;
+									inv.remove(sel);
+								} else {
+									((StackableItem) item).count -= ((StackableItem) toItem).maxCount - ((StackableItem) toItem).count;
+									((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
+									menus[0].setSelection(sel + 1);
+								}
+
+								Sound.play("select");
+								update();
+							}
+						}
+					}
+					return;
 				}
 			}
 
