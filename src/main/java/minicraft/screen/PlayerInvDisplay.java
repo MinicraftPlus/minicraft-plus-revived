@@ -57,6 +57,28 @@ public class PlayerInvDisplay extends Display {
 
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
+			if (selection == 0) { // Item slot movement; preventing up and down being proceeded before this
+				if (input.getKey("SHIFT").down && input.getKey("CURSOR-UP").clicked) {
+					int sel = menus[0].getSelection();
+					if (sel > 0) { // If there is an entry above.
+						Inventory inv = player.getInventory();
+						inv.add(sel - 1, inv.remove(sel));
+						menus[0].setSelection(sel - 1);
+						update();
+						return;
+					}
+				} else if (input.getKey("SHIFT").down && input.getKey("CURSOR-DOWN").clicked) {
+					int sel = menus[0].getSelection();
+					if (menus[0].getNumOptions() > sel + 1) { // If there is an entry below.
+						Inventory inv = player.getInventory();
+						inv.add(sel + 1, inv.remove(sel));
+						menus[0].setSelection(sel + 1);
+						update();
+						return;
+					}
+				}
+			}
+
 			super.tick(input);
 
 			if (input.inputPressed("menu")) {

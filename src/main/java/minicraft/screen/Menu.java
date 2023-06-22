@@ -172,8 +172,8 @@ public class Menu {
 		int prevSel = selection;
 		if (input.inputPressed("cursor-up")) selection--;
 		if (input.inputPressed("cursor-down")) selection++;
-		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
-		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
+		// if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2; // Reserved
+		// if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
 		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
 
 		if (useSearcherBar) {
