@@ -6,7 +6,6 @@
 
 # Text files
 /*.txt
-logs/
 
 # hidden files
 /.*

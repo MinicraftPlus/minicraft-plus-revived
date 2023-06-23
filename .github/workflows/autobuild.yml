@@ -2,17 +2,15 @@ name: Nightly build
 on:
   schedule:
     - cron:  '0 0 * * *'
+  
 jobs:
   gradle:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Change version name in build
-      run: |
-        sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-nightly/" build.gradle
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
@@ -24,7 +22,7 @@ jobs:
     - name: Execute Gradle build
       run: ./gradlew build
       
-    - uses: "dciborow/action-github-releases@latest"
+    - uses: "dciborow/action-github-releases@v1.0.1"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
