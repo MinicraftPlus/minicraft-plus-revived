@@ -29,7 +29,7 @@ jobs:
         automatic_release_tag: "latest"
         prerelease: true
         title: "Nightly (breaking)"
-        generate_release_notes: Nightly release. Contains changes that almost certainly will break your saves. Uncertain if runs at all.
+        generate_release_notes: "Nightly release. Contains changes that almost certainly will break your saves. Uncertain if runs at all."
         files: |
           LICENSE
           build/libs/**.jar
