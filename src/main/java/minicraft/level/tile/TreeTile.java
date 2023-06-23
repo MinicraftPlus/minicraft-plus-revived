@@ -70,6 +70,7 @@ public class TreeTile extends Tile {
 		Tiles.get("Grass").render(screen, level, x, y);
 
 		TreeType thisType = level.treeTypes[x + y * level.w];
+		// Checking whether the target direction has targeted the same TreeTile
 		boolean up = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
 		boolean left = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
 		boolean right = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];

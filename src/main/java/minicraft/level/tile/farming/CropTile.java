@@ -58,6 +58,7 @@ public class CropTile extends FarmTile implements BoostablePlant {
 					}
 				}
 
+			// Checking whether the target direction has targeted the same CropTile
 			boolean up = level.getTile(xt, yt - 1) == this;
 			boolean down = level.getTile(xt, yt + 1) == this;
 			boolean left = level.getTile(xt - 1, yt) == this;
