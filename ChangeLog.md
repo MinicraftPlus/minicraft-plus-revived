@@ -61,6 +61,7 @@ but some sections are changed to compliant this project.
 * Fixed seed random problem
 * Fixed rendering positioning problem of color code styled texts
 * Fixed lights disappearing when out of screen
+* Fixed animals and items destroying plants
 
 ## [2.1.3]
 
