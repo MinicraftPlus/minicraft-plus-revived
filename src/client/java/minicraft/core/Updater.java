@@ -212,7 +212,7 @@ public class Updater extends Game {
 				}
 
 				// For debugging only
-				if (currentDisplay == null && input.getKey("F4").clicked) {
+				if (debug && currentDisplay == null && input.getKey("F4").clicked) {
 					Game.setDisplay(new DebugPanelDisplay());
 				}
 			} // End "menu-null" conditional

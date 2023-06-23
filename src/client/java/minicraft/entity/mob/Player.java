@@ -527,12 +527,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
 				}
-				//debug feature:
-				if (input.inputDown("F3-p")) { // Remove all potion effects
-					for (PotionType potionType : potioneffects.keySet()) {
-						PotionItem.applyPotion(this, potionType, false);
-					}
-				}
 
 				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...

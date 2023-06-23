@@ -7,6 +7,8 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.entry.ListEntry;
@@ -139,6 +141,12 @@ public class DebugPanelDisplay extends Display {
 		}, false));
 		entries.add(new SelectEntry("Change level down", () -> {
 			World.scheduleLevelChange(-1);
+			Game.exitDisplay();
+		}, false));
+		entries.add(new SelectEntry("Remove all potion effects", () -> {
+			for (PotionType potionType : Game.player.potioneffects.keySet()) {
+				PotionItem.applyPotion(Game.player, potionType, false);
+			}
 			Game.exitDisplay();
 		}, false));
 
