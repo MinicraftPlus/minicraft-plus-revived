@@ -389,6 +389,11 @@ public class InputHandler implements KeyListener {
 		}); // Return the Key object.
 	}
 
+	/** Mark a physical key as not just clicked. It should be more careful when using this method. */
+	public void toggleOffPhyKey(String key) {
+		getPhysKey(key).clicked = false;
+	}
+
 	/// This method provides a way to press physical keys without actually generating a key event.
 	/*public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);

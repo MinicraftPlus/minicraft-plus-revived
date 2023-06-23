@@ -204,7 +204,7 @@ public class Menu {
 						continue;
 					}
 
-					input.getKey(pressedKey).clicked = false;
+					input.toggleOffPhyKey(pressedKey);
 				}
 
 				// check if word was updated
