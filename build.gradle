@@ -1,85 +1,98 @@
 plugins {
-    id 'java'
     id 'application'
-    id 'maven-publish'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
+allprojects {
+    apply plugin: "java"
 
-project.version = '2.2.0-dev4'
-group = "java.minicraft"
-archivesBaseName = "minicraft-plus"
+    version = "2.2.0-dev4"
 
-def ENV = System.getenv()
+    sourceCompatibility = 8
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-
-sourceCompatibility = 8
-mainClassName = 'minicraft.core.Game'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-repositories {
-    mavenCentral()
-    maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://jitpack.io" }
+    repositories {
+        mavenCentral()
+    }
 }
 
+subprojects {
+    sourceSets.main {
+        java {
+            srcDir "java"
+        }
+        resources {
+            srcDir "resources"
+        }
+    }
+
+    dependencies {
+        implementation 'org.jetbrains:annotations:23.0.0'
+        implementation 'org.tinylog:tinylog-api:2.4.1'
+        implementation 'org.tinylog:tinylog-impl:2.4.1'
+    }
+}
+
+project(":common") {
+    dependencies {
+
+    }
+}
+
+project(":client") {
+    archivesBaseName = "minicraft-plus"
+
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        implementation project(":common")
+
+        implementation 'org.json:json:20220320'
+        implementation 'com.konghq:unirest-java:3.13.10'
+        implementation 'com.badlogicgames.gdx:gdx:1.11.0'
+        implementation 'com.badlogicgames.gdx:gdx-box2d:1.11.0'
+        implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
+        implementation 'com.badlogicgames.jamepad:jamepad:2.0.20.0'
+    }
+
+    application {
+        mainClass = 'minicraft.core.Game'
+    }
+}
+
+project(":server") {
+
+    archivesBaseName = "minicraft-plus-server"
+
+    dependencies {
+        implementation project(":common")
+    }
+
+    application {
+        mainClass = 'minicraft.core.Server'
+    }
+}
+
+// Building the root project actually just builds the client project.
 dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'org.json:json:20220320'
-    implementation 'com.konghq:unirest-java:3.13.10'
-    implementation 'org.tinylog:tinylog-api:2.4.1'
-    implementation 'org.tinylog:tinylog-impl:2.4.1'
-    implementation 'com.badlogicgames.gdx:gdx:1.11.0'
-    implementation 'com.badlogicgames.gdx:gdx-box2d:1.11.0'
-    implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
-    implementation 'com.badlogicgames.jamepad:jamepad:2.0.20.0'
+    implementation project(":client")
 }
 
-java {
-    withSourcesJar()
-}
-
-shadowJar {
-    archivesBaseName = 'minicraft_plus'
-    archiveClassifier.set('')
-
+// Build a runnable game distribution.
+jar {
     manifest {
         attributes(
-                'Main-Class': mainClassName,
+                'Main-Class': 'minicraft.core.Game',
                 'Implementation-Title': project.name,
                 'Implementation-Version': project.version,
                 'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
     }
-}
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact(shadowJar)
-            artifact(sourcesJar)
-            pom.withXml {
-                subprojects.each {
-                    if (it.name != project.testmods_project) {
-                        depNode.appendNode("groupId", it.group)
-                        depNode.appendNode("artifactId", it.name)
-                        depNode.appendNode("version", it.version)
-                        depNode.appendNode("scope", "compile")
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        if (ENV.MAVEN_PUBLISH_TOKEN) {
-            maven {
-                url 'https://repo.repsy.io/mvn/minicraftplus/minicraft'
-                credentials {
-                    username ENV.MAVEN_PUBLISH_USERNAME
-                    password ENV.MAVEN_PUBLISH_TOKEN
-                }
-                authentication {
-                    basic(BasicAuthentication)
-                }
-            }
-        }
-    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.output.resourcesDir)
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }}
 }
