@@ -14,7 +14,7 @@ public final class Settings {
 	private static final HashMap<String, ArrayEntry<?>> options = new HashMap<>();
 
 	static {
-		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getDefaultRefreshRate(), 10)); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
 		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20)); // The magnification of screenshot. I would want to see ultimate sized.
 		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
@@ -81,20 +81,25 @@ public final class Settings {
 	}
 
 	/**
-	 * Gets the refresh rate of the default monitor.
+	 * Gets the double of the refresh rate of the default monitor and rounds down the value to the nearest 10.
 	 * Safely handles headless environments (if that were to happen for some reason).
-	 * @return The refresh rate if successful. 60 if not.
+	 * @return The refresh rate if successful. 120 if not. 120 (double) is more optimal than 60.
 	 */
 	private static int getDefaultRefreshRate() {
 		int hz;
 		try {
-			hz = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+			hz = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate()
+				* 2; // Double the refresh rate as the max FPS value, which could make the rendering optimal without unstable tearing.
 		} catch (HeadlessException e) {
-			return 60;
+			return 120;
 		}
 
-		if (hz == DisplayMode.REFRESH_RATE_UNKNOWN) return 60;
-		if (hz > 300 || 10 >= hz) return 60;
-		return hz;
+		if (hz == DisplayMode.REFRESH_RATE_UNKNOWN) return 120;
+		if (hz > 300) {
+			return 300;
+		} else if (10 >= hz) {
+			return 10;
+		}
+		return hz % 10 == 0 ? hz : hz - hz % 10;
 	}
 }
