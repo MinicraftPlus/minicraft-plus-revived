@@ -6,8 +6,6 @@
 
 # Text files
 /*.txt
-# Log files
-logs/
 
 # hidden files
 /.*
@@ -20,6 +18,9 @@ build/
 bin/
 out/
 classes/
+
+# Log files
+logs/
 
 # BlueJ files
 *.ctxt
