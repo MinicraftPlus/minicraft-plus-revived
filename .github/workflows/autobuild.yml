@@ -32,5 +32,6 @@ jobs:
         generate_release_notes: true
         files: |
           LICENSE
+          ChangeLog.md
           build/libs/**.jar
         
