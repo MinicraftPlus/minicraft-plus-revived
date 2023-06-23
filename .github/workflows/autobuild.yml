@@ -1,0 +1,35 @@
+name: Nightly build
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+  
+jobs:
+  gradle:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 8
+        
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2.4.2
+    
+    - name: Execute Gradle build
+      run: ./gradlew build
+      
+    - uses: "dciborow/action-github-releases@v1.0.1"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Nightly (breaking)"
+        generate_release_notes: Nightly release. Contains changes that almost certainly will break your saves. Uncertain if runs at all.
+        files: |
+          LICENSE
+          build/libs/**.jar
+        
