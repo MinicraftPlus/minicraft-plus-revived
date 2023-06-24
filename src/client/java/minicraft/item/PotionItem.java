@@ -26,7 +26,8 @@ public class PotionItem extends StackableItem {
 
 	private PotionItem(PotionType type) { this(type, 1); }
 	private PotionItem(PotionType type, int count) {
-		super(type.name, new LinkedSprite(SpriteType.Item, "potion").setColor(type.dispColor), count);
+		super(type.name, new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "potion")
+			.setColor(type.dispColor).createSpriteLink(), count);
 		this.type = type;
 	}
 

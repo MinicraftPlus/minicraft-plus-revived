@@ -27,9 +27,9 @@ public class Lantern extends Furniture {
 	 * @param type Type of lantern.
 	 */
 	public Lantern(Lantern.Type type) {
-		super(type.title, new LinkedSprite(SpriteType.Entity, type == Type.NORM ? "lantern" :
-			type == Type.IRON ? "iron_lantern" : "gold_lantern"), new LinkedSprite(SpriteType.Item, type == Type.NORM ? "lantern" :
-			type == Type.IRON ? "iron_lantern" : "gold_lantern"), 3, 2);
+		super(type.title, new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, type == Type.NORM ? "lantern" :
+			type == Type.IRON ? "iron_lantern" : "gold_lantern").createSpriteLink(), new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, type == Type.NORM ? "lantern" :
+			type == Type.IRON ? "iron_lantern" : "gold_lantern").createSpriteLink(), 3, 2);
 		this.type = type;
 	}
 

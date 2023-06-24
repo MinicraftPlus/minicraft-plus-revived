@@ -19,7 +19,8 @@ public class Bed extends Furniture {
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
 	public Bed() {
-		super("Bed", new LinkedSprite(SpriteType.Entity, "bed"), new LinkedSprite(SpriteType.Item, "bed"), 3, 2);
+		super("Bed", new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "bed").createSpriteLink(),
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "bed").createSpriteLink(), 3, 2);
 	}
 
 	/** Called when the player attempts to get in bed. */

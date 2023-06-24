@@ -146,8 +146,8 @@ public abstract class Mob extends Entity {
 	public static LinkedSprite[] compileSpriteList(int sheetX, int sheetY, int width, int height, int mirror, int number, String key) {
 		LinkedSprite[] sprites = new LinkedSprite[number];
 		for (int i = 0; i < sprites.length; i++)
-			sprites[i] = new LinkedSprite(SpriteType.Entity, key).setSpriteDim(sheetX + width * i, sheetY, width, height)
-				.setMirror(mirror).setFlip(mirror);
+			sprites[i] = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, key).setSpriteDim(sheetX + width * i, sheetY, width, height)
+				.setMirror(mirror).setFlip(mirror).createSpriteLink();
 
 		return sprites;
 	}

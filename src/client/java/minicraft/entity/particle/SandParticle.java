@@ -12,7 +12,8 @@ public class SandParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public SandParticle(int x, int y) {
-		super(x, y, 180 + new Random().nextInt(71) - 35, new LinkedSprite(SpriteType.Entity, "sand_dust"));
-		this.sprite.setMirror(random.nextInt(4));
+		super(x, y, 180 + new Random().nextInt(71) - 35, null);
+		sprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "sand_dust").setMirror(random.nextInt(4))
+			.createSpriteLink();
 	}
 }

@@ -15,11 +15,16 @@ public class ArmorItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new ArmorItem("Leather Armor", new LinkedSprite(SpriteType.Item, "leather_armor"), .3f, 1));
-		items.add(new ArmorItem("Snake Armor", new LinkedSprite(SpriteType.Item, "snake_armor"), .4f, 2));
-		items.add(new ArmorItem("Iron Armor", new LinkedSprite(SpriteType.Item, "iron_armor"), .5f, 3));
-		items.add(new ArmorItem("Gold Armor", new LinkedSprite(SpriteType.Item, "gold_armor"), .7f, 4));
-		items.add(new ArmorItem("Gem Armor", new LinkedSprite(SpriteType.Item, "gem_armor"), 1f, 5));
+		items.add(new ArmorItem("Leather Armor",
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "leather_armor").createSpriteLink(), .3f, 1));
+		items.add(new ArmorItem("Snake Armor",
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "snake_armor").createSpriteLink(), .4f, 2));
+		items.add(new ArmorItem("Iron Armor",
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "iron_armor").createSpriteLink(), .5f, 3));
+		items.add(new ArmorItem("Gold Armor",
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gold_armor").createSpriteLink(), .7f, 4));
+		items.add(new ArmorItem("Gem Armor",
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gem_armor").createSpriteLink(), 1f, 5));
 
 		return items;
 	}

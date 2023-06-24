@@ -15,7 +15,7 @@ public class Spark extends Entity {
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
 	private final AirWizard owner; // The AirWizard that created this spark
-	private LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "spark");
+	private final LinkedSprite sprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "spark").createSpriteLink();
 
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
@@ -76,9 +76,8 @@ public class Spark extends Entity {
 			randmirror = random.nextInt(4);
 		}
 
-		sprite.setMirror(randmirror);
 		screen.render(x - 4, y - 4 + 2, sprite.getSprite(), 0, false, Color.BLACK); // renders the shadow on the ground
-		screen.render(x - 4, y - 4 - 2, sprite); // Renders the spark
+		screen.render(x - 4, y - 4 - 2, sprite.getSprite(), randmirror, false); // Renders the spark
 	}
 
 	/**

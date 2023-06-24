@@ -8,12 +8,12 @@ import minicraft.level.tile.Tiles;
 
 public class WheatTile extends PlantTile {
 	private LinkedSprite[] spritStages = new LinkedSprite[] {
-		new LinkedSprite(SpriteType.Tile, "wheat_stage0"),
-		new LinkedSprite(SpriteType.Tile, "wheat_stage1"),
-		new LinkedSprite(SpriteType.Tile, "wheat_stage2"),
-		new LinkedSprite(SpriteType.Tile, "wheat_stage3"),
-		new LinkedSprite(SpriteType.Tile, "wheat_stage4"),
-		new LinkedSprite(SpriteType.Tile, "wheat_stage5")
+		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage0").createSpriteLink(),
+		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage1").createSpriteLink(),
+		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage2").createSpriteLink(),
+		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage3").createSpriteLink(),
+		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage4").createSpriteLink(),
+		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage5").createSpriteLink()
 	};
 
 	public WheatTile(String name) {

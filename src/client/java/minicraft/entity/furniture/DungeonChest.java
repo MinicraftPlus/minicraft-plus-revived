@@ -19,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 public class DungeonChest extends Chest {
-	private static final LinkedSprite openSprite = new LinkedSprite(SpriteType.Entity, "dungeon_chest");
-	private static final LinkedSprite lockSprite = new LinkedSprite(SpriteType.Entity, "white_chest");
+	private static final LinkedSprite openSprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "dungeon_chest").createSpriteLink();
+	private static final LinkedSprite lockSprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "white_chest").createSpriteLink();
 
 	public Random random = new Random();
 	private boolean isLocked;

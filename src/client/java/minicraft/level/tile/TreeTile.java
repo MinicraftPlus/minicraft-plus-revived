@@ -22,8 +22,8 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {
-	private static LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
-	private static LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
+	private static LinkedSprite treeSprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "tree").createSpriteLink();
+	private static LinkedSprite treeSpriteFull = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "tree_full").createSpriteLink();
 
 	protected TreeTile(String name) {
 		super(name, null);

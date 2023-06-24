@@ -12,6 +12,6 @@ public class SmashParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public SmashParticle(int x, int y) {
-		super(x, y, 10, new LinkedSprite(SpriteType.Entity, "smash"));
+		super(x, y, 10, new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "smash").createSpriteLink());
 	}
 }

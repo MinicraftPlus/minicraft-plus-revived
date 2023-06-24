@@ -16,15 +16,15 @@ public class ClothingItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new ClothingItem("Red Clothes", new LinkedSprite(SpriteType.Item, "red_clothes"), Color.get(1, 204, 0, 0)));
-		items.add(new ClothingItem("Blue Clothes", new LinkedSprite(SpriteType.Item, "blue_clothes"), Color.get(1, 0, 0, 204)));
-		items.add(new ClothingItem("Green Clothes",  new LinkedSprite(SpriteType.Item, "green_clothes"), Color.get(1, 0, 204, 0)));
-		items.add(new ClothingItem("Yellow Clothes",  new LinkedSprite(SpriteType.Item, "yellow_clothes"), Color.get(1, 204, 204, 0)));
-		items.add(new ClothingItem("Black Clothes",  new LinkedSprite(SpriteType.Item, "black_clothes"), Color.get(1, 51)));
-		items.add(new ClothingItem("Orange Clothes",  new LinkedSprite(SpriteType.Item, "orange_clothes"), Color.get(1, 255, 102, 0)));
-		items.add(new ClothingItem("Purple Clothes",  new LinkedSprite(SpriteType.Item, "purple_clothes"), Color.get(1, 102, 0, 153)));
-		items.add(new ClothingItem("Cyan Clothes",  new LinkedSprite(SpriteType.Item, "cyan_clothes"), Color.get(1, 0, 102, 153)));
-		items.add(new ClothingItem("Reg Clothes",  new LinkedSprite(SpriteType.Item, "reg_clothes"), Color.get(1, 51, 51, 0)));
+		items.add(new ClothingItem("Red Clothes", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "red_clothes").createSpriteLink(), Color.get(1, 204, 0, 0)));
+		items.add(new ClothingItem("Blue Clothes", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "blue_clothes").createSpriteLink(), Color.get(1, 0, 0, 204)));
+		items.add(new ClothingItem("Green Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "green_clothes").createSpriteLink(), Color.get(1, 0, 204, 0)));
+		items.add(new ClothingItem("Yellow Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "yellow_clothes").createSpriteLink(), Color.get(1, 204, 204, 0)));
+		items.add(new ClothingItem("Black Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "black_clothes").createSpriteLink(), Color.get(1, 51)));
+		items.add(new ClothingItem("Orange Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "orange_clothes").createSpriteLink(), Color.get(1, 255, 102, 0)));
+		items.add(new ClothingItem("Purple Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "purple_clothes").createSpriteLink(), Color.get(1, 102, 0, 153)));
+		items.add(new ClothingItem("Cyan Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cyan_clothes").createSpriteLink(), Color.get(1, 0, 102, 153)));
+		items.add(new ClothingItem("Reg Clothes",  new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "reg_clothes").createSpriteLink(), Color.get(1, 51, 51, 0)));
 
 		return items;
 	}

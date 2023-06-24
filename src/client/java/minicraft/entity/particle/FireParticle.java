@@ -14,6 +14,7 @@ public class FireParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public FireParticle(int x, int y) {
-		super(x, y, 30, new LinkedSprite(SpriteType.Gui, "hud").setSpriteDim(4, 2, 1, 1));
+		super(x, y, 30, new LinkedSprite.SpriteLinkBuilder(SpriteType.Gui, "hud")
+			.setSpriteDim(4, 2, 1, 1).createSpriteLink());
 	}
 }

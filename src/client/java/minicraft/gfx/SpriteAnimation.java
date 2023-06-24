@@ -54,8 +54,8 @@ public class SpriteAnimation implements Destroyable {
 	private boolean singletonWithConnective = false;
 
 	// Refreshing only data.
-	private SpriteType type;
-	private String key;
+	private final SpriteType type;
+	private final String key;
 
 	/**
 	 * Constructing animations with the provided key. The meta is given by default.
@@ -121,43 +121,6 @@ public class SpriteAnimation implements Destroyable {
 		if (frame >= animations.length) frame = animations.length - 1;
 		animations[frame].setColor(color);
 
-		return this;
-	}
-
-	/**
-	 * Setting the mirror of all animation frames.
-	 * @param mirror The mirror of sprite/
-	 * @return The instance itself.
-	 */
-	public SpriteAnimation setMirror(int mirror) {
-		for (LinkedSprite sprite : animations) {
-			sprite.setMirror(mirror);
-		}
-
-		return this;
-	}
-
-	/**
-	 * Setting the mirror of the specific animation frame.
-	 * @param frame The specific frame.
-	 * @param mirror The mirror of sprite.
-	 * @return The instance itself.
-	 */
-	public SpriteAnimation setMirror(int frame, int mirror) {
-		if (frame < 0) frame = 0;
-		if (frame >= animations.length) frame = animations.length - 1;
-		animations[frame].setMirror(mirror);
-
-		return this;
-	}
-
-	/**
-	 * Setting the sprite sheet mirror of all frames.
-	 * @param mirror The mirror of sprite sheet.
-	 * @return The instance itself.
-	 */
-	public SpriteAnimation setSpriteMirror(int mirror) {
-		for (LinkedSprite sprite : animations) sprite.setFlip(mirror);
 		return this;
 	}
 
@@ -294,14 +257,15 @@ public class SpriteAnimation implements Destroyable {
 			if (metadata.frames < 1) metadata.frames = 1;
 			animations = new LinkedSprite[metadata.frames];
 			for (int f = 0; f < animations.length; f++) {
-				animations[f] = new LinkedSprite(type, key).setSpriteDim(0, f * width, width, width);
+				animations[f] = new LinkedSprite.SpriteLinkBuilder(type, key).setSpriteDim(0, f * width, width, width)
+					.createSpriteLink(false);
 			}
 
 			// Tile sprite only.
-			if (metadata.border != null) border = new LinkedSprite(type, metadata.border);
-			if (metadata.corner != null) corner = new LinkedSprite(type, metadata.corner);
+			if (metadata.border != null) border = new LinkedSprite.SpriteLinkBuilder(type, metadata.border).createSpriteLink(false);
+			if (metadata.corner != null) corner = new LinkedSprite.SpriteLinkBuilder(type, metadata.corner).createSpriteLink(false);
 		} else {
-			animations = new LinkedSprite[] {new LinkedSprite(type, key).setSpriteSize(width, width)};
+			animations = new LinkedSprite[] {new LinkedSprite.SpriteLinkBuilder(type, key).setSpriteSize(width, width).createSpriteLink(false)};
 			border = null;
 			corner = null;
 		}

@@ -49,8 +49,8 @@ public class BucketItem extends StackableItem {
 
 	private BucketItem(Fill fill) { this(fill, 1); }
 	private BucketItem(Fill fill, int count) {
-		super(fill.toString() + " Bucket", new LinkedSprite(SpriteType.Item, fill == Fill.Empty ? "bucket" :
-			fill == Fill.Lava ? "lava_bucket" : "water_bucket"), count);
+		super(fill.toString() + " Bucket", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, fill == Fill.Empty ? "bucket" :
+			fill == Fill.Lava ? "lava_bucket" : "water_bucket").createSpriteLink(), count);
 		this.filling = fill;
 	}
 

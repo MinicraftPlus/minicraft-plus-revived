@@ -44,7 +44,8 @@ public class ToolItem extends Item {
 
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
-		super(LEVEL_NAMES[level] + " " + type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")));
+		super(LEVEL_NAMES[level] + " " + type.name(),
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")).createSpriteLink());
 
 		this.type = type;
 		this.level = level;
@@ -54,7 +55,7 @@ public class ToolItem extends Item {
 	}
 
 	public ToolItem(ToolType type) {
-		super(type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), "")));
+		super(type.name(), new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, getSpriteName(type.toString(), "")).createSpriteLink());
 
 		this.type = type;
 		dur = type.durability;

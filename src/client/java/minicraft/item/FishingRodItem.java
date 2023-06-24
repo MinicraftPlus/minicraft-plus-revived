@@ -47,8 +47,8 @@ public class FishingRodItem extends Item {
     };
 
     public FishingRodItem(int level) {
-        super(LEVEL_NAMES[level] + " Fishing Rod", new LinkedSprite(SpriteType.Item,
-			LEVEL_NAMES[level].toLowerCase().replace("wood", "wooden") + "_fishing_rod"));
+        super(LEVEL_NAMES[level] + " Fishing Rod", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item,
+			LEVEL_NAMES[level].toLowerCase().replace("wood", "wooden") + "_fishing_rod").createSpriteLink());
         this.level = level;
     }
 

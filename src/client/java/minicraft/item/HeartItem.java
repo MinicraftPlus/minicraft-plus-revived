@@ -14,7 +14,8 @@ public class HeartItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new HeartItem("Obsidian Heart", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "obsidian_heart"), 5));
+		items.add(new HeartItem("Obsidian Heart",
+			new SpriteLinker.LinkedSprite.SpriteLinkBuilder(SpriteLinker.SpriteType.Item, "obsidian_heart").createSpriteLink(), 5));
 
 		return items;
 	}

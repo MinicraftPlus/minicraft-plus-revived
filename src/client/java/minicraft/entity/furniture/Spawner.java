@@ -71,16 +71,17 @@ public class Spawner extends Furniture {
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSprite(SpriteType.Item, "cow_spawner"):
-			m instanceof Pig ? new LinkedSprite(SpriteType.Item, "pig_spawner"):
-			m instanceof Sheep ? new LinkedSprite(SpriteType.Item, "sheep_spawner"):
-			m instanceof Slime ? new LinkedSprite(SpriteType.Item, "slime_spawner"):
-			m instanceof Zombie ? new LinkedSprite(SpriteType.Item, "zombie_spawner"):
-			m instanceof Creeper ? new LinkedSprite(SpriteType.Item, "creeper_spawner"):
-			m instanceof Skeleton ? new LinkedSprite(SpriteType.Item, "skeleton_spawner"):
-			m instanceof Snake ? new LinkedSprite(SpriteType.Item, "snake_spawner"):
-			m instanceof Knight ? new LinkedSprite(SpriteType.Item, "knight_spawner"):
-			new LinkedSprite(SpriteType.Item, "air_wizard_spawner"), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "spawner").createSpriteLink(),
+			m instanceof Cow ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cow_spawner").createSpriteLink():
+			m instanceof Pig ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "pig_spawner").createSpriteLink():
+			m instanceof Sheep ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "sheep_spawner").createSpriteLink():
+			m instanceof Slime ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "slime_spawner").createSpriteLink():
+			m instanceof Zombie ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "zombie_spawner").createSpriteLink():
+			m instanceof Creeper ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "creeper_spawner").createSpriteLink():
+			m instanceof Skeleton ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "skeleton_spawner").createSpriteLink():
+			m instanceof Snake ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "snake_spawner").createSpriteLink():
+			m instanceof Knight ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "knight_spawner").createSpriteLink():
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "air_wizard_spawner").createSpriteLink(), 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();

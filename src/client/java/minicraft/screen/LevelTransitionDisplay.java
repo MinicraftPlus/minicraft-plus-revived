@@ -1,11 +1,15 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+
+import java.util.function.Supplier;
 
 public class LevelTransitionDisplay extends Display {
 
@@ -14,7 +18,7 @@ public class LevelTransitionDisplay extends Display {
 	private int dir; // Direction that you are changing levels. (going up or down stairs)
 	private int time = 0; // Time it spends on this menu
 
-	private LinkedSprite hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
+	private final Supplier<MinicraftImage> hudSheet = () -> Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud");
 
 	public LevelTransitionDisplay(int dir) {
 		super(false,false);
@@ -33,8 +37,8 @@ public class LevelTransitionDisplay extends Display {
 			for (int y = 0; y < 150; y++) { // Loop however many times depending on the height (It's divided by 3 because the pixels are scaled up by 3)
 				int dd = (y + x % 2 * 2 + x / 3) - time*2; // Used as part of the positioning.
 				if (dd < 0 && dd > -30) {
-					if (dir > 0) screen.render(x * 8, y * 8, 5, 2, 0, hudSheet.getSheet()); // If the direction is upwards then render the squares going up
-					else screen.render(x * 8, Screen.h - y * 8 - 8, 5, 2, 0, hudSheet.getSheet());  // If the direction is negative, then the squares will go down.
+					if (dir > 0) screen.render(x * 8, y * 8, 5, 2, 0, hudSheet.get()); // If the direction is upwards then render the squares going up
+					else screen.render(x * 8, Screen.h - y * 8 - 8, 5, 2, 0, hudSheet.get());  // If the direction is negative, then the squares will go down.
 				}
 			}
 		}

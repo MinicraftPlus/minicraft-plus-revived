@@ -22,13 +22,13 @@ public class Chest extends Furniture implements ItemHolder {
 
 	public Chest() { this("Chest"); }
 
-	public Chest(String name) { this(name, new LinkedSprite(SpriteType.Item, "chest")); }
+	public Chest(String name) { this(name, new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "chest").createSpriteLink()); }
 	/**
 	 * Creates a chest with a custom name.
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
-		super(name, new LinkedSprite(SpriteType.Entity, "chest"), itemSprite, 3, 3); // Name of the chest
+		super(name, new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "chest").createSpriteLink(), itemSprite, 3, 3); // Name of the chest
 
 		inventory = new Inventory(); // Initialize the inventory.
 	}

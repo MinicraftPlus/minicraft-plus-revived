@@ -22,8 +22,9 @@ public class SummonItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new SummonItem("Totem of Air", new LinkedSprite(SpriteType.Item, "air_totem"), "Air Wizard"));
-		items.add(new SummonItem("Obsidian Poppet", new LinkedSprite(SpriteType.Item, "knight_statue"), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
+		items.add(new SummonItem("Totem of Air", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "air_totem").createSpriteLink(), "Air Wizard"));
+		items.add(new SummonItem("Obsidian Poppet", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "knight_statue")
+			.createSpriteLink(), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
 
 		return items;
 	}

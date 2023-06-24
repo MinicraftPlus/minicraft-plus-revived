@@ -14,7 +14,8 @@ public class KnightStatue extends Furniture {
 	private final int bossHealth;
 
 	public KnightStatue(int health) {
-		super("KnightStatue", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "knight_statue"), new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "knight_statue"), 3, 2);
+		super("KnightStatue", new SpriteLinker.LinkedSprite.SpriteLinkBuilder(SpriteLinker.SpriteType.Entity, "knight_statue").createSpriteLink(),
+			new SpriteLinker.LinkedSprite.SpriteLinkBuilder(SpriteLinker.SpriteType.Item, "knight_statue").createSpriteLink(), 3, 2);
 		bossHealth = health;
 	}
 

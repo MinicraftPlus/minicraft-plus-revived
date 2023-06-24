@@ -15,16 +15,16 @@ public class FoodItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new FoodItem("Baked Potato", new LinkedSprite(SpriteType.Item, "baked_potato"), 1));
-		items.add(new FoodItem("Apple", new LinkedSprite(SpriteType.Item, "apple"), 1));
-		items.add(new FoodItem("Raw Pork", new LinkedSprite(SpriteType.Item, "pork"), 1));
-		items.add(new FoodItem("Raw Fish", new LinkedSprite(SpriteType.Item, "fish"), 1));
-		items.add(new FoodItem("Raw Beef", new LinkedSprite(SpriteType.Item, "beef"), 1));
-		items.add(new FoodItem("Bread", new LinkedSprite(SpriteType.Item, "bread"), 2));
-		items.add(new FoodItem("Cooked Fish", new LinkedSprite(SpriteType.Item, "cooked_fish"), 3));
-		items.add(new FoodItem("Cooked Pork", new LinkedSprite(SpriteType.Item, "cooked_pork"), 3));
-		items.add(new FoodItem("Steak", new LinkedSprite(SpriteType.Item, "cooked_beef"), 3));
-		items.add(new FoodItem("Gold Apple", new LinkedSprite(SpriteType.Item, "golden_apple"), 10));
+		items.add(new FoodItem("Baked Potato", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "baked_potato").createSpriteLink(), 1));
+		items.add(new FoodItem("Apple", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "apple").createSpriteLink(), 1));
+		items.add(new FoodItem("Raw Pork", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "pork").createSpriteLink(), 1));
+		items.add(new FoodItem("Raw Fish", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "fish").createSpriteLink(), 1));
+		items.add(new FoodItem("Raw Beef", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "beef").createSpriteLink(), 1));
+		items.add(new FoodItem("Bread", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "bread").createSpriteLink(), 2));
+		items.add(new FoodItem("Cooked Fish", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cooked_fish").createSpriteLink(), 3));
+		items.add(new FoodItem("Cooked Pork", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cooked_pork").createSpriteLink(), 3));
+		items.add(new FoodItem("Steak", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cooked_beef").createSpriteLink(), 3));
+		items.add(new FoodItem("Gold Apple", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "golden_apple").createSpriteLink(), 10));
 
 		return items;
 	}

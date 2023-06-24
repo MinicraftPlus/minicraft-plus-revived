@@ -38,7 +38,8 @@ public class Tnt extends Furniture implements ActionListener {
 	 * Creates a new tnt furniture.
 	 */
 	public Tnt() {
-		super("Tnt", new LinkedSprite(SpriteType.Entity, "tnt"), new LinkedSprite(SpriteType.Item, "tnt"), 3, 2);
+		super("Tnt", new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "tnt").createSpriteLink(),
+			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "tnt").createSpriteLink(), 3, 2);
 		fuseLit = false;
 		ftik = 0;
 

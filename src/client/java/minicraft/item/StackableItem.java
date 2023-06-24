@@ -15,28 +15,28 @@ public class StackableItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new StackableItem("Wood", new LinkedSprite(SpriteType.Item, "wood")));
-		items.add(new StackableItem("Leather", new LinkedSprite(SpriteType.Item, "leather")));
-		items.add(new StackableItem("Wheat", new LinkedSprite(SpriteType.Item, "wheat")));
-		items.add(new StackableItem("Key", new LinkedSprite(SpriteType.Item, "key")));
-		items.add(new StackableItem("arrow", new LinkedSprite(SpriteType.Item, "arrow")));
-		items.add(new StackableItem("string", new LinkedSprite(SpriteType.Item, "string")));
-		items.add(new StackableItem("Coal", new LinkedSprite(SpriteType.Item, "coal")));
-		items.add(new StackableItem("Iron Ore", new LinkedSprite(SpriteType.Item, "iron_ore")));
-		items.add(new StackableItem("Lapis", new LinkedSprite(SpriteType.Item, "lapis")));
-		items.add(new StackableItem("Gold Ore", new LinkedSprite(SpriteType.Item, "gold_ore")));
-		items.add(new StackableItem("Iron", new LinkedSprite(SpriteType.Item, "iron_ingot")));
-		items.add(new StackableItem("Gold", new LinkedSprite(SpriteType.Item, "gold_ingot")));
-		items.add(new StackableItem("Rose", new LinkedSprite(SpriteType.Item, "red_flower")));
-		items.add(new StackableItem("Gunpowder", new LinkedSprite(SpriteType.Item, "gunpowder")));
-		items.add(new StackableItem("Slime", new LinkedSprite(SpriteType.Item, "slime")));
-		items.add(new StackableItem("glass", new LinkedSprite(SpriteType.Item, "glass")));
-		items.add(new StackableItem("cloth", new LinkedSprite(SpriteType.Item, "cloth")));
-		items.add(new StackableItem("gem", new LinkedSprite(SpriteType.Item, "gem")));
-		items.add(new StackableItem("Scale", new LinkedSprite(SpriteType.Item, "scale")));
-		items.add(new StackableItem("Shard", new LinkedSprite(SpriteType.Item, "shard")));
-		items.add(new StackableItem("Cloud Ore", new LinkedSprite(SpriteType.Item, "cloud_ore")));
-		items.add(new StackableItem("Glass Bottle", new LinkedSprite(SpriteType.Item, "glass_bottle")));
+		items.add(new StackableItem("Wood", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "wood").createSpriteLink()));
+		items.add(new StackableItem("Leather", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "leather").createSpriteLink()));
+		items.add(new StackableItem("Wheat", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "wheat").createSpriteLink()));
+		items.add(new StackableItem("Key", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "key").createSpriteLink()));
+		items.add(new StackableItem("arrow", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "arrow").createSpriteLink()));
+		items.add(new StackableItem("string", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "string").createSpriteLink()));
+		items.add(new StackableItem("Coal", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "coal").createSpriteLink()));
+		items.add(new StackableItem("Iron Ore", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "iron_ore").createSpriteLink()));
+		items.add(new StackableItem("Lapis", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "lapis").createSpriteLink()));
+		items.add(new StackableItem("Gold Ore", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gold_ore").createSpriteLink()));
+		items.add(new StackableItem("Iron", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "iron_ingot").createSpriteLink()));
+		items.add(new StackableItem("Gold", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gold_ingot").createSpriteLink()));
+		items.add(new StackableItem("Rose", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "red_flower").createSpriteLink()));
+		items.add(new StackableItem("Gunpowder", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gunpowder").createSpriteLink()));
+		items.add(new StackableItem("Slime", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "slime").createSpriteLink()));
+		items.add(new StackableItem("glass", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "glass").createSpriteLink()));
+		items.add(new StackableItem("cloth", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cloth").createSpriteLink()));
+		items.add(new StackableItem("gem", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gem").createSpriteLink()));
+		items.add(new StackableItem("Scale", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "scale").createSpriteLink()));
+		items.add(new StackableItem("Shard", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "shard").createSpriteLink()));
+		items.add(new StackableItem("Cloud Ore", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cloud_ore").createSpriteLink()));
+		items.add(new StackableItem("Glass Bottle", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "glass_bottle").createSpriteLink()));
 
 		return items;
 	}
