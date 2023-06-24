@@ -49,9 +49,6 @@ public class Sheep extends PassiveMob {
 			if (tile instanceof GrassTile) {
 				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
 				cut = false;
-			} else if (tile instanceof TallGrassTile) {
-				level.setTile(x >> 4, y >> 4, Tiles.get("grass"));
-				cut = false;
 			}
 		}
 	}

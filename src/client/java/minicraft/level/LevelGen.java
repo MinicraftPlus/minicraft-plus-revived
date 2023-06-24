@@ -417,18 +417,6 @@ public class LevelGen {
 			}
 		}
 
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				int xx = x + random.nextInt(3) - random.nextInt(3);
-				int yy = y + random.nextInt(3) - random.nextInt(3);
-				if (xx >= 0 && yy >= 0 && xx < w && yy < h && random.nextInt(5) < 3) {
-					if (map[xx + yy * w] == Tiles.get("grass").id) {
-						map[xx + yy * w] = TallGrassTile.grassIDs.get(random.nextInt(TallGrassTile.grassIDs.size()));
-					}
-				}
-			}
-		}
-
 		for (int i = 0; i < w * h / 400; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
