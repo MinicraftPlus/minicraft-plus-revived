@@ -152,11 +152,11 @@ public class Inventory {
 			return null;
 		}
 
-		if (!unlimited) {
-			// First check if the item can stack with the slot.
-			if (slot >= 0) {
-				if (item instanceof StackableItem && slot < items.size() && ((StackableItem) item).stacksWith(items.get(slot))) {
-					StackableItem toStack = (StackableItem) items.get(slot);
+		// First check if the item can stack with the slot.
+		if (slot >= 0) {
+			if (item instanceof StackableItem && slot < items.size() && ((StackableItem) item).stacksWith(items.get(slot))) {
+				StackableItem toStack = (StackableItem) items.get(slot);
+				if (!unlimited) {
 					if (toStack.count < toStack.maxCount) {
 						if (toStack.count + ((StackableItem) item).count <= toStack.maxCount) {
 							toStack.count += ((StackableItem) item).count;
@@ -166,31 +166,46 @@ public class Inventory {
 							toStack.count = toStack.maxCount;
 						}
 					}
-				}
-			}
-
-			if (items.size() < maxItem) {
-				if (item instanceof StackableItem) { // If the item is a item...
-					StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-					if (toTake.count <= toTake.maxCount) {
-						items.add(slot + 1, toTake);
-						return null;
-					} else {
-						StackableItem adding = toTake.copy();
-						adding.count = toTake.maxCount;
-						items.add(slot + 1, adding); // Add the item to the items list
-						toTake.count -= adding.count;
-						return singleton ? add(Math.min(slot + 2, maxItem - 1), toTake) : add(toTake); // Try to add the remaining items at the end
-					}
 				} else {
-					items.add(slot + 1, item); // Add the item to the items list
+					toStack.count += ((StackableItem) item).count;
 					return null;
 				}
+			}
+		}
+
+		if (!unlimited) {
+			if (items.size() < maxItem) {
+				if (slot < 0) items.add(0, item); // Insert to the first slot
+				else if (item instanceof StackableItem) { // If the item is a stackable item...
+					StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
+					// If the target slot stacks with the item but the stack size reaches the maximum (checked before this).
+					if (slot < items.size() && toTake.stacksWith(items.get(slot))) {
+						return singleton ? add(toTake) : add(slot + 1, toTake); // Try to add at the end or to the next slot
+					} else { // The target slot does not stack with the item.
+						if (toTake.count <= toTake.maxCount) {
+							items.add(Math.min(slot, items.size()), toTake); // Insert to the slot
+						} else {
+							StackableItem adding = toTake.copy();
+							adding.count = toTake.maxCount;
+							items.add(Math.min(slot + 1, items.size()), adding); // Add the item to the items list
+							toTake.count -= adding.count;
+							// Try to add the remaining items at the end or to the next slot
+							return singleton ? add(toTake) : add(slot + 1, toTake);
+						}
+					}
+				} else {
+					items.add(slot, item); // Add the item to the items list
+				}
+				return null;
 			} else {
 				return add(item); // Try to stack with existed stacks
 			}
 		} else {
-			items.add(slot + 1, item);
+			if (slot < 0) {
+				items.add(0, item); // Insert to the first slot
+			} else {
+				items.add(Math.min(slot, items.size()), item);
+			}
 			return null;
 		}
 	}

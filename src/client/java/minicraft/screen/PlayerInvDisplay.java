@@ -137,33 +137,38 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean transferAll;
-					if (input.getKey("SHIFT-ATTACK").clicked) {
+					if (input.getKey("SHIFT-ENTER").clicked) {
 						transferAll = true;
 					} else if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
 						transferAll = !(fromItem instanceof StackableItem);
 					} else return;
 
 					Item toItem = fromItem.copy();
+					if (toItem instanceof StackableItem && transferAll)
+						((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
 
-					boolean finalAdd = true;
-					if (fromItem instanceof StackableItem) {
-						Item slot;
-						if (((StackableItem) fromItem).stacksWith(slot = to.get(toSel))) {
-							if (transferAll) {
-								if (((StackableItem) slot).count < ((StackableItem) slot).maxCount) {
-									// Fill the slot to the maximum
-									((StackableItem) slot).count = ((StackableItem) slot).maxCount;
-									finalAdd = false;
+					if (input.getKey("CTRL").down) {
+						if (to.add(toItem) != null) { // Ignoring the cursor
+							Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
+						}
+					} else {
+						boolean finalAdd = true;
+						if (fromItem instanceof StackableItem && toSel < to.invSize()) {
+							Item slot;
+							if (((StackableItem) fromItem).stacksWith(slot = to.get(toSel))) {
+								if (transferAll) {
+									if (((StackableItem) slot).count < ((StackableItem) slot).maxCount) {
+										// Fill the slot to the maximum
+										((StackableItem) slot).count = ((StackableItem) slot).maxCount;
+										finalAdd = false;
+									}
 								}
-							} else {
-								((StackableItem) slot).count++;
-								finalAdd = false;
 							}
 						}
-					}
 
-					if (finalAdd && to.add(toSel, toItem, false) != null) {
-						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
+						if (finalAdd && to.add(toSel, toItem, false) != null) {
+							Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
+						}
 					}
 					update();
 				}

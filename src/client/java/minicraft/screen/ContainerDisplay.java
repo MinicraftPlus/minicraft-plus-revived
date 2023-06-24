@@ -129,7 +129,7 @@ public class ContainerDisplay extends Display {
 						move = ((StackableItem)toItem).count;
 					}
 
-					if (to.add(toSel, toItem, false) != null) {
+					if ((input.getKey("CTRL").down ? to.add(toItem) : to.add(toSel, toItem, false)) != null) {
 						((StackableItem)fromItem).count -= move - ((StackableItem) toItem).count;
 					} else if (!transferAll) {
 						((StackableItem)fromItem).count--;
@@ -138,7 +138,7 @@ public class ContainerDisplay extends Display {
 					}
 					update();
 				} else {
-					if (to.add(toSel, toItem, false) == null) {
+					if ((input.getKey("CTRL").down ? to.add(toItem) : to.add(toSel, toItem, false)) == null) {
 						from.remove(fromSel);
 						update();
 					}
