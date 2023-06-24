@@ -25,23 +25,23 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT));
-
+		InventoryMenu invMenu = new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT, this::update);
 		creativeMode = Game.isMode("minicraft.settings.mode.creative");
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
-				menus[0],
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
-					creativeInv = true;
-				}}
+				invMenu,
+				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT, true, false)
 			};
 
-			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+			menus[1].translate(invMenu.getBounds().getWidth() + padding, 0);
 			update();
 
-			if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
-		} else creativeInv = null;
+			if(invMenu.getNumOptions() == 0) onSelectionChange(0, 1);
+		} else {
+			creativeInv = null;
+			menus = new Menu[] { invMenu };
+		}
 
 		this.player = player;
 
@@ -59,78 +59,6 @@ public class PlayerInvDisplay extends Display {
 
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
-			if (selection == 0) {
-				// Item slot movement; preventing up and down being proceeded before this
-				if (input.getKey("SHIFT").down && input.getKey("CURSOR-UP").clicked) {
-					int sel = menus[0].getSelection();
-					if (sel > 0) { // If there is an entry above.
-						Inventory inv = player.getInventory();
-						inv.add(sel - 1, inv.remove(sel));
-						menus[0].setSelection(sel - 1);
-						Sound.play("select");
-						update();
-					}
-					return;
-				} else if (input.getKey("SHIFT").down && input.getKey("CURSOR-DOWN").clicked) {
-					int sel = menus[0].getSelection();
-					if (menus[0].getNumOptions() > sel + 1) { // If there is an entry below.
-						Inventory inv = player.getInventory();
-						inv.add(sel + 1, inv.remove(sel));
-						menus[0].setSelection(sel + 1);
-						Sound.play("select");
-						update();
-					}
-					return;
-
-				} else if (input.getKey("CTRL").down && input.getKey("CURSOR-UP").clicked) { // StackableItem slot stacking
-					int sel = menus[0].getSelection();
-					if (sel > 0) { // If there is an entry above.
-						Inventory inv = player.getInventory();
-						Item item = inv.get(sel);
-						Item toItem = inv.get(sel - 1);
-						if (item instanceof StackableItem && ((StackableItem) item).stacksWith(toItem)) {
-							if (((StackableItem) toItem).count < ((StackableItem) toItem).maxCount) {
-								if (((StackableItem) toItem).count + ((StackableItem) item).count <= ((StackableItem) toItem).maxCount) {
-									((StackableItem) toItem).count += ((StackableItem) item).count;
-									inv.remove(sel);
-								} else {
-									((StackableItem) item).count -= ((StackableItem) toItem).maxCount - ((StackableItem) toItem).count;
-									((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
-								}
-
-								menus[0].setSelection(sel - 1);
-								Sound.play("select");
-								update();
-							}
-						}
-					}
-					return;
-				} else if (input.getKey("CTRL").down && input.getKey("CURSOR-DOWN").clicked) { // StackableItem slot stacking
-					int sel = menus[0].getSelection();
-					if (menus[0].getNumOptions() > sel + 1) { // If there is an entry below.
-						Inventory inv = player.getInventory();
-						Item item = inv.get(sel);
-						Item toItem = inv.get(sel + 1);
-						if (item instanceof StackableItem && ((StackableItem) item).stacksWith(toItem)) {
-							if (((StackableItem) toItem).count < ((StackableItem) toItem).maxCount) {
-								if (((StackableItem) toItem).count + ((StackableItem) item).count <= ((StackableItem) toItem).maxCount) {
-									((StackableItem) toItem).count += ((StackableItem) item).count;
-									inv.remove(sel);
-								} else {
-									((StackableItem) item).count -= ((StackableItem) toItem).maxCount - ((StackableItem) toItem).count;
-									((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
-									menus[0].setSelection(sel + 1);
-								}
-
-								Sound.play("select");
-								update();
-							}
-						}
-					}
-					return;
-				}
-			}
-
 			super.tick(input);
 
 			if (input.inputPressed("menu")) {
@@ -268,9 +196,7 @@ public class PlayerInvDisplay extends Display {
 
 	private void update() {
 		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]) {{
-			creativeInv = true;
-		}};
+		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 	}
