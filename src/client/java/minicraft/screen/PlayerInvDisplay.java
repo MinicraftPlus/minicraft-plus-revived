@@ -108,7 +108,6 @@ public class PlayerInvDisplay extends Display {
 					}
 
 					from = player.getInventory();
-					to = creativeInv;
 
 					int fromSel = curMenu.getSelection();
 					Item fromItem = from.get(fromSel);
@@ -138,17 +137,32 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean transferAll;
-					if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
-						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+					if (input.getKey("SHIFT-ATTACK").clicked) {
+						transferAll = true;
+					} else if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
+						transferAll = !(fromItem instanceof StackableItem);
 					} else return;
 
 					Item toItem = fromItem.copy();
 
-					if (!transferAll) {
-						((StackableItem)toItem).count = 1;
+					boolean finalAdd = true;
+					if (fromItem instanceof StackableItem) {
+						Item slot;
+						if (((StackableItem) fromItem).stacksWith(slot = to.get(toSel))) {
+							if (transferAll) {
+								if (((StackableItem) slot).count < ((StackableItem) slot).maxCount) {
+									// Fill the slot to the maximum
+									((StackableItem) slot).count = ((StackableItem) slot).maxCount;
+									finalAdd = false;
+								}
+							} else {
+								((StackableItem) slot).count++;
+								finalAdd = false;
+							}
+						}
 					}
 
-					if (to.add(toSel, toItem, false) != null) {
+					if (finalAdd && to.add(toSel, toItem, false) != null) {
 						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
 					}
 					update();

@@ -154,7 +154,7 @@ public class Inventory {
 
 		if (!unlimited) {
 			// First check if the item can stack with the slot.
-			if (item instanceof StackableItem && ((StackableItem) item).stacksWith(items.get(slot))) {
+			if (item instanceof StackableItem && slot < items.size() && ((StackableItem) item).stacksWith(items.get(slot))) {
 				StackableItem toStack = (StackableItem) items.get(slot);
 				if (toStack.count + ((StackableItem) item).count <= toStack.maxCount) {
 					toStack.count += ((StackableItem) item).count;

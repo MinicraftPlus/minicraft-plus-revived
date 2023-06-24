@@ -126,7 +126,7 @@ public class ContainerDisplay extends Display {
 					if (!transferAll) {
 						((StackableItem)toItem).count = 1;
 					} else {
-						move = ((StackableItem)fromItem).count;
+						move = ((StackableItem)toItem).count;
 					}
 
 					if (to.add(toSel, toItem, false) != null) {
