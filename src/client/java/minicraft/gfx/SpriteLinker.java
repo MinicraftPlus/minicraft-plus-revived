@@ -72,6 +72,13 @@ public class SpriteLinker {
 		setSprite(SpriteType.Entity, key, spriteSheet);
 	}
 
+	public void refreshSkins() {
+		linkedSheets.forEach(s -> {
+			if (s.key.startsWith("skin."))
+				s.reloadSprite();
+		});
+	}
+
 	private static final String MISSING_ENTITY_KEY = "missing_entity", MISSING_ITEM_KEY = "missing_item", MISSING_TILE_KEY = "missing_tile";
 
 	/**

@@ -31,7 +31,6 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -62,7 +61,6 @@ public class SkinDisplay extends Display {
 		selectedSkin = defaultSkins.get(0);
 
 		Logging.RESOURCEHANDLER_SKIN.debug("Refreshing skins.");
-		refreshSkins();
 	}
 
 	public SkinDisplay() {
@@ -78,6 +76,7 @@ public class SkinDisplay extends Display {
 		refreshSkins();
 		refreshEntries();
 		menus[0].setSelection(new ArrayList<>(skins.keySet()).indexOf(selectedSkin));
+		Renderer.spriteLinker.refreshSkins();
 	}
 
 	public static void refreshSkins() {
@@ -124,16 +123,7 @@ public class SkinDisplay extends Display {
 	public static void releaseSkins() {
 		for (String skin : new ArrayList<>(skins.keySet())) {
 			if (!defaultSkins.contains(skin) && !skin.equals(selectedSkin)) {
-				Renderer.spriteLinker.setSkin("skin." + skin, null);
-				if (skins.containsKey(skin)) for (LinkedSprite[] a : skins.remove(skin)) {
-					for (LinkedSprite b : a) {
-						try {
-							b.destroy();
-						} catch (DestroyFailedException e) {
-							Logging.RESOURCEHANDLER_SKIN.trace(e);
-						}
-					}
-				}
+				deregisterSkin(skin);
 			}
 		}
 	}
@@ -198,22 +188,25 @@ public class SkinDisplay extends Display {
 			if (file.exists()) try {
 				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 16);
 				Renderer.spriteLinker.setSkin("skin." + name, sheet);
-				System.out.println("skin." + name);
 				skins.put(name, Mob.compileMobSpriteAnimations(0, 0, "skin." + name));
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", skinPath);
 			} catch (SecurityException e) {
 				Logging.RESOURCEHANDLER_SKIN.error("Access to file located at {} was denied. Check if game is given permission.", skinPath);
 			} else {
-				Renderer.spriteLinker.setSkin("skin." + name, null);
-				if (skins.containsKey(name)) for (LinkedSprite[] a : skins.remove(name)) {
-					for (LinkedSprite b : a) {
-						try {
-							b.destroy();
-						} catch (DestroyFailedException e) {
-							Logging.RESOURCEHANDLER_SKIN.trace(e);
-						}
-					}
+				deregisterSkin(name);
+			}
+		}
+	}
+
+	private static void deregisterSkin(String name) {
+		Renderer.spriteLinker.setSkin("skin." + name, null);
+		if (skins.containsKey(name)) for (LinkedSprite[] a : skins.remove(name)) {
+			for (LinkedSprite b : a) {
+				try {
+					b.destroy();
+				} catch (DestroyFailedException e) {
+					Logging.RESOURCEHANDLER_SKIN.trace(e);
 				}
 			}
 		}
