@@ -97,6 +97,10 @@ jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }}
 }
 
+application { // Execute only client main class
+    mainClass = "minicraft.core.Game"
+}
+
 // Don't override if we're building a tar package.
 tasks.withType(Tar){
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
