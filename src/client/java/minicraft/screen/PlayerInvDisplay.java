@@ -148,7 +148,7 @@ public class PlayerInvDisplay extends Display {
 						((StackableItem)toItem).count = 1;
 					}
 
-					if (to.add(toSel, toItem) != null) {
+					if (to.add(toSel, toItem, false) != null) {
 						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
 					}
 					update();

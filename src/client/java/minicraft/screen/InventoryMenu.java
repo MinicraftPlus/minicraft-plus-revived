@@ -46,17 +46,19 @@ class InventoryMenu extends ItemListMenu {
 			if (input.getKey("SHIFT").down && input.getKey("CURSOR-UP").clicked) {
 				int sel = getSelection();
 				if (sel > 0) { // If there is an entry above.
-					inv.add(sel - 1, inv.remove(sel));
-					setSelection(sel - 1);
+					inv.swapSlots(sel, --sel);
+					setSelection(sel);
 					Sound.play("select");
+					refreshEntries();
 				}
 				return;
 			} else if (input.getKey("SHIFT").down && input.getKey("CURSOR-DOWN").clicked) {
 				int sel = getSelection();
 				if (getNumOptions() > sel + 1) { // If there is an entry below.
-					inv.add(sel + 1, inv.remove(sel));
-					setSelection(sel + 1);
+					inv.swapSlots(sel, ++sel);
+					setSelection(sel);
 					Sound.play("select");
+					refreshEntries();
 				}
 				return;
 
@@ -146,5 +148,10 @@ class InventoryMenu extends ItemListMenu {
 	public void removeSelectedEntry() {
 		inv.remove(getSelection());
 		super.removeSelectedEntry();
+	}
+
+	// This does not reconstruct and recalculate the frame.
+	private void refreshEntries() {
+		setEntries(ItemEntry.useItems(inv.getItems()));
 	}
 }

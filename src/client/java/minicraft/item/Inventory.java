@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -134,7 +135,16 @@ public class Inventory {
 	 * @return the remaining item (original object) not being added; {@code null} if whole stack of items has been added successfully;
 	 * if the returned item is stackable item, it must have count greater than 0
 	 */
-	public @Nullable Item add(int slot, @Nullable Item item) {
+	public @Nullable Item add(int slot, @Nullable Item item) { return add(slot, item, true); }
+	/**
+	 * Adds an item to a specific spot in the inventory.
+	 * @param slot Index to place item at.
+	 * @param item Item to be added.
+	 * @param singleton Whether to add into the slot when overflow; applicable only to stackable items
+	 * @return the remaining item (original object) not being added; {@code null} if whole stack of items has been added successfully;
+	 * if the returned item is stackable item, it must have count greater than 0
+	 */
+	public @Nullable Item add(int slot, @Nullable Item item, boolean singleton) {
 		if (item == null) return null;
 		// Do not add to inventory if it is a PowerGlove
 		if (item instanceof PowerGloveItem) {
@@ -143,6 +153,18 @@ public class Inventory {
 		}
 
 		if (!unlimited) {
+			// First check if the item can stack with the slot.
+			if (item instanceof StackableItem && ((StackableItem) item).stacksWith(items.get(slot))) {
+				StackableItem toStack = (StackableItem) items.get(slot);
+				if (toStack.count + ((StackableItem) item).count <= toStack.maxCount) {
+					toStack.count += ((StackableItem) item).count;
+					return null;
+				} else { // There are remaining items.
+					((StackableItem) item).count -= toStack.maxCount - toStack.count;
+					toStack.count = toStack.maxCount;
+				}
+			}
+
 			if (items.size() < maxItem) {
 				if (item instanceof StackableItem) { // If the item is a item...
 					StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
@@ -154,19 +176,24 @@ public class Inventory {
 						adding.count = toTake.maxCount;
 						items.add(slot, adding); // Add the item to the items list
 						toTake.count -= adding.count;
-						return add(toTake); // Try to add the remaining items at the end
+						return singleton ? add(Math.min(slot + 1, maxItem), toTake) : add(toTake); // Try to add the remaining items at the end
 					}
 				} else {
 					items.add(slot, item); // Add the item to the items list
 					return null;
 				}
 			} else {
-				return item;
+				return add(item); // Try to stack with existed stacks
 			}
 		} else {
 			items.add(slot, item);
 			return null;
 		}
+	}
+
+	/** Swaps 2 slots within the inventory. */
+	public void swapSlots(int a, int b) {
+		Collections.swap(items, a, b);
 	}
 
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
