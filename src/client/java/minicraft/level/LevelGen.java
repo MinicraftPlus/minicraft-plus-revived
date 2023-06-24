@@ -3,9 +3,7 @@ package minicraft.level;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
-import minicraft.level.tile.TallGrassTile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.TreeTile;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -15,9 +13,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.Random;
-import java.util.function.BiFunction;
 
 public class LevelGen {
 	private static long worldSeed = 0;

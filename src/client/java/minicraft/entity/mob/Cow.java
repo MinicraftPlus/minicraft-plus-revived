@@ -4,7 +4,6 @@ import minicraft.core.io.Settings;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 import minicraft.level.tile.GrassTile;
-import minicraft.level.tile.TallGrassTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 

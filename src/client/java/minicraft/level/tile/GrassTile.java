@@ -125,7 +125,5 @@ public class GrassTile extends Tile implements BoostablePlant {
 	static { // The left-hand-sided data is tile id; the right-hand-sided data is tile data.
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 0));
 		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 1));
-		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 52, (short) 0));
-		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 53, (short) 0));
 	}
 }

@@ -9,7 +9,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.tile.GrassTile;
-import minicraft.level.tile.TallGrassTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import org.jetbrains.annotations.Nullable;
