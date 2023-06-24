@@ -509,7 +509,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (input.inputPressed("menu") && activeItem != null) {
-				tryAddToInvOrDrop(activeItem);
+				tryAddToInvOrDrop(activeItem, true);
 				activeItem = null;
 				if (isFishing) {
 					isFishing = false;
@@ -567,7 +567,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
 			if (prevItem != null) { // and you had a previous item that we should care about...
-				tryAddToInvOrDrop(prevItem); // Then add that previous item to your inventory so it isn't lost.
+				tryAddToInvOrDrop(prevItem, true); // Then add that previous item to your inventory so it isn't lost.
 			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
@@ -1195,10 +1195,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/**
 	 * Trying to add a stack of item(s) to the top of player inventory.
 	 * If there is/are no more item(s) can be added to the inventory, drop the item(s) near the player.
+	 * @param head {@code true} if force-adding to the first slot; {@code false} if merging and adding to the end
 	 */
-	public void tryAddToInvOrDrop(@Nullable Item item) {
+	public void tryAddToInvOrDrop(@Nullable Item item, boolean head) {
 		if (item != null) {
-			if (inventory.add(0, item) != null) {
+			if ((head ? inventory.add(-1, item) : inventory.add(item)) != null) {
 				getLevel().dropItem(x, y, item);
 			}
 		}

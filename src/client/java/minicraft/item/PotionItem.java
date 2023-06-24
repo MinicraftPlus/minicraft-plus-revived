@@ -40,7 +40,7 @@ public class PotionItem extends StackableItem {
 
 	protected boolean interactOn(boolean subClassSuccess, Player player) {
 		if (subClassSuccess)
-			player.tryAddToInvOrDrop(Items.get("glass bottle"));
+			player.tryAddToInvOrDrop(Items.get("glass bottle"), false);
 		return super.interactOn(subClassSuccess);
 	}
 

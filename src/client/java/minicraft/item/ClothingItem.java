@@ -48,7 +48,7 @@ public class ClothingItem extends StackableItem {
 				lastClothing = (ClothingItem) Items.get("Reg Clothes");
 			lastClothing = lastClothing.copy();
 			lastClothing.count = 1;
-			player.tryAddToInvOrDrop(lastClothing);
+			player.tryAddToInvOrDrop(lastClothing, false);
 			player.shirtColor = playerCol;
 			return super.interactOn(true);
 		}

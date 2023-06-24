@@ -130,7 +130,7 @@ public class Inventory {
 
 	/**
 	 * Adds an item to a specific spot in the inventory.
-	 * @param slot Index to place item at.
+	 * @param slot Index to place item at; -1 if force-adding to the first slot
 	 * @param item Item to be added.
 	 * @return the remaining item (original object) not being added; {@code null} if whole stack of items has been added successfully;
 	 * if the returned item is stackable item, it must have count greater than 0
@@ -138,7 +138,7 @@ public class Inventory {
 	public @Nullable Item add(int slot, @Nullable Item item) { return add(slot, item, true); }
 	/**
 	 * Adds an item to a specific spot in the inventory.
-	 * @param slot Index to place item at.
+	 * @param slot Index to place item at; -1 if force-adding to the first slot
 	 * @param item Item to be added.
 	 * @param singleton Whether to add into the slot when overflow; applicable only to stackable items
 	 * @return the remaining item (original object) not being added; {@code null} if whole stack of items has been added successfully;
@@ -154,14 +154,18 @@ public class Inventory {
 
 		if (!unlimited) {
 			// First check if the item can stack with the slot.
-			if (item instanceof StackableItem && slot < items.size() && ((StackableItem) item).stacksWith(items.get(slot))) {
-				StackableItem toStack = (StackableItem) items.get(slot);
-				if (toStack.count + ((StackableItem) item).count <= toStack.maxCount) {
-					toStack.count += ((StackableItem) item).count;
-					return null;
-				} else { // There are remaining items.
-					((StackableItem) item).count -= toStack.maxCount - toStack.count;
-					toStack.count = toStack.maxCount;
+			if (slot >= 0) {
+				if (item instanceof StackableItem && slot < items.size() && ((StackableItem) item).stacksWith(items.get(slot))) {
+					StackableItem toStack = (StackableItem) items.get(slot);
+					if (toStack.count < toStack.maxCount) {
+						if (toStack.count + ((StackableItem) item).count <= toStack.maxCount) {
+							toStack.count += ((StackableItem) item).count;
+							return null;
+						} else { // There are remaining items.
+							((StackableItem) item).count -= toStack.maxCount - toStack.count;
+							toStack.count = toStack.maxCount;
+						}
+					}
 				}
 			}
 
@@ -169,24 +173,24 @@ public class Inventory {
 				if (item instanceof StackableItem) { // If the item is a item...
 					StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
 					if (toTake.count <= toTake.maxCount) {
-						items.add(slot, toTake);
+						items.add(slot + 1, toTake);
 						return null;
 					} else {
 						StackableItem adding = toTake.copy();
 						adding.count = toTake.maxCount;
-						items.add(slot, adding); // Add the item to the items list
+						items.add(slot + 1, adding); // Add the item to the items list
 						toTake.count -= adding.count;
-						return singleton ? add(Math.min(slot + 1, maxItem), toTake) : add(toTake); // Try to add the remaining items at the end
+						return singleton ? add(Math.min(slot + 2, maxItem - 1), toTake) : add(toTake); // Try to add the remaining items at the end
 					}
 				} else {
-					items.add(slot, item); // Add the item to the items list
+					items.add(slot + 1, item); // Add the item to the items list
 					return null;
 				}
 			} else {
 				return add(item); // Try to stack with existed stacks
 			}
 		} else {
-			items.add(slot, item);
+			items.add(slot + 1, item);
 			return null;
 		}
 	}
