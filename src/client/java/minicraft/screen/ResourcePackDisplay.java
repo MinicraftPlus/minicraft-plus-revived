@@ -721,13 +721,13 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		SpriteAnimation.refreshAnimations();
-		Renderer.spriteLinker.updateLinkedSheets();
-		Localization.loadLanguage();
-
 		// Refreshing skins
 		SkinDisplay.refreshSkins();
 		SkinDisplay.releaseSkins();
+
+		SpriteAnimation.refreshAnimations();
+		Renderer.spriteLinker.updateLinkedSheets();
+		Localization.loadLanguage();
 	}
 
 	/**

@@ -31,6 +31,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -197,6 +198,7 @@ public class SkinDisplay extends Display {
 			if (file.exists()) try {
 				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 16);
 				Renderer.spriteLinker.setSkin("skin." + name, sheet);
+				System.out.println("skin." + name);
 				skins.put(name, Mob.compileMobSpriteAnimations(0, 0, "skin." + name));
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", skinPath);

@@ -74,12 +74,6 @@ public class SpriteLinker {
 
 	private static final String MISSING_ENTITY_KEY = "missing_entity", MISSING_ITEM_KEY = "missing_item", MISSING_TILE_KEY = "missing_tile";
 
-	/** Textures for missing textures for entity, item or tile */
-	public static final LinkedSprite
-		MISSING_ENTITY_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, MISSING_ENTITY_KEY).createSpriteLink(true),
-		MISSING_ITEM_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, MISSING_ITEM_KEY).createSpriteLink(true),
-		MISSING_TILE_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, MISSING_TILE_KEY).createSpriteLink(true);
-
 	/**
 	 * Getting the missing texture with the specific sprite category.
 	 * @param type The sprite category.
@@ -87,9 +81,9 @@ public class SpriteLinker {
 	 */
 	public static LinkedSprite missingTexture(SpriteType type) {
 		switch (type) {
-			case Entity: return MISSING_ENTITY_TEXTURE;
-			case Item: return MISSING_ITEM_TEXTURE;
-			case Tile: return MISSING_TILE_TEXTURE;
+			case Entity: return LinkedSprite.MISSING_ENTITY_TEXTURE;
+			case Item: return LinkedSprite.MISSING_ITEM_TEXTURE;
+			case Tile: return LinkedSprite.MISSING_TILE_TEXTURE;
 			default: return null;
 		}
 	}
@@ -128,8 +122,23 @@ public class SpriteLinker {
 		Item, Gui, Tile, Entity // Only for resource packs; Skin is not applied.
 	}
 
+	public HashMap<String, MinicraftImage> getMappingByType(SpriteType type) {
+		switch (type) {
+			case Entity: return entitySheets;
+			default: case Gui: return guiSheets;
+			case Item: return itemSheets;
+			case Tile: return tileSheets;
+		}
+	}
+
 	/** A sprite collector with resource collector. */
 	public static class LinkedSprite implements Destroyable {
+		/** Textures for missing textures for entity, item or tile */
+		public static final LinkedSprite
+			MISSING_ENTITY_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, MISSING_ENTITY_KEY).createSpriteLink(true),
+			MISSING_ITEM_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, MISSING_ITEM_KEY).createSpriteLink(true),
+			MISSING_TILE_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, MISSING_TILE_KEY).createSpriteLink(true);
+
 		private final String key; // The resource key.
 		private final SpriteType spriteType;
 		private final HashMap<String, MinicraftImage> linkedMap;
@@ -313,13 +322,7 @@ public class SpriteLinker {
 
 			public LinkedSprite createSpriteLink() { return createSpriteLink(true); }
 			public LinkedSprite createSpriteLink(boolean immutable) {
-				HashMap<String, MinicraftImage> linkedMap;
-				switch (spriteType) {
-					case Entity: linkedMap = Renderer.spriteLinker.entitySheets; break;
-					default: case Gui: linkedMap = Renderer.spriteLinker.guiSheets; break;
-					case Item: linkedMap = Renderer.spriteLinker.itemSheets; break;
-					case Tile: linkedMap = Renderer.spriteLinker.tileSheets; break;
-				}
+				HashMap<String, MinicraftImage> linkedMap = Renderer.spriteLinker.getMappingByType(spriteType);
 				LinkedSprite sprite = new LinkedSprite(spriteType, key, linkedMap, x, y, w, h, color, mirror, flip, immutable);
 				Renderer.spriteLinker.linkedSheets.add(sprite);
 				return sprite;

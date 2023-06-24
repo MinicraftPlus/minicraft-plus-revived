@@ -4,6 +4,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
@@ -87,6 +88,7 @@ public class Game {
 		Analytics.GameStartup.ping();
 
 		input = new InputHandler(Renderer.canvas);
+		Renderer.spriteLinker = new SpriteLinker();
 
 		ResourcePackDisplay.initPacks();
 		ResourcePackDisplay.reloadResources();
