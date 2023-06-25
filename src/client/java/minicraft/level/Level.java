@@ -9,6 +9,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Lantern;
 import minicraft.entity.furniture.Spawner;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Cow;
@@ -862,6 +863,12 @@ public class Level {
 		for (Tile t: getAreaTiles(x, y, 3))
 			if (t instanceof TorchTile)
 				return true;
+		for (Entity e : getEntitiesOfClass(Lantern.class)) {
+			if (e instanceof Lantern) {
+				if (Math.hypot((e.x >> 4) - x, (e.y >> 4) - y) < e.getLightRadius() - 1)
+					return true;
+			}
+		}
 
 		return false;
 	}
