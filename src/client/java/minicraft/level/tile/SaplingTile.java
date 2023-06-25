@@ -8,7 +8,7 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
-public class SaplingTile extends Tile implements BoostablePlant {
+public class SaplingTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
 
 	private Tile onType;
@@ -46,15 +46,5 @@ public class SaplingTile extends Tile implements BoostablePlant {
 		level.setTile(x, y, onType);
 		Sound.play("monsterhurt");
 		return true;
-	}
-
-	@Override
-	public boolean isValidBoostablePlantTarget(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
-	public void performPlantBoost(Level level, int x, int y) {
-		level.setData(x, y, Math.min(level.getData(x, y) + random.nextInt(30), 110));
 	}
 }

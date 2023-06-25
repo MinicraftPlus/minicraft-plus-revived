@@ -7,7 +7,6 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.item.Items;
 import minicraft.level.Level;
-import minicraft.level.tile.BoostablePlant;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class CropTile extends FarmTile implements BoostablePlant {
+public class CropTile extends FarmTile {
 	protected final @Nullable String seed;
 
 	protected int maxAge = 0b111; // Must be a bit mask.
@@ -136,17 +135,5 @@ public class CropTile extends FarmTile implements BoostablePlant {
 		if (fertilization > 511) fertilization = 511; // The maximum possible value to be reached.
 		// If this value exceeds 511, the final value would be greater than the hard maximum value that short can be.
 		level.setData(x, y, (data & (0b111 + (maxAge << 3))) + (fertilization << (3 + (maxAge + 1)/2)));
-	}
-
-	@Override
-	public boolean isValidBoostablePlantTarget(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
-	public void performPlantBoost(Level level, int x, int y) {
-		int data = level.getData(x, y);
-		int stage = (data >> 3) & maxAge;
-		level.setData(x, y, (data & ~(maxAge << 3)) + (Math.min(stage + random.nextInt(4) + 2, maxAge) << 3));
 	}
 }

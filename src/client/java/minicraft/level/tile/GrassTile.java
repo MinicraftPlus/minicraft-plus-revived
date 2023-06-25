@@ -17,7 +17,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class GrassTile extends Tile implements BoostablePlant {
+public class GrassTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
 		.setSingletonWithConnective(true);
@@ -89,41 +89,5 @@ public class GrassTile extends Tile implements BoostablePlant {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public boolean isValidBoostablePlantTarget(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
-	public void performPlantBoost(Level level, int x, int y) {
-		label:
-		for (int i = 0; i < 128; i++) {
-			int xx = x;
-			int yy = y;
-
-			for(int j = 0; j < i / 16; ++j) {
-				xx += x + random.nextInt(3) - 1;
-				yy += y + random.nextInt(3) - 1;
-				if (!(level.getTile(xx, yy) == this)) {
-					continue label;
-				}
-			}
-
-			if (level.getTile(xx, yy) == this && random.nextInt(10) == 0) {
-				performPlantBoost(level, xx, yy);
-			}
-
-			if (level.getTile(xx, yy) != this) continue; // Further confirming the tile is still grass tile.
-			Map.Entry<Short, Short> plant = boostPerformingPlants.get(random.nextInt(boostPerformingPlants.size()));
-			level.setTile(xx, yy, Tiles.get(plant.getKey()), plant.getValue());
-		}
-	}
-
-	private static final ArrayList<Map.Entry<Short, Short>> boostPerformingPlants = new ArrayList<>();
-	static { // The left-hand-sided data is tile id; the right-hand-sided data is tile data.
-		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 0));
-		boostPerformingPlants.add(new AbstractMap.SimpleEntry<>((short) 2, (short) 1));
 	}
 }
