@@ -1,6 +1,7 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
+import minicraft.core.Updater;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Cow;
@@ -122,6 +123,12 @@ public class Spawner extends Furniture {
 	private void trySpawn() {
 		if (level == null) return;
 		if (level.mobCount >= level.maxMobCount) return; // Can't spawn more entities
+		if (mob instanceof EnemyMob) {
+			if (level.depth >= 0 && Updater.tickCount > Updater.sleepEndTime && Updater.tickCount < Updater.sleepStartTime)
+				return; // Do not spawn if it is on the surface or above and it is under daylight.
+			if (level.isLight(x >> 4, y >> 4))
+				return;
+		}
 
 		Player player = getClosestPlayer();
 		if (player == null) return;
