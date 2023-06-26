@@ -15,11 +15,10 @@ class ItemListMenu extends Menu {
 			.setSearcherBar(true);
 	}
 
-	protected ItemListMenu(Builder b, ItemEntry[] entries, String title) { this(b, entries, title, true); }
-	protected ItemListMenu(Builder b, ItemEntry[] entries, String title, boolean localizeTitle) {
+	protected ItemListMenu(Builder b, ItemEntry[] entries, String title) {
 		super(b
 			.setEntries(entries)
-			.setTitle(title, localizeTitle)
+			.setTitle(title)
 			.createMenu()
 		);
 	}

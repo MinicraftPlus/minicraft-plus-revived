@@ -465,9 +465,8 @@ public class Menu {
 
 		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
 
-		public Builder setTitle(String title) { return setTitle(title, true); }
-		public Builder setTitle(String title, boolean localize) {
-			menu.title = localize ? Localization.getLocalized(title) : title;
+		public Builder setTitle(String title) {
+			menu.title = title;
 			return this;
 		}
 
