@@ -193,10 +193,10 @@ public class Load {
 
 	public Load() { this(Game.VERSION); }
 	public Load(Version worldVersion) {
-		this(false);
+		this(false, false);
 		worldVer = worldVersion;
 	}
-	public Load(boolean loadConfig) {
+	public Load(boolean loadConfig, boolean partialLoad) {
 		if (!loadConfig) return;
 		boolean resave = false;
 
@@ -205,11 +205,11 @@ public class Load {
 
 		// Check if Preferences.json exists. (new version)
 		if (new File(location + "Preferences.json").exists()) {
-			loadPrefs("Preferences");
+			loadPrefs("Preferences", partialLoad);
 
 			// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
-			loadPrefsOld("Preferences");
+			loadPrefsOld("Preferences", partialLoad);
 			Logging.SAVELOAD.info("Upgrading preferences to JSON.");
 			resave = true;
 
@@ -218,6 +218,8 @@ public class Load {
 			Logging.SAVELOAD.warn("No preferences found, creating new file.");
 			resave = true;
 		}
+
+		if (partialLoad) return; // Partial loading only loads partial preferences
 
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
@@ -425,7 +427,7 @@ public class Load {
 		Settings.setIdx("mode", mode);
 	}
 
-	private void loadPrefsOld(String filename) {
+	private void loadPrefsOld(String filename, boolean partialLoad) {
 		loadFromFile(location + filename + extension);
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
 
@@ -437,6 +439,8 @@ public class Load {
 
 		if (prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
+
+		if (partialLoad) return; // Partial loading only loads basic settings.
 
 		SkinDisplay.releaseSkins();
 
@@ -502,7 +506,7 @@ public class Load {
 		}
 	}
 
-	private void loadPrefs(String filename) {
+	private void loadPrefs(String filename, boolean partialLoad) {
 		JSONObject json;
 		try {
 			json = new JSONObject(loadFromFile(location + filename + ".json", false));
@@ -519,6 +523,9 @@ public class Load {
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("fps", json.getInt("fps"));
 		Settings.set("showquests", json.optBoolean("showquests", true));
+		Settings.set("hardwareacc", json.optBoolean("hardwareacc", true));
+
+		if (partialLoad) return; // Partial loading only loads basic settings.
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
