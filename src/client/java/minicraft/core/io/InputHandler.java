@@ -114,8 +114,6 @@ public class InputHandler implements KeyListener {
 		} catch (ControllerUnpluggedException e) {
 			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
 		}
-
-		lastInputActivityListener.start();
 	}
 	public InputHandler(Component inputSource) {
 		this();
@@ -206,6 +204,8 @@ public class InputHandler implements KeyListener {
 			for (Key key: keyboard.values())
 				key.tick(); // Call tick() for each key.
 		}
+
+		lastInputActivityListener.tick();
 
 		// Also update the controller button state.
 		for (ControllerButton btn : ControllerButton.values()) {
@@ -632,24 +632,15 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
-	private class LastInputActivityListener extends Thread {
+	private class LastInputActivityListener {
 		public long lastKeyActivityTimestamp = 0;
 		public long lastButtonActivityTimestamp = 0;
 
-		public LastInputActivityListener() {
-			super("LastInputActivityListener");
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				if (getAllPressedKeys().size() > 0)
-					lastKeyActivityTimestamp = System.currentTimeMillis();
-				if (getAllPressedButtons().size() > 0)
-					lastButtonActivityTimestamp = System.currentTimeMillis();
-				if (isInterrupted())
-					return;
-			}
+		public void tick() {
+			if (getAllPressedKeys().size() > 0)
+				lastKeyActivityTimestamp = System.currentTimeMillis();
+			if (getAllPressedButtons().size() > 0)
+				lastButtonActivityTimestamp = System.currentTimeMillis();
 		}
 	}
 }
