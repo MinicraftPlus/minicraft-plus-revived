@@ -89,7 +89,7 @@ public class Initializer extends Game {
 			}
 
 			now = System.nanoTime();
-			if (now >= lastRender + 1E9D / MAX_FPS / 1.05) {
+			if (now >= lastRender + 1E9D / MAX_FPS / 1.01) {
 				frames++;
 				lastRender = now;
 				Renderer.render();
