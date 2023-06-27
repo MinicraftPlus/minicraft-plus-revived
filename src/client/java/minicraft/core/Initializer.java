@@ -89,11 +89,22 @@ public class Initializer extends Game {
 			}
 
 			now = System.nanoTime();
-			if (now >= lastRender + 1E9D / MAX_FPS) {
+			if (now >= lastRender + 1E9D / MAX_FPS / 1.05) {
 				frames++;
 				lastRender = now;
 				Renderer.render();
 			}
+
+			try {
+				long curNano = System.nanoTime();
+				long untilNextTick = (long) (lastTick + nsPerTick - curNano);
+				long untilNextFrame = (long) (lastRender + 1E9D / MAX_FPS - curNano);
+				if (untilNextTick > 1E3 && untilNextFrame > 1E3) {
+					double timeToWait = Math.min(untilNextTick, untilNextFrame) / 1.2; // in nanosecond
+					//noinspection BusyWait
+					Thread.sleep((long) Math.floor(timeToWait / 1E6), (int) ((timeToWait - Math.floor(timeToWait)) % 1E6));
+				}
+			} catch (InterruptedException ignored) {}
 
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				long interval = System.currentTimeMillis() - lastTimer1;
