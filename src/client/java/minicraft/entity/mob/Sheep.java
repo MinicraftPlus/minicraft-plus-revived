@@ -19,6 +19,8 @@ public class Sheep extends PassiveMob {
 
 	public boolean cut = false;
 
+	private boolean followingPlayer = false;
+
 	/**
 	 * Creates a sheep entity.
 	 */
@@ -52,6 +54,28 @@ public class Sheep extends PassiveMob {
 				cut = false;
 			}
 		}
+
+		followingPlayer = false;
+		if (AirWizard.beaten) { // When there is no curse
+			Player player;
+			double distance = 0;
+			// If the player is close
+			if ((player = level.getClosestPlayer(x, y)) != null && (distance = Math.hypot(x - player.x, y - player.y)) < 6) {
+				// If the player is holding a wheat item
+				if (player.activeItem != null && player.activeItem.getName().equalsIgnoreCase("Wheat")) {
+					followingPlayer = true;
+					xmov = 0; // Reset velocity
+					ymov = 0;
+				}
+			}
+
+			if (followingPlayer && distance > 2) {
+				double theta = Math.atan2(player.y - y, player.x - x);
+				int xMov = (int) (speed * Math.cos(theta));
+				int yMov = (int) (speed * Math.sin(theta));
+				move(xMov, yMov);
+			}
+		}
 	}
 
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
@@ -78,5 +102,9 @@ public class Sheep extends PassiveMob {
 		dropItem(min, max, Items.get("Raw Beef"));
 
 		super.die();
+	}
+
+	protected boolean skipTick() {
+		return !followingPlayer && super.skipTick(); // Skip tick if following a player
 	}
 }
