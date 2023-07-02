@@ -2,6 +2,7 @@ name: Nightly build
 on:
   schedule:
     - cron:  '0 0 * * *'
+  workflow_dispatch:
   
 jobs:
   gradle:
@@ -28,8 +29,9 @@ jobs:
         automatic_release_tag: "latest"
         prerelease: true
         title: "Nightly (breaking)"
-        generate_release_notes: Nightly release. Contains changes that almost certainly will break your saves. Uncertain if runs at all.
+        generate_release_notes: true
         files: |
           LICENSE
+          ChangeLog.md
           build/libs/**.jar
         
