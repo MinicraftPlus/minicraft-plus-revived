@@ -72,7 +72,7 @@ public class GrassTile extends Tile {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.play("monsterhurt");
-					if (random.nextInt(2) != 0) { // 50% chance to drop Wheat seeds
+					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
 						level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Wheat Seeds"));
 					}
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
