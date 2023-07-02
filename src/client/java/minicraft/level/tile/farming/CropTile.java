@@ -5,7 +5,11 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.Particle;
+import minicraft.gfx.SpriteLinker;
+import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -13,6 +17,7 @@ import minicraft.level.tile.WaterTile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class CropTile extends FarmTile {
 	protected final @Nullable String seed;
@@ -92,6 +97,37 @@ public class CropTile extends FarmTile {
 		}
 
 		return successful;
+	}
+
+	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
+
+	@Override
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if (item instanceof StackableItem && item.getName().equalsIgnoreCase("Fertilizer")) {
+			((StackableItem) item).count--;
+			Random random = new Random();
+			for (int i = 0; i < 2; ++i) {
+				double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+				double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+				level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
+			}
+			int fertilization = getFertilization(level.getData(xt, yt));
+			if (fertilization < 100) { // More fertilization, lower the buffer is applied.
+				fertilize(level, xt, yt, 40);
+			} else if (fertilization < 200) {
+				fertilize(level, xt, yt, 30);
+			} else if (fertilization < 300) {
+				fertilize(level, xt, yt, 25);
+			} else if (fertilization < 400) {
+				fertilize(level, xt, yt, 20);
+			} else {
+				fertilize(level, xt, yt, 10);
+			}
+
+			return true;
+		}
+
+		return super.interact(level, xt, yt, player, item, attackDir);
 	}
 
 	/** Default harvest method, used for everything that doesn't really need any special behavior. */
