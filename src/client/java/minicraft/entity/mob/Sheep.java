@@ -45,11 +45,9 @@ public class Sheep extends PassiveMob {
 	public void tick() {
 		super.tick();
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		if (random.nextInt(1000) == 0) { // Grazing
-			if (tile instanceof GrassTile) {
-				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
-				cut = false;
-			}
+		if (tile instanceof GrassTile && random.nextInt(1000) == 0) { // Grazing
+			level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
+			cut = false;
 		}
 	}
 
