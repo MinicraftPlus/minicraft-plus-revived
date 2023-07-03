@@ -2,6 +2,7 @@ package minicraft.core;
 
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +64,13 @@ public class Initializer extends Game {
 				Localization.isDebugLocaleEnabled = true;
 			} else if (args[i].equalsIgnoreCase("--debug-unloc-tracing")) {
 				Localization.unlocalizedStringTracing = true;
+			} else if (args[i].toLowerCase().startsWith("--hardware-acceleration=")) {
+				switch (args[i].substring(24).toLowerCase()) { // Strip the whole matching string including equal sign
+					case "on": case "true": case "yes": case "t": case "y":
+						Settings.set("hardwareacc", true); break;
+					case "off": case "false": case "no": case "f": case "n":
+						Settings.set("hardwareacc", false); break;
+				}
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
