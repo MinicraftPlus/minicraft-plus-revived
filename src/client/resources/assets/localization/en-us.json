@@ -141,6 +141,8 @@
   "minicraft.displays.loading.regeneration_popup.display.4": "%s to cancel world loading",
   "minicraft.displays.loading.regeneration_cancellation_popup.display": "World loading cancelled",
   "minicraft.displays.options_main_menu": "Main Menu Options",
+  "minicraft.displays.options_main_menu.popup_restart_required": "Restart Required",
+  "minicraft.displays.options_main_menu.popup_restart_required.description": "A restart is required to apply the change in hardware acceleration setting.",
   "minicraft.displays.options_main_menu.resource_packs": "Resource packs",
   "minicraft.displays.options_world": "World Options",
   "minicraft.displays.options_world.off_tutorials_confirm_popup": "Are you sure you want to turn off the tutorials forever?",

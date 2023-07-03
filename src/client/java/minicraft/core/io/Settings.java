@@ -1,12 +1,18 @@
 package minicraft.core.io;
 
+import minicraft.core.Game;
+import minicraft.gfx.Color;
+import minicraft.screen.OptionsMainMenuDisplay;
+import minicraft.screen.PopupDisplay;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
+import minicraft.screen.entry.StringEntry;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class Settings {
@@ -40,6 +46,17 @@ public final class Settings {
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
 		);
+		options.get("hardwareacc").setChangeAction(value -> {
+			if (Game.getDisplay() instanceof OptionsMainMenuDisplay) { // if it is current on a settings display
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("enter", menu -> {
+					Game.exitDisplay();
+					return true;
+				}));
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig("minicraft.displays.options_main_menu.popup_restart_required", callbacks, 0),
+					StringEntry.useLines(Color.YELLOW, false, "minicraft.displays.options_main_menu.popup_restart_required.description")));
+			}
+		});
 	}
 
 	/**
