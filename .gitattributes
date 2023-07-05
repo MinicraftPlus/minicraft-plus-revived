@@ -1,2 +1,9 @@
-* text=true
-safecrlf=true
+* text=auto
+* safecrlf=true
+*.jpg binary
+*.png binary
+*.ogg binary
+*.wav binary
+*.txt	text
+*.java text
+*.json text
