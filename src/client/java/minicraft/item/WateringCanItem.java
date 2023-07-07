@@ -38,7 +38,7 @@ public class WateringCanItem extends Item {
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_3")
 	};
 
-	public final int CAPACITY = 3600;
+	public final int CAPACITY = 1800;
 	public int content = 0;
 	private int renderingTick = 0;
 
