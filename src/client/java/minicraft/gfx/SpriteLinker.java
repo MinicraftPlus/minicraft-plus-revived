@@ -172,6 +172,7 @@ public class SpriteLinker {
 			this.mirror = mirror;
 			this.flip = flip;
 			this.immutable = immutable;
+			reloadSprite(true); // First attempt to load a sprite. A failure (missing resources) would be expected before resource initialization.
 		}
 
 		/**
@@ -204,9 +205,12 @@ public class SpriteLinker {
 		}
 
 		/** Reloading the sprite with the configuration. */
-		private void reloadSprite() {
+		private void reloadSprite() { reloadSprite(false); }
+		private void reloadSprite(boolean onInitialize) {
 			MinicraftImage sheet = linkedMap.get(key);
 			if (sheet != null) {
+				int h = this.h == 0 ? sheet.height/8 : this.h;
+				int w = this.w == 0 ? sheet.width/8 : this.w;
 				if ((x + w) * 8 <= sheet.width && (y + h) * 8 <= sheet.height) {
 					boolean flipX = (0x01 & flip) > 0, flipY = (0x02 & flip) > 0;
 					Sprite.Px[][] pixels = new Sprite.Px[h][w];
@@ -223,9 +227,10 @@ public class SpriteLinker {
 					sprite.color = color;
 				} else {
 					Logging.SPRITE.warn("SpriteSheet or required sprite with resource ID is invalid: {}", key);
+					Logging.SPRITE.debug("Invalid sprite: x: {}; y: {}; w: {}, h: {}", x, y, w, h);
 					sprite = missingTexture(spriteType).getSprite();
 				}
-			} else {
+			} else if (!onInitialize) {
 				Logging.SPRITE.warn("SpriteSheet with resource ID not found: {}", key);
 				sprite = missingTexture(spriteType).getSprite();
 			}
