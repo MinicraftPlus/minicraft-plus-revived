@@ -16,6 +16,9 @@ public final class Settings {
 	static {
 		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
 		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20)); // The magnification of screenshot. I would want to see ultimate sized.
+		options.put("screenshotscale", new ArrayEntry<>("minicraft.settings.screenshot_scaling_strategy",
+			"minicraft.settings.screenshot_scaling_strategy.nearest_neighbor", "minicraft.settings.screenshot_scaling_strategy.bilinear", "minicraft.settings.screenshot_scaling_strategy.bicubic"));
+		options.get("screenshotscale").setSelection(2);
 		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("minicraft.settings.mode", "minicraft.settings.mode.survival", "minicraft.settings.mode.creative", "minicraft.settings.mode.hardcore", "minicraft.settings.mode.score"));
