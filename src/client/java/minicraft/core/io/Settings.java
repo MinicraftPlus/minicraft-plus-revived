@@ -32,7 +32,6 @@ public final class Settings {
 
 		options.put("sound", new BooleanEntry("minicraft.settings.sound", true));
 		options.put("autosave", new BooleanEntry("minicraft.settings.autosave", true));
-		options.put("hardwareacc", new BooleanEntry("minicraft.settings.hardware_acceleration", true));
 
 		options.put("size", new ArrayEntry<>("minicraft.settings.size", 128, 256, 512));
 		options.put("theme", new ArrayEntry<>("minicraft.settings.theme", "minicraft.settings.theme.normal", "minicraft.settings.theme.forest", "minicraft.settings.theme.desert", "minicraft.settings.theme.plain", "minicraft.settings.theme.hell"));
@@ -46,17 +45,6 @@ public final class Settings {
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
 		);
-		options.get("hardwareacc").setChangeAction(value -> {
-			if (Game.getDisplay() instanceof OptionsMainMenuDisplay) { // if it is current on a settings display
-				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
-				callbacks.add(new PopupDisplay.PopupActionCallback("enter", menu -> {
-					Game.exitDisplay();
-					return true;
-				}));
-				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig("minicraft.displays.options_main_menu.popup_restart_required", callbacks, 0),
-					StringEntry.useLines(Color.YELLOW, false, "minicraft.displays.options_main_menu.popup_restart_required.description")));
-			}
-		});
 	}
 
 	/**

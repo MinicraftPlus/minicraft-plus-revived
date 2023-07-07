@@ -87,8 +87,6 @@ public class Game {
 		Analytics.GameStartup.ping();
 
 		new Load(true, true); // This loads basic saved preferences.
-		// Reference: https://stackoverflow.com/a/13832805
-		if ((boolean) Settings.get("hardwareacc")) System.setProperty("sun.java2d.opengl", "true");
 		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 
 		input = new InputHandler(Renderer.canvas);

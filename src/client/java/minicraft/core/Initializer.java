@@ -44,6 +44,7 @@ public class Initializer extends Game {
 		// Parses command line arguments
 		@Nullable
 		String saveDir = null;
+		boolean enableHardwareAcceleration = true;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
 				i++;
@@ -64,16 +65,13 @@ public class Initializer extends Game {
 				Localization.isDebugLocaleEnabled = true;
 			} else if (args[i].equalsIgnoreCase("--debug-unloc-tracing")) {
 				Localization.unlocalizedStringTracing = true;
-			} else if (args[i].toLowerCase().startsWith("--hardware-acceleration=")) {
-				switch (args[i].substring(24).toLowerCase()) { // Strip the whole matching string including equal sign
-					case "on": case "true": case "yes": case "t": case "y":
-						Settings.set("hardwareacc", true); break;
-					case "off": case "false": case "no": case "f": case "n":
-						Settings.set("hardwareacc", false); break;
-				}
+			} else if (args[i].equalsIgnoreCase("--no-hardware-acceleration")) {
+				enableHardwareAcceleration = false;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
+		// Reference: https://stackoverflow.com/a/13832805
+		if (enableHardwareAcceleration) System.setProperty("sun.java2d.opengl", "true");
 
 		FileHandler.determineGameDir(saveDir);
 	}
