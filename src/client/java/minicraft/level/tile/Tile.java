@@ -15,7 +15,7 @@ import java.util.Random;
 
 public abstract class Tile {
 	public static int tickCount = 0; // A global tickCount used in the Lava & water tiles.
-	protected Random random = new Random();
+	protected final Random random = new Random();
 
 	/**
 	 * This is used by wall tiles to get what material they're made of.
@@ -47,7 +47,7 @@ public abstract class Tile {
 	public int light = 1;
 	protected boolean maySpawn = false;
 
-	protected SpriteAnimation sprite = null;
+	protected SpriteAnimation sprite;
 
 	protected Tile(String name, SpriteAnimation sprite) {
 		this.name = name.toUpperCase();
@@ -131,6 +131,7 @@ public abstract class Tile {
 	 * @param yt Y position of the tile.
 	 * @return true if successful.
 	 */
+	@SuppressWarnings({"UnusedReturnValue", "unused"}) // Reserved for future development
 	public boolean onExplode(Level level, int xt, int yt) {
 		return false;
 	}
@@ -146,7 +147,8 @@ public abstract class Tile {
 		}
 	}
 
-	public boolean matches(int thisData, String tileInfo) {
+	// Reserved; parameter thisData probably should not be handled here.
+	public boolean matches(@SuppressWarnings("unused") int thisData, String tileInfo) {
 		return name.equals(tileInfo.split("_")[0]);
 	}
 
@@ -164,8 +166,7 @@ public abstract class Tile {
 			int tiledata = curLevel.data[pos];
 
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
-		} catch(NullPointerException | IndexOutOfBoundsException ignored) {
-		}
+		} catch(NullPointerException | IndexOutOfBoundsException ignored) {}
 
 		return "";
 	}

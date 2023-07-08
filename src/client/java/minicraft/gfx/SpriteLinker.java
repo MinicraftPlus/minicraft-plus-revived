@@ -58,7 +58,7 @@ public class SpriteLinker {
 		return null;
 	}
 
-	/** Cleaing all skin sheets in entity sheets. */
+	/** Clearing all skin sheets in entity sheets. */
 	public void clearSkins() {
 		for (String k : new ArrayList<>(entitySheets.keySet())) {
 			if (k.startsWith("skin.")) entitySheets.remove(k);
@@ -84,7 +84,7 @@ public class SpriteLinker {
 			case Entity: return new LinkedSprite(SpriteType.Entity, "missing_entity");
 			case Item: return new LinkedSprite(SpriteType.Item, "missing_item");
 			case Tile: return new LinkedSprite(SpriteType.Tile, "missing_tile");
-			default: return null;
+			default: return new LinkedSprite(SpriteType.Gui, "hud").setSpriteDim(7, 0, 1, 1);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class SpriteLinker {
 	/** Updating all existing LinkedSheet for resource pack application. */
 	public void updateLinkedSheets() {
 		Logging.SPRITE.debug("Updating all LinkedSprite.");
-		linkedSheets.forEach(s -> s.reload());
+		linkedSheets.forEach(LinkedSprite::reload);
 	}
 
 	/** The metadata of the sprite sheet. */
@@ -117,9 +117,9 @@ public class SpriteLinker {
 		public String border = null, corner = null;
 	}
 
-	/** The sprite categories in the image resources. TODO Removed for the new save system */
-	public static enum SpriteType {
-		Item, Gui, Tile, Entity; // Only for resource packs; Skin is not applied.
+	/** The sprite categories in the image resources. TODO Remove for the new resource (registration) system */
+	public enum SpriteType {
+		Item, Gui, Tile, Entity // Only for resource packs; Skin is not applied.
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class SpriteLinker {
 		}
 	}
 
-	/** A sprite collector with resource collector. */
+	/** A sprite collector with resource collector. TODO Add a builder */
 	public static class LinkedSprite implements Destroyable {
 		private final String key; // The resource key.
 
@@ -146,9 +146,9 @@ public class SpriteLinker {
 
 		// Sprite data.
 		private HashMap<String, MinicraftImage> linkedMap;
-		private SpriteType spriteType;
+		private final SpriteType spriteType;
 		private Sprite sprite;
-		private boolean destoryed; // It is not linked when destoryed.
+		private boolean destroyed; // It is not linked when destroyed.
 		private boolean reloaded = false; // Whether the sprite is reloaded.
 
 		/**
@@ -189,6 +189,7 @@ public class SpriteLinker {
 		 * @param y The y position of the sprite.
 		 * @return The instance itself.
 		 */
+		@SuppressWarnings("UnusedReturnValue")
 		public LinkedSprite setSpritePos(int x, int y) {
 			this.x = x;
 			this.y = y;
@@ -263,13 +264,13 @@ public class SpriteLinker {
 
 				boolean flipX = (0x01 & flip) > 0, flipY = (0x02 & flip) > 0;
 
-				Sprite.Px[][] pixels = new Sprite.Px[h][w];
+				MinicraftImage.Px[][] pixels = new MinicraftImage.Px[h][w];
 				for (int r = 0; r < h; r++) {
 					for (int c = 0; c < w; c++) {
 						// The offsets are there to determine the pixel that will be there: the one in order, or on the opposite side.
 						int xOffset = flipX ? w-1 - c : c;
 						int yOffset = flipY ? h-1 - r : r;
-						pixels[r][c] = new Sprite.Px(x + xOffset, y + yOffset, mirror, sheet);
+						pixels[r][c] = sheet.new Px(x + xOffset, y + yOffset, mirror);
 					}
 				}
 
@@ -285,14 +286,14 @@ public class SpriteLinker {
 
 		/** Unlink this LinkedSprite from SpriteLinker. */
 		@Override
-		public void destroy() throws DestroyFailedException {
+		public void destroy() {
 			Renderer.spriteLinker.linkedSheets.remove(this); // Unlink this instance.
-			destoryed = true;
+			destroyed = true;
 		}
 		/** If this LinkedSprite is unlinked from SpriteLinker. */
 		@Override
 		public boolean isDestroyed() {
-			return destoryed;
+			return destroyed;
 		}
 	}
 }

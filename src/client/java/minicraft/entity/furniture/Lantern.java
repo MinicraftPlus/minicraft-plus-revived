@@ -6,30 +6,30 @@ import org.jetbrains.annotations.NotNull;
 
 public class Lantern extends Furniture {
 	public enum Type {
-		NORM ("Lantern", 9, 0),
-		IRON ("Iron Lantern", 12, 2),
-		GOLD ("Gold Lantern", 15, 4);
+		NORM ("Lantern", 9, new LinkedSprite(SpriteType.Entity, "lantern"), new LinkedSprite(SpriteType.Item, "lantern")),
+		IRON ("Iron Lantern", 12, new LinkedSprite(SpriteType.Entity, "iron_lantern"), new LinkedSprite(SpriteType.Item, "iron_lantern")),
+		GOLD ("Gold Lantern", 15, new LinkedSprite(SpriteType.Entity, "gold_lantern"), new LinkedSprite(SpriteType.Item, "gold_lantern"));
 
-		protected int light, offset;
-		protected String title;
+		private final int light;
+		private final String title;
+		private final LinkedSprite sprite, itemSprite;
 
-		Type(String title, int light, int offset) {
+		Type(String title, int light, LinkedSprite sprite, LinkedSprite itemSprite) {
 			this.title = title;
-			this.offset = offset;
 			this.light = light;
+			this.sprite = sprite;
+			this.itemSprite = itemSprite;
 		}
 	}
 
-	public Lantern.Type type;
+	public final Lantern.Type type;
 
 	/**
 	 * Creates a lantern of a given type.
 	 * @param type Type of lantern.
 	 */
 	public Lantern(Lantern.Type type) {
-		super(type.title, new LinkedSprite(SpriteType.Entity, type == Type.NORM ? "lantern" :
-			type == Type.IRON ? "iron_lantern" : "gold_lantern"), new LinkedSprite(SpriteType.Item, type == Type.NORM ? "lantern" :
-			type == Type.IRON ? "iron_lantern" : "gold_lantern"), 3, 2);
+		super(type.title, type.sprite, type.itemSprite, 3, 2);
 		this.type = type;
 	}
 

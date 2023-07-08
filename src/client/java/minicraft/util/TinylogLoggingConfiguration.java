@@ -27,8 +27,8 @@ import java.util.Set;
 public class TinylogLoggingConfiguration {
 	public static class WriterConfig {
 		public final String ID;
-		public Set<Level> levels;
-		public TagList tags;
+		public final Set<Level> levels;
+		public final TagList tags;
 
 		public WriterConfig(String ID, Set<Level> levels, TagList tags) {
 			this.ID = ID;
@@ -65,7 +65,7 @@ public class TinylogLoggingConfiguration {
 
 		HashMap<Writer, WriterConfig> writers = new HashMap<>(generateConsoleWriters());
 
-		ServiceLoader<Writer> loader = new ServiceLoader<Writer>(Writer.class, Map.class);
+		ServiceLoader<Writer> loader = new ServiceLoader<>(Writer.class, Map.class);
 
 		Map<String, String> writerProperties = Configuration.getSiblings("writer"); // Assert they are all defined.
 

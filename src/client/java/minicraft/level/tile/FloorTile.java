@@ -12,8 +12,10 @@ import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
+import java.util.Objects;
+
 public class FloorTile extends Tile {
-	protected Material type;
+	protected final Material type;
 
 	protected FloorTile(Material type) { this(type, null); }
 	protected FloorTile(Material type, String name) {
@@ -39,9 +41,10 @@ public class FloorTile extends Tile {
 						level.setTile(xt, yt, Tiles.get("Hole"));
 					}
 					Item drop;
-					switch (type) {
-						case Wood: drop = Items.get("Plank"); break;
-						default: drop = Items.get(type.name() + " Brick"); break;
+					if (Objects.requireNonNull(type) == Material.Wood) {
+						drop = Items.get("Plank");
+					} else {
+						drop = Items.get(type.name() + " Brick");
 					}
 					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);

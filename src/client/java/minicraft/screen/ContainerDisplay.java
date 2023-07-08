@@ -15,8 +15,8 @@ public class ContainerDisplay extends Display {
 
 	private static final int padding = 10;
 
-	private Player player;
-	private Chest chest;
+	private final Player player; // If this display is opened in the client side, this would not be needed to be saved.
+	private final Chest chest;
 
 	public ContainerDisplay(Player player, Chest chest) {
 		super(new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.LEFT), new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT));
@@ -34,7 +34,7 @@ public class ContainerDisplay extends Display {
 		if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 	}
 
-	OnScreenKeyboardMenu onScreenKeyboardMenu;
+	final OnScreenKeyboardMenu onScreenKeyboardMenu;
 
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
@@ -147,6 +147,7 @@ public class ContainerDisplay extends Display {
 			}
 	}
 
+	@SuppressWarnings("unused") // It is not sure how this should be implemented.
 	public void onInvUpdate(ItemHolder holder) {
 		if(holder == player || holder == chest)
 			update();

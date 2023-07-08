@@ -93,7 +93,9 @@ public class FireSpark extends Entity {
 			randmirror = random.nextInt(4);
 		}
 
+		//noinspection unused It is not sure how these were used.
 		int xt = 8;
+		//noinspection unused
 		int yt = 13;
 
 		screen.render(x - 4, y - 4 + 2, sprite.getSprite(), randmirror, false, Color.BLACK); // renders the shadow on the ground

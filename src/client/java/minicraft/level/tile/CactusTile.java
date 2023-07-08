@@ -16,7 +16,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class CactusTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cactus");
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cactus");
 
 	protected CactusTile(String name) {
 		super(name, sprite);

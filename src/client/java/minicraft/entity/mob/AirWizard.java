@@ -31,7 +31,10 @@ public class AirWizard extends EnemyMob {
 
 	/**
 	 * This is used by the spawner to spawn air wizards. {@code lvl} is unused.
+	 * @deprecated This is replaced.
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	public AirWizard(int lvl) { this(); }
 
 	/**
@@ -158,6 +161,7 @@ public class AirWizard extends EnemyMob {
 	@Override
 	public void die() {
 		Player[] players = level.getPlayers();
+		//noinspection RedundantLengthCheck
 		if (players.length > 0) { // If the player is still here
 			for (Player p: players) {
 				p.addScore(100000); // Give the player 100K points.
@@ -187,5 +191,5 @@ public class AirWizard extends EnemyMob {
 	}
 
 	@Override
-	public int getMaxLevel() { return 2; }
+	public int getMaxLevel() { return 1; }
 }

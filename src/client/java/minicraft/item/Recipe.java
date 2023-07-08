@@ -46,8 +46,7 @@ public class Recipe {
 	public int getAmount() { return amount; }
 	public boolean getCanCraft() { return canCraft; }
 	public boolean checkCanCraft(Player player) {
-		canCraft = getCanCraft(player);
-		return canCraft;
+		return canCraft = getCanCraft(player);
 	}
 	/** Checks if the player can craft the recipe */
 	private boolean getCanCraft(Player player) {

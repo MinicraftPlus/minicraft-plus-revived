@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Creeper extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		new LinkedSprite[][] {Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "creeper")},
 		new LinkedSprite[][] {Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "creeper")},
 		new LinkedSprite[][] {Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "creeper")},

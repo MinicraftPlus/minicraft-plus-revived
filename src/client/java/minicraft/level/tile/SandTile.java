@@ -17,7 +17,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class SandTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sand")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sand")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToSand)
 		.setSingletonWithConnective(true);
 

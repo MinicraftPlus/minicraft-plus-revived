@@ -99,7 +99,7 @@ public class Localization {
 	 * The loaded file is then parsed, and all the entries are added to a hashmap.
 	 */
 	public static void loadLanguage() {
-		Logging.RESOURCEHANDLER_LOCALIZATION.trace("Loading language...");
+		Logging.RESOURCE_HANDLER__LOCALIZATION.trace("Loading language...");
 		localization.clear();
 
 		if (selectedLocale == DEBUG_LOCALE) return; // DO NOT load any localization for debugging.
@@ -172,7 +172,7 @@ public class Localization {
 	}
 
 	public static void addLocalization(Locale loc, String json) {
-		if (!localeInfo.containsKey(loc)) return; // Only add when Locale Information is exist.
+		if (!localeInfo.containsKey(loc)) return; // Only add when Locale Information is existed.
 		if (!unloadedLocalization.containsKey(loc))
 			unloadedLocalization.put(loc, new ArrayList<>());
 		unloadedLocalization.get(loc).add(json);

@@ -21,7 +21,7 @@ public class BookDisplay extends Display {
 	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
 
 	// First array is page and second is line.
-	private String[][] lines;
+	private final String[][] lines;
 	private int page;
 
 	private final boolean hasTitle;
@@ -65,7 +65,7 @@ public class BookDisplay extends Display {
 
 		builder
 			.setPositioning(new Point(Screen.w/2, pageCount.getBounds().getBottom() + spacing), RelPos.BOTTOM)
-			.setSize(maxX-minX + MinicraftImage.boxWidth*2, maxY-minY + MinicraftImage.boxWidth*2)
+			.setSize(maxX-minX + MinicraftImage.boxSize *2, maxY-minY + MinicraftImage.boxSize *2)
 			.setShouldRender(false);
 
 		menus = new Menu[lines.length + pageOffset];

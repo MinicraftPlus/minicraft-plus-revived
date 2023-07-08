@@ -79,11 +79,11 @@ public abstract class Mob extends Entity {
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
 		int xd = 0, yd = 0;
 		if (xKnockback != 0) {
-			xd = (int)Math.ceil(xKnockback/2);
+			xd = (int) Math.ceil(xKnockback/2.0);
 			xKnockback -= xKnockback/Math.abs(xKnockback);
 		}
 		if (yKnockback != 0) {
-			yd = (int)Math.ceil(yKnockback/2);
+			yd = (int) Math.ceil(yKnockback/2.0);
 			yKnockback -= yKnockback/Math.abs(yKnockback);
 		}
 
@@ -95,7 +95,7 @@ public abstract class Mob extends Entity {
 	private boolean move(int xd, int yd, boolean changeDir) { // Knockback shouldn't change mob direction
 		if (level == null) return false; // Stopped b/c there's no level to move in!
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings("unused") // Reserved; most likely it will not be used in the future.
 		int oldxt = x >> 4;
 		@SuppressWarnings("unused")
 		int oldyt = y >> 4;
@@ -246,6 +246,8 @@ public abstract class Mob extends Entity {
 		this.burningDuration = sec * 60;
 	}
 
+	// TODO doHurt and onExploded might be implemented at once by a standard method with damage source entity.
+
 	/**
 	 * Executed when a TNT bomb explodes near this mob.
 	 * @param tnt The TNT exploding.
@@ -279,7 +281,7 @@ public abstract class Mob extends Entity {
 
 		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
-		if (health > (Player.baseHealth + Player.extraHealth)) health = (Player.baseHealth + Player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum
+		if (health > (Player.baseHealth + Game.player.extraHealth)) health = (Player.baseHealth + Game.player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum
 	}
 
 	protected static Direction getAttackDir(Entity attacker, Entity hurt) {

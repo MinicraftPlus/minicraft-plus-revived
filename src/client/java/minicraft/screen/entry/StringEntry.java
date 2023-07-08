@@ -7,18 +7,20 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-// an unselectable line.
+// a non-selectable line.
 public class StringEntry extends ListEntry {
 
 	private static final int DEFAULT_COLOR = Color.WHITE;
 
 	private String text;
-	private int color;
-	private boolean localize;
+	private final int color;
+	private final boolean localize;
 
 	/**
-	 *
+	 * Wraps a long string into list of string entries indicating the line(s) of the wrapped string.
+	 * @see Font#getLines(String, int, int, int)
 	 */
 	public static StringEntry[] useLines(String... lines) {
 		return useLines(DEFAULT_COLOR, lines);
@@ -27,7 +29,7 @@ public class StringEntry extends ListEntry {
 	public static StringEntry[] useLines(int color, boolean localize, String... lines) {
 		ArrayList<String> lns = new ArrayList<>();
 		for (String l : lines) {
-			for (String ll : Font.getLines(localize? Localization.getLocalized(l): l, Screen.w-20, Screen.h*2, 0)) lns.add(ll);
+			Collections.addAll(lns, Font.getLines(localize ? Localization.getLocalized(l) : l, Screen.w - 20, Screen.h * 2, 0));
 		}
 		StringEntry[] entries = new StringEntry[lns.size()];
 		for (int i = 0; i < lns.size(); i++)

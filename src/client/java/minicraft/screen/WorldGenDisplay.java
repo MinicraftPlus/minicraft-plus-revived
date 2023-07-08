@@ -29,6 +29,7 @@ public class WorldGenDisplay extends Display {
 		if (FileHandler.OS.contains("windows")) {
 			// Reference: https://stackoverflow.com/a/6804755
 			worldNameRegex = "[^<>:\"/\\\\|?*\\x00-\\x1F]+";
+			//noinspection RegExpRepeatedSpace,RegExpUnexpectedAnchor
 			detailedFilenamePattern = Pattern.compile(
 			"# Match a valid Windows filename (unspecified file system).          \n" +
 				"^                                # Anchor to start of string.        \n" +
@@ -41,7 +42,7 @@ public class WorldGenDisplay extends Display {
 				"  $                              # and end of string                 \n" +
 				")                                # End negative lookahead assertion. \n" +
 				"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
-				"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
+				"[^<>:\"/\\\\|?*\\x00-\\x1F .]    # Last char is not a space or dot.  \n" +
 				"$                                # Anchor to end of string.            ",
 			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 		} else if (FileHandler.OS.contains("mac")) {

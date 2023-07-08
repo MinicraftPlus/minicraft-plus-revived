@@ -42,7 +42,7 @@ public class StackableItem extends Item {
 	}
 
 	public int count;
-	public int maxCount = 100;
+	public final int maxCount = 100;
 
 	protected StackableItem(String name, LinkedSprite sprite) {
 		super(name, sprite);
@@ -56,6 +56,7 @@ public class StackableItem extends Item {
 	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
 
 	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	protected boolean interactOn(boolean subClassSuccess) {
 		if (subClassSuccess && !Game.isMode("minicraft.settings.mode.creative"))
 			count--;
@@ -84,7 +85,7 @@ public class StackableItem extends Item {
 
 	@Override
 	public String getDisplayName() {
-		String amt = (Math.min(count, 999)) + " ";
+		String amt = (count > 999 ? "999+" : count) + " ";
 		return " " + amt + Localization.getLocalized(getName());
 	}
 }

@@ -14,7 +14,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class CloudTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cloud")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cloud")
 		.setConnectChecker((tile, side) -> tile.getClass() != InfiniteFallTile.class)
 		.setSingletonWithConnective(true);
 

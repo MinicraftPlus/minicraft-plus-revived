@@ -13,7 +13,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class PathTile extends Tile {
-    private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "path");
+    private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "path");
 
     public PathTile(String name) {
         super(name, sprite);

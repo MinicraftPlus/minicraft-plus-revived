@@ -11,7 +11,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class PotatoTile extends PlantTile {
-	private LinkedSprite[] spritStages = new LinkedSprite[] {
+	private final LinkedSprite[] spritStages = new LinkedSprite[] {
 		new LinkedSprite(SpriteType.Tile, "potato_stage0"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage1"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage2"),

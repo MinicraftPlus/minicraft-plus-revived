@@ -27,7 +27,7 @@ public class PauseDisplay extends Display {
 				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay()))
 		));
 
-		if (TutorialDisplayHandler.inQuests())
+		if (TutorialDisplayHandler.inQuests()) // This entry is not updated when tutorial is skipped.
 			entries.add(new SelectEntry("minicraft.displays.quests", () -> Game.setDisplay(new QuestsDisplay())));
 
 		entries.add(new SelectEntry("minicraft.displays.pause.save", () -> {

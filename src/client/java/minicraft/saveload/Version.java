@@ -40,6 +40,7 @@ public class Version implements Comparable<Version> {
 	}
 
 	public boolean isValid() { return valid; }
+	@SuppressWarnings("unused") // Reserved; this might be used for tracing.
 	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
 
 	/**

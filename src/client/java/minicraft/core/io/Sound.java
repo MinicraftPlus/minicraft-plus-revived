@@ -21,7 +21,7 @@ public class Sound {
 	// Creates sounds from their respective files
 	private static final HashMap<String, Sound> sounds = new HashMap<>();
 
-	private Clip clip; // Creates a audio clip to be played
+	private final Clip clip; // Creates an audio clip to be played
 
 	private Sound(Clip clip) {
 		this.clip = clip;
@@ -36,10 +36,10 @@ public class Sound {
 			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(in).getFormat());
 
 			if (!AudioSystem.isLineSupported(info)) {
-				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
+				Logging.RESOURCE_HANDLER__SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
 
-				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
-				Logging.RESOURCEHANDLER_SOUND.error("-source:");
+				Logging.RESOURCE_HANDLER__SOUND.error("Supported audio formats:");
+				Logging.RESOURCE_HANDLER__SOUND.error("-source:");
 				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
 				Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
 				for (Line.Info value : sinfo) {
@@ -47,18 +47,16 @@ public class Sound {
 						DataLine.Info dataLineInfo = (DataLine.Info) value;
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
 						for (AudioFormat af : supportedFormats)
-							Logging.RESOURCEHANDLER_SOUND.error(af);
+							Logging.RESOURCE_HANDLER__SOUND.error(af);
 					}
 				}
-				Logging.RESOURCEHANDLER_SOUND.error("-target:");
-				for (int i = 0; i < tinfo.length; i++)
-				{
-					if (tinfo[i] instanceof DataLine.Info)
-					{
-						DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
+				Logging.RESOURCE_HANDLER__SOUND.error("-target:");
+				for (Line.Info value : tinfo) {
+					if (value instanceof DataLine.Info) {
+						DataLine.Info dataLineInfo = (DataLine.Info) value;
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-						for (AudioFormat af: supportedFormats)
-							Logging.RESOURCEHANDLER_SOUND.error(af);
+						for (AudioFormat af : supportedFormats)
+							Logging.RESOURCE_HANDLER__SOUND.error(af);
 					}
 				}
 
@@ -83,7 +81,7 @@ public class Sound {
 		}
 	}
 
-	/** Recommend {@link #play(String)} and {@link #loop(String, boolean)}. */
+	/** @deprecated Not in use. Intermediate methods {@link #play(String)} and {@link #loop(String, boolean)} are recommended. */
 	@Nullable
 	public static Sound getSound(String key) {
 		return sounds.get(key);

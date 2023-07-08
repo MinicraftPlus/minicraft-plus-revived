@@ -16,7 +16,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.util.AdvancementElement;
 
 public class FarmTile extends Tile {
-    private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "farmland");
+    private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "farmland");
 
     public FarmTile(String name) {
         super(name, sprite);

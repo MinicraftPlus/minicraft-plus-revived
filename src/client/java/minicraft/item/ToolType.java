@@ -18,9 +18,8 @@ public enum ToolType {
 	/**
 	 * Create a tool with four levels: wood, stone, iron, gold, and gem.
 	 * All these levels are added automatically but sprites have to be added manually.
-	 * Uses line 14 in the item spritesheet.
 	 * @param xPos X position of the starting sprite in the spritesheet.
-	 * @param dur Durabiltity of the tool.
+	 * @param dur Durability of the tool.
 	 */
 	ToolType(int xPos, int dur) {
 		this.xPos = xPos;

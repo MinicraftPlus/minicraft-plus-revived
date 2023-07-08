@@ -7,14 +7,14 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Skeleton extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 2, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 4, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 6, "skeleton")
 	};
 
-	private int arrowtime;
+	private final int arrowtime;
 	private int artime;
 
 	/**

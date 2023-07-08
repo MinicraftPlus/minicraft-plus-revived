@@ -62,7 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
-	protected InputHandler input;
+	protected final InputHandler input;
 	private static final int playerHurtTime = 30;
 	public static final int INTERACT_DIST = 12;
 	private static final int ATTACK_DIST = 20;
@@ -82,8 +82,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// The maximum stats that the player can have.
 	public static final int maxStat = 10;
 	public static final int maxHealth = 30, maxStamina = maxStat, maxHunger = maxStat;
-	public static int extraHealth = 0;
-	public static int baseHealth = 10;
+	public int extraHealth = 0;
+	public static final int baseHealth = 10;
 	public static final int maxArmor = 100;
 
 	public static LinkedSprite[][] sprites;
@@ -119,7 +119,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int hungerChargeDelay; // The delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 
-	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
+	public final HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
 	public boolean simpPotionEffects;
 	public boolean renderGUI;
@@ -130,11 +130,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int shirtColor = Color.get(1, 51, 51, 0); // Player shirt color.
 
 	public boolean isFishing = false;
-	public int maxFishingTicks = 120;
+	public final int maxFishingTicks = 120;
 	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
 
-	private LinkedSprite hudSheet;
+	private final LinkedSprite hudSheet;
 
 	// Note: the player's health & max health are inherited from Mob.java
 
@@ -253,6 +253,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Adds a potion effect to the player.
 	 * @param type Type of effect.
 	 */
+	@SuppressWarnings("unused") // Reserved; specifying duration is recommended.
 	public void addPotionEffect(PotionType type) {
 		addPotionEffect(type, type.duration);
 	}
@@ -378,7 +379,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if( stamina == 0) stamHungerTicks-=diffIdx; // Double effect if no stamina at all.
 		}
 
-		// This if statement encapsulates the hunger system
+		// This if statement encapsulates the hunger system; this might be implemented when sleeping with smaller factors.
 		if(!Bed.inBed(this)) {
 			if (hungerChargeDelay > 0) { // If the hunger is recharging health...
 				stamHungerTicks -= 2+diffIdx; // Penalize the hunger
@@ -452,8 +453,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputDown("move-down")) vec.y++;
 				if (input.inputDown("move-left")) vec.x--;
 				if (input.inputDown("move-right")) vec.x++;
-
-
 			}
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
@@ -564,7 +563,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Removes an held item and places it back into the inventory.
-	 * Looks complicated to so it can handle the powerglove.
+	 * Looks complicated to so it can handle the PowerGlove.
 	 */
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
@@ -589,6 +588,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * This method is called when we press the attack button.
+	 * TODO Separating (pure) interaction and attack actions are recommended to expand extensibility and reduce limitations for entities, items and tiles.
 	 */
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
@@ -687,6 +687,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 	}
 
+	@SuppressWarnings("ConstantValue")
 	private Rectangle getInteractionBox(int range) {
 		int x = this.x, y = this.y - 2;
 
@@ -766,6 +767,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		fishingTicks = maxFishingTicks; // If you didn't catch anything, try again in 120 ticks
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private boolean use() { return use(getInteractionBox(INTERACT_DIST)); }
 
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
@@ -827,6 +829,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		carrySprites = selectedSkin[1];
 	}
 
+	@SuppressWarnings("PointlessArithmeticExpression")
 	@Override
 	public void render(Screen screen) {
 		/* Offset locations to start drawing the sprite relative to our position */
@@ -982,7 +985,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// The player can swim.
 	public boolean canSwim() { return true; }
 
-	// Can walk on wool tiles..? quickly..?
+	// Can walk on wool tiles..? quickly..? A review is required for this feature.
 	public boolean canWool() { return true; }
 
 	/**
@@ -996,7 +999,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	/**
-	 * Finds the starting position for the player in a level.
+	 * Finds the starting position for the player in a level. Static spawn point might be implemented in the future.
 	 * @param level The level.
 	 */
 	public void findStartPos(Level level) { findStartPos(level, true); }
@@ -1152,6 +1155,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param damage Amount of damage to do to player
 	 * @param attackDir The direction of attack.
 	 */
+	@SuppressWarnings("SameParameterValue") // Reserved
 	private void directHurt(int damage, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 

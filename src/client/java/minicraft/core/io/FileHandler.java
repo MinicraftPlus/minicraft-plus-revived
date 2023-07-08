@@ -63,17 +63,19 @@ public class FileHandler extends Game {
 	public static void determineGameDir(@Nullable String saveDir) {
 		if (saveDir != null) {
 			gameDir = saveDir;
-			Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
+			Logging.GAME_HANDLER.debug("Determined gameDir: " + gameDir);
 
 			File gameDirFile = new File(gameDir);
+			//noinspection ResultOfMethodCallIgnored
 			gameDirFile.mkdirs();
 		} else {
 			saveDir = FileHandler.getSystemGameDir();
 
 			gameDir = saveDir + localGameDir;
-			Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
+			Logging.GAME_HANDLER.debug("Determined gameDir: " + gameDir);
 
 			File testFile = new File(gameDir);
+			//noinspection ResultOfMethodCallIgnored
 			testFile.mkdirs();
 
 			File oldFolder = new File(saveDir + "/.playminicraft/mods/Minicraft Plus");
@@ -102,11 +104,12 @@ public class FileHandler extends Game {
 		    return systemGameDir;
 	}
 
+	@SuppressWarnings("unused") // Reserved
 	public static String getLocalGameDir() {
 		    return localGameDir;
 	}
 
-	private static void deleteFolder(File top) {
+	public static void deleteFolder(File top) {
 		if (top == null) return;
 		if (top.isDirectory()) {
 			File[] subfiles = top.listFiles();
@@ -121,7 +124,7 @@ public class FileHandler extends Game {
 
 	public static void copyFolderContents(Path origFolder, Path newFolder, int ifExisting, boolean deleteOriginal) throws IOException {
 		// I can determine the local folder structure with origFolder.relativize(file), then use newFolder.resolve(relative).
-		Logging.RESOURCEHANDLER.info("Copying contents of folder " + origFolder + " to new folder " + newFolder);
+		Logging.RESOURCE_HANDLER.info("Copying contents of folder " + origFolder + " to new folder " + newFolder);
 
 		Files.walkFileTree(origFolder, new FileVisitor<Path>() {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
@@ -191,28 +194,28 @@ public class FileHandler extends Game {
 	 * Gets a list of paths to where the localization files are located on your disk, and adds them to the "localizationFiles" HashMap.
 	 * The path is relative to the "resources" folder.
 	 * Will not work if we are running this from a jar.
+	 * @deprecated Not in used. This has already been replaced and handled in {@link #listAssets()}.
 	 */
+	@SuppressWarnings("unused")
 	private static ArrayList<String> listResourcesUsingIDE() {
 		ArrayList<String> names = new ArrayList<>();
 		try {
 			URL fUrl = Game.class.getResource("/");
 			if (fUrl == null) {
-				Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not find localization folder.");
+				Logging.RESOURCE_HANDLER__LOCALIZATION.error("Could not find localization folder.");
 				return names;
 			}
 
 			Path folderPath = Paths.get(fUrl.toURI());
-			Files.walk(folderPath)
-        		.forEach(p -> {
-					names.add(folderPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
-				});
+			try (Stream<Path> files = Files.walk(folderPath)) {
+        		files.forEach(p -> names.add(folderPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : "")));
+			}
 
 			if (!names.contains("resources")) { // Providing a simple resolution when the previous location is invalid, the gradle build path is used.
 				Path fPath = folderPath.resolve("../../../resources/main");
-				Files.walk(fPath)
-					.forEach(p -> {
-						names.add(fPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
-					});
+				try (Stream<Path> files = Files.walk(fPath)) {
+					files.forEach(p -> names.add(fPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : "")));
+				}
 			}
 		} catch (IOException | URISyntaxException e) {
 			CrashHandler.errorHandle(e);

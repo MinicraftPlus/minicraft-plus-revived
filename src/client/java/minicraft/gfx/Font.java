@@ -90,8 +90,8 @@ public class Font {
 		return max;
 	}
 
-	public static int textHeight() {//noinspection SuspiciousNameCombination
-		return MinicraftImage.boxWidth;
+	public static int textHeight() {
+		return MinicraftImage.boxSize;
 	}
 
 	public static void drawCentered(String msg, Screen screen, int y, int color) {

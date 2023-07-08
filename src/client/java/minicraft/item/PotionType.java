@@ -11,7 +11,7 @@ public enum PotionType {
 
 	Speed (Color.get(1, 105, 209, 105), 4200) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
-			player.moveSpeed += (double)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) );
+			player.moveSpeed += addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0);
 			return true;
 		}
 	},
@@ -56,8 +56,8 @@ public enum PotionType {
 		}
 	};
 
-	public int dispColor, duration;
-	public String name;
+	public final int dispColor, duration;
+	public final String name;
 
 	PotionType(int col, int dur) {
 		dispColor = col;
@@ -69,6 +69,7 @@ public enum PotionType {
 		return duration > 0; // If you have no duration and do nothing, then you can't be used.
 	}
 
+	/** @deprecated Not in use. Uncertain. */
 	public boolean transmitEffect() {
 		return true; // Any effect which could be duplicated and result poorly should not be sent to the server.
 		// For the case of the Health potion, the player health is not transmitted separately until after the potion effect finishes, so having it send just gets the change there earlier.

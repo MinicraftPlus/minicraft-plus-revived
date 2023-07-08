@@ -15,17 +15,19 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class DirtTile extends Tile {
-	private static SpriteAnimation[] levelSprite = new SpriteAnimation[] {
+	private static final SpriteAnimation[] levelSprite = new SpriteAnimation[] {
 		new SpriteAnimation(SpriteType.Tile, "dirt"),
 		new SpriteAnimation(SpriteType.Tile, "gray_dirt"),
 		new SpriteAnimation(SpriteType.Tile, "purple_dirt")
 	};
 
 	protected DirtTile(String name) {
-		super(name, levelSprite[0]);
+		super(name, levelSprite[0]); // Passing sprite for placeholder
 		maySpawn = true;
 	}
 
+	/** @deprecated Not in use. This method was used for tinting tile textures,
+	 * but tile texture tinting has been replaced by transparency and recursive texture rendering. */
 	protected static int dCol(int depth) {
 		switch (depth) {
 			case 1: return Color.get(1, 194, 194, 194); // Sky.

@@ -40,7 +40,7 @@ public class ObsidianKnight extends EnemyMob {
 	private static int attackPhaseCooldown = 0; // Cooldown between attacks
 
 	private AttackPhase attackPhase = AttackPhase.Attacking;
-	private enum AttackPhase { Attacking, Dashing, Walking; } // Using fire sparks in attacking.
+	private enum AttackPhase { Attacking, Dashing, Walking } // Using fire sparks in attacking.
 	private static final AttackPhase[] ATTACK_PHASES = AttackPhase.values();
 
 	private int dashTime = 0;
@@ -134,7 +134,7 @@ public class ObsidianKnight extends EnemyMob {
 				else if (atan2 < -67.5) attackDir = -90;
 				else if (atan2 < -22.5) attackDir = -45;
 				else attackDir = 0;
-				double speed = 1 + attackLevel * 0.2 + attackTime / 10 * 0.01; // speed is dependent on the attackType. (higher attackType, faster speeds)
+				double speed = 1 + attackLevel * 0.2 + attackTime / 10.0 * 0.01; // speed is dependent on the attackType. (higher attackType, faster speeds)
 				// The range of attack is 90 degrees. With little random factor.
 				int phi = attackDir - 36 + (attackTime % 5) * 18 + random.nextInt(7) - 3;
 				level.add(new FireSpark(this, Math.cos(Math.toRadians(phi)) * speed, Math.sin(Math.toRadians(phi)) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
@@ -242,6 +242,7 @@ public class ObsidianKnight extends EnemyMob {
 	@Override
 	public void die() {
 		Player[] players = level.getPlayers();
+		//noinspection RedundantLengthCheck
 		if (players.length > 0) { // If the player is still here
 			for (Player p: players) {
 				p.addScore(300000); // Give the player 300K points.

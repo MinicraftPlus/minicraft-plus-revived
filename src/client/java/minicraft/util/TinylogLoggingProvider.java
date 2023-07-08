@@ -193,6 +193,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 	 *
 	 * @return All writers
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public Collection<Writer> getWriters() {
 		return writers.keySet();
 	}

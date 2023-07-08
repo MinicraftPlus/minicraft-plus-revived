@@ -8,9 +8,9 @@ import minicraft.gfx.Font;
 
 public class SelectEntry extends ListEntry {
 
-	private Action onSelect;
+	private final Action onSelect;
 	private String text;
-	private boolean localize;
+	private final boolean localize;
 
 	/**
 	 * Creates a new entry which acts as a button.
@@ -30,6 +30,7 @@ public class SelectEntry extends ListEntry {
 	 * Changes the text of the entry.
 	 * @param text new text
 	 */
+	@SuppressWarnings("unused") // In the most cases, recreating entries and menus is considered.
 	void setText(String text) { this.text = text; }
 
 	public String getText() { return text; }

@@ -14,11 +14,11 @@ import javax.security.auth.DestroyFailedException;
 import java.util.List;
 
 public class Arrow extends Entity implements ClientTickable {
-	private Direction dir;
+	private final Direction dir;
 	private int damage;
-	public Mob owner;
-	private int speed;
-	private LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
+	public final Mob owner;
+	private final int speed;
+	private final LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
 
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);
@@ -78,11 +78,7 @@ public class Arrow extends Entity implements ClientTickable {
 					&& !level.getTile(x / 16, y / 16).connectsToFluid
 					&& level.getTile(x / 16, y / 16).id != 16) {
 				this.remove();
-				try {
-					sprite.destroy();
-				} catch (DestroyFailedException e) {
-					Logging.SPRITE.trace(e);
-				}
+				sprite.destroy();
 			}
 		}
 	}

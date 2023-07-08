@@ -59,7 +59,7 @@ public class CraftingDisplay extends Display {
 		List<Recipe> recipes = availableRecipes.stream().filter(unlockedRecipes::contains).collect(Collectors.toList());
 		recipeMenu = new RecipeMenu(recipes, title, player);
 		this.recipes = recipes.toArray(new Recipe[0]);
-		itemCountMenu.setPositioning(new Point(recipeMenu.getBounds().getRight()+MinicraftImage.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
+		itemCountMenu.setPositioning(new Point(recipeMenu.getBounds().getRight()+MinicraftImage.boxSize, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 		costsMenu.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 
 		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
@@ -89,17 +89,32 @@ public class CraftingDisplay extends Display {
 		return player.getInventory().count(recipes[recipeMenu.getSelection()].getProduct());
 	}
 
-	private ItemListing[] getCurItemCosts() {
-		ArrayList<ItemListing> costList = new ArrayList<>();
-		if (recipes.length == 0) return new ItemListing[0];
+	private RecipeCostEntry[] getCurItemCosts() {
+		ArrayList<RecipeCostEntry> costList = new ArrayList<>();
+		if (recipes.length == 0) return new RecipeCostEntry[0];
 
 		Map<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
-			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
+			costList.add(new RecipeCostEntry(cost, player.getInventory().count(cost), costMap.get(itemName)));
 		}
 
-		return costList.toArray(new ItemListing[0]);
+		return costList.toArray(new RecipeCostEntry[0]);
+	}
+
+	private static class RecipeCostEntry extends ItemListing {
+		private final int count, cost;
+
+		public RecipeCostEntry(Item i, int count, int cost) {
+			super(i, count + "/" + cost);
+			this.count = count;
+			this.cost = cost;
+		}
+
+		@Override
+		public int getColor(boolean isSelected) {
+			return count < cost ? COL_UNSLCT : COL_SLCT;
+		}
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;

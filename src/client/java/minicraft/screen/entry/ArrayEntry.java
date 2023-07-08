@@ -10,12 +10,12 @@ import java.util.Arrays;
 public class ArrayEntry<T> extends ListEntry {
 
 	private final String label;
-	private T[] options;
-	private boolean[] optionVis;
+	private final T[] options;
+	private final boolean[] optionVis;
 
 	private int selection;
-	private boolean wrap;
-	private boolean localize;
+	private final boolean wrap;
+	private final boolean localize;
 
 	private ChangeListener changeAction;
 
@@ -50,11 +50,11 @@ public class ArrayEntry<T> extends ListEntry {
 	}
 
 	protected String getLabel() { return label; }
-	protected String getLocalizationOption(T option) { return option.toString(); }
 
 	public int getSelection() { return selection; }
 	public T getValue() { return options[selection]; }
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean valueIs(Object value) {
 		if (value instanceof String && options instanceof String[])
 			return ((String)value).equalsIgnoreCase((String)getValue());

@@ -20,15 +20,15 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class WallTile extends Tile {
-	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
+	private static final SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
 		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
-	private static SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_wall")
+	private static final SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_wall")
 		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
-	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
+	private static final SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
 		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
 
 	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
-	protected Material type;
+	protected final Material type;
 
 	protected WallTile(Material type) { this(type, null); }
 	protected WallTile(Material type, String name) {

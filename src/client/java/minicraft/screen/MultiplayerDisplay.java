@@ -18,7 +18,8 @@ import minicraft.gfx.Screen;
 import minicraft.network.Analytics;
 import minicraft.util.Logging;
 
-/** @deprecated As multiplayer mode removed. This class is not localized. */
+/** @deprecated As multiplayer mode removed. This class is not localized, reserved for future reference. */
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 @Deprecated
 public class MultiplayerDisplay extends Display {
 
@@ -35,12 +36,12 @@ public class MultiplayerDisplay extends Display {
 	private String errorMessage = "";
 
 	private String typing = email;
-	private boolean inputIsValid = false;
+	private final boolean inputIsValid = false;
 
 	private boolean online = false;
-	private boolean typingEmail = true;
+	private final boolean typingEmail = true;
 
-	private Ellipsis ellipsis = new SequentialEllipsis();
+	private final Ellipsis ellipsis = new SequentialEllipsis();
 
 	private enum State {
 		WAITING, LOGIN, ENTERIP, LOADING, ERROR

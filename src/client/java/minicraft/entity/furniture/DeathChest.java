@@ -16,19 +16,20 @@ import minicraft.item.Item;
 import minicraft.item.StackableItem;
 
 public class DeathChest extends Chest {
-	private static LinkedSprite normalSprite = new LinkedSprite(SpriteType.Entity, "chest");
-	private static LinkedSprite redSprite = new LinkedSprite(SpriteType.Entity, "red_chest");
+	private static final LinkedSprite normalSprite = new LinkedSprite(SpriteType.Entity, "chest");
+	private static final LinkedSprite redSprite = new LinkedSprite(SpriteType.Entity, "red_chest");
+	private static final LinkedSprite dungeonItemSprite = new LinkedSprite(SpriteType.Item, "dungeon_chest");
 
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // What direction the red shade (redtick) is changing.
-	private Inventory inventory = new Inventory() {{ unlimited = true; }}; // Implement the inventory locally instead.
+	private final Inventory inventory = new Inventory(true); // Implement the inventory locally instead.
 
 	/**
 	 * Creates a custom chest with the name Death Chest
 	 */
 	public DeathChest() {
-		super("Death Chest", new LinkedSprite(SpriteType.Item, "dungeon_chest"));
+		super("Death Chest", dungeonItemSprite);
 		this.sprite = normalSprite;
 
 		/// Set the expiration time based on the world difficulty.
@@ -56,7 +57,7 @@ public class DeathChest extends Chest {
 		super.tick();
 		//name = "Death Chest:"; // add the current
 
-		if (inventory.invSize() == 0) {
+		if (inventory.getInvSize() == 0) {
 			remove();
 		}
 
@@ -91,6 +92,7 @@ public class DeathChest extends Chest {
 
 	public boolean use(Player player) { return false; } // can't open it, just walk into it.
 
+	@SuppressWarnings({"unused", "EmptyMethod"}) // Purpose unknown
 	public void take(Player player) {} // can't grab a death chest.
 
 	@Override

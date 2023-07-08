@@ -19,8 +19,8 @@ public class Furniture extends Entity {
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
 	public LinkedSprite sprite;
-	public LinkedSprite itemSprite;
-	public String name;
+	public final LinkedSprite itemSprite;
+	public final String name;
 
 	/**
 	 * Constructor for the furniture entity.

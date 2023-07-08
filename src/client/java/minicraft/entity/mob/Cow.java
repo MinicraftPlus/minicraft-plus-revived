@@ -8,7 +8,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Cow extends PassiveMob {
-	private static LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "cow");
+	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "cow");
 
 	/**
 	 * Creates the cow with the right sprites and color.

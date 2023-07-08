@@ -71,8 +71,8 @@ public class AchievementsDisplay extends Display {
 
     public AchievementsDisplay() {
         super(true, true,
-                new Menu.Builder(false, 2, RelPos.CENTER, getAchievemensAsEntries()).setSize(48, 48).createMenu(),
-                new Menu.Builder(false, 2, RelPos.BOTTOM, new StringEntry("")).setSize(200, 32).setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM).createMenu());
+                new Menu.Builder(false, 2, RelPos.CENTER, getAchievementsAsEntries()).setSize(Screen.w, 48).createMenu(),
+                new Menu.Builder(false, 2, RelPos.BOTTOM, new StringEntry("")).setSize(Screen.w, 32).setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM).createMenu());
     }
 
     @Override
@@ -192,7 +192,7 @@ public class AchievementsDisplay extends Display {
         return strings.toArray(new String[0]);
     }
 
-    public static List<ListEntry> getAchievemensAsEntries() {
+    private static List<ListEntry> getAchievementsAsEntries() {
         List<ListEntry> l = new ArrayList<>();
         for (String id : achievements.keySet()) {
             // Add entry to list.

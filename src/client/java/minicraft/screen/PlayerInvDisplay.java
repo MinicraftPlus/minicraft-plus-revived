@@ -48,7 +48,7 @@ public class PlayerInvDisplay extends Display {
 			onScreenKeyboardMenu.setVisible(false);
 	}
 
-	OnScreenKeyboardMenu onScreenKeyboardMenu;
+	final OnScreenKeyboardMenu onScreenKeyboardMenu;
 
 	@Override
 	public void tick(InputHandler input) {
@@ -176,8 +176,7 @@ public class PlayerInvDisplay extends Display {
 		super.onSelectionChange(oldSel, newSel);
 		if (creativeMode) {
 			// Hide Items Inventory when not selecting it.
-			if (selection == 0) menus[1].shouldRender = false;
-			else menus[1].shouldRender = true;
+			menus[1].shouldRender = selection != 0;
 
 			if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
 			int shift = 0;

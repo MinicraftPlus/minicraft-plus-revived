@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import minicraft.core.Action;
 import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
@@ -33,17 +34,17 @@ public abstract class Entity implements Tickable {
 	// Entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
-	private int xr, yr; // x, y radius of entity
+	private final int xr, yr; // x, y radius of entity
 	private boolean removed; // If the entity is to be removed from the level.
 	protected Level level; // The level that the entity is on.
 	public int col; // Current color.
 
 	// Numeric unique identifier for the entity.
-	public int eid;
+	public int eid; // This should be final in best practice; optimization is reserved in the future
 
 	/**
 	 * Default constructor for the Entity class.
-	 * Assings null/none values to the instace variables.
+	 * Assigns null/none values to the instance variables.
 	 * The exception is removed which is set to true, and
 	 * lastUpdate which is set to System.nanoTime().
 	 * @param xr X radius of entity.
@@ -94,6 +95,7 @@ public abstract class Entity implements Tickable {
 	public boolean canBurn() {
 		return true;
 	} // Determines if the entity can burn.
+	@SuppressWarnings("unused") // This might be reserved for advanced development in lava.
 	public boolean canBeAffectedByLava() {
 		return true;
 	} // Determines if the entity can burn in lava.
@@ -190,10 +192,10 @@ public abstract class Entity implements Tickable {
 	 * @param yMove The value of the willing y movement
 	 * @param incrementMove The movement call when the movement is possible
 	 * @return {@code true} if the movement is successful, {@code false} otherwise.
-	 * @see #moveByEntityHitBoxChecks(int, int, int, IntSupplier, IntSupplier, Runnable)
+	 * @see #moveByEntityHitBoxChecks(int, int, int, IntSupplier, IntSupplier, Action)
 	 */
 	protected boolean moveByEntityHitBoxChecks(int sgn, int hitBoxFront, int maxFront, IntSupplier xMove,
-											   IntSupplier yMove, Runnable incrementMove) {
+											   IntSupplier yMove, Action incrementMove) {
 		boolean successful = false;
 
 		// These lists are named as if the entity has already moved-- it hasn't, though.
@@ -214,7 +216,7 @@ public abstract class Entity implements Tickable {
 				}
 			}
 			if (blocked) break;
-			incrementMove.run(); // Movement successful
+			incrementMove.act(); // Movement successful
 			successful = true;
 		}
 

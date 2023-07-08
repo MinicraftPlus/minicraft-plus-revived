@@ -15,6 +15,7 @@ import javax.security.auth.Destroyable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 /** This is not applicable for mob sprite animations. Only for generic sprite animations. */
@@ -30,6 +31,7 @@ public class SpriteAnimation implements Destroyable {
 		metas.clear();
 	}
 
+	@SuppressWarnings("unused") // Reserved
 	public static SpriteMeta getMetadata(String key) {
 		return metas.get(key);
 	}
@@ -53,9 +55,9 @@ public class SpriteAnimation implements Destroyable {
 	private BiFunction<Tile, Boolean, Boolean> connectChecker;
 	private boolean singletonWithConnective = false;
 
-	// Refreshing only data.
-	private SpriteType type;
-	private String key;
+	// Refreshing-used only data.
+	private final SpriteType type;
+	private final String key;
 
 	/**
 	 * Constructing animations with the provided key. The meta is given by default.
@@ -116,6 +118,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @param color The color of sprite.
 	 * @return The instance itself.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public SpriteAnimation setColor(int frame, int color) {
 		if (frame < 0) frame = 0;
 		if (frame >= animations.length) frame = animations.length - 1;
@@ -129,6 +132,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @param mirror The mirror of sprite/
 	 * @return The instance itself.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public SpriteAnimation setMirror(int mirror) {
 		for (LinkedSprite sprite : animations) {
 			sprite.setMirror(mirror);
@@ -143,6 +147,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @param mirror The mirror of sprite.
 	 * @return The instance itself.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public SpriteAnimation setMirror(int frame, int mirror) {
 		if (frame < 0) frame = 0;
 		if (frame >= animations.length) frame = animations.length - 1;
@@ -156,6 +161,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @param mirror The mirror of sprite sheet.
 	 * @return The instance itself.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public SpriteAnimation setSpriteMirror(int mirror) {
 		for (LinkedSprite sprite : animations) sprite.setFlip(mirror);
 		return this;
@@ -165,6 +171,7 @@ public class SpriteAnimation implements Destroyable {
 	 * Getting the current frame of animation.
 	 * @return The current frame sprite.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public LinkedSprite getCurrentFrame() {
 		return animations[frame];
 	}
@@ -174,6 +181,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @param frame The specific frame.
 	 * @return The frame sprite.
 	 */
+	@SuppressWarnings("unused") // Reserved
 	public LinkedSprite getFrame(int frame) {
 		return animations[frame];
 	}
@@ -202,12 +210,13 @@ public class SpriteAnimation implements Destroyable {
 			y = y << 4;
 
 			Sprite full = animations[frame].getSprite(); // Singleton; Must be 2*2.
-			Sprite sparse = border != null ? border.getSprite() : null; // Border; Must be 3*3.
+			// If NullPointerException is thrown here, configuration error occurs.
+			Sprite sparse = Objects.requireNonNull(border.getSprite()); // Border; Must be 3*3.
 			Sprite sides = corner != null ? corner.getSprite() : null; // Corner; Must be 2*2.
 
 			if (u && l) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
-				Sprite.Px connective = singletonWithConnective ? full.spritePixels[1][1] : sparse.spritePixels[1][1];
+				MinicraftImage.Px connective = singletonWithConnective ? full.spritePixels[1][1] : sparse.spritePixels[1][1];
 				if (ul) screen.render(x, y, connective, connectiveColor);
 				else if (sides == null) screen.render(x, y, full.spritePixels[1][1], full.color);
 				else screen.render(x, y, sides.spritePixels[0][0], 3, sides.color);
@@ -216,7 +225,7 @@ public class SpriteAnimation implements Destroyable {
 
 			if (u && r) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
-				Sprite.Px connective = singletonWithConnective ? full.spritePixels[1][0] : sparse.spritePixels[1][1];
+				MinicraftImage.Px connective = singletonWithConnective ? full.spritePixels[1][0] : sparse.spritePixels[1][1];
 				if (ur) screen.render(x + 8, y, connective, connectiveColor);
 				else if (sides == null) screen.render(x + 8, y, full.spritePixels[1][0], full.color);
 				else screen.render(x + 8, y, sides.spritePixels[0][1], 3, sides.color);
@@ -225,7 +234,7 @@ public class SpriteAnimation implements Destroyable {
 
 			if (d && l) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
-				Sprite.Px connective = singletonWithConnective ? full.spritePixels[0][1] : sparse.spritePixels[1][1];
+				MinicraftImage.Px connective = singletonWithConnective ? full.spritePixels[0][1] : sparse.spritePixels[1][1];
 				if (dl) screen.render(x, y + 8, connective, connectiveColor);
 				else if (sides == null) screen.render(x, y + 8, full.spritePixels[0][1], full.color);
 				else screen.render(x, y + 8, sides.spritePixels[1][0], 3, sides.color);
@@ -234,7 +243,7 @@ public class SpriteAnimation implements Destroyable {
 
 			if (d && r) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
-				Sprite.Px connective = singletonWithConnective ? full.spritePixels[0][0] : sparse.spritePixels[1][1];
+				MinicraftImage.Px connective = singletonWithConnective ? full.spritePixels[0][0] : sparse.spritePixels[1][1];
 				if (dr) screen.render(x + 8, y + 8, connective, connectiveColor);
 				else if (sides == null) screen.render(x + 8, y + 8, full.spritePixels[0][0], full.color);
 				else screen.render(x + 8, y + 8, sides.spritePixels[1][1], 3, sides.color);
@@ -266,7 +275,8 @@ public class SpriteAnimation implements Destroyable {
 		}
 	}
 
-	/** Refreshing the animation data for this instance. */
+	/** Refreshing the animation data for this instance.
+	 * @deprecated Should not be dynamic. */
 	public void refreshAnimation(SpriteMeta metadata) {
 		frame = 0;
 		frametick = 0;
@@ -282,13 +292,9 @@ public class SpriteAnimation implements Destroyable {
 		int width = sheet.width / 8;
 
 		// Destroying all previous LinkedSprite.
-		try {
-			if (animations != null) for (LinkedSprite sprite : animations) sprite.destroy();
-			if (border != null) border.destroy();
-			if (corner != null) corner.destroy();
-		} catch (DestroyFailedException e) {
-			Logging.SPRITE.trace(e);
-		}
+		if (animations != null) for (LinkedSprite sprite : animations) sprite.destroy();
+		if (border != null) border.destroy();
+		if (corner != null) corner.destroy();
 
 		if (metadata != null) {
 			if (metadata.frames < 1) metadata.frames = 1;

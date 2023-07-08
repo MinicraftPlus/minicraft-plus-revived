@@ -6,13 +6,13 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteAnimation;
 import minicraft.level.Level;
 
+// TODO This should be handled in different way.
 public class InfiniteFallTile extends Tile {
 
 	protected InfiniteFallTile(String name) {
-		super(name, (SpriteAnimation)null);
+		super(name, null);
 	}
 
 	@Override

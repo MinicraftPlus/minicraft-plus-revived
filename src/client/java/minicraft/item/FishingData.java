@@ -3,7 +3,7 @@ package minicraft.item;
 import minicraft.saveload.Load;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FishingData {
@@ -19,10 +19,10 @@ public class FishingData {
     public static List<String> getData(String name) {
         List<String> data;
         try {
-            data = Load.loadFile("/resources/data/fishing/" + name + "_loot.txt");
+            data = Collections.unmodifiableList(Load.loadFile("/resources/data/fishing/" + name + "_loot.txt"));
         } catch (IOException e) {
             e.printStackTrace();
-            data = new ArrayList<>();
+            data = Collections.emptyList();
         }
         return data;
     }

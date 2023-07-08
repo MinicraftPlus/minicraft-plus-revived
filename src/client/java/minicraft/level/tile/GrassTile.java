@@ -14,7 +14,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class GrassTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
 		.setSingletonWithConnective(true);
 
@@ -25,7 +25,7 @@ public class GrassTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		// TODO revise this method.
+		// TODO revise this method. This works as same as Flower#tick except chancing.
 		if (random.nextInt(40) != 0) return false;
 
 		int xn = xt;

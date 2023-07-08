@@ -28,17 +28,8 @@ public class Sheep extends PassiveMob {
 
 	@Override
 	public void render(Screen screen) {
-		int xo = x - 8;
-		int yo = y - 11;
-
-		LinkedSprite[][] curAnim = cut ? cutSprites : sprites;
-
-		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
-		if (hurtTime > 0) {
-			screen.render(xo, yo, curSprite.getSprite(), true);
-		} else {
-			screen.render(xo, yo, curSprite);
-		}
+		super.sprites = cut ? cutSprites : sprites;
+		super.render(screen);
 	}
 
 	@Override

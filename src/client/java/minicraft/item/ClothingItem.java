@@ -29,7 +29,7 @@ public class ClothingItem extends StackableItem {
 		return items;
 	}
 
-	private int playerCol;
+	private final int playerCol;
 
 	private ClothingItem(String name, LinkedSprite sprite, int pcol) { this(name, 1, sprite, pcol); }
 	private ClothingItem(String name, int count, LinkedSprite sprite, int pcol) {

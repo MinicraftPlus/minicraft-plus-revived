@@ -10,41 +10,41 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 // this stores structures that can be drawn at any location.
 public class Structure {
 
-	private HashSet<TilePoint> tiles;
-	private HashMap<Point, Furniture> furniture;
+	private final HashMap<Point, Tile> tiles;
+	private final HashMap<Point, Furniture> furniture;
 
 	public Structure() {
-		tiles = new HashSet<>();
+		tiles = new HashMap<>();
 		furniture = new HashMap<>();
 	}
+	@SuppressWarnings("unused") // Reserved; copying function would not be used.
 	public Structure(Structure struct) {
 		this.tiles = struct.tiles;
 		this.furniture = struct.furniture;
 	}
 
 	public void setTile(int x, int y, Tile tile) {
-		tiles.add(new TilePoint(x, y, tile));
+		tiles.put(new Point(x, y), tile);
 	}
 	public void addFurniture(int x, int y, Furniture furniture) {
 		this.furniture.put(new Point(x, y), furniture);
 	}
 
 	public void draw(Level level, int xt, int yt) {
-		for (TilePoint p: tiles)
-			 level.setTile(xt+p.x, yt+p.y, p.t);
+		for (Point p: tiles.keySet())
+			 level.setTile(xt+p.x, yt+p.y, tiles.get(p));
 
 		for (Point p: furniture.keySet())
 			 level.add(furniture.get(p).copy(), xt+p.x, yt+p.y, true);
 	}
 
 	public void draw(short[] map, int xt, int yt, int mapWidth) {
-		for (TilePoint p: tiles)
-			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
+		for (Point p: tiles.keySet())
+			map[(xt + p.x) + (yt + p.y) * mapWidth] = tiles.get(p).id;
 	}
 
 	public void setData(String keys, String data) {
@@ -53,8 +53,8 @@ public class Structure {
 		String[] stringKeyPairs = keys.split(",");
 
 		// Puts all the keys in the keyPairs HashMap
-		for (int i = 0; i < stringKeyPairs.length; i++) {
-			String[] thisKey = stringKeyPairs[i].split(":");
+		for (String stringKeyPair : stringKeyPairs) {
+			String[] thisKey = stringKeyPair.split(":");
 			keyPairs.put(thisKey[0], thisKey[1]);
 		}
 
@@ -69,29 +69,6 @@ public class Structure {
 					this.setTile(-width / 2 + i, - height / 2 + c, tile);
 				}
 			}
-		}
-	}
-
-	static class TilePoint {
-		int x, y;
-		Tile t;
-
-		public TilePoint(int x, int y, Tile tile) {
-			this.x = x;
-			this.y = y;
-			this.t = tile;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (!(o instanceof TilePoint)) return false;
-			TilePoint p = (TilePoint) o;
-			return x == p.x && y == p.y && t.id == p.t.id;
-		}
-
-		@Override
-		public int hashCode() {
-			return x + y * 51 + t.id * 131;
 		}
 	}
 

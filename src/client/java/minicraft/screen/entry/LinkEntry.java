@@ -25,7 +25,9 @@ public class LinkEntry extends SelectEntry {
 
 	// note that if the failMsg should be localized, such must be done before passing them as parameters, for this class will not do it since, by default, the failMsg contains a url.
 
+	@SuppressWarnings("unused") // Reserved
 	public LinkEntry(int color, String urlText) { this(color, urlText, urlText, false); }
+	@SuppressWarnings("unused") // Reserved
 	public LinkEntry(int color, String text, String url) { this(color, text, url, true); }
 	public LinkEntry(int color, String text, String url, String failMsg) { this(color, text, url, failMsg, true); }
 

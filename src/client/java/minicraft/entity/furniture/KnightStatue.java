@@ -10,11 +10,13 @@ import minicraft.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 public class KnightStatue extends Furniture {
+	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "knight_statue");
+	private static final SpriteLinker.LinkedSprite itemSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "knight_statue");
 	private int touches = 0; // >= 0
 	private final int bossHealth;
 
 	public KnightStatue(int health) {
-		super("KnightStatue", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "knight_statue"), new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "knight_statue"), 3, 2);
+		super("KnightStatue", sprite, itemSprite, 3, 2);
 		bossHealth = health;
 	}
 

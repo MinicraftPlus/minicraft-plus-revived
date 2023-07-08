@@ -127,7 +127,7 @@ public class TitleDisplay extends Display {
 			}
 		}
 
-		boolean isblue = splashes[rand].contains("blue");
+		boolean isBlue = splashes[rand].contains("blue");
 		boolean isGreen = splashes[rand].contains("Green");
 		boolean isRed = splashes[rand].contains("Red");
 
@@ -141,7 +141,7 @@ public class TitleDisplay extends Display {
 
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
-		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
+		int splashColor = isBlue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
 		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
 
