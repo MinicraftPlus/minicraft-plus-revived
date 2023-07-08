@@ -2,7 +2,6 @@ package minicraft.core;
 
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.util.Logging;
 import minicraft.util.TinylogLoggingProvider;
 import org.jetbrains.annotations.Nullable;
