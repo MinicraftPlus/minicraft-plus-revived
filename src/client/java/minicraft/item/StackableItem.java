@@ -37,6 +37,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Shard", new LinkedSprite(SpriteType.Item, "shard")));
 		items.add(new StackableItem("Cloud Ore", new LinkedSprite(SpriteType.Item, "cloud_ore")));
 		items.add(new StackableItem("Glass Bottle", new LinkedSprite(SpriteType.Item, "glass_bottle")));
+		items.add(new StackableItem("Knight Shard", new LinkedSprite(SpriteType.Item, "knight_shard")));
 
 		return items;
 	}
