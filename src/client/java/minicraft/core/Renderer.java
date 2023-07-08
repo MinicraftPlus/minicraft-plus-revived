@@ -171,13 +171,7 @@ public class Renderer extends Game {
 				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
 				AffineTransform at = new AffineTransform();
 				at.scale(scale, scale); // Setting the scaling.
-				int interpolationType;
-				switch ((String) Settings.get("screenshotscale")) {
-					case "minicraft.settings.screenshot_scaling_strategy.nearest_neighbor": interpolationType = AffineTransformOp.TYPE_NEAREST_NEIGHBOR; break;
-					case "minicraft.settings.screenshot_scaling_strategy.bilinear": interpolationType = AffineTransformOp.TYPE_BILINEAR; break;
-					case "minicraft.settings.screenshot_scaling_strategy.bicubic": default: interpolationType = AffineTransformOp.TYPE_BICUBIC; break;
-				}
-				AffineTransformOp scaleOp = new AffineTransformOp(at, interpolationType);
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 
 				// Use this solution without larger scales which use up a lot of memory.
 				// With scale 20, up to around 360MB overall RAM use.

@@ -65,7 +65,6 @@ public class OptionsWorldDisplay extends Display {
 			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("screenshot"),
-			Settings.getEntry("screenshotscale"),
 			new SelectEntry("minicraft.display.options_display.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		));
 	}
