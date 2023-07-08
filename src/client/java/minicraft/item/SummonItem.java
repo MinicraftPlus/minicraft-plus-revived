@@ -68,12 +68,15 @@ public class SummonItem extends StackableItem {
 					// If the player nears the center.
 					if (new Rectangle(level.w/2-3, level.h/2-3, 7, 7).contains(player.x >> 4, player.y >> 4)) {
 						if (!ObsidianKnight.active) {
-
-							// Pay stamina
-							if (player.payStamina(2)) {
-								level.add(new KnightStatue(5000), level.w/2, level.h/2, true);
-								Logger.tag("SummonItem").debug("Summoned new Knight Statue");
-								success = true;
+							if (level.getEntitiesOfClass(KnightStatue.class).length == 0) { // Prevent unintended behaviors
+								// Pay stamina
+								if (player.payStamina(2)) {
+									level.add(new KnightStatue(5000), level.w/2, level.h/2, true);
+									Logger.tag("SummonItem").debug("Summoned new Knight Statue");
+									success = true;
+								}
+							} else {
+								Game.notifications.add(Localization.getLocalized("minicraft.notification.knight_statue_exists"));
 							}
 						} else {
 							Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
