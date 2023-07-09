@@ -88,7 +88,6 @@ public class Game {
 		Analytics.GameStartup.ping();
 
 		input = new InputHandler(Renderer.canvas);
-		Renderer.spriteLinker = new SpriteLinker();
 
 		ResourcePackDisplay.initPacks();
 		ResourcePackDisplay.reloadResources();
