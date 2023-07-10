@@ -3,10 +3,13 @@ package minicraft.entity.furniture;
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
+import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.screen.DarkAnvilDisplay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public class DarkAnvil extends Furniture {
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "dark_anvil");
@@ -21,7 +24,14 @@ public class DarkAnvil extends Furniture {
 	public DarkAnvil() {
 		super("Dark Anvil", sprite, itemSprite);
 	}
+	public DarkAnvil(int store, int energy) {
+		this();
+		this.energy = energy;
+		this.fuelStore = (StackableItem) Items.get("Cloud Ore");
+		fuelStore.count = store;
+	}
 
+	@Range(from = 0, to = MAX_ENERGY)
 	public int getEnergy() {
 		return energy;
 	}
@@ -44,21 +54,27 @@ public class DarkAnvil extends Furniture {
 		return false;
 	}
 
-	public @Nullable StackableItem withdrawStore(boolean all) {
+	/** @see minicraft.screen.entry.SlotEntry.SynchronizedSlotEntry#withdrawSlot(boolean, int) */
+	public @Nullable StackableItem withdrawStore(boolean whole, @Range(from = 0, to = Integer.MAX_VALUE) int maxStackSize) {
+		return withdrawStore(whole ? maxStackSize : 1);
+	}
+	/** @see minicraft.screen.entry.SlotEntry.SynchronizedSlotEntry#withdrawSlot(int) */
+	public @Nullable StackableItem withdrawStore(int count) {
 		if (fuelStore == null) return null;
 		StackableItem item;
-		if (all) {
+		if (count >= fuelStore.count) {
 			item = fuelStore;
 			fuelStore = null;
 		} else {
 			item = fuelStore.copy();
-			item.count = 1;
-			fuelStore.count--;
+			item.count = Math.min(count, fuelStore.count);
+			fuelStore.count -= item.count;
 			if (fuelStore.isDepleted()) fuelStore = null;
 		}
 		return item;
 	}
 
+	@Range(from = 0, to = Integer.MAX_VALUE)
 	public int getStore() {
 		if (fuelStore == null) return 0;
 		return fuelStore.count;
@@ -74,13 +90,20 @@ public class DarkAnvil extends Furniture {
 		return false;
 	}
 
-	/** @return {@code true} if the provided {@code item} is not depleted */
+	/** @return {@code true} if the provided {@code item} is not depleted
+	 * @see minicraft.screen.entry.SlotEntry.SynchronizedSlotEntry#depositSlot(Item) */
 	public boolean depositStore(StackableItem item) {
 		if (item.getName().equalsIgnoreCase("Cloud Ore")) {
 			if (!item.isDepleted()) {
-				int toAdd = Math.min(item.count, fuelStore.maxCount - fuelStore.count);
-				fuelStore.count += toAdd;
-				item.count -= toAdd;
+				if (fuelStore == null) {
+					fuelStore = item.copy();
+					fuelStore.count = Math.min(item.count, fuelStore.maxCount);
+					item.count -= fuelStore.count;
+				} else {
+					int toAdd = Math.min(item.count, fuelStore.maxCount - fuelStore.count);
+					fuelStore.count += toAdd;
+					item.count -= toAdd;
+				}
 			}
 
 			return !item.isDepleted();

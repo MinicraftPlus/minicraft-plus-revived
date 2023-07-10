@@ -109,6 +109,7 @@ public class Recipes {
 		anvilRecipes.add(new Recipe("Gem Shovel_1", "Wood_5", "gem_50"));
 		anvilRecipes.add(new Recipe("Gem Bow_1", "Wood_5", "gem_50", "string_2"));
 		anvilRecipes.add(new Recipe("Shears_1", "Iron_4"));
+		anvilRecipes.add(new Recipe("Dark Anvil_1", "Cloud Ore_5", "Shard_10", "Iron_5", "Raw Obsidian_4"));
 
 		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));

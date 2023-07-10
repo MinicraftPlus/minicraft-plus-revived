@@ -6,7 +6,6 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -15,7 +14,8 @@ import minicraft.item.ToolItem;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.SlotEntry;
-import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -44,20 +44,9 @@ public class DarkAnvilDisplay extends Display {
 	private ArrayList<ListEntry> getEntries() {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 
-		// The first space is reserved for item sprite.
-		int energy = darkAnvil.getEnergy();
-		SpriteLinker.LinkedSprite sprite = Items.get("Cloud Ore").sprite;
-		entries.add(new StringEntry("  " + (energy / DarkAnvil.MAX_ENERGY) + "% (" + darkAnvil.getStore() + ")",
-			energy > 0 ? Color.WHITE : Color.GRAY, false) {
-			@Override
-			public void render(Screen screen, int x, int y, boolean isSelected) {
-				super.render(screen, x, y, isSelected);
-				screen.render(x, y, sprite);
-			}
-		});
-
-		entries.add(carrier.toolSlot);
+		entries.add(carrier.fuelSlot);
 		entries.add(carrier.materialSlot);
+		entries.add(carrier.toolSlot);
 		entries.add(carrier.actionEntry);
 		entries.add(carrier.productSlot);
 
@@ -152,36 +141,155 @@ public class DarkAnvilDisplay extends Display {
 	private void update() {
 		// On (slot) update; refresh actionEntry and product (for productSlot)
 		Item item; // Product slot should be empty for this to work.
-		if ((item = carrier.toolSlot.getItem()) != null && carrier.productSlot.getItem() == null) {
+		if ((item = carrier.toolSlot.getItem()) != null && carrier.productSlot.getItem() == null &&
+			((ToolItem) item).dur < ((ToolItem) item).MAX_DUR) { // Only when the durability is not full
 			carrier.product = (ToolItem) item.copy();
 			carrier.product.dur = carrier.product.MAX_DUR;
-			StackableItem material;
-			carrier.actionEntry.setSelectable((material = (StackableItem) carrier.materialSlot.getItem()) != null &&
-				material.count >= carrier.product.level + 1);
+			StackableItem material = (StackableItem) carrier.materialSlot.getItem();
+			carrier.actionEntry.setSelectable(material != null && material.count >= carrier.product.level + 1 &&
+				(darkAnvil.getEnergy() > 0 || darkAnvil.getStore() > 0)); // There must be energy left.
 		} else {
 			carrier.product = null;
 			carrier.actionEntry.setSelectable(false);
 		}
 
 		// Generic menu update
+		int oldSel = menus[0].getSelection();
 		menus[0] = darkAnvilMenuBuilder.setEntries(getEntries()).createMenu();
+		menus[0].setSelection(oldSel);
 		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 	}
 
+	private boolean tryRefillEnergy() {
+		if (darkAnvil.tryRefillEnergy())
+			update();
+		return darkAnvil.getEnergy() > 0; // Weather there is energy left as the result.
+	}
+
+	/** This class acts as a communicator to the fuel store of {@link DarkAnvil}. */
+	private class SynchronizedMaterialSlotEntry extends SlotEntry.SynchronizedSlotEntry { // Cloud Ore
+		private final StackableItem model = (StackableItem) Items.get("Cloud Ore");
+
+		public SynchronizedMaterialSlotEntry() {
+			super(new SlotEntry.SingletonItemSlotEntryPlaceholder(Items.get("Cloud Ore")));
+		}
+
+		/** Mainly referencing {@link #onSlotTransfer(SlotEntry, InputHandler)}. */
+		@Override
+		protected void onSelect(InputHandler input) {
+			if (isEmpty()) return;
+			boolean transferAll = input.getKey("SHIFT").down || examineCount() == 1;
+			StackableItem toItem = model.copy();
+			if (!transferAll) {
+				toItem.count = 1;
+			} else {
+				toItem.count = examineCount();
+			}
+
+			int moved = player.getInventory().add(toItem);
+			if (moved != 0) {
+				StackableItem withdrawn = darkAnvil.withdrawStore(moved);
+				if (withdrawn == null || withdrawn.count != moved) {
+					Logging.INVENTORY.warn(
+						"Attempted to transfer {} of Cloud Ore item from Dark Anvil to the player inventory, but only {} of can be withdrawn.",
+						moved, withdrawn == null ? "none" : withdrawn.count);
+				}
+				update();
+			}
+		}
+
+		@Override
+		public @Nullable StackableItem withdrawSlot(boolean whole, int maxStackSize) {
+			return darkAnvil.withdrawStore(whole, maxStackSize);
+		}
+
+		@Override
+		public @Nullable StackableItem withdrawSlot(int count) {
+			return darkAnvil.withdrawStore(count);
+		}
+
+		@Override
+		public boolean depositSlot(Item item) {
+			if (item instanceof StackableItem)
+				return darkAnvil.depositStore((StackableItem) item);
+			return true;
+		}
+
+		/** @deprecated this should not be called in this class for safety and efficiency. */
+		@Override
+		@Deprecated
+		public @Nullable StackableItem examineSlot() {
+			StackableItem clone = model.copy();
+			clone.count = examineCount();
+			return clone;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return darkAnvil.getStore() == 0;
+		}
+
+		public int examineCount() {
+			return darkAnvil.getStore();
+		}
+
+		@Override
+		protected void renderItemSprite(Screen screen, int x, int y) {
+			screen.render(x, y, model.sprite);
+		}
+
+		@Override
+		public int getColor(boolean isSelected) {
+			return (darkAnvil.getEnergy() > 0 || examineCount() > 0) ? (isSelected ? Color.WHITE : Color.tint(Color.GRAY, 1, true)) :
+				isSelected ? Color.GRAY : Color.DARK_GRAY;
+		}
+
+		@Override
+		protected @Nullable String getItemDisplayString() {
+			return null; // Unused
+		}
+
+		@Override
+		public String toString() {
+			// The first space is reserved for item sprite
+			return "  " + (darkAnvil.getEnergy() * 100 / DarkAnvil.MAX_ENERGY) + "% (" + darkAnvil.getStore() + ")";
+		}
+	}
+
 	// A temporary carrier of a dark anvil (for item slots)
 	private class DarkAnvilCarrier {
+		private final SynchronizedMaterialSlotEntry fuelSlot; // Cloud Ore
 		private final SlotEntry toolSlot;
-		private final SlotEntry materialSlot; // Cloud Ore
+		private final SlotEntry materialSlot; // Shard
 		private final SlotEntry.TemporarySlotEntry productSlot;
 		private final SelectEntry actionEntry;
 		private ToolItem product = null;
 
 		public DarkAnvilCarrier() {
-			toolSlot = new SlotEntry(new SlotEntry.SlotEntryPlaceholder("Tool Item"), DarkAnvilDisplay.this::onSlotTransfer);
-			materialSlot = new SlotEntry(new SlotEntry.SingletonItemSlotEntryPlaceholder(Items.get("Cloud Ore")), DarkAnvilDisplay.this::onSlotTransfer);
-			productSlot = new SlotEntry.TemporarySlotEntry(new SlotEntry.SlotEntryPlaceholder("Repaired tool") {
+			fuelSlot = new SynchronizedMaterialSlotEntry();
+			toolSlot = new SlotEntry(new SlotEntry.SlotEntryPlaceholder("Tool Item"), DarkAnvilDisplay.this::onSlotTransfer) {
+				@Override
+				public String toString() {
+					ToolItem item = (ToolItem) getItem();
+					if (item == null) return super.toString();
+					int dur = item.dur * 100 / item.MAX_DUR;
+					return " " + dur + "%" + item.getDisplayName();
+				}
+
+				@Override
+				public int getColor(boolean isSelected) {
+					ToolItem item = (ToolItem) getItem();
+					if (item == null) return super.getColor(isSelected);
+					int dur = item.dur * 100 / item.MAX_DUR;
+					int green = (int) (dur * 2.55f); // Let duration show as normal.
+					int color = Color.get(1, 255 - green, green, 0);
+					return isSelected ? color : Color.tint(color, -1, true);
+				}
+			};
+			materialSlot = new SlotEntry(new SlotEntry.SingletonItemSlotEntryPlaceholder(Items.get("Shard")), DarkAnvilDisplay.this::onSlotTransfer);
+			productSlot = new SlotEntry.TemporarySlotEntry(new SlotEntry.SlotEntryPlaceholder("Tool Reparation") {
 				@Override
 				public String getDisplayString() {
 					return product == null ? super.getDisplayString() : product.getDisplayName();
@@ -205,7 +313,8 @@ public class DarkAnvilDisplay extends Display {
 			ToolItem tool = (ToolItem) toolSlot.getItem();
 			StackableItem material = (StackableItem) materialSlot.getItem();
 			// Checking again for security
-			if (tool != null && material != null && material.count >= tool.level + 1) {
+			if (tool != null && material != null && material.count >= tool.level + 1 &&
+				tryRefillEnergy() && darkAnvil.deduceEnergy()) { // Refilling occurs only when a consumption is made.
 				toolSlot.setItem(null);
 				material.count -= tool.level + 1;
 				productSlot.setItem(product);
@@ -221,7 +330,15 @@ public class DarkAnvilDisplay extends Display {
 					toolSlot.setItem(item);
 					return 1;
 				}
-			} else if (item.getName().equalsIgnoreCase("Cloud Ore")) { // materialSlot
+			} else if (item.getName().equalsIgnoreCase("Cloud Ore")) { // fuelSlot
+				int count = ((StackableItem) item).count;
+				StackableItem toAdd = ((StackableItem) item).copy();
+				toAdd.count = count;
+				if (fuelSlot.depositSlot(toAdd)) {
+					return count - toAdd.count;
+				} else
+					return count;
+			} else if (item.getName().equalsIgnoreCase("Shard")) { // materialSlot
 				StackableItem stack = (StackableItem) materialSlot.getItem();
 				StackableItem toItem = (StackableItem) item.copy();
 				if (stack == null) {
@@ -239,5 +356,13 @@ public class DarkAnvilDisplay extends Display {
 
 			return 0;
 		}
+	}
+
+	@Override
+	public void onExit() { // Throw all the temporarily stored items out the dark anvil.
+		Item item;
+		if ((item = carrier.materialSlot.getItem()) != null) darkAnvil.getLevel().dropItem(darkAnvil.x, darkAnvil.y, item);
+		if ((item = carrier.toolSlot.getItem()) != null) darkAnvil.getLevel().dropItem(darkAnvil.x, darkAnvil.y, item);
+		if ((item = carrier.productSlot.getItem()) != null) darkAnvil.getLevel().dropItem(darkAnvil.x, darkAnvil.y, item);
 	}
 }

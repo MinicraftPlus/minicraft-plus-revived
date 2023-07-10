@@ -13,6 +13,7 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Spark;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DarkAnvil;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.KnightStatue;
@@ -394,6 +395,11 @@ public class Save {
 
 		if (e instanceof KnightStatue) {
 			extradata.append(":").append(((KnightStatue) e).getBossHealth());
+		}
+
+		if (e instanceof DarkAnvil) {
+			extradata.append(":").append(((DarkAnvil) e).getEnergy());
+			extradata.append(":").append(((DarkAnvil) e).getStore());
 		}
 
 		if (!isLocalSave) {

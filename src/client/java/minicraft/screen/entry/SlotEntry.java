@@ -4,7 +4,6 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
@@ -43,10 +42,10 @@ public class SlotEntry extends ListEntry {
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		super.render(screen, x, y, isSelected);
-		SpriteLinker.LinkedSprite sprite;
-		if (item == null && (sprite = placeholder.getSprite()) != null)
-			screen.render(x, y, sprite);
-		else
+		if (item == null) {
+			SpriteLinker.LinkedSprite sprite = placeholder.getSprite();
+			if (sprite != null) screen.render(x, y, sprite);
+		} else
 			screen.render(x, y, item.sprite);
 	}
 
@@ -83,9 +82,104 @@ public class SlotEntry extends ListEntry {
 		public @Nullable SpriteLinker.LinkedSprite getSprite() { return sprite; }
 	}
 
+	public static abstract class SynchronizedSlotEntry extends ListEntry { // Used when the slot is protected.
+		private final SlotEntryPlaceholder placeholder;
+
+		public SynchronizedSlotEntry(@NotNull SlotEntryPlaceholder placeholder) {
+			this.placeholder = placeholder;
+		}
+
+		/** This is invoked when a select action is inputted on the slot in a display. */
+		protected abstract void onSelect(InputHandler input);
+
+		/**
+		 * Safely withdraw the item inside the slot. This is a modification actor.
+		 * @param whole {@code true} if willing to withdraw the whole stack until reaching the maximum stack size
+		 * @param maxStackSize the maximum stack size of the returned item object
+		 * @return the withdrawn item object from the slot
+		 */
+		public @Nullable Item withdrawSlot(boolean whole, int maxStackSize) {
+			return withdrawSlot(whole ? maxStackSize : 1);
+		}
+		/**
+		 * Safely withdraw the item inside the slot. This is a modification actor.
+		 * @param count the amount of items willing to withdraw
+		 * @return the withdrawn item object from the slot
+		 */
+		public abstract @Nullable Item withdrawSlot(int count);
+
+		/**
+		 * Safely deposit the provided item into the slot. This is a modification actor.
+		 * @param item the item object to be deposited into the slot
+		 * @return {@code true} if the provided {@code item} is not depleted
+		 */
+		public abstract boolean depositSlot(Item item);
+
+		/**
+		 * Getting the current item object in the current state of the slot.
+		 * No modification to the slot should be made.
+		 * @return a clone of the current slot (for safety); {@code null} if the current slot is empty
+		 * @see #isEmpty()
+		 */
+		public abstract @Nullable Item examineSlot();
+
+		@Override
+		public void tick(InputHandler input) {
+			if (input.inputPressed("select")) {
+				Sound.play("confirm");
+				onSelect(input);
+			}
+		}
+
+		@Override
+		public void render(Screen screen, int x, int y, boolean isSelected) {
+			super.render(screen, x, y, isSelected);
+			if (isEmpty()) {
+				SpriteLinker.LinkedSprite sprite = placeholder.getSprite();
+				if (sprite != null) screen.render(x, y, sprite);
+			} else
+				renderItemSprite(screen, x, y);
+		}
+
+		/**
+		 * Quick examine to the existence of the slot to not create a new clone or object.
+		 * This is associated with {@link #getColor(boolean)} and {@link #toString()} by default.
+		 * @return {@code true} if the current slot is empty
+		 * @see #renderItemSprite(Screen, int, int)
+		 * @see #getItemDisplayString()
+		 */
+		public abstract boolean isEmpty();
+
+		/**
+		 * Rendering the current item sprite of the slot.
+		 * This is called by {@link #render(Screen, int, int, boolean)} only when the slot is not empty by default.
+		 * @see #isEmpty()
+		 */
+		protected abstract void renderItemSprite(Screen screen, int x, int y);
+
+		@Override
+		public int getColor(boolean isSelected) {
+			return isEmpty() ? placeholder.getDisplayColor(isSelected) : super.getColor(isSelected);
+		}
+
+		/**
+		 * Getting the display string of the current item in the slot.
+		 * This is called by {@link #toString()} only when the slot is not empty by default.
+		 * @return the display string associated with the item in the slot; {@code null} is expected when the slot is empty
+		 * @see #isEmpty()
+		 */
+		protected abstract @Nullable String getItemDisplayString();
+
+		@Override
+		public String toString() {
+			String itemDisplayName;
+			return isEmpty() || (itemDisplayName = getItemDisplayString()) == null ? placeholder.getDisplayString() : itemDisplayName;
+		}
+	}
+
 	public static class SingletonItemSlotEntryPlaceholder extends SlotEntryPlaceholder {
 		public SingletonItemSlotEntryPlaceholder(@NotNull Item item) {
-			super(Localization.getLocalized(item.getName()), item.sprite);
+			super(" " + Localization.getLocalized(item.getName()), item.sprite);
 		}
 	}
 

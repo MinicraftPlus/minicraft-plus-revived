@@ -589,8 +589,6 @@ public class Menu {
 				int width = titleDim.width;
 				for(ListEntry entry: menu.entries) {
 					int entryWidth = entry.getWidth();
-					if(menu.isSelectable() && !entry.isSelectable())
-						entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
 					width = Math.max(width, entryWidth);
 				}
 
