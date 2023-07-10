@@ -99,7 +99,7 @@ public class ContainerDisplay extends Display {
 		}
 
 		if (mainMethod || !onScreenKeyboardMenu.isVisible())
-			if (input.inputPressed("attack") || input.getKey("shift-enter").clicked) {
+			if (input.inputPressed("attack") || input.getKey("shift-attack").clicked) {
 				if (curMenu.getEntries().length == 0) return;
 				// switch inventories
 				Inventory from, to;
@@ -116,7 +116,7 @@ public class ContainerDisplay extends Display {
 
 				Item fromItem = from.get(fromSel);
 
-				boolean transferAll = input.getKey("shift-enter").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+				boolean transferAll = input.getKey("shift").down || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 
 				Item toItem = fromItem.copy();
 

@@ -429,13 +429,13 @@ public class QuestsDisplay extends Display {
 				if (questsTree.length > 0) {
 					if (input.getKey("shift").down) { // Browsing mode.
 						inBrowsing = true;
-						if (input.getKey("shift-down").clicked)
+						if (input.getKey("shift-cursor-down").clicked)
 							yScroll += 3;
-						else if (input.getKey("shift-up").clicked)
+						else if (input.getKey("shift-cursor-up").clicked)
 							yScroll -= 3;
-						else if (input.getKey("shift-right").clicked)
+						else if (input.getKey("shift-cursor-right").clicked)
 							xScroll += 3;
-						else if (input.getKey("shift-left").clicked)
+						else if (input.getKey("shift-cursor-left").clicked)
 							xScroll -= 3;
 					} else {
 						if (inBrowsing) {

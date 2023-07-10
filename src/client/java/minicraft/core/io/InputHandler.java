@@ -361,18 +361,48 @@ public class InputHandler implements KeyListener {
 		// Complex compound key binding support.
 		HashSet<Key> keys = new HashSet<>();
 		synchronized ("lock") {
-			String[] split = keytext.split("-");
-			for (String s : split) {
-				if (keyboard.containsKey(s))
-					keys.add(keyboard.get(s)); // Gets the key object from keyboard, if if exists.
-				else {
-					// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
-					Key key = new Key(); // Make new key
-					keyboard.put(s, key); // Add it to keyboard
-					keys.add(key);
+//			String[] split = keytext.split("-");
+//			for (String s : split) {
+//				if (keyboard.containsKey(s))
+//					keys.add(keyboard.get(s)); // Gets the key object from keyboard, if if exists.
+//				else {
+//					// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
+//					Key key = new Key(); // Make new key
+//					keyboard.put(s, key); // Add it to keyboard
+//					keys.add(key);
+//
+//					//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+//				}
+//			}
 
-					//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
-				}
+			while (true) { // Only handle these 3 modifiers as the key combinations.
+				if (keytext.startsWith("SHIFT-")) {
+					keys.add(keyboard.get("SHIFT"));
+					keytext = keytext.substring(6);
+				} else if (keytext.startsWith("ALT-")) {
+					keys.add(keyboard.get("ALT"));
+					keytext = keytext.substring(4);
+				} else if (keytext.startsWith("CTRL-")) {
+					keys.add(keyboard.get("CTRL"));
+					keytext = keytext.substring(5);
+				} else break; // No more modifiers to be handled
+			}
+
+			if(getFromMap) { // If false, we assume that keytext is a physical key.
+				// If the passed-in key equals one in keymap, then replace it with it's match, a key in keyboard.
+				if (keymap.containsKey(keytext))
+					keytext = keymap.get(keytext); // Converts action name to physical key name
+			}
+
+			if (keyboard.containsKey(keytext))
+				keys.add(keyboard.get(keytext)); // Gets the key object from keyboard, if if exists.
+			else {
+				// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
+				Key key = new Key(); // Make new key
+				keyboard.put(keytext, key); // Add it to keyboard
+				keys.add(key);
+
+				//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
 		}
 
