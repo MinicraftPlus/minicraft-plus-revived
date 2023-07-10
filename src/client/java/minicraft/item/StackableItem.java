@@ -27,7 +27,6 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Gold Ore", new LinkedSprite(SpriteType.Item, "gold_ore")));
 		items.add(new StackableItem("Iron", new LinkedSprite(SpriteType.Item, "iron_ingot")));
 		items.add(new StackableItem("Gold", new LinkedSprite(SpriteType.Item, "gold_ingot")));
-		items.add(new StackableItem("Rose", new LinkedSprite(SpriteType.Item, "red_flower")));
 		items.add(new StackableItem("Gunpowder", new LinkedSprite(SpriteType.Item, "gunpowder")));
 		items.add(new StackableItem("Slime", new LinkedSprite(SpriteType.Item, "slime")));
 		items.add(new StackableItem("glass", new LinkedSprite(SpriteType.Item, "glass")));

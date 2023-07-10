@@ -15,11 +15,8 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class FlowerTile extends Tile {
-	private static final SpriteAnimation flowerSprite0 = new SpriteAnimation(SpriteType.Tile, "flower_shape0");
-	private static final SpriteAnimation flowerSprite1 = new SpriteAnimation(SpriteType.Tile, "flower_shape1");
-
-	protected FlowerTile(String name) {
-		super(name, null);
+	protected FlowerTile(String name, String key) {
+		super(name, new SpriteAnimation(SpriteType.Tile, key));
 		connectsToGrass = true;
 		maySpawn = true;
 	}
@@ -42,9 +39,7 @@ public class FlowerTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
-		int data = level.getData(x, y);
-		int shape = (data / 16) % 2;
-		(shape == 0 ? flowerSprite0 : flowerSprite1).render(screen, level, x, y);
+		sprite.render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
@@ -55,8 +50,7 @@ public class FlowerTile extends Tile {
 					int data = level.getData(x, y);
 					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.play("monsterhurt");
-					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Flower"));
-					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Rose"));
+					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get(name));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, x, y, level.depth));
@@ -68,8 +62,7 @@ public class FlowerTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		level.dropItem(x *16 + 8, y * 16 + 8, 0, 1, Items.get("Flower"));
-		level.dropItem(x *16 + 8, y * 16 + 8, 0, 1, Items.get("Rose"));
+		level.dropItem(x *16 + 8, y * 16 + 8, Items.get(name));
 		level.setTile(x, y, Tiles.get("Grass"));
 		return true;
 	}

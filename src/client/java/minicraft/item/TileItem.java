@@ -27,7 +27,6 @@ public class TileItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		/// TileItem sprites all have 1x1 sprites.
-		items.add(new TileItem("Flower", new LinkedSprite(SpriteType.Item, "white_flower"), new TileModel("flower"), "grass"));
 		items.add(new TileItem("Acorn", new LinkedSprite(SpriteType.Item, "acorn"), new TileModel("tree Sapling"), "grass"));
 		items.add(new TileItem("Dirt", new LinkedSprite(SpriteType.Item, "dirt"), new TileModel("dirt"), "hole", "water", "lava"));
 		items.add(new TileItem("Natural Rock", new LinkedSprite(SpriteType.Item, "stone"), new TileModel("rock"), "hole", "dirt", "sand", "grass", "path", "water", "lava"));
@@ -61,6 +60,26 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Heavenly Berries", new LinkedSprite(SpriteType.Item, "heavenly_berries"), new TileModel("heavenly berries", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Hellish Berries", new LinkedSprite(SpriteType.Item, "hellish_berries"), new TileModel("hellish berries", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
+
+		items.add(new TileItem("Rose", new LinkedSprite(SpriteType.Item, "rose"), new TileModel("rose"), "grass"));
+		items.add(new TileItem("Oxeye Daisy", new LinkedSprite(SpriteType.Item, "oxeye_daisy"), new TileModel("oxeye daisy"), "grass"));
+		items.add(new TileItem("Sunflower", new LinkedSprite(SpriteType.Item, "sunflower"), new TileModel("sunflower"), "grass"));
+		items.add(new TileItem("Allium", new LinkedSprite(SpriteType.Item, "allium"), new TileModel("allium"), "grass"));
+		items.add(new TileItem("Blue Orchid", new LinkedSprite(SpriteType.Item, "blue_orchid"), new TileModel("blue orchid"), "grass"));
+		items.add(new TileItem("Cornflower", new LinkedSprite(SpriteType.Item, "cornflower"), new TileModel("cornflower"), "grass"));
+		items.add(new TileItem("Dandelion", new LinkedSprite(SpriteType.Item, "dandelion"), new TileModel("dandelion"), "grass"));
+		items.add(new TileItem("Hydrangea", new LinkedSprite(SpriteType.Item, "hydrangea"), new TileModel("hydrangea"), "grass"));
+		items.add(new TileItem("Iris", new LinkedSprite(SpriteType.Item, "iris"), new TileModel("iris"), "grass"));
+		items.add(new TileItem("Orange Tulip", new LinkedSprite(SpriteType.Item, "orange_tulip"), new TileModel("orange tulip"), "grass"));
+		items.add(new TileItem("Pink Tulip", new LinkedSprite(SpriteType.Item, "pink_tulip"), new TileModel("pink tulip"), "grass"));
+		items.add(new TileItem("Red Tulip", new LinkedSprite(SpriteType.Item, "red_tulip"), new TileModel("red tulip"), "grass"));
+		items.add(new TileItem("White Tulip", new LinkedSprite(SpriteType.Item, "white_tulip"), new TileModel("white tulip"), "grass"));
+		items.add(new TileItem("Peony", new LinkedSprite(SpriteType.Item, "peony"), new TileModel("peony"), "grass"));
+		items.add(new TileItem("Periwinkle", new LinkedSprite(SpriteType.Item, "periwinkle"), new TileModel("periwinkle"), "grass"));
+		items.add(new TileItem("Pink Lily", new LinkedSprite(SpriteType.Item, "pink_lily"), new TileModel("pink lily"), "grass"));
+		items.add(new TileItem("White Lily", new LinkedSprite(SpriteType.Item, "white_lily"), new TileModel("white lily"), "grass"));
+		items.add(new TileItem("Poppy", new LinkedSprite(SpriteType.Item, "poppy"), new TileModel("poppy"), "grass"));
+		items.add(new TileItem("Violet", new LinkedSprite(SpriteType.Item, "violet"), new TileModel("violet"), "grass"));
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
