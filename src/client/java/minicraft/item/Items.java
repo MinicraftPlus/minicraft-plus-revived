@@ -43,9 +43,7 @@ public class Items {
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
-		addAll(ArcaneFertilizerItem.getAllInstances());
 		addAll(WateringCanItem.getAllInstances());
-		addAll(FertilizerItem.getAllInstances());
 		addAll(DyeItem.getAllInstances());
 		addAll(WoolItem.getAllInstances());
 	}

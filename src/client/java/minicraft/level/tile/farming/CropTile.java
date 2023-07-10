@@ -5,17 +5,21 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.Particle;
+import minicraft.gfx.SpriteLinker;
+import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.StackableItem;
 import minicraft.level.Level;
-import minicraft.level.tile.BoostablePlant;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Random;
 
-public class CropTile extends FarmTile implements BoostablePlant {
+public class CropTile extends FarmTile {
 	protected final @Nullable String seed;
 
 	protected int maxAge = 0b111; // Must be a bit mask.
@@ -95,6 +99,37 @@ public class CropTile extends FarmTile implements BoostablePlant {
 		return successful;
 	}
 
+	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
+
+	@Override
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if (item instanceof StackableItem && item.getName().equalsIgnoreCase("Fertilizer")) {
+			((StackableItem) item).count--;
+			Random random = new Random();
+			for (int i = 0; i < 2; ++i) {
+				double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+				double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+				level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
+			}
+			int fertilization = getFertilization(level.getData(xt, yt));
+			if (fertilization < 100) { // More fertilization, lower the buffer is applied.
+				fertilize(level, xt, yt, 40);
+			} else if (fertilization < 200) {
+				fertilize(level, xt, yt, 30);
+			} else if (fertilization < 300) {
+				fertilize(level, xt, yt, 25);
+			} else if (fertilization < 400) {
+				fertilize(level, xt, yt, 20);
+			} else {
+				fertilize(level, xt, yt, 10);
+			}
+
+			return true;
+		}
+
+		return super.interact(level, xt, yt, player, item, attackDir);
+	}
+
 	/** Default harvest method, used for everything that doesn't really need any special behavior. */
 	protected void harvest(Level level, int x, int y, Entity entity) {
 		int data = level.getData(x, y);
@@ -136,17 +171,5 @@ public class CropTile extends FarmTile implements BoostablePlant {
 		if (fertilization > 511) fertilization = 511; // The maximum possible value to be reached.
 		// If this value exceeds 511, the final value would be greater than the hard maximum value that short can be.
 		level.setData(x, y, (data & (0b111 + (maxAge << 3))) + (fertilization << (3 + (maxAge + 1)/2)));
-	}
-
-	@Override
-	public boolean isValidBoostablePlantTarget(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
-	public void performPlantBoost(Level level, int x, int y) {
-		int data = level.getData(x, y);
-		int stage = (data >> 3) & maxAge;
-		level.setData(x, y, (data & ~(maxAge << 3)) + (Math.min(stage + random.nextInt(4) + 2, maxAge) << 3));
 	}
 }

@@ -2,6 +2,7 @@ package minicraft.item;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.WaterParticle;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
@@ -14,7 +15,9 @@ import minicraft.level.tile.WaterTile;
 import minicraft.level.tile.farming.CropTile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 public class WateringCanItem extends Item {
@@ -26,6 +29,7 @@ public class WateringCanItem extends Item {
 
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_can");
 	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_can_filled");
+	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
 
 	private static final SpriteLinker.LinkedSprite[] spriteSplash = new SpriteLinker.LinkedSprite[] {
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_0"),
@@ -34,7 +38,7 @@ public class WateringCanItem extends Item {
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_3")
 	};
 
-	public final int CAPACITY = 3600;
+	public final int CAPACITY = 1800;
 	public int content = 0;
 	private int renderingTick = 0;
 
@@ -52,8 +56,8 @@ public class WateringCanItem extends Item {
 			content--;
 			updateSprite();
 			renderingTick++;
+			Random random = new Random();
 			if (renderingTick >= 8) {
-				Random random = new Random();
 				for (int i = 0; i < 4; i++) {
 					SpriteLinker.LinkedSprite splash = spriteSplash[random.nextInt(spriteSplash.length)];
 					// 2-pixel deviation for centering particle sprites.
@@ -70,18 +74,44 @@ public class WateringCanItem extends Item {
 				if (fertilization < 150) { // Maximum of 5 levels watering can can fertilize.
 					((CropTile) tile).fertilize(level, xt, yt, 1);
 				}
+				if (random.nextInt(5) == 0) {
+					double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+					double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+					level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
+				}
 			} else if (tile instanceof DirtTile || tile instanceof GrassTile) {
+				if (tile instanceof GrassTile) {
+					if (random.nextInt(15) == 0) {
+						double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+						double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+						level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
+					}
+					if (random.nextInt(60) == 0) { // Small chance for growing flowers
+						level.setTile(xt, yt, Tiles.get(2), random.nextInt(2));
+					}
+				}
+
 				for (Point p : level.getAreaTilePositions(xt, yt, 1)) {
 					Tile t = level.getTile(p.x, p.y);
 					if (tile instanceof DirtTile) {
 						if (t instanceof GrassTile) { // Grass tile exists.
-							if (new Random().nextInt(10) == 0)
+							if (random.nextInt(5) == 0) {
+								double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
+							}
+							if (random.nextInt(10) == 0)
 								level.setTile(xt, yt, Tiles.get("grass")); // Grass extends.
 							break; // Operation finished.
 						}
 					} else { // tile instanceof GrassTile
 						if (t instanceof DirtTile) { // Dirt tile exists.
-							if (new Random().nextInt(15) == 0)
+							if (random.nextInt(5) == 0) {
+								double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
+							}
+							if (random.nextInt(15) == 0)
 								level.setTile(p.x, p.y, Tiles.get("grass")); // Grass extends.
 							break; // Operation finished.
 						}

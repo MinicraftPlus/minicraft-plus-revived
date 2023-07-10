@@ -71,37 +71,37 @@ public class TreeTile extends Tile {
 
 		TreeType thisType = level.treeTypes[x + y * level.w];
 		// Checking whether the target direction has targeted the same TreeTile
-		boolean up = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
-		boolean left = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
-		boolean right = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
-		boolean down = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
-		boolean upLeft = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
-		boolean upRight = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
-		boolean downLeft = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
-		boolean downRight = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
+		boolean isUpTileSame = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
+		boolean isLeftTileSame = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
+		boolean isRightTileSame = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
+		boolean isDownTileSame = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
+		boolean isUpLeftTileSame = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
+		boolean isUpRightTileSame = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
+		boolean isDownLeftTileSame = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
+		boolean isDownRightTileSame = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
 
 		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
-		if (up && upLeft && left) {
+		if (isUpTileSame && isUpLeftTileSame && isLeftTileSame) {
 			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
 		} else {
 			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
 		}
 
-		if (up && upRight && right) {
+		if (isUpTileSame && isUpRightTileSame && isRightTileSame) {
 			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
 		} else {
 			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
 		}
 
-		if (down && downLeft && left) {
+		if (isDownTileSame && isDownLeftTileSame && isLeftTileSame) {
 			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
 			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
-		if (down && downRight && right) {
+		if (isDownTileSame && isDownRightTileSame && isRightTileSame) {
 			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
 		} else {
 			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);

@@ -3,9 +3,7 @@ package minicraft.level;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
-import minicraft.level.tile.TallGrassTile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.TreeTile;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -15,9 +13,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.Random;
-import java.util.function.BiFunction;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -416,18 +412,6 @@ public class LevelGen {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
 						}
-					}
-				}
-			}
-		}
-
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				int xx = x + random.nextInt(3) - random.nextInt(3);
-				int yy = y + random.nextInt(3) - random.nextInt(3);
-				if (xx >= 0 && yy >= 0 && xx < w && yy < h && random.nextInt(5) < 3) {
-					if (map[xx + yy * w] == Tiles.get("grass").id) {
-						map[xx + yy * w] = TallGrassTile.grassIDs.get(random.nextInt(TallGrassTile.grassIDs.size()));
 					}
 				}
 			}

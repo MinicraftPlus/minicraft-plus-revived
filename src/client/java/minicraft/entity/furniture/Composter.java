@@ -3,7 +3,6 @@ package minicraft.entity.furniture;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
-import minicraft.item.FertilizerItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
@@ -26,7 +25,7 @@ public class Composter extends Furniture {
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (compost == MAX_COMPOST) {
 			compost = 0;
-			FertilizerItem i = (FertilizerItem) Items.get("Fertilizer").copy();
+			StackableItem i = (StackableItem) Items.get("Fertilizer").copy();
 			i.count = 1;
 			player.getLevel().dropItem(x, y, i);
 			refreshStatus();
