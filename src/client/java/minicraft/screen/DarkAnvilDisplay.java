@@ -157,6 +157,10 @@ public class DarkAnvilDisplay extends Display {
 		int oldSel = menus[0].getSelection();
 		menus[0] = darkAnvilMenuBuilder.setEntries(getEntries()).createMenu();
 		menus[0].setSelection(oldSel);
+		while (menus[0].getCurEntry() != null && !menus[0].getCurEntry().isSelectable()) {
+			int sel = menus[0].getSelection();
+			menus[0].setSelection(sel == 0 ? menus[0].getNumOptions() : sel - 1);
+		}
 		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
