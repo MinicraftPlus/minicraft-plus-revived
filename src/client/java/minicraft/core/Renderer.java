@@ -63,10 +63,7 @@ public class Renderer extends Game {
 	static float SCALE = 3;
 
 	public static Screen screen; // Creates the main screen
-	public static final SpriteLinker spriteLinker; // The sprite linker for sprites
-	static {
-		spriteLinker = new SpriteLinker();
-	}
+	public static final SpriteLinker spriteLinker = new SpriteLinker(); // The sprite linker for sprites
 
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
