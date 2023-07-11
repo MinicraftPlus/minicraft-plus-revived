@@ -85,6 +85,11 @@ public class ObsidianKnight extends EnemyMob {
 			lvlSprites = broken;
 		}
 
+		//Fix for wrong sprite usage when respawned
+		if (health > 2500) {
+			lvlSprites = armored;
+		}
+
 		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
 
 		if (attackPhaseCooldown == 0) {
