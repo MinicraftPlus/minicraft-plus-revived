@@ -1,5 +1,7 @@
 package minicraft.util;
 
+import org.jetbrains.annotations.Range;
+
 public final class MyUtils {
 
 	private MyUtils() {}

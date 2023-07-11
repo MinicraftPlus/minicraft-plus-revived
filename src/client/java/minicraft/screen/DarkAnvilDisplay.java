@@ -321,6 +321,7 @@ public class DarkAnvilDisplay extends Display {
 				tryRefillEnergy() && darkAnvil.deduceEnergy()) { // Refilling occurs only when a consumption is made.
 				toolSlot.setItem(null);
 				material.count -= tool.level + 1;
+				if (material.isDepleted()) materialSlot.setItem(null);
 				productSlot.setItem(product);
 			}
 
