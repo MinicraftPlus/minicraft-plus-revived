@@ -79,14 +79,10 @@ public class ObsidianKnight extends EnemyMob {
 			this.remove();
 		}
 
-		//Achieve phase2
-		if (health <= 2500) {
+		// Achieve phase 2
+		if (health <= 2500 && phase == 0) { // Assume that phase would not turn back to phase 1
 			phase = 1;
-		}
-		if (phase == 1) { // Refreshing phased sprites
-			lvlSprites = broken;
-		} else {
-			lvlSprites = armored;
+			lvlSprites = broken; // Refreshing phased sprites
 		}
 
 		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
