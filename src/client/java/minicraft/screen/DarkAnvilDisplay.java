@@ -173,10 +173,10 @@ public class DarkAnvilDisplay extends Display {
 	}
 
 	/** This class acts as a communicator to the fuel store of {@link DarkAnvil}. */
-	private class SynchronizedMaterialSlotEntry extends SlotEntry.SynchronizedSlotEntry { // Cloud Ore
+	private class SynchronizedFuelSlotEntry extends SlotEntry.SynchronizedSlotEntry { // Cloud Ore
 		private final StackableItem model = (StackableItem) Items.get("Cloud Ore");
 
-		public SynchronizedMaterialSlotEntry() {
+		public SynchronizedFuelSlotEntry() {
 			super(new SlotEntry.SingletonItemSlotEntryPlaceholder(Items.get("Cloud Ore")));
 		}
 
@@ -258,13 +258,13 @@ public class DarkAnvilDisplay extends Display {
 		@Override
 		public String toString() {
 			// The first space is reserved for item sprite
-			return "  " + (darkAnvil.getEnergy() * 100 / DarkAnvil.MAX_ENERGY) + "% (" + darkAnvil.getStore() + ")";
+			return "  FUEL " + (darkAnvil.getEnergy() * 100 / DarkAnvil.MAX_ENERGY) + "% (" + darkAnvil.getStore() + ")";
 		}
 	}
 
 	// A temporary carrier of a dark anvil (for item slots)
 	private class DarkAnvilCarrier {
-		private final SynchronizedMaterialSlotEntry fuelSlot; // Cloud Ore
+		private final SynchronizedFuelSlotEntry fuelSlot; // Cloud Ore
 		private final SlotEntry toolSlot;
 		private final SlotEntry materialSlot; // Shard
 		private final SlotEntry.TemporarySlotEntry productSlot;
@@ -272,7 +272,7 @@ public class DarkAnvilDisplay extends Display {
 		private ToolItem product = null;
 
 		public DarkAnvilCarrier() {
-			fuelSlot = new SynchronizedMaterialSlotEntry();
+			fuelSlot = new SynchronizedFuelSlotEntry();
 			toolSlot = new SlotEntry(new SlotEntry.SlotEntryPlaceholder("Tool Item"), DarkAnvilDisplay.this::onSlotTransfer) {
 				@Override
 				public String toString() {
