@@ -27,27 +27,7 @@ public final class Tiles {
 
 		tiles.put((short)0, new GrassTile("Grass"));
 		tiles.put((short)1, new DirtTile("Dirt"));
-		tiles.put((short)2, new FlowerTile("Oxeye Daisy", "oxeye_daisy"));
-		// These are out of order because of additions of new flowers
-		tiles.put((short)64, new FlowerTile("Rose", "rose"));
-		tiles.put((short)65, new FlowerTile("Sunflower", "sunflower"));
-		tiles.put((short)66, new FlowerTile("Allium", "allium"));
-		tiles.put((short)67, new FlowerTile("Blue Orchid", "blue_orchid"));
-		tiles.put((short)68, new FlowerTile("Cornflower", "cornflower"));
-		tiles.put((short)69, new FlowerTile("Dandelion", "dandelion"));
-		tiles.put((short)70, new FlowerTile("Hydrangea", "hydrangea"));
-		tiles.put((short)71, new FlowerTile("Iris", "iris"));
-		tiles.put((short)72, new FlowerTile("Orange Tulip", "orange_tulip"));
-		tiles.put((short)73, new FlowerTile("Pink Tulip", "pink_tulip"));
-		tiles.put((short)74, new FlowerTile("Red Tulip", "red_tulip"));
-		tiles.put((short)75, new FlowerTile("White Tulip", "white_tulip"));
-		tiles.put((short)76, new FlowerTile("Peony", "peony"));
-		tiles.put((short)77, new FlowerTile("Periwinkle", "periwinkle"));
-		tiles.put((short)78, new FlowerTile("Pink Lily", "pink_lily"));
-		tiles.put((short)79, new FlowerTile("White Lily", "white_lily"));
-		tiles.put((short)80, new FlowerTile("Poppy", "poppy"));
-		tiles.put((short)81, new FlowerTile("Violet", "violet"));
-
+		tiles.put((short)2, new FlowerTile("Flower"));
 		tiles.put((short)3, new HoleTile("Hole"));
 		tiles.put((short)4, new StairsTile("Stairs Up", true));
 		tiles.put((short)5, new StairsTile("Stairs Down", false));
