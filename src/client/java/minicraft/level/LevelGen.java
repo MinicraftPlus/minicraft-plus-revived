@@ -1,6 +1,5 @@
 package minicraft.level;
 
-import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
 import minicraft.level.tile.Tiles;
@@ -9,11 +8,26 @@ import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -37,7 +51,7 @@ public class LevelGen {
 		}
 
 		int stepSize = featureSize;
-		double scale = 2 / w;
+		double scale = 2.0 / w;
 		double scaleMod = 1;
 		do {
 			int halfStep = stepSize / 2;
@@ -48,7 +62,7 @@ public class LevelGen {
 					double c = sample(x, y + stepSize); // Fetches the next value down, possibly looping back to the top of the column.
 					double d = sample(x + stepSize, y + stepSize); // Fetches the value one down, one right.
 
-					/**
+					/*
 					 * This could probably use some explaining... Note: the number values are probably only good the first time around...
 					 *
 					 * This starts with taking the average of the four numbers from before (they form a little square in adjacent tiles), each of which holds a value from -1 to 1.
@@ -82,7 +96,7 @@ public class LevelGen {
 				}
 			}
 
-			/**
+			/*
 			 * THEN... this stuff is set to repeat the system all over again!
 			 * The featureSize is halved, allowing access to further unset mids, and the scale changes...
 			 * The scale increases the first time, x1.8, but the second time it's x1.1, and after that probably a little less than 1. So, it generally increases a bit, maybe to 4 / w at tops. This results in the 5th random value being more significant than the first 4 ones in later iterations.
@@ -98,7 +112,7 @@ public class LevelGen {
 	} // This merely returns the value, like Level.getTile(x, y).
 
 	private void setSample(int x, int y, double value) {
-		/**
+		/*
 		 * This method is short, but difficult to understand. This is what I think it does:
 		 *
 		 * The values array is like a 2D array, but formatted into a 1D array; so the basic "x + y * w" is used to access a given value.
@@ -114,8 +128,7 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
-	@Nullable
-	static short[][] createAndValidateMap(int w, int h, int level, long seed) {
+	static short[] @Nullable [] createAndValidateMap(int w, int h, int level, long seed) {
 		worldSeed = seed;
 
 		if (level == 1)
@@ -155,7 +168,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
 			short[][] result = createUndergroundMap(w, h, depth);
@@ -196,7 +209,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateSkyMap(int w, int h) {
+	private static short[][] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 
 		do {
@@ -695,7 +708,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -749,55 +762,82 @@ public class LevelGen {
 	}
 
 	public static void main(String[] args) {
-		LevelGen.worldSeed = 0x100;
-
-		// Fixes to get this method to work
-
-		// AirWizard needs this in constructor
-		Game.gameDir = "";
-
-		Tiles.initTileList();
-		// End of fixes
-
-		int idx = -2;
-
-		int[] maplvls = new int[args.length];
-		boolean valid = true;
-		if (maplvls.length > 0) {
-			for (int i = 0; i < args.length; i++) {
-				try {
-					int lvlnum = Integer.parseInt(args[i]);
-					maplvls[i] = lvlnum;
-				} catch (Exception ex) {
-					valid = false;
-					break;
-				}
+		JFrame frame = new JFrame("World Level Generation Test");
+		frame.setResizable(false);
+		frame.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
 			}
-		} else valid = false;
+			@Override
+			public void windowClosed(WindowEvent e) {
+				System.exit(0);
+			}
+			@Override
+			public void windowIconified(WindowEvent e) {}
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+			@Override
+			public void windowActivated(WindowEvent e) {}
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+		});
+		frame.setLayout(new BorderLayout());
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new FlowLayout());
+		mainPanel.add(new JLabel("World Level Generation Test Type"));
+		frame.add(mainPanel, BorderLayout.CENTER);
 
-		if (!valid) {
-			maplvls = new int[1];
-			maplvls[0] = 0;
+		AtomicReference<Boolean> typeChoice = new AtomicReference<>();
+		JPanel buttonPanel = new JPanel();
+		JButton buttonClassic = new JButton("Classic Tuple");
+		buttonClassic.addActionListener(e -> {
+			typeChoice.set(true);
+			frame.setVisible(false);
+		});
+		buttonPanel.add(buttonClassic);
+		JButton buttonFlexible = new JButton("Flexible");
+		buttonFlexible.addActionListener(e -> {
+			typeChoice.set(false);
+			frame.setVisible(false);
+		});
+		buttonPanel.add(buttonFlexible);
+		buttonPanel.setLayout(new FlowLayout());
+		frame.add(buttonPanel, BorderLayout.SOUTH);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		while (true) {
+			synchronized (frame) {
+				if (!frame.isVisible()) break;
+			}
 		}
 
-		//noinspection InfiniteLoopStatement
-		while (true) {
-			int w = 128;
-			int h = 128;
+		mainPanel.removeAll();
+		buttonPanel.removeAll();
+		JButton buttonNext = new JButton("Next");
+		buttonPanel.add(buttonNext);
 
-			int lvl = maplvls[idx++ % maplvls.length];
-			if (lvl > 1 || lvl < -4) continue;
-
-			short[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl, LevelGen.worldSeed);
-
-			if (fullmap == null) continue;
-			short[] map = fullmap[0];
-
-			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			int[] pixels = new int[w * h];
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++) {
-					int i = x + y * w;
+		Boolean typeChoiceValue = typeChoice.get();
+		List<Runnable> query = Collections.synchronizedList(new LinkedList<>());
+		class Config {
+			public final int w;
+			public final int h;
+			public Config(int w, int h) {
+				this.w = w;
+				this.h = h;
+			}
+		}
+		AtomicReference<Config> configHolder = new AtomicReference<>(new Config(128, 128));
+		Consumer<short[]> imgOutput = map -> {
+			Config cfg = configHolder.get();
+			BufferedImage img = new BufferedImage(cfg.w, cfg.h, BufferedImage.TYPE_INT_RGB);
+			int[] pixels = new int[cfg.w * cfg.h];
+			for (int y = 0; y < cfg.h; y++) {
+				for (int x = 0; x < cfg.w; x++) {
+					int i = x + y * cfg.w;
 
 					if (map[i] == Tiles.get("water").id) pixels[i] = 0x000080;
 					if (map[i] == Tiles.get("iron Ore").id) pixels[i] = 0x000080;
@@ -820,12 +860,153 @@ public class LevelGen {
 					if (map[i] == Tiles.get("Raw Obsidian").id) pixels[i] = 0x0a0080;
 				}
 			}
-			img.setRGB(0, 0, w, h, pixels, 0, w);
-			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)));
-			if (LevelGen.worldSeed == 0x100)
-				LevelGen.worldSeed = 0xAAFF20;
-			else
-				LevelGen.worldSeed = 0x100;
+			img.setRGB(0, 0, cfg.w, cfg.h, pixels, 0, cfg.w);
+			mainPanel.removeAll();
+			mainPanel.add(new JLabel(new ImageIcon(img.getScaledInstance(800, 800, Image.SCALE_AREA_AVERAGING))));
+			frame.pack();
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
+		};
+		if (typeChoiceValue == null) {
+			System.exit(0); // No choice.
+		} else if (typeChoiceValue) { // Classic Tuple
+			LevelGen.worldSeed = 0x100;
+
+			// Fixes to get this method to work
+
+			Tiles.initTileList();
+			// End of fixes
+
+			AtomicInteger idx = new AtomicInteger(-2);
+
+			int[] maplvls = new int[args.length];
+			boolean valid = true;
+			if (maplvls.length > 0) {
+				for (int i = 0; i < args.length; i++) {
+					try {
+						int lvlnum = Integer.parseInt(args[i]);
+						maplvls[i] = lvlnum;
+					} catch (Exception ex) {
+						valid = false;
+						break;
+					}
+				}
+			} else valid = false;
+
+			if (!valid) {
+				maplvls = new int[1];
+			}
+
+			int[] finalMaplvls = maplvls;
+			Runnable runner = new Runnable() {
+				@Override
+				public void run() {
+					Config cfg = configHolder.get();
+					int lvl = finalMaplvls[idx.getAndIncrement() % finalMaplvls.length];
+					if (lvl > 1 || lvl < -4) {
+						synchronized (query) {
+							query.add(this);
+						}
+						return;
+					}
+
+					short[][] fullmap = LevelGen.createAndValidateMap(cfg.w, cfg.h, lvl, LevelGen.worldSeed);
+
+					if (fullmap == null) {
+						synchronized (query) {
+							query.add(this);
+						}
+						return;
+					}
+					short[] map = fullmap[0];
+					imgOutput.accept(map);
+					if (LevelGen.worldSeed == 0x100)
+						LevelGen.worldSeed = 0xAAFF20;
+					else
+						LevelGen.worldSeed = 0x100;
+				}
+			};
+			buttonNext.addActionListener(e -> {
+				frame.setVisible(false);
+				synchronized (query) {
+					query.add(runner);
+				}
+			});
+			runner.run();
+		} else { // Flexible
+			Tiles.initTileList();
+
+			JButton buttonConfirm = new JButton("Confirm");
+			JComboBox<Integer> comboBox = new JComboBox<>(new Integer[] { 128, 256, 512 });
+			comboBox.setEditable(false);
+			Random random = new Random();
+			AtomicInteger idx = new AtomicInteger();
+			int[] levels = new int[] { 0, 1, -1, -2, -3, -4 };
+			Runnable runner = new Runnable() {
+				@Override
+				public void run() {
+					Config cfg = configHolder.get();
+					short[][] fullmap = LevelGen.createAndValidateMap(cfg.w, cfg.h, levels[idx.get()], LevelGen.worldSeed);
+					if (fullmap == null) {
+						synchronized (query) {
+							query.add(this);
+						}
+						return;
+					}
+					short[] map = fullmap[0];
+					imgOutput.accept(map);
+				}
+			};
+			Runnable cfgRunner = () -> {
+				mainPanel.removeAll();
+				mainPanel.add(comboBox);
+				buttonPanel.removeAll();
+				buttonPanel.add(buttonConfirm);
+				frame.setTitle("World Level Generation Test");
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			};
+			JButton buttonNextLevel = new JButton("Next Level");
+			buttonNextLevel.addActionListener(e -> {
+				frame.setVisible(false);
+				if (idx.incrementAndGet() == levels.length - 1) {
+					buttonPanel.remove(buttonNextLevel);
+				}
+				synchronized (query) {
+					query.add(runner);
+				}
+			});
+			buttonConfirm.addActionListener(e -> {
+				frame.setVisible(false);
+				buttonPanel.removeAll();
+				buttonPanel.add(buttonNext);
+				buttonPanel.add(buttonNextLevel);
+				int size = Objects.requireNonNull((Integer) comboBox.getSelectedItem());
+				configHolder.set(new Config(size, size));
+				LevelGen.worldSeed = random.nextLong();
+				frame.setTitle("World Level Generation Test: " + configHolder.get().h + "; " + LevelGen.worldSeed);
+				synchronized (query) {
+					query.add(runner);
+				}
+			});
+			buttonNext.addActionListener(e -> {
+				frame.setVisible(false);
+				if (buttonNextLevel.getParent() != buttonPanel)
+					buttonPanel.add(buttonNextLevel);
+				synchronized (query) {
+					query.add(cfgRunner);
+				}
+			});
+			cfgRunner.run();
+		}
+		// noinspection InfiniteLoopStatement
+		while (true) {
+			synchronized (query) {
+				if (!query.isEmpty()) {
+					query.remove(0).run();
+				}
+			}
 		}
 	}
 }
