@@ -14,7 +14,6 @@ import minicraft.entity.Spark;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DarkAnvil;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.KnightStatue;
@@ -1069,8 +1068,6 @@ public class Load {
 		} else if (newEntity instanceof KnightStatue) {
 			int health = Integer.parseInt(info.get(2));
 			newEntity = new KnightStatue(health);
-		} else if (newEntity instanceof DarkAnvil) {
-			newEntity = new DarkAnvil(Integer.parseInt(info.get(2)), Integer.parseInt(info.get(3)));
 		}
 
 		if (!isLocalSave) {
@@ -1149,7 +1146,6 @@ public class Load {
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
 			case "KnightStatue": return new KnightStatue(0);
 			case "ObsidianKnight": return  new ObsidianKnight(0);
-			case "DarkAnvil": return new DarkAnvil();
 			case "RepairBench": return new RepairBench();
 			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;

@@ -6,7 +6,6 @@ import minicraft.entity.Direction;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DarkAnvil;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Lantern;
@@ -59,7 +58,6 @@ public class FurnitureItem extends Item {
 
 		items.add(new FurnitureItem(new Tnt()));
 		items.add(new FurnitureItem(new Bed()));
-		items.add(new FurnitureItem(new DarkAnvil()));
 		items.add(new FurnitureItem(new RepairBench()));
 
 		return items;
