@@ -4,6 +4,7 @@ import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
+import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -230,14 +231,15 @@ public class LevelGen {
 	}
 
 	private static short[][] createTopMap(int w, int h) { // Create surface map
+		// Irregular: larger the map, larger the features.
 		// creates a bunch of value maps, some with small size...
-		LevelGen mnoise1 = new LevelGen(w, h, 16);
-		LevelGen mnoise2 = new LevelGen(w, h, 16);
-		LevelGen mnoise3 = new LevelGen(w, h, 16);
+		LevelGen mnoise1 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 8 : 16);
+		LevelGen mnoise2 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 8 : 16);
+		LevelGen mnoise3 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 8 : 16);
 
 		// ...and some with larger size.
-		LevelGen noise1 = new LevelGen(w, h, 32);
-		LevelGen noise2 = new LevelGen(w, h, 32);
+		LevelGen noise1 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 4 : 32);
+		LevelGen noise2 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 4 : 32);
 
 		short[] map = new short[w * h];
 		short[] data = new short[w * h];
@@ -251,24 +253,21 @@ public class LevelGen {
 				mval = Math.abs(mval - mnoise3.values[i]) * 3 - 2;
 
 				// This calculates a sort of distance based on the current coordinate.
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
-				val += 1 - dist*20;
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
+				val += 1 - 4 * Math.pow((w - dist * 2.0) / w, 4);
 
 				switch ((String) Settings.get("Type")) {
 					case "minicraft.settings.type.island":
 
-						if (val < -0.5) {
+						if (val < -1) {
 							if (Settings.get("Theme").equals("minicraft.settings.theme.hell"))
 								map[i] = Tiles.get("lava").id;
 							else
 								map[i] = Tiles.get("water").id;
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
 						} else {
 							map[i] = Tiles.get("grass").id;
@@ -277,13 +276,13 @@ public class LevelGen {
 						break;
 					case "minicraft.settings.type.box":
 
-						if (val < -1.5) {
+						if (val < -1 || dist < 10 && mval > -2) {
 							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
 								map[i] = Tiles.get("water").id;
 							}
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0 && mval < -0.5) {
 							map[i] = Tiles.get("rock").id;
 						} else {
 							map[i] = Tiles.get("grass").id;
@@ -292,9 +291,9 @@ public class LevelGen {
 						break;
 					case "minicraft.settings.type.mountain":
 
-						if (val < -0.4) {
+						if (val < -0.6 && mval > -2) {
 							map[i] = Tiles.get("grass").id;
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0.6 && mval < -1.5) {
 							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
@@ -313,7 +312,7 @@ public class LevelGen {
 							if (!Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
 								map[i] = Tiles.get("water").id;
 							}
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0.5 && mval < -1) {
 							map[i] = Tiles.get("rock").id;
 						} else {
 							map[i] = Tiles.get("grass").id;
@@ -384,6 +383,8 @@ public class LevelGen {
 				}
 			}
 		}
+
+		// Normal trees
 		if (!Settings.get("Theme").equals("minicraft.settings.theme.forest") && !Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
 			for (int i = 0; i < w * h / 1200; i++) {
 				int x = random.nextInt(w);
@@ -400,6 +401,7 @@ public class LevelGen {
 			}
 		}
 
+		// Raw trees
 		if (Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
 			for (int i = 0; i < w * h / 2800; i++) {
 				int x = random.nextInt(w);
@@ -414,8 +416,7 @@ public class LevelGen {
 					}
 				}
 			}
-		}
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+		} else { // Common trees
 			for (int i = 0; i < w * h / 400; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -431,11 +432,11 @@ public class LevelGen {
 			}
 		}
 
-		for (int i = 0; i < w * h / 400; i++) {
+		for (int i = 0; i < w * h / 600; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
 			int col = random.nextInt(4);
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < 20; j++) {
 				int xx = x + random.nextInt(5) - random.nextInt(5);
 				int yy = y + random.nextInt(5) - random.nextInt(5);
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
@@ -459,10 +460,10 @@ public class LevelGen {
 
 		int count = 0;
 
-		//if (Game.debug) System.out.println("Generating stairs for surface level...");
+		Logging.WORLD.trace("Generating stairs for surface level...");
 
 		stairsLoop:
-		for (int i = 0; i < w * h / 100; i++) { // Loops a certain number of times, more for bigger world sizes.
+		for (int i = 0; i < w * h / 10; i++) { // Loops a certain number of times, more for bigger world sizes.
 			int x = random.nextInt(w - 2) + 1;
 			int y = random.nextInt(h - 2) + 1;
 
@@ -483,11 +484,6 @@ public class LevelGen {
 			count++;
 			if (count >= w / 21) break;
 		}
-
-		//System.out.println("min="+min);
-		//System.out.println("max="+max);
-		//average /= w*h;
-		//System.out.println(average);
 
 		return new short[][]{map, data};
 	}
@@ -867,6 +863,10 @@ public class LevelGen {
 			frame.setLocationRelativeTo(null);
 			frame.setVisible(true);
 		};
+
+		Settings.set("type", "minicraft.settings.type.island");
+		Settings.set("theme", "minicraft.settings.theme.hell");
+
 		if (typeChoiceValue == null) {
 			System.exit(0); // No choice.
 		} else if (typeChoiceValue) { // Classic Tuple
