@@ -720,8 +720,8 @@ public class LevelGen {
 	}
 
 	private static short[][] createSkyMap(int w, int h) {
-		LevelGen noise1 = new LevelGen(w, h, 8);
-		LevelGen noise2 = new LevelGen(w, h, 8);
+		LevelGen noise1 = new LevelGen(w, h, Math.min(w / 16, 16));
+		LevelGen noise2 = new LevelGen(w, h, Math.min(w / 16, 16));
 
 		short[] map = new short[w * h];
 		short[] data = new short[w * h];
@@ -732,17 +732,15 @@ public class LevelGen {
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
+				// This calculates a sort of distance based on the current coordinate.
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
 				val = -val * 1 - 2.2;
-				val += 1 - dist * 20;
+				val += 1 - 2 * Math.pow((w - dist * 2.0) / w, 4);
 
-				if (val < -0.25) {
+				if (val < -1) {
 					map[i] = Tiles.get("Infinite Fall").id;
 				} else {
 					map[i] = Tiles.get("cloud").id;
