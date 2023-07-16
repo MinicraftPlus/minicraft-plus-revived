@@ -322,8 +322,9 @@ public class LevelGen {
 			}
 		}
 
+		// Sand
 		if (Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
-
+			// Mainly sand
 			for (int i = 0; i < w * h / 200; i++) {
 				int xs = random.nextInt(w);
 				int ys = random.nextInt(h);
@@ -343,11 +344,9 @@ public class LevelGen {
 					}
 				}
 			}
-		}
-
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
-
-			for (int i = 0; i < w * h / 2800; i++) {
+		} else {
+			// Normal sand
+			for (int i = 0; i < w * h / 3800; i++) {
 				int xs = random.nextInt(w);
 				int ys = random.nextInt(h);
 				for (int k = 0; k < 10; k++) {
@@ -366,43 +365,41 @@ public class LevelGen {
 					}
 				}
 			}
-		}
 
-		if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
-			for (int i = 0; i < w * h / 200; i++) {
-				int x = random.nextInt(w);
-				int y = random.nextInt(h);
-				for (int j = 0; j < 200; j++) {
-					int xx = x + random.nextInt(15) - random.nextInt(15);
-					int yy = y + random.nextInt(15) - random.nextInt(15);
-					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
-						}
+			// Beaches
+			for (int i = 0; i < w * h / 1800; i++) {
+				int xs = random.nextInt(w);
+				int ys = random.nextInt(h);
+				for (int k = 0; k < 5; k++) {
+					int x = xs + random.nextInt(21) - 10;
+					int y = ys + random.nextInt(21) - 10;
+					for (int j = 0; j < 5; j++) {
+						int xo = x + random.nextInt(5) - random.nextInt(5);
+						int yo = y + random.nextInt(5) - random.nextInt(5);
+						boolean foundWater = false;
+						for (int yy = yo - 3; yy <= yo + 3; yy++)
+							for (int xx = xo - 3; xx <= xo + 3; xx++)
+								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+									if (map[xx + yy * w] == Tiles.get("water").id) {
+										foundWater = true;
+									}
+								}
+						if (!foundWater) continue;
+						for (int yy = yo - 1; yy <= yo + 1; yy++)
+							for (int xx = xo - 1; xx <= xo + 1; xx++)
+								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+									if (map[xx + yy * w] == Tiles.get("grass").id) {
+										map[xx + yy * w] = Tiles.get("sand").id;
+									}
+								}
 					}
 				}
 			}
 		}
 
-		// Normal trees
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.forest") && !Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
-			for (int i = 0; i < w * h / 1200; i++) {
-				int x = random.nextInt(w);
-				int y = random.nextInt(h);
-				for (int j = 0; j < 200; j++) {
-					int xx = x + random.nextInt(15) - random.nextInt(15);
-					int yy = y + random.nextInt(15) - random.nextInt(15);
-					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
-						}
-					}
-				}
-			}
-		}
-
-		// Raw trees
+		// Trees
 		if (Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+			// Raw trees
 			for (int i = 0; i < w * h / 2800; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -416,7 +413,40 @@ public class LevelGen {
 					}
 				}
 			}
-		} else { // Common trees
+		} else {
+			if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
+				// Concentrated trees
+				for (int i = 0; i < w * h / 200; i++) {
+					int x = random.nextInt(w);
+					int y = random.nextInt(h);
+					for (int j = 0; j < 200; j++) {
+						int xx = x + random.nextInt(15) - random.nextInt(15);
+						int yy = y + random.nextInt(15) - random.nextInt(15);
+						if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+							if (map[xx + yy * w] == Tiles.get("grass").id) {
+								map[xx + yy * w] = Tiles.get("tree").id;
+							}
+						}
+					}
+				}
+			} else {
+				// Normal trees
+				for (int i = 0; i < w * h / 1200; i++) {
+					int x = random.nextInt(w);
+					int y = random.nextInt(h);
+					for (int j = 0; j < 200; j++) {
+						int xx = x + random.nextInt(15) - random.nextInt(15);
+						int yy = y + random.nextInt(15) - random.nextInt(15);
+						if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+							if (map[xx + yy * w] == Tiles.get("grass").id) {
+								map[xx + yy * w] = Tiles.get("tree").id;
+							}
+						}
+					}
+				}
+			}
+
+			// Common trees
 			for (int i = 0; i < w * h / 400; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -432,6 +462,7 @@ public class LevelGen {
 			}
 		}
 
+		// Flowers
 		for (int i = 0; i < w * h / 600; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
@@ -448,6 +479,7 @@ public class LevelGen {
 			}
 		}
 
+		// Cactuses
 		for (int i = 0; i < w * h / 100; i++) {
 			int xx = random.nextInt(w);
 			int yy = random.nextInt(h);
@@ -865,7 +897,7 @@ public class LevelGen {
 		};
 
 		Settings.set("type", "minicraft.settings.type.island");
-		Settings.set("theme", "minicraft.settings.theme.hell");
+		Settings.set("theme", "minicraft.settings.theme.normal");
 
 		if (typeChoiceValue == null) {
 			System.exit(0); // No choice.
