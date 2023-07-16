@@ -532,50 +532,51 @@ public class LevelGen {
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
-				double xd = x / (w - 1.1) * 2 - 1;
-				double yd = y / (h - 1.1) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
+				// This calculates a sort of distance based on the current coordinate.
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
 				val = -val * 1 - 2.2;
-				val += 1 - dist * 2;
+				val += 1 - 2 * Math.pow((w - dist * 2.0) / w, 4);
 
-				if (val < -0.05) {
+				if (val < -.6 || dist < 4) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-				}else if(val>=-0.05 && val<-0.03){map[i] = Tiles.get("Lava").id;
+				} else if (val >= -0.02 && val < 0) {
+					map[i] = Tiles.get("Lava").id;
 				} else {
-					if (random.nextInt(2) == 1) {
-						if (random.nextInt(2) == 1) {
+					if (random.nextInt(3) != 0) {
+						if (random.nextBoolean()) {
 							map[i] = Tiles.get("Obsidian").id;
 						} else {
 							map[i] = Tiles.get("Raw Obsidian").id;
 						}
-					}
-					else {
+					} else {
 						map[i] = Tiles.get("dirt").id;
 					}
 				}
 			}
 		}
 
-		decorLoop:
 		for (int i = 0; i < w * h / 450; i++) {
 			int x = random.nextInt(w - 2) + 1;
 			int y = random.nextInt(h - 2) + 1;
 
-			for (int yy = y - 1; yy <= y + 1; yy++) {
-				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("Obsidian").id)
-						continue decorLoop;
+			if (x > 8 && y > 8) {
+				if (x < w - 8 && y < w - 8) {
+					if (random.nextInt(6) == 0)
+						Structure.ornateLavaPool.draw(map, x, y, w);
 				}
 			}
+		}
+
+		for (int i = 0; i < w * h / 1000; i++) {
+			int x = random.nextInt(w - 2) + 1;
+			int y = random.nextInt(h - 2) + 1;
 
 			if (x > 8 && y > 8) {
 				if (x < w - 8 && y < w - 8) {
-					if (random.nextInt(2) == 0)
-						Structure.ornateLavaPool.draw(map, x, y, w);
+					Structure.lavaPool.draw(map, x, y, w);
 				}
 			}
 		}
