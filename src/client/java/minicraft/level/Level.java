@@ -568,7 +568,7 @@ public class Level {
 
 	public int getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w];
+		return data[x + y * w] & 0xFFFF;
 	}
 
 	public void setData(int x, int y, int val) {
