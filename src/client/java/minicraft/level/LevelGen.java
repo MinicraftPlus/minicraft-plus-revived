@@ -621,15 +621,14 @@ public class LevelGen {
 				double wval = Math.abs(wnoise1.values[i] - wnoise2.values[i]);
 				wval = Math.abs(wval - wnoise3.values[i]) * 3 - 2;
 
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = Math.pow(dist, 8);
-				val += 1 - dist * 20;
+				// This calculates a sort of distance based on the current coordinate.
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
+				val += 1 - 3 * Math.pow((w - dist * 2.0) / w, 4);
 
-				if (val > -1 && wval < -1 + (depth) / 2.0 * 3) {
+				if (val > -1 && wval < -1 + (depth) / 2.0 * 3 && (nval < -.5 || nval > .5)) {
 					if (depth == 3) map[i] = Tiles.get("lava").id;
 					else if (depth == 1) map[i] = Tiles.get("dirt").id;
 					else map[i] = Tiles.get("water").id;
@@ -645,10 +644,10 @@ public class LevelGen {
 		}
 		{
 			int r = 2;
-			for (int i = 0; i < w * h / 400; i++) {
+			for (int i = 0; i < w * h / 300; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
-				for (int j = 0; j < 30; j++) {
+				for (int j = 0; j < 20; j++) {
 					int xx = x + random.nextInt(5) - random.nextInt(5);
 					int yy = y + random.nextInt(5) - random.nextInt(5);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
@@ -657,12 +656,12 @@ public class LevelGen {
 						}
 					}
 				}
-				for (int j = 0; j < 10; j++) {
+				for (int j = 0; j < 8; j++) {
 					int xx = x + random.nextInt(3) - random.nextInt(2);
 					int yy = y + random.nextInt(3) - random.nextInt(2);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
-							map[xx + yy * w] = (short) (Tiles.get("Lapis").id & 0xffff);
+							map[xx + yy * w] = Tiles.get("Lapis").id;
 						}
 					}
 				}
@@ -670,31 +669,27 @@ public class LevelGen {
 		}
 
 		if (depth > 2) { // The level above dungeon.
-			int r = 1;
 			int xm = w/2;
 			int ym = h/2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
 			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			Rectangle edgeRect = new Rectangle(edgeMargin, edgeMargin, w - edgeMargin, h - edgeMargin, Rectangle.CORNERS);
 			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
 			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
 			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
 				int xx = random.nextInt(w);
 				int yy = random.nextInt(h);
 				lockRect.setPosition(xx, yy, RelPos.CENTER);
-				if (lockRect.getTop() > edgeMargin && lockRect.getLeft() > edgeMargin &&
-					lockRect.getRight() < w - edgeMargin && lockRect.getBottom() < h - edgeMargin &&
-					!lockRect.intersects(bossRoomRect)) {
+				if (lockRect.isWithin(edgeRect) && !lockRect.intersects(bossRoomRect)) {
 
 					Structure.dungeonLock.draw(map, xx, yy, w);
 
 					/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
-					map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
+					map[xx + yy * w] = Tiles.get("Stairs Down").id;
 					break; // The generation is successful.
 				}
 			} while (true);
-		}
-
-		if (depth < 3) {
+		} else { // Other underground levels
 			int count = 0;
 			stairsLoop:
 			for (int i = 0; i < w * h / 100; i++) {
@@ -1015,6 +1010,7 @@ public class LevelGen {
 				int size = Objects.requireNonNull((Integer) comboBox.getSelectedItem());
 				configHolder.set(new Config(size, size));
 				LevelGen.worldSeed = random.nextLong();
+				idx.set(0);
 				frame.setTitle("World Level Generation Test: " + configHolder.get().h + "; " + LevelGen.worldSeed);
 				synchronized (query) {
 					query.add(runner);
