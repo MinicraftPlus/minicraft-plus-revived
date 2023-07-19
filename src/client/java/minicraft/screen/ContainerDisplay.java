@@ -19,19 +19,24 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 
 	public ContainerDisplay(Player player, Chest chest) {
-		super(new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.LEFT), new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT));
+		super(
+			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT), 
+			new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.RIGHT)
+		);
+
 		//pInv = player.getInventory();
 		//cInv = chest.getInventory();
 		this.player = player;
 		this.chest = chest;
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
-		if (onScreenKeyboardMenu != null)
+		if (onScreenKeyboardMenu != null) {
 			onScreenKeyboardMenu.setVisible(false);
+		}
 
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 
-		if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
+		if (menus[1].getNumOptions() == 0) onSelectionChange(1, 0);
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
@@ -39,12 +44,17 @@ public class ContainerDisplay extends Display {
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
-		if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		
+		if (oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		
 		int shift = 0;
-		if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
-		if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-		for(Menu m: menus)
+		
+		if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
+		if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
+		
+		for (Menu m: menus) {
 			m.translate(shift, 0);
+		}
 	}
 
 	private int getOtherIdx() { return selection ^ 1; }
@@ -52,8 +62,9 @@ public class ContainerDisplay extends Display {
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
-		if (onScreenKeyboardMenu != null)
+		if (onScreenKeyboardMenu != null) {
 			onScreenKeyboardMenu.render(screen);
+		}
 	}
 
 	@Override
@@ -101,14 +112,15 @@ public class ContainerDisplay extends Display {
 		if (mainMethod || !onScreenKeyboardMenu.isVisible())
 			if (input.inputPressed("attack") || input.getKey("shift-enter").clicked) {
 				if (curMenu.getEntries().length == 0) return;
+
 				// switch inventories
 				Inventory from, to;
-				if(selection == 0) {
-					from = chest.getInventory();
-					to = player.getInventory();
-				} else {
+				if (selection == 0) {
 					from = player.getInventory();
 					to = chest.getInventory();
+				} else {
+					from = chest.getInventory();
+					to = player.getInventory();
 				}
 
 				int toSel = menus[otherIdx].getSelection();
@@ -148,8 +160,9 @@ public class ContainerDisplay extends Display {
 	}
 
 	public void onInvUpdate(ItemHolder holder) {
-		if(holder == player || holder == chest)
+		if (holder == player || holder == chest) {
 			update();
+		}
 	}
 
 	private void update() {
