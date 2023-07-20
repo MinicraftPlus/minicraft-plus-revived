@@ -24,7 +24,7 @@ public class PlayerInvDisplay extends Display {
 	private final Player player;
 
 	private String itemDescription = "";
-	private Menu.Builder descriptionMenuBuilder;
+	private final Menu.Builder descriptionMenuBuilder;
 
 	private final boolean creativeMode;
 	private final Inventory creativeInv;
@@ -43,7 +43,7 @@ public class PlayerInvDisplay extends Display {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				invMenu,
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT, true, false)
+				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT, true, false),
 				descriptionMenu
 			};
 
@@ -55,8 +55,6 @@ public class PlayerInvDisplay extends Display {
 			creativeInv = null;
 			menus = new Menu[] { invMenu, descriptionMenu };
 		}
-
-		this.player = player;
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu != null)
