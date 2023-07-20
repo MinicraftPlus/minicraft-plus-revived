@@ -438,49 +438,8 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
 
-		SkinDisplay.releaseSkins();
-
-		// Get legacy language and convert it into the current format.
-		if (prefVer.compareTo(new Version("2.0.3-dev1")) >= 0) {
-			// Get language and convert into locale.
-			String lang;
-			switch (data.remove(0)) {
-				case "english":
-					lang = "en-us";
-					break;
-				case "french":
-					lang = "fr-fr";
-					break;
-				case "hungarian":
-					lang = "hu-hu";
-					break;
-				case "indonesia":
-					lang = "id-id";
-					break;
-				case "italiano":
-					lang = "it-it";
-					break;
-				case "norwegian":
-					lang = "nb-no";
-					break;
-				case "portugues":
-					lang = "pt-pt";
-					break;
-				case "spanish":
-					lang = "es-es";
-					break;
-				case "turkish":
-					lang = "tr-tr";
-					break;
-				default:
-					lang = null;
-					break;
-			}
-
-			if (lang != null) {
-				Localization.changeLanguage(lang);
-			}
-		}
+		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
+			data.remove(0); // Numeral skin indices are replaced.
 
 		List<String> subdata;
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
@@ -490,6 +449,48 @@ public class Load {
 			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
 				MultiplayerDisplay.savedUUID = data.remove(0);
 				MultiplayerDisplay.savedUsername = data.remove(0);
+			}
+
+			// Get legacy language and convert it into the current format.
+			if (prefVer.compareTo(new Version("2.0.4-dev3")) >= 0) {
+				// Get language and convert into locale.
+				String lang;
+				switch (data.remove(0)) {
+					case "english":
+						lang = "en-us";
+						break;
+					case "french":
+						lang = "fr-fr";
+						break;
+					case "hungarian":
+						lang = "hu-hu";
+						break;
+					case "indonesia":
+						lang = "id-id";
+						break;
+					case "italiano":
+						lang = "it-it";
+						break;
+					case "norwegian":
+						lang = "nb-no";
+						break;
+					case "portugues":
+						lang = "pt-pt";
+						break;
+					case "spanish":
+						lang = "es-es";
+						break;
+					case "turkish":
+						lang = "tr-tr";
+						break;
+					default:
+						lang = null;
+						break;
+				}
+
+				if (lang != null) {
+					Localization.changeLanguage(lang);
+				}
 			}
 
 			String keyData = data.get(0);

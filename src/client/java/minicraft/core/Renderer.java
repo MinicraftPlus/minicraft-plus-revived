@@ -104,10 +104,7 @@ public class Renderer extends Game {
 		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
-		Initializer.startCanvasRendering();
 		canvas.createBufferStrategy(3);
-
-		canvas.requestFocus();
 	}
 
 
