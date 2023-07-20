@@ -7,11 +7,13 @@ import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import minicraft.screen.entry.StringEntry;
 
 public class PlayerInvDisplay extends Display {
 
@@ -19,33 +21,53 @@ public class PlayerInvDisplay extends Display {
 
 	private final Player player;
 
+	private String itemDescription = "";
+	private Menu.Builder descriptionMenuBuilder;
+
 	private final boolean creativeMode;
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
 		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT));
-
+		this.player = player;
+		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.settings.mode.creative");
+		itemDescription = getDescription();
+		Menu descriptionMenu = descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT)
+			.setEntries(StringEntry.useLines(Color.WHITE, false, itemDescription.split("\n")))
+			.setSelectable(false)
+			.createMenu();
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				menus[0],
 				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
 					creativeInv = true;
-				}}
+				}},
+				descriptionMenu
 			};
 
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 			update();
 
 			if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
-		} else creativeInv = null;
-
-		this.player = player;
+		} else {
+			creativeInv = null;
+			menus = new Menu[] { menus[0], descriptionMenu };
+		}
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu != null)
 			onScreenKeyboardMenu.setVisible(false);
+	}
+
+	private String getDescription() {
+		if (selection == 0) {
+			Inventory inv = player.getInventory();
+			return inv.invSize() == 0 ? "" : inv.get(menus[0].getSelection()).getDescription();
+		} else {
+			return creativeInv.invSize() == 0 ? "" : creativeInv.get(menus[1].getSelection()).getDescription();
+		}
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
@@ -55,6 +77,7 @@ public class PlayerInvDisplay extends Display {
 		boolean acted = false; // Checks if typing action is needed to be handled.
 		boolean mainMethod = false;
 
+		itemDescription = getDescription();
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
@@ -91,7 +114,7 @@ public class PlayerInvDisplay extends Display {
 			}
 		}
 
-		if (mainMethod || !onScreenKeyboardMenu.isVisible())
+		if (mainMethod || !onScreenKeyboardMenu.isVisible()) {
 			if (creativeMode) {
 				int otherIdx = getOtherIdx();
 
@@ -156,16 +179,22 @@ public class PlayerInvDisplay extends Display {
 					Game.exitDisplay();
 				}
 			}
+		}
 	}
 
 	@Override
 	public void render(Screen screen) {
+		if (itemDescription.isEmpty()) menus[creativeMode ? 2 : 1].shouldRender = false;
+		else {
+			menus[creativeMode ? 2 : 1] = descriptionMenuBuilder.setEntries(StringEntry.useLines(Color.WHITE, itemDescription.split("\n")))
+				.createMenu(); // This resizes menu
+		}
+
 		super.render(screen);
 
 		// Searcher help text
 		String text = Localization.getLocalized("minicraft.displays.player_inv.display.help", Game.input.getMapping("SEARCHER-BAR"));
-
-		Font.draw(text, screen, 12, Screen.h/ 2 + 8, Color.WHITE);
+		Font.draw(text, screen, selection == 0 ? 12 : Screen.w - 12 - Font.textWidth(text), menus[creativeMode ? 2 : 1].getBounds().getBottom() + 8, Color.WHITE);
 
 		if (onScreenKeyboardMenu != null)
 			onScreenKeyboardMenu.render(screen);
@@ -183,8 +212,10 @@ public class PlayerInvDisplay extends Display {
 			int shift = 0;
 			if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
 			if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-			for(Menu m: menus)
-				m.translate(shift, 0);
+			menus[0].translate(shift, 0);
+			menus[1].translate(shift, 0);
+			if (newSel == 0) descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
+			if (newSel == 1) descriptionMenuBuilder.setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
 		}
 	}
 
@@ -197,5 +228,6 @@ public class PlayerInvDisplay extends Display {
 		}};
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
+		itemDescription = getDescription();
 	}
 }

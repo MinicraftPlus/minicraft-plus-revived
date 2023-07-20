@@ -75,9 +75,8 @@ public class TitleDisplay extends Display {
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
 			if (time.getDayOfMonth() == 19) rand = 1;
-			if (time.getDayOfMonth() == 25) rand = 2;
 		} else {
-			rand = random.nextInt(splashes.length - 3) + 3;
+			rand = random.nextInt(splashes.length - 2) + 2;
 		}
 
 		World.levels = new Level[World.levels.length];
@@ -160,9 +159,8 @@ public class TitleDisplay extends Display {
 	private static final String[] splashes = {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
-		"Happy XMAS!",
-        "Now with Customizable Skins!",
-        "Skin Update by Litorom1, El Virus!",
+		// These two above have id specific functionality. Don't move or remove them.
+		"Now with skins!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",
@@ -176,10 +174,8 @@ public class TitleDisplay extends Display {
 		"Chris J is great with portals!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
-		"Oh Hi Mark",
-		"Use the force!",
 		"Keep calm!",
-		"Get him, Steve!",
+		"Get him, Paul!",
 		"Forty-Two!",
 		"Kill Creeper, get Gunpowder!",
 		"Kill Cow, get Beef!",
@@ -190,18 +186,14 @@ public class TitleDisplay extends Display {
 		"Kill Pig, get Porkchop!",
 		"Gold > Iron",
 		"Gem > Gold",
-		"Test == InDev!",
 		"Story? Uhh...",
 		"Infinite terrain? What's that?",
-		"Redstone? What's that?",
-		"Minecarts? What are those?",
 		"Windows? I prefer Doors!",
 		"2.5D FTW!",
 		"3rd dimension not included!",
 		"Null not included",
 		"Mouse not included!",
 		"No spiders included!",
-		"No Endermen included!",
 		"No chickens included!",
 		"Grab your friends!",
 		"Creepers included!",
@@ -214,13 +206,11 @@ public class TitleDisplay extends Display {
 		"Bigger Worlds!",
 		"World types!",
 		"World themes!",
-		"Sugarcane is an idea!",
 		"Milk is an idea!",
 		"So we back in the mine,",
 		"Pickaxe swinging from side to side",
 		"In search of Gems!",
 		"Life itself suspended by a thread",
-		"saying ay-oh, that creeper's KO'd!",
 		"Gimmie a bucket!",
 		"Farming with water!",
 		"Get the High-Score!",
@@ -240,13 +230,12 @@ public class TitleDisplay extends Display {
 		"Why is this blue?",
 		"Green is a nice color!",
 		"Red is my favorite color!",
-		"Made with 10000% Vitamin Z!",
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
 		"hello down there!",
 		"That guy is such a sly fox!",
-		"Hola senor!",
+		"Hola señor!",
 		"Sonic Boom!",
 		"Hakuna Matata!",
 		"One truth prevails!",
@@ -259,10 +248,9 @@ public class TitleDisplay extends Display {
 		"001100010011000000110001!",
 		"011010000110110101101101?",
 		"...zzz...",
-		"He was too redundant",
-		"Echoed Whispers...",
-		"Of Knights and Men",
-		"Breaking NEWS!",
+		"They were too redundant",
+		"Echoed whispers...",
+		"Of knights and men",
 		"Death before dishonor!",
 	};
 }
