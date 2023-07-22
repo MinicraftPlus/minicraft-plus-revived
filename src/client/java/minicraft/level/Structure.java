@@ -43,8 +43,7 @@ public class Structure {
 			 level.add(furniture.get(p).copy(), xt+p.x, yt+p.y, true);
 	}
 
-	public void draw(Level level, int xt, int yt, float integrity) {
-		Random random = new Random();
+	public void draw(Level level, int xt, int yt, float integrity, Random random) {
 		for (TilePoint p: tiles)
 			if (random.nextInt(100) < integrity) level.setTile(xt+p.x, yt+p.y, p.t);
 

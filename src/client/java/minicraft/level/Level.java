@@ -918,19 +918,19 @@ public class Level {
 						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
 					}
 
-					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16, random.nextInt(3) * 5 + 90);
+					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16, random.nextInt(3) * 5 + 90, random);
 
 					if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5, random.nextInt(3) * 5 + 90);
+						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5, random.nextInt(3) * 5 + 90, random);
 					}
 					if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5, random.nextInt(3) * 5 + 90);
+						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5, random.nextInt(3) * 5 + 90, random);
 					}
 					if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16, random.nextInt(3) * 5 + 90);
+						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16, random.nextInt(3) * 5 + 90, random);
 					}
 					if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16, random.nextInt(3) * 5 + 90);
+						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16, random.nextInt(3) * 5 + 90, random);
 					}
 
 					add(sp);
@@ -1037,9 +1037,9 @@ public class Level {
 						yo += random.nextInt(5) - 2;
 
 						if (twoDoors) {
-							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo, random.nextInt(7) * 5 + 60);
+							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo, random.nextInt(7) * 5 + 60, random);
 						} else {
-							Structure.villageHouseNormal.draw(this, x + xo, y + yo, random.nextInt(7) * 5 + 60);
+							Structure.villageHouseNormal.draw(this, x + xo, y + yo, random.nextInt(7) * 5 + 60, random);
 						}
 
 						// Make the village look ruined
