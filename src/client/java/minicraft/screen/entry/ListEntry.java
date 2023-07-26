@@ -108,7 +108,7 @@ public abstract class ListEntry {
 	public void displaceRight(int boundsWidth) {
 		int width = getWidth();
 		if (boundsWidth < width)
-			xDisplacement = Math.min(xDisplacement + MinicraftImage.boxWidth, width - boundsWidth);
+			xDisplacement = Math.min(xDisplacement + MinicraftImage.boxWidth, 0);
 	}
 
 	/**

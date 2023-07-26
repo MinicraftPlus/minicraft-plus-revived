@@ -355,7 +355,7 @@ public class Menu {
 				Point pos = entryPos.positionRect(new Dimension(entryWidth, ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 				boolean selected = idx == selection;
 				int xDisplacement = selected ? entry.getXDisplacement() : 0;
-				boolean hideOverflow = entry.hideWhenOverflow();
+				boolean hideOverflow = entry.hideWhenOverflow() && entry.isSelectable();
 				if (searcherBarActive && useSearcherBar) {
 					entry.render(screen, pos.x + xDisplacement, pos.y, selected, hideOverflow ? renderingXBounds : null, typingSearcher, Color.YELLOW);
 				} else {
