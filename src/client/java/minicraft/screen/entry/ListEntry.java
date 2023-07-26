@@ -3,7 +3,9 @@ package minicraft.screen.entry;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
@@ -14,18 +16,20 @@ public abstract class ListEntry {
 
 	private boolean selectable = true, visible = true;
 
+	protected int xDisplacement = 0; // Displacing to the left for negative values, right for positive values.
+
 	/**
 	 * Ticks the entry. Used to handle input from the InputHandler
 	 * @param input InputHandler used to get player input.
 	 */
 	public abstract void tick(InputHandler input);
 
-	public void render(Screen screen, int x, int y, boolean isSelected, String contain, int containColor) {
+	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds, String contain, int containColor) {
 		if (!visible) {
 			return;
 		}
 
-		render(screen, x, y, isSelected);
+		render(screen, x, y, isSelected, bounds);
 		if (contain == null || contain.isEmpty()) {
 			return;
 		}
@@ -36,6 +40,15 @@ public abstract class ListEntry {
 		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
 	}
 
+	public static class IntRange {
+		public final int lower;
+		public final int upper;
+		public IntRange(int lower, int upper) {
+			this.lower = lower;
+			this.upper = upper;
+		}
+	}
+
 	/**
 	 * Renders the entry to the given screen.
 	 * Coordinate origin is in the top left corner of the entry space.
@@ -43,14 +56,15 @@ public abstract class ListEntry {
 	 * @param x X coordinate
 	 * @param y Y coordinate
 	 * @param isSelected true if the entry is selected, false otherwise
+	 * @param bounds X rendering bounds
 	 */
-	public void render(Screen screen, int x, int y, boolean isSelected) {
+	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
 		if (visible) {
 			String text = toString().replace(Color.WHITE_CODE + Color.GRAY_CODE, Color.toStringCode(getColor(isSelected)));
 			if (text.contains(String.valueOf(Color.COLOR_CHAR)))
-				Font.drawColor(Color.toStringCode(getColor(isSelected)) + text, screen, x, y);
+				Font.drawColor(Color.toStringCode(getColor(isSelected)) + text, screen, x, y, bounds);
 			else
-				Font.draw(text, screen, x, y, getColor(isSelected));
+				Font.draw(text, screen, x, y, getColor(isSelected), bounds);
 		}
 	}
 
@@ -75,6 +89,53 @@ public abstract class ListEntry {
 	 */
 	public static int getHeight() {
 		return Font.textHeight();
+	}
+
+	/**
+	 * Displaces the entry to the left in rendering, with input right.
+	 * @param boundsWidth the length of space in x-axis bounds
+	 */
+	public void displaceLeft(int boundsWidth) {
+		int width = getWidth();
+		if (boundsWidth < width)
+			xDisplacement = Math.max(xDisplacement - MinicraftImage.boxWidth, boundsWidth - width);
+	}
+
+	/**
+	 * Displaces the entry to the right in rendering, with input left.
+	 * @param boundsWidth the length of space in x-axis bounds
+	 */
+	public void displaceRight(int boundsWidth) {
+		int width = getWidth();
+		if (boundsWidth < width)
+			xDisplacement = Math.min(xDisplacement + MinicraftImage.boxWidth, width - boundsWidth);
+	}
+
+	/**
+	 * Calculates the rendering displacement of the entry in the menu.
+	 * @return the x displacement.
+	 */
+	public int getXDisplacement() {
+		return xDisplacement;
+	}
+
+	/**
+	 * Resets the rendering x displacement to the initial value.
+	 * @return this instance itself
+	 * @see #getXDisplacement()
+	 */
+	public ListEntry resetXDisplacement() {
+		xDisplacement = 0;
+		return this;
+	}
+
+	/**
+	 * Returns whether to hide the entry content when the entry exceeds the rendering bounds of the menu.
+	 * If the overflowed content is hidden, the cursor is not displaced the part is not rendered if available.
+	 * @return {@code true} to hide the overflowed parts
+	 */
+	public boolean hideWhenOverflow() {
+		return false;
 	}
 
 	/**

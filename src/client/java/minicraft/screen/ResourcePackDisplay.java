@@ -18,6 +18,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
@@ -189,6 +190,7 @@ public class ResourcePackDisplay extends Display {
 			menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
 
 		fileWatcher = new WatcherThread();
+		helpPositionTextEntry.setAlternatingScrollingTextRenderTicker(new ListEntry.IntRange(0, Screen.w), (Screen.w - helpPositionTextEntry.getWidth()) / 2);
 	}
 
 	@Override
@@ -321,6 +323,8 @@ public class ResourcePackDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
+		helpPositionTextEntry.tick(input); // For rendering purpose
+
 		// Overrides the default tick handler.
 		if (input.getKey("right").clicked) { // Move cursor to the second list.
 			if (selection == 0) {
@@ -379,6 +383,8 @@ public class ResourcePackDisplay extends Display {
 		super.tick(input);
 	}
 
+	private final StringEntry helpPositionTextEntry = new StringEntry("minicraft.displays.resource_packs.display.help.position", Color.DARK_GRAY);
+
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
@@ -390,7 +396,7 @@ public class ResourcePackDisplay extends Display {
 		if (Game.input.anyControllerConnected()) Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
+		helpPositionTextEntry.render(screen, (Screen.w - helpPositionTextEntry.getWidth()) / 2 + helpPositionTextEntry.getXDisplacement(), Screen.h - 9, false, null);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
