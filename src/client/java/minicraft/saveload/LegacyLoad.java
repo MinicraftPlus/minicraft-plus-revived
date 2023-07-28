@@ -445,7 +445,7 @@ public class LegacyLoad {
 			case "Workbench": return new Crafter(Crafter.Type.Workbench);
 			case "Chest": return new Chest();
 			case "DeathChest": return new DeathChest();
-			case "DungeonChest": return new DungeonChest(false);
+			case "DungeonChest": return new DungeonChest(null);
 			case "Anvil": return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
 			case "Loom": return new Crafter(Crafter.Type.Loom);

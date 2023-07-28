@@ -22,21 +22,21 @@ public class DungeonChest extends Chest {
 	private static final LinkedSprite openSprite = new LinkedSprite(SpriteType.Entity, "dungeon_chest");
 	private static final LinkedSprite lockSprite = new LinkedSprite(SpriteType.Entity, "white_chest");
 
-	public Random random = new Random();
 	private boolean isLocked;
 
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
-	 * @param populateInv Populate the inventory of the DungeonChest using the loot table system.
+	 * @param random Populate the inventory of the DungeonChest using the loot table system with the given {@link Random} provider.
+	 *               {@code null} if populating the inventory is not intended.
 	 */
-	public DungeonChest(boolean populateInv) {
-		this(populateInv, false);
+	public DungeonChest(@Nullable Random random) {
+		this(random, false);
 	}
 
-	public DungeonChest(boolean populateInv, boolean unlocked) {
+	public DungeonChest(@Nullable Random random, boolean unlocked) {
 		super("Dungeon Chest");
-		if (populateInv) {
-			populateInv();
+		if (random != null) {
+			populateInv(random);
 		}
 
 		setLocked(!unlocked);
@@ -44,7 +44,7 @@ public class DungeonChest extends Chest {
 
 	@Override
 	public @NotNull Furniture copy() {
-		return new DungeonChest(false, !this.isLocked);
+		return new DungeonChest(null, !this.isLocked);
 	}
 
 	public boolean use(Player player) {
@@ -83,13 +83,12 @@ public class DungeonChest extends Chest {
 	/**
 	 * Populate the inventory of the DungeonChest using the loot table system.
 	 */
-	private void populateInv() {
+	public void populateInv(Random random) {
 		// Clear inventory.
-		Inventory inv = getInventory();
-		inv.clearInv();
+		getInventory().clearInv();
 
 		// Populate inventory.
-		populateInvRandom("dungeonchest", 0);
+		populateInvRandom(random, "dungeonchest", 0);
 	}
 
 	public boolean isLocked() {
