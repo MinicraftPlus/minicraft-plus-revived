@@ -42,12 +42,8 @@ public class StairsTile extends Tile {
 
 		// Makes it, so you can remove the stairs if you are in creative and debug mode.
 		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
-			int data = level.getData(xt, yt);
 			level.setTile(xt, yt, Tiles.get("Grass"));
 			Sound.play("monsterhurt");
-			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-					item, this, data, xt, yt, level.depth));
 			return true;
 		} else {
 			return false;

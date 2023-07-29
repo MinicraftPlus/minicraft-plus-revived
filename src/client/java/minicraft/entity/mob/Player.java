@@ -649,13 +649,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
 					Tile tile = level.getTile(t.x, t.y);
+					int data = level.getData(t.x, t.y); // Tile data before interaction
 
 					// If the item successfully interacts with the target tile.
-					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
-						done = true;
+					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir) ||
+						// Returns true if the target tile successfully interacts with the item (always NotNull).
+						tile.interact(level, t.x, t.y, this, activeItem, attackDir)) {
 
-						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)){
+						AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+							new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+								activeItem, tile, data, t.x, t.y, level.depth));
 						done = true;
 					}
 				}

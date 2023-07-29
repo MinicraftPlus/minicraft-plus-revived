@@ -47,11 +47,7 @@ public class HardRockTile extends Tile {
 			// If we are hitting with a gem pickaxe.
 			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
 				if (player.payStamina(2) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
 					hurt(level, xt, yt, tool.getDamage());
-					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			} else {

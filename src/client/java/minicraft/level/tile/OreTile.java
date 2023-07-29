@@ -73,11 +73,7 @@ public class OreTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(6 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
 					hurt(level, xt, yt, tool.getDamage());
-					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}

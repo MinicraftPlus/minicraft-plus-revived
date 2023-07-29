@@ -58,9 +58,6 @@ public class RockTile extends Tile {
 				// Drop coal since we use a pickaxe.
 				dropCoal = true;
 				hurt(level, xt, yt, tool.getDamage());
-				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-						item, this, data, xt, yt, level.depth));
 				return true;
 			}
 		}
