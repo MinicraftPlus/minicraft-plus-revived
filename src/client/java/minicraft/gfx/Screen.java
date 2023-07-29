@@ -4,6 +4,7 @@ import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.Arrays;
 
@@ -70,7 +71,7 @@ public class Screen {
 	}
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+    public void render(int xp, int yp, int xt, int yt, @MagicConstant(flags = {BIT_MIRROR_X, BIT_MIRROR_Y}) int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.

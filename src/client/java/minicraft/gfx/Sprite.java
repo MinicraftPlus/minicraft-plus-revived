@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import org.jetbrains.annotations.Range;
+
 /** This class represents a group of pixels on their sprite sheet(s). */
 public class Sprite {
 	/*
@@ -12,6 +14,7 @@ public class Sprite {
 	*/
 
 	public final MinicraftImage.Px[][] spritePixels;
+	@Range(from = -1, to = 0x1FFFFFF)
 	public int color = -1;
 	// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 

@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.util.Logging;
+import org.intellij.lang.annotations.MagicConstant;
 
 import javax.security.auth.DestroyFailedException;
 import javax.security.auth.Destroyable;
@@ -225,7 +226,7 @@ public class SpriteLinker {
 		 * @param mirror The mirror of the sprite.
 		 * @return The instance itself.
 		 */
-		public LinkedSprite setMirror(int mirror) {
+		public LinkedSprite setMirror(@MagicConstant(flags = {1, 2}) int mirror) {
 			this.mirror = mirror;
 			reloaded = false; // Reload this.
 			return this;

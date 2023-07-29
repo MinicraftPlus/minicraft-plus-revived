@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.util.Logging;
+import org.intellij.lang.annotations.MagicConstant;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -80,9 +81,9 @@ public class MinicraftImage {
 
 	/** This class represents a 8*8 pixel block unit on the sprite sheet. */
 	public class Px {
-		final int x, y, mirror;
+		public final int x, y, mirror;
 
-		public Px(int sheetX, int sheetY, int mirroring) {
+		public Px(int sheetX, int sheetY, @MagicConstant(flags = {1, 2}) int mirroring) {
 			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
 			x = sheetX;
 			y = sheetY;
