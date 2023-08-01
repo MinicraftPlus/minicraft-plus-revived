@@ -303,8 +303,8 @@ public class Menu {
 			} else {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 6, 0, hudSheet.getSheet());
-					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
 				}
+				Font.draw(title, screen, titleLoc.x, titleLoc.y, titleColor);
 			}
 		}
 
