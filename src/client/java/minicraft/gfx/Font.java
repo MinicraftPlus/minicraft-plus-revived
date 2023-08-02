@@ -67,9 +67,8 @@ public class Font {
 	public static void drawBackground(String msg, Screen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
 
 	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
-		String newMsg = msg;
-		for (int i = 0; i < newMsg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
+		for (int i = 0; i < msg.length(); i++) { // Renders the black boxes under the text
+			screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
 		}
 
 		// Renders the text
