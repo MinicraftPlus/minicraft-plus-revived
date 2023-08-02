@@ -1,7 +1,6 @@
 package minicraft.gfx;
 
 import minicraft.core.Renderer;
-import minicraft.core.io.Localization;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class Font {
 			"ÙÛÝ*«»£$&€§ªºabcdefghijklmnopqrs"+
 			"tuvwxyzáàãâäéèêëíìîïóòõôöúùûüçñý"+
 			"ÿабвгдеёжзийклмнопрстуфхцчшщъыьэ"+
-			"юя";
+			"юяışő";
 	private static final int[] charsAdvance = new int[Font.chars.length()];
 
 	public static void updateCharAdvances(MinicraftImage font) {
