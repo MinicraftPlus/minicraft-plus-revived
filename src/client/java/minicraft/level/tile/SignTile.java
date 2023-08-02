@@ -61,7 +61,7 @@ public class SignTile extends Tile {
 		if (item != null) {
 			if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
 				level.setTile(xt, yt, this.onType);
-				SignDisplay.removeSign(xt, yt);
+				SignDisplay.removeSign(level.depth, xt, yt);
 				Sound.play("monsterhurt");
 				level.dropItem(xt*16+8, yt*16+8, Items.get("Sign"));
 				return true;
