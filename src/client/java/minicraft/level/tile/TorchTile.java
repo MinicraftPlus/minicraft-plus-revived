@@ -19,7 +19,7 @@ public class TorchTile extends Tile {
 	public static TorchTile getTorchTile(Tile onTile) {
 		int id = onTile.id & 0xFFFF;
 		if(id < 16384) id += 16384;
-		else Logger.tag("TorchTile").info("Tried to place torch on torch tile...");
+		else Logger.tag("TorchTile").info("Tried to place torch on torch or sign tile...");
 
 		if(Tiles.containsTile(id))
 			return (TorchTile)Tiles.get(id);

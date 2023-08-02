@@ -204,6 +204,12 @@ public final class Tiles {
 			name = name.substring(6); // Cuts off torch prefix.
 		}
 
+		boolean isSign = false;
+		if (name.startsWith("SIGN")) {
+			isSign = true;
+			name = name.substring(5);
+		}
+
 		if(name.contains("_")) {
 			name = name.substring(0, name.indexOf("_"));
 		}
@@ -223,6 +229,10 @@ public final class Tiles {
 
 		if(isTorch) {
 			getting = TorchTile.getTorchTile(getting);
+		}
+
+		if (isSign) {
+			getting = SignTile.getSignTile(getting);
 		}
 
 		overflowCheck = 0;

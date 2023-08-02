@@ -520,40 +520,55 @@ public class InputHandler implements KeyListener {
 		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 
-	private static final String control = "\\p{Print}"; // Should match only printable characters.
+	private static final String control = "\\p{Print}&&\b"; // Should match only printable characters.
 	public String addKeyTyped(String typing, @Nullable String pattern) {
+		return handleBackspaceChars(getKeysTyped(typing, pattern));
+	}
+
+	/** This returns a raw format of the keys typed, i.e. {@code \b} are not handled here. */
+	public String getKeysTyped(@Nullable String pattern) { return getKeysTyped(null, pattern); }
+	public String getKeysTyped(@Nullable String typing, @Nullable String pattern) {
+		StringBuilder typed = typing == null ? new StringBuilder() : new StringBuilder(typing);
 		if (lastKeyTyped.length() > 0) {
-			String letter = lastKeyTyped;
+			for (char letter : lastKeyTyped.toCharArray()) {
+				String letterString = String.valueOf(letter);
+				if (letterString.matches(control) && (pattern == null || letterString.matches(pattern)))
+					typed.append(letter);
+			}
 			lastKeyTyped = "";
-			if ( letter.matches(control) && (pattern == null || letter.matches(pattern)) || letter.equals("\b") )
-				typing += letter;
 		}
 
+		return typed.toString();
+	}
+
+	public static String handleBackspaceChars(String typing) { return handleBackspaceChars(typing, false); }
+	/**
+	 * This handles and erases backspace control characters {@code \b} from the given string.
+	 * Evaluation to backspace characters stops if no more characters are in front of them.
+	 * @param keepUnevaluated {@code true} if intending to keep the unhandled backspace characters in the returned string;
+	 *                        otherwise, those characters are removed even that they are not evaluated.
+	 */
+	public static String handleBackspaceChars(String typing, boolean keepUnevaluated) {
 		// Erasing characters by \b. Reference: https://stackoverflow.com/a/30174028
 		Stack<Character> stack = new Stack<>();
 
 		// for-each character in the string
 		for (int i = 0; i < typing.length(); i++) {
 			char c = typing.charAt(i);
-
-			// push if it's not a backspace
-			if (c != '\b') {
-				stack.push(c);
-				// else pop if possible
-			} else if (!stack.empty()) {
+			if (c == '\b' && !stack.empty() && stack.peek() != '\b') { // pop if the last char exists and is not \b
 				stack.pop();
+			} else if (c != '\b' || keepUnevaluated) {
+				stack.push(c);
 			}
 		}
 
 		// convert stack to string
 		StringBuilder builder = new StringBuilder(stack.size());
-
 		for (Character c : stack) {
 			builder.append(c);
 		}
 
-		typing = builder.toString();
-		return typing;
+		return builder.toString();
 	}
 
 	public boolean anyControllerConnected() {

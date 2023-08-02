@@ -120,6 +120,9 @@ public abstract class Entity implements Tickable {
 	public boolean move(int xd, int yd) {
 		if (Updater.saving || (xd == 0 && yd == 0)) return true; // Pretend that it kept moving
 
+		int prevXt = x >> 4;
+		int prevYt = y >> 4;
+
 		boolean stopped = true; // Used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
 		//noinspection RedundantIfStatement
 		if (moveX(xd)) stopped = false; // Becomes false if horizontal movement was successful.
@@ -127,6 +130,8 @@ public abstract class Entity implements Tickable {
 		if (!stopped) {
 			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
+			if (prevXt != xt || prevYt != yt)
+
 			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 		}
 
