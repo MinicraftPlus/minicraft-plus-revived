@@ -218,8 +218,8 @@ public class Menu {
 					for (int i = 0; entryIt.hasNext(); i++) {
 						ListEntry entry = entryIt.next();
 
-						String stringEntry = entry.toString().toLowerCase(Locale.ENGLISH);
-						String typingString = typingSearcher.toLowerCase(Locale.ENGLISH);
+						String stringEntry = entry.toString();
+						String typingString = typingSearcher;
 
 						if (stringEntry.contains(typingString)) {
 							if (shouldSelect) {
