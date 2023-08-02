@@ -723,7 +723,6 @@ public class ResourcePackDisplay extends Display {
 
 		SpriteAnimation.refreshAnimations();
 		Renderer.spriteLinker.updateLinkedSheets();
-		Font.updateCharAdvances(Renderer.spriteLinker.getSheet(SpriteType.Gui, "font"));
 		Localization.loadLanguage();
 
 		// Refreshing skins
