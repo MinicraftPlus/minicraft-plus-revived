@@ -43,6 +43,7 @@ public class Items {
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
+		addAll(SignItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {

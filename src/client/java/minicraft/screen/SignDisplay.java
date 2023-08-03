@@ -38,6 +38,10 @@ public class SignDisplay extends Display {
 		signTexts.forEach((pt, texts) -> SignDisplay.signTexts.put(pt, Collections.emptyList()));
 	}
 
+	public static Map<Map.Entry<Integer, Point>, List<String>> getSignTexts() {
+		return new HashMap<>(signTexts);
+	}
+
 	public static void updateSign(int levelDepth, int x, int y, List<String> lines) {
 		signTexts.put(new AbstractMap.SimpleImmutableEntry<>(levelDepth, new Point(x, y)), Collections.unmodifiableList(new ArrayList<>(lines)));
 	}
