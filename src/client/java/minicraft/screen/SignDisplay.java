@@ -266,7 +266,7 @@ public class SignDisplay extends Display {
 		/**
 		 * Inserts a character to be inserted at the current cursor position. Cursor position is handled when needed.
 		 * This controls whether the procedure should be terminated depending on how the characters are handled.
-		 * @param c A printable or line break (line feed) or backspace {@code \b} character to be inserted. Regex: {@code \p{Print}&&[\b\n]}
+		 * @param c A printable or line break (line feed) or backspace {@code \b} character to be inserted. Regex: {@code [\p{Print}\b\n]+}
 		 * @return {@code true} if the char is handled and valid to be continuing processing the following chars;
 		 * otherwise, the procedure of processing characters is terminated.
 		 */

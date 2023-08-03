@@ -520,19 +520,20 @@ public class InputHandler implements KeyListener {
 		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 
-	private static final String control = "\\p{Print}&&\b"; // Should match only printable characters.
+	private static final String control = "[\\p{Print}\n]+"; // Should match only printable characters.
 	public String addKeyTyped(String typing, @Nullable String pattern) {
 		return handleBackspaceChars(getKeysTyped(typing, pattern));
 	}
 
 	/** This returns a raw format of the keys typed, i.e. {@code \b} are not handled here. */
-	public String getKeysTyped(@Nullable String pattern) { return getKeysTyped(null, pattern); }
-	public String getKeysTyped(@Nullable String typing, @Nullable String pattern) {
+	public String getKeysTyped(@Nullable String pattern) { return getKeysTyped(null, pattern, true); }
+	public String getKeysTyped(@Nullable String typing, @Nullable String pattern) { return getKeysTyped(typing, pattern, false); }
+	public String getKeysTyped(@Nullable String typing, @Nullable String pattern, boolean multiline) {
 		StringBuilder typed = typing == null ? new StringBuilder() : new StringBuilder(typing);
 		if (lastKeyTyped.length() > 0) {
 			for (char letter : lastKeyTyped.toCharArray()) {
 				String letterString = String.valueOf(letter);
-				if (letterString.matches(control) && (pattern == null || letterString.matches(pattern)))
+				if (letter == '\b' || letterString.matches(control) && (letter != '\n' || multiline) && (pattern == null || letterString.matches(pattern)))
 					typed.append(letter);
 			}
 			lastKeyTyped = "";
