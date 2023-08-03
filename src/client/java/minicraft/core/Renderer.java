@@ -28,6 +28,7 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
@@ -71,6 +72,8 @@ public class Renderer extends Game {
 
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
+
+	public static SignDisplayMenu signDisplayMenu = null;
 
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
@@ -411,6 +414,7 @@ public class Renderer extends Game {
 
 		TutorialDisplayHandler.render(screen);
 		renderQuestsDisplay();
+		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
 	}
 

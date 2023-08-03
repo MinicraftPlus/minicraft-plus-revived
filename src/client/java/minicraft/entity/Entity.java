@@ -131,7 +131,7 @@ public abstract class Entity implements Tickable {
 			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
 			if (prevXt != xt || prevYt != yt)
-
+				level.getTile(prevXt, prevYt).steppedOut(level, prevXt, prevYt, this);
 			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 		}
 

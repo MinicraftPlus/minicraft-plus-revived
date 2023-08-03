@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -22,8 +23,6 @@ import org.tinylog.Logger;
 
 public class SignTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "sign");
-
-	private static @Nullable SignDisplayMenu signDisplayMenu;
 
 	private final Tile onType;
 
@@ -52,9 +51,6 @@ public class SignTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		onType.render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
-		if (signDisplayMenu != null) {
-			signDisplayMenu.render(screen);
-		}
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -87,8 +83,8 @@ public class SignTile extends Tile {
 	@Override
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 		if (entity instanceof Player) {
-			if (signDisplayMenu == null || signDisplayMenu.differsFrom(level.depth, xt, yt)) {
-				signDisplayMenu = new SignDisplayMenu(level, xt, yt);
+			if (Renderer.signDisplayMenu == null || Renderer.signDisplayMenu.differsFrom(level.depth, xt, yt)) {
+				Renderer.signDisplayMenu = new SignDisplayMenu(level, xt, yt);
 			}
 		}
 	}
@@ -96,8 +92,8 @@ public class SignTile extends Tile {
 	@Override
 	public void steppedOut(Level level, int xt, int yt, Entity entity) {
 		if (entity instanceof Player) {
-			if (signDisplayMenu != null && signDisplayMenu.matches(level.depth, xt, yt)) {
-				signDisplayMenu = null;
+			if (Renderer.signDisplayMenu != null && Renderer.signDisplayMenu.matches(level.depth, xt, yt)) {
+				Renderer.signDisplayMenu = null;
 			}
 		}
 	}

@@ -35,7 +35,7 @@ public class SignDisplay extends Display {
 
 	public static void loadSignTexts(Map<Map.Entry<Integer, Point>, List<String>> signTexts) {
 		SignDisplay.signTexts.clear();
-		signTexts.forEach((pt, texts) -> SignDisplay.signTexts.put(pt, Collections.emptyList()));
+		signTexts.forEach((pt, texts) -> SignDisplay.signTexts.put(pt, Collections.unmodifiableList(new ArrayList<>(texts))));
 	}
 
 	public static Map<Map.Entry<Integer, Point>, List<String>> getSignTexts() {
@@ -61,7 +61,7 @@ public class SignDisplay extends Display {
 
 	public SignDisplay(Level level, int x, int y) {
 		super(false, new Menu.Builder(true, 3, RelPos.CENTER)
-			.setPositioning(new Point(Screen.w, 6), RelPos.BOTTOM)
+			.setPositioning(new Point(Screen.w / 2, 6), RelPos.BOTTOM)
 			.setMenuSize(new Dimension(MinicraftImage.boxWidth * (MAX_TEXT_LENGTH + 2), MinicraftImage.boxWidth * (MAX_ROW_COUNT + 2)))
 			.setSelectable(false)
 			.createMenu());
@@ -152,10 +152,10 @@ public class SignDisplay extends Display {
 				}
 
 				updateCaretAnimation();
-			} else if (input.inputDown("CURSOR-LEFT")) {
+			} else if (input.inputPressed("CURSOR-LEFT")) {
 				if (cursorX > 0) cursorX--;
 				updateCaretAnimation();
-			} else if (input.inputDown("CURSOR-RIGHT")) {
+			} else if (input.inputPressed("CURSOR-RIGHT")) {
 				if (cursorX == rows.get(cursorY).length()) { // The end of row
 					if (cursorY < rows.size() - 1) { // If it is not in the last row
 						cursorX = 0;
@@ -199,16 +199,18 @@ public class SignDisplay extends Display {
 			}
 
 			// Cursor rendering
-			int lineWidth = getLineWidthOfRow(cursorX, cursorY) * MinicraftImage.boxWidth;
-			int displayX = calculateDisplayX(cursorX) * MinicraftImage.boxWidth;
-			int displayY = calculateDisplayY(cursorX, cursorY) * MinicraftImage.boxWidth;
-			int lineBeginning = centeredX - lineWidth / 2;
-			int cursorX = lineBeginning + displayX;
-			int cursorY = bounds.getTop() + MinicraftImage.boxWidth + displayY;
-			int cursorRenderY = cursorY + MinicraftImage.boxWidth - 1;
-			for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 1 pixel high and 8 pixel wide
-				int idx = cursorX + i + cursorRenderY;
-				screen.pixels[idx] = idx == Color.WHITE ? Color.BLACK : Color.WHITE;
+			if (caretShown) {
+				int lineWidth = getLineWidthOfRow(cursorX, cursorY) * MinicraftImage.boxWidth;
+				int displayX = calculateDisplayX(cursorX) * MinicraftImage.boxWidth;
+				int displayY = calculateDisplayY(cursorX, cursorY) * MinicraftImage.boxWidth;
+				int lineBeginning = centeredX - lineWidth / 2;
+				int cursorX = lineBeginning + displayX;
+				int cursorY = bounds.getTop() + MinicraftImage.boxWidth + displayY;
+				int cursorRenderY = cursorY + MinicraftImage.boxWidth - 2;
+				for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 1 pixel high and 8 pixel wide
+					int idx = cursorX + i + cursorRenderY * Screen.w;
+					screen.pixels[idx] = screen.pixels[idx] == Color.WHITE ? Color.BLACK : Color.WHITE;
+				}
 			}
 		}
 
@@ -218,13 +220,13 @@ public class SignDisplay extends Display {
 		}
 
 		private int calculateDisplayX(int x) {
-			return x > MAX_TEXT_LENGTH ? x % MAX_TEXT_LENGTH : x;
+			return x > MAX_TEXT_LENGTH ? x - (x - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH : x;
 		}
 
 		private int getLineWidthOfRow(int x, int y) {
 			int length = rows.get(y).length();
 			return (x == 0 ? MAX_TEXT_LENGTH : (x + MAX_TEXT_LENGTH - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH) > length
-				? length - (x - 1) / MAX_TEXT_LENGTH : MAX_TEXT_LENGTH;
+				? length - (x - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH : MAX_TEXT_LENGTH;
 		}
 
 		private int calculateDisplayY(int x, int y) {
@@ -250,7 +252,7 @@ public class SignDisplay extends Display {
 
 		private int calculateNumberOfOccupiedLinesOfRow(int y) {
 			int length = rows.get(y).length();
-			return length == 0 ? 1 : (length + MAX_TEXT_LENGTH - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH;
+			return length == 0 ? 1 : (length + MAX_TEXT_LENGTH - 1) / MAX_TEXT_LENGTH;
 		}
 
 		private void insertChars(String chars) {
@@ -311,7 +313,8 @@ public class SignDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 		Rectangle bounds = menus[0].getBounds();
-		Font.draw(Localization.getLocalized("Use SHIFT-ENTER to confirm input."), screen, bounds.getLeft(), bounds.getBottom() + 8, Color.GRAY);
+		Font.drawCentered(Localization.getLocalized("Use SHIFT-ENTER to confirm input."), screen, bounds.getBottom() + 8, Color.GRAY);
+		editor.render(screen);
 	}
 
 	@Override

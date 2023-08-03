@@ -156,6 +156,8 @@ public class World extends Game {
 
 		Renderer.readyToRenderGameplay = true;
 
+		Renderer.signDisplayMenu = null;
+
 		PlayerDeathDisplay.shouldRespawn = true;
 
 		Logging.WORLD.trace("World initialized.");
