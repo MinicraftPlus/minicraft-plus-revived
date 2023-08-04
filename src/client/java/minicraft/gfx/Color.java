@@ -173,6 +173,19 @@ public class Color {
 		return new int[] {r, g, b};
 	}
 
+	/**
+	 * Gets the lightness of the given 24-bit RGB color value.
+	 * This is strictly calculated by L from RGB to HSL conversion.
+	 * For other formula and method reference: https://stackoverflow.com/a/56678483.
+	 * @return lightness, from 0 to 1 floating point number
+	 */
+	public static float getLightnessFromRGB(int color) {
+		int r = (color >> 16) & 0xFF;
+		int g = (color >> 8) & 0xFF;
+		int b = color & 0xFF;
+		return (Math.max(Math.max(r, g), b) + Math.min(Math.min(r, g), b)) / 510f;
+	}
+
 	/// This is for color testing.
 	public static void main(String[] args) {
 		int r, g, b;

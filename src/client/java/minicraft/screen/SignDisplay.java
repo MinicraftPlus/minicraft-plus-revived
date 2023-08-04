@@ -122,38 +122,21 @@ public class SignDisplay extends Display {
 			// As lines are centered, the character above in rendering would not always be the one in indices.
 			// The position is set to the beginning of line when the cursor moved upward or downward.
 			} else if (input.inputPressed("CURSOR-UP")) {
-				if (cursorX > MAX_TEXT_LENGTH) { // This should be safe.
-					cursorX -= (cursorX % MAX_TEXT_LENGTH == 0 ? MAX_TEXT_LENGTH : cursorX % MAX_TEXT_LENGTH) + MAX_TEXT_LENGTH;
-				} else if (cursorY > 0) {
-					int length = rows.get(--cursorY).length();
-					if (cursorX > 0 && cursorX % MAX_TEXT_LENGTH == 0) { // If the current position is at the end of line
-						cursorX = length;
-					} else {
-						if (length > 0 && (length % MAX_TEXT_LENGTH) == 0) {
-							cursorX += length - MAX_TEXT_LENGTH;
-						} else {
-							cursorX += length / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH;
-						}
-
-						if (cursorX > length) cursorX = length; // Collapses the spaces between the cursor and the end of row
-					}
-				} else {
-					cursorX = 0;
+				cursorX = 0;
+				if (cursorY > 0) {
+					cursorY--;
 				}
 
 				updateCaretAnimation();
 			} else if (input.inputPressed("CURSOR-DOWN")) {
-				if (cursorX / MAX_TEXT_LENGTH < rows.get(cursorY).length() / MAX_TEXT_LENGTH) {
-					cursorX += MAX_TEXT_LENGTH - cursorX % MAX_TEXT_LENGTH;
-				} else if (cursorY < rows.size() - 1) {
-					cursorX = 0; // It is always in the first line of the row, so it is always the beginning of the row.
-				} else {
-					cursorX = rows.get(cursorY).length();
-				}
-
+				cursorX = rows.get(cursorY < rows.size() - 1 ? ++cursorY : cursorY).length();
 				updateCaretAnimation();
 			} else if (input.inputPressed("CURSOR-LEFT")) {
 				if (cursorX > 0) cursorX--;
+				else if (cursorY > 0) {
+					cursorX = rows.get(--cursorY).length();
+				}
+
 				updateCaretAnimation();
 			} else if (input.inputPressed("CURSOR-RIGHT")) {
 				if (cursorX == rows.get(cursorY).length()) { // The end of row
@@ -209,7 +192,7 @@ public class SignDisplay extends Display {
 				int cursorRenderY = cursorY + MinicraftImage.boxWidth - 2;
 				for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 1 pixel high and 8 pixel wide
 					int idx = cursorX + i + cursorRenderY * Screen.w;
-					screen.pixels[idx] = screen.pixels[idx] == Color.WHITE ? Color.BLACK : Color.WHITE;
+					screen.pixels[idx] = Color.getLightnessFromRGB(screen.pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
 				}
 			}
 		}
