@@ -38,14 +38,12 @@ public class BossDoorTile extends DoorTile {
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (source instanceof Player) {
-			if (ObsidianKnight.active && !Game.isMode("minicraft.settings.mode.creative")) {
-				Game.notifications.add(doorMsg);
-				return true;
-			}
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if (ObsidianKnight.active && !Game.isMode("minicraft.settings.mode.creative")) {
+			Game.notifications.add(doorMsg);
+			return true;
 		}
 
-		return super.hurt(level, x, y, source, dmg, attackDir);
+		return super.interact(level, xt, yt, player, item, attackDir);
 	}
 }
