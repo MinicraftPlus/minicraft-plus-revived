@@ -69,8 +69,8 @@ public class TutorialDisplayHandler {
 					Game.input.getMapping("move-right")))));
 		controlGuides.add(new ControlGuide(1, "attack",
 			() -> Localization.getLocalized("minicraft.control_guide.attack", Game.input.getMapping("attack"))));
-		controlGuides.add(new ControlGuide(1, "menu",
-			() -> Localization.getLocalized("minicraft.control_guide.menu", Game.input.getMapping("menu"))));
+		controlGuides.add(new ControlGuide(1, "inventory",
+			() -> Localization.getLocalized("minicraft.control_guide.menu", Game.input.getMapping("INVENTORY"))));
 		controlGuides.add(new ControlGuide(1, "craft",
 			() -> Localization.getLocalized("minicraft.control_guide.craft", Game.input.getMapping("craft"))));
 	}

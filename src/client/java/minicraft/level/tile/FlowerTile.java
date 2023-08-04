@@ -47,7 +47,7 @@ public class FlowerTile extends Tile {
 		(shape == 0 ? flowerSprite0 : flowerSprite1).render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int x, int y, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {

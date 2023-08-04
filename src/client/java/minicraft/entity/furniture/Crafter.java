@@ -48,7 +48,7 @@ public class Crafter extends Furniture {
 		this.type = type;
 	}
 
-	public boolean use(Player player) {
+	public boolean interact(Player player) {
 		Game.setDisplay(new CraftingDisplay(type.recipes, type.name(), player));
 		return true;
 	}

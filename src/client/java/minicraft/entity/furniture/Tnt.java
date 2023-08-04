@@ -124,7 +124,7 @@ public class Tnt extends Furniture implements ActionListener {
 	}
 
 	@Override
-	public boolean interact(Player player, Item heldItem, Direction attackDir) {
+	public boolean attack(Player player, Item heldItem, Direction attackDir) {
 		if (!fuseLit) {
 			fuseLit = true;
 			Sound.play("fuse");

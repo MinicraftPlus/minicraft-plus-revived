@@ -54,7 +54,7 @@ public class Sheep extends PassiveMob {
 		}
 	}
 
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
 		if (cut) return false;
 
 		if (item instanceof ToolItem) {

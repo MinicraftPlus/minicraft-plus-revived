@@ -89,7 +89,7 @@ public class DeathChest extends Chest {
 		Font.draw(timeString, screen, x - Font.textWidth(timeString)/2, y - Font.textHeight() - getBounds().getHeight()/2, Color.WHITE);
 	}
 
-	public boolean use(Player player) { return false; } // can't open it, just walk into it.
+	public boolean interact(Player player) { return false; } // can't open it, just walk into it.
 
 	public void take(Player player) {} // can't grab a death chest.
 

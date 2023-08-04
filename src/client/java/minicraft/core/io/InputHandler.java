@@ -180,10 +180,9 @@ public class InputHandler implements KeyListener {
 
 		buttonMap.put("ATTACK", ControllerButton.A);
 		buttonMap.put("INTERACT", ControllerButton.B);
-		buttonMap.put("MENU", ControllerButton.Y);
-		buttonMap.put("CRAFT", ControllerButton.X);
+		buttonMap.put("INVENTORY", ControllerButton.X);
+		buttonMap.put("CRAFT", ControllerButton.Y);
 		buttonMap.put("PICKUP", ControllerButton.LEFTSTICK);
-		buttonMap.put("INVENTORY", ControllerButton.RIGHTSTICK);
 
 		buttonMap.put("SEARCHER-BAR", ControllerButton.START);
 

@@ -37,8 +37,8 @@ public class StairsTile extends Tile {
 	}
 
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		super.interact(level, xt, yt, player, item, attackDir);
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		super.attack(level, xt, yt, player, item, attackDir);
 
 		// Makes it so you can remove the stairs if you are in creative and debug mode.
 		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {

@@ -500,7 +500,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				attack();
 			}
 
-			if (input.inputPressed("menu") && activeItem != null) {
+			if ((activeItem == null || !activeItem.used_pending) && (input.inputPressed("interact")) && stamina != 0 && onFallDelay <= 0) { // This only allows interactions when such action is possible.
+				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
+				staminaRecharge = 0;
+
+				interact();
+			}
+
+			if (input.inputPressed("INVENTORY") && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -519,11 +526,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.inputPressed("INVENTORY"))
 					Game.setDisplay(new PlayerInvDisplay(this));
 				if (input.inputPressed("pause"))
 					Game.setDisplay(new PauseDisplay());
-				if (input.inputPressed("craft") && !use())
+				if (input.inputPressed("craft"))
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.inputPressed("QUICK-SAVE") && !Updater.saving) {
@@ -591,21 +598,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
 
-		if (isFishing) {
-			isFishing = false;
-			fishingTicks = maxFishingTicks;
-		}
-
-		if (activeItem != null && !activeItem.interactsWithWorld()) {
-			attackDir = dir; // Make the attack direction equal the current direction
-			attackItem = activeItem; // Make attackItem equal activeItem
-			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (activeItem.isDepleted()) {
-				activeItem = null;
-			}
-			return;
-		}
-
 		attackDir = dir; // Make the attack direction equal the current direction
 		attackItem = activeItem; // Make attackItem equal activeItem
 
@@ -614,22 +606,80 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackTime = 10;
 			boolean done = false;
 
-			// Fire a bow if we have the stamina and an arrow.
-			if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
-				ToolItem tool = (ToolItem) activeItem;
-				if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
+			// If the interaction between you and an entity is successful, then return.
+			if (attack(getInteractionBox(INTERACT_DIST))) return;
 
-					inventory.removeItem(Items.arrowItem);
-					level.add(new Arrow(this, attackDir, tool.level));
-					attackTime = 10;
+			// Attempt to interact with the tile.
+			Point t = getInteractionTile();
 
-					if (!Game.isMode("minicraft.settings.mode.creative")) tool.dur--;
+			// If the target coordinates are a valid tile.
+			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 
-					AchievementsDisplay.setAchievement("minicraft.achievement.bow",true);
+				// Get any entities (except dropped items and particles) on the tile.
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
 
-					return;
+				// If there are no other entities than us on the tile.
+				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
+					Tile tile = level.getTile(t.x, t.y);
+
+					// If the item successfully interacts with the target tile.
+					if (activeItem.attackOn(tile, level, t.x, t.y, this, attackDir)) {
+						done = true;
+
+						// Returns true if the target tile successfully interacts with the item.
+					} else if (tile.attack(level, t.x, t.y, this, activeItem, attackDir)){
+						done = true;
+					}
+				}
+
+				if (activeItem.isDepleted()) {
+					// If the activeItem has 0 items left, then "destroy" it.
+					activeItem = null;
 				}
 			}
+			if (done) return; // Skip the rest if interaction was handled
+		}
+
+		if (activeItem == null) { // If there is no active item, OR if the item can be used to attack...
+			attackTime = 5;
+			// Attacks the enemy in the appropriate direction.
+			boolean used = hurt(getInteractionBox(ATTACK_DIST));
+
+			// Attempts to hurt the tile in the appropriate direction.
+			Point t = getInteractionTile();
+
+			// Check if tile is in bounds of the map.
+			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+				Tile tile = level.getTile(t.x, t.y);
+				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
+			}
+
+			if (used && activeItem instanceof ToolItem)
+				((ToolItem)activeItem).payDurability();
+		}
+	}
+
+	protected void interact() {
+		// walkDist is not synced, so this can happen for both the client and server.
+		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
+
+		if (isFishing) {
+			isFishing = false;
+			fishingTicks = maxFishingTicks;
+		}
+
+		if (activeItem != null && !activeItem.interactsWithWorld()) {
+			if (activeItem.interactOn(Tiles.get(0), level, x >> 4, y >> 4, this, attackDir)) {
+				if (activeItem.isDepleted()) {
+					activeItem = null;
+				}
+				return;
+			}
+		}
+
+		// If we are holding an item.
+		if (activeItem != null) {
+			boolean done = false;
 
 			// If the interaction between you and an entity is successful, then return.
 			if (interact(getInteractionBox(INTERACT_DIST))) return;
@@ -657,30 +707,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (activeItem.isDepleted()) {
+				if (done && activeItem.isDepleted()) {
 					// If the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}
 			}
-			if (done) return; // Skip the rest if interaction was handled
-		}
-
-		if (activeItem == null || activeItem.canAttack()) { // If there is no active item, OR if the item can be used to attack...
-			attackTime = 5;
-			// Attacks the enemy in the appropriate direction.
-			boolean used = hurt(getInteractionBox(ATTACK_DIST));
-
-			// Attempts to hurt the tile in the appropriate direction.
-			Point t = getInteractionTile();
-
-			// Check if tile is in bounds of the map.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
-				Tile tile = level.getTile(t.x, t.y);
-				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
-			}
-
-			if (used && activeItem instanceof ToolItem)
-				((ToolItem)activeItem).payDurability();
 		}
 	}
 
@@ -763,22 +794,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		fishingTicks = maxFishingTicks; // If you didn't catch anything, try again in 120 ticks
 	}
 
-	private boolean use() { return use(getInteractionBox(INTERACT_DIST)); }
-
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
-	private boolean use(Rectangle area) {
+	private boolean interact(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area); // Gets the entities within the 4 points
 		for (Entity e : entities) {
-			if (e instanceof Furniture && ((Furniture) e).use(this)) return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			if (e instanceof Furniture && ((Furniture) e).interact(this)) return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
 		return false;
 	}
 
-	/** same, but for interaction. */
-	private boolean interact(Rectangle area) {
+	/** same, but for attack. */
+	private boolean attack(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
 		for (Entity e : entities) {
-			if (e != this && e.interact(this, activeItem, attackDir)) return true; // This is the ONLY place that the Entity.interact method is actually called.
+			if (e != this && e.attack(this, activeItem, attackDir)) return true; // This is the ONLY place that the Entity.interact method is actually called.
 		}
 		return false;
 	}
@@ -794,7 +823,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				((Mob) e).hurt(this, dmg, attackDir);
 			}
 			if (e instanceof Furniture)
-				e.interact(this, null, attackDir);
+				e.attack(this, null, attackDir);
 		}
 		return maxDmg > 0;
 	}

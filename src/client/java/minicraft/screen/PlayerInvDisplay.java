@@ -82,7 +82,7 @@ public class PlayerInvDisplay extends Display {
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
 
-			if (input.inputPressed("menu")) {
+			if (input.inputPressed("INVENTORY")) {
 				Game.exitDisplay();
 				return;
 			}
@@ -100,7 +100,7 @@ public class PlayerInvDisplay extends Display {
 			if (!acted)
 				curMenu.tick(input);
 
-			if (input.getKey("menu").clicked) { // Should not listen button press.
+			if (input.inputPressed("INVENTORY") || input.inputPressed("EXIT")) { // Should not listen button press.
 				Game.exitDisplay();
 				return;
 			}

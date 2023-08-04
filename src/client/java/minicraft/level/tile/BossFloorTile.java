@@ -17,7 +17,7 @@ public class BossFloorTile extends FloorTile {
 		super(Material.Obsidian, "Boss Floor");
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative")) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
@@ -33,6 +33,6 @@ public class BossFloorTile extends FloorTile {
 			return false;
 		}
 
-		return super.interact(level, xt, yt, player, item, attackDir);
+		return super.attack(level, xt, yt, player, item, attackDir);
 	}
 }

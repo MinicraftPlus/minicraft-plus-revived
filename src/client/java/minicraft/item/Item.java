@@ -37,6 +37,11 @@ public abstract class Item {
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 
+	/** Determines what happens when the player attacks with a tile */
+	public boolean attackOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+		return false;
+	}
+
 	/** Determines what happens when the player interacts with a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
@@ -44,11 +49,6 @@ public abstract class Item {
 
 	/** Returning true causes this item to be removed from the player's active item slot */
 	public boolean isDepleted() {
-		return false;
-	}
-
-	/** Returns if the item can attack mobs or not */
-	public boolean canAttack() {
 		return false;
 	}
 

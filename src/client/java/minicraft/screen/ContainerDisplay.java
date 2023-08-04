@@ -20,7 +20,7 @@ public class ContainerDisplay extends Display {
 
 	public ContainerDisplay(Player player, Chest chest) {
 		super(
-			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT), 
+			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT),
 			new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.RIGHT)
 		);
 
@@ -44,14 +44,14 @@ public class ContainerDisplay extends Display {
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
-		
+
 		if (oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
-		
+
 		int shift = 0;
-		
+
 		if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
 		if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-		
+
 		for (Menu m: menus) {
 			m.translate(shift, 0);
 		}
@@ -77,7 +77,7 @@ public class ContainerDisplay extends Display {
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
 
-			if (input.inputPressed("menu") || chest.isRemoved()) {
+			if (input.inputPressed("INVENTORY") || chest.isRemoved()) {
 				Game.setDisplay(null);
 				return;
 			}
@@ -95,7 +95,7 @@ public class ContainerDisplay extends Display {
 			if (!acted)
 				curMenu.tick(input);
 
-			if (input.getKey("menu").clicked || chest.isRemoved()) {
+			if (input.inputPressed("INVENTORY") || input.inputPressed("EXIT") || chest.isRemoved()) {
 				Game.setDisplay(null);
 				return;
 			}

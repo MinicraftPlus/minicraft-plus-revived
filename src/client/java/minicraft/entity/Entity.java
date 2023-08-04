@@ -106,13 +106,13 @@ public abstract class Entity implements Tickable {
 	protected void touchedBy(Entity entity) {}
 
 	/**
-	 * Interacts with the entity this method is called on
+	 * Attacks the entity this method is called on
 	 * @param player The player attacking
 	 * @param item The item the player attacked with
 	 * @param attackDir The direction to interact
 	 * @return If the interaction was successful
 	 */
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
 		return false;
 	}
 
