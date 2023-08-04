@@ -526,12 +526,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("INVENTORY"))
+				if (input.inputPressed("craft")) // obtain SHIFT modifier input with E
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
+				else if (input.inputPressed("INVENTORY"))
 					Game.setDisplay(new PlayerInvDisplay(this));
 				if (input.inputPressed("pause"))
 					Game.setDisplay(new PauseDisplay());
-				if (input.inputPressed("craft"))
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.inputPressed("QUICK-SAVE") && !Updater.saving) {
 					Updater.saving = true;
@@ -601,13 +601,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		attackDir = dir; // Make the attack direction equal the current direction
 		attackItem = activeItem; // Make attackItem equal activeItem
 
+		attackTime = 10;
+
+		// If the interaction between you and an entity is successful, then return.
+		if (attack(getInteractionBox(INTERACT_DIST))) return;
+
 		// If we are holding an item.
 		if (activeItem != null) {
-			attackTime = 10;
 			boolean done = false;
-
-			// If the interaction between you and an entity is successful, then return.
-			if (attack(getInteractionBox(INTERACT_DIST))) return;
 
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
@@ -677,12 +678,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 
+		// If the interaction between you and an entity is successful, then return.
+		if (interact(getInteractionBox(INTERACT_DIST))) return;
+
 		// If we are holding an item.
 		if (activeItem != null) {
 			boolean done = false;
-
-			// If the interaction between you and an entity is successful, then return.
-			if (interact(getInteractionBox(INTERACT_DIST))) return;
 
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
