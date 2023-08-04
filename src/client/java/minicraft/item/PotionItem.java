@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -39,7 +40,7 @@ public class PotionItem extends StackableItem {
 	}
 
 	protected boolean interactOn(boolean subClassSuccess, Player player) {
-		if (subClassSuccess)
+		if (subClassSuccess && !Game.isMode("minicraft.settings.mode.creative"))
 			player.tryAddToInvOrDrop(Items.get("glass bottle"));
 		return super.interactOn(subClassSuccess);
 	}
