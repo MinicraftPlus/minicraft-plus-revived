@@ -37,7 +37,7 @@ public abstract class Item {
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 
-	/** Determines what happens when the player attacks with a tile */
+	/** Determines what happens when the player attacks a tile */
 	public boolean attackOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
 	}
