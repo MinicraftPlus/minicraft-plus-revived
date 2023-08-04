@@ -47,7 +47,6 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
-import minicraft.screen.InfoDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerInvDisplay;
@@ -120,8 +119,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 
 	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
-	public boolean showpotioneffects; // Whether to display the current potion effects on screen
-	public boolean simpPotionEffects;
+	public boolean showPotionEffects; // Whether to display the current potion effects on screen
+	public boolean simplifyPotionEffects;
 	public boolean renderGUI;
 	public int questExpanding; // Lets the display keeps expanded.
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
@@ -186,8 +185,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		};
 
 		potioneffects = new HashMap<>();
-		showpotioneffects = true;
-		simpPotionEffects = false;
+		showPotionEffects = true;
+		simplifyPotionEffects = false;
 		renderGUI = true;
 
 		cooldowninfo = 0;
@@ -307,20 +306,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.inputPressed("potionEffects") && cooldowninfo == 0) {
+		if (input.inputPressed("POTION-EFFECTS") && cooldowninfo == 0) {
 			cooldowninfo = 10;
-			showpotioneffects = !showpotioneffects;
+			showPotionEffects = !showPotionEffects;
 		}
 
-		if (input.inputPressed("simpPotionEffects")) {
-			simpPotionEffects = !simpPotionEffects;
+		if (input.inputPressed("SIMPLIFY-POTION-EFFECTS")) {
+			simplifyPotionEffects = !simplifyPotionEffects;
 		}
 
-		if (input.inputPressed("toggleHUD")) {
+		if (input.inputPressed("TOGGLE-HUD")) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.inputPressed("expandQuestDisplay")) {
+		if (input.inputPressed("EXPAND-QUEST-DISPLAY")) {
 			questExpanding = 30;
 		}
 
@@ -527,9 +526,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputPressed("craft") && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
-				if (input.inputDown("info")) Game.setDisplay(new InfoDisplay());
-
-				if (input.inputDown("quicksave") && !Updater.saving) {
+				if (input.inputPressed("QUICK-SAVE") && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
