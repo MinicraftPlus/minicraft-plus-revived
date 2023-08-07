@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.ClipboardHandler;
 import minicraft.core.io.InputHandler;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SignDisplay extends Display {
 	public static final int MAX_TEXT_LENGTH = 20;
@@ -69,6 +71,9 @@ public class SignDisplay extends Display {
 		this.x = x;
 		this.y = y;
 		editor = new SignEditor(getSign(levelDepth, x, y));
+		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.setVisible(false);
 	}
 
 	private class SignEditor {
@@ -80,19 +85,12 @@ public class SignDisplay extends Display {
 
 		public SignEditor(@Nullable List<String> lines) {
 			if (lines != null) lines.forEach(l -> rows.add(new StringBuilder(l)));
-			if (rows.isEmpty()) rows.add(new StringBuilder());
+			while (rows.size() < MAX_ROW_COUNT)
+				rows.add(new StringBuilder());
 		}
 
 		public List<String> getLines() {
-			ArrayList<String> lines = new ArrayList<>();
-			rows.forEach(r -> {
-				// Reference: https://www.baeldung.com/java-string-split-every-n-characters#using-the-stringsubstring-method
-				int length = r.length();
-				for (int i = 0; i < length; i += MAX_TEXT_LENGTH) {
-					lines.add(r.substring(i, Math.min(length, i + MAX_TEXT_LENGTH)));
-				}
-			});
-			return lines;
+			return rows.stream().map(StringBuilder::toString).collect(Collectors.toList());
 		}
 
 		public void tick(InputHandler input) {
@@ -103,63 +101,43 @@ public class SignDisplay extends Display {
 
 			insertChars(input.getKeysTyped(null));
 			if (input.getKey("PAGE-UP").clicked) {
-				cursorX = 0;
-				cursorY = 0;
+				cursorX = rows.get(cursorY = 0).length();
 				updateCaretAnimation();
 			} else if (input.getKey("PAGE-DOWN").clicked) {
-				cursorY = rows.size() - 1;
-				cursorX = rows.get(cursorY).length();
+				cursorX = rows.get(cursorY = rows.size() - 1).length();
 				updateCaretAnimation();
 
 			} else if (input.getKey("HOME").clicked) {
-				cursorX = (cursorX - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH; // Rounding down
+				cursorX = 0;
 				updateCaretAnimation();
 			} else if (input.getKey("END").clicked) {
-				cursorX = Math.min((cursorX + MAX_TEXT_LENGTH - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH, rows.get(cursorY).length()); // Rounding up
+				cursorX = rows.get(cursorY).length();
 				updateCaretAnimation();
 
 			// Cursor navigating
 			// As lines are centered, the character above in rendering would not always be the one in indices.
-			// The position is set to the beginning of line when the cursor moved upward or downward.
+			// The position is set to the end of line when the cursor moved upward or downward.
 			} else if (input.inputPressed("CURSOR-UP")) {
-				cursorX = 0;
-				if (cursorY > 0) {
-					cursorY--;
-				}
-
+				cursorX = rows.get(cursorY == 0 ? cursorY = rows.size() - 1 : --cursorY).length();
 				updateCaretAnimation();
-			} else if (input.inputPressed("CURSOR-DOWN")) {
-				cursorX = rows.get(cursorY < rows.size() - 1 ? ++cursorY : cursorY).length();
+			} else if (input.inputPressed("CURSOR-DOWN") || input.getKey("ENTER").clicked) {
+				cursorX = rows.get(cursorY == rows.size() - 1 ? cursorY = 0 : ++cursorY).length();
 				updateCaretAnimation();
 			} else if (input.inputPressed("CURSOR-LEFT")) {
 				if (cursorX > 0) cursorX--;
-				else if (cursorY > 0) {
-					cursorX = rows.get(--cursorY).length();
-				}
-
 				updateCaretAnimation();
 			} else if (input.inputPressed("CURSOR-RIGHT")) {
-				if (cursorX == rows.get(cursorY).length()) { // The end of row
-					if (cursorY < rows.size() - 1) { // If it is not in the last row
-						cursorX = 0;
-						cursorY++;
-					}
-				} else {
-					cursorX++;
-				}
-
+				if (cursorX < rows.get(cursorY).length()) cursorX++;
 				updateCaretAnimation();
 
 			// Clipboard operations
 			} else if (input.getKey("CTRL-X").clicked) {
 				cursorX = 0;
-				cursorY = 0;
-				clipboard.setClipboardContents(String.join("\n", rows));
-				rows.clear();
-				rows.add(new StringBuilder());
+				clipboard.setClipboardContents(rows.get(cursorY).toString());
+				rows.set(cursorY, new StringBuilder());
 				updateCaretAnimation();
 			} else if (input.getKey("CTRL-C").clicked) {
-				clipboard.setClipboardContents(String.join("\n", rows));
+				clipboard.setClipboardContents(rows.get(cursorY).toString());
 				updateCaretAnimation();
 			} else if (input.getKey("CTRL-V").clicked) {
 				insertChars(clipboard.getClipboardContents());
@@ -171,28 +149,30 @@ public class SignDisplay extends Display {
 			int yPos = bounds.getTop() + MinicraftImage.boxWidth; // Upper border
 			int centeredX = bounds.getLeft() + bounds.getWidth() / 2;
 			for (StringBuilder row : rows) {
-				// See #getLines
-				String r = row.toString();
-				int length = r.length();
-				for (int j = 0; j < length; j += MAX_TEXT_LENGTH) { // For each line
-					Font.drawCentered(r.substring(j, Math.min(length, j + MAX_TEXT_LENGTH)), screen, yPos, Color.WHITE);
-					//noinspection SuspiciousNameCombination
-					yPos += MinicraftImage.boxWidth;
-				}
+				Font.drawCentered(row.toString(), screen, yPos, Color.WHITE);
+				//noinspection SuspiciousNameCombination
+				yPos += MinicraftImage.boxWidth;
 			}
 
 			// Cursor rendering
 			if (caretShown) {
-				int lineWidth = getLineWidthOfRow(cursorX, cursorY) * MinicraftImage.boxWidth;
-				int displayX = calculateDisplayX(cursorX) * MinicraftImage.boxWidth;
-				int displayY = calculateDisplayY(cursorX, cursorY) * MinicraftImage.boxWidth;
+				int lineWidth = rows.get(cursorY).length() * MinicraftImage.boxWidth;
+				int displayX = cursorX * MinicraftImage.boxWidth;
+				int displayY = cursorY * MinicraftImage.boxWidth;
 				int lineBeginning = centeredX - lineWidth / 2;
 				int cursorX = lineBeginning + displayX;
 				int cursorY = bounds.getTop() + MinicraftImage.boxWidth + displayY;
-				int cursorRenderY = cursorY + MinicraftImage.boxWidth - 2;
-				for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 1 pixel high and 8 pixel wide
-					int idx = cursorX + i + cursorRenderY * Screen.w;
-					screen.pixels[idx] = Color.getLightnessFromRGB(screen.pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+				if (this.cursorX == rows.get(this.cursorY).length()) { // Replace cursor
+					int cursorRenderY = cursorY + MinicraftImage.boxWidth - 1;
+					for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 1 pixel high and 8 pixel wide
+						int idx = cursorX + i + cursorRenderY * Screen.w;
+						screen.pixels[idx] = Color.getLightnessFromRGB(screen.pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+					}
+				} else { // Insert cursor
+					for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 8 pixel high and 1 pixel wide
+						int idx = cursorX + (cursorY + i) * Screen.w;
+						screen.pixels[idx] = Color.getLightnessFromRGB(screen.pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+					}
 				}
 			}
 		}
@@ -200,42 +180,6 @@ public class SignDisplay extends Display {
 		private void updateCaretAnimation() {
 			caretShown = true;
 			caretFrameCountDown = 120;
-		}
-
-		private int calculateDisplayX(int x) {
-			return x > MAX_TEXT_LENGTH ? x - (x - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH : x;
-		}
-
-		private int getLineWidthOfRow(int x, int y) {
-			int length = rows.get(y).length();
-			return (x == 0 ? MAX_TEXT_LENGTH : (x + MAX_TEXT_LENGTH - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH) > length
-				? length - (x - 1) / MAX_TEXT_LENGTH * MAX_TEXT_LENGTH : MAX_TEXT_LENGTH;
-		}
-
-		private int calculateDisplayY(int x, int y) {
-			int count = 0;
-			for (int i = 0; i <= y; i++) {
-				if (i != y) count += calculateNumberOfOccupiedLinesOfRow(i);
-				else count += (x - 1) / MAX_TEXT_LENGTH; // A new line is regarded when the current line exceeds MAX_TEST_LENGTH.
-			}
-
-			return count;
-		}
-
-		private boolean checkNewLineAvailable() {
-			int maxY = rows.size() - 1;
-			return calculateDisplayY(rows.get(maxY).length(), maxY) < MAX_ROW_COUNT - 1;
-		}
-
-		private boolean checkRowLineCapacity(int y) {
-			int len = rows.get(y).length();
-			// If the current row is not enough to fill in a line or the existing new line
-			return len < MAX_TEXT_LENGTH || len % MAX_TEXT_LENGTH != 0;
-		}
-
-		private int calculateNumberOfOccupiedLinesOfRow(int y) {
-			int length = rows.get(y).length();
-			return length == 0 ? 1 : (length + MAX_TEXT_LENGTH - 1) / MAX_TEXT_LENGTH;
 		}
 
 		private void insertChars(String chars) {
@@ -257,34 +201,17 @@ public class SignDisplay extends Display {
 		 */
 		private boolean insertChar(char c) {
 			if (c == '\b') { // Backspace
-				if (cursorX == 0 && cursorY == 0) return true; // No effect; valid behaviour; handled
-				else if (cursorX > 0) {
+				if (cursorX == 0) return true; // No effect; valid behaviour; handled
+				else { // cursorX > 0
 					rows.get(cursorY).deleteCharAt(--cursorX); // Remove the char in front of the cursor.
-				} else { // cursorY > 0 && cursorX == 0
-					// Combining the current row to the row above. Remove the current line and decrement cursorY by 1.
-					rows.get(cursorY - 1).append(rows.remove(cursorY--));
 				}
 
 				return true; // A backspace is always not limited by the line count limit, and it could reduce characters when appropriate.
 			} else if (c == '\n') { // Line break
-				StringBuilder curRow = rows.get(cursorY);
-				int rowLen = curRow.length();
-				// If the row occupies more than 1 line and the string of the cursor until the end of line plus the last line
-				//   does not contain enough chars to require a new line, so that the line break does not affect the line count.
-				// The cursor should be within the row so that it does not create an empty new line, which breaks the case mentioned above.
-				// One of the cases is that the cursor is at the end of line.
-				if (rowLen > MAX_TEXT_LENGTH && cursorX > 0 && cursorX < rowLen &&
-						cursorX <= rowLen - rowLen % MAX_TEXT_LENGTH && // The cursor should be in the line before the last line.
-						MAX_TEXT_LENGTH - cursorX + rowLen % MAX_TEXT_LENGTH <= MAX_TEXT_LENGTH ||
-						checkNewLineAvailable()) { // For other cases, a new line would always be required.
-					rows.add(++cursorY, new StringBuilder(curRow.substring(cursorX))); // Create new builder from the split point.
-					curRow.delete(cursorX, rowLen); // Remove string part starts with the split point.
-					cursorX = 0; // A pointer to the new line after the break.
-					return true;
-				} else return false; // No line break; the char is discarded; no effect; unhandled
+				return true; // No effect; the char is ignored; handled
 			} else {
 				// If the current line has spaces to expand, or else a new line would be required.
-				if (checkRowLineCapacity(cursorY) || checkNewLineAvailable()) {
+				if (rows.get(cursorY).length() < MAX_TEXT_LENGTH) {
 					rows.get(cursorY).insert(cursorX++, c);
 					return true;
 				} else return false; // No more chars are accepted to expand at the current cursor position.
@@ -292,22 +219,53 @@ public class SignDisplay extends Display {
 		}
 	}
 
+	OnScreenKeyboardMenu onScreenKeyboardMenu;
+
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
 		Rectangle bounds = menus[0].getBounds();
 		Font.drawCentered(Localization.getLocalized("Use SHIFT-ENTER to confirm input."), screen, bounds.getBottom() + 8, Color.GRAY);
 		editor.render(screen);
+		if (onScreenKeyboardMenu != null)
+			onScreenKeyboardMenu.render(screen);
 	}
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.inputPressed("exit") || input.getKey("SHIFT-ENTER").clicked) {
-			updateSign(levelDepth, x, y, editor.getLines());
-			Game.exitDisplay();
-			return;
+		boolean acted = false; // Checks if typing action is needed to be handled.
+		boolean mainMethod = false;
+		if (onScreenKeyboardMenu == null || !onScreenKeyboardMenu.isVisible()) {
+			if (input.inputPressed("exit") || input.getKey("SHIFT-ENTER").clicked) {
+				updateSign(levelDepth, x, y, editor.getLines());
+				Game.exitDisplay();
+				return;
+			}
+
+			mainMethod = true;
+		} else {
+			try {
+				onScreenKeyboardMenu.tick(input);
+			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
+					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+				acted = true;
+			}
+
+			if (acted)
+				editor.tick(input);
+
+			if (input.getKey("exit").clicked || input.getKey("SHIFT-ENTER").clicked) { // Should not listen button press
+				updateSign(levelDepth, x, y, editor.getLines());
+				Game.exitDisplay();
+				return;
+			}
+
+			if (input.buttonPressed(ControllerButton.X)) { // Hide the keyboard.
+				onScreenKeyboardMenu.setVisible(!onScreenKeyboardMenu.isVisible());
+			}
 		}
 
-		editor.tick(input);
+		if (mainMethod || !onScreenKeyboardMenu.isVisible())
+			editor.tick(input);
 	}
 }
