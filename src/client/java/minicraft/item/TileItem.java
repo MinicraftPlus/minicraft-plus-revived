@@ -91,7 +91,7 @@ public class TileItem extends StackableItem {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
-				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
+				level.setTile(xt, yt, Tiles.get(model)); // TODO maybe data should be part of the saved tile..?
 				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(
 						this, level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth

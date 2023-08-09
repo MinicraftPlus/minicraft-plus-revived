@@ -13,25 +13,27 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 import org.tinylog.Logger;
 
+import java.util.HashMap;
+
 public class TorchTile extends Tile {
-	private Tile onType;
+	public static final TorchTile DELEGATE = new TorchTile(new ConnectTile()); // ConnectTile is used for placeholder.
 
+	private static final HashMap<Integer, TorchTile> instances = new HashMap<>();
+
+	private final Tile onType;
+
+	/** @param onTile The tile identified by tile data. */
 	public static TorchTile getTorchTile(Tile onTile) {
+		if (onTile instanceof TorchTile) return (TorchTile) onTile;
 		int id = onTile.id & 0xFFFF;
-		if(id < 16384) id += 16384;
-		else Logger.tag("TorchTile").info("Tried to place torch on torch tile...");
-
-		if(Tiles.containsTile(id))
-			return (TorchTile)Tiles.get(id);
-		else {
-			TorchTile tile = new TorchTile(onTile);
-			Tiles.add(id, tile);
-			return tile;
-		}
+		if (instances.containsKey(id)) return instances.get(id);
+		TorchTile tile = new TorchTile(onTile);
+		instances.put(id, tile);
+		return tile;
 	}
 
 	private TorchTile(Tile onType) {
-		super("Torch "+ onType.name, new SpriteAnimation(SpriteType.Tile, "torch"));
+		super("Torch", new SpriteAnimation(SpriteType.Tile, "torch"));
 		this.onType = onType;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;
@@ -50,7 +52,7 @@ public class TorchTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(item instanceof PowerGloveItem) {
 			int data = level.getData(xt, yt);
-			level.setTile(xt, yt, this.onType);
+			level.setTile(xt, yt, onType);
 			Sound.play("monsterhurt");
 			level.dropItem(xt*16+8, yt*16+8, Items.get("Torch"));
 			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(

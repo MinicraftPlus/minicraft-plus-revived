@@ -26,7 +26,7 @@ public class TorchItem extends TileItem {
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (validTiles.contains(tile.name)) {
-			level.setTile(xt, yt, TorchTile.getTorchTile(tile));
+			level.setTile(xt, yt, TorchTile.DELEGATE, tile.id);
 			return super.interactOn(true);
 		}
 		return super.interactOn(false);

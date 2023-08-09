@@ -72,6 +72,7 @@ public final class Tiles {
 		tiles.put((short)47, new BossWallTile());
 		tiles.put((short)48, new BossFloorTile());
 		tiles.put((short)49, new BossDoorTile());
+		tiles.put((short)50, TorchTile.DELEGATE);
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
@@ -199,7 +200,7 @@ public final class Tiles {
 		Tile getting = null;
 
 		boolean isTorch = false;
-		if(name.startsWith("TORCH")) {
+		if(name.startsWith("TORCH") && name.length() > 5) {
 			isTorch = true;
 			name = name.substring(6); // Cuts off torch prefix.
 		}
@@ -221,7 +222,7 @@ public final class Tiles {
 			getting = tiles.get((short)0);
 		}
 
-		if(isTorch) {
+		if (isTorch) {
 			getting = TorchTile.getTorchTile(getting);
 		}
 
@@ -229,24 +230,14 @@ public final class Tiles {
 		return getting;
 	}
 
-	public static Tile get(int id) {
+	public static Tile get(short id) {
 		//System.out.println("Requesting tile by id: " + id);
-		if(id < 0) id += 32768;
-
-		if(tiles.get((short)id) != null) {
-			return tiles.get((short)id);
-		}
-		else if(id >= 32767) {
-			return TorchTile.getTorchTile(get(id - 32767));
-		}
-		else {
+		if (tiles.get(id) != null) {
+			return tiles.get(id);
+		} else {
 			Logging.TILES.info("Unknown tile id requested: " + id);
-			return tiles.get((short)0);
+			return tiles.get((short) 0);
 		}
-	}
-
-	public static boolean containsTile(int id) {
-		return tiles.get((short)id) != null;
 	}
 
 	public static String getName(String descriptName) {
