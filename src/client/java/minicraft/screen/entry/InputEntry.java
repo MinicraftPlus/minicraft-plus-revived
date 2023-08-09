@@ -15,7 +15,7 @@ public class InputEntry extends ListEntry {
 
 	private String userInput;
 
-	private ChangeListener listener;
+	protected ChangeListener listener;
 
 	private ClipboardHandler clipboardHandler = new ClipboardHandler();
 
@@ -57,6 +57,11 @@ public class InputEntry extends ListEntry {
 	}
 
 	public String getUserInput() { return userInput; }
+
+	public void setUserInput(String text) {
+		userInput = text;
+		listener.onChange(text);
+	}
 
 	public String toString() {
 		return Localization.getLocalized(prompt) + (prompt.length() == 0 ? "" : ": ") + userInput;

@@ -12,8 +12,13 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
+import minicraft.item.StackableItem;
+import minicraft.item.UnknownItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.entry.ArrayEntry;
@@ -29,8 +34,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -238,7 +245,6 @@ public class DebugPanelDisplay extends Display {
 			ArrayEntry<PotionType> effectEntry = new ArrayEntry<>("Effect", true, false, PotionType.values());
 			InputEntry durEntry = new InputEntry("Duration", regexNumber, 0) {
 				private boolean specific = false;
-				private ChangeListener listener = null;
 
 				@Override
 				public void tick(InputHandler input) {
@@ -269,12 +275,6 @@ public class DebugPanelDisplay extends Display {
 				@Override
 				public String getUserInput() {
 					return specific ? super.getUserInput() : null;
-				}
-
-				@Override
-				public void setChangeListener(ChangeListener l) {
-					listener = l;
-					super.setChangeListener(l);
 				}
 
 				@Override
@@ -317,6 +317,102 @@ public class DebugPanelDisplay extends Display {
 				return true;
 			}, display -> durEntry.isValid(), Arrays.asList(optionEntry, optionEntry1, optionEntry2)));
 		}, false));
+		entries.add(new SelectEntry("Inventory Clear ...", () -> {
+			SelectableListInputEntry itemSelEntry = new SelectableListInputEntry("Item", Items.getRegisteredItemKeys(), "All");
+			InputEntry countEntry = new InputEntry("Max Count", regexNumber, 0) {
+				@Override
+				public boolean isValid() {
+					String input = getUserInput();
+					if (input.isEmpty()) return true; // Infinite
+					try {
+						int value = Integer.parseInt(input);
+						return value >= 0;
+					} catch (NumberFormatException e) {
+						return false;
+					}
+				}
+
+				@Override
+				public String toString() {
+					return getUserInput().isEmpty() ? "Max Count: Infinite" : super.toString();
+				}
+			};
+
+			CommandOptionEntry optionEntry1 = new CommandOptionEntry(countEntry);
+			countEntry.setChangeListener(v -> optionEntry1.callCheckUpdateListener());
+			countEntry.setVisible(false);
+			CommandOptionEntry optionEntry = new CommandOptionEntry(itemSelEntry, optionEntry1);
+			itemSelEntry.setChangeListener(v -> {
+				countEntry.setVisible(!itemSelEntry.getUserInput().isEmpty());
+				optionEntry.callCheckUpdateListener();
+			});
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				int count = 0;
+				if (itemSelEntry.getUserInput().isEmpty()) {
+					Inventory inventory = Game.player.getInventory();
+					count = inventory.getItems().stream().reduce(0, (a, b) -> a + Items.getCount(b), Integer::sum);
+					inventory.clearInv();
+				} else if (!itemSelEntry.isValid()) {
+					Logging.WORLDNAMED.error("Item specified is invalid: {}.", itemSelEntry.getUserInput());
+					return true;
+				} else {
+					Inventory inventory = Game.player.getInventory();
+					Item item = Items.get(itemSelEntry.getUserInput());
+					if (item instanceof UnknownItem) {
+						Logging.WORLDNAMED.error("Item specified is unknown: {}.", itemSelEntry.getUserInput());
+						return true;
+					} else {
+						if (countEntry.getUserInput().isEmpty()) {
+							for (int i = 0; i < inventory.invSize(); i++) {
+								Item stack;
+								if (item.equals(stack = inventory.get(i))) {
+									count += Items.getCount(stack); // May add case 0 handle
+									inventory.remove(i);
+									i--; // To iterate correctly
+								}
+							}
+						} else {
+							int value;
+							try {
+								value = Integer.parseInt(countEntry.getUserInput());
+								if (value < 0)
+									throw new IllegalArgumentException("count negative");
+							} catch (IllegalArgumentException e) {
+								Logging.WORLDNAMED.error(e, "Invalid count: {}", countEntry.getUserInput());
+								return true;
+							}
+
+							if (value == 0) {
+								Logging.WORLDNAMED.info("Item of `{}` in inventory count: {}.", item.getName(), inventory.count(item));
+								return true;
+							} else {
+								for (int i = 0; i < inventory.invSize(); i++) {
+									Item stack;
+									if (item.equals(stack = inventory.get(i))) {
+										if (stack instanceof StackableItem) {
+											int toRemove = Math.min(value - count, ((StackableItem) stack).count);
+											((StackableItem) stack).count -= toRemove;
+											if (((StackableItem) stack).count == 0) inventory.remove(i);
+											count += toRemove;
+										} else {
+											inventory.remove(i);
+											count++;
+										}
+
+										if (count == value) break;
+										i--; // To iterate correctly
+									}
+								}
+							}
+						}
+					}
+				}
+
+				Logging.WORLDNAMED.info("Removed {} items from the inventory.", count);
+				return true;
+			}, display -> itemSelEntry.getUserInput().isEmpty() || itemSelEntry.isValid() && countEntry.isValid(),
+				Collections.singletonList(optionEntry)));
+		}, false));
 
 		return entries;
 	}
@@ -338,15 +434,16 @@ public class DebugPanelDisplay extends Display {
 					return isSelectable() ? super.getColor(isSelected) : Color.DARK_GRAY;
 				}
 			};
-			Action checkUpdateListener = () -> actionEntry.setSelectable(allowCheck == null || allowCheck.test(this));
-			optionEntries.forEach(e -> {
-				entries.addAll(e.getEntries());
-				e.setCheckUpdateListener(checkUpdateListener);
-			});
-			entries.add(actionEntry);
-			checkUpdateListener.act(); // First call
-			builder = new Menu.Builder(true, 2, RelPos.CENTER, entries)
+			builder = new Menu.Builder(true, 2, RelPos.CENTER)
 				.setTitle("minicraft.display.debug_panel.command_popup");
+			optionEntries.forEach(e -> entries.addAll(e.getEntries()));
+			entries.add(actionEntry);
+			Action checkUpdateListener = () -> {
+				actionEntry.setSelectable(allowCheck == null || allowCheck.test(this));
+				builder.setEntries(entries.stream().filter(ListEntry::isVisible).collect(Collectors.toList()));
+			};
+			optionEntries.forEach(e -> e.setCheckUpdateListener(checkUpdateListener));
+			checkUpdateListener.act(); // First call
 			menus = new Menu[] { builder.createMenu() };
 			this.onCancel = onCancel;
 		}
@@ -596,6 +693,74 @@ public class DebugPanelDisplay extends Display {
 		@Override
 		public String toString() {
 			return entries.get(selection).toString();
+		}
+	}
+
+	private static class SelectableListInputEntry extends InputEntry {
+		private final String prompt;
+		private final List<String> list;
+		private final @Nullable String placeholder;
+
+		public SelectableListInputEntry(String prompt, Collection<String> list) { this(prompt, list, null); }
+		public SelectableListInputEntry(String prompt, Collection<String> list, @Nullable String placeholder) {
+			super(prompt);
+			ArrayList<String> arrayList = list.stream().map(String::toUpperCase).sorted().collect(Collectors.toCollection(ArrayList::new));
+			this.prompt = prompt;
+			this.list = Collections.unmodifiableList(arrayList);
+			this.placeholder = placeholder;
+		}
+
+		@Override
+		public boolean isValid() {
+			String input = getUserInput();
+			if (input.isEmpty()) return placeholder != null; // Default behaviour
+			else
+				return list.contains(input);
+		}
+
+		@Override
+		public void tick(InputHandler input) {
+			if (input.getKey("SELECT").clicked) {
+				Sound.play("select");
+				Game.setDisplay(new ListItemSelectDisplay(list, this::setUserInput));
+				return;
+			}
+
+			super.tick(input);
+		}
+
+		@Override
+		public String getUserInput() {
+			return super.getUserInput().toUpperCase(); // In case list content is all upper-cased.
+		}
+
+		@Override
+		public String toString() {
+			return getUserInput().isEmpty() && placeholder != null ? prompt + ": " + placeholder : super.toString();
+		}
+	}
+
+	private static class ListItemSelectDisplay extends Display {
+		private final List<String> list;
+		private final Consumer<String> callback;
+
+		public ListItemSelectDisplay(List<String> list, Consumer<String> callback) {
+			this.list = Collections.unmodifiableList(new ArrayList<>(list));
+			this.callback = callback;
+			menus = new Menu[] {
+				new Menu.Builder(true, 1, RelPos.CENTER)
+					.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER)
+					.setEntries(this.list.stream().map(e -> new SelectEntry(e, () -> onSelect(menus[0].getSelection()), false)).collect(Collectors.toList()))
+					.setTitle("Select")
+					.setDisplayLength(Math.min(this.list.size(), 10))
+					.setSearcherBar(true)
+					.createMenu()
+			};
+		}
+
+		private void onSelect(int index) {
+			callback.accept(list.get(index));
+			Game.exitDisplay();
 		}
 	}
 }
