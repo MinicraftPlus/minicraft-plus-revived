@@ -22,6 +22,7 @@ import minicraft.item.StackableItem;
 import minicraft.item.UnknownItem;
 import minicraft.level.Level;
 import minicraft.level.tile.HoleTile;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
@@ -31,6 +32,7 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.UserMutable;
 import minicraft.util.Logging;
+import minicraft.util.MyUtils;
 import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -447,7 +449,9 @@ public class DebugPanelDisplay extends Display {
 			};
 			final String METHOD_KEEP = "KEEP";
 			final String METHOD_REPLACE = "REPLACE";
-			ArrayEntry<String> methodEntry = new ArrayEntry<>("Method", true, false, METHOD_KEEP, METHOD_REPLACE);
+			//noinspection Convert2Diamond Ambious type infer
+			ArrayEntry<String> methodEntry = new ArrayEntry<String>("Method", true, false, METHOD_KEEP, METHOD_REPLACE);
+			methodEntry.setValue(METHOD_REPLACE);
 
 			CommandOptionEntry optionEntry = new CommandOptionEntry(levelOption);
 			CommandOptionEntry optionEntry1 = new CommandOptionEntry(coordinatesOption);
@@ -473,9 +477,10 @@ public class DebugPanelDisplay extends Display {
 					return true; // No action.
 				}
 
+				Level level = World.levels[World.lvlIdx(distLevel)];
 				switch (methodEntry.getValue()) {
 					case METHOD_KEEP:
-						if (!(World.levels[World.lvlIdx(distLevel)].getTile(distX, distY) instanceof HoleTile)) {
+						if (!(level.getTile(distX, distY) instanceof HoleTile)) {
 							Logging.WORLDNAMED.info("No tile is placed.");
 							return true;
 						}
@@ -485,11 +490,138 @@ public class DebugPanelDisplay extends Display {
 						return true;
 				}
 
-				World.levels[World.lvlIdx(distLevel)].setTile(distX, distY, Tiles.get(tile), data);
+				level.setTile(distX, distY, Tiles.get(tile), data);
 				Logging.WORLDNAMED.info("Placed tile {} at ({}, {}, {}) with data {}.", tile, distLevel, distX, distY, data);
 				return true;
 			}, display -> levelOption.isValid() && coordinatesOption.isAllInputValid() && tileSelEntry.isValid() && dataEntry.isValid(),
 				Arrays.asList(optionEntry, optionEntry1, optionEntry2, optionEntry3, optionEntry4)));
+		}, false));
+		entries.add(new SelectEntry("Fill ...", () -> {
+			Level curLevel = Game.player.getLevel();
+			LevelSelectionOption levelOption = new LevelSelectionOption(curLevel.depth);
+			LevelCoordinatesOption fromOption =
+				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
+			LevelCoordinatesOption toOption =
+				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
+			SelectableListInputEntry tileSelEntry = new SelectableListInputEntry("Tile", Tiles.getRegisteredTileKeys());
+			InputEntry dataEntry = new InputEntry("Data", regexNumber, 0, "0") {
+				@Override
+				public boolean isValid() {
+					try {
+						Short.parseShort(getUserInput());
+						return true;
+					} catch (NumberFormatException e) {
+						return false;
+					}
+				}
+
+				@Override
+				public void setChangeListener(ChangeListener l) {
+					super.setChangeListener(v -> {
+						String input = getUserInput();
+						if (input.startsWith("0") && input.length() > 1)
+							setUserInput(input.substring(1)); // Trimming leading zero
+						if (input.isEmpty()) setUserInput("0"); // "zero" placeholder (default value)
+						l.onChange(v);
+					});
+				}
+			};
+			final String METHOD_HOLLOW = "HOLLOW";
+			final String METHOD_KEEP = "KEEP";
+			final String METHOD_OUTLINE = "OUTLINE";
+			final String METHOD_REPLACE = "REPLACE";
+			//noinspection Convert2Diamond Ambious type infer
+			ArrayEntry<String> methodEntry = new ArrayEntry<String>("Method", true, false,
+				METHOD_HOLLOW, METHOD_KEEP, METHOD_OUTLINE, METHOD_REPLACE);
+			methodEntry.setValue(METHOD_REPLACE);
+
+			CommandOptionEntry optionEntry = new CommandOptionEntry(levelOption);
+			CommandOptionEntry optionEntry1 = new CommandOptionEntry(fromOption);
+			CommandOptionEntry optionEntry2 = new CommandOptionEntry(toOption);
+			CommandOptionEntry optionEntry3 = new CommandOptionEntry(tileSelEntry);
+			CommandOptionEntry optionEntry4 = new CommandOptionEntry(dataEntry);
+			CommandOptionEntry optionEntry5 = new CommandOptionEntry(methodEntry);
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				int distLevel;
+				int distX1;
+				int distY1;
+				int distX2;
+				int distY2;
+				String tile;
+				short data;
+				try {
+					distLevel = levelOption.getLevelValue();
+					distX1 = fromOption.getXValue();
+					distY1 = fromOption.getYValue();
+					distX2 = toOption.getXValue();
+					distY2 = toOption.getYValue();
+					if (!tileSelEntry.isValid())
+						throw new IllegalArgumentException("tile inputted is invalid");
+					tile = tileSelEntry.getUserInput();
+					data = Short.parseShort(dataEntry.getUserInput());
+				} catch (IllegalArgumentException e) {
+					Logging.WORLDNAMED.error(e, "Invalid arguments in options of command `Set tile ...`");
+					return true; // No action.
+				}
+
+				int minX = Math.min(distX1, distX2);
+				int minY = Math.min(distY1, distY2);
+				int maxX = Math.max(distX1, distX2);
+				int maxY = Math.max(distY1, distY2);
+				int count = 0;
+				Level level = World.levels[World.lvlIdx(distLevel)];
+				Tile tileInstance = Tiles.get(tile);
+				switch (methodEntry.getValue()) {
+					case METHOD_HOLLOW:
+						Tile hole = Tiles.get("hole");
+						for (int x = minX; x <= maxX; x++) {
+							for (int y = minY; y <= maxY; y++) {
+								if (x == minX || x == maxX || y == minY || y == maxY) {
+									level.setTile(x, y, tileInstance, data);
+								} else {
+									level.setTile(x, y, hole);
+								}
+								count++;
+							}
+						}
+						break;
+					case METHOD_KEEP:
+						for (int x = minX; x <= maxX; x++) {
+							for (int y = minY; y <= maxY; y++) {
+								if (!(level.getTile(x, y) instanceof HoleTile)) {
+									level.setTile(x, y, tileInstance, data);
+									count++;
+								}
+							}
+						}
+						break;
+					case METHOD_OUTLINE:
+						for (int x = minX; x <= maxX; x++) {
+							for (int y = minY; y <= maxY; y++) {
+								if (x == minX || x == maxX || y == minY || y == maxY) {
+									level.setTile(x, y, tileInstance, data);
+									count++;
+								}
+							}
+						}
+						break;
+					case METHOD_REPLACE:
+						for (int x = minX; x <= maxX; x++) {
+							for (int y = minY; y <= maxY; y++) {
+								level.setTile(x, y, tileInstance, data);
+								count++;
+							}
+						}
+						break;
+					default:
+						Logging.WORLDNAMED.error("Invalid (unexpected) method is inputted.");
+						return true;
+				}
+
+				Logging.WORLDNAMED.info("Placed {}.", count, MyUtils.plural(count, "tile"));
+				return true;
+			}, display -> levelOption.isValid() && fromOption.isAllInputValid() && toOption.isAllInputValid() && tileSelEntry.isValid() && dataEntry.isValid(),
+				Arrays.asList(optionEntry, optionEntry1, optionEntry2, optionEntry3, optionEntry4, optionEntry5)));
 		}, false));
 
 		return entries;
@@ -846,11 +978,9 @@ public class DebugPanelDisplay extends Display {
 		}
 
 		public int getLevelValue() throws IllegalArgumentException {
-			try {
-				return Objects.requireNonNull(getLevelValueRaw());
-			} catch (NullPointerException e) {
-				throw new IllegalArgumentException(e);
-			}
+			Integer val = getLevelValueRaw();
+			if (val == null) throw new IllegalArgumentException("value is invalid");
+			return val;
 		}
 
 		@Nullable
