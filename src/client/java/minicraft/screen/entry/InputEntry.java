@@ -7,7 +7,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
-public class InputEntry extends ListEntry {
+public class InputEntry extends ListEntry implements UserMutable {
+	protected static final int DARK_RED = Color.tint(Color.RED, -1, true);
 
 	private String prompt;
 	private String regex;
@@ -68,13 +69,14 @@ public class InputEntry extends ListEntry {
 	}
 
 	public void render(Screen screen, int x, int y, boolean isSelected) {
-		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : Color.RED);
+		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : isSelected ? Color.RED : DARK_RED);
 	}
 
 	public boolean isValid() {
 		return userInput.matches(regex);
 	}
 
+	@Override
 	public void setChangeListener(ChangeListener l) {
 		listener = l;
 	}

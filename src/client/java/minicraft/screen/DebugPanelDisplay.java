@@ -10,6 +10,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
@@ -20,6 +21,7 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.item.UnknownItem;
 import minicraft.level.Level;
+import minicraft.level.tile.HoleTile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
@@ -27,6 +29,7 @@ import minicraft.screen.entry.ChangeListener;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.UserMutable;
 import minicraft.util.Logging;
 import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -73,16 +77,18 @@ public class DebugPanelDisplay extends Display {
 			Game.exitDisplay();
 		}, false));
 		entries.add(new SelectEntry("Teleport to...",() -> {
-			LevelTileCoordinatesOption coordinatesOption =
-				new LevelTileCoordinatesOption(Game.player.getLevel(), Game.player.x >> 4, Game.player.y >> 4);
-			CommandOptionEntry optionEntry = new CommandOptionEntry(coordinatesOption);
-			coordinatesOption.init(optionEntry);
+			Level curLevel = Game.player.getLevel();
+			LevelSelectionOption levelOption = new LevelSelectionOption(curLevel.depth);
+			LevelCoordinatesOption coordinatesOption =
+				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, false);
+			CommandOptionEntry optionEntry = new CommandOptionEntry(levelOption);
+			CommandOptionEntry optionEntry1 = new CommandOptionEntry(coordinatesOption);
 			Game.setDisplay(new CommandPopupDisplay(null, () -> {
-				Level distLevel;
+				int distLevel;
 				int distX;
 				int distY;
 				try {
-					distLevel = coordinatesOption.getLevelValue();
+					distLevel = levelOption.getLevelValue();
 					distX = coordinatesOption.getXValue();
 					distY = coordinatesOption.getYValue();
 				} catch (IllegalArgumentException e) {
@@ -90,20 +96,24 @@ public class DebugPanelDisplay extends Display {
 					return true; // No action.
 				}
 
-				Level prevLevel = Game.player.getLevel();
+				int prevLevel = curLevel.depth;
 				int prevX = Game.player.x;
 				int prevY = Game.player.y;
-				Game.player.x = distX * 16 + 8;
-				Game.player.y = distY * 16 + 8;
+				Game.player.x = distX;
+				Game.player.y = distY;
 				if (prevLevel != distLevel) {
 					Game.exitDisplay(2);
-					Game.setDisplay(new LevelTransitionDisplay(distLevel.depth - prevLevel.depth));
+					Game.setDisplay(new LevelTransitionDisplay(distLevel - curLevel.depth));
+					Logging.WORLDNAMED.info("Teleported player from ({}, {}, {}) to ({}, {}, {}).",
+						curLevel.depth, prevX, prevY, distLevel, Game.player.x, Game.player.y);
 					return false;
 				}
+
 				Logging.WORLDNAMED.info("Teleported player from ({}, {}, {}) to ({}, {}, {}).",
-					prevLevel.depth, prevX, prevY, distLevel.depth, Game.player.x, Game.player.y);
+					curLevel.depth, prevX, prevY, distLevel, Game.player.x, Game.player.y);
 				return true;
-			}, display -> coordinatesOption.isAllInputValid(), Collections.singletonList(optionEntry)));
+			}, display -> levelOption.isValid() && coordinatesOption.isAllInputValid(),
+				Arrays.asList(optionEntry, optionEntry1)));
 		}, false));
 		entries.add(new SelectEntry("Time set ...", () -> {
 			//noinspection Convert2Diamond Ambious type infer
@@ -123,13 +133,13 @@ public class DebugPanelDisplay extends Display {
 			UnionEntry<ListEntry> unionEntry = new UnionEntry<>(timeArrayEntry, timeOption);
 			BooleanEntry timeTypeEntry = new BooleanEntry("Specific", false);
 			CommandOptionEntry optionEntry = new CommandOptionEntry(timeTypeEntry, new CommandOptionEntry(unionEntry));
-			timeTypeEntry.setChangeAction(v -> {
+			timeTypeEntry.setChangeListener(v -> {
 				unionEntry.setSelection((boolean) v ? 1 : 0);
 				optionEntry.callCheckUpdateListener();
 			}); // TODO Change ChangeListener into ChangeListener<T>
 			ChangeListener listener = v -> optionEntry.callCheckUpdateListener();
 			timeOption.setChangeListener(listener);
-			timeArrayEntry.setChangeAction(listener);
+			timeArrayEntry.setChangeListener(listener);
 			Game.setDisplay(new CommandPopupDisplay(null, () -> {
 				ListEntry selectedEntry = unionEntry.getSelectedEntry();
 				int distTime;
@@ -161,7 +171,6 @@ public class DebugPanelDisplay extends Display {
 				"minicraft.settings.mode.hardcore", "minicraft.settings.mode.score");
 			modeEntry.setValue(Settings.get("mode"));
 			CommandOptionEntry optionEntry = new CommandOptionEntry(modeEntry);
-			modeEntry.setChangeAction(v -> optionEntry.callCheckUpdateListener());
 			Game.setDisplay(new CommandPopupDisplay(null, () -> {
 				Object prevMode = Settings.get("mode");
 				String distMode = modeEntry.getValue();
@@ -284,11 +293,8 @@ public class DebugPanelDisplay extends Display {
 			};
 
 			CommandOptionEntry optionEntry = new CommandOptionEntry(actionEntry);
-			actionEntry.setChangeAction(v -> optionEntry.callCheckUpdateListener());
 			CommandOptionEntry optionEntry1 = new CommandOptionEntry(effectEntry);
-			effectEntry.setChangeAction(v -> optionEntry1.callCheckUpdateListener());
 			CommandOptionEntry optionEntry2 = new CommandOptionEntry(durEntry);
-			durEntry.setChangeListener(v -> optionEntry2.callCheckUpdateListener());
 			Game.setDisplay(new CommandPopupDisplay(null, () -> {
 				if (actionEntry.getValue()) for (PotionType potionType : Game.player.potioneffects.keySet()) {
 					PotionItem.applyPotion(Game.player, potionType, false);
@@ -338,10 +344,8 @@ public class DebugPanelDisplay extends Display {
 				}
 			};
 
-			CommandOptionEntry optionEntry1 = new CommandOptionEntry(countEntry);
-			countEntry.setChangeListener(v -> optionEntry1.callCheckUpdateListener());
 			countEntry.setVisible(false);
-			CommandOptionEntry optionEntry = new CommandOptionEntry(itemSelEntry, optionEntry1);
+			CommandOptionEntry optionEntry = new CommandOptionEntry(itemSelEntry, new CommandOptionEntry(countEntry));
 			itemSelEntry.setChangeListener(v -> {
 				countEntry.setVisible(!itemSelEntry.getUserInput().isEmpty());
 				optionEntry.callCheckUpdateListener();
@@ -413,6 +417,80 @@ public class DebugPanelDisplay extends Display {
 			}, display -> itemSelEntry.getUserInput().isEmpty() || itemSelEntry.isValid() && countEntry.isValid(),
 				Collections.singletonList(optionEntry)));
 		}, false));
+		entries.add(new SelectEntry("Set tile ...", () -> {
+			Level curLevel = Game.player.getLevel();
+			LevelSelectionOption levelOption = new LevelSelectionOption(curLevel.depth);
+			LevelCoordinatesOption coordinatesOption =
+				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
+			SelectableListInputEntry tileSelEntry = new SelectableListInputEntry("Tile", Tiles.getRegisteredTileKeys());
+			InputEntry dataEntry = new InputEntry("Data", regexNumber, 0, "0") {
+				@Override
+				public boolean isValid() {
+					try {
+						Short.parseShort(getUserInput());
+						return true;
+					} catch (NumberFormatException e) {
+						return false;
+					}
+				}
+
+				@Override
+				public void setChangeListener(ChangeListener l) {
+					super.setChangeListener(v -> {
+						String input = getUserInput();
+						if (input.startsWith("0") && input.length() > 1)
+							setUserInput(input.substring(1)); // Trimming leading zero
+						if (input.isEmpty()) setUserInput("0"); // "zero" placeholder (default value)
+						l.onChange(v);
+					});
+				}
+			};
+			final String METHOD_KEEP = "KEEP";
+			final String METHOD_REPLACE = "REPLACE";
+			ArrayEntry<String> methodEntry = new ArrayEntry<>("Method", true, false, METHOD_KEEP, METHOD_REPLACE);
+
+			CommandOptionEntry optionEntry = new CommandOptionEntry(levelOption);
+			CommandOptionEntry optionEntry1 = new CommandOptionEntry(coordinatesOption);
+			CommandOptionEntry optionEntry2 = new CommandOptionEntry(tileSelEntry);
+			CommandOptionEntry optionEntry3 = new CommandOptionEntry(dataEntry);
+			CommandOptionEntry optionEntry4 = new CommandOptionEntry(methodEntry);
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				int distLevel;
+				int distX;
+				int distY;
+				String tile;
+				short data;
+				try {
+					distLevel = levelOption.getLevelValue();
+					distX = coordinatesOption.getXValue();
+					distY = coordinatesOption.getYValue();
+					if (!tileSelEntry.isValid())
+						throw new IllegalArgumentException("tile inputted is invalid");
+					tile = tileSelEntry.getUserInput();
+					data = Short.parseShort(dataEntry.getUserInput());
+				} catch (IllegalArgumentException e) {
+					Logging.WORLDNAMED.error(e, "Invalid arguments in options of command `Set tile ...`");
+					return true; // No action.
+				}
+
+				switch (methodEntry.getValue()) {
+					case METHOD_KEEP:
+						if (!(World.levels[World.lvlIdx(distLevel)].getTile(distX, distY) instanceof HoleTile)) {
+							Logging.WORLDNAMED.info("No tile is placed.");
+							return true;
+						}
+					case METHOD_REPLACE: break; // Valid and expected; skip check
+					default:
+						Logging.WORLDNAMED.error("Invalid (unexpected) method is inputted.");
+						return true;
+				}
+
+				World.levels[World.lvlIdx(distLevel)].setTile(distX, distY, Tiles.get(tile), data);
+				Logging.WORLDNAMED.info("Placed tile {} at ({}, {}, {}) with data {}.", tile, distLevel, distX, distY, data);
+				return true;
+			}, display -> levelOption.isValid() && coordinatesOption.isAllInputValid() && tileSelEntry.isValid() && dataEntry.isValid(),
+				Arrays.asList(optionEntry, optionEntry1, optionEntry2, optionEntry3, optionEntry4)));
+		}, false));
 
 		return entries;
 	}
@@ -475,6 +553,9 @@ public class DebugPanelDisplay extends Display {
 		public CommandOptionEntry(@NotNull ListEntry delegateEntry, @Nullable CommandOptionEntry subEntry) {
 			this.delegateEntry = delegateEntry;
 			this.subEntry = subEntry;
+			if (delegateEntry instanceof UserMutable) {
+				((UserMutable) delegateEntry).setChangeListener(v -> callCheckUpdateListener());
+			}
 		}
 
 		public void setVisible(boolean visible) {
@@ -502,75 +583,167 @@ public class DebugPanelDisplay extends Display {
 		}
 	}
 
-	private static class LevelTileCoordinatesOption extends ListEntry {
-		private static final int DARK_RED = Color.tint(Color.RED, -1, true);
-		private static final int INPUT_ENTRY_COUNT = 3; // Level depth, x, y
+	private static class LevelCoordinatesOption extends ListEntry implements UserMutable {
+		private static final int INPUT_ENTRY_COUNT = 2; // x, y
 
-		private final List<InputEntry> inputs;
+		private final List<CoordinateInputEntry> inputs;
 
 		private int selection = 0;
 
-		public LevelTileCoordinatesOption(Level level, int x, int y) {
-			inputs = Collections.unmodifiableList(Arrays.asList(
-				new InputEntry("Level", regexNegNumber, 0, String.valueOf(level.depth)) {
-					@Override
-					public boolean isValid() {
-						try {
-							int value = Integer.parseInt(getUserInput());
-							return value >= -4 && value <= 1;
-						} catch (NumberFormatException e) {
-							return false;
-						}
-					}
-
-					@Override
-					public void render(Screen screen, int x, int y, boolean isSelected) {
-						Font.draw(toString(), screen, x, y, isValid() ?
-							(isSelected ? Color.GREEN : COL_UNSLCT) :
-							isSelected ? Color.RED : DARK_RED);
-					}
-				},
-				new InputEntry("X", regexNumber, 0, String.valueOf(x)) {
-					@Override
-					public boolean isValid() {
-						try {
-							int value = Integer.parseInt(getUserInput());
-							return value >= 0 && value < level.w;
-						} catch (NumberFormatException e) {
-							return false;
-						}
-					}
-
-					@Override
-					public void render(Screen screen, int x, int y, boolean isSelected) {
-						Font.draw(toString(), screen, x, y, isValid() ?
-							(isSelected ? Color.GREEN : COL_UNSLCT) :
-							isSelected ? Color.RED : DARK_RED);
-					}
-				},
-				new InputEntry("Y", regexNumber, 0, String.valueOf(y)) {
-					@Override
-					public boolean isValid() {
-						try {
-							int value = Integer.parseInt(getUserInput());
-							return value >= 0 && value < level.h;
-						} catch (NumberFormatException e) {
-							return false;
-						}
-					}
-
-					@Override
-					public void render(Screen screen, int x, int y, boolean isSelected) {
-						Font.draw(toString(), screen, x, y, isValid() ?
-							(isSelected ? Color.GREEN : COL_UNSLCT) :
-							isSelected ? Color.RED : DARK_RED);
-					}
-				}
+		public LevelCoordinatesOption(int w, int h, int x, int y, boolean isInputTile, boolean isTile) {
+			inputs = Collections.unmodifiableList(isTile ? Arrays.asList(
+				new TileCoordinateInputEntry("X", w, x, isInputTile),
+				new TileCoordinateInputEntry("Y", h, y, isInputTile)
+			) : Arrays.asList(
+				new EntityCoordinateInputEntry("X", w, x, isInputTile),
+				new EntityCoordinateInputEntry("Y", h, y, isInputTile)
 			));
 		}
 
-		public void init(CommandOptionEntry optionEntry) {
-			inputs.forEach(inputEntry -> inputEntry.setChangeListener(v -> optionEntry.callCheckUpdateListener()));
+		private static abstract class CoordinateInputEntry extends InputEntry {
+			public CoordinateInputEntry(String prompt, String regex, String initValue) {
+				super(prompt, regex, 0, initValue);
+			}
+
+			public boolean isAllValid() {
+				return isValid();
+			}
+
+			public abstract int getValue() throws IllegalArgumentException;
+		}
+
+		// Based on entity coordinate system
+		private static class EntityCoordinateInputEntry extends CoordinateInputEntry {
+			private final int bound;
+			private final InputEntry minorInput;
+
+			private boolean specified;
+			private boolean minor;
+
+			public EntityCoordinateInputEntry(String prompt, int bound, int initValue, boolean isTile) {
+				super(prompt, regexNumber, String.valueOf(isTile ? initValue : initValue / 16));
+				this.bound = bound;
+				specified = !isTile;
+				minorInput = new InputEntry("", regexNumber, 0, isTile ? "" : String.valueOf(initValue % 16)) {
+					@Override
+					public boolean isValid() {
+						try {
+							int value = Integer.parseInt(getUserInput());
+							return value >= 0 && value < 16;
+						} catch (NumberFormatException e) {
+							return false;
+						}
+					}
+
+					@Override
+					public void setChangeListener(ChangeListener l) {
+						super.setChangeListener(v -> {
+							String input = getUserInput();
+							if (input.startsWith("0") && input.length() > 1)
+								setUserInput(input.substring(1)); // Trimming leading zero
+							if (input.isEmpty()) setUserInput("0"); // "zero" placeholder (default value)
+							l.onChange(v);
+						});
+					}
+				};
+			}
+
+			@Override
+			public boolean isValid() {
+				try {
+					int value = Integer.parseInt(getUserInput());
+					return value >= 0 && value < bound;
+				} catch (NumberFormatException e) {
+					return false;
+				}
+			}
+
+			@Override
+			public boolean isAllValid() {
+				return super.isAllValid() && minorInput.isValid();
+			}
+
+			@Override
+			public void tick(InputHandler input) {
+				if (input.getKey("MINUS").clicked) {
+					if (!specified) specified = true;
+					minor = !minor;
+				} else if (!minor) {
+					super.tick(input);
+				} else {
+					minorInput.tick(input);
+				}
+			}
+
+			@Override
+			public void render(Screen screen, int x, int y, boolean isSelected) {
+				String text = super.toString();
+				String input = getUserInput();
+				int padding = text.length() - input.length();
+				Font.draw(text.substring(0, padding), screen, x, y, isSelected ? COL_SLCT : COL_UNSLCT);
+				Font.draw(input, screen, x + padding * MinicraftImage.boxWidth, y,
+					isValid() ? isSelected ? minor ? COL_SLCT : Color.GREEN : COL_UNSLCT : isSelected ? Color.RED : DARK_RED);
+				String minorText = minorInput.getUserInput();
+				if (specified) {
+					Font.draw("-", screen, x += Font.textWidth(text), y, isSelected ? COL_SLCT : COL_UNSLCT);
+					if (minorText.isEmpty()) minorText = "0";
+					Font.draw(minorText, screen, x + MinicraftImage.boxWidth, y,
+						minorInput.isValid() ? isSelected ? minor ? Color.GREEN : COL_SLCT : COL_UNSLCT : isSelected ? Color.RED : DARK_RED);
+				}
+			}
+
+			@Override
+			public void setChangeListener(ChangeListener l) {
+				minorInput.setChangeListener(l);
+				super.setChangeListener(l);
+			}
+
+			public int getValue() throws IllegalArgumentException {
+				String input = getUserInput();
+				if (input.isEmpty()) throw new IllegalArgumentException("input is empty");
+				if (!isValid() || !minorInput.isValid()) throw new IllegalArgumentException("invalid input");
+				try {
+					return Integer.parseInt(input) * 16 + Integer.parseInt(minorInput.getUserInput());
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+
+			@Override
+			public String toString() {
+				return super.toString() + (specified ? "-" + minorInput.getUserInput() : "");
+			}
+		}
+
+		// Based on tile coordinate system
+		private static class TileCoordinateInputEntry extends CoordinateInputEntry {
+			private final int bound;
+
+			public TileCoordinateInputEntry(String prompt, int bound, int initValue, boolean isTile) {
+				super(prompt, regexNumber, String.valueOf(isTile ? initValue : initValue / 16));
+				this.bound = bound;
+			}
+
+			@Override
+			public boolean isValid() {
+				try {
+					int value = Integer.parseInt(getUserInput());
+					return value >= 0 && value < bound;
+				} catch (NumberFormatException e) {
+					return false;
+				}
+			}
+
+			public int getValue() throws IllegalArgumentException {
+				String input = getUserInput();
+				if (input.isEmpty()) throw new IllegalArgumentException("input is empty");
+				if (!isValid()) throw new IllegalArgumentException("invalid input");
+				try {
+					return Integer.parseInt(input);
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
 		}
 
 		@Override
@@ -596,38 +769,118 @@ public class DebugPanelDisplay extends Display {
 			}
 		}
 
-		public Level getLevelValue() throws IllegalArgumentException {
-			if (!inputs.get(0).isValid()) throw new IllegalArgumentException();
-			try {
-				return World.levels[World.lvlIdx(Integer.parseInt(inputs.get(0).getUserInput()))];
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
 		public int getXValue() throws IllegalArgumentException {
-			if (!inputs.get(0).isValid()) throw new IllegalArgumentException();
-			try {
-				return Integer.parseInt(inputs.get(1).getUserInput());
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException(e);
-			}
+			return inputs.get(0).getValue();
 		}
 		public int getYValue() throws IllegalArgumentException {
-			if (!inputs.get(0).isValid()) throw new IllegalArgumentException();
-			try {
-				return Integer.parseInt(inputs.get(2).getUserInput());
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException(e);
-			}
+			return inputs.get(1).getValue();
 		}
 
 		public boolean isAllInputValid() {
-			return inputs.stream().allMatch(InputEntry::isValid);
+			return inputs.stream().allMatch(CoordinateInputEntry::isAllValid);
+		}
+
+		@Override
+		public void setChangeListener(ChangeListener listener) {
+			inputs.forEach(i -> i.setChangeListener(listener));
 		}
 
 		@Override
 		public String toString() {
 			return inputs.stream().map(InputEntry::toString).collect(Collectors.joining("; "));
+		}
+	}
+
+	private static class LevelSelectionOption extends InputEntry {
+		private static final int[] levelDepths;
+		static {
+			levelDepths = World.idxToDepth.clone();
+			Arrays.sort(levelDepths);
+		}
+
+		private final int defaultLevel;
+
+		private boolean typing = false; // Typing or selecting
+		private int selection;
+
+		public LevelSelectionOption(int level) {
+			super("Level", regexNegNumber, 0, String.valueOf(level));
+			this.defaultLevel = level;
+			selection = Arrays.binarySearch(levelDepths, level);
+		}
+
+		@Override
+		public void tick(InputHandler input) {
+			if (input.getKey("ENTER").clicked) {
+				if (typing) {
+					Integer level = getLevelValueRaw();
+					if (level != null) {
+						selection = Arrays.binarySearch(levelDepths, level);
+						typing = false;
+					}
+				} else // !typing
+					typing = true;
+			} else if (!typing) {
+				if (input.getKey("CURSOR-LEFT").clicked) {
+					selection = Math.max(selection - 1, 0);
+					Sound.play("select");
+					setUserInput(String.valueOf(levelDepths[selection]));
+				} else if (input.getKey("CURSOR-RIGHT").clicked) {
+					selection = Math.min(selection + 1, levelDepths.length - 1);
+					Sound.play("select");
+					setUserInput(String.valueOf(levelDepths[selection]));
+				}
+			} else
+				super.tick(input);
+		}
+
+		@Override
+		public boolean isValid() {
+			try {
+				String input = getUserInput();
+				if (input.isEmpty()) return true; // Default level
+				return Arrays.binarySearch(levelDepths, Integer.parseInt(input)) >= 0;
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		}
+
+		public int getLevelValue() throws IllegalArgumentException {
+			try {
+				return Objects.requireNonNull(getLevelValueRaw());
+			} catch (NullPointerException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+		@Nullable
+		protected Integer getLevelValueRaw() {
+			try {
+				String input = getUserInput();
+				if (input.isEmpty()) return defaultLevel; // Default level
+				int val = Integer.parseInt(input);
+				return Arrays.binarySearch(levelDepths, val) < 0 ? null : val; // Non-null if input is valid
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		}
+
+		@Override
+		public void render(Screen screen, int x, int y, boolean isSelected) {
+			if (!isSelected) typing = false; // TODO There should be #tick(..., isSelected) to replace this line.
+			Font.draw(isSelected && typing ? super.toString() : toString(), screen, x, y,
+				isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : isSelected ? Color.RED : DARK_RED);
+		}
+
+		@Override
+		public String toString() {
+			Integer depth = getLevelValueRaw();
+			try {
+				return depth != null ? "Level: " + Level.getDepthString(depth) + " (" + Level.getLevelName(depth) + ")" : super.toString();
+			} catch (NumberFormatException e) { // In case of an unexpected exception causing a crash.
+				Logging.WORLDNAMED.warn(e, "#isValid and #getUserInput are handled incorrectly in combination");
+				return super.toString();
+			}
 		}
 	}
 
@@ -639,14 +892,6 @@ public class DebugPanelDisplay extends Display {
 		@SafeVarargs
 		public UnionEntry(T... entries) {
 			this.entries = Arrays.asList(entries);
-		}
-
-		public T getEntry(int index) {
-			return entries.get(index);
-		}
-
-		public void setEntry(int index, T entry) {
-			entries.set(index, entry);
 		}
 
 		public void setSelection(int selection) {
@@ -721,7 +966,7 @@ public class DebugPanelDisplay extends Display {
 		@Override
 		public void tick(InputHandler input) {
 			if (input.getKey("SELECT").clicked) {
-				Sound.play("select");
+				Sound.play("confirm");
 				Game.setDisplay(new ListItemSelectDisplay(list, this::setUserInput));
 				return;
 			}
