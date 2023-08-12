@@ -126,7 +126,7 @@ public class Menu {
 		doScroll();
 	}
 
-	void setSelection(int idx) {
+	public void setSelection(int idx) {
 		if(idx >= entries.size())
 			idx = entries.size() - 1;
 
@@ -136,7 +136,7 @@ public class Menu {
 
 		doScroll();
 	}
-	int getSelection() { return selection; }
+	public int getSelection() { return selection; }
 	int getDispSelection() { return dispSelection; }
 
 	ListEntry[] getEntries() { return entries.toArray(new ListEntry[0]); }

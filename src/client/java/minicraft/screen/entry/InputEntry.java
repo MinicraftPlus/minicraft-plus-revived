@@ -6,8 +6,14 @@ import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import org.intellij.lang.annotations.RegExp;
 
 public class InputEntry extends ListEntry implements UserMutable {
+	@RegExp
+	public static final String regexNumber = "[0-9]+";
+	@RegExp
+	public static final String regexNegNumber = "[0-9-]+";
+
 	protected static final int DARK_RED = Color.tint(Color.RED, -1, true);
 
 	private String prompt;
