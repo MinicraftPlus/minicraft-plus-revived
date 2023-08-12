@@ -103,6 +103,7 @@ public class World extends Game {
 		Bed.removePlayers();
 		Updater.gameTime = 0;
 		Updater.gamespeed = 1;
+		Updater.timeFlow = true;
 		lastWorldEnterTime = System.currentTimeMillis();
 
 		Updater.changeTimeOfDay(Updater.Time.Morning); // Resets tickCount; game starts in the day, so that it's nice and bright.

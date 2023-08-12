@@ -7,11 +7,40 @@ import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
+import minicraft.entity.Arrow;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.FireSpark;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Spark;
+import minicraft.entity.furniture.DeathChest;
+import minicraft.entity.furniture.Furniture;
+import minicraft.entity.furniture.KnightStatue;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.Cow;
+import minicraft.entity.mob.Creeper;
+import minicraft.entity.mob.EnemyMob;
+import minicraft.entity.mob.Knight;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.ObsidianKnight;
+import minicraft.entity.mob.PassiveMob;
+import minicraft.entity.mob.Pig;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.Sheep;
+import minicraft.entity.mob.Skeleton;
+import minicraft.entity.mob.Slime;
+import minicraft.entity.mob.Snake;
+import minicraft.entity.mob.Zombie;
+import minicraft.entity.particle.BurnParticle;
+import minicraft.entity.particle.FireParticle;
+import minicraft.entity.particle.SandParticle;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -25,11 +54,13 @@ import minicraft.level.tile.HoleTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.entry.ArrayEntry;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.ChangeListener;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.screen.entry.UserMutable;
 import minicraft.util.Logging;
 import minicraft.util.MyUtils;
@@ -41,12 +72,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DebugPanelDisplay extends Display {
 	@RegExp
@@ -55,6 +98,7 @@ public class DebugPanelDisplay extends Display {
 	private static final String regexNegNumber = "[0-9-]+";
 
 	// This would only handle keyboard inputs.
+	// No localization would be applied.
 	public DebugPanelDisplay() {
 		super(new Menu.Builder(true, 0, RelPos.LEFT, getEntries())
 			.setPositioning(new Point(9, 9), RelPos.BOTTOM_RIGHT)
@@ -500,9 +544,9 @@ public class DebugPanelDisplay extends Display {
 			Level curLevel = Game.player.getLevel();
 			LevelSelectionOption levelOption = new LevelSelectionOption(curLevel.depth);
 			LevelCoordinatesOption fromOption =
-				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
+				new LevelCoordinatesOption("From", curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
 			LevelCoordinatesOption toOption =
-				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
+				new LevelCoordinatesOption("To", curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, true);
 			SelectableListInputEntry tileSelEntry = new SelectableListInputEntry("Tile", Tiles.getRegisteredTileKeys());
 			InputEntry dataEntry = new InputEntry("Data", regexNumber, 0, "0") {
 				@Override
@@ -560,7 +604,7 @@ public class DebugPanelDisplay extends Display {
 					tile = tileSelEntry.getUserInput();
 					data = Short.parseShort(dataEntry.getUserInput());
 				} catch (IllegalArgumentException e) {
-					Logging.WORLDNAMED.error(e, "Invalid arguments in options of command `Set tile ...`");
+					Logging.WORLDNAMED.error(e, "Invalid arguments in options of command `Fill ...`");
 					return true; // No action.
 				}
 
@@ -622,6 +666,142 @@ public class DebugPanelDisplay extends Display {
 				return true;
 			}, display -> levelOption.isValid() && fromOption.isAllInputValid() && toOption.isAllInputValid() && tileSelEntry.isValid() && dataEntry.isValid(),
 				Arrays.asList(optionEntry, optionEntry1, optionEntry2, optionEntry3, optionEntry4, optionEntry5)));
+		}, false));
+		entries.add(new SelectEntry("Kill ...", () -> {
+			TargetSelectorEntry selectorEntry = new TargetSelectorEntry(Game.player);
+			CommandOptionEntry optionEntry = new CommandOptionEntry(selectorEntry);
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				if (selectorEntry.isValid()) {
+					Logging.WORLDNAMED.error("Invalid arguments in options of command `Kill ...`");
+					return true; // No action.
+				}
+
+				Collection<Entity> entities = selectorEntry.collectTargets();
+				int count = entities.size();
+				entities.forEach(Entity::die);
+				Logging.WORLDNAMED.info("Eliminated {}.", count, MyUtils.plural(count, "entity"));
+				return true;
+			}, display -> selectorEntry.isValid(), Collections.singletonList(optionEntry)));
+		}, false));
+		// Item attributes cannot be modified or customized because of the design and nature (static and non-dynamic) of the game.
+		entries.add(new SelectEntry("Give ...", () -> {
+			SelectableListInputEntry itemSelEntry = new SelectableListInputEntry("Item", Items.getRegisteredItemKeys());
+			InputEntry countEntry = new InputEntry("Count", regexNumber, 0) {
+				@Override
+				public boolean isValid() {
+					String input = getUserInput();
+					if (input.isEmpty()) return true; // One
+					try {
+						int value = Integer.parseInt(input);
+						return value >= 1;
+					} catch (NumberFormatException e) {
+						return false;
+					}
+				}
+
+				@Override
+				public String toString() {
+					return getUserInput().isEmpty() ? "Count: One" : super.toString();
+				}
+			};
+			CommandOptionEntry optionEntry = new CommandOptionEntry(itemSelEntry);
+			CommandOptionEntry optionEntry1 = new CommandOptionEntry(countEntry);
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				int count;
+				try {
+					String input = countEntry.getUserInput();;
+					if (input.isEmpty()) count = 1;
+					else {
+						count = Integer.parseInt(input);
+						if (count < 1)
+							throw new IllegalArgumentException("count invalid");
+					}
+				} catch (IllegalArgumentException e) {
+					Logging.WORLDNAMED.error(e, "Invalid arguments in options of command `Fill ...`");
+					return true; // No action.
+				}
+
+				int given;
+				String itemName;
+				if (!itemSelEntry.isValid()) {
+					Logging.WORLDNAMED.error("Item specified is invalid: {}.", itemSelEntry.getUserInput());
+					return true;
+				} else {
+					Inventory inventory = Game.player.getInventory();
+					Item item = Items.get(itemSelEntry.getUserInput());
+					if (item instanceof UnknownItem) {
+						Logging.WORLDNAMED.error("Item specified is unknown: {}.", itemSelEntry.getUserInput());
+						return true;
+					} else {
+						given = inventory.add(item, count);
+						itemName = item.getName();
+					}
+				}
+
+				Logging.WORLDNAMED.info("Gave {} * {}.", given, itemName);
+				return true;
+			}, display -> itemSelEntry.isValid() && countEntry.isValid(),
+				Arrays.asList(optionEntry, optionEntry1)));
+		}, false));
+		entries.add(new SelectEntry("Daytime Lock ...", () -> {
+			BooleanEntry booleanEntry = new BooleanEntry("Do Daylight Cycle", Updater.timeFlow);
+			CommandOptionEntry optionEntry = new CommandOptionEntry(booleanEntry);
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				Logging.WORLDNAMED.info("Daytime flow is now {}.", Updater.timeFlow = booleanEntry.getValue());
+				return true;
+			}, null, Collections.singletonList(optionEntry)));
+		}, false));
+		// Because of the hit box, summoning with a number is not implemented.
+		// If entity attributes are going to be implemented, this would be massive and unideal
+		// due to the nature (static and non-dynamic) of the system.
+		// As the whole list of entities is too long to be included here and
+		// as mentioned above, some entities require attributes to work properly, only mobs are listed here.
+		// The original plan with bosses is to enable summoning if forced, but it is redundant to be implemented,
+		// bosses are not included instead.
+		HashMap<String, Function<Integer, Entity>> entitySelectionList = new HashMap<>();
+		entitySelectionList.put("Cow", lvl -> new Cow());
+		entitySelectionList.put("Creeper", Creeper::new);
+		entitySelectionList.put("Knight", Knight::new);
+		entitySelectionList.put("Pig", lvl -> new Pig());
+		entitySelectionList.put("Sheep", lvl -> new Sheep());
+		entitySelectionList.put("Skeleton", Skeleton::new);
+		entitySelectionList.put("Slime", Slime::new);
+		entitySelectionList.put("Snake", Snake::new);
+		entitySelectionList.put("Zombie", Zombie::new);
+		entries.add(new SelectEntry("Summon ...", () -> {
+			SelectableListInputEntry entitySelEntry = new SelectableListInputEntry("Entity", entitySelectionList.keySet());
+			Level curLevel = Game.player.getLevel();
+			LevelSelectionOption levelOption = new LevelSelectionOption(curLevel.depth);
+			LevelCoordinatesOption coordinatesOption =
+				new LevelCoordinatesOption(curLevel.w, curLevel.h, Game.player.x, Game.player.y, false, false);
+			CommandOptionEntry optionEntry = new CommandOptionEntry(entitySelEntry);
+			CommandOptionEntry optionEntry1 = new CommandOptionEntry(levelOption);
+			CommandOptionEntry optionEntry2 = new CommandOptionEntry(coordinatesOption);
+			Game.setDisplay(new CommandPopupDisplay(null, () -> {
+				int distLevel;
+				int distX;
+				int distY;
+				try {
+					distLevel = levelOption.getLevelValue();
+					distX = coordinatesOption.getXValue();
+					distY = coordinatesOption.getYValue();
+				} catch (IllegalArgumentException e) {
+					Logging.WORLDNAMED.error(e, "Invalid arguments in options of command `Teleport to ...`");
+					return true; // No action.
+				}
+
+				String selectedEntity = entitySelEntry.getUserInput();
+				if (!entitySelectionList.containsKey(selectedEntity)) {
+					Logging.WORLDNAMED.error("Invalid entity inputted.");
+					return true; // No action.
+				}
+
+				Entity entity = entitySelectionList.get(selectedEntity).apply(MyUtils.clamp(-distLevel, 0, 3));
+				World.levels[World.lvlIdx(distLevel)].add(entity, distX, distY);
+				Logging.WORLDNAMED.info("Summoned a {}.", selectedEntity.toUpperCase());
+				return true;
+			}, display -> entitySelEntry.isValid() && levelOption.isValid() && coordinatesOption.isAllInputValid(),
+				Arrays.asList(optionEntry, optionEntry1, optionEntry2)));
 		}, false));
 
 		return entries;
@@ -718,11 +898,27 @@ public class DebugPanelDisplay extends Display {
 	private static class LevelCoordinatesOption extends ListEntry implements UserMutable {
 		private static final int INPUT_ENTRY_COUNT = 2; // x, y
 
+		private final @Nullable String prompt;
 		private final List<CoordinateInputEntry> inputs;
 
 		private int selection = 0;
 
+		public LevelCoordinatesOption(int w, int h, boolean isTile) { this(null, w, h, isTile); }
 		public LevelCoordinatesOption(int w, int h, int x, int y, boolean isInputTile, boolean isTile) {
+			this(null, w, h, x, y, isInputTile, isTile);
+		}
+		public LevelCoordinatesOption(@Nullable String prompt, int w, int h, boolean isTile) {
+			this.prompt = prompt;
+			inputs = Collections.unmodifiableList(isTile ? Arrays.asList(
+				new TileCoordinateInputEntry("X", w),
+				new TileCoordinateInputEntry("Y", h)
+			) : Arrays.asList(
+				new EntityCoordinateInputEntry("X", w),
+				new EntityCoordinateInputEntry("Y", h)
+			));
+		}
+		public LevelCoordinatesOption(@Nullable String prompt, int w, int h, int x, int y, boolean isInputTile, boolean isTile) {
+			this.prompt = prompt;
 			inputs = Collections.unmodifiableList(isTile ? Arrays.asList(
 				new TileCoordinateInputEntry("X", w, x, isInputTile),
 				new TileCoordinateInputEntry("Y", h, y, isInputTile)
@@ -753,10 +949,17 @@ public class DebugPanelDisplay extends Display {
 			private boolean minor;
 
 			public EntityCoordinateInputEntry(String prompt, int bound, int initValue, boolean isTile) {
-				super(prompt, regexNumber, String.valueOf(isTile ? initValue : initValue / 16));
+				this(prompt, bound, String.valueOf(isTile ? initValue : initValue / 16), !isTile, isTile ? "" : String.valueOf(initValue % 16));
+			}
+			/** Construct an entry with no default input. */
+			public EntityCoordinateInputEntry(String prompt, int bound) {
+				this(prompt, bound, "", false, "");
+			}
+			private EntityCoordinateInputEntry(String prompt, int bound, String initValue, boolean specified, String minorDefault) {
+				super(prompt, regexNumber, initValue);
 				this.bound = bound;
-				specified = !isTile;
-				minorInput = new InputEntry("", regexNumber, 0, isTile ? "" : String.valueOf(initValue % 16)) {
+				this.specified = specified;
+				minorInput = new InputEntry("", regexNumber, 0, minorDefault) {
 					@Override
 					public boolean isValid() {
 						try {
@@ -851,8 +1054,14 @@ public class DebugPanelDisplay extends Display {
 		private static class TileCoordinateInputEntry extends CoordinateInputEntry {
 			private final int bound;
 
+			public TileCoordinateInputEntry(String prompt, int bound) {
+				this(prompt, bound, "");
+			}
 			public TileCoordinateInputEntry(String prompt, int bound, int initValue, boolean isTile) {
-				super(prompt, regexNumber, String.valueOf(isTile ? initValue : initValue / 16));
+				this(prompt, bound, String.valueOf(isTile ? initValue : initValue / 16));
+			}
+			private TileCoordinateInputEntry(String prompt, int bound, String initValue) {
+				super(prompt, regexNumber, initValue);
 				this.bound = bound;
 			}
 
@@ -919,7 +1128,99 @@ public class DebugPanelDisplay extends Display {
 
 		@Override
 		public String toString() {
-			return inputs.stream().map(InputEntry::toString).collect(Collectors.joining("; "));
+			return (prompt == null ? "" : prompt + ": ") + inputs.stream().map(InputEntry::toString).collect(Collectors.joining("; "));
+		}
+	}
+
+	// Integer 2-value vectors within a 2D Euclidean plane
+	private static class Vector2ValueOption extends ListEntry implements UserMutable {
+		private static final int INPUT_ENTRY_COUNT = 2; // x, y
+
+		private final @Nullable String prompt;
+		private final List<CoordinateInputEntry> inputs;
+
+		private int selection = 0;
+
+		public Vector2ValueOption(boolean isNeg, @Nullable Integer x, @Nullable Integer y) {
+			this(null, isNeg, x, y);
+		}
+		public Vector2ValueOption(@Nullable String prompt, boolean isNeg, @Nullable Integer x, @Nullable Integer y) {
+			this.prompt = prompt;
+			inputs = Collections.unmodifiableList(Arrays.asList(
+				new CoordinateInputEntry("X", isNeg, x == null ? "" : String.valueOf(x)),
+				new CoordinateInputEntry("Y", isNeg, y == null ? "" : String.valueOf(y))
+			));
+		}
+
+		private static class CoordinateInputEntry extends InputEntry {
+			public CoordinateInputEntry(String prompt, boolean isNeg, String initValue) {
+				super(prompt, isNeg ? regexNegNumber : regexNumber, 0, initValue);
+			}
+
+			@Override
+			public boolean isValid() {
+				try {
+					Integer.parseInt(getUserInput());
+					return true;
+				} catch (NumberFormatException e) {
+					return false;
+				}
+			}
+
+			public int getValue() throws IllegalArgumentException {
+				String input = getUserInput();
+				if (input.isEmpty()) throw new IllegalArgumentException("input is empty");
+				if (!isValid()) throw new IllegalArgumentException("invalid input");
+				try {
+					return Integer.parseInt(input);
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+		}
+
+		@Override
+		public void tick(InputHandler input) {
+			if (input.getKey("CURSOR-LEFT").clicked) {
+				if (selection > 0) selection--;
+				Sound.play("select");
+			} else if (input.getKey("CURSOR-RIGHT").clicked) {
+				if (selection < INPUT_ENTRY_COUNT - 1) selection++;
+				Sound.play("select");
+			} else {
+				inputs.get(selection).tick(input);
+			}
+		}
+
+		@Override
+		public void render(Screen screen, int x, int y, boolean isSelected) {
+			if (isVisible()) {
+				for (int i = 0; i < INPUT_ENTRY_COUNT; i++) {
+					inputs.get(i).render(screen, x, y, isSelected && i == selection);
+					x += Font.textWidth(inputs.get(i).toString()) + Font.textWidth("; ");
+				}
+			}
+		}
+
+		public int getXValue() throws IllegalArgumentException {
+			return inputs.get(0).getValue();
+		}
+		public int getYValue() throws IllegalArgumentException {
+			return inputs.get(1).getValue();
+		}
+
+		public boolean isAllInputValid() {
+			return inputs.stream().allMatch(CoordinateInputEntry::isValid);
+		}
+
+		@Override
+		public void setChangeListener(ChangeListener listener) {
+			inputs.forEach(i -> i.setChangeListener(listener));
+		}
+
+		@Override
+		public String toString() {
+			return (prompt == null ? "" : prompt + ": ") + inputs.stream().map(InputEntry::toString).collect(Collectors.joining("; "));
 		}
 	}
 
@@ -935,10 +1236,11 @@ public class DebugPanelDisplay extends Display {
 		private boolean typing = false; // Typing or selecting
 		private int selection;
 
-		public LevelSelectionOption(int level) {
-			super("Level", regexNegNumber, 0, String.valueOf(level));
-			this.defaultLevel = level;
-			selection = Arrays.binarySearch(levelDepths, level);
+		public LevelSelectionOption() { this(null); }
+		public LevelSelectionOption(@Nullable Integer level) {
+			super("Level", regexNegNumber, 0, level == null ? "" : String.valueOf(level));
+			this.defaultLevel = level == null ? 0 : level;
+			selection = Arrays.binarySearch(levelDepths, defaultLevel);
 		}
 
 		@Override
@@ -1097,7 +1399,7 @@ public class DebugPanelDisplay extends Display {
 		public void tick(InputHandler input) {
 			if (input.getKey("SELECT").clicked) {
 				Sound.play("confirm");
-				Game.setDisplay(new ListItemSelectDisplay(list, this::setUserInput));
+				Game.setDisplay(new ListItemSelectDisplay<>(list, this::setUserInput));
 				return;
 			}
 
@@ -1115,27 +1417,931 @@ public class DebugPanelDisplay extends Display {
 		}
 	}
 
-	private static class ListItemSelectDisplay extends Display {
-		private final List<String> list;
-		private final Consumer<String> callback;
+	private static class ListItemSelectDisplay<T> extends Display {
+		private final Consumer<T> callback;
 
-		public ListItemSelectDisplay(List<String> list, Consumer<String> callback) {
-			this.list = Collections.unmodifiableList(new ArrayList<>(list));
+		public static class ListItemHandler<T> {
+			public final @NotNull Function<T, String> stringifier;
+			public final @Nullable Predicate<T> itemFilter;
+			public final boolean removeFiltered;
+
+			public ListItemHandler() { this(Objects::toString); }
+			public ListItemHandler(@NotNull Function<T, String> stringifier) { this(stringifier, null); }
+			public ListItemHandler(@NotNull Function<T, String> stringifier, @Nullable Predicate<T> itemFilter) {
+				this(stringifier, itemFilter, true);
+			}
+			public ListItemHandler(@NotNull Function<T, String> stringifier, @Nullable Predicate<T> itemFilter, boolean removeFiltered) {
+				this.stringifier = stringifier;
+				this.itemFilter = itemFilter;
+				this.removeFiltered = removeFiltered;
+			}
+		}
+
+		public ListItemSelectDisplay(T[] list, Consumer<T> callback) { this(Arrays.asList(list), new ListItemHandler<>(), callback); }
+		public ListItemSelectDisplay(List<T> list, Consumer<T> callback) { this(list, new ListItemHandler<>(), callback); }
+		public ListItemSelectDisplay(T[] list, @NotNull ListItemHandler<T> itemHandler, Consumer<T> callback) {
+			this(Arrays.asList(list), itemHandler, callback);
+		}
+		public ListItemSelectDisplay(List<T> list, @NotNull ListItemHandler<T> itemHandler, Consumer<T> callback) {
 			this.callback = callback;
 			menus = new Menu[] {
 				new Menu.Builder(true, 1, RelPos.CENTER)
 					.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER)
-					.setEntries(this.list.stream().map(e -> new SelectEntry(e, () -> onSelect(menus[0].getSelection()), false)).collect(Collectors.toList()))
+					.setEntries((itemHandler.itemFilter != null && itemHandler.removeFiltered ?
+						list.stream().filter(itemHandler.itemFilter) : list.stream()).map(e -> {
+						SelectEntry entry = new SelectEntry(itemHandler.stringifier.apply(e), () -> onSelect(e), false);
+						if (itemHandler.itemFilter != null && !itemHandler.removeFiltered && !itemHandler.itemFilter.test(e))
+							entry.setSelectable(false);
+						return entry;
+					}).collect(Collectors.toList()))
 					.setTitle("Select")
-					.setDisplayLength(Math.min(this.list.size(), 10))
+					.setDisplayLength(Math.min(list.size(), 10))
 					.setSearcherBar(true)
 					.createMenu()
 			};
 		}
 
-		private void onSelect(int index) {
-			callback.accept(list.get(index));
+		private void onSelect(T item) {
+			callback.accept(item);
 			Game.exitDisplay();
+		}
+	}
+
+	private static class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetScope> {
+		// UPV == UnParsable Value
+		private static final String UPV_STRING = Color.RED_CODE + "UPV" + Color.WHITE_CODE + Color.GRAY_CODE;
+		private static final int DARK_RED = Color.tint(Color.RED, -1, true);
+		private static final int DARK_GREEN = Color.tint(Color.GREEN, -1, true);
+		private static final int DARK_BLUE = Color.tint(Color.BLUE, -1, true);
+		private static final Predicate<Entity> NOOP_FILTER = e -> true;
+
+		private enum TargetScope {
+			Player(true, e -> e instanceof Player), // There is only Game#player available as of now, so this specifies the player itself.
+			Entity(false, e -> true); // All entities
+
+			public final boolean single;
+			public final Predicate<Entity> filter;
+
+			TargetScope(boolean single, Predicate<Entity> filter) {
+				this.single = single;
+				this.filter = filter;
+			}
+		}
+
+		private static String formatPosition(int position) {
+			return (position / 16) + "-" + (position % 16);
+		}
+
+		private final TargetSelectorConfigDisplay configDisplay;
+
+		public TargetSelectorEntry(Player player) {
+			super("Target", true, false, TargetScope.Player, TargetScope.Entity);
+			configDisplay = new TargetSelectorConfigDisplay(player);
+		}
+
+		private class TargetSelectorConfigDisplay extends Display {
+			private final Menu.Builder builder;
+			private final PositionArgument positionArgument;
+			private final FilterArgument filterArgument;
+			private final CollectionArgument collectionArgument;
+
+			public TargetSelectorConfigDisplay(Player player) {
+				positionArgument = new PositionArgument(player.getLevel(), player.x, player.y);
+				filterArgument = new FilterArgument();
+				collectionArgument = new CollectionArgument();
+				builder = new Menu.Builder(true, 2, RelPos.CENTER,
+					positionArgument.getEntry(), filterArgument.getEntry(), collectionArgument.getEntry())
+					.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER);
+				menus = new Menu[1];
+				update();
+			}
+
+			private void update() {
+				int oldSel = menus[0] == null ? 0 : menus[0].getSelection();
+				menus[0] = builder.createMenu();
+				menus[0].setSelection(oldSel);
+			}
+
+			public boolean isValid() {
+				return positionArgument.isAllValid() && filterArgument.isAllValid() && collectionArgument.isAllValid() &&
+					(!getValue().single || !filterArgument.isSet()); // Single target cannot apply filter
+			}
+
+			public Collection<Entity> collectTargets() {
+				assert isValid(); // This method should be called after checked of isValid.
+				if (getValue() == TargetScope.Player) return Collections.singleton(Game.player);
+				// TargetScope#Entity
+				LinkedHashSet<Entity> entities = new LinkedHashSet<>();
+				if (positionArgument.isSpecified())
+					entities.addAll(Arrays.asList(World.levels[World.lvlIdx(positionArgument.getLevelValue())].getEntityArray()));
+				else {
+					for (Level level : World.levels) {
+						entities.addAll(Arrays.asList(level.getEntityArray()));
+					}
+				}
+
+				// The effect of level depths on distance is undefined, so this is not taken into account here.
+				int localX = positionArgument.getXValue();
+				int localY = positionArgument.getYValue();
+				Comparator<Entity> comparator;
+				switch (collectionArgument.getSort()) {
+					case Nearest: comparator = Comparator.comparingDouble(e -> Math.hypot(localX - e.x, localY - e.y)); break;
+					case Furthest: comparator = Comparator.<Entity>comparingDouble(e -> Math.hypot(localX - e.x, localY - e.y)).reversed(); break;
+					case Random: // Reference: https://stackoverflow.com/a/40380283
+						final Map<Object, UUID> uniqueIds = new IdentityHashMap<>();
+						comparator = Comparator.comparing(e -> uniqueIds.computeIfAbsent(e, k -> UUID.randomUUID()));
+						break;
+					default: // Reference: https://stackoverflow.com/a/70007141
+					case Arbitrary: comparator = (a, b) -> 0; // NO-OP; Keeps it as the original order as added with LinkedHashSet.
+				}
+				Stream<Entity> stream = entities.stream().filter(filterArgument.getFilter(positionArgument))
+					.sorted(comparator);
+				if (collectionArgument.isLimitEnabled()) try {
+					stream = stream.limit(collectionArgument.getLimit());
+				} catch (IllegalArgumentException e) {
+					Logging.WORLDNAMED.error(e, "Invalid (unchecked and unexpected) limit value");
+					return Collections.emptySet();
+				}
+
+				return stream.collect(Collectors.toList());
+			}
+		}
+
+		private static class PositionArgument {
+
+			private final int defaultDepth, defaultX, defaultY;
+			private final PositionSelectDisplay display;
+			private final SelectEntry entry;
+			private boolean depthValid = true, xValid = true, yValid = true;
+			private @Nullable Integer depth, x, y;
+			private boolean specify = false;
+
+			public PositionArgument(Level level, int x, int y) {
+				this.defaultDepth = level.depth;
+				this.defaultX = x;
+				this.defaultY = y;
+				display = new PositionSelectDisplay(level);
+				entry = new SelectEntry("Position", () -> Game.setDisplay(display), false) {
+
+					@Override
+					public String toString() {
+						return String.format("Position: (%s, %s, %s)",
+							depthValid ? depth == null ? formatPosition(defaultDepth) :
+								Color.BLUE_CODE + formatPosition(depth) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING,
+							xValid ? PositionArgument.this.x == null ? formatPosition(defaultX) :
+								Color.BLUE_CODE + formatPosition(PositionArgument.this.x) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING,
+							yValid ? PositionArgument.this.y == null ? formatPosition(defaultY) :
+								Color.BLUE_CODE + formatPosition(PositionArgument.this.y) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING
+						);
+					}
+				};
+			}
+
+			private class PositionSelectDisplay extends Display {
+				private final Menu.Builder builder;
+				private final BooleanEntry specifyOption; // If unspecified, all entities are selected unless there is any range argument used.
+				private final LevelSelectionOption levelOption; // If level is not specified, all entities in the world are selected.
+				private final LevelCoordinatesOption positionOption; // If level is specified, the position is also used.
+
+				public PositionSelectDisplay(Level level) {
+					specifyOption = new BooleanEntry("Specify", false);
+					levelOption = new LevelSelectionOption();
+					positionOption = new LevelCoordinatesOption(level.w, level.h, false);
+					builder = new Menu.Builder(true, 2, RelPos.CENTER, levelOption, positionOption)
+						.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER)
+						.setTitle("Position");
+					menus = new Menu[1];
+					ChangeListener l = v -> onUpdate();
+					specifyOption.setChangeListener(l);
+					levelOption.setChangeListener(l);
+					positionOption.setChangeListener(l);
+					onUpdate();
+				}
+
+				private void onUpdate() {
+					ArrayList<ListEntry> entries = new ArrayList<>();
+					entries.add(specifyOption);
+					if (specifyOption.getValue()) {
+						entries.add(levelOption);
+						entries.add(positionOption);
+					}
+					int oldSel = menus[0] == null ? 0 : menus[0].getSelection();
+					menus[0] = builder.setEntries(entries).createMenu();
+					menus[0].setSelection(oldSel);
+				}
+
+				@Override
+				public void tick(InputHandler input) {
+					if (input.getKey("EXIT").clicked) {
+						if (specifyOption.getValue()) {
+							specify = true;
+							try {
+								depth = levelOption.getLevelValue();
+								depthValid = true;
+							} catch (IllegalArgumentException e) {
+								depth = null;
+								depthValid = false;
+							}
+
+							try {
+								x = positionOption.getXValue();
+								xValid = true;
+							} catch (IllegalArgumentException e) {
+								x = null;
+								xValid = false;
+							}
+
+							try {
+								y = positionOption.getYValue();
+								yValid = true;
+							} catch (IllegalArgumentException e) {
+								y = null;
+								yValid = false;
+							}
+						} else {
+							specify = false;
+							depth = null;
+							x = null;
+							y = null;
+							depthValid = true;
+							xValid = true;
+							yValid = true;
+						}
+
+						Game.exitDisplay();
+						return;
+					}
+
+					super.tick(input);
+				}
+
+				@Override
+				public void init(@Nullable Display parent) {
+					super.init(parent);
+					menus[0].setSelection(0); // Reset selection
+				}
+			}
+
+			public boolean isAllValid() {
+				return depthValid && xValid && yValid;
+			}
+
+			public SelectEntry getEntry() {
+				return entry;
+			}
+
+			public boolean isSpecified() {
+				return specify;
+			}
+
+			public int getLevelValue() {
+				return depth == null ? defaultDepth : depth;
+			}
+			public int getXValue() {
+				return x == null ? defaultX : x;
+			}
+			public int getYValue() {
+				return y == null ? defaultY : y;
+			}
+		}
+
+		private static class FilterArgument {
+			private final FilterSettingDisplay display;
+			private final SelectEntry entry;
+			private final LinkedHashMap<FilterOption, FilterOption.FilterOptionEntry> argumentOptions = new LinkedHashMap<>();
+
+			public FilterArgument() {
+				display = new FilterSettingDisplay();
+				entry = new SelectEntry("Filter", () -> Game.setDisplay(display), false) {
+					@Override
+					public String toString() {
+						long v;
+						return argumentOptions.isEmpty() ? "Filter(s) ..." : String.format("Filter(s) (%s)", argumentOptions.size() +
+							((v = argumentOptions.values().stream().filter(e -> !e.isFilterValid()).count()) > 0 ?
+								";" + Color.RED_CODE + v + " " + Color.WHITE_CODE + Color.GRAY_CODE + UPV_STRING : ""));
+					}
+				};
+			}
+
+			private class FilterSettingDisplay extends Display {
+				private final StringEntry placeholderEntry = new StringEntry("No Filter Selected", Color.GRAY, false);
+				private final SelectEntry actionEntry;
+				private final Menu.Builder builder;
+
+				public FilterSettingDisplay() {
+					actionEntry = new SelectEntry("Add Filter",
+						() -> Game.setDisplay(new ListItemSelectDisplay<>(FilterOption.values(),
+							new ListItemSelectDisplay.ListItemHandler<>(o -> o.name, o -> !argumentOptions.containsKey(o)), this::addFilter))) {
+						@Override
+						public int getColor(boolean isSelected) {
+							return isSelectable() ? super.getColor(isSelected) : Color.DARK_GRAY;
+						}
+					};
+					builder = new Menu.Builder(true, 2, RelPos.CENTER)
+						.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER);
+					menus = new Menu[1];
+					update();
+				}
+
+				private void update() {
+					ArrayList<ListEntry> entries = new ArrayList<>();
+					if (argumentOptions.isEmpty())
+						entries.add(placeholderEntry);
+					else
+						argumentOptions.values().forEach(e -> entries.add(e.getEntry()));
+					entries.add(new BlankEntry());
+					actionEntry.setSelectable(Arrays.stream(FilterOption.values()).anyMatch(o -> !argumentOptions.containsKey(o)));
+					entries.add(actionEntry);
+					menus[0] = builder.setEntries(entries).createMenu();
+				}
+
+				private void addFilter(FilterOption option) {
+					FilterOption.FilterOptionEntry entry = option.getEntry();;
+					argumentOptions.put(option, entry);
+					entry.setChangeListener(v -> update());
+					update();
+				}
+			}
+
+			private enum FilterOption {
+				Distance("Distance") { // Value based on the smallest unit in entity coordinate system.
+					@Override
+					public @NotNull FilterOptionEntry getEntry() {
+						return new DistanceOptionEntry();
+					}
+
+					class DistanceOptionEntry extends InputEntry implements FilterOptionEntry {
+						private final InputEntry rangedInput = new InputEntry("", regexNumber, 0);
+						private int selection = 0; // Maybe this should be boolean?
+						private boolean ranged = false;
+
+						public DistanceOptionEntry() {
+							super("Distance", regexNumber, 0);
+						}
+
+						@Override
+						public void tick(InputHandler input) {
+							if (input.getKey("ENTER").clicked) {
+								ranged = !ranged;
+								if (selection == 1) selection = 0;
+							} else if (input.getKey("CURSOR-LEFT").clicked) {
+								if (selection == 1) selection = 0;
+								Sound.play("select");
+							} else if (input.getKey("CURSOR-RIGHT").clicked) {
+								if (ranged) {
+									if (selection == 0) selection = 1;
+									Sound.play("select");
+								}
+							} else {
+								if (selection == 1) rangedInput.tick(input);
+								else super.tick(input);
+							}
+						}
+
+						@Override
+						public boolean isValid() {
+							String input = getUserInput();
+							if (!ranged) {
+								if (input.isEmpty()) return false;
+								try {
+									return Integer.parseInt(input) >= 0;
+								} catch (NumberFormatException e) {
+									return false;
+								}
+							} else {
+								String range = rangedInput.getUserInput();
+								if (range.isEmpty() && input.isEmpty()) return false;
+								if (range.isEmpty()) try {
+									return Integer.parseInt(input) >= 0;
+								} catch (NumberFormatException e) {
+									return false;
+								} else if (input.isEmpty()) try {
+									return Integer.parseInt(range) >= 0;
+								} catch (NumberFormatException e) {
+									return false;
+								} else {
+									try {
+										int a = Integer.parseInt(input);
+										int b = Integer.parseInt(input);
+										return a >= 0 && b >= a;
+									} catch (NumberFormatException e) {
+										return false;
+									}
+								}
+							}
+						}
+
+						@Override
+						public @NotNull Predicate<Entity> getFilter(PositionArgument positionArgument) {
+							if (!isValid()) return NOOP_FILTER;
+							if (!ranged) {
+								int value;
+								try {
+									value = Integer.parseInt(getUserInput());
+								} catch (NumberFormatException e) { // #isValid should have already handled this.
+									return NOOP_FILTER;
+								}
+
+								return e -> positionArgument.getLevelValue() == e.getLevel().depth && // Same level
+									Math.hypot(positionArgument.getXValue() - e.x, positionArgument.getYValue()) == value;
+							} else {
+								String input = getUserInput();
+								String rInput = rangedInput.getUserInput();
+								int value, range;
+								// This should have checked that there should be at least one of them non-empty.
+								assert !(input.isEmpty() && rInput.isEmpty()); // by #isValid
+								if (input.isEmpty()) { // ..range
+									try {
+										range = Integer.parseInt(rInput);
+									} catch (NumberFormatException e) { // #isValid should have already handled this.
+										return NOOP_FILTER;
+									}
+
+									return e -> positionArgument.getLevelValue() == e.getLevel().depth && // Same level
+										Math.hypot(positionArgument.getXValue() - e.x, positionArgument.getYValue()) <= range;
+								} else if (rInput.isEmpty()) { // input..
+									try {
+										value = Integer.parseInt(input);
+									} catch (NumberFormatException e) { // #isValid should have already handled this.
+										return NOOP_FILTER;
+									}
+
+									return e -> positionArgument.getLevelValue() == e.getLevel().depth && // Same level
+										Math.hypot(positionArgument.getXValue() - e.x, positionArgument.getYValue()) >= value;
+								} else {
+									try {
+										range = Integer.parseInt(rInput);
+									} catch (NumberFormatException e) { // #isValid should have already handled this.
+										return NOOP_FILTER;
+									}
+
+									try {
+										value = Integer.parseInt(input);
+									} catch (NumberFormatException e) { // #isValid should have already handled this.
+										return NOOP_FILTER;
+									}
+
+									return e -> {
+										double d;
+										return positionArgument.getLevelValue() == e.getLevel().depth && // Same level
+											(d = Math.hypot(positionArgument.getXValue() - e.x, positionArgument.getYValue())) >= value &&
+											d <= range;
+									};
+								}
+							}
+						}
+
+						@Override
+						public @NotNull ListEntry getEntry() {
+							return this;
+						}
+
+						@Override
+						public boolean isFilterValid() {
+							return isValid();
+						}
+					}
+				},
+				// Entity hit boxes are rectangular, and this argument filters entities that their hit boxes are "touched" by the ranges.
+				DimensionRange("Dimension Range") { // Value based on the smallest unit in entity coordinate system.
+					@Override
+					public @NotNull FilterOptionEntry getEntry() {
+						return new RangeOptionEntry();
+					}
+
+					class RangeOptionEntry extends Vector2ValueOption implements FilterOptionEntry {
+						public RangeOptionEntry() {
+							super("Dimension Range", true, null, null);
+						}
+
+						@Override
+						public @NotNull Predicate<Entity> getFilter(PositionArgument positionArgument) {
+							Integer x, y;
+							try {
+								x = getXValue();
+							} catch (IllegalArgumentException e) {
+								x = null;
+							}
+
+							try {
+								y = getYValue();
+							} catch (IllegalArgumentException e) {
+								y = null;
+							}
+
+							if (x == null && y == null) return NOOP_FILTER;
+							else {
+								if (x == null) x = 0;
+								if (y == null) y = 0;
+								int ax = positionArgument.getXValue();
+								int bx = ax + x;
+								int minX = Math.min(ax, bx);
+								int maxX = Math.max(ax, bx);
+								int ay = positionArgument.getYValue();
+								int by = ay + y;
+								int minY = Math.min(ay, by);
+								int maxY = Math.max(ay, by);
+								return e -> positionArgument.getLevelValue() == e.getLevel().depth && // Same level
+									e.isTouching(new Rectangle(minX, minY, maxX, maxY, Rectangle.CORNERS));
+							}
+						}
+
+						@Override
+						public @NotNull ListEntry getEntry() {
+							return this;
+						}
+
+						@Override
+						public boolean isFilterValid() {
+							return isAllInputValid();
+						}
+					}
+				},
+				Rotation("Rotation") { // This ambiguously specifies mobs as only mobs have this property.
+					@Override
+					public @NotNull FilterOptionEntry getEntry() {
+						return new RotationOptionEntry();
+					}
+
+					class RotationOptionEntry extends ArrayEntry<Direction> implements FilterOptionEntry {
+						public RotationOptionEntry() {
+							super("Rotation", true, false,
+								Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT);
+						}
+
+						@Override
+						public @NotNull Predicate<Entity> getFilter(PositionArgument positionArgument) {
+							return e -> e instanceof Mob && ((Mob) e).dir == getValue();
+						}
+
+						@Override
+						public @NotNull ListEntry getEntry() {
+							return this;
+						}
+
+						@Override
+						public boolean isFilterValid() {
+							return true;
+						}
+					}
+				},
+				Name("Name") {
+					@Override
+					public @NotNull FilterOptionEntry getEntry() {
+						return new NameOptionEntry();
+					}
+
+					class NameOptionEntry extends InputEntry implements FilterOptionEntry {
+						public NameOptionEntry() {
+							super("Name");
+						}
+
+						@Override
+						public @NotNull Predicate<Entity> getFilter(PositionArgument positionArgument) {
+							return e -> getUserInput().equalsIgnoreCase(e instanceof Furniture ? ((Furniture) e).name :
+								entityNames.get(e.getClass()));
+						}
+
+						@Override
+						public boolean isValid() {
+							return super.isValid() && !getUserInput().isEmpty();
+						}
+
+						@Override
+						public @NotNull ListEntry getEntry() {
+							return this;
+						}
+
+						@Override
+						public boolean isFilterValid() {
+							return isValid();
+						}
+					}
+				},
+				Type("Type") {
+					@Override
+					public @NotNull FilterOptionEntry getEntry() {
+						return new TypeOptionEntry();
+					}
+
+					class TypeOptionEntry extends ListEntry implements FilterOptionEntry {
+						private final EnumMap<EntityType, Boolean> typeList = new EnumMap<>(EntityType.class);
+						private final Display display;
+
+						private ChangeListener listener;
+
+						public TypeOptionEntry() {
+							for (EntityType type : EntityType.values()) {
+								typeList.put(type, null);
+							}
+
+							display = new Display(new Menu.Builder(true, 2, RelPos.CENTER,
+								typeList.keySet().stream().map(t -> new ListEntry() {
+									@Override
+									public void tick(InputHandler input) {
+										if (input.getKey("ENTER").clicked) {
+											typeList.compute(t, (ty, v) -> // null -> true -> false -> null
+												v == null ? true : v ? false : null);
+										}
+									}
+
+									@Override
+									public int getColor(boolean isSelected) {
+										Boolean s = typeList.get(t);
+										if (s == null) return super.getColor(isSelected);
+										return s ? isSelected ? Color.GREEN : DARK_GREEN :
+											isSelected ? Color.BLUE : DARK_BLUE;
+									}
+
+									@Override
+									public String toString() {
+										return t.name;
+									}
+								}).collect(Collectors.toList()))
+								.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER)
+								.createMenu()) {
+								@Override
+								public void tick(InputHandler input) {
+									if (input.getKey("SELECT").clicked) {
+										listener.onChange(null);
+										Game.exitDisplay();
+										return;
+									}
+
+									super.tick(input);
+								}
+							};
+						}
+
+						@Override
+						public @NotNull Predicate<Entity> getFilter(PositionArgument positionArgument) {
+							return typeList.entrySet().stream().reduce(e -> true,
+								(a, b) -> b.getValue() == null ? a : a.and(b.getValue() ? b.getKey().filter : b.getKey().filter.negate()), Predicate::and);
+						}
+
+						@Override
+						public @NotNull ListEntry getEntry() {
+							return this;
+						}
+
+						@Override
+						public boolean isFilterValid() {
+							return true;
+						}
+
+						@Override
+						public void tick(InputHandler input) {
+							if (input.getKey("SELECT").clicked) {
+								Sound.play("select");
+								Game.setDisplay(display);
+							}
+						}
+
+						@Override
+						public String toString() {
+							if (typeList.values().stream().allMatch(Objects::isNull)) {
+								return "Type: All";
+							} else {
+								Stream<Map.Entry<EntityType, Boolean>> s;
+								if ((s = typeList.entrySet().stream().filter(Objects::nonNull)).count() == 1) {
+									Map.Entry<EntityType, Boolean> e;
+									return "Type: " + ((e = s.findAny().get()).getValue() ? "" : "Not ") + e.getKey().name;
+								} else { // At least 1 of them > 0
+									// WL == WhiteList, BL == BlackList
+									Stream<Boolean> stream = typeList.values().stream();
+									long wl = stream.filter(e -> e != null && e).count();
+									long bl = stream.filter(e -> e != null && !e).count();
+									return String.format("Type: %s",
+										wl == 0 ? bl + "BL" : bl == 0 ? wl + "WL" : String.format("%sWL;%sBL", wl, bl));
+								}
+							}
+						}
+
+						@Override
+						public void setChangeListener(ChangeListener listener) {
+							this.listener = listener;
+						}
+					}
+				};
+
+				private static final HashMap<Class<? extends Entity>, String> entityNames = new HashMap<>();
+
+				static {
+					// Reference: https://stackoverflow.com/a/56087201
+					UnaryOperator<String> nameSeparator = str -> {
+						StringBuilder sb = new StringBuilder();
+						sb.append(str.charAt(0)); // Assume str#length() > 0
+						for (int i = 1; i < str.length(); i++) {
+							char c = str.charAt(i);
+							if (Character.isUpperCase(c)) sb.append(" ");
+							sb.append(c);
+						}
+						return sb.toString();
+					};
+
+					List<Class<? extends Entity>> classes = Arrays.asList(
+						// Furniture not in FurnitureItem
+						DeathChest.class,
+						KnightStatue.class,
+						// Mob
+						AirWizard.class,
+						Cow.class,
+						Creeper.class,
+						Knight.class,
+						ObsidianKnight.class,
+						Pig.class,
+						Player.class,
+						Sheep.class,
+						Skeleton.class,
+						Slime.class,
+						Snake.class,
+						Zombie.class,
+						// Particle
+						BurnParticle.class,
+						FireParticle.class,
+						SandParticle.class,
+						SmashParticle.class,
+						TextParticle.class,
+						// Other entities
+						Arrow.class,
+						FireSpark.class,
+						Spark.class
+					);
+					classes.forEach(c -> entityNames.put(c, nameSeparator.apply(c.getSimpleName())));
+				}
+
+				private enum EntityType {
+					Furniture("Furniture", e -> e instanceof Furniture),
+					Chest("Chest", e -> e instanceof minicraft.entity.furniture.Chest),
+					Lantern("Lantern", e -> e instanceof minicraft.entity.furniture.Lantern),
+					Spawner("Spawner", e -> e instanceof minicraft.entity.furniture.Spawner),
+					Boss("Boss", e -> e instanceof AirWizard || e instanceof ObsidianKnight),
+					Enemy("Enemy", e -> e instanceof EnemyMob), // Or hostile
+					Passive("Passive", e -> e instanceof PassiveMob),
+					Mob("Mob", e -> e instanceof Mob),
+					MobAi("Mob with AI", e -> e instanceof minicraft.entity.mob.MobAi),
+					Player("Player", e -> e instanceof Player),
+					Particle("Particle", e -> e instanceof minicraft.entity.particle.Particle),
+					Item("Item", e -> e instanceof ItemEntity),
+					Spark("Spark", e -> e instanceof Spark || e instanceof FireSpark),
+					Arrow("Arrow", e -> e instanceof Arrow),
+					Projectile("Projectile", e -> e instanceof Arrow || e instanceof Spark || e instanceof FireSpark);
+
+					public final String name;
+					public final Predicate<Entity> filter;
+
+					EntityType(String name, Predicate<Entity> filter) {
+						this.name = name;
+						this.filter = filter;
+					}
+				}
+
+				public final String name;
+
+				FilterOption(@NotNull String name) {
+					this.name = name;
+				}
+
+				/** Constructs a new entry instance for this argument option. */
+				@NotNull
+				public abstract FilterOptionEntry getEntry();
+
+				public interface FilterOptionEntry extends UserMutable {
+					@NotNull Predicate<Entity> getFilter(PositionArgument positionArgument);
+
+					/** The entry representing this option. */
+					@NotNull ListEntry getEntry();
+
+					boolean isFilterValid();
+				}
+			}
+
+			public Predicate<Entity> getFilter(PositionArgument positionArgument) {
+				return argumentOptions.values().stream().reduce(NOOP_FILTER, (a, b) -> a.and(b.getFilter(positionArgument)), Predicate::and);
+			}
+
+			public boolean isSet() {
+				return argumentOptions.size() > 0;
+			}
+
+			public SelectEntry getEntry() {
+				return entry;
+			}
+
+			public boolean isAllValid() {
+				return argumentOptions.values().stream().allMatch(FilterOption.FilterOptionEntry::isFilterValid);
+			}
+		}
+
+		// Order and Bound
+		private static class CollectionArgument {
+			private final InputEntry limitEntry;
+			private final ArrayEntry<SortType> sortEntry;
+			private final BooleanEntry limitEnabled;
+			private final BooleanEntry sortEnabled;
+			private final SelectEntry entry;
+			private final Display display;
+
+			public enum SortType {
+				Nearest, Furthest, Random, Arbitrary
+			}
+
+			public CollectionArgument() {
+				limitEnabled = new BooleanEntry("Enable Limit", false);
+				sortEnabled = new BooleanEntry("Enable Sort", false);
+				limitEntry = new InputEntry("Limit", regexNumber, 0) {
+					@Override
+					public boolean isValid() {
+						try {
+							return Integer.parseInt(getUserInput()) >= 1;
+						} catch (NumberFormatException e) {
+							return false;
+						}
+					}
+				};
+				sortEntry = new ArrayEntry<>("Sort", true, false, SortType.values());
+				Menu.Builder builder = new Menu.Builder(true, 2, RelPos.CENTER)
+					.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER);
+				display = new Display() {
+					{
+						menus = new Menu[1];
+						ChangeListener listener = v -> update();
+						limitEntry.setChangeListener(listener);
+						sortEntry.setChangeListener(listener);
+						limitEnabled.setChangeListener(listener);
+						sortEnabled.setChangeListener(listener);
+						update();
+					}
+
+					private void update() {
+						ArrayList<ListEntry> entries = new ArrayList<>();
+						entries.add(limitEnabled);
+						entries.add(sortEnabled);
+						if (limitEnabled.getValue()) entries.add(limitEntry);
+						if (sortEnabled.getValue()) entries.add(sortEntry);
+						int oldSel = menus[0] == null ? 0 : menus[0].getSelection();
+						menus[0] = builder.setEntries(entries).createMenu();
+						menus[0].setSelection(oldSel);
+					}
+				};
+				entry = new SelectEntry("Order and Bound", () -> Game.setDisplay(display), false) {
+					@Override
+					public String toString() {
+						return super.toString() + (limitEntry.isValid() ? "" : " (Order " + UPV_STRING + ")");
+					}
+				};
+			}
+
+			public boolean isAllValid() {
+				return !limitEnabled.getValue() || limitEntry.isValid();
+			}
+
+			public SelectEntry getEntry() {
+				return entry;
+			}
+
+			public boolean isSortEnabled() {
+				return sortEnabled.getValue();
+			}
+			public boolean isLimitEnabled() {
+				return limitEnabled.getValue();
+			}
+
+			public int getLimit() throws IllegalArgumentException {
+				try {
+					int value = Integer.parseInt(limitEntry.getUserInput());
+					if (value < 1) throw new IllegalArgumentException("value invalid");
+					return value;
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+			public SortType getSort() {
+				return sortEnabled.getValue() ? sortEntry.getValue() : SortType.Arbitrary;
+			}
+		}
+
+		public boolean isValid() {
+			return configDisplay.isValid();
+		}
+
+		public Collection<Entity> collectTargets() {
+			return configDisplay.collectTargets();
+		}
+
+		@Override
+		public int getColor(boolean isSelected) {
+			return isValid() ? super.getColor(isSelected) : isSelected ? Color.RED : DARK_RED;
+		}
+
+		@Override
+		public void tick(InputHandler input) {
+			if (input.getKey("SELECT").clicked) {
+				Sound.play("confirm");
+				Game.setDisplay(configDisplay);
+			} else {
+				super.tick(input);
+			}
 		}
 	}
 }

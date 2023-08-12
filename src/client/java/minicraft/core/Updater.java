@@ -29,6 +29,7 @@ public class Updater extends Game {
 	public static float gamespeed = 1; // Measured in MULTIPLES OF NORMSPEED.
 	public static boolean paused = true; // If the game is paused.
 
+	public static boolean timeFlow = true;
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	static int time = 0; // Facilites time of day / sunlight.
 	public static final int dayLength = 64800; // This value determines how long one game day is.
@@ -152,7 +153,7 @@ public class Updater extends Game {
 		}
 
 		// Increment tickCount if the game is not paused
-		if (!paused) setTime(tickCount+1);
+		if (!paused && timeFlow) setTime(tickCount+1);
 
 		// SCORE MODE ONLY
 
