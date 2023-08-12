@@ -75,7 +75,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -134,7 +133,7 @@ public class DebugPanelDisplay extends Display {
 				int distX;
 				int distY;
 				try {
-					distLevel = levelOption.getLevelValue();
+					distLevel = levelOption.getValue();
 					distX = coordinatesOption.getXValue();
 					distY = coordinatesOption.getYValue();
 				} catch (IllegalArgumentException e) {
@@ -509,7 +508,7 @@ public class DebugPanelDisplay extends Display {
 				String tile;
 				short data;
 				try {
-					distLevel = levelOption.getLevelValue();
+					distLevel = levelOption.getValue();
 					distX = coordinatesOption.getXValue();
 					distY = coordinatesOption.getYValue();
 					if (!tileSelEntry.isValid())
@@ -594,7 +593,7 @@ public class DebugPanelDisplay extends Display {
 				String tile;
 				short data;
 				try {
-					distLevel = levelOption.getLevelValue();
+					distLevel = levelOption.getValue();
 					distX1 = fromOption.getXValue();
 					distY1 = fromOption.getYValue();
 					distX2 = toOption.getXValue();
@@ -782,7 +781,7 @@ public class DebugPanelDisplay extends Display {
 				int distX;
 				int distY;
 				try {
-					distLevel = levelOption.getLevelValue();
+					distLevel = levelOption.getValue();
 					distX = coordinatesOption.getXValue();
 					distY = coordinatesOption.getYValue();
 				} catch (IllegalArgumentException e) {
@@ -1152,30 +1151,15 @@ public class DebugPanelDisplay extends Display {
 			));
 		}
 
-		private static class CoordinateInputEntry extends InputEntry {
+		private static class CoordinateInputEntry extends TargetedInputEntry<Integer> {
 			public CoordinateInputEntry(String prompt, boolean isNeg, String initValue) {
-				super(prompt, isNeg ? regexNegNumber : regexNumber, 0, initValue);
-			}
-
-			@Override
-			public boolean isValid() {
-				try {
-					Integer.parseInt(getUserInput());
-					return true;
-				} catch (NumberFormatException e) {
-					return false;
-				}
-			}
-
-			public int getValue() throws IllegalArgumentException {
-				String input = getUserInput();
-				if (input.isEmpty()) throw new IllegalArgumentException("input is empty");
-				if (!isValid()) throw new IllegalArgumentException("invalid input");
-				try {
-					return Integer.parseInt(input);
-				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException(e);
-				}
+				super(prompt, isNeg ? regexNegNumber : regexNumber, new TargetedValidator<>(null, input -> {
+					try {
+						return Integer.parseInt(input);
+					} catch (NumberFormatException e) {
+						return null;
+					}
+				}), initValue);
 			}
 		}
 
@@ -1224,7 +1208,86 @@ public class DebugPanelDisplay extends Display {
 		}
 	}
 
-	private static class LevelSelectionOption extends InputEntry {
+	/** A type of input entry that focuses on returning a deserved type of value with the user input. */
+	private static class TargetedInputEntry<T> extends InputEntry {
+		protected static TargetedValidator<?> NOOP = new TargetedValidator<>(null, i -> null);
+
+		@SuppressWarnings("unchecked")
+		protected static <T> TargetedValidator<T> noOpValidator() {
+			return (TargetedValidator<T>) NOOP;
+		}
+
+		public static class TargetedValidator<T> {
+			public final @Nullable Predicate<String> validator;
+			public final @NotNull Function<String, T> parser;
+
+			/**
+			 * In order to function precisely, the {@code validator} function must be compatible with the {@code parser} function;
+			 * for all {@code string}, the following must hold:
+			 * <pre>{@code
+			 *     (parser.apply(string) != null) == validator.test(string)
+			 * }</pre>
+			 * @param validator A validator to validate user input with the desired input.
+			 *                  If {@code null}, it checks whether the given {@code parser} returns {@code null} instead.
+			 * @param parser A parser to parse and may validate the input.
+			 */
+			public TargetedValidator(@Nullable Predicate<String> validator, @NotNull Function<String, T> parser) {
+				this.validator = validator;
+				this.parser = parser;
+			}
+		}
+
+		private final TargetedValidator<T> validator;
+
+		public TargetedInputEntry(String prompt, @NotNull TargetedValidator<T> validator) { this(prompt, null, validator); }
+		public TargetedInputEntry(String prompt, @RegExp String regex, @NotNull TargetedValidator<T> validator) {
+			this(prompt, regex, validator, "");
+		}
+		public TargetedInputEntry(String prompt, @RegExp String regex, @NotNull TargetedValidator<T> validator, @NotNull String initValue) {
+			super(prompt, regex, 0, initValue); // maxLen is not important
+			this.validator = validator;
+		}
+
+		protected boolean hasValidator() {
+			checkForValidator();
+			return validator.validator != null;
+		}
+
+		protected boolean validate(String input) {
+			checkForValidator();
+			return validator.validator == null ? parse(input) != null : validator.validator.test(input);
+		}
+
+		protected @Nullable T parse(String input) {
+			checkForValidator();
+			return validator.parser.apply(input);
+		}
+
+		@Override
+		public boolean isValid() {
+			return super.isValid() && validate(getUserInput());
+		}
+
+		private void checkForValidator() {
+			if (validator == NOOP)
+				throw new SecurityException("NOOP is used without method overrides");
+		}
+
+		public T getValue() throws IllegalArgumentException {
+			String input = getUserInput();
+			boolean valid = false;
+			if (!hasValidator() || (valid = validate(input))) {
+				T value = parse(input);
+				if (value != null) return value;
+				else if (valid)
+					throw new SecurityException("corrupted validator parser");
+			}
+
+			throw new IllegalArgumentException("value is invalid");
+		}
+	}
+
+	private static class LevelSelectionOption extends TargetedInputEntry<Integer> {
 		private static final int[] levelDepths;
 		static {
 			levelDepths = World.idxToDepth.clone();
@@ -1238,7 +1301,7 @@ public class DebugPanelDisplay extends Display {
 
 		public LevelSelectionOption() { this(null); }
 		public LevelSelectionOption(@Nullable Integer level) {
-			super("Level", regexNegNumber, 0, level == null ? "" : String.valueOf(level));
+			super("Level", regexNegNumber, noOpValidator(), level == null ? "" : String.valueOf(level));
 			this.defaultLevel = level == null ? 0 : level;
 			selection = Arrays.binarySearch(levelDepths, defaultLevel);
 		}
@@ -1247,8 +1310,8 @@ public class DebugPanelDisplay extends Display {
 		public void tick(InputHandler input) {
 			if (input.getKey("ENTER").clicked) {
 				if (typing) {
-					Integer level = getLevelValueRaw();
-					if (level != null) {
+					if (isValid()) { // Only to change when the input is valid.
+						int level = getValue();
 						selection = Arrays.binarySearch(levelDepths, level);
 						typing = false;
 					}
@@ -1269,9 +1332,13 @@ public class DebugPanelDisplay extends Display {
 		}
 
 		@Override
-		public boolean isValid() {
+		protected boolean hasValidator() {
+			return true;
+		}
+
+		@Override
+		protected boolean validate(String input) {
 			try {
-				String input = getUserInput();
 				if (input.isEmpty()) return true; // Default level
 				return Arrays.binarySearch(levelDepths, Integer.parseInt(input)) >= 0;
 			} catch (NumberFormatException e) {
@@ -1279,16 +1346,9 @@ public class DebugPanelDisplay extends Display {
 			}
 		}
 
-		public int getLevelValue() throws IllegalArgumentException {
-			Integer val = getLevelValueRaw();
-			if (val == null) throw new IllegalArgumentException("value is invalid");
-			return val;
-		}
-
-		@Nullable
-		protected Integer getLevelValueRaw() {
+		@Override
+		protected @Nullable Integer parse(String input) {
 			try {
-				String input = getUserInput();
 				if (input.isEmpty()) return defaultLevel; // Default level
 				int val = Integer.parseInt(input);
 				return Arrays.binarySearch(levelDepths, val) < 0 ? null : val; // Non-null if input is valid
@@ -1306,11 +1366,10 @@ public class DebugPanelDisplay extends Display {
 
 		@Override
 		public String toString() {
-			Integer depth = getLevelValueRaw();
 			try {
-				return depth != null ? "Level: " + Level.getDepthString(depth) + " (" + Level.getLevelName(depth) + ")" : super.toString();
-			} catch (NumberFormatException e) { // In case of an unexpected exception causing a crash.
-				Logging.WORLDNAMED.warn(e, "#isValid and #getUserInput are handled incorrectly in combination");
+				int depth = getValue();
+				return "Level: " + Level.getDepthString(depth) + " (" + Level.getLevelName(depth) + ")";
+			} catch (IllegalArgumentException e) {
 				return super.toString();
 			}
 		}
@@ -1636,7 +1695,7 @@ public class DebugPanelDisplay extends Display {
 						if (specifyOption.getValue()) {
 							specify = true;
 							try {
-								depth = levelOption.getLevelValue();
+								depth = levelOption.getValue();
 								depthValid = true;
 							} catch (IllegalArgumentException e) {
 								depth = null;

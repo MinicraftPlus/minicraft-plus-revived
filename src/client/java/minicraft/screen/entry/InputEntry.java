@@ -72,8 +72,9 @@ public class InputEntry extends ListEntry implements UserMutable {
 		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : isSelected ? Color.RED : DARK_RED);
 	}
 
+	// TODO Review this, if userInput contains any unmatched char, it is either regex or InputHanlder#getKeyTyped is corrupted.
 	public boolean isValid() {
-		return userInput.matches(regex);
+		return regex == null || userInput.matches(regex);
 	}
 
 	@Override
