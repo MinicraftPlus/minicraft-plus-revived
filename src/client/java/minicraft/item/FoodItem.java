@@ -29,14 +29,13 @@ public class FoodItem extends StackableItem {
 		return items;
 	}
 
-	private int feed; // The amount of hunger the food "satisfies" you by.
-	private int staminaCost; // The amount of stamina it costs to consume the food.
+	private final int feed; // The amount of hunger the food "satisfies" you by.
+	private static final int staminaCost = 2; // The amount of stamina it costs to consume the food.
 
 	private FoodItem(String name, LinkedSprite sprite, int feed) { this(name, sprite, 1, feed); }
 	private FoodItem(String name, LinkedSprite sprite, int count, int feed) {
 		super(name, sprite, count);
 		this.feed = feed;
-		staminaCost = 5;
 	}
 
 	/** What happens when the player uses the item on a tile */
