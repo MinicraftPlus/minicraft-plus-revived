@@ -21,7 +21,7 @@ public class LevelSelectionOption extends TargetedInputEntry<Integer> {
 
 	private final int defaultLevel;
 
-	private boolean typing = false; // Typing or selecting
+	private boolean typing; // Typing or selecting
 	private int selection;
 
 	public LevelSelectionOption() {
@@ -29,8 +29,10 @@ public class LevelSelectionOption extends TargetedInputEntry<Integer> {
 	}
 
 	public LevelSelectionOption(@Nullable Integer level) {
-		super("Level", regexNegNumber, noOpValidator(), level == null ? "" : String.valueOf(level));
+		super("Level", level == null ? regexNegNumberOpt : regexNegNumber, noOpValidator(),
+			level == null ? "" : String.valueOf(level));
 		this.defaultLevel = level == null ? 0 : level;
+		typing = level == null;
 		selection = Arrays.binarySearch(levelDepths, defaultLevel);
 	}
 

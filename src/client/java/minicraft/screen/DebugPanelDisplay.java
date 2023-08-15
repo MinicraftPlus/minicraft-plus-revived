@@ -634,7 +634,7 @@ public class DebugPanelDisplay extends Display {
 			TargetSelectorEntry selectorEntry = new TargetSelectorEntry(Game.player);
 			CommandOptionEntry optionEntry = new CommandOptionEntry(selectorEntry);
 			Game.setDisplay(new CommandPopupDisplay(null, () -> {
-				if (selectorEntry.isValid()) {
+				if (!selectorEntry.isValid()) {
 					Logging.WORLDNAMED.error("Invalid arguments in options of command `Kill ...`");
 					return true; // No action.
 				}
@@ -722,15 +722,15 @@ public class DebugPanelDisplay extends Display {
 		// The original plan with bosses is to enable summoning if forced, but it is redundant to be implemented,
 		// bosses are not included instead.
 		HashMap<String, Function<Integer, Entity>> entitySelectionList = new HashMap<>();
-		entitySelectionList.put("Cow", lvl -> new Cow());
-		entitySelectionList.put("Creeper", Creeper::new);
-		entitySelectionList.put("Knight", Knight::new);
-		entitySelectionList.put("Pig", lvl -> new Pig());
-		entitySelectionList.put("Sheep", lvl -> new Sheep());
-		entitySelectionList.put("Skeleton", Skeleton::new);
-		entitySelectionList.put("Slime", Slime::new);
-		entitySelectionList.put("Snake", Snake::new);
-		entitySelectionList.put("Zombie", Zombie::new);
+		entitySelectionList.put("COW", lvl -> new Cow());
+		entitySelectionList.put("CREEPER", Creeper::new);
+		entitySelectionList.put("KNIGHT", Knight::new);
+		entitySelectionList.put("PIG", lvl -> new Pig());
+		entitySelectionList.put("SHEEP", lvl -> new Sheep());
+		entitySelectionList.put("SKELETON", Skeleton::new);
+		entitySelectionList.put("SLIME", Slime::new);
+		entitySelectionList.put("SNAKE", Snake::new);
+		entitySelectionList.put("ZOMBIE", Zombie::new);
 		entries.add(new SelectEntry("Summon ...", () -> {
 			SelectableListInputEntry entitySelEntry = new SelectableListInputEntry("Entity", entitySelectionList.keySet());
 			Level curLevel = Game.player.getLevel();

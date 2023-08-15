@@ -13,6 +13,8 @@ public class InputEntry extends ListEntry implements UserMutable {
 	public static final String regexNumber = "[0-9]+";
 	@RegExp
 	public static final String regexNegNumber = "[0-9-]+";
+	@RegExp
+	public static final String regexNegNumberOpt = "[0-9-]*";
 
 	protected static final int DARK_RED = Color.tint(Color.RED, -1, true);
 

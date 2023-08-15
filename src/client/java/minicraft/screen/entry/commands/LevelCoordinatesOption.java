@@ -243,6 +243,14 @@ public class LevelCoordinatesOption extends ListEntry implements UserMutable {
 		}
 	}
 
+	public String getXUserInput() {
+		return inputs.get(0).getUserInput();
+	}
+
+	public String getYUserInput() {
+		return inputs.get(1).getUserInput();
+	}
+
 	public int getXValue() throws IllegalArgumentException {
 		return inputs.get(0).getValue();
 	}

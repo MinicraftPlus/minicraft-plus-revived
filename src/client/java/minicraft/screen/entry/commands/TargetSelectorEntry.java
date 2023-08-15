@@ -55,6 +55,8 @@ import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.AbstractList;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,11 +65,13 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -134,6 +138,12 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 				(!getValue().single || !filterArgument.isSet()); // Single target cannot apply filter
 		}
 
+		public void setChangeListener(ChangeListener listener) {
+			positionArgument.setChangeListener(listener);
+			filterArgument.setChangeListener(listener);
+			collectionArgument.setChangeListener(listener);
+		}
+
 		public Collection<Entity> collectTargets() {
 			assert isValid(); // This method should be called after checked of isValid.
 			if (getValue() == TargetScope.Player) return Collections.singleton(Game.player);
@@ -187,6 +197,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 		private boolean depthValid = true, xValid = true, yValid = true;
 		private @Nullable Integer depth, x, y;
 		private boolean specify = false;
+		private ChangeListener listener = null;
 
 		public PositionArgument(Level level, int x, int y) {
 			this.defaultDepth = level.depth;
@@ -198,12 +209,12 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 				@Override
 				public String toString() {
 					return String.format("Position: (%s, %s, %s)",
-						depthValid ? depth == null ? formatPosition(defaultDepth) :
-							Color.BLUE_CODE + formatPosition(depth) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING,
+						depthValid ? depth == null ? defaultDepth :
+							Color.CYAN_CODE + depth + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING,
 						xValid ? PositionArgument.this.x == null ? formatPosition(defaultX) :
-							Color.BLUE_CODE + formatPosition(PositionArgument.this.x) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING,
+							Color.CYAN_CODE + formatPosition(PositionArgument.this.x) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING,
 						yValid ? PositionArgument.this.y == null ? formatPosition(defaultY) :
-							Color.BLUE_CODE + formatPosition(PositionArgument.this.y) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING
+							Color.CYAN_CODE + formatPosition(PositionArgument.this.y) + Color.WHITE_CODE + Color.GRAY_CODE : UPV_STRING
 					);
 				}
 			};
@@ -247,7 +258,10 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 				if (input.getKey("EXIT").clicked) {
 					if (specifyOption.getValue()) {
 						specify = true;
-						try {
+						if (levelOption.getUserInput().isEmpty()) {
+							depth = null; // Default value
+							depthValid = true;
+						} else try {
 							depth = levelOption.getValue();
 							depthValid = true;
 						} catch (IllegalArgumentException e) {
@@ -255,7 +269,10 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 							depthValid = false;
 						}
 
-						try {
+						if (positionOption.getXUserInput().isEmpty()) {
+							x = null; // Default value
+							xValid = true;
+						} else try {
 							x = positionOption.getXValue();
 							xValid = true;
 						} catch (IllegalArgumentException e) {
@@ -263,7 +280,10 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 							xValid = false;
 						}
 
-						try {
+						if (positionOption.getYUserInput().isEmpty()) {
+							y = null; // Default value
+							yValid = true;
+						} else try {
 							y = positionOption.getYValue();
 							yValid = true;
 						} catch (IllegalArgumentException e) {
@@ -280,6 +300,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 						yValid = true;
 					}
 
+					if (listener != null) listener.onChange(null);
 					Game.exitDisplay();
 					return;
 				}
@@ -300,6 +321,10 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 		public SelectEntry getEntry() {
 			return entry;
+		}
+
+		public void setChangeListener(ChangeListener listener) {
+			this.listener = listener;
 		}
 
 		public boolean isSpecified() {
@@ -323,6 +348,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 		private final FilterArgument.FilterSettingDisplay display;
 		private final SelectEntry entry;
 		private final LinkedHashMap<FilterArgument.FilterOption, FilterArgument.FilterOption.FilterOptionEntry> argumentOptions = new LinkedHashMap<>();
+		private ChangeListener listener = null;
 
 		public FilterArgument() {
 			display = new FilterArgument.FilterSettingDisplay();
@@ -341,6 +367,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 			private final StringEntry placeholderEntry = new StringEntry("No Filter Selected", Color.GRAY, false);
 			private final SelectEntry actionEntry;
 			private final Menu.Builder builder;
+			private final HashMap<ListEntry, FilterOption> entryMap = new HashMap<>(); // A temporary list storing entry relations.
 
 			public FilterSettingDisplay() {
 				actionEntry = new SelectEntry("Add Filter",
@@ -359,19 +386,36 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 			private void update() {
 				ArrayList<ListEntry> entries = new ArrayList<>();
+				entryMap.clear();
 				if (argumentOptions.isEmpty())
 					entries.add(placeholderEntry);
 				else
-					argumentOptions.values().forEach(e -> entries.add(e.getEntry()));
+					argumentOptions.forEach((k, v) -> {
+						ListEntry entry1 = v.getEntry();
+						entries.add(entry1);
+						entryMap.put(entry1, k);
+					});
 				entries.add(new BlankEntry());
 				actionEntry.setSelectable(Arrays.stream(FilterArgument.FilterOption.values()).anyMatch(o -> !argumentOptions.containsKey(o)));
 				entries.add(actionEntry);
 				menus[0] = builder.setEntries(entries).createMenu();
+				if (listener != null) listener.onChange(null);
+			}
+
+			@Override
+			public void tick(InputHandler input) {
+				if (input.getKey("D").clicked) {
+					int index = menus[0].getSelection();
+					if (index < argumentOptions.size()) {
+						argumentOptions.remove(entryMap.get(menus[0].getCurEntry()));
+						update();
+					}
+				} else
+					super.tick(input);
 			}
 
 			private void addFilter(FilterArgument.FilterOption option) {
 				FilterArgument.FilterOption.FilterOptionEntry entry = option.getEntry();
-				;
 				argumentOptions.put(option, entry);
 				entry.setChangeListener(v -> update());
 				update();
@@ -655,13 +699,17 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 							typeList.put(type, null);
 						}
 
+						HashMap<Boolean, Boolean> boolMap = new HashMap<>();
+						boolMap.put(null, true);
+						boolMap.put(true, false);
+						boolMap.put(false, null);
 						display = new Display(new Menu.Builder(true, 2, RelPos.CENTER,
 							typeList.keySet().stream().map(t -> new ListEntry() {
 								@Override
 								public void tick(InputHandler input) {
 									if (input.getKey("ENTER").clicked) {
 										typeList.compute(t, (ty, v) -> // null -> true -> false -> null
-											v == null ? true : v ? false : null);
+											boolMap.get(v));
 									}
 								}
 
@@ -682,7 +730,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 							.createMenu()) {
 							@Override
 							public void tick(InputHandler input) {
-								if (input.getKey("SELECT").clicked) {
+								if (input.getKey("EXIT").clicked) {
 									listener.onChange(null);
 									Game.exitDisplay();
 									return;
@@ -722,15 +770,46 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 						if (typeList.values().stream().allMatch(Objects::isNull)) {
 							return "Type: All";
 						} else {
-							Stream<Map.Entry<FilterArgument.FilterOption.EntityType, Boolean>> s;
-							if ((s = typeList.entrySet().stream().filter(Objects::nonNull)).count() == 1) {
+							List<Map.Entry<FilterArgument.FilterOption.EntityType, Boolean>> s;
+							if ((s = typeList.entrySet().stream().filter(e -> e.getValue() != null)
+								// An efficient collection for only the first element from the stream
+								.collect(Collectors.toCollection(() -> new AbstractList<Map.Entry<EntityType, Boolean>>() {
+									private int size = 0; // Only check for first element
+									private @Nullable Set<Map.Entry<EntityType, Boolean>> singleton = null;
+
+									@Override
+									public boolean add(Map.Entry<EntityType, Boolean> entityTypeBooleanEntry) {
+										if (singleton == null) {
+											singleton = Collections.singleton(entityTypeBooleanEntry);
+											size = 1;
+											return true;
+										} else {
+											size = 2;
+											return false;
+										}
+									}
+
+									@Override
+									public Map.Entry<EntityType, Boolean> get(int index) {
+										return singleton == null ? null : singleton.iterator().next();
+									}
+
+									@Override
+									public Iterator<Map.Entry<EntityType, Boolean>> iterator() {
+										return singleton == null ? Collections.emptyIterator() : singleton.iterator();
+									}
+
+									@Override
+									public int size() {
+										return size;
+									}
+								}))).size() == 1) {
 								Map.Entry<FilterArgument.FilterOption.EntityType, Boolean> e;
-								return "Type: " + ((e = s.findAny().get()).getValue() ? "" : "Not ") + e.getKey().name;
+								return "Type: " + ((e = s.get(0)).getValue() ? "" : "Not ") + e.getKey().name;
 							} else { // At least 1 of them > 0
 								// WL == WhiteList, BL == BlackList
-								Stream<Boolean> stream = typeList.values().stream();
-								long wl = stream.filter(e -> e != null && e).count();
-								long bl = stream.filter(e -> e != null && !e).count();
+								long wl = typeList.values().stream().filter(e -> e != null && e).count();
+								long bl = typeList.values().stream().filter(e -> e != null && !e).count();
 								return String.format("Type: %s",
 									wl == 0 ? bl + "BL" : bl == 0 ? wl + "WL" : String.format("%sWL;%sBL", wl, bl));
 							}
@@ -852,6 +931,10 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 			return entry;
 		}
 
+		public void setChangeListener(ChangeListener listener) {
+			this.listener = listener;
+		}
+
 		public boolean isAllValid() {
 			return argumentOptions.values().stream().allMatch(FilterArgument.FilterOption.FilterOptionEntry::isFilterValid);
 		}
@@ -865,6 +948,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 		private final BooleanEntry sortEnabled;
 		private final SelectEntry entry;
 		private final Display display;
+		private ChangeListener listener = null;
 
 		public enum SortType {
 			Nearest, Furthest, Random, Arbitrary
@@ -906,12 +990,13 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 					int oldSel = menus[0] == null ? 0 : menus[0].getSelection();
 					menus[0] = builder.setEntries(entries).createMenu();
 					menus[0].setSelection(oldSel);
+					if (listener != null) listener.onChange(null);
 				}
 			};
 			entry = new SelectEntry("Order and Bound", () -> Game.setDisplay(display), false) {
 				@Override
 				public String toString() {
-					return super.toString() + (limitEntry.isValid() ? "" : " (Order " + UPV_STRING + ")");
+					return super.toString() + (isAllValid() ? "" : " (Bound " + UPV_STRING + ")");
 				}
 			};
 		}
@@ -922,6 +1007,10 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 		public SelectEntry getEntry() {
 			return entry;
+		}
+
+		public void setChangeListener(ChangeListener listener) {
+			this.listener = listener;
 		}
 
 		public boolean isSortEnabled() {
@@ -958,6 +1047,12 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 	@Override
 	public int getColor(boolean isSelected) {
 		return isValid() ? super.getColor(isSelected) : isSelected ? Color.RED : DARK_RED;
+	}
+
+	@Override
+	public void setChangeListener(ChangeListener l) {
+		configDisplay.setChangeListener(l);
+		super.setChangeListener(l);
 	}
 
 	@Override

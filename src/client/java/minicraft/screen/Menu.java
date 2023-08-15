@@ -148,7 +148,7 @@ public class Menu {
 		this.entries.clear();
 		this.entries.addAll(entries);
 	}
-	@Nullable ListEntry getCurEntry() { return entries.size() == 0 ? null : entries.get(selection); }
+	public @Nullable ListEntry getCurEntry() { return entries.size() == 0 ? null : entries.get(selection); }
 	int getNumOptions() { return entries.size(); }
 
 	Rectangle getBounds() { return new Rectangle(bounds); }
