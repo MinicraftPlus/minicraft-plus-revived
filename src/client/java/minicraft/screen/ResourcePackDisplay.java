@@ -247,8 +247,8 @@ public class ResourcePackDisplay extends Display {
 
 		menus = newMenus;
 
-		/* Translate position. */
-		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
+		// Translate position.
+		onSelectionChange(selection ^ 1, selection);
 	}
 
 	/** Watching the directory changes. Allowing hot-loading. */
