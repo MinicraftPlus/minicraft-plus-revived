@@ -4,7 +4,6 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
@@ -102,7 +102,7 @@ public class Game {
 		Renderer.initScreen();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
-		player.eid = 0;
+		player.uuid = UUID.randomUUID();
 		new Load(true); // This loads any saved preferences.
 		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 

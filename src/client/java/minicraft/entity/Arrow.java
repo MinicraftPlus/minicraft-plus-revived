@@ -49,7 +49,7 @@ public class Arrow extends Entity implements ClientTickable {
 	 * @return string representation of owner, xdir, ydir and damage.
 	 */
 	public String getData() {
-		return owner.eid + ":" + dir.ordinal() + ":"+damage;
+		return owner.uuid + ":" + dir.ordinal() + ":"+damage;
 	}
 
 	@Override

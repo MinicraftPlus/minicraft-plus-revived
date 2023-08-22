@@ -79,8 +79,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
@@ -928,8 +930,11 @@ public class Load {
 		}
 	}
 
+	// For mapping old numeric entity IDs
+	private final HashMap<Integer, Entity> oldEIDs = new HashMap<>();
+
 	@Nullable
-	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
+	private Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
 		if (entityData.length() == 0) return null;
 
@@ -941,29 +946,61 @@ public class Load {
 		int x = Integer.parseInt(info.get(0));
 		int y = Integer.parseInt(info.get(1));
 
-		int eid = -1;
+		Integer eid = null; // null if the old EID does not exist.
+		UUID uuid = null; // Old EID mapping is not supported
 		if (!isLocalSave) {
-			eid = Integer.parseInt(info.remove(2));
+			String id = info.remove(2);
+			try {
+				uuid = UUID.fromString(id);
+			} catch (IllegalArgumentException e) {
+				try {
+					eid = Integer.parseInt(id); // Old numeric EID
+					Logging.SAVELOAD.info("Old EID {} will be regenerated.", id);
+					Entity entity;
+					if ((entity = oldEIDs.remove(eid)) != null) { // The old value is removed and returned if exists.
+						entity.remove();
+					}
+				} catch (NumberFormatException ignored) {}
+			}
 
-			// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
-			Entity existing = Network.getEntity(eid);
+			if (uuid != null) {
+				// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
+				Entity existing = Network.getEntity(uuid);
 
-			if (existing != null) {
-				// Existing one is out of date; replace it.
-				existing.remove();
-				Game.levels[Game.currentLevel].add(existing);
-				return null;
+				if (existing != null) {
+					// Existing one is out of date; replace it.
+					existing.remove();
+				}
 			}
 		}
 
 		Entity newEntity;
 
 		if (entityName.equals("Spark") && !isLocalSave) {
-			int awID = Integer.parseInt(info.get(2));
-			Entity sparkOwner = Network.getEntity(awID);
+			UUID awID = null;
+			Entity sparkOwner = null;
+			try {
+				awID = UUID.fromString(info.get(2));
+			} catch (IllegalArgumentException e) {
+				try { // Old EID mapping
+					int awEID = Integer.parseInt(info.get(2));
+					if (oldEIDs.containsKey(awEID)) {
+						sparkOwner = oldEIDs.get(awEID);
+					}
+				} catch (NumberFormatException ignored) {}
+			}
+
+			if (awID != null) {
+				sparkOwner = Network.getEntity(awID);
+			}
+
+			if (sparkOwner == null) {
+				sparkOwner = AirWizard.entity; // Assume that it is given by the Air Wizard.
+			}
+
 			if (sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
-			else {
+			else { // Warning: if Air Wizard is not loaded first, sparks cannot be loaded.
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
 				return null;
 			}
@@ -984,11 +1021,30 @@ public class Load {
 		}
 
 		if (entityName.equals("FireSpark") && !isLocalSave) {
-			int obID = Integer.parseInt(info.get(2));
-			Entity sparkOwner = Network.getEntity(obID);
+			UUID obID = null;
+			Entity sparkOwner = null;
+			try {
+				obID = UUID.fromString(info.get(2));
+			} catch (IllegalArgumentException e) {
+				try { // Old EID mapping
+					int obEID = Integer.parseInt(info.get(2));
+					if (oldEIDs.containsKey(obEID)) {
+						sparkOwner = oldEIDs.get(obEID);
+					}
+				} catch (NumberFormatException ignored) {}
+			}
+
+			if (obID != null) {
+				sparkOwner = Network.getEntity(obID);
+			}
+
+			if (sparkOwner == null) {
+				sparkOwner = ObsidianKnight.entity; // Assume that it is given by the Obsidian Knight.
+			}
+
 			if (sparkOwner instanceof ObsidianKnight)
 				newEntity = new FireSpark((ObsidianKnight)sparkOwner, x, y);
-			else {
+			else { // Warning: if Obsidian Knight is not loaded first, sparks cannot be loaded.
 				Logging.SAVELOAD.error("Failed to load FireSpark; owner id doesn't point to a correct entity");
 				return null;
 			}
@@ -1071,12 +1127,27 @@ public class Load {
 
 		if (!isLocalSave) {
 			if (newEntity instanceof Arrow) {
-				int ownerID = Integer.parseInt(info.get(2));
-				Mob m = (Mob)Network.getEntity(ownerID);
-				if (m != null) {
+				UUID ownerID = null;
+				Entity m = null;
+				try {
+					ownerID = UUID.fromString(info.get(2));
+				} catch (IllegalArgumentException e) {
+					try { // Old EID mapping
+						int ownerEID = Integer.parseInt(info.get(2));
+						if (oldEIDs.containsKey(ownerEID)) {
+							m = oldEIDs.get(ownerEID);
+						}
+					} catch (NumberFormatException ignored) {}
+				}
+
+				if (ownerID != null) {
+					m = Network.getEntity(ownerID);
+				}
+
+				if (m instanceof Mob) {
 					Direction dir = Direction.values[Integer.parseInt(info.get(3))];
 					int dmg = Integer.parseInt(info.get(5));
-					newEntity = new Arrow(m, x, y, dir, dmg);
+					newEntity = new Arrow((Mob) m, x, y, dir, dmg);
 				}
 			}
 			if (newEntity instanceof ItemEntity) {
@@ -1096,15 +1167,16 @@ public class Load {
 			}
 		}
 
-		newEntity.eid = eid; // This will be -1 unless set earlier, so a new one will be generated when adding it to the level.
-		if (newEntity instanceof ItemEntity && eid == -1)
-			Logging.SAVELOAD.warn("Item entity was loaded with no eid");
+		newEntity.uuid = uuid; // This will be -1 unless set earlier, so a new one will be generated when adding it to the level.
+		if (newEntity instanceof ItemEntity && uuid == null)
+			Logging.SAVELOAD.warn("Item entity was loaded with no UUID");
 
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if (World.levels[curLevel] != null) {
 			World.levels[curLevel].add(newEntity, x, y);
 		}
 
+		if (eid != null) oldEIDs.put(eid, newEntity); // Add to old eid mapping if necessary.
 		return newEntity;
 	}
 

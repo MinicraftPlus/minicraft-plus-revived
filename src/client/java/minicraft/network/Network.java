@@ -13,12 +13,10 @@ import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
-import java.util.Random;
+import java.util.UUID;
 
 public class Network extends Game {
 	private Network() {}
-
-	private static final Random random = new Random();
 
 	private static VersionInfo latestVersion = null;
 
@@ -48,39 +46,38 @@ public class Network extends Game {
 	}
 
 	@Nullable
-	public static Entity getEntity(int eid) {
+	public static Entity getEntity(UUID uuid) {
 		for (Level level: levels) {
 			if (level == null) continue;
 			for (Entity e: level.getEntityArray())
-				if (e.eid == eid)
+				if (e.uuid.equals(uuid))
 					return e;
 		}
 
 		return null;
 	}
 
-	public static int generateUniqueEntityId() {
-		int eid;
+	public static UUID generateUniqueEntityUUID() {
+		UUID uuid;
 		int tries = 0; // Just in case it gets out of hand.
 		do {
 			tries++;
 			if (tries == 1000)
 				Logging.NETWORK.info("Note: Trying 1000th time to find valid entity id...(Will continue)");
 
-			eid = random.nextInt();
-		} while (!idIsAvailable(eid));
+			uuid = UUID.randomUUID();
+		} while (!idIsAvailable(uuid));
 
-		return eid;
+		return uuid;
 	}
 
-	public static boolean idIsAvailable(int eid) {
-		if (eid == 0) return false; // This is reserved for the main player... kind of...
-		if (eid < 0) return false; // ID's must be positive numbers.
+	public static boolean idIsAvailable(UUID uuid) { // May use a stored UUID set
+		if (uuid == null) return false; // Invalid
 
 		for (Level level: levels) {
 			if (level == null) continue;
 			for (Entity e: level.getEntityArray()) {
-				if (e.eid == eid)
+				if (e.uuid.equals(uuid))
 					return false;
 			}
 		}

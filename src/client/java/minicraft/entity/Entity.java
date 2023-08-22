@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.function.IntSupplier;
 
 public abstract class Entity implements Tickable {
@@ -39,7 +40,7 @@ public abstract class Entity implements Tickable {
 	public int col; // Current color.
 
 	// Numeric unique identifier for the entity.
-	public int eid;
+	public UUID uuid;
 
 	/**
 	 * Default constructor for the Entity class.
@@ -57,7 +58,7 @@ public abstract class Entity implements Tickable {
 		removed = true;
 		col = 0;
 
-		eid = -1;
+		uuid = null;
 	}
 
 	public abstract void render(Screen screen); // Used to render the entity on screen.
@@ -262,8 +263,8 @@ public abstract class Entity implements Tickable {
 		this.x = x;
 		this.y = y;
 
-		if (eid < 0)
-			eid = Network.generateUniqueEntityId();
+		if (uuid == null)
+			uuid = Network.generateUniqueEntityUUID();
 	}
 
 	public boolean isWithin(int tileRadius, Entity other) {
@@ -301,7 +302,7 @@ public abstract class Entity implements Tickable {
 	public String toString() { return getClass().getSimpleName() + getDataPrints(); }
 	protected List<String> getDataPrints() {
 		List<String> prints = new ArrayList<>();
-		prints.add("eid=" + eid);
+		prints.add("UUID=" + uuid);
 		return prints;
 	}
 
@@ -311,5 +312,5 @@ public abstract class Entity implements Tickable {
 	}
 
 	@Override
-	public final int hashCode() { return eid; }
+	public final int hashCode() { return uuid.hashCode(); }
 }
