@@ -29,10 +29,12 @@ import minicraft.entity.mob.Zombie;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
+import minicraft.level.tile.TreeTile;
 import minicraft.util.Logging;
 
 import java.util.ArrayList;
@@ -61,6 +63,8 @@ public class Level {
 
 	public short[] tiles; // An array of all the tiles in the world.
 	public short[] data; // An array of the data of the tiles in the world.
+
+	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -133,6 +137,37 @@ public class Level {
 		random = new Random(seed);
 		short[][] maps; // Multidimensional array (an array within a array), used for the map
 
+		treeTypes = new TreeTile.TreeType[w * h];
+		{
+			LevelGen noise1 = new LevelGen(w, h, 32);
+			LevelGen noise2 = new LevelGen(w, h, 32);
+			TreeTile.TreeType[] types = TreeTile.TreeType.values();
+			for (int y = 0; y < h; y++) { // Loop through height
+				for (int x = 0; x < w; x++) { // Loop through width
+					// Randomly selecting a tree type.
+					int i = x + y * w;
+					double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+					// This calculates a sort of distance based on the current coordinate.
+					double xd = x / (w - 1.0) * 2 - 1;
+					double yd = y / (h - 1.0) * 2 - 1;
+					if (xd < 0) xd = -xd;
+					if (yd < 0) yd = -yd;
+					double dist = Math.max(xd, yd);
+					dist = dist * dist * dist * dist;
+					dist = dist * dist * dist * dist;
+					val += 1 - dist*20;
+					val += 1.5; // Assuming the range of value is from 0 to 2.
+					val *= types.length / 2.0;
+					val += 1; // Incrementing index.
+					// The original val mainly falls in small interval instead of averagely.
+					val = 1.0/(3 * types.length) * Math.pow(val - 5, 2); // Quadratically bloating the value.
+					int idx = (int) Math.round(val - 1); // Decrementing index.
+					treeTypes[x + y * w] = (idx >= types.length || idx < 0) ? TreeTile.TreeType.OAK // Oak by default.
+						: types[idx];
+				}
+			}
+		}
+
 		if (level != -4 && level != 0)
 			monsterDensity = 8;
 
@@ -155,6 +190,7 @@ public class Level {
 
 		tiles = maps[0]; // Assigns the tiles in the map
 		data = maps[1]; // Assigns the data of the tiles
+
 
 		if (level < 0)
 			generateSpawnerStructures();
@@ -534,7 +570,7 @@ public class Level {
 
 	public int getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w] & 0xff;
+		return data[x + y * w];
 	}
 
 	public void setData(int x, int y, int val) {
@@ -606,7 +642,22 @@ public class Level {
 					// Spawns the friendly mobs.
 					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 					else if (rnd >= 68) add((new Pig()), nx, ny);
-					else add((new Sheep()), nx, ny);
+					else { // Sheep spawning
+					double colorRnd = random.nextDouble();
+					if (colorRnd < 0.8) { // 80% for default color, i.e. white
+						add((new Sheep()), nx, ny);
+					} else if (colorRnd < 0.85) { // 5% for black
+						add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
+					} else if (colorRnd < 0.9) { // 5% for gray
+						add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
+					} else if (colorRnd < 0.95) { // 5% for light gray
+						add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
+					} else if (colorRnd < 0.98) { // 3% for brown
+						add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
+					} else { // 2% for pink
+						add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+					}
+				}
 
 					spawned = true;
 				}

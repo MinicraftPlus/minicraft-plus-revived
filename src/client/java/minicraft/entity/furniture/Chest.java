@@ -77,7 +77,7 @@ public class Chest extends Furniture implements ItemHolder {
 	public void die() {
 		if (level != null) {
 			List<Item> items = inventory.getItems();
-			level.dropItem(x, y, items.toArray(new Item[items.size()]));
+			level.dropItem(x, y, items.toArray(new Item[0]));
 		}
 		super.die();
 	}

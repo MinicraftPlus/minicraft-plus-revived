@@ -185,7 +185,7 @@ public abstract class Mob extends Entity {
 	private boolean isWooling() { // supposed to walk at half speed on wool
 		if (level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		return tile == Tiles.get("wool");
+		return tile == Tiles.get("white wool");
 	}
 
 	/**

@@ -5,6 +5,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Composter;
 import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.Furniture;
@@ -50,13 +51,19 @@ public class FurnitureItem extends Item {
 		for (Crafter.Type type: Crafter.Type.values()) {
 			items.add(new FurnitureItem(new Crafter(type)));
 		}
+
 		// Add the various lanterns
 		for (Lantern.Type type: Lantern.Type.values()) {
 			 items.add(new FurnitureItem(new Lantern(type)));
 		}
 
+		// Add the various colors of bed
+		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
+			items.add(new FurnitureItem(new Bed(color)));
+		}
+
 		items.add(new FurnitureItem(new Tnt()));
-		items.add(new FurnitureItem(new Bed()));
+		items.add(new FurnitureItem(new Composter()));
 
 		return items;
 	}

@@ -127,7 +127,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
 
-	public int shirtColor = Color.get(1, 51, 51, 0); // Player shirt color.
+	public int shirtColor = 0; // Player shirt color.
 
 	public boolean isFishing = false;
 	public int maxFishingTicks = 120;
@@ -635,7 +635,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			// If the interaction between you and an entity is successful, then return.
-			if (interact(getInteractionBox(INTERACT_DIST))) return;
+			if (interact(getInteractionBox(INTERACT_DIST))) {
+				if (activeItem.isDepleted())
+					activeItem = null;
+				return;
+			}
 
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
@@ -881,16 +885,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// This makes falling look really cool.
 			int spriteToUse = Math.round(onFallDelay / 2f) % carrySprites.length;
 			curSprite = carrySprites[spriteToUse][(walkDist >> 3) & 1];
-			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor == 0 ? 0x1EFEFEF : shirtColor));
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 			// Render each corner of the sprite
 			if (isSwimming()) {
 				Sprite sprite = curSprite.getSprite();
-				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
-				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
+				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor == 0 ? 0x1EFEFEF : shirtColor);
+				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor == 0 ? 0x1EFEFEF : shirtColor);
 			} else { // Don't render the bottom half if swimming.
-				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor == 0 ? 0x1EFEFEF : shirtColor));
 			}
 		}
 
