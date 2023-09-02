@@ -47,7 +47,7 @@ public class TorchTile extends Tile {
 		return 5;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(item instanceof PowerGloveItem) {
 			int data = level.getData(xt, yt);
 			level.setTile(xt, yt, this.onType);

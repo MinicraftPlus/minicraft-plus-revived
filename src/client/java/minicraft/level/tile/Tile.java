@@ -119,6 +119,20 @@ public abstract class Tile {
 	 * @param attackDir The direction of the player attacking.
 	 * @return Was the operation successful?
 	 */
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		return false;
+	}
+
+	/**
+	 * Called when you interact an item on a tile (ex: Pickaxe on rock).
+	 * @param level The level the player is on.
+	 * @param xt X position of the player in tile coordinates (32x per tile).
+	 * @param yt Y position of the player in tile coordinates (32px per tile).
+	 * @param player The player who called this method.
+	 * @param item The item the player is currently holding.
+	 * @param attackDir The direction of the player attacking.
+	 * @return Was the operation successful?
+	 */
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		return false;
 	}

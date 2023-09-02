@@ -46,7 +46,7 @@ public class DoorTile extends Tile {
 		curSprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
@@ -65,12 +65,10 @@ public class DoorTile extends Tile {
 		return false;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (source instanceof Player) {
-			boolean closed = level.getData(x, y) == 0;
-			level.setData(x, y, closed ? 1 : 0);
-		}
-		return false;
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		boolean closed = level.getData(xt, yt) == 0;
+		level.setData(xt, yt, closed ? 1 : 0);
+		return true;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

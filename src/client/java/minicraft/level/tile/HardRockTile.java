@@ -38,7 +38,7 @@ public class HardRockTile extends Tile {
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {

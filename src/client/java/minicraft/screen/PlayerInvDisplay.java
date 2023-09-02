@@ -82,7 +82,7 @@ public class PlayerInvDisplay extends Display {
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
 
-			if (input.inputPressed("menu")) {
+			if (input.inputPressed("INVENTORY")) {
 				Game.exitDisplay();
 				return;
 			}
@@ -100,7 +100,7 @@ public class PlayerInvDisplay extends Display {
 			if (!acted)
 				curMenu.tick(input);
 
-			if (input.getKey("menu").clicked) { // Should not listen button press.
+			if (input.inputPressed("INVENTORY") || input.inputPressed("EXIT")) { // Should not listen button press.
 				Game.exitDisplay();
 				return;
 			}
@@ -122,7 +122,7 @@ public class PlayerInvDisplay extends Display {
 
 				Inventory from, to;
 				if (selection == 0) {
-					if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+					if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 						player.activeItem = player.getInventory().remove(menus[0].getSelection());
 						Game.exitDisplay();
 						return;
@@ -159,7 +159,7 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean transferAll;
-					if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
+					if (input.inputPressed("SELECT")) { // If stack limit is available, this can transfer whole stack
 						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 					} else return;
 
@@ -174,7 +174,7 @@ public class PlayerInvDisplay extends Display {
 				}
 
 			} else {
-				if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+				if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 					player.activeItem = player.getInventory().remove(menus[0].getSelection());
 					Game.exitDisplay();
 				}

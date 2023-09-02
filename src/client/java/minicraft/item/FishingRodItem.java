@@ -68,10 +68,7 @@ public class FishingRodItem extends Item {
         return false;
     }
 
-    @Override
-    public boolean canAttack() { return false; }
-
-    @Override
+	@Override
     public boolean isDepleted() {
         if (random.nextInt(100) > 120 - uses + level * 6) { // Breaking is random, the lower the level, and the more times you use it, the higher the chance
             Game.notifications.add("Your Fishing rod broke.");

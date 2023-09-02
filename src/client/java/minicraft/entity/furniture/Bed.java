@@ -23,7 +23,7 @@ public class Bed extends Furniture {
 	}
 
 	/** Called when the player attempts to get in bed. */
-	public boolean use(Player player) {
+	public boolean interact(Player player) {
 		if (checkCanSleep(player)) { // If it is late enough in the day to sleep...
 
 			// Set the player spawn coord. to their current position, in tile coords (hence " >> 4")

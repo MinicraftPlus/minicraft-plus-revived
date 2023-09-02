@@ -18,7 +18,7 @@ public class BossDoorTile extends DoorTile {
 		super(Material.Obsidian, "Boss Door");
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative")) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
@@ -34,18 +34,16 @@ public class BossDoorTile extends DoorTile {
 			return false;
 		}
 
-		return super.interact(level, xt, yt, player, item, attackDir);
+		return super.attack(level, xt, yt, player, item, attackDir);
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (source instanceof Player) {
-			if (ObsidianKnight.active && !Game.isMode("minicraft.settings.mode.creative")) {
-				Game.notifications.add(doorMsg);
-				return true;
-			}
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if (ObsidianKnight.active && !Game.isMode("minicraft.settings.mode.creative")) {
+			Game.notifications.add(doorMsg);
+			return true;
 		}
 
-		return super.hurt(level, x, y, source, dmg, attackDir);
+		return super.interact(level, xt, yt, player, item, attackDir);
 	}
 }

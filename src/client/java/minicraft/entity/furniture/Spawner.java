@@ -173,7 +173,7 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, Item item, Direction attackDir) {
+	public boolean attack(Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
 
@@ -211,13 +211,13 @@ public class Spawner extends Furniture {
 			return true;
 		}
 
-		if (item == null) return use(player);
+		if (item == null) return interact(player);
 
 		return false;
 	}
 
 	@Override
-	public boolean use(Player player) {
+	public boolean interact(Player player) {
 		if (Game.isMode("minicraft.settings.mode.creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if (lvl > maxMobLevel) lvl = 1;
