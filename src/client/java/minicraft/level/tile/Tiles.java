@@ -72,6 +72,9 @@ public final class Tiles {
 		tiles.put((short)47, new BossWallTile());
 		tiles.put((short)48, new BossFloorTile());
 		tiles.put((short)49, new BossDoorTile());
+		tiles.put((short)50, new FenceTile(Tile.Material.Wood));
+		tiles.put((short)51, new FenceTile(Tile.Material.Stone));
+		tiles.put((short)52, new FenceTile(Tile.Material.Obsidian));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());

@@ -33,16 +33,19 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Plank", new LinkedSprite(SpriteType.Item, "plank"), "Wood Planks", "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", new LinkedSprite(SpriteType.Item, "plank_wall"), "Wood Wall", "Wood Planks"));
 		items.add(new TileItem("Wood Door", new LinkedSprite(SpriteType.Item, "wood_door"), "Wood Door", "Wood Planks"));
+		items.add(new TileItem("Wood Fence", new LinkedSprite(SpriteType.Item, "wood_fence"), "Wood Fence", "grass"));
 		items.add(new TileItem("Stone", new LinkedSprite(SpriteType.Item, "stone"), "Stone", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Brick", new LinkedSprite(SpriteType.Item, "stone_brick"), "Stone Bricks", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Ornate Stone", new LinkedSprite(SpriteType.Item, "stone_brick"), "Ornate Stone", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Wall", new LinkedSprite(SpriteType.Item, "stone_wall"), "Stone Wall", "Stone Bricks"));
 		items.add(new TileItem("Stone Door", new LinkedSprite(SpriteType.Item, "stone_wall"), "Stone Door", "Stone Bricks"));
+		items.add(new TileItem("Stone Fence", new LinkedSprite(SpriteType.Item, "stone_fence"), "Stone Fence", "Stone Bricks"));
 		items.add(new TileItem("Raw Obsidian", new LinkedSprite(SpriteType.Item, "obsidian"), "Raw Obsidian", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Brick", new LinkedSprite(SpriteType.Item, "obsidian_brick"), "Obsidian", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Ornate Obsidian", new LinkedSprite(SpriteType.Item, "obsidian_brick"), "Ornate Obsidian","hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", new LinkedSprite(SpriteType.Item, "obsidian_wall"), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", new LinkedSprite(SpriteType.Item, "obsidian_door"), "Obsidian Door", "Obsidian"));
+		items.add(new TileItem("Obsidian Fence", new LinkedSprite(SpriteType.Item, "obsidian_fence"), "Obsidian Fence", "Obsidian"));
 
 		items.add(new TileItem("Wool", new LinkedSprite(SpriteType.Item, "wool"), "Wool", "hole", "water"));
 		items.add(new TileItem("Red Wool", new LinkedSprite(SpriteType.Item, "red_wool"), "Red Wool", "hole", "water"));
