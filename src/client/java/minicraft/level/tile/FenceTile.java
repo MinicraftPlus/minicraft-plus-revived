@@ -32,6 +32,8 @@ public class FenceTile extends Tile {
 
 	protected SpriteAnimation top, bottom, left, right;
 
+	public boolean connectUp = false, connectDown = false, connectLeft = false, connectRight = false;
+
 	protected FenceTile(Material type) { this(type, null); }
 	protected FenceTile(Material type, String name) {
 		super(type.name() + " " + (name == null ? "Fence" : name), null);
@@ -55,6 +57,14 @@ public class FenceTile extends Tile {
 		right = new SpriteAnimation(SpriteType.Tile, type.name().toLowerCase() + "_fence_right");
 	}
 
+	public void updateConnections(Level level, int x, int y)
+	{
+		connectUp = level.getTile(x, y - 1).name.equals(name);
+		connectDown = level.getTile(x, y + 1).name.equals(name);
+		connectLeft = level.getTile(x - 1, y).name.equals(name);
+		connectRight = level.getTile(x + 1, y).name.equals(name);
+	}
+
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
@@ -70,20 +80,22 @@ public class FenceTile extends Tile {
 
 		sprite.render(screen, level, x, y);
 
+		updateConnections(level, x, y);
+
 		// up
-		if (level.getTile(x, y - 1).name.equals(name)) {
+		if (connectUp) {
 			top.render(screen, level, x, y);
 		}
 		// bottom
-		if (level.getTile(x, y + 1).name.equals(name)) {
+		if (connectDown) {
 			bottom.render(screen, level, x, y);
 		}
 		// left
-		if (level.getTile(x - 1, y).name.equals(name)) {
+		if (connectLeft) {
 			left.render(screen, level, x, y);
 		}
 		// right
-		if (level.getTile(x + 1, y).name.equals(name)) {
+		if (connectRight) {
 			right.render(screen, level, x, y);
 		}
 	}
