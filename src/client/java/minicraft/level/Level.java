@@ -571,12 +571,13 @@ public class Level {
 
 		boolean spawned = false;
 		for (Player player : players) {
+			assert player.getLevel().depth == depth;
 			int lvl = World.lvlIdx(player.getLevel().depth);
 			for (int i = 0; i < 30 && !spawned; i++) {
 				int rnd = random.nextInt(100);
 				int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
 				double distance = Math.hypot(Math.abs(nx - player.x), Math.abs(ny - player.y));
-				if (distance < 10 || distance > 40) continue; // Spawns only between 10 and 40 tiles far from players.
+				if (distance < 160) continue; // Spawns only far from 10 tiles away.
 
 				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
