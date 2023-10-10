@@ -1,39 +1,200 @@
 {
-  "minicraft.advancements.recipes.anvil": {
-    "requirements": [
-      [
-        "has_iron"
-      ]
-    ],
+  "minicraft.advancements.recipes.workbench": {
     "criteria": {
-      "has_iron": {
+      "has_wood": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Iron"
+                "wood"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Anvil_1": [
-          "Iron_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.arrow": {
     "requirements": [
       [
-        "has_stone",
         "has_wood"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Workbench_1": ["Wood_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.torch": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Torch_2": ["Wood_1", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.plank": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "plank_2": ["Wood_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.plank_wall": {
+    "criteria": {
+      "has_plank": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "plank"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_plank"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Plank Wall_1": ["plank_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_door": {
+    "criteria": {
+      "has_plank": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "plank"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_plank"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Door_1": ["plank_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.lantern": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_slime": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "slime"
+              ]
+            }
+          ]
+        }
+      },
+      "has_glass": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "glass"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_slime",
+        "has_glass"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Lantern_1": ["Wood_8", "slime_4", "glass_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.stone_brick": {
     "criteria": {
       "has_stone": {
         "trigger": "inventory_changed",
@@ -41,1085 +202,297 @@
           "items": [
             {
               "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
+                "stone"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "arrow_3": [
-          "Stone_2",
-          "Wood_2"
-        ]
+        "Stone Brick_1": ["Stone_2"]
       }
     }
   },
-  "minicraft.advancements.recipes.awkward_potion": {
-    "requirements": [
-      [
-        "has_lapis",
-        "has_glass_bottle"
-      ]
-    ],
+  "minicraft.advancements.recipes.ornate_stone": {
     "criteria": {
-      "has_lapis": {
+      "has_stone": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      },
-      "has_glass_bottle": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Glass Bottle"
+                "stone"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Awkward Potion_1": [
-          "Lapis_3",
-          "Glass Bottle_1"
-        ]
+        "Stone Brick_1": ["Stone_2"]
       }
     }
   },
-  "minicraft.advancements.recipes.baked_potato": {
-    "requirements": [
-      [
-        "has_potato"
-      ]
-    ],
+  "minicraft.advancements.recipes.stone_wall": {
     "criteria": {
-      "has_potato": {
+      "has_stone_brick": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Potato"
+                "stone brick"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_stone_brick"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Baked Potato_1": [
-          "Potato_1"
-        ]
+        "Stone Wall_1": ["Stone Brick_3"]
       }
     }
   },
-  "minicraft.advancements.recipes.black_bed": {
-    "requirements": [
-      [
-        "has_black_wool",
-        "has_wood"
-      ]
-    ],
+  "minicraft.advancements.recipes.stone_door": {
     "criteria": {
-      "has_black_wool": {
+      "has_stone_brick": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "BLACK Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
+                "stone brick"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_stone_brick"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "BLACK Bed_1": [
-          "Wood_5",
-          "BLACK Wool_3"
-        ]
+        "Stone Door_1": ["Stone Brick_5"]
       }
     }
   },
-  "minicraft.advancements.recipes.black_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_black_dye"
-      ]
-    ],
+  "minicraft.advancements.recipes.obsidian_brick": {
     "criteria": {
-      "has_white_bed": {
+      "has_raw_obsidian": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_black_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLACK Dye"
+                "raw obsidian"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_raw_obsidian"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "BLACK Bed_1": [
-          "WHITE Bed_1",
-          "BLACK Dye_1"
-        ]
+        "Obsidian Brick_1": ["Raw Obsidian_2"]
       }
     }
   },
-  "minicraft.advancements.recipes.black_clothes": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_cloth"
-      ]
-    ],
+  "minicraft.advancements.recipes.ornate_obsidian": {
     "criteria": {
-      "has_coal": {
+      "has_raw_obsidian": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Coal"
-              ]
-            }
-          ]
-        }
-      },
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
+                "raw obsidian"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_raw_obsidian"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Black Clothes_1": [
-          "Coal_1",
-          "cloth_5"
-        ]
+        "Ornate Obsidian_1": ["Raw Obsidian_2"]
       }
     }
   },
-  "minicraft.advancements.recipes.black_dye": {
-    "requirements": [
-      [
-        "has_coal"
-      ]
-    ],
+  "minicraft.advancements.recipes.obsidian_wall": {
     "criteria": {
-      "has_coal": {
+      "has_obsidian_brick": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Coal"
+                "obsidian brick"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_obsidian_brick"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "BLACK Dye_1": [
-          "Coal_1"
-        ]
+        "Obsidian Wall_1": ["Obsidian Brick_3"]
       }
     }
   },
-  "minicraft.advancements.recipes.black_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_black_dye"
-      ]
-    ],
+  "minicraft.advancements.recipes.obsidian_door": {
     "criteria": {
-      "has_white_wool": {
+      "has_obsidian_brick": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_black_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLACK Dye"
+                "obsidian brick"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_obsidian_brick"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "BLACK Wool_1": [
-          "BLACK Dye_1",
-          "WHITE Wool_1"
-        ]
+        "Obsidian Door_1": ["Obsidian Brick_5"]
       }
     }
   },
-  "minicraft.advancements.recipes.blue_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_blue_wool"
-      ]
-    ],
+  "minicraft.advancements.recipes.oven": {
     "criteria": {
-      "has_wood": {
+      "has_stone": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Wool"
+                "stone"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_stone"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "BLUE Bed_1": [
-          "Wood_5",
-          "BLUE Wool_3"
-        ]
+        "Oven_1": ["Stone_15"]
       }
     }
   },
-  "minicraft.advancements.recipes.blue_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_blue_dye"
-      ]
-    ],
+  "minicraft.advancements.recipes.furnace": {
     "criteria": {
-      "has_white_bed": {
+      "has_stone": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
+                "stone"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "BLUE Bed_1": [
-          "BLUE Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.blue_clothes": {
     "requirements": [
       [
-        "has_lapis",
-        "has_cloth"
+        "has_stone"
       ]
     ],
-    "criteria": {
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      },
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
-              ]
-            }
-          ]
-        }
-      }
-    },
     "rewards": {
       "recipes": {
-        "Blue Clothes_1": [
-          "Lapis_1",
-          "cloth_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.blue_dye": {
-    "requirements": [
-      [
-        "has_lapis"
-      ]
-    ],
-    "criteria": {
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "BLUE Dye_1": [
-          "Lapis_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.blue_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_blue_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "BLUE Wool_1": [
-          "BLUE Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.bone_meal": {
-    "requirements": [
-      [
-        "has_bone"
-      ]
-    ],
-    "criteria": {
-      "has_bone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Bone"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Bone Meal_3": [
-          "Bone_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.bread": {
-    "requirements": [
-      [
-        "has_wheat"
-      ]
-    ],
-    "criteria": {
-      "has_wheat": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wheat"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Bread_1": [
-          "Wheat_4"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.brown_bed": {
-    "requirements": [
-      [
-        "has_brown_wool",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_brown_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BROWN Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "BROWN Bed_1": [
-          "BROWN Wool_3",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.brown_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_brown_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_brown_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BROWN Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "BROWN Bed_1": [
-          "WHITE Bed_1",
-          "BROWN Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.brown_dye": {
-    "requirements": [
-      [
-        "has_green_dye",
-        "has_red_dye"
-      ]
-    ],
-    "criteria": {
-      "has_green_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GREEN Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "BROWN Dye_2": [
-          "GREEN Dye_1",
-          "RED Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.brown_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_brown_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_brown_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BROWN Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "BROWN Wool_1": [
-          "BROWN Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.chest": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Chest_1": [
-          "Wood_20"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cooked_fish": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_raw_fish"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
-              ]
-            }
-          ]
-        }
-      },
-      "has_raw_fish": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Raw Fish"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Cooked Fish_1": [
-          "Coal_1",
-          "Raw Fish_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cooked_pork": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_raw_pork"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
-              ]
-            }
-          ]
-        }
-      },
-      "has_raw_pork": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Raw Pork"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Cooked Pork_1": [
-          "Coal_1",
-          "Raw Pork_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cyan_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_cyan_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_cyan_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "CYAN Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "CYAN Bed_1": [
-          "Wood_5",
-          "CYAN Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cyan_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_cyan_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_cyan_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "CYAN Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "CYAN Bed_1": [
-          "CYAN Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cyan_clothes": {
-    "requirements": [
-      [
-        "has_cactus",
-        "has_lapis",
-        "has_cloth"
-      ]
-    ],
-    "criteria": {
-      "has_cactus": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Cactus"
-              ]
-            }
-          ]
-        }
-      },
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      },
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Cyan Clothes_1": [
-          "Lapis_1",
-          "cloth_5",
-          "Cactus_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cyan_dye": {
-    "requirements": [
-      [
-        "has_green_dye",
-        "has_blue_dye"
-      ]
-    ],
-    "criteria": {
-      "has_green_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GREEN Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "CYAN Dye_2": [
-          "BLUE Dye_1",
-          "GREEN Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.cyan_wool": {
-    "requirements": [
-      [
-        "has_cyan_dye",
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_cyan_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "CYAN Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "CYAN Wool_1": [
-          "CYAN Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.empty_bucket": {
-    "requirements": [
-      [
-        "has_iron"
-      ]
-    ],
-    "criteria": {
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Empty Bucket_1": [
-          "Iron_5"
-        ]
+        "Furnace_1": ["Stone_20"]
       }
     }
   },
   "minicraft.advancements.recipes.enchanter": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
     "requirements": [
       [
         "has_wood",
@@ -1127,6 +500,13 @@
         "has_lapis"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Enchanter_1": ["Wood_5", "String_2", "Lapis_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.chest": {
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -1134,566 +514,59 @@
           "items": [
             {
               "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      },
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
+                "wood"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Enchanter_1": [
-          "Lapis_10",
-          "string_2",
-          "Wood_5"
-        ]
+        "Chest_1": ["Wood_20"]
       }
     }
   },
-  "minicraft.advancements.recipes.energy_potion": {
-    "requirements": [
-      [
-        "has_gem",
-        "has_awkward_potion"
-      ]
-    ],
+  "minicraft.advancements.recipes.anvil": {
     "criteria": {
-      "has_gem": {
+      "has_iron": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
+                "iron"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_iron"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Energy Potion_1": [
-          "Awkward Potion_1",
-          "gem_25"
-        ]
+        "Anvil_1": ["iron_5"]
       }
     }
   },
-  "minicraft.advancements.recipes.escape_potion": {
-    "requirements": [
-      [
-        "has_lapis",
-        "has_gunpowder",
-        "has_awkward_potion"
-      ]
-    ],
+  "minicraft.advancements.recipes.tnt": {
     "criteria": {
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      },
       "has_gunpowder": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Gunpowder"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Escape Potion_1": [
-          "Lapis_7",
-          "Awkward Potion_1",
-          "Gunpowder_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.furnace": {
-    "requirements": [
-      [
-        "has_stone"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Furnace_1": [
-          "Stone_20"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_armor": {
-    "requirements": [
-      [
-        "has_gem"
-      ]
-    ],
-    "criteria": {
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Armor_1": [
-          "gem_65"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_axe": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gem"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Axe_1": [
-          "Wood_5",
-          "gem_50"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_bow": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gem",
-        "has_string"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Bow_1": [
-          "string_2",
-          "Wood_5",
-          "gem_50"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_claymore": {
-    "requirements": [
-      [
-        "has_shard",
-        "has_gem_sword"
-      ]
-    ],
-    "criteria": {
-      "has_shard": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Shard"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem_sword": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gem Sword"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Claymore_1": [
-          "Gem Sword_1",
-          "Shard_15"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_fishing_rod": {
-    "requirements": [
-      [
-        "has_gem",
-        "has_string"
-      ]
-    ],
-    "criteria": {
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Fishing Rod_1": [
-          "string_3",
-          "gem_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_hoe": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gem"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Hoe_1": [
-          "Wood_5",
-          "gem_50"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_pickaxe": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gem"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Pickaxe_1": [
-          "Wood_5",
-          "gem_50"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_shovel": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gem"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Shovel_1": [
-          "Wood_5",
-          "gem_50"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gem_sword": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gem"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gem": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "gem"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gem Sword_1": [
-          "Wood_5",
-          "gem_50"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.glass": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_sand"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
+                "gunpowder"
               ]
             }
           ]
@@ -1705,127 +578,26 @@
           "items": [
             {
               "items": [
-                "Sand"
+                "sand"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_gunpowder",
+        "has_sand"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "glass_1": [
-          "Coal_1",
-          "Sand_4"
-        ]
+        "Tnt_1": ["Gunpowder_10", "Sand_8"]
       }
     }
   },
-  "minicraft.advancements.recipes.glass_bottle": {
-    "requirements": [
-      [
-        "has_glass"
-      ]
-    ],
-    "criteria": {
-      "has_glass": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "glass"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Glass Bottle_1": [
-          "glass_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_gold_ore"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold_ore": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold Ore"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gold_1": [
-          "Coal_1",
-          "Gold Ore_4"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_armor": {
-    "requirements": [
-      [
-        "has_gold"
-      ]
-    ],
-    "criteria": {
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gold Armor_1": [
-          "Gold_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_axe": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gold"
-      ]
-    ],
+  "minicraft.advancements.recipes.loom": {
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -1833,42 +605,38 @@
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
         }
       },
-      "has_gold": {
+      "has_wool": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Gold"
+                "wool"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Gold Axe_1": [
-          "Gold_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_bow": {
     "requirements": [
       [
         "has_wood",
-        "has_string",
-        "has_gold"
+        "has_wool"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Loom_1": ["Wood_10", "Wool_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wood_fishing_rod": {
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -1876,7 +644,7 @@
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
@@ -1893,80 +661,73 @@
             }
           ]
         }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
       }
     },
+    "requirements": [
+      [
+        "has_wood",
+        "has_string"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Gold Bow_1": [
-          "Gold_5",
-          "string_2",
-          "Wood_5"
-        ]
+        "Wood Fishing Rod_1": ["Wood_10", "String_3"]
       }
     }
   },
-  "minicraft.advancements.recipes.gold_claymore": {
-    "requirements": [
-      [
-        "has_shard",
-        "has_gold_sword"
-      ]
-    ],
+  "minicraft.advancements.recipes.iron_fishing_rod": {
     "criteria": {
-      "has_shard": {
+      "has_iron": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Shard"
+                "iron"
               ]
             }
           ]
         }
       },
-      "has_gold_sword": {
+      "has_string": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Gold Sword"
+                "string"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_iron",
+        "has_string"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Gold Claymore_1": [
-          "Shard_15",
-          "Gold Sword_1"
-        ]
+        "Iron Fishing Rod_1": ["Iron_10", "String_3"]
       }
     }
   },
   "minicraft.advancements.recipes.gold_fishing_rod": {
-    "requirements": [
-      [
-        "has_string",
-        "has_gold"
-      ]
-    ],
     "criteria": {
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      },
       "has_string": {
         "trigger": "inventory_changed",
         "conditions": {
@@ -1978,134 +739,60 @@
             }
           ]
         }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Gold Fishing Rod_1": [
-          "Gold_10",
-          "string_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_hoe": {
     "requirements": [
       [
-        "has_wood",
-        "has_gold"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gold Hoe_1": [
-          "Gold_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_lantern": {
-    "requirements": [
-      [
-        "has_glass",
         "has_gold",
-        "has_slime"
+        "has_string"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Gold Fishing Rod_1": ["Gold_10", "String_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_fishing_rod": {
     "criteria": {
-      "has_glass": {
+      "has_gem": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "glass"
+                "gem"
               ]
             }
           ]
         }
       },
-      "has_gold": {
+      "has_string": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
-      },
-      "has_slime": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Slime"
+                "string"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_gem",
+        "has_string"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Gold Lantern_1": [
-          "glass_4",
-          "Gold_10",
-          "Slime_5"
-        ]
+        "Gem Fishing Rod_1": ["Gem_10", "String_3"]
       }
     }
   },
-  "minicraft.advancements.recipes.gold_pickaxe": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gold"
-      ]
-    ],
+  "minicraft.advancements.recipes.wooden_sword": {
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -2113,432 +800,1079 @@
           "items": [
             {
               "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
+                "wood"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Gold Pickaxe_1": [
-          "Gold_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_shovel": {
     "requirements": [
       [
-        "has_wood",
-        "has_gold"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gold Shovel_1": [
-          "Gold_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gold_sword": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_gold"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gold Sword_1": [
-          "Gold_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.golden_apple": {
-    "requirements": [
-      [
-        "has_apple",
-        "has_gold"
-      ]
-    ],
-    "criteria": {
-      "has_apple": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Apple"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Gold Apple_1": [
-          "Gold_8",
-          "Apple_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gray_bed": {
-    "requirements": [
-      [
-        "has_gray_wool",
         "has_wood"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Wood Sword_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wooden_axe": {
     "criteria": {
-      "has_gray_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GRAY Wool"
-              ]
-            }
-          ]
-        }
-      },
       "has_wood": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "GRAY Bed_1": [
-          "GRAY Wool_3",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gray_bed_from_white_bed": {
     "requirements": [
       [
-        "has_gray_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_gray_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GRAY Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "GRAY Bed_1": [
-          "GRAY Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gray_dye": {
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_black_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_black_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLACK Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "GRAY Dye_2": [
-          "WHITE Dye_1",
-          "BLACK Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.gray_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_gray_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gray_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GRAY Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "GRAY Wool_1": [
-          "GRAY Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.green_bed": {
-    "requirements": [
-      [
-        "has_green_wool",
         "has_wood"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Wood Axe_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wooden_hoe": {
     "criteria": {
-      "has_green_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GREEN Wool"
-              ]
-            }
-          ]
-        }
-      },
       "has_wood": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "GREEN Bed_1": [
-          "GREEN Wool_3",
-          "Wood_5"
-        ]
+        "Wood Hoe_1": ["Wood_5"]
       }
     }
   },
-  "minicraft.advancements.recipes.green_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_green_dye",
-        "has_white_bed"
-      ]
-    ],
+  "minicraft.advancements.recipes.wooden_pickaxe": {
     "criteria": {
-      "has_green_dye": {
+      "has_wood": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Pickaxe_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wooden_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Shovel_1": ["Wood_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.wooden_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
               ]
             }
           ]
         }
       },
-      "has_white_bed": {
+      "has_string": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "string"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_wood",
+        "has_string"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "GREEN Bed_1": [
-          "GREEN Dye_1",
-          "WHITE Bed_1"
-        ]
+        "Wood Bow_1": ["Wood_5", "string_2"]
       }
     }
   },
-  "minicraft.advancements.recipes.green_clothes": {
+  "minicraft.advancements.recipes.rock_sword": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
     "requirements": [
       [
-        "has_cactus",
-        "has_cloth"
+        "has_wood",
+        "has_stone"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Rock Sword_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_axe": {
     "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Sword_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_hoe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Axe_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_pickaxe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Pickaxe_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Shovel_1": ["Wood_5", "Stone_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.rock_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Rock Bow_1": ["Wood_5", "Stone_5", "string_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.arrow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_stone": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_stone"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "arrow_3": ["Wood_2", "Stone_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.leather_armor": {
+    "criteria": {
+      "has_leather": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "leather"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_leather"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Leather Armor_1": ["leather_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.snake_armor": {
+    "criteria": {
+      "has_scale": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "scale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_scale"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Snake Armor_1": ["scale_15"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.string": {
+    "criteria": {
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wool"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "String_2": ["Wool_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.red_wool": {
+    "criteria": {
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      },
+      "has_rose": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "rose"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wool",
+        "has_rose"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "red wool_1": ["Wool_1", "rose_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.blue_wool": {
+    "criteria": {
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wool",
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "blue wool_1": ["Wool_1", "Lapis_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.green_wool": {
+    "criteria": {
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      },
       "has_cactus": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Cactus"
+                "cactus"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wool",
+        "has_cactus"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "green wool_1": ["Wool_1", "Cactus_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.yellow_wool": {
+    "criteria": {
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
               ]
             }
           ]
         }
       },
+      "has_flower": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "flower"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wool",
+        "has_flower"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "yellow wool_1": ["Wool_1", "Flower_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.black_wool": {
+    "criteria": {
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wool",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "black wool_1": ["Wool_1", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.bed": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_wool": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wool"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_wool"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Bed_1": ["Wood_5", "Wool_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.blue_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "blue clothes_1": ["cloth_5", "Lapis_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.green_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_cactus": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cactus"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_cactus"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "green clothes_1": ["cloth_5", "Cactus_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.yellow_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_flower": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "flower"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_flower"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "yellow clothes_1": ["cloth_5", "Flower_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.black_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "black clothes_1": ["cloth_5", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.orange_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_rose": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "rose"
+              ]
+            }
+          ]
+        }
+      },
+      "has_flower": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "flower"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_rose",
+        "has_flower"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "orange clothes_1": ["cloth_5", "rose_1", "Flower_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.purple_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      },
+      "has_rose": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "rose"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_lapis",
+        "has_rose"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "purple clothes_1": ["cloth_5", "Lapis_1", "rose_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.cyan_clothes": {
+    "criteria": {
+      "has_cloth": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cloth"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      },
+      "has_cactus": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cactus"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_cloth",
+        "has_lapis",
+        "has_cactus"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "cyan clothes_1": ["cloth_5", "Lapis_1", "Cactus_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.reg_clothes": {
+    "criteria": {
       "has_cloth": {
         "trigger": "inventory_changed",
         "conditions": {
@@ -2552,245 +1886,18 @@
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Green Clothes_1": [
-          "Cactus_1",
-          "cloth_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.green_dye": {
     "requirements": [
       [
-        "has_cactus"
+        "has_cloth"
       ]
     ],
-    "criteria": {
-      "has_cactus": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Cactus"
-              ]
-            }
-          ]
-        }
-      }
-    },
     "rewards": {
       "recipes": {
-        "GREEN Dye_1": [
-          "Cactus_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.green_wool": {
-    "requirements": [
-      [
-        "has_green_dye",
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_green_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GREEN Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "GREEN Wool_1": [
-          "GREEN Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.haste_potion": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood",
-        "has_awkward_potion"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Haste Potion_1": [
-          "Awkward Potion_1",
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.health_potion": {
-    "requirements": [
-      [
-        "has_leather_armor",
-        "has_gunpowder",
-        "has_awkward_potion"
-      ]
-    ],
-    "criteria": {
-      "has_leather_armor": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Leather Armor"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gunpowder": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gunpowder"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Health Potion_1": [
-          "Awkward Potion_1",
-          "Gunpowder_2",
-          "Leather Armor_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_iron_ore"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron_ore": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron Ore"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Iron_1": [
-          "Coal_1",
-          "Iron Ore_4"
-        ]
+        "reg clothes_1": ["cloth_5"]
       }
     }
   },
   "minicraft.advancements.recipes.iron_armor": {
-    "requirements": [
-      [
-        "has_iron"
-      ]
-    ],
     "criteria": {
       "has_iron": {
         "trigger": "inventory_changed",
@@ -2798,28 +1905,207 @@
           "items": [
             {
               "items": [
-                "Iron"
+                "iron"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Iron Armor_1": [
-          "Iron_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron_axe": {
     "requirements": [
       [
-        "has_wood",
         "has_iron"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Iron Armor_1": ["iron_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_armor": {
+    "criteria": {
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_gold"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Armor_1": ["gold_10"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_armor": {
+    "criteria": {
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_gem"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Armor_1": ["gem_65"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.empty_bucket": {
+    "criteria": {
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_iron"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Empty Bucket_1": ["iron_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_lantern": {
+    "criteria": {
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      },
+      "has_slime": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "slime"
+              ]
+            }
+          ]
+        }
+      },
+      "has_glass": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "glass"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_iron",
+        "has_slime",
+        "has_glass"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Iron Lantern_1": ["iron_8", "slime_5", "glass_4"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_lantern": {
+    "criteria": {
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      },
+      "has_slime": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "slime"
+              ]
+            }
+          ]
+        }
+      },
+      "has_glass": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "glass"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_gold",
+        "has_slime",
+        "has_glass"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Lantern_1": ["gold_10", "slime_5", "glass_4"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_sword": {
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -2827,7 +2113,7 @@
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
@@ -2839,128 +2125,246 @@
           "items": [
             {
               "items": [
-                "Iron"
+                "iron"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Iron Axe_1": [
-          "Wood_5",
-          "Iron_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron_bow": {
     "requirements": [
       [
         "has_wood",
-        "has_string",
         "has_iron"
       ]
     ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
-      }
-    },
     "rewards": {
       "recipes": {
-        "Iron Bow_1": [
-          "string_2",
-          "Iron_5",
-          "Wood_5"
-        ]
+        "Iron Sword_1": ["Wood_5", "iron_5"]
       }
     }
   },
   "minicraft.advancements.recipes.iron_claymore": {
-    "requirements": [
-      [
-        "has_shard",
-        "has_iron_sword"
-      ]
-    ],
     "criteria": {
+      "has_sword": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron sword"
+              ]
+            }
+          ]
+        }
+      },
       "has_shard": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Shard"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron_sword": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron Sword"
+                "shard"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_sword",
+        "has_shard"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Iron Claymore_1": [
-          "Iron Sword_1",
-          "Shard_15"
-        ]
+        "Iron Claymore_1": ["Iron Sword_1", "shard_15"]
       }
     }
   },
-  "minicraft.advancements.recipes.iron_fishing_rod": {
+  "minicraft.advancements.recipes.iron_axe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
     "requirements": [
       [
-        "has_string",
+        "has_wood",
         "has_iron"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Iron Axe_1": ["Wood_5", "iron_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_hoe": {
     "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_iron"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Iron Hoe_1": ["Wood_5", "iron_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_pickaxe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_iron"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Iron Pickaxe_1": ["Wood_5", "iron_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_iron"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Iron Shovel_1": ["Wood_5", "iron_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      },
       "has_string": {
         "trigger": "inventory_changed",
         "conditions": {
@@ -2972,36 +2376,22 @@
             }
           ]
         }
-      },
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Iron Fishing Rod_1": [
-          "string_3",
-          "Iron_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron_hoe": {
     "requirements": [
       [
         "has_wood",
-        "has_iron"
+        "has_iron",
+        "has_string"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Iron Bow_1": ["Wood_5", "iron_5", "string_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_sword": {
     "criteria": {
       "has_wood": {
         "trigger": "inventory_changed",
@@ -3009,42 +2399,714 @@
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
         }
       },
-      "has_iron": {
+      "has_gold": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Iron"
+                "gold"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gold"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Iron Hoe_1": [
-          "Wood_5",
-          "Iron_5"
-        ]
+        "Gold Sword_1": ["Wood_5", "gold_5"]
       }
     }
   },
-  "minicraft.advancements.recipes.iron_lantern": {
+  "minicraft.advancements.recipes.gold_claymore": {
+    "criteria": {
+      "has_sword": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold sword"
+              ]
+            }
+          ]
+        }
+      },
+      "has_shard": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "shard"
+              ]
+            }
+          ]
+        }
+      }
+    },
     "requirements": [
       [
-        "has_glass",
-        "has_slime",
+        "has_sword",
+        "has_shard"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Claymore_1": ["Gold Sword_1", "shard_15"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_axe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gold"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Axe_1": ["Wood_5", "gold_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_hoe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gold"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Hoe_1": ["Wood_5", "gold_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_pickaxe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gold"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Pickaxe_1": ["Wood_5", "gold_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gold"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Shovel_1": ["Wood_5", "gold_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gold",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Bow_1": ["Wood_5", "gold_5", "string_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_sword": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gem"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Sword_1": ["Wood_5", "gem_50"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_claymore": {
+    "criteria": {
+      "has_sword": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem sword"
+              ]
+            }
+          ]
+        }
+      },
+      "has_shard": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "shard"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_sword",
+        "has_shard"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Claymore_1": ["Gem Sword_1", "shard_15"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_axe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gem"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Axe_1": ["Wood_5", "gem_50"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_hoe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gem"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Hoe_1": ["Wood_5", "gem_50"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_pickaxe": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gem"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Pickaxe_1": ["Wood_5", "gem_50"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_shovel": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gem"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Shovel_1": ["Wood_5", "gem_50"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gem_bow": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gem": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gem"
+              ]
+            }
+          ]
+        }
+      },
+      "has_string": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood",
+        "has_gem",
+        "has_string"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Bow_1": ["Wood_5", "gem_50", "string_2"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.shears": {
+    "criteria": {
+      "has_iron": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
         "has_iron"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "Shears_1": ["Iron_4"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.iron": {
+    "criteria": {
+      "has_ore": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "iron ore"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_ore",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "iron_1": ["iron Ore_4", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.gold": {
+    "criteria": {
+      "has_ore": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold ore"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_ore",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "gold_1": ["gold Ore_4", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.glass": {
+    "criteria": {
+      "has_sand": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "sand"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_sand",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "glass_1": ["sand_4", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.glass_bottle": {
     "criteria": {
       "has_glass": {
         "trigger": "inventory_changed",
@@ -3057,6 +3119,318 @@
             }
           ]
         }
+      }
+    },
+    "requirements": [
+      [
+        "has_glass"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "glass bottle_1": ["glass_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.cooked_pork": {
+    "criteria": {
+      "has_pork": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "raw pork"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_pork",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "cooked pork_1": ["raw pork_1", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.steak": {
+    "criteria": {
+      "has_beef": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "raw beef"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_beef",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "steak_1": ["raw beef_1", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.cooked_fish": {
+    "criteria": {
+      "has_fish": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "raw fish"
+              ]
+            }
+          ]
+        }
+      },
+      "has_coal": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "coal"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_fish",
+        "has_coal"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "cooked fish_1": ["raw fish_1", "coal_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.bread": {
+    "criteria": {
+      "has_wheat": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wheat"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wheat"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "bread_1": ["wheat_4"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.baked_potato": {
+    "criteria": {
+      "has_potato": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "potato"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_potato"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Baked Potato_1": ["Potato_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.golden_apple": {
+    "criteria": {
+      "has_apple": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "apple"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_apple",
+        "has_gold"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Gold Apple_1": ["apple_1", "gold_8"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.awkward_potion": {
+    "criteria": {
+      "has_bottle": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "glass bottle"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_bottle",
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "awkward potion_1": ["glass bottle_1", "Lapis_3"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.speed_potion": {
+    "criteria": {
+      "has_awkward": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "awkward potion"
+              ]
+            }
+          ]
+        }
+      },
+      "has_cactus": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "cactus"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_cactus"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "speed potion_1": ["awkward potion_1", "Cactus_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.light_potion": {
+    "criteria": {
+      "has_awkward": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "awkward potion"
+              ]
+            }
+          ]
+        }
       },
       "has_slime": {
         "trigger": "inventory_changed",
@@ -3064,177 +3438,73 @@
           "items": [
             {
               "items": [
-                "Slime"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
+                "slime"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Iron Lantern_1": [
-          "glass_4",
-          "Iron_8",
-          "Slime_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron_pickaxe": {
     "requirements": [
       [
-        "has_wood",
-        "has_iron"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Iron Pickaxe_1": [
-          "Wood_5",
-          "Iron_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron_shovel": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_iron"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Iron Shovel_1": [
-          "Wood_5",
-          "Iron_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.iron_sword": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_iron"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_iron": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Iron Sword_1": [
-          "Wood_5",
-          "Iron_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.lantern": {
-    "requirements": [
-      [
-        "has_glass",
-        "has_wood",
+        "has_awkward",
         "has_slime"
       ]
     ],
+    "rewards": {
+      "recipes": {
+        "light potion_1": ["awkward potion_1", "slime_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.swim_potion": {
     "criteria": {
-      "has_glass": {
+      "has_awkward": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "glass"
+                "awkward potion"
+              ]
+            }
+          ]
+        }
+      },
+      "has_fish": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "raw fish"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_fish"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "swim potion_1": ["awkward potion_1", "raw fish_5"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.haste_potion": {
+    "criteria": {
+      "has_awkward": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "awkward potion"
               ]
             }
           ]
@@ -3246,50 +3516,47 @@
           "items": [
             {
               "items": [
-                "Wood"
+                "wood"
               ]
             }
           ]
         }
       },
-      "has_slime": {
+      "has_stone": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Slime"
+                "stone"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_wood",
+        "has_stone"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Lantern_1": [
-          "glass_3",
-          "Slime_4",
-          "Wood_8"
-        ]
+        "haste potion_1": ["awkward potion_1", "Wood_5", "Stone_5"]
       }
     }
   },
   "minicraft.advancements.recipes.lava_potion": {
-    "requirements": [
-      [
-        "has_awkward_potion",
-        "has_lava_bucket"
-      ]
-    ],
     "criteria": {
-      "has_awkward_potion": {
+      "has_awkward": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Awkward Potion"
+                "awkward potion"
               ]
             }
           ]
@@ -3301,1033 +3568,34 @@
           "items": [
             {
               "items": [
-                "Lava Bucket"
+                "lava bucket"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_lava_bucket"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Lava Potion_1": [
-          "Awkward Potion_1",
-          "Lava Bucket_1"
-        ]
+        "lava potion_1": ["awkward potion_1", "Lava Bucket_1"]
       }
     }
   },
-  "minicraft.advancements.recipes.leather_armor": {
-    "requirements": [
-      [
-        "has_leather"
-      ]
-    ],
+  "minicraft.advancements.recipes.energy_potion": {
     "criteria": {
-      "has_leather": {
+      "has_awkward": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Leather"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Leather Armor_1": [
-          "Leather_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_blue_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_light_blue_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_light_blue_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIGHT BLUE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT BLUE Bed_1": [
-          "LIGHT BLUE Wool_3",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_blue_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_light_blue_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_light_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIGHT BLUE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT BLUE Bed_1": [
-          "LIGHT BLUE Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_blue_dye": {
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_blue_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT BLUE Dye_2": [
-          "BLUE Dye_1",
-          "WHITE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_blue_wool": {
-    "requirements": [
-      [
-        "has_light_blue_dye",
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_light_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIGHT BLUE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT BLUE Wool_1": [
-          "LIGHT BLUE Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_gray_bed": {
-    "requirements": [
-      [
-        "has_light_gray_wool",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_light_gray_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIGHT GRAY Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT GRAY Bed_1": [
-          "Wood_5",
-          "LIGHT GRAY Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_gray_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_light_gray_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_light_gray_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIGHT GRAY Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT GRAY Bed_1": [
-          "WHITE Bed_1",
-          "LIGHT GRAY Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_gray_dye_from_black_white_dye": {
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_black_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_black_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLACK Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT GRAY Dye_3": [
-          "WHITE Dye_2",
-          "BLACK Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_gray_dye_from_gray_white_dye": {
-    "requirements": [
-      [
-        "has_gray_dye",
-        "has_white_dye"
-      ]
-    ],
-    "criteria": {
-      "has_gray_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GRAY Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT GRAY Dye_2": [
-          "GRAY Dye_1",
-          "WHITE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_gray_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_light_gray_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_light_gray_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIGHT GRAY Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIGHT GRAY Wool_1": [
-          "LIGHT GRAY Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_potion": {
-    "requirements": [
-      [
-        "has_slime",
-        "has_awkward_potion"
-      ]
-    ],
-    "criteria": {
-      "has_slime": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Slime"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Light Potion_1": [
-          "Slime_5",
-          "Awkward Potion_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.lime_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_lime_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_lime_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIME Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIME Bed_1": [
-          "LIME Wool_3",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.lime_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_lime_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_lime_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIME Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIME Bed_1": [
-          "LIME Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.lime_dye": {
-    "requirements": [
-      [
-        "has_green_dye",
-        "has_white_dye"
-      ]
-    ],
-    "criteria": {
-      "has_green_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "GREEN Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIME Dye_2": [
-          "GREEN Dye_1",
-          "WHITE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.lime_wool": {
-    "requirements": [
-      [
-        "has_lime_dye",
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_lime_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "LIME Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "LIME Wool_1": [
-          "LIME Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.loom": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Loom_1": [
-          "Wood_10",
-          "WHITE Wool_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_magenta_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_magenta_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "MAGENTA Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "MAGENTA Bed_1": [
-          "Wood_5",
-          "MAGENTA Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_magenta_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_magenta_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "MAGENTA Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "MAGENTA Bed_1": [
-          "MAGENTA Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_dye": {
-    "requirements": [
-      [
-        "has_pink_dye",
-        "has_purple_dye"
-      ]
-    ],
-    "criteria": {
-      "has_pink_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PINK Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_purple_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PURPLE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "MAGENTA Dye_2": [
-          "PINK Dye_1",
-          "PURPLE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_dye_from_blue_red_pink": {
-    "requirements": [
-      [
-        "has_pink_dye",
-        "has_red_dye",
-        "has_blue_dye"
-      ]
-    ],
-    "criteria": {
-      "has_pink_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PINK Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "MAGENTA Dye_4": [
-          "PINK Dye_1",
-          "RED Dye_1",
-          "BLUE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_dye_from_white_dye": {
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_red_dye",
-        "has_blue_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "MAGENTA Dye_4": [
-          "WHITE Dye_1",
-          "RED Dye_2",
-          "BLUE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_magenta_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_magenta_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "MAGENTA Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "MAGENTA Wool_1": [
-          "MAGENTA Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.obsidian_brick": {
-    "requirements": [
-      [
-        "has_raw_obsidian"
-      ]
-    ],
-    "criteria": {
-      "has_raw_obsidian": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Raw Obsidian"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Obsidian Brick_1": [
-          "Raw Obsidian_2"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.obsidian_door": {
-    "requirements": [
-      [
-        "has_obsidian_brick"
-      ]
-    ],
-    "criteria": {
-      "has_obsidian_brick": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Obsidian Brick"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Obsidian Door_1": [
-          "Obsidian Brick_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.obsidian_poppet": {
-    "requirements": [
-      [
-        "has_shard",
-        "has_gem",
-        "has_lapis",
-        "has_gold"
-      ]
-    ],
-    "criteria": {
-      "has_shard": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Shard"
+                "awkward potion"
               ]
             }
           ]
@@ -4344,1626 +3612,68 @@
             }
           ]
         }
-      },
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      },
-      "has_gold": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Gold"
-              ]
-            }
-          ]
-        }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Obsidian Poppet_1": [
-          "Lapis_5",
-          "Gold_10",
-          "Shard_15",
-          "gem_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.obsidian_wall": {
     "requirements": [
       [
-        "has_obsidian_brick"
+        "has_awkward",
+        "has_gem"
       ]
     ],
-    "criteria": {
-      "has_obsidian_brick": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Obsidian Brick"
-              ]
-            }
-          ]
-        }
-      }
-    },
     "rewards": {
       "recipes": {
-        "Obsidian Wall_1": [
-          "Obsidian Brick_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.orange_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_orange_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_orange_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "ORANGE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "ORANGE Bed_1": [
-          "Wood_5",
-          "ORANGE Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.orange_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_orange_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_orange_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "ORANGE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "ORANGE Bed_1": [
-          "ORANGE Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.orange_clothes": {
-    "requirements": [
-      [
-        "has_rose",
-        "has_cloth",
-        "has_flower"
-      ]
-    ],
-    "criteria": {
-      "has_rose": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Rose"
-              ]
-            }
-          ]
-        }
-      },
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
-              ]
-            }
-          ]
-        }
-      },
-      "has_flower": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Flower"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Orange Clothes_1": [
-          "cloth_5",
-          "Rose_1",
-          "Flower_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.orange_dye": {
-    "requirements": [
-      [
-        "has_red_dye",
-        "has_yellow_dye"
-      ]
-    ],
-    "criteria": {
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_yellow_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "YELLOW Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "ORANGE Dye_2": [
-          "YELLOW Dye_1",
-          "RED Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.orange_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_orange_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_orange_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "ORANGE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "ORANGE Wool_1": [
-          "ORANGE Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.ornate_obsidian": {
-    "requirements": [
-      [
-        "has_raw_obsidian"
-      ]
-    ],
-    "criteria": {
-      "has_raw_obsidian": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Raw Obsidian"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Ornate Obsidian_1": [
-          "Raw Obsidian_2"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.ornate_stone": {
-    "requirements": [
-      [
-        "has_stone"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Ornate Stone_1": [
-          "Stone_2"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.oven": {
-    "requirements": [
-      [
-        "has_stone"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Oven_1": [
-          "Stone_15"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.pink_bed": {
-    "requirements": [
-      [
-        "has_pink_wool",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_pink_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PINK Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PINK Bed_1": [
-          "Wood_5",
-          "PINK Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.pink_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_pink_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_pink_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PINK Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PINK Bed_1": [
-          "PINK Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.pink_dye": {
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_red_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PINK Dye_2": [
-          "WHITE Dye_1",
-          "RED Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.pink_wool": {
-    "requirements": [
-      [
-        "has_pink_dye",
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_pink_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PINK Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PINK Wool_1": [
-          "PINK Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.plank": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Plank_2": [
-          "Wood_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.plank_wall": {
-    "requirements": [
-      [
-        "has_plank"
-      ]
-    ],
-    "criteria": {
-      "has_plank": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Plank"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Plank Wall_1": [
-          "Plank_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.purple_bed": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_purple_wool"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_purple_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PURPLE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PURPLE Bed_1": [
-          "Wood_5",
-          "PURPLE Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.purple_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_purple_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_purple_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PURPLE Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PURPLE Bed_1": [
-          "WHITE Bed_1",
-          "PURPLE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.purple_clothes": {
-    "requirements": [
-      [
-        "has_rose",
-        "has_lapis",
-        "has_cloth"
-      ]
-    ],
-    "criteria": {
-      "has_rose": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Rose"
-              ]
-            }
-          ]
-        }
-      },
-      "has_lapis": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        }
-      },
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Purple Clothes_1": [
-          "Lapis_1",
-          "cloth_5",
-          "Rose_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.purple_dye": {
-    "requirements": [
-      [
-        "has_red_dye",
-        "has_blue_dye"
-      ]
-    ],
-    "criteria": {
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_blue_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PURPLE Dye_2": [
-          "BLUE Dye_1",
-          "RED Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.purple_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_purple_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_purple_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PURPLE Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "PURPLE Wool_1": [
-          "PURPLE Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.red_bed": {
-    "requirements": [
-      [
-        "has_red_wool",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_red_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "RED Bed_1": [
-          "Wood_5",
-          "RED Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.red_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_red_dye",
-        "has_white_bed"
-      ]
-    ],
-    "criteria": {
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "RED Bed_1": [
-          "RED Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.red_dye": {
-    "requirements": [
-      [
-        "has_rose"
-      ]
-    ],
-    "criteria": {
-      "has_rose": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Rose"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "RED Dye_1": [
-          "Rose_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.red_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_red_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_red_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "RED Wool_1": [
-          "RED Dye_1",
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.reg_clothes": {
-    "requirements": [
-      [
-        "has_cloth"
-      ]
-    ],
-    "criteria": {
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Reg Clothes_1": [
-          "cloth_5"
-        ]
+        "energy potion_1": ["awkward potion_1", "gem_25"]
       }
     }
   },
   "minicraft.advancements.recipes.regen_potion": {
-    "requirements": [
-      [
-        "has_golden_apple",
-        "has_awkward_potion"
-      ]
-    ],
     "criteria": {
+      "has_awkward": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "awkward potion"
+              ]
+            }
+          ]
+        }
+      },
       "has_golden_apple": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Gold Apple"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
+                "gold apple"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_golden_apple"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Regen Potion_1": [
-          "Gold Apple_1",
-          "Awkward Potion_1"
-        ]
+        "regen potion_1": ["awkward potion_1", "Gold Apple_1"]
       }
     }
   },
-  "minicraft.advancements.recipes.shears": {
-    "requirements": [
-      [
-        "has_iron"
-      ]
-    ],
+  "minicraft.advancements.recipes.health_potion": {
     "criteria": {
-      "has_iron": {
+      "has_awkward": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Iron"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Shears_1": [
-          "Iron_4"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.snake_armor": {
-    "requirements": [
-      [
-        "has_scale"
-      ]
-    ],
-    "criteria": {
-      "has_scale": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Scale"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Snake Armor_1": [
-          "Scale_15"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.speed_potion": {
-    "requirements": [
-      [
-        "has_cactus",
-        "has_awkward_potion"
-      ]
-    ],
-    "criteria": {
-      "has_cactus": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Cactus"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Speed Potion_1": [
-          "Cactus_5",
-          "Awkward Potion_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.steak": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_raw_beef"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
-              ]
-            }
-          ]
-        }
-      },
-      "has_raw_beef": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Raw Beef"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Steak_1": [
-          "Coal_1",
-          "Raw Beef_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_axe": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Rock Axe_1": [
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_bow": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood",
-        "has_string"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Rock Bow_1": [
-          "string_2",
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_brick": {
-    "requirements": [
-      [
-        "has_stone"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Stone Brick_1": [
-          "Stone_2"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_door": {
-    "requirements": [
-      [
-        "has_stone_brick"
-      ]
-    ],
-    "criteria": {
-      "has_stone_brick": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone Brick"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Stone Door_1": [
-          "Stone Brick_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_hoe": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Rock Hoe_1": [
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_pickaxe": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Rock Pickaxe_1": [
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_shovel": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Rock Shovel_1": [
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_sword": {
-    "requirements": [
-      [
-        "has_stone",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_stone": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Rock Sword_1": [
-          "Stone_5",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.stone_wall": {
-    "requirements": [
-      [
-        "has_stone_brick"
-      ]
-    ],
-    "criteria": {
-      "has_stone_brick": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Stone Brick"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Stone Wall_1": [
-          "Stone Brick_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.string": {
-    "requirements": [
-      [
-        "has_white_wool"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "string_2": [
-          "WHITE Wool_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.swim_potion": {
-    "requirements": [
-      [
-        "has_raw_fish",
-        "has_awkward_potion"
-      ]
-    ],
-    "criteria": {
-      "has_raw_fish": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Raw Fish"
-              ]
-            }
-          ]
-        }
-      },
-      "has_awkward_potion": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Awkward Potion"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Swim Potion_1": [
-          "Awkward Potion_1",
-          "Raw Fish_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.tnt": {
-    "requirements": [
-      [
-        "has_sand",
-        "has_gunpowder"
-      ]
-    ],
-    "criteria": {
-      "has_sand": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Sand"
+                "awkward potion"
               ]
             }
           ]
@@ -5975,74 +3685,104 @@
           "items": [
             {
               "items": [
-                "Gunpowder"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Tnt_1": [
-          "Sand_8",
-          "Gunpowder_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.torch": {
-    "requirements": [
-      [
-        "has_coal",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_coal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Coal"
+                "gunpowder"
               ]
             }
           ]
         }
       },
-      "has_wood": {
+      "has_leather_armor": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Wood"
+                "leather armor"
               ]
             }
           ]
         }
       }
     },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_gunpowder",
+        "has_leather_armor"
+      ]
+    ],
     "rewards": {
       "recipes": {
-        "Torch_2": [
-          "Coal_1",
-          "Wood_1"
-        ]
+        "Health potion_1": ["awkward potion_1", "GunPowder_2", "Leather Armor_1"]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.escape_potion": {
+    "criteria": {
+      "has_awkward": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "awkward potion"
+              ]
+            }
+          ]
+        }
+      },
+      "has_gunpowder": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gunpowder"
+              ]
+            }
+          ]
+        }
+      },
+      "has_lapis": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "lapis"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_awkward",
+        "has_gunpowder",
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Escape potion_1": ["awkward potion_1", "GunPowder_3", "Lapis_7"]
       }
     }
   },
   "minicraft.advancements.recipes.totem_of_air": {
-    "requirements": [
-      [
-        "has_gem",
-        "has_cloud_ore",
-        "has_lapis",
-        "has_gold"
-      ]
-    ],
     "criteria": {
+      "has_gold": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "gold potion"
+              ]
+            }
+          ]
+        }
+      },
       "has_gem": {
         "trigger": "inventory_changed",
         "conditions": {
@@ -6055,625 +3795,42 @@
           ]
         }
       },
-      "has_cloud_ore": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Cloud Ore"
-              ]
-            }
-          ]
-        }
-      },
       "has_lapis": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Lapis"
+                "lapis"
               ]
             }
           ]
         }
       },
-      "has_gold": {
+      "has_cloud_ore": {
         "trigger": "inventory_changed",
         "conditions": {
           "items": [
             {
               "items": [
-                "Gold"
+                "cloud ore"
               ]
             }
           ]
         }
       }
     },
-    "rewards": {
-      "recipes": {
-        "Totem of Air_1": [
-          "Lapis_5",
-          "Gold_10",
-          "gem_10",
-          "Cloud Ore_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.white_bed": {
     "requirements": [
       [
-        "has_wood",
-        "has_white_wool"
+        "has_gold",
+        "has_gem",
+        "has_lapis",
+        "has_cloud_ore"
       ]
     ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      }
-    },
     "rewards": {
       "recipes": {
-        "WHITE Bed_1": [
-          "Wood_5",
-          "WHITE Wool_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.white_dye": {
-    "requirements": [
-      [
-        "has_bone_meal"
-      ]
-    ],
-    "criteria": {
-      "has_bone_meal": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Bone Meal"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "WHITE Dye_1": [
-          "Bone Meal_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.white_wool": {
-    "requirements": [
-      [
-        "has_string"
-      ]
-    ],
-    "criteria": {
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "WHITE Wool_1": [
-          "string_3"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wood_door": {
-    "requirements": [
-      [
-        "has_plank"
-      ]
-    ],
-    "criteria": {
-      "has_plank": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Plank"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Door_1": [
-          "Plank_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wood_fishing_rod": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_string"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Fishing Rod_1": [
-          "string_3",
-          "Wood_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wooden_axe": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Axe_1": [
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wooden_bow": {
-    "requirements": [
-      [
-        "has_wood",
-        "has_string"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      },
-      "has_string": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Bow_1": [
-          "string_2",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wooden_hoe": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Hoe_1": [
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wooden_pickaxe": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Pickaxe_1": [
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wooden_shovel": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Shovel_1": [
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.wooden_sword": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Wood Sword_1": [
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.workbench": {
-    "requirements": [
-      [
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Workbench_1": [
-          "Wood_10"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.yellow_bed": {
-    "requirements": [
-      [
-        "has_yellow_wool",
-        "has_wood"
-      ]
-    ],
-    "criteria": {
-      "has_yellow_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "YELLOW Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_wood": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Wood"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "YELLOW Bed_1": [
-          "YELLOW Wool_3",
-          "Wood_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.yellow_bed_from_white_bed": {
-    "requirements": [
-      [
-        "has_white_bed",
-        "has_yellow_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_bed": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Bed"
-              ]
-            }
-          ]
-        }
-      },
-      "has_yellow_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "YELLOW Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "YELLOW Bed_1": [
-          "YELLOW Dye_1",
-          "WHITE Bed_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.yellow_clothes": {
-    "requirements": [
-      [
-        "has_cloth",
-        "has_flower"
-      ]
-    ],
-    "criteria": {
-      "has_cloth": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "cloth"
-              ]
-            }
-          ]
-        }
-      },
-      "has_flower": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Flower"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "Yellow Clothes_1": [
-          "Flower_1",
-          "cloth_5"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.yellow_dye": {
-    "requirements": [
-      [
-        "has_flower"
-      ]
-    ],
-    "criteria": {
-      "has_flower": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Flower"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "YELLOW Dye_1": [
-          "Flower_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.yellow_wool": {
-    "requirements": [
-      [
-        "has_white_wool",
-        "has_yellow_dye"
-      ]
-    ],
-    "criteria": {
-      "has_white_wool": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Wool"
-              ]
-            }
-          ]
-        }
-      },
-      "has_yellow_dye": {
-        "trigger": "inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "YELLOW Dye"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "rewards": {
-      "recipes": {
-        "YELLOW Wool_1": [
-          "YELLOW Dye_1",
-          "WHITE Wool_1"
-        ]
+        "Totem of Air_1": ["gold_10", "gem_10", "Lapis_5","Cloud Ore_5"]
       }
     }
   }
