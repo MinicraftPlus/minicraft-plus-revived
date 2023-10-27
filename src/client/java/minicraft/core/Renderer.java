@@ -82,12 +82,12 @@ public class Renderer extends Game {
 		MinicraftImage skinsSheet;
 		try {
 			// These set the sprites to be used.
-			skinsSheet = new MinicraftImage(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
+			skinsSheet = MinicraftImage.createDefaultCompatible(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
 			return null;
-		} catch (IOException | IllegalArgumentException e) {
+		} catch (IOException | IllegalArgumentException | MinicraftImage.MinicraftImageDimensionIncompatibleException e) {
 			// If there is an error reading the file.
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
