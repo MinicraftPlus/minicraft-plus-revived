@@ -1,11 +1,20 @@
 package minicraft.gfx;
 
+import com.aparapi.Kernel;
+import minicraft.core.Initializer;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.screen.ResourcePackDisplay;
+import org.intellij.lang.annotations.MagicConstant;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Screen {
 
@@ -23,7 +32,7 @@ public class Screen {
 	private static final int BIT_MIRROR_X = 0x01; // Written in hexadecimal; binary: 01
 	private static final int BIT_MIRROR_Y = 0x02; // Binary: 10
 
-	public int[] pixels; // Pixels on the screen
+	protected int[] pixels; // Pixels on the screen
 
 	// Outdated Information:
 	// Since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
@@ -35,10 +44,23 @@ public class Screen {
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
 
+	/** Initializes the screen with the given pixel array instance. */
+	public void init(int[] pixels) {
+		this.pixels = pixels;
+	}
+
 	/** Clears all the colors on the screen */
 	public void clear(int color) {
 		// Turns each pixel into a single color (clearing the screen!)
-		Arrays.fill(pixels, color);
+		int[] pixels = this.pixels;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				pixels[getGlobalId()] = color;
+			}
+		};
+		kernel.execute(pixels.length);
+		kernel.dispose();
 	}
 
 	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
@@ -74,36 +96,97 @@ public class Screen {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
-		xp -= xOffset; //account for screen offset
-		yp -= yOffset;
+		int xpt = xp - xOffset; //account for screen offset
+		int ypt = yp - yOffset;
 
 		// Determines if the image should be mirrored...
-		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // Horizontally.
-		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
+		boolean[] mirrorX = new boolean [] { (bits & BIT_MIRROR_X) > 0 }; // Horizontally.
+		boolean[] mirrorY = new boolean [] { (bits & BIT_MIRROR_Y) > 0 }; // Vertically.
+		boolean[] wBright = new boolean [] { fullbright };
 
 		// Validation check
-		if (sheet == null || xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
-			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
-			xt = 0;
-			yt = 0;
+		if (xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
+			render(xp, yp, 0, 0, bits, Renderer.spriteLinker.missingSheet(SpriteType.Item), -1, false, 0);
+			return;
 		}
 
-		int xTile = xt; // Gets x position of the spritesheet "tile"
-		int yTile = yt; // Gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+        int toffs = xt * 8 + yt * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+		int[] sheetPixels = sheet.pixels;
+		int sheetWidth = sheet.width;
 
 		// THIS LOOPS FOR EVERY PIXEL
-		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
-			int ys = y; // Current y pixel
-			if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
-			if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
-			for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
-				if (x + xp < 0 || x + xp >= w) continue; // Skip rest if out of bounds.
+		int[] pixels = this.pixels;
+		int w = Screen.w, h = Screen.h;
+		int WHITE = Color.WHITE;
+        Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int subPos = getGlobalId();
+				int x = subPos % 8;
+				int y = subPos / 8;
+				int ys = y; // Current y pixel
+				if (mirrorY[0]) ys = 7 - y; // Reverses the pixel for a mirroring effect
+				if (y + ypt < 0 || y + ypt >= h) return; // If the pixel is out of bounds, then skip the rest of the loop.
+				if (x + xpt < 0 || x + xpt >= w) return; // Skip rest if out of bounds.
 
 				int xs = x; // Current x pixel
-				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
+				if (mirrorX[0]) xs = 7 - x; // Reverses the pixel for a mirroring effect
 
-				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+				int col = sheetPixels[toffs + xs + ys * sheetWidth]; // Gets the color of the current pixel from the value stored in the sheet.
+
+				boolean isTransparent = (col >> 24 == 0);
+
+				if (!isTransparent) {
+					int index = (x + xpt) + (y + ypt) * w;
+
+					if (whiteTint != -1 && col == 0x1FFFFFF) {
+						// If this is white, write the whiteTint over it
+						pixels[index] = Color.upgrade(whiteTint);
+					} else {
+						// Inserts the colors into the image
+						if (wBright[0]) {
+							pixels[index] = WHITE;
+						} else {
+							if (color != 0) {
+
+								pixels[index] = color;
+							} else {
+								pixels[index] = Color.upgrade(col);
+							}
+						}
+					}
+				}
+			}
+		};
+		kernel.execute(64); // Loops a whole sheet tile.
+		kernel.dispose();
+	}
+
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
+		render(xp, yp, xt, yt ,tw, th, sheet, -1);
+	}
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int whiteTint) {
+		render(xp, yp, xt, yt, tw, th, sheet, whiteTint, false);
+	}
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int whiteTint, boolean fullbright) {
+		render(xp, yp, xt, yt, tw, th, sheet, whiteTint, fullbright, 0);
+	}
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+		if (sheet == null) return; // Verifying that sheet is not null.
+		int toffs = xt + yt * sheet.width;
+		int[] pixels = this.pixels;
+		int w = Screen.w, h = Screen.h;
+		int WHITE = Color.WHITE;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int subPos = getGlobalId();
+				int x = subPos % 8;
+				int y = subPos / 8;
+                if (y + yp < 0 || y + yp >= h) return; // If the pixel is out of bounds, then skip the rest of the loop.
+				if (x + xp < 0 || x + xp >= w) return; // Skip rest if out of bounds.
+
+                int col = sheet.pixels[toffs + x + y * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 
 				boolean isTransparent = (col >> 24 == 0);
 
@@ -116,7 +199,7 @@ public class Screen {
 					} else {
 						// Inserts the colors into the image
 						if (fullbright) {
-							pixels[index] = Color.WHITE;
+							pixels[index] = WHITE;
 						} else {
 							if (color != 0) {
 
@@ -128,7 +211,49 @@ public class Screen {
 					}
 				}
 			}
-		}
+		};
+		kernel.execute(tw * th); // Loops a whole sheet area.
+		kernel.dispose();
+	}
+
+	public void fillRect(int xp, int yp, int ww, int hh, int color) {
+		int[] pixels = this.pixels;
+		int w = Screen.w, h = Screen.h;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int id = getGlobalId();
+				int x = xp + id % ww;
+				int y = yp + id / ww;
+                if (y < 0 || y >= h || x < 0 || x >= w) return;
+                pixels[x + y * w] = color;
+			}
+		};
+		kernel.execute(ww * hh);
+		kernel.dispose();
+	}
+
+	/**
+	 * Draw a straight line along an axis.
+	 * @param axis The axis to draw along: {@code 0} for x-axis; {@code 1} for y-axis
+	 * @param l The length of the line
+	 */
+	public void drawAxisLine(int xp, int yp, @MagicConstant(intValues = {0, 1}) int axis, int l, int color) {
+		int[] pixels = this.pixels;
+		int w = Screen.w;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int id = getGlobalId();
+				if (axis == 0) { // x-axis
+					pixels[xp + id + yp * w] = color;
+				} else { // y-axis
+					pixels[xp + (yp + id) * w] = color;
+				}
+			}
+		};
+		kernel.execute(l);
+		kernel.dispose();
 	}
 
 	/** Sets the offset of the screen */
@@ -174,27 +299,34 @@ public class Screen {
 		else if(currentLevel >= 5)
 			tintFactor = -MAXDARK;
 
+		int[] pixels = this.pixels;
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
-		int i = 0; // Current pixel on the screen
-		for (int y = 0; y < h; y++) { // loop through height of screen
-            for (int x = 0; x < w; x++) { // loop through width of screen
-				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
+		double finalTintFactor = tintFactor;
+		int w = Screen.w, h = Screen.h;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int id = getGlobalId();
+				int x = id % w;
+				int y = id / h;
+				if (oPixels[id] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
 
-                    /// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
+					/// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
 					if (currentLevel < 3) { // if in caves...
-                        /// in the caves, not being lit means being pitch black.
-						pixels[i] = 0;
-                    } else {
+						/// in the caves, not being lit means being pitch black.
+						pixels[id] = 0;
+					} else {
 						/// Outside the caves, not being lit simply means being darker.
-						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
-                    }
-                }
+						pixels[id] = Color.tintColor(pixels[id], (int) finalTintFactor); // darkens the color one shade.
+					}
+				}
 
 				// Increase the tinting of all colors by 20.
-				pixels[i] = Color.tintColor(pixels[i], 20);
-                i++; // Moves to the next pixel.
-            }
-        }
+				pixels[id] = Color.tintColor(pixels[id], 20);
+			}
+		};
+		kernel.execute(w * h);
+		kernel.dispose();
     }
 
 	public void renderLight(int x, int y, int r) {
@@ -213,13 +345,25 @@ public class Screen {
 		if (x1 > w) x1 = w;
 		if (y1 > h) y1 = h;
 
-		for (int yy = y0; yy < y1; yy++) { // Loop through each y position
-			int yd = yy - y; // Get distance to the previous y position.
-			yd = yd * yd; // Square that distance
-			for (int xx = x0; xx < x1; xx++) { // Loop though each x pos
-				int xd = xx - x; // Get x delta
+		int xp = x;
+		int yp = y;
+		int xa = x0;
+		int ya = y0;
+		int ww = x1 - x0;
+		int hh = y1 - y0;
+		int[] pixels = this.pixels;
+		int w = Screen.w, h = Screen.h;
+		Kernel kernel = new Kernel() {
+			@Override
+			public void run() {
+				int id = getGlobalId();
+				int xx = xa + id % ww;
+				int yy = ya + id / ww;
+				if (xx < 0 || xx >= w || yy < 0 || yy >= h) return;
+				int yd = yy - yp; // Get distance to the previous y position.
+				yd = yd * yd; // Square that distance
+				int xd = xx - xp; // Get x delta
 				int dist = xd * xd + yd; // Square x delta, then add the y delta, to get total distance.
-
 				if (dist <= r * r) {
 					// If the distance from the center (x,y) is less or equal to the radius...
 					int br = 255 - dist * 255 / (r * r); // area where light will be rendered. // r*r is becuase dist is still x*x+y*y, of pythag theorem.
@@ -227,6 +371,8 @@ public class Screen {
 					if (pixels[xx + yy * w] < br) pixels[xx + yy * w] = br; // Pixel cannot be smaller than br; in other words, the pixel color (brightness) cannot be less than br.
 				}
 			}
-		}
+		};
+		kernel.execute(ww * hh);
+		kernel.dispose();
 	}
 }

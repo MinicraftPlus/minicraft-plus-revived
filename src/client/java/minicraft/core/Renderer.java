@@ -101,7 +101,7 @@ public class Renderer extends Game {
 		lightScreen = new Screen();
 
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		screen.init(((DataBufferInt) image.getRaster().getDataBuffer()).getData());
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
@@ -128,7 +128,7 @@ public class Renderer extends Game {
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
 		Graphics g = bs.getDrawGraphics(); // Gets the graphics in which java draws the picture
-		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Draws a rect to fill the whole window (to cover last?)
+		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Draws a rect to fill the whole window (to cover last?)
 
 		// Scale the pixels.
 		int ww = getWindowSize().width;

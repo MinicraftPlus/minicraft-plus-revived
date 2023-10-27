@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
@@ -25,7 +26,10 @@ import minicraft.util.Quest.QuestSeries;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -298,6 +302,7 @@ public class QuestsDisplay extends Display {
 			private final int rasterHeight;
 			private final int rasterX;
 			private final int rasterY;
+			private final MinicraftImage image;
 			private final int[] rasterPixels;
 			private final Screen simulatedRasterScreen = new Screen() {
 				@Override
@@ -417,7 +422,14 @@ public class QuestsDisplay extends Display {
 				Rectangle menuBounds = menus[1].getBounds();
 				rasterWidth = menuBounds.getWidth() - MinicraftImage.boxWidth*2;
 				rasterHeight = menuBounds.getHeight() - MinicraftImage.boxWidth*2;
-				rasterPixels = new int[rasterWidth * rasterHeight];
+				BufferedImage bufferedImage = new BufferedImage(rasterWidth, rasterHeight, BufferedImage.TYPE_INT_RGB);
+				try {
+					image = new MinicraftImage(bufferedImage);
+				} catch (IOException e) {
+					CrashHandler.crashHandle(e);
+					throw new UncheckedIOException(e);
+				}
+				rasterPixels = image.pixels;
 				rasterX = menuBounds.getLeft() + MinicraftImage.boxWidth;
 				rasterY = menuBounds.getTop() + MinicraftImage.boxWidth;
 			}
@@ -497,20 +509,11 @@ public class QuestsDisplay extends Display {
 					menu.render(screen);
 				Arrays.fill(rasterPixels, Color.BLACK);
 				renderRaster();
-				final int xPadding = rasterX - 1;
-				final int yPadding = rasterY - 1;
-				for (int i = 0; i < rasterWidth + 2; i++) {
-					for (int j = 0; j < rasterHeight + 2; j++) {
-						final int pos = xPadding + i + (yPadding + j) * Screen.w;
-						if (i == 0 || i == rasterWidth + 1 || j == 0 || j == rasterHeight + 1)
-							screen.pixels[pos] = Color.WHITE; // Raster border.
-						else {
-							final int x = i - 1; // Also < rasterWidth.
-							final int y = j - 1; // Also < rasterHeight.
-							screen.pixels[pos] = rasterPixels[x + y * rasterWidth];
-						}
-					}
-				}
+				screen.drawAxisLine(rasterX - 1, rasterY - 1, 1, rasterHeight + 2, Color.WHITE); // left border
+				screen.drawAxisLine(rasterX + rasterWidth, rasterY - 1, 1, rasterHeight + 2, Color.WHITE); // right border
+				screen.drawAxisLine(rasterX - 1, rasterY - 1, 0, rasterWidth + 2, Color.WHITE); // top border
+				screen.drawAxisLine(rasterX - 1, rasterY + rasterHeight, 0, rasterWidth + 2, Color.WHITE); // right border
+				screen.render(rasterX, rasterY, 0, 0, rasterWidth, rasterHeight, image);
 			}
 
 			private void renderRaster() {
