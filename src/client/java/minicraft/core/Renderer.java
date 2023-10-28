@@ -125,6 +125,8 @@ public class Renderer extends Game {
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
+		screen.flush();
+
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
 		Graphics g = bs.getDrawGraphics(); // Gets the graphics in which java draws the picture
