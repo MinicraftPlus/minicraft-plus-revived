@@ -288,7 +288,7 @@ public class Screen {
 	}
 
 	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
-		render(xp, yp, xt, yt ,tw, th, sheet, -1);
+		render(xp, yp, xt, yt ,tw, th, sheet, 0);
 	}
 	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors) {
 		render(xp, yp, xt, yt ,tw, th, sheet, mirrors, -1);
