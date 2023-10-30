@@ -55,7 +55,6 @@ project(":client") {
         implementation 'com.badlogicgames.gdx:gdx-box2d:1.11.0'
         implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
         implementation 'com.badlogicgames.jamepad:jamepad:2.0.20.0'
-        implementation 'com.aparapi:aparapi:3.0.0'
     }
 
     application {

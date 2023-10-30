@@ -294,17 +294,11 @@ public class OnScreenKeyboardMenu extends Menu {
 				} else
 					Font.draw(String.valueOf(key.output), screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
 
-				screen.drawAxisLine(x, y, 1, keyHeight, 0x1BCBCBC); // left border
-				screen.drawAxisLine(x + keyWidth, y, 1, keyHeight, 0x1BCBCBC); // right border
-				screen.drawAxisLine(x, y, 0, keyWidth, 0x1BCBCBC); // top border
-				screen.drawAxisLine(x, y + keyHeight, 0, keyWidth, 0x1BCBCBC); // bottom border
+				screen.drawRect(x, y, keyWidth, keyHeight, 0x1BCBCBC); // border
 
 				if (this.x == c && this.y == r) {
 					color = keyPressed > 0 ? 0x1EFEFF0 : 0x1DFDFE0;
-					screen.drawAxisLine(x + 1, y, 1, keyHeight, color); // left border
-					screen.drawAxisLine(x - 1 + keyWidth, y, 1, keyHeight, color); // right border
-					screen.drawAxisLine(x, y + 1, 0, keyWidth, color); // top border
-					screen.drawAxisLine(x, y - 1 + keyHeight, 0, keyWidth, color); // bottom border
+					screen.drawRect(x + 1, y + 1, keyWidth - 2, keyHeight - 2, color); // border
 				}
 
 				x += keyWidth;

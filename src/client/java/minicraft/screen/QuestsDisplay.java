@@ -304,7 +304,7 @@ public class QuestsDisplay extends Display {
 			private final int rasterY;
 			private final MinicraftImage image;
 			private final int[] rasterPixels;
-			private final Screen simulatedRasterScreen = new Screen() {
+			private final Screen simulatedRasterScreen = new Screen(new BufferedImage(Screen.w, Screen.h, BufferedImage.TYPE_INT_RGB)) {
 				@Override
 				public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 					if (sheet == null) return; // Verifying that sheet is not null.
@@ -503,10 +503,8 @@ public class QuestsDisplay extends Display {
 					menu.render(screen);
 				Arrays.fill(rasterPixels, Color.BLACK);
 				renderRaster();
-				screen.drawAxisLine(rasterX - 1, rasterY - 1, 1, rasterHeight + 2, Color.WHITE); // left border
-				screen.drawAxisLine(rasterX + rasterWidth, rasterY - 1, 1, rasterHeight + 2, Color.WHITE); // right border
-				screen.drawAxisLine(rasterX - 1, rasterY - 1, 0, rasterWidth + 2, Color.WHITE); // top border
-				screen.drawAxisLine(rasterX - 1, rasterY + rasterHeight, 0, rasterWidth + 2, Color.WHITE); // right border
+				// Border
+				screen.drawRect(rasterX - 1, rasterY - 1, rasterWidth + 2, rasterHeight + 2, Color.WHITE);
 				screen.render(rasterX, rasterY, 0, 0, rasterWidth, rasterHeight, image);
 			}
 

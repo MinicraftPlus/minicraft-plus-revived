@@ -37,7 +37,7 @@ import minicraft.util.Quest.QuestSeries;
 import javax.imageio.ImageIO;
 
 import java.awt.Canvas;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
@@ -67,7 +67,6 @@ public class Renderer extends Game {
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
 
-	private static Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
@@ -97,11 +96,10 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {
-		screen = new Screen();
-		lightScreen = new Screen();
-
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		screen.init(((DataBufferInt) image.getRaster().getDataBuffer()).getData());
+		screen = new Screen(image);
+		//lightScreen = new Screen();
+
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
@@ -114,6 +112,8 @@ public class Renderer extends Game {
 	public static void render() {
 		if (screen == null) return; // No point in this if there's no gui... :P
 
+		screen.clear(0);
+
 		if (readyToRenderGameplay) {
 			renderLevel();
 			if (player.renderGUI) renderGui();
@@ -125,12 +125,15 @@ public class Renderer extends Game {
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
-		screen.flush();
-
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
-		Graphics g = bs.getDrawGraphics(); // Gets the graphics in which java draws the picture
+		Graphics2D g = (Graphics2D) bs.getDrawGraphics(); // Gets the graphics in which java draws the picture
 		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Draws a rect to fill the whole window (to cover last?)
+
+
+
+		// Flushes the screen to the renderer.
+		screen.flush();
 
 		// Scale the pixels.
 		int ww = getWindowSize().width;
@@ -211,10 +214,9 @@ public class Renderer extends Game {
 
 		// This creates the darkness in the caves
 		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength / 4 || Updater.tickCount > Updater.dayLength / 2) && !isMode("minicraft.settings.mode.creative")) {
-			lightScreen.clear(0); // This doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // Brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
-			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
-			screen.overlay(lightScreen, currentLevel, xScroll, yScroll); // Overlays the light screen over the main screen.
+			level.renderLight(screen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
+			screen.overlay(currentLevel, xScroll, yScroll); // Overlays the light screen over the main screen.
 		}
 	}
 
