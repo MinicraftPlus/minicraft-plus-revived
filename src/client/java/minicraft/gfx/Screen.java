@@ -355,26 +355,25 @@ public class Screen {
 
 	/** Overlays the screen with pixels */
     public void overlay(int currentLevel, int xa, int ya) {
-		double tintFactor = 0;
+		double darkFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
 			double relTime = (Updater.tickCount % transTime) * 1.0 / transTime;
 
 			switch (Updater.getTime()) {
-				case Morning: tintFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
-				case Day: tintFactor = 0; break;
-				case Evening: tintFactor = relTime * MAXDARK; break;
-				case Night: tintFactor = MAXDARK; break;
+				case Morning: darkFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
+				case Day: darkFactor = 0; break;
+				case Evening: darkFactor = relTime * MAXDARK; break;
+				case Night: darkFactor = MAXDARK; break;
 			}
 
-			if (currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
-			tintFactor *= -1; // All previous operations were assuming this was a darkening factor.
+			if (currentLevel > 3) darkFactor -= (darkFactor < 10 ? darkFactor : 10);
 		}
 		else if(currentLevel >= 5)
-			tintFactor = -MAXDARK;
+			darkFactor = MAXDARK;
 
 	    // The Integer array of pixels to overlay the screen with.
-		queue(new OverlayRendering(currentLevel, xa, ya, tintFactor));
+		queue(new OverlayRendering(currentLevel, xa, ya, darkFactor));
     }
 
 	public void renderLight(int x, int y, int r) {
@@ -436,7 +435,7 @@ public class Screen {
 				return 1;
 			} else {
 				// Outside the caves, not being lit simply means being darker.
-				return 1D - darkFactor / 144; // darkens the color one shade.
+				return darkFactor / 128; // darkens the color one shade.
 			}
 		}
 
@@ -459,10 +458,11 @@ public class Screen {
 			for (int x = 0; x < w; ++x) {
 				for (int y = 0; y < h; ++y) {
 					int i = x + y * w;
+					// Grade of lightness
 					int grade = bufPixels[i] & 0xFF;
 					// (a + b) & 3 acts like (a + b) % 4
 					if (grade / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
-						olPixels[i] = grade << 24;
+						olPixels[i] = (255 - grade) << 24;
 					} else {
 						olPixels[i] = 0;
 					}
