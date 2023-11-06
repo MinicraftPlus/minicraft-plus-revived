@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -42,13 +43,15 @@ public class ClothingItem extends StackableItem {
 		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
-			ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
-				.findAny().orElse(null);
-			if (lastClothing == null)
-				lastClothing = (ClothingItem) Items.get("Reg Clothes");
-			lastClothing = lastClothing.copy();
-			lastClothing.count = 1;
-			player.tryAddToInvOrDrop(lastClothing);
+			if (!Game.isMode("minicraft.settings.mode.creative")) {
+				ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
+					.findAny().orElse(null);
+				if (lastClothing == null)
+					lastClothing = (ClothingItem) Items.get("Reg Clothes");
+				lastClothing = lastClothing.copy();
+				lastClothing.count = 1;
+				player.tryAddToInvOrDrop(lastClothing);
+			}
 			player.shirtColor = playerCol;
 			return super.interactOn(true);
 		}
