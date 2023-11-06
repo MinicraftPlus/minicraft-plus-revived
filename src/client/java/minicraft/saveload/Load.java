@@ -18,6 +18,7 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.RepairBench;
 import minicraft.entity.furniture.Spawner;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.mob.AirWizard;
@@ -1145,6 +1146,7 @@ public class Load {
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
 			case "KnightStatue": return new KnightStatue(0);
 			case "ObsidianKnight": return  new ObsidianKnight(0);
+			case "RepairBench": return new RepairBench();
 			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
