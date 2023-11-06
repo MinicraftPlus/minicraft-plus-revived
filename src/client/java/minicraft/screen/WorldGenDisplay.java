@@ -152,25 +152,6 @@ public class WorldGenDisplay extends Display {
 		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true)
 			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
-		SelectEntry nameHelp = new SelectEntry("minicraft.displays.world_gen.troublesome_input", () -> Game.setDisplay(new MessageDisplay("minicraft.displays.world_gen.troublesome_input.msg"))) {
-			@Override
-			public int getColor(boolean isSelected) {
-				return Color.get(1, 204);
-			}
-		};
-
-		nameHelp.setVisible(false);
-
-		HashSet<String> controls = new HashSet<>();
-		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-up").split("/")));
-		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-down").split("/")));
-		for (String key: controls) {
-			if(key.matches("^\\w$")) {
-				nameHelp.setVisible(true);
-				break;
-			}
-		}
-
 		worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
@@ -179,7 +160,6 @@ public class WorldGenDisplay extends Display {
 		Menu mainMenu =
 			new Menu.Builder(false, 10, RelPos.LEFT,
 				nameField,
-				nameHelp,
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
 

@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -7,14 +8,23 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.KeyInputEntry;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import org.intellij.lang.annotations.RegExp;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class KeyInputDisplay extends Display {
-	private static Menu.Builder builder;
+	@RegExp
+	private static final String regexLetter = "^\\w$";
+	private final Menu.Builder builder;
 
 	private static KeyInputEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
@@ -55,19 +65,88 @@ public class KeyInputDisplay extends Display {
 		};
 	}
 
+	@NotNull
+	private ArrayList<String> getAnyTroubles() {
+		ArrayList<String> troubles = new ArrayList<>();
+		for (String pref : Game.input.getKeyPrefs()) {
+			String[] mappings = pref.substring(pref.indexOf(";") + 1).split("\\|");
+			if (Arrays.stream(mappings).anyMatch(k -> k.matches(regexLetter)))
+				troubles.add(pref.substring(0, pref.indexOf(";")));
+		}
+		return troubles;
+	}
+
 	@Override
 	public void tick(InputHandler input) {
+		if (input.getKey("EXIT").clicked) {
+			ArrayList<String> troubles = getAnyTroubles();
+			if (!troubles.isEmpty()) {
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				Collections.addAll(entries, StringEntry.useLines("minicraft.displays.key_input.troublesome_input.confirm.msg.intro"));
+				Collections.addAll(entries, StringEntry.useLines(Color.WHITE, false, String.join(", ", troubles)));
+				Collections.addAll(entries, StringEntry.useLines("minicraft.displays.key_input.troublesome_input.confirm.msg.conclusion"));
+				entries.add(new BlankEntry());
+				entries.add(new StringEntry("minicraft.display.popup.enter_confirm"));
+				entries.add(new StringEntry("minicraft.display.popup.escape_cancel"));
+
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("ENTER", m -> {
+					Game.exitDisplay(2);
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
+					"minicraft.displays.key_input.troublesome_input.confirm.title", callbacks, 2),
+					entries.toArray(new ListEntry[0])));
+				return;
+			}
+		}
+
 		super.tick(input); // ticks menu
 
 		if (input.keyToChange != null) {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback(null, popup -> {
 				if (input.keyToChange == null) {
-					// the key has just been set, refreshes key bindings.
-					menus[0] = builder.setEntries(getEntries())
-						.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
-						.createMenu();
-					Game.exitDisplay();
+					Action action = () -> {
+						// the key has just been set, refreshes key bindings.
+						menus[0] = builder.setEntries(getEntries())
+							.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
+							.createMenu();
+						Game.exitDisplay();
+					};
+					String[] splitStr = input.getChangedKey().split(";", 2);
+					String[] keyStr = splitStr[1].split("\\|");
+					if (splitStr[0].startsWith("CURSOR-") && Arrays.stream(keyStr).anyMatch(k -> k.matches(regexLetter))) {
+						ArrayList<ListEntry> entries = new ArrayList<>();
+						Collections.addAll(entries, StringEntry.useLines("minicraft.displays.key_input.troublesome_input.warning.msg"));
+						entries.add(new BlankEntry());
+						entries.add(new StringEntry(Localization.getLocalized(
+							"minicraft.displays.key_input.troublesome_input.warning.remove", "ENTER"), false));
+						entries.add(new StringEntry(Localization.getLocalized(
+							"minicraft.displays.key_input.troublesome_input.warning.return", "ESCAPE"), false));
+
+						ArrayList<PopupDisplay.PopupActionCallback> callbacks1 = new ArrayList<>();
+						callbacks1.add(new PopupDisplay.PopupActionCallback("ENTER", m -> {
+							input.setKey(splitStr[0],
+								Arrays.stream(keyStr).filter(k -> !k.matches(regexLetter)).collect(Collectors.joining("|")));
+							Game.exitDisplay();
+							action.act();
+							return true;
+						}));
+						callbacks1.add(new PopupDisplay.PopupActionCallback("ESCAPE", m -> {
+							Game.exitDisplay();
+							action.act();
+							return true;
+						}));
+
+						Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
+							"minicraft.displays.key_input.troublesome_input.warning.title", callbacks1, 2),
+							entries.toArray(new ListEntry[0])));
+						return true;
+					}
+
+					action.act();
 					return true;
 				}
 
