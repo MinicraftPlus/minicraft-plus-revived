@@ -1,3 +1,6 @@
+[![Nightly build](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/autobuild.yml/badge.svg?branch=main)](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/autobuild.yml)
+[![CodeQL](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/codeql-analysis.yml)
+
 # Minicraft+
 ![Minicraft+](https://user-images.githubusercontent.com/37084190/138313821-75ac3112-7044-45c1-bdbb-d89f2333c2c0.png)
 
@@ -40,7 +43,7 @@ You must first confirm that you have [Java](https://www.java.com/en/download/) (
 ## Localization
 This project is running with an external localization platform called POEditor. You can contribute localization by clicking the image below!
 
-[![Minicraft+ POEditor Stats](https://raw.githubusercontent.com/BenCheung0422/MinicraftPlus-POEditor-Stats/main/docs/poeditor_stats.svg)](https://poeditor.com/join/project/xvtwoWhNXe)
+[![Minicraft+ POEditor Stats](https://minicraft-plus-poeditor-stats.vercel.app/api/card)](https://minicraft-plus-poeditor-stats.vercel.app)
 
 ## How to build/run in development
 Because this project uses a build tool called gradle it is very easy to build or run the project from the source code.
