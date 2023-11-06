@@ -9,6 +9,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Lantern;
 import minicraft.entity.furniture.Spawner;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Cow;
@@ -817,11 +818,12 @@ public class Level {
 		int hitBoxFrontTile1 = hitBoxFront1 >> 4;
 		int maxFrontTile = hitBoxFrontTile1; // Value for full tile movement
 		// Skips the current tile by adding 1.
+		mainLoop:
 		for (int front = hitBoxFrontTile + sgn; sgn < 0 ? front >= hitBoxFrontTile1 : front <= hitBoxFrontTile1; front += sgn) {
 			for (int horTile = hitBoxLeftTile; horTile <= hitBoxRightTile; horTile++) {
 				if (!frontTilePassableCheck.test(front, horTile)) {
 					maxFrontTile = front - sgn; // Rolls back a tile by subtracting 1.
-					break; // Tile hit box check stops.
+					break mainLoop; // Tile hit box check stops.
 				}
 			}
 		}
@@ -897,6 +899,10 @@ public class Level {
 		for (Tile t: getAreaTiles(x, y, 3))
 			if (t instanceof TorchTile)
 				return true;
+		for (Entity e : getEntitiesInRect(e -> e instanceof Lantern, new Rectangle(x, y, 8, 8, Rectangle.CENTER_DIMS))) {
+			if (Math.hypot((e.x >> 4) - x, (e.y >> 4) - y) < e.getLightRadius() - 1)
+				return true;
+		}
 
 		return false;
 	}
