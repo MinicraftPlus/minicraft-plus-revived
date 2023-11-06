@@ -146,45 +146,47 @@ public class WorldGenDisplay extends Display {
 		};
 	}
 
+	private final SelectEntry createWorld;
+
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true)
+		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.options.world_name", WorldSelectDisplay.getWorldNames(), "", true)
 			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
-		worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
+		worldSeed = new InputEntry("minicraft.displays.world_gen.options.seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
 		}.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
+		createWorld = new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
+			if(!nameField.isValid()) return;
+			WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
+			OptionalLong seed = getSeed();
+			Long seedObj = seed.isPresent() ? seed.getAsLong() : null;
+			Game.setDisplay(new LoadingDisplay(new WorldSettings(seedObj)));
+		}) {
+			@Override
+			public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
+				Font.draw(toString(), screen, x, y, isSelectable() ? Color.CYAN : Color.tint(Color.CYAN, -1, true), bounds);
+			}
+		};
+		createWorld.setSelectable(false);
+		nameField.setChangeListener(o -> createWorld.setSelectable(nameField.isValid()));
+
 		Menu mainMenu =
-			new Menu.Builder(false, 10, RelPos.LEFT,
+			new Menu.Builder(false, 3, RelPos.CENTER,
 				nameField,
-				Settings.getEntry("mode"),
-				Settings.getEntry("scoretime"),
-
-				new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
-					if(!nameField.isValid()) return;
-					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
-					OptionalLong seed = getSeed();
-					Long seedObj = seed.isPresent() ? seed.getAsLong() : null;
-					Game.setDisplay(new LoadingDisplay(new WorldSettings(seedObj)));
-				}) {
-					@Override
-					public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-						Font.draw(toString(), screen, x, y, Color.CYAN, bounds);
-					}
-				},
-
+				worldSeed,
 				Settings.getEntry("size"),
 				Settings.getEntry("theme"),
 				Settings.getEntry("type"),
 				Settings.getEntry("quests"),
 				Settings.getEntry("tutorials"),
-				worldSeed
+				Settings.getEntry("mode"),
+				Settings.getEntry("scoretime"),
+				createWorld
 			)
-				.setDisplayLength(5)
-				.setScrollPolicies(0.8f, false)
 				.setTitle("minicraft.displays.world_gen.title")
 				.setMaxBoundsAsRenderingBounds()
 				.createMenu();

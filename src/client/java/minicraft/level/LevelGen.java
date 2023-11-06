@@ -248,10 +248,10 @@ public class LevelGen {
 				val += 1 - dist*20;
 
 				switch ((String) Settings.get("Type")) {
-					case "minicraft.settings.type.island":
+					case "minicraft.displays.world_gen.options.terrain_type.island":
 
 						if (val < -0.5) {
-							if (Settings.get("Theme").equals("minicraft.settings.theme.hell"))
+							if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.hell"))
 								map[i] = Tiles.get("lava").id;
 							else
 								map[i] = Tiles.get("water").id;
@@ -262,10 +262,10 @@ public class LevelGen {
 						}
 
 						break;
-					case "minicraft.settings.type.box":
+					case "minicraft.displays.world_gen.options.terrain_type.box":
 
 						if (val < -1.5) {
-							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+							if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
 								map[i] = Tiles.get("water").id;
@@ -277,12 +277,12 @@ public class LevelGen {
 						}
 
 						break;
-					case "minicraft.settings.type.mountain":
+					case "minicraft.displays.world_gen.options.terrain_type.mountain":
 
 						if (val < -0.4) {
 							map[i] = Tiles.get("grass").id;
 						} else if (val > 0.5 && mval < -1.5) {
-							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+							if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
 								map[i] = Tiles.get("water").id;
@@ -292,12 +292,12 @@ public class LevelGen {
 						}
 						break;
 
-					case "minicraft.settings.type.irregular":
+					case "minicraft.displays.world_gen.options.terrain_type.irregular":
 						if (val < -0.5 && mval < -0.5) {
-							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+							if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							}
-							if (!Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+							if (!Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.hell")) {
 								map[i] = Tiles.get("water").id;
 							}
 						} else if (val > 0.5 && mval < -1.5) {
@@ -310,7 +310,7 @@ public class LevelGen {
 			}
 		}
 
-		if (Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
+		if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.desert")) {
 
 			for (int i = 0; i < w * h / 200; i++) {
 				int xs = random.nextInt(w);
@@ -333,7 +333,7 @@ public class LevelGen {
 			}
 		}
 
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
+		if (!Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.desert")) {
 
 			for (int i = 0; i < w * h / 2800; i++) {
 				int xs = random.nextInt(w);
@@ -356,7 +356,7 @@ public class LevelGen {
 			}
 		}
 
-		if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
+		if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.forest")) {
 			for (int i = 0; i < w * h / 200; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -371,7 +371,7 @@ public class LevelGen {
 				}
 			}
 		}
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.forest") && !Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+		if (!Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.forest") && !Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.plain")) {
 			for (int i = 0; i < w * h / 1200; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -387,7 +387,7 @@ public class LevelGen {
 			}
 		}
 
-		if (Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+		if (Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.plain")) {
 			for (int i = 0; i < w * h / 2800; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -402,7 +402,7 @@ public class LevelGen {
 				}
 			}
 		}
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+		if (!Settings.get("Theme").equals("minicraft.displays.world_gen.options.theme.plain")) {
 			for (int i = 0; i < w * h / 400; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);

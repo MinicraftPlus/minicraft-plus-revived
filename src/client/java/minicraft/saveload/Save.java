@@ -175,7 +175,7 @@ public class Save {
 	private void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(World.getWorldSeed()));
-		data.add(Settings.getIdx("mode") + (Game.isMode("minicraft.settings.mode.score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
+		data.add(Settings.getIdx("mode") + (Game.isMode("minicraft.displays.world_gen.options.game_mode.score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
 		data.add(String.valueOf(Updater.tickCount));
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));

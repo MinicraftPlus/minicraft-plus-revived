@@ -32,11 +32,11 @@ public class DeathChest extends Chest {
 		this.sprite = normalSprite;
 
 		/// Set the expiration time based on the world difficulty.
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.easy")) {
 			time = 300*Updater.normSpeed;
-		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+		} else if (Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.normal")) {
 			time = 120*Updater.normSpeed;
-		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+		} else if (Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.hard")) {
 			time = 30*Updater.normSpeed;
 		}
 	}

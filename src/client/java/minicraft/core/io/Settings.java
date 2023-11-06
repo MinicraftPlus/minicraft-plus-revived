@@ -16,28 +16,28 @@ public final class Settings {
 	static {
 		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
 		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20)); // The magnification of screenshot. I would want to see ultimate sized.
-		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
+		options.put("diff", new ArrayEntry<>("minicraft.displays.world_gen.options.difficulty", "minicraft.displays.world_gen.options.difficulty.easy", "minicraft.displays.world_gen.options.difficulty.normal", "minicraft.displays.world_gen.options.difficulty.hard"));
 		options.get("diff").setSelection(1);
-		options.put("mode", new ArrayEntry<>("minicraft.settings.mode", "minicraft.settings.mode.survival", "minicraft.settings.mode.creative", "minicraft.settings.mode.hardcore", "minicraft.settings.mode.score"));
+		options.put("mode", new ArrayEntry<>("minicraft.displays.world_gen.options.game_mode", "minicraft.displays.world_gen.options.game_mode.survival", "minicraft.displays.world_gen.options.game_mode.creative", "minicraft.displays.world_gen.options.game_mode.hardcore", "minicraft.displays.world_gen.options.game_mode.score"));
 
-		options.put("scoretime", new ArrayEntry<>("minicraft.settings.scoretime", 10, 20, 40, 60, 120));
+		options.put("scoretime", new ArrayEntry<>("minicraft.displays.world_gen.options.score_time", 10, 20, 40, 60, 120));
 		options.get("scoretime").setValueVisibility(10, false);
 		options.get("scoretime").setValueVisibility(120, false);
 
 		options.put("sound", new BooleanEntry("minicraft.settings.sound", true));
 		options.put("autosave", new BooleanEntry("minicraft.settings.autosave", true));
 
-		options.put("size", new ArrayEntry<>("minicraft.settings.size", 128, 256, 512));
-		options.put("theme", new ArrayEntry<>("minicraft.settings.theme", "minicraft.settings.theme.normal", "minicraft.settings.theme.forest", "minicraft.settings.theme.desert", "minicraft.settings.theme.plain", "minicraft.settings.theme.hell"));
-		options.put("type", new ArrayEntry<>("minicraft.settings.type", "minicraft.settings.type.island", "minicraft.settings.type.box", "minicraft.settings.type.mountain", "minicraft.settings.type.irregular"));
+		options.put("size", new ArrayEntry<>("minicraft.displays.world_gen.options.world_size", 128, 256, 512));
+		options.put("theme", new ArrayEntry<>("minicraft.displays.world_gen.options.theme", "minicraft.displays.world_gen.options.theme.normal", "minicraft.displays.world_gen.options.theme.forest", "minicraft.displays.world_gen.options.theme.desert", "minicraft.displays.world_gen.options.theme.plain", "minicraft.displays.world_gen.options.theme.hell"));
+		options.put("type", new ArrayEntry<>("minicraft.displays.world_gen.options.terrain_type", "minicraft.displays.world_gen.options.terrain_type.island", "minicraft.displays.world_gen.options.terrain_type.box", "minicraft.displays.world_gen.options.terrain_type.mountain", "minicraft.displays.world_gen.options.terrain_type.irregular"));
 
 		// TODO localize these labels
-		options.put("tutorials", new BooleanEntry("Tutorials", false));
-		options.put("quests", new BooleanEntry("Quests", false));
+		options.put("tutorials", new BooleanEntry("minicraft.displays.world_gen.options.tutorials", false));
+		options.put("quests", new BooleanEntry("minicraft.displays.world_gen.options.quests", false));
 		options.put("showquests", new BooleanEntry("Quests Panel", true));
 
 		options.get("mode").setChangeAction(value ->
-			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
+			options.get("scoretime").setVisible("minicraft.displays.world_gen.options.game_mode.score".equals(value))
 		);
 	}
 

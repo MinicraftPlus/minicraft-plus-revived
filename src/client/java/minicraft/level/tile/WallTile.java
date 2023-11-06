@@ -47,7 +47,7 @@ public class WallTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 			hurt(level, x, y, 0);
 			return true;
 		} else {
@@ -57,7 +57,7 @@ public class WallTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -82,7 +82,7 @@ public class WallTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth = 100;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = sbwHealth;
+		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) dmg = damage = sbwHealth;
 
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");

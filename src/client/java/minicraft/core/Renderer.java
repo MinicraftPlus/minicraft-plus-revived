@@ -208,7 +208,7 @@ public class Renderer extends Game {
 		level.renderSprites(screen, xScroll, yScroll); // Renders level sprites on screen
 
 		// This creates the darkness in the caves
-		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength / 4 || Updater.tickCount > Updater.dayLength / 2) && !isMode("minicraft.settings.mode.creative")) {
+		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength / 4 || Updater.tickCount > Updater.dayLength / 2) && !isMode("minicraft.displays.world_gen.options.game_mode.creative")) {
 			lightScreen.clear(0); // This doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // Brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
 			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
@@ -222,7 +222,7 @@ public class Renderer extends Game {
 	 */
 	private static void renderGui() {
 		// This draws the black square where the selected item would be if you were holding it
-		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
+		if (!isMode("minicraft.displays.world_gen.options.game_mode.creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
 				screen.render(x * 8, Screen.h - 8, 5, 2, 0, hudSheet.getSheet());
 			}
@@ -239,7 +239,7 @@ public class Renderer extends Game {
 			if (((ToolItem) player.activeItem).type == ToolType.Bow) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
-				if (isMode("minicraft.settings.mode.creative") || ac >= 10000)
+				if (isMode("minicraft.displays.world_gen.options.game_mode.creative") || ac >= 10000)
 					Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
 				else
 					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
@@ -291,7 +291,7 @@ public class Renderer extends Game {
 
 
 		// SCORE MODE ONLY:
-		if (isMode("minicraft.settings.mode.score")) {
+		if (isMode("minicraft.displays.world_gen.options.game_mode.score")) {
 			int seconds = (int) Math.ceil(Updater.scoreTime / (double) Updater.normSpeed);
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
@@ -349,7 +349,7 @@ public class Renderer extends Game {
 		}
 
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
-		if (!isMode("minicraft.settings.mode.creative")) {
+		if (!isMode("minicraft.displays.world_gen.options.game_mode.creative")) {
 			for (int i = 1; i <= 30; i++) {
 				// Renders your current red default hearts, golden hearts for 20 HP, obsidian hearts for 30 HP, or black hearts for damaged health.
 				if (i < 11) {
@@ -496,7 +496,7 @@ public class Renderer extends Game {
 			info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
 			if (levels[currentLevel] != null)
 				info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
-			if (isMode("minicraft.settings.mode.score")) info.add("Score: " + player.getScore());
+			if (isMode("minicraft.displays.world_gen.options.game_mode.score")) info.add("Score: " + player.getScore());
 
 			if (levels[currentLevel] != null) {
 				info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);

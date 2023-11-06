@@ -81,7 +81,7 @@ public class EnemyMob extends MobAi {
 		super.tick();
 
 		Player player = getClosestPlayer();
-		if (player != null && !Bed.sleeping() && randomWalkTime <= 0 && !Game.isMode("minicraft.settings.mode.creative")) { // Checks if player is on zombie's level, if there is no time left on randonimity timer, and if the player is not in creative.
+		if (player != null && !Bed.sleeping() && randomWalkTime <= 0 && !Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) { // Checks if player is on zombie's level, if there is no time left on randonimity timer, and if the player is not in creative.
 			int xd = player.x - x;
 			int yd = player.y - y;
 			if (xd * xd + yd * yd < detectDist * detectDist) {
@@ -112,7 +112,7 @@ public class EnemyMob extends MobAi {
 		super.touchedBy(entity);
 		// Hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
-			((Player)entity).hurt(this, lvl * (Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 2 : 1));
+			((Player)entity).hurt(this, lvl * (Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.hard") ? 2 : 1));
 		}
 	}
 
@@ -128,7 +128,7 @@ public class EnemyMob extends MobAi {
 	 * @return true if the mob can spawn here, false if not.
 	 */
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob
-		int r = (level.depth == -4 ? (Game.isMode("minicraft.settings.mode.score") ? 22 : 15) : 13);
+		int r = (level.depth == -4 ? (Game.isMode("minicraft.displays.world_gen.options.game_mode.score") ? 22 : 15) : 13);
 
 		if(!MobAi.checkStartPos(level, x, y, 60, r))
 			return false;

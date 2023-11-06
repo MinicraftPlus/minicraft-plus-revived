@@ -40,7 +40,7 @@ public class PotionItem extends StackableItem {
 	}
 
 	protected boolean interactOn(boolean subClassSuccess, Player player) {
-		if (subClassSuccess && !Game.isMode("minicraft.settings.mode.creative"))
+		if (subClassSuccess && !Game.isMode("minicraft.displays.world_gen.options.game_mode.creative"))
 			player.tryAddToInvOrDrop(Items.get("glass bottle"));
 		return super.interactOn(subClassSuccess);
 	}

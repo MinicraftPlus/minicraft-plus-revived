@@ -92,10 +92,10 @@ public class Updater extends Game {
 	public static void tick() {
 
 		// Quick Level change: move the player for -1, or 1 levels
-		if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
+		if (isMode("minicraft.displays.world_gen.options.game_mode.creative") && input.getKey("SHIFT-S").clicked ) {
 			Game.setDisplay(new LevelTransitionDisplay(-1));
 
-		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
+		} else if (isMode("minicraft.displays.world_gen.options.game_mode.creative") && input.getKey("SHIFT-W").clicked ){
 			Game.setDisplay(new LevelTransitionDisplay(1));
 		}
 
@@ -164,7 +164,7 @@ public class Updater extends Game {
 
 		// SCORE MODE ONLY
 
-		if (isMode("minicraft.settings.mode.score") && (!paused && !gameOver)) {
+		if (isMode("minicraft.displays.world_gen.options.game_mode.score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setDisplay(new EndGameDisplay());
@@ -238,19 +238,19 @@ public class Updater extends Game {
 
 					String prevMode = (String)Settings.get("mode");
 					if (input.getKey("F3-F4-2").clicked) {
-						Settings.set("mode", "minicraft.settings.mode.creative");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
+						Settings.set("mode", "minicraft.displays.world_gen.options.game_mode.creative");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.displays.world_gen.options.game_mode.creative");
 					}
 					if (input.getKey("F3-F4-1").clicked) {
-						Settings.set("mode", "minicraft.settings.mode.survival");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
+						Settings.set("mode", "minicraft.displays.world_gen.options.game_mode.survival");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.displays.world_gen.options.game_mode.survival");
 					}
 					if (input.getKey("F3-F4-3").clicked) {
-						Settings.set("mode", "minicraft.settings.mode.score");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
+						Settings.set("mode", "minicraft.displays.world_gen.options.game_mode.score");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.displays.world_gen.options.game_mode.score");
 					}
 
-					if (isMode("minicraft.settings.mode.score") && input.getKey("F3-SHIFT-T").clicked) {
+					if (isMode("minicraft.displays.world_gen.options.game_mode.score") && input.getKey("F3-SHIFT-T").clicked) {
 						scoreTime = normSpeed * 5; // 5 seconds
 					}
 
