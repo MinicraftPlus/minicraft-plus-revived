@@ -212,7 +212,7 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new MessageDisplay(pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 1) return SelectEntry.COL_UNSLCT;
@@ -223,7 +223,7 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new MessageDisplay(pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 0) return SelectEntry.COL_UNSLCT;

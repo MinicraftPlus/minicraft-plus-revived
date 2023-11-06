@@ -35,7 +35,7 @@ public class LoadingDisplay extends Display {
 				if (t instanceof InterruptedException) {
 					World.onWorldExits();
 					Game.exitDisplay(); // Exits the loading display and returns to world select display.
-					Game.setDisplay(new PopupDisplay(null, "minicraft.displays.loading.regeneration_cancellation_popup.display"));
+					Game.setDisplay(new MessageDisplay("minicraft.displays.loading.regeneration_cancellation_popup.display"));
 				} else
 					throw ex;
 			}

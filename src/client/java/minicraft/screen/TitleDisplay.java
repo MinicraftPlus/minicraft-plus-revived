@@ -50,10 +50,14 @@ public class TitleDisplay extends Display {
 			new SelectEntry("minicraft.displays.title.help", () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 					new BlankEntry(),
-					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions.collect()))),
-					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide.collect()))),
-					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about.collect()))),
-					new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits.collect())))
+					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new PagedDisplay(
+							Localization.getLocalized("minicraft.displays.title.help.instructions"), BookData.instructions.collect()))),
+					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new PagedDisplay(
+							Localization.getLocalized("minicraft.displays.title.help.storyline_guide"), BookData.storylineGuide.collect()))),
+					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new PagedDisplay(
+							Localization.getLocalized("minicraft.displays.title.help.about"), BookData.about.collect()))),
+					new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new PagedDisplay(
+							Localization.getLocalized("minicraft.displays.title.help.credits"), BookData.credits.collect())))
 				).setTitle("minicraft.displays.title.help").createMenu()))
 			),
 			new SelectEntry("minicraft.displays.title.quit", Game::quit)
