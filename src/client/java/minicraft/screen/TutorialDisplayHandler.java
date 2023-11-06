@@ -62,7 +62,7 @@ public class TutorialDisplayHandler {
 	private static ControlGuide currentGuide = null;
 
 	static {
-		controlGuides.add(new ControlGuide(120, "move-up|move-down|move-left|move-right",
+		controlGuides.add(new ControlGuide(300, "move-up|move-down|move-left|move-right",
 			() -> Localization.getLocalized("minicraft.control_guide.move",
 				String.format("%s|%s|%s|%s", Game.input.getMapping("move-up"),
 					Game.input.getMapping("move-left"), Game.input.getMapping("move-down"),
@@ -90,16 +90,11 @@ public class TutorialDisplayHandler {
 		}
 
 		private void tick() {
-			if (this.key.contains("|")) {
-				InputHandler.Key key = new InputHandler.Key();
-				for (String keyposs: this.key.split("\\|")) {
-					InputHandler.Key aKey = Game.input.getKey(keyposs);
-					key.down = key.down || aKey.down;
-					key.clicked = key.clicked || aKey.clicked;
+			if (key.contains("|")) {
+				for (String k : key.split("\\|")) {
+					if (Game.input.inputDown(k)) interactedDuration++;
 				}
-
-				if (key.down) interactedDuration++;
-			} else if (Game.input.getKey(key).down)
+			} else if (Game.input.inputDown(key))
 				interactedDuration++;
 		}
 	}
@@ -188,7 +183,8 @@ public class TutorialDisplayHandler {
 				return;
 			}
 
-			currentGuide.tick();
+			if (Game.getDisplay() == null)
+				currentGuide.tick();
 		}
 
 		if (currentOngoingElement != null) {
