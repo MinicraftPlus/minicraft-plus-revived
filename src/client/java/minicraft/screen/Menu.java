@@ -34,6 +34,7 @@ public class Menu {
 	private int spacing = 0;
 	private Rectangle bounds = null;
 	private Rectangle entryBounds = null;
+	private Rectangle renderingBounds = null;
 	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 
 	private String title = "";
@@ -76,6 +77,7 @@ public class Menu {
 		spacing = m.spacing;
 		bounds = m.bounds == null ? null : new Rectangle(m.bounds);
 		entryBounds = m.entryBounds == null ? null : new Rectangle(m.entryBounds);
+		renderingBounds = m.renderingBounds;
 		entryPos = m.entryPos;
 		title = m.title;
 		titleColor = m.titleColor;
@@ -170,11 +172,16 @@ public class Menu {
 		if(!selectable || entries.size() == 0) return;
 
 		int prevSel = selection;
-		if (input.inputPressed("cursor-up")) selection--;
-		if (input.inputPressed("cursor-down")) selection++;
-		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
-		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
-		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
+		if (input.getKey("ALT").down) {
+			if (input.inputPressed("cursor-left")) entries.get(selection).displaceRight(entryBounds.getWidth());
+			if (input.inputPressed("cursor-right")) entries.get(selection).displaceLeft(entryBounds.getWidth());
+		} else {
+			if (input.inputPressed("cursor-up")) selection--;
+			if (input.inputPressed("cursor-down")) selection++;
+			if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
+			if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
+			if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
+		}
 
 		if (useSearcherBar) {
 			if (input.getKey("searcher-bar").clicked) {
@@ -336,6 +343,7 @@ public class Menu {
 			int extra = diff*(ListEntry.getHeight() + spacing) / 2;
 			y += extra;
 		}
+		ListEntry.IntRange renderingXBounds = new ListEntry.IntRange(renderingBounds.getLeft(), renderingBounds.getRight());
 		for(int i = offset; i < (wrap ? offset + displayLength : Math.min(offset + displayLength, entries.size())); i++) {
 			if(special && i-offset >= entries.size()) break;
 
@@ -343,17 +351,21 @@ public class Menu {
 			ListEntry entry = entries.get(idx);
 
 			if(!(entry instanceof BlankEntry)) {
-				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+				int entryWidth = entry.getWidth();
+				Point pos = entryPos.positionRect(new Dimension(entryWidth, ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 				boolean selected = idx == selection;
+				int xDisplacement = selected ? entry.getXDisplacement() : 0;
+				boolean hideOverflow = entry.hideWhenOverflow() && entry.isSelectable();
 				if (searcherBarActive && useSearcherBar) {
-					entry.render(screen, pos.x, pos.y, selected, typingSearcher, Color.YELLOW);
+					entry.render(screen, pos.x + xDisplacement, pos.y, selected, hideOverflow ? renderingXBounds : null, typingSearcher, Color.YELLOW);
 				} else {
-					entry.render(screen, pos.x, pos.y, selected);
+					entry.render(screen, pos.x + xDisplacement, pos.y, selected, hideOverflow ? renderingXBounds : null);
 				}
 				if (selected && entry.isSelectable()) {
 					// draw the arrows
-					Font.draw("> ", screen, pos.x - Font.textWidth("> "), y, ListEntry.COL_SLCT);
-					Font.draw(" <", screen, pos.x + entry.getWidth(), y, ListEntry.COL_SLCT);
+					boolean hiddenOverflow = hideOverflow && entryWidth > entryBounds.getWidth();
+					Font.draw("> ", screen, hiddenOverflow ? entryBounds.getLeft() - Font.textWidth("> ") : pos.x + xDisplacement - Font.textWidth("> "), y, ListEntry.COL_SLCT);
+					Font.draw(" <", screen, hiddenOverflow ? entryBounds.getRight() : pos.x + xDisplacement + entryWidth, y, ListEntry.COL_SLCT);
 				}
 			}
 
@@ -426,6 +438,9 @@ public class Menu {
 		@NotNull private Point anchor = center;
 		@NotNull private RelPos menuPos = RelPos.CENTER;
 		private Dimension menuSize = null;
+		private Rectangle limitingBounds = null;
+		private Rectangle renderingBounds = null;
+		private boolean removeEntryPeaks = false;
 
 		private boolean searcherBar;
 
@@ -462,6 +477,31 @@ public class Menu {
 
 		public Builder setDisplayLength(int numEntries) { menu.displayLength = numEntries; return this; }
 
+		/** This restricts the maximum bounds this menu could be. */
+		public Builder setMaxBounds(Rectangle rect) {
+			limitingBounds = rect;
+			return this;
+		}
+
+		public Builder setMaxBoundsAsMaxMenuBounds() {
+			limitingBounds = new Rectangle(0, 0, Screen.w, Screen.h, Rectangle.CORNERS);
+			return this;
+		}
+
+		public Builder setRemoveEntryPeaks(boolean removeEntryPeaks) {
+			this.removeEntryPeaks = removeEntryPeaks;
+			return this;
+		}
+
+		public Builder setRenderingBounds(Rectangle rect) {
+			renderingBounds = rect;
+			return this;
+		}
+
+		public Builder setMaxBoundsAsRenderingBounds() {
+			renderingBounds = new Rectangle(0, 0, Screen.w, Screen.h, Rectangle.CORNERS);
+			return this;
+		}
 
 		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
 
@@ -587,11 +627,46 @@ public class Menu {
 
 			if(menuSize == null) {
 				int width = titleDim.width;
-				for(ListEntry entry: menu.entries) {
-					int entryWidth = entry.getWidth();
-					if(menu.isSelectable() && !entry.isSelectable())
-						entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
-					width = Math.max(width, entryWidth);
+				// There should be valid peaks to be handled when the number of entries is greater than 1.
+				if (removeEntryPeaks && menu.entries.size() > 1) {
+					// First write into an array to more easily find peaks.
+					int[] entryWidths = new int[menu.entries.size()];
+					for (int i = 0; i < menu.entries.size(); ++i) {
+						entryWidths[i] = menu.entries.get(i).getWidth();
+					}
+
+					// Reference: https://www.geeksforgeeks.org/print-all-the-peaks-and-troughs-in-an-array-of-integers/
+					boolean handled = false; // For security check.
+					ArrayList<Integer> peaks = new ArrayList<>();
+					for (int i = 0; i < entryWidths.length; ++i) {
+						// Checks if the element is greater than the neighbours
+						if ((i == 0 || entryWidths[i] > entryWidths[i - 1]) && (i == entryWidths.length - 1 || entryWidths[i] > entryWidths[i + 1])) {
+							peaks.add(entryWidths[i]);
+						} else {
+							int entryWidth = entryWidths[i];
+							if (menu.isSelectable() && !menu.entries.get(i).isSelectable())
+								entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
+							width = Math.max(width, entryWidth);
+							handled = true;
+						}
+					}
+
+					if (!handled) width = Math.max(width, Arrays.stream(entryWidths).max().getAsInt());
+					else {
+						if (peaks.size() > 0) { // Count in the peaks into the resultant width with small ratio.
+							double peaksAvg = (double) peaks.stream().mapToInt(a -> a).sum() / peaks.size();
+							double ratio = .07 / Math.max(peaksAvg / width - 1, .07); // max is used to prevent extreme case.
+							width = (int) (width * ratio + (1 - ratio) * peaksAvg);
+							width -= width % MinicraftImage.boxWidth; // strip extra pixels
+						}
+					}
+				} else {
+					for(ListEntry entry: menu.entries) {
+						int entryWidth = entry.getWidth();
+						if(menu.isSelectable() && !entry.isSelectable())
+							entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
+						width = Math.max(width, entryWidth);
+					}
 				}
 
 				if(menu.displayLength > 0) { // has been set; use to determine entry bounds
@@ -632,9 +707,22 @@ public class Menu {
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
 			menu.bounds = menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
 
+			if (limitingBounds != null) {
+				// Exceeded areas are cut off from the bounds.
+				if (!limitingBounds.intersects(menu.bounds))
+					throw new IndexOutOfBoundsException("limitingBounds does not intersect bounds");
+				int x = Math.max(limitingBounds.getLeft(), menu.bounds.getLeft()); // Get the rightmost left bound
+				int y = Math.max(limitingBounds.getTop(), menu.bounds.getTop()); // Get the bottommost top bound
+				int x1 = Math.min(limitingBounds.getBottom(), menu.bounds.getBottom()); // Get the topmost bottom bound
+				int y1 = Math.min(limitingBounds.getRight(), menu.bounds.getRight()); // Get the leftmost right bount
+				menu.bounds = new Rectangle(x, y, x1, y1, Rectangle.CORNERS); // Reset to the bounds after cut off the exceeded bounds
+			}
+
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 
 			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
+
+			menu.renderingBounds = renderingBounds == null ? menu.entryBounds : renderingBounds;
 
 			if(titlePos.xIndex == 0 && titlePos.yIndex != 1)
 				menu.titleLoc.x += MinicraftImage.boxWidth;
@@ -679,6 +767,9 @@ public class Menu {
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;
 			b.searcherBar = searcherBar;
+			b.limitingBounds = limitingBounds;
+			b.renderingBounds = renderingBounds;
+			b.removeEntryPeaks = removeEntryPeaks;
 
 			return b;
 		}

@@ -3,6 +3,7 @@ package minicraft.screen.entry;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class ItemEntry extends ListEntry {
 	public void tick(InputHandler input) {}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected) {
-		super.render(screen, x, y, true);
+	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
+		super.render(screen, x, y, true, bounds);
 		screen.render(x, y, item.sprite);
 	}
 

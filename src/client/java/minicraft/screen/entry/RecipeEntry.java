@@ -4,6 +4,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,9 +28,9 @@ public class RecipeEntry extends ItemEntry {
 	public void tick(InputHandler input) {}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected) {
+	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
 		if (isVisible()) {
-			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
+			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT, bounds);
 			screen.render(x, y, getItem().sprite);
 		}
 	}
