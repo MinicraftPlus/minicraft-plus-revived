@@ -24,11 +24,11 @@ public class LoadingDisplay extends Display {
 
 	private String msg = "";
 
-	public LoadingDisplay() {
+	public LoadingDisplay(WorldGenDisplay.WorldSettings settings) {
 		super(true, false);
 		t = new Timer(500, e -> new Thread(() -> { // A new thread is required as this blocks the running thread.
 			try {
-				World.initWorld();
+				World.initWorld(settings);
 				Game.setDisplay(null);
 			} catch (RuntimeException ex) {
 				Throwable t = ex.getCause();

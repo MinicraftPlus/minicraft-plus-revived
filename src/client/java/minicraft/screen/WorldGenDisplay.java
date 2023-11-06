@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
+import minicraft.core.World;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -12,6 +13,7 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -23,12 +25,12 @@ import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
 	private static final Pattern detailedFilenamePattern;
-
 	private static final String worldNameRegex;
 	static {
 		if (FileHandler.OS.contains("windows")) {
 			// Reference: https://stackoverflow.com/a/6804755
 			worldNameRegex = "[^<>:\"/\\\\|?*\\x00-\\x1F]+";
+			//noinspection RegExpRepeatedSpace,RegExpRedundantEscape,RegExpUnexpectedAnchor
 			detailedFilenamePattern = Pattern.compile(
 			"# Match a valid Windows filename (unspecified file system).          \n" +
 				"^                                # Anchor to start of string.        \n" +
@@ -53,21 +55,26 @@ public class WorldGenDisplay extends Display {
 		}
 	}
 
-	private static InputEntry worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20);
+	private final InputEntry worldSeed;
 
-	public static OptionalLong getSeed() {
+	private OptionalLong getSeed() {
 		String seedStr = worldSeed.getUserInput();
 
 		// If there is no input seed, generate random number
-		if(seedStr.length() == 0)
+		if (seedStr.isEmpty())
 			return OptionalLong.empty();
 
 		// If the seed is only numbers, just use numbers
 		if (Pattern.matches("-?[0-9]*", seedStr) && seedStr.length() < 20) {
-			return OptionalLong.of(Long.parseLong(seedStr));
+			try {
+				return OptionalLong.of(Long.parseLong(seedStr));
+			} catch (NumberFormatException e) {
+				// In case if there is any unexpected exception occurs.
+				Logging.UNEXPECTED.error(e);
+			}
 		}
 
-		// If the seed is some combination of numbers/letters, hash them into a floating point number
+		// If the seed is some combination of numbers/letters, hash them into an int64 number
 		long seed = 1125899906842597L; // rather large prime number
 		int len = seedStr.length();
 
@@ -175,7 +182,9 @@ public class WorldGenDisplay extends Display {
 				new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
 					if(!nameField.isValid()) return;
 					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
-					Game.setDisplay(new LoadingDisplay());
+					OptionalLong seed = getSeed();
+					Long seedObj = seed.isPresent() ? seed.getAsLong() : null;
+					Game.setDisplay(new LoadingDisplay(new WorldSettings(seedObj)));
 				}) {
 					@Override
 					public void render(Screen screen, int x, int y, boolean isSelected) {
@@ -200,6 +209,13 @@ public class WorldGenDisplay extends Display {
 			menus = new Menu[] { mainMenu };
 		else
 			menus = new Menu[] { onScreenKeyboardMenu, mainMenu };
+	}
+
+	public static class WorldSettings {
+		public final @Nullable Long seed;
+		public WorldSettings(@Nullable Long seed) {
+			this.seed = seed;
+		}
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;

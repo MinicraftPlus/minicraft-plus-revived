@@ -94,7 +94,7 @@ public class World extends Game {
 	/** This method is used to create a brand new world, or to load an existing one from a file.
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
-	public static void initWorld() { // This is a full reset; everything.
+	public static void initWorld(WorldGenDisplay.WorldSettings settings) { // This is a full reset; everything.
 		Logging.WORLD.debug("Resetting world...");
 
 		PlayerDeathDisplay.shouldRespawn = false;
@@ -125,7 +125,7 @@ public class World extends Game {
 
 			worldSize = (Integer) Settings.get("size");
 
-			seed = WorldGenDisplay.getSeed().orElse(new Random().nextLong());
+			seed = settings.seed == null ? new Random().nextLong() : settings.seed;
 			random = new Random(seed);
 
 			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // The .002 is for floating point errors, in case they occur.

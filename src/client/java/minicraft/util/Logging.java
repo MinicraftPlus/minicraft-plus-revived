@@ -33,6 +33,7 @@ public final class Logging {
 	public static final TaggedLogger SPRITE = Logger.tag("Sprite");
 	public static final TaggedLogger CONTROLLER = Logger.tag("Controller");
 	public static final TaggedLogger PLAYER = Logger.tag("Player");
+	public static final TaggedLogger UNEXPECTED = Logger.tag("Unexpected");
 
 	/** This is defined dynamically. */
 	public static TaggedLogger WORLDNAMED = Logger.tag(null);
