@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import minicraft.core.Action;
 import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.IntSupplier;
 
 public abstract class Entity implements Tickable {
@@ -134,7 +137,6 @@ public abstract class Entity implements Tickable {
 				level.getTile(prevXt, prevYt).steppedOut(level, prevXt, prevYt, this);
 			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 		}
-
 		return !stopped;
 	}
 
@@ -158,8 +160,17 @@ public abstract class Entity implements Tickable {
 		int hitBoxFront = x + xr * sgn;
 		int maxFront = Level.calculateMaxFrontClosestTile(sgn, d, hitBoxLeft, hitBoxRight, hitBoxFront,
 			(front, horTile) -> level.getTile(front, horTile).mayPass(level, front, horTile, this)); // Maximum position can be reached with front hit box
-		if (maxFront == hitBoxFront) return false; // No movement can be made.
-		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x + sgn, () -> y, () -> x += sgn);
+		if (maxFront == hitBoxFront) { // Bumping into the facing tile
+			int hitBoxRightTile = hitBoxRight >> 4;
+			int frontTile = (hitBoxFront + sgn) >> 4;
+			for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
+				level.getTile(frontTile, horTile).bumpedInto(level, frontTile, horTile, this);
+			}
+			return false; // No movement can be made.
+		}
+		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x + sgn, () -> y, () -> x += sgn, hitBoxLeft, hitBoxRight,
+			(front, horTile) -> level.getTile(front, horTile).bumpedInto(level, front, horTile, this),
+			(front, horTile) -> level.getTile(front, horTile).steppedOn(level, front, horTile, this));
 	}
 
 	/**
@@ -182,8 +193,17 @@ public abstract class Entity implements Tickable {
 		int hitBoxFront = y + yr * sgn;
 		int maxFront = Level.calculateMaxFrontClosestTile(sgn, d, hitBoxLeft, hitBoxRight, hitBoxFront,
 			(front, horTile) -> level.getTile(horTile, front).mayPass(level, horTile, front, this)); // Maximum position can be reached with front hit box
-		if (maxFront == hitBoxFront) return false; // No movement can be made.
-		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x, () -> y + sgn, () -> y += sgn);
+		if (maxFront == hitBoxFront) { // Bumping into the facing tile
+			int hitBoxRightTile = hitBoxRight >> 4;
+			int frontTile = (hitBoxFront + sgn) >> 4;
+			for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
+				level.getTile(horTile, frontTile).bumpedInto(level, horTile, frontTile, this);
+			}
+			return false; // No movement can be made.
+		}
+		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x, () -> y + sgn, () -> y += sgn, hitBoxLeft, hitBoxRight,
+			(front, horTile) -> level.getTile(horTile, front).bumpedInto(level, horTile, front, this),
+			(front, horTile) -> level.getTile(horTile, front).steppedOn(level, horTile, front, this));
 	}
 
 	/**
@@ -194,16 +214,34 @@ public abstract class Entity implements Tickable {
 	 * @param xMove The value of the willing x movement
 	 * @param yMove The value of the willing y movement
 	 * @param incrementMove The movement call when the movement is possible
+	 * @param hitBoxLeft The left boundary of hit box
+	 * @param hitBoxRight The right boundary of hit box
+	 * @param bumpingHandler The consumer handling bumping into a new tile;
+	 *                       the first parameter takes the front tile position and second one takes the horizontal position
+	 * @param steppingHandler The consumer handling stepping on a new tile;
+	 *                        the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return {@code true} if the movement is successful, {@code false} otherwise.
-	 * @see #moveByEntityHitBoxChecks(int, int, int, IntSupplier, IntSupplier, Runnable)
+	 * @see Level#calculateMaxFrontClosestTile(int, int, int, int, int, BiPredicate)
 	 */
 	protected boolean moveByEntityHitBoxChecks(int sgn, int hitBoxFront, int maxFront, IntSupplier xMove,
-											   IntSupplier yMove, Runnable incrementMove) {
+											   IntSupplier yMove, Action incrementMove, int hitBoxLeft, int hitBoxRight,
+											   BiConsumer<Integer, Integer> bumpingHandler, BiConsumer<Integer, Integer> steppingHandler) {
 		boolean successful = false;
 
 		// These lists are named as if the entity has already moved-- it hasn't, though.
 		HashSet<Entity> wasInside = new HashSet<>(level.getEntitiesInRect(getBounds())); // Gets all the entities that are inside this entity (aka: colliding) before moving.
+		int frontTile = hitBoxFront << 4; // The original tile the front boundary hit box staying on
+		boolean handleSteppedOn = false; // Used together with frontTile
 		for (int front = hitBoxFront; sgn < 0 ? front > maxFront : front < maxFront; front += sgn) {
+			int newFrontTile = (front + sgn) >> 4;
+			if (newFrontTile != frontTile) { // New tile touched
+				int hitBoxRightTile = hitBoxRight >> 4;
+				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
+					bumpingHandler.accept(horTile, newFrontTile);
+				}
+				frontTile = newFrontTile;
+				handleSteppedOn = true;
+			}
 			boolean blocked = false; // If the entity prevents this one from movement, no movement.
 			for (Entity e : level.getEntitiesInRect(new Rectangle(xMove.getAsInt(), yMove.getAsInt(), xr * 2, yr * 2, Rectangle.CENTER_DIMS))) {
 				if (!wasInside.contains(e)) { // Skips entities that were touched.
@@ -219,7 +257,13 @@ public abstract class Entity implements Tickable {
 				}
 			}
 			if (blocked) break;
-			incrementMove.run(); // Movement successful
+			incrementMove.act(); // Movement successful
+			if (handleSteppedOn) { // When the movement to a new tile successes
+				int hitBoxRightTile = hitBoxRight >> 4;
+				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
+					steppingHandler.accept(horTile, frontTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+				}
+			}
 			successful = true;
 		}
 

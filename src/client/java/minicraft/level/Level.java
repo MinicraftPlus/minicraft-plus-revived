@@ -783,11 +783,12 @@ public class Level {
 		int hitBoxFrontTile1 = hitBoxFront1 >> 4;
 		int maxFrontTile = hitBoxFrontTile1; // Value for full tile movement
 		// Skips the current tile by adding 1.
+		mainLoop:
 		for (int front = hitBoxFrontTile + sgn; sgn < 0 ? front >= hitBoxFrontTile1 : front <= hitBoxFrontTile1; front += sgn) {
 			for (int horTile = hitBoxLeftTile; horTile <= hitBoxRightTile; horTile++) {
 				if (!frontTilePassableCheck.test(front, horTile)) {
 					maxFrontTile = front - sgn; // Rolls back a tile by subtracting 1.
-					break; // Tile hit box check stops.
+					break mainLoop; // Tile hit box check stops.
 				}
 			}
 		}
