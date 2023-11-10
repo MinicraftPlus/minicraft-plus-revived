@@ -315,7 +315,7 @@ public class Load {
 			if (ch == commaChar && bracketCounter.isEmpty()) {
 				String str = input.substring(lastIdx + (input.charAt(lastIdx) == commaChar ? 1 : 0), i).trim();
 				lastIdx = i;
-				if (!str.isEmpty()) out.add(str);
+				out.add(str); // Empty strings are expected.
 			} else if (ch == openBracket0) {
 				bracketCounter.push(0);
 			} else if (ch == closeBracket0) {
