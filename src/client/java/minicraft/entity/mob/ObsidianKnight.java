@@ -16,6 +16,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
 import minicraft.screen.AchievementsDisplay;
+import org.jetbrains.annotations.Range;
 
 public class ObsidianKnight extends EnemyMob {
 	private static final SpriteLinker.LinkedSprite[][][] armored = new SpriteLinker.LinkedSprite[][][] {
@@ -36,8 +37,9 @@ public class ObsidianKnight extends EnemyMob {
 	public static boolean beaten = false; // If the boss was beaten
 	public static boolean active = false; // If the boss is active
 
-	private static int phase = 0; // The phase of the boss. {0, 1}
-	private static int attackPhaseCooldown = 0; // Cooldown between attacks
+	@Range(from = 0, to = 1)
+	private int phase = 0; // The phase of the boss. {0, 1}
+	private int attackPhaseCooldown = 0; // Cooldown between attacks
 
 	private AttackPhase attackPhase = AttackPhase.Attacking;
 	private enum AttackPhase { Attacking, Dashing, Walking; } // Using fire sparks in attacking.
@@ -77,12 +79,10 @@ public class ObsidianKnight extends EnemyMob {
 			this.remove();
 		}
 
-		//Achieve phase2
-		if (health <= 2500) {
+		// Achieve phase 2
+		if (health <= 2500 && phase == 0) { // Assume that phase would not turn back to phase 1
 			phase = 1;
-		}
-		if (phase == 1) {
-			lvlSprites = broken;
+			lvlSprites = broken; // Refreshing phased sprites
 		}
 
 		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
@@ -134,7 +134,7 @@ public class ObsidianKnight extends EnemyMob {
 				else if (atan2 < -67.5) attackDir = -90;
 				else if (atan2 < -22.5) attackDir = -45;
 				else attackDir = 0;
-				double speed = 1 + attackLevel * 0.2 + attackTime / 10 * 0.01; // speed is dependent on the attackType. (higher attackType, faster speeds)
+				double speed = 1 + attackLevel * 0.2 + attackTime / 10D * 0.01; // speed is dependent on the attackType. (higher attackType, faster speeds)
 				// The range of attack is 90 degrees. With little random factor.
 				int phi = attackDir - 36 + (attackTime % 5) * 18 + random.nextInt(7) - 3;
 				level.add(new FireSpark(this, Math.cos(Math.toRadians(phi)) * speed, Math.sin(Math.toRadians(phi)) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.

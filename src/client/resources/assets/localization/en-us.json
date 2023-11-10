@@ -233,6 +233,7 @@
   "minicraft.notification.wrong_level_dungeon": "Can only be summoned on the dungeon level",
   "minicraft.notification.boss_limit": "No more bosses can be spawned",
   "minicraft.notification.spawn_on_boss_tile": "Can only be summoned in the Boss Room",
+  "minicraft.notification.knight_statue_exists": "A knight statue exists",
   "minicraft.notifications.statue_tapped": "You hear echoed whispers...",
   "minicraft.notifications.statue_touched": "You hear the statue vibrating...",
   "minicraft.quest.farming": "Farming Farmer",
