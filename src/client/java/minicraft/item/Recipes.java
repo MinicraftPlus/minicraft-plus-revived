@@ -109,6 +109,7 @@ public class Recipes {
 		anvilRecipes.add(new Recipe("Gem Shovel_1", "Wood_5", "gem_50"));
 		anvilRecipes.add(new Recipe("Gem Bow_1", "Wood_5", "gem_50", "string_2"));
 		anvilRecipes.add(new Recipe("Shears_1", "Iron_4"));
+		anvilRecipes.add(new Recipe("Watering Can_1", "Iron_3"));
 
 		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));
@@ -132,7 +133,8 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("regen potion_1", "awkward potion_1", "Gold Apple_1"));
 		enchantRecipes.add(new Recipe("Health Potion_1", "awkward potion_1", "GunPowder_2", "Leather Armor_1"));
 		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "GunPowder_3", "Lapis_7"));
-		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5"));
-		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5","Shard_15"));
+		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5", "Cloud Ore_5"));
+		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5", "Shard_15"));
+		enchantRecipes.add(new Recipe("Arcane Fertilizer_3", "Lapis_6", "Bone_2"));
 	}
 }

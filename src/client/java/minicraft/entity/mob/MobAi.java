@@ -84,7 +84,7 @@ public abstract class MobAi extends Mob {
 		if (lifetime > 0) {
 			age++;
 			if (age > lifetime) {
-				boolean playerClose = getLevel().entityNearPlayer((Entity) this);
+				boolean playerClose = getLevel().entityNearPlayer(this);
 
 				if (!playerClose) {
 					remove();
