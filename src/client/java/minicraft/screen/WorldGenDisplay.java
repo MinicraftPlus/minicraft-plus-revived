@@ -12,6 +12,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -177,6 +178,7 @@ public class WorldGenDisplay extends Display {
 		Menu mainMenu =
 			new Menu.Builder(false, 3, RelPos.CENTER,
 				nameField,
+				new BlankEntry(),
 				worldSeed,
 				Settings.getEntry("size"),
 				Settings.getEntry("theme"),
@@ -185,6 +187,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("tutorials"),
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
+				new BlankEntry(),
 				createWorld
 			)
 				.setTitle("minicraft.displays.world_gen.title")
