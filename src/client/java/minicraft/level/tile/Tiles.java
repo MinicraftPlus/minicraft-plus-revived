@@ -1,6 +1,10 @@
 package minicraft.level.tile;
 
 import minicraft.core.CrashHandler;
+import minicraft.level.tile.farming.HeavenlyBerriesTile;
+import minicraft.level.tile.farming.HellishBerriesTile;
+import minicraft.level.tile.farming.TomatoTile;
+import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
@@ -75,6 +79,10 @@ public final class Tiles {
 		tiles.put((short)50, new FenceTile(Tile.Material.Wood));
 		tiles.put((short)51, new FenceTile(Tile.Material.Stone));
 		tiles.put((short)52, new FenceTile(Tile.Material.Obsidian));
+		tiles.put((short)50, new TomatoTile("Tomato"));
+		tiles.put((short)51, new CarrotTile("Carrot"));
+		tiles.put((short)52, new HeavenlyBerriesTile("Heavenly Berries"));
+		tiles.put((short)53, new HellishBerriesTile("Hellish Berries"));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
@@ -86,7 +94,7 @@ public final class Tiles {
 	}
 
 
-	protected static void add(int id, Tile tile) {
+	static void add(int id, Tile tile) {
 		tiles.put((short)id, tile);
 		Logging.TILES.debug("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;
