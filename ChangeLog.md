@@ -61,7 +61,6 @@ but some sections are changed to compliant this project.
 ### Removals
 
 * Removed stepped sand texture
-* Removed Chrismas-related splash text
 
 ### Fixes
 
