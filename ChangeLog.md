@@ -16,7 +16,8 @@ but some sections are changed to compliant this project.
 * Added obsidian knight as the second boss
 * Added limitation to inventories
 * Added limitation to stackable items
-* Added four new debug arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`
+* Added seven new debug arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`, `--debug-level`, `--debug-locale`, `--debug-unloc-tracing`
+* Added a new argument for disabling hardware acceleration - `--no-hardware-acceleration`
 * Added a toggle for HUD display
 * Added a toggle for simplified effect display
 * Added a new menu for creative mode
@@ -36,6 +37,7 @@ but some sections are changed to compliant this project.
 * Added coloured sheep (#445)
 * Added ability to dye sheep and beds (#445)
 * Cow and sheep now graze on grasses
+* Added a trigger to auto-enable hardware acceleration
 
 ### Changes
 
@@ -51,10 +53,15 @@ but some sections are changed to compliant this project.
 * Made languages fallback to English
 * Improved the tile place indicator
 * Overhauled debugging actions
+* Overhauled the farming system
+* Changed the languaging setting menu
+* Optimized CPU usage
+* Reduced food stamina cost
 
 ### Removals
 
 * Removed stepped sand texture
+* Removed Chrismas-related splash text
 
 ### Fixes
 
@@ -62,6 +69,7 @@ but some sections are changed to compliant this project.
 * Fixed rendering positioning problem of color code styled texts
 * Fixed lights disappearing when out of screen
 * Fixed animals and items destroying plants
+* Fixed various old world loading crashes
 
 ## [2.1.3]
 
