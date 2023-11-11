@@ -1,0 +1,16 @@
+api_token: 717434b2cbaa8af9a9ac250e3cc8dc05 # readonly token
+projects:
+- format: key_value_json
+  id: 590819
+  terms:
+    en-us: src/client/resources/assets/localization/en-us.json
+    es: src/client/resources/assets/localization/es-es.json
+    fr: src/client/resources/assets/localization/fr-fr.json
+    hu: src/client/resources/assets/localization/hu-hu.json
+    id: src/client/resources/assets/localization/id-id.json
+    it: src/client/resources/assets/localization/it-it.json
+    nb: src/client/resources/assets/localization/nb-no.json
+    pt: src/client/resources/assets/localization/pt-pt.json
+    ru: src/client/resources/assets/localization/ru-ru.json
+    tr: src/client/resources/assets/localization/tr-tr.json
+  terms_path: src/client/resources/assets/localization/en-us.json
