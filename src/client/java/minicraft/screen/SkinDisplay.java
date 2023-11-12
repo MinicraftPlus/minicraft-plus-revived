@@ -265,7 +265,6 @@ public class SkinDisplay extends Display {
 		screen.render(xOffset, yOffset, sprite);
 
 		// Help text.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.DARK_GRAY);
 	}
 

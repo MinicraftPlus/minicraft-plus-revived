@@ -394,7 +394,7 @@ public class ResourcePackDisplay extends Display {
 
 		// Info text at the bottom.
 		if (Game.input.anyControllerConnected()) Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move"), screen, Screen.h - 25, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
 		helpPositionTextEntry.render(screen, (Screen.w - helpPositionTextEntry.getWidth()) / 2 + helpPositionTextEntry.getXDisplacement(), Screen.h - 9, false, null);
 
@@ -901,7 +901,6 @@ public class ResourcePackDisplay extends Display {
 				switch (path) {
 					case "assets/books/about.txt": BookData.about = () -> book; break;
 					case "assets/books/credits.txt": BookData.credits = () -> book; break;
-					case "assets/books/instructions.txt": BookData.instructions = () -> book; break;
 					case "assets/books/antidous.txt": BookData.antVenomBook = () -> book; break;
 					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
 				}

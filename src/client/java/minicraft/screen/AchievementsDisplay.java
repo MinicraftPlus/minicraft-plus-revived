@@ -129,9 +129,6 @@ public class AchievementsDisplay extends Display {
             // Achievement description.
             menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
         }
-
-        // Help text.
-        Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements.display.help", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 8, Color.DARK_GRAY);
     }
 
     /**

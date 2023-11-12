@@ -50,8 +50,7 @@ public class TitleDisplay extends Display {
 			new SelectEntry("minicraft.displays.title.help", () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 					new BlankEntry(),
-					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new PagedDisplay(
-							Localization.getLocalized("minicraft.displays.title.help.instructions"), BookData.instructions.collect()))),
+					new SelectEntry("minicraft.displays.how_to_play", () -> Game.setDisplay(new HowToPlayDisplay())),
 					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new PagedDisplay(
 							Localization.getLocalized("minicraft.displays.title.help.storyline_guide"), BookData.storylineGuide.collect()))),
 					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new PagedDisplay(
@@ -150,14 +149,7 @@ public class TitleDisplay extends Display {
 
 		Font.draw(Localization.getLocalized("minicraft.displays.title.display.version", Game.VERSION), screen, 1, 1, Color.get(1, 51));
 
-
-		String upString = Localization.getLocalized("minicraft.displays.title.display.help.0", Game.input.getMapping("cursor-up"), Game.input.getMapping("cursor-down"));
-		String selectString = Localization.getLocalized("minicraft.displays.title.display.help.1", Game.input.getMapping("select"));
-		String exitString = Localization.getLocalized("minicraft.displays.title.display.help.2", Game.input.getMapping("exit"));
-
-		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
-		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);
-		Font.drawCentered(exitString, screen, Screen.h - 10, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.title.display.help"), screen, Screen.h - 10, Color.DARK_GRAY);
 	}
 
 	private static final String[] splashes = {

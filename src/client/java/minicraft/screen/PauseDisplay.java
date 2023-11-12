@@ -17,9 +17,6 @@ import java.util.Arrays;
 public class PauseDisplay extends Display {
 
 	public PauseDisplay() {
-		String upString = Localization.getLocalized("minicraft.displays.pause.display.help.scroll", Game.input.getMapping("cursor-up"), Game.input.getMapping("cursor-down"));
-		String selectString = Localization.getLocalized("minicraft.displays.pause.display.help.choose", Game.input.getMapping("select"));
-
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 				new BlankEntry(),
 				new SelectEntry("minicraft.displays.pause.return", () -> Game.setDisplay(null)),
@@ -48,12 +45,7 @@ public class PauseDisplay extends Display {
 				}));
 
 				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 8), items.toArray(new ListEntry[0])));
-			}),
-
-			new BlankEntry(),
-
-			new StringEntry(upString, Color.GRAY),
-			new StringEntry(selectString, Color.GRAY)
+			})
 		));
 
 		menus = new Menu[] {
