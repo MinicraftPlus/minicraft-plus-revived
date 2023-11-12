@@ -126,7 +126,10 @@ public class Updater extends Game {
 			// assert curDisplay == prevDisplay;
 			currentDisplay = displayQuery.peek();
 			assert currentDisplay != null;
-			currentDisplay.init(prevDisplay);
+			if (prevDisplay.getParent() == currentDisplay)
+				prevDisplay.onExit();
+			else
+				currentDisplay.init(prevDisplay);
 		}
 
 		Level level = levels[currentLevel];

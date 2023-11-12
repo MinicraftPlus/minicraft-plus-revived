@@ -1,7 +1,6 @@
 package minicraft.gfx;
 
 import minicraft.core.Renderer;
-import minicraft.core.io.Localization;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.screen.entry.ListEntry;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,10 @@ public class Font {
 			"6789.,!?'\"-+=/\\%()<>:;^@ÁÉÍÓÚÑ¿¡"+
 			"ÃÊÇÔÕĞÇÜİÖŞÆØÅŰŐ[]#|{}_АБВГДЕЁЖЗ"+
 			"ИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯÀÂÄÈÎÌÏÒ"+
-			"ÙÛÝ*«»£$&€§ªº";
+			"ÙÛÝ*«»£$&€§ªºabcdefghijklmnopqrs"+
+			"tuvwxyzáàãâäéèêëíìîïóòõôöúùûüçñý"+
+			"ÿабвгдеёжзийклмнопрстуфхцчшщъыьэ"+
+			"юяışő";
 
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 
@@ -26,7 +28,6 @@ public class Font {
 	/** Draws the message to the x & y coordinates on the screen. */
 	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) { draw(msg, screen, x, y, whiteTint, null); }
 	public static void draw(String msg, Screen screen, int x, int y, int whiteTint, @Nullable ListEntry.IntRange bounds) {
-		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
 			if (ix >= 0) {
@@ -71,9 +72,8 @@ public class Font {
 	public static void drawBackground(String msg, Screen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
 
 	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
-		String newMsg = msg.toUpperCase(Localization.getSelectedLocale());
-		for (int i = 0; i < newMsg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
+		for (int i = 0; i < msg.length(); i++) { // Renders the black boxes under the text
+			screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
 		}
 
 		// Renders the text
@@ -83,6 +83,7 @@ public class Font {
 	public static int textWidth(String text) { // Filtering out coloring codes.
 		return (int) (Math.max(text.length() - text.chars().filter(ch -> ch == Color.COLOR_CHAR).count() * 5, 0) * 8);
 	}
+
 	public static int textWidth(String[] para) {
 		// This returns the maximum length of all the lines.
 		if (para == null || para.length == 0) return 0;

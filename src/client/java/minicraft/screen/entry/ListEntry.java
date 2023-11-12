@@ -7,8 +7,6 @@ import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-
 public abstract class ListEntry {
 
 	public static final int COL_UNSLCT = Color.GRAY;
@@ -34,8 +32,7 @@ public abstract class ListEntry {
 			return;
 		}
 
-		String string = toString().toLowerCase(Locale.ENGLISH);
-		contain = contain.toLowerCase(Locale.ENGLISH);
+		String string = toString();
 
 		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
 	}

@@ -129,12 +129,12 @@ public abstract class Mob extends Entity {
 
 	/** The mob immediately despawns if the distance of the closest player is greater than the return value of this. */
 	protected int getDespawnDistance() {
-		return 80;
+		return 1280;
 	}
 
 	/** The mob randomly despawns if the distance of the closest player is greater than the return value of this. */
 	protected int getNoDespawnDistance() {
-		return 40;
+		return 640;
 	}
 
 	/** @see #handleDespawn() */
