@@ -322,21 +322,7 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getMappedKey("right").isClicked()) { // Move cursor to the second list.
-			if (selection == 0) {
-				Sound.play("select");
-				onSelectionChange(0, 1);
-			}
-
-			return;
-		} else if (input.getMappedKey("left").isClicked()) { // Move cursor to the first list.
-			if (selection == 1) {
-				Sound.play("select");
-				onSelectionChange(1, 0);
-			}
-
-			return;
-		} else if (input.getMappedKey("shift-right").isClicked()) { // Move the selected pack to the second list.
+		if (input.getMappedKey("shift+cursor-right").isClicked()) { // Move the selected pack to the second list.
 			if (selection == 0 && resourcePacks.size() > 0) {
 				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
@@ -345,7 +331,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift-left").isClicked()) { // Move the selected pack to the first list.
+		} else if (input.getMappedKey("shift+cursor-left").isClicked()) { // Move the selected pack to the first list.
 			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
 				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
@@ -354,7 +340,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift-up").isClicked()) { // Move up the selected pack in the second list.
+		} else if (input.getMappedKey("shift+cursor-up").isClicked()) { // Move up the selected pack in the second list.
 			if (selection == 1 && menus[1].getSelection() > 0) {
 				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
@@ -364,13 +350,27 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift-down").isClicked()) { // Move down the selected pack in the second list.
+		} else if (input.getMappedKey("shift+cursor-down").isClicked()) { // Move down the selected pack in the second list.
 			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
 				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
 				refreshEntries();
 				Sound.play("select");
+			}
+
+			return;
+		} else if (input.getMappedKey("cursor-right").isClicked()) { // Move cursor to the second list.
+			if (selection == 0) {
+				Sound.play("select");
+				onSelectionChange(0, 1);
+			}
+
+			return;
+		} else if (input.getMappedKey("cursor-left").isClicked()) { // Move cursor to the first list.
+			if (selection == 1) {
+				Sound.play("select");
+				onSelectionChange(1, 0);
 			}
 
 			return;

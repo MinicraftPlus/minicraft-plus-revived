@@ -433,7 +433,7 @@ public class InputHandler implements KeyListener {
 		synchronized ("lock") {
 			String[] split = keyText.split("\\+");
 			for (String s : split) {
-				keys.add(getKey(s));
+				keys.add(getKey(keymap.getOrDefault(s, s)));
 			}
 		}
 
