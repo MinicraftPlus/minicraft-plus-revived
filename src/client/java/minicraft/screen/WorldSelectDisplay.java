@@ -80,7 +80,7 @@ public class WorldSelectDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("SHIFT-C").clicked || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
+		if (input.getMappedKey("SHIFT-C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.BLUE));
@@ -127,7 +127,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-R").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
+		} else if (input.getMappedKey("SHIFT-R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			names.remove(worldName);
@@ -173,7 +173,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-D").clicked || input.leftTriggerPressed() && input.rightTriggerPressed()) {
+		} else if (input.getMappedKey("SHIFT-D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
 				Color.toStringCode(Color.tint(Color.RED, 1, true)), worldNames.get(menus[0].getSelection()),

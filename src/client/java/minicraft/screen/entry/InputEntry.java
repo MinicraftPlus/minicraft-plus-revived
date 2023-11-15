@@ -42,14 +42,14 @@ public class InputEntry extends ListEntry {
 
 		if (maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
-		if (input.getKey("CTRL-V").clicked) {
+		if (input.getMappedKey("CTRL-V").isClicked()) {
 			userInput = userInput + clipboardHandler.getClipboardContents();
 		}
 		if (!userInput.equals("")) {
-			if (input.getKey("CTRL-C").clicked) {
+			if (input.getMappedKey("CTRL-C").isClicked()) {
 				clipboardHandler.setClipboardContents(userInput);
 			}
-			if (input.getKey("CTRL-X").clicked) {
+			if (input.getMappedKey("CTRL-X").isClicked()) {
 				clipboardHandler.setClipboardContents(userInput);
 				userInput = "";
 			}
