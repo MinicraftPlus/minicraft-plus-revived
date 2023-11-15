@@ -11,6 +11,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
+import minicraft.screen.Notification;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
@@ -177,6 +178,16 @@ public class Updater extends Game {
 		}
 
 		if (updateNoteTick) notetick++;
+		Notification notification;
+		if ((notification = inAppNotifications.peek()) != null) {
+			boolean refresh = true;
+			if (notification.isExpired()) {
+				inAppNotifications.pop(); // Removes
+				refresh = (notification = inAppNotifications.peek()) != null; // Tries getting new
+			}
+
+			if (refresh) notification.tick();
+		}
 
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!Renderer.canvas.hasFocus()) {
@@ -331,7 +342,7 @@ public class Updater extends Game {
 	}
 	public static void notifyAll(String msg, int notetick) {
 		msg = Localization.getLocalized(msg);
-		notifications.add(msg);
+		inGameNotifications.add(msg);
 		Updater.notetick = notetick;
 	}
 }

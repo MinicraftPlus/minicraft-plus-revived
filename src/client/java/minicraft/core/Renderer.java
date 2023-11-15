@@ -27,6 +27,7 @@ import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
+import minicraft.screen.Notification;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.TutorialDisplayHandler;
@@ -122,6 +123,11 @@ public class Renderer extends Game {
 
 		if (currentDisplay != null) // Renders menu, if present.
 			currentDisplay.render(screen);
+
+		Notification notification;
+		if ((notification = inAppNotifications.peek()) != null) {
+			notification.render(screen);
+		}
 
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
@@ -268,18 +274,18 @@ public class Renderer extends Game {
 		// NOTIFICATIONS
 
 		Updater.updateNoteTick = false;
-		if (permStatus.size() == 0 && notifications.size() > 0) {
+		if (permStatus.size() == 0 && inGameNotifications.size() > 0) {
 			Updater.updateNoteTick = true;
-			if (notifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
-				notifications = notifications.subList(notifications.size() - 3, notifications.size());
+			if (inGameNotifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
+				inGameNotifications = inGameNotifications.subList(inGameNotifications.size() - 3, inGameNotifications.size());
 			}
 
 			if (Updater.notetick > 180) { // Display time per notification.
-				notifications.remove(0);
+				inGameNotifications.remove(0);
 				Updater.notetick = 0;
 			}
 			List<String> print = new ArrayList<>();
-			for (String n : notifications) {
+			for (String n : inGameNotifications) {
 				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
 					print.add(l);
 			}

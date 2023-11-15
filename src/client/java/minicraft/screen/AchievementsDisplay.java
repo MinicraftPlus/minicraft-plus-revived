@@ -165,7 +165,7 @@ public class AchievementsDisplay extends Display {
             achievementScore += a.score;
 
             // Tells the player that they got an achievement.
-            Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked", Localization.getLocalized(id)));
+            Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked", Localization.getLocalized(id)));
         }
         else
             achievementScore -= a.score;

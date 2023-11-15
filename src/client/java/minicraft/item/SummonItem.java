@@ -56,10 +56,10 @@ public class SummonItem extends StackableItem {
 						}
 					}
 					else {
-						Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
+						Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
 					}
 				} else {
-					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_sky"));
+					Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.wrong_level_sky"));
 				}
 
 				break;
@@ -85,16 +85,16 @@ public class SummonItem extends StackableItem {
 									success = true;
 								}
 							} else {
-								Game.notifications.add(Localization.getLocalized("minicraft.notification.knight_statue_exists"));
+								Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.knight_statue_exists"));
 							}
 						} else {
-							Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
+							Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
 						}
 					} else {
-						Game.notifications.add(Localization.getLocalized("minicraft.notification.spawn_on_boss_tile"));
+						Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.spawn_on_boss_tile"));
 					}
 				} else {
-					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_dungeon"));
+					Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.wrong_level_dungeon"));
 				}
 				break;
 			default:

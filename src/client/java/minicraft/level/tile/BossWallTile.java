@@ -29,7 +29,7 @@ public class BossWallTile extends WallTile {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {
 					if (player.payStamina(1)) {
-						Game.notifications.add(Localization.getLocalized(wallMsg));
+						Game.inGameNotifications.add(Localization.getLocalized(wallMsg));
 						Sound.play("monsterhurt");
 						return true;
 					}

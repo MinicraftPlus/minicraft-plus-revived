@@ -757,7 +757,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// For secret messages :=)
-						Game.notifications.add(itemData.substring(1));
+						Game.inGameNotifications.add(itemData.substring(1));
 					} else {
 						if (Items.get(itemData).equals(Items.get("Raw Fish"))) {
 							AchievementsDisplay.setAchievement("minicraft.achievement.fish",true);
