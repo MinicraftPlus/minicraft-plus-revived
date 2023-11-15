@@ -92,19 +92,19 @@ public class Updater extends Game {
 	public static void tick() {
 
 		// Quick Level change: move the player for -1, or 1 levels
-		if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
+		if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-S").isClicked() ) {
 			Game.setDisplay(new LevelTransitionDisplay(-1));
 
-		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
+		} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked() ){
 			Game.setDisplay(new LevelTransitionDisplay(1));
 		}
 
-		if (input.getKey("FULLSCREEN").clicked) {
+		if (input.getMappedKey("FULLSCREEN").isClicked()) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
 		}
 
-		if (input.getKey("screenshot").clicked) {
+		if (input.getMappedKey("screenshot").isClicked()) {
 			screenshot++;
 		}
 
@@ -218,13 +218,13 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (currentDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (currentDisplay == null && input.getMappedKey("F3").isClicked()) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 
 				// For debugging only
 				{
-					if (input.getKey("F3-L").clicked) {
+					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
 						for (Level value : levels) {
@@ -234,56 +234,56 @@ public class Updater extends Game {
 					}
 
 					// Host-only cheats.
-					if (input.getKey("F3-T-1").clicked) changeTimeOfDay(Time.Morning);
-					if (input.getKey("F3-T-2").clicked) changeTimeOfDay(Time.Day);
-					if (input.getKey("F3-T-3").clicked) changeTimeOfDay(Time.Evening);
-					if (input.getKey("F3-T-4").clicked) changeTimeOfDay(Time.Night);
+					if (input.getMappedKey("F3-T-1").isClicked()) changeTimeOfDay(Time.Morning);
+					if (input.getMappedKey("F3-T-2").isClicked()) changeTimeOfDay(Time.Day);
+					if (input.getMappedKey("F3-T-3").isClicked()) changeTimeOfDay(Time.Evening);
+					if (input.getMappedKey("F3-T-4").isClicked()) changeTimeOfDay(Time.Night);
 
 					String prevMode = (String)Settings.get("mode");
-					if (input.getKey("F3-F4-2").clicked) {
+					if (input.getMappedKey("F3-F4-2").isClicked()) {
 						Settings.set("mode", "minicraft.settings.mode.creative");
 						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
 					}
-					if (input.getKey("F3-F4-1").clicked) {
+					if (input.getMappedKey("F3-F4-1").isClicked()) {
 						Settings.set("mode", "minicraft.settings.mode.survival");
 						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
 					}
-					if (input.getKey("F3-F4-3").clicked) {
+					if (input.getMappedKey("F3-F4-3").isClicked()) {
 						Settings.set("mode", "minicraft.settings.mode.score");
 						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
 					}
 
-					if (isMode("minicraft.settings.mode.score") && input.getKey("F3-SHIFT-T").clicked) {
+					if (isMode("minicraft.settings.mode.score") && input.getMappedKey("F3-SHIFT-T").isClicked()) {
 						scoreTime = normSpeed * 5; // 5 seconds
 					}
 
 					float prevSpeed = gamespeed;
-					if (input.getKey("F3-S-0").clicked) {
+					if (input.getMappedKey("F3-S-0").isClicked()) {
 						gamespeed = 1;
 						Logging.WORLDNAMED.trace("Tick speed reset from {} into 1.", prevSpeed);
 					}
-					if (input.getKey("F3-S-equals").clicked) {
+					if (input.getMappedKey("F3-S-equals").isClicked()) {
 						if (gamespeed < 1) gamespeed *= 2;
 						else if (normSpeed*gamespeed < 2000) gamespeed++;
 						Logging.WORLDNAMED.trace("Tick speed increased from {} into {}.", prevSpeed, gamespeed);
 					}
-					if (input.getKey("F3-S-minus").clicked) {
+					if (input.getMappedKey("F3-S-minus").isClicked()) {
 						if (gamespeed > 1) gamespeed--;
 						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
 						Logging.WORLDNAMED.trace("Tick speed decreased from {} into {}.", prevSpeed, gamespeed);
 					}
 
-					if (input.getKey("F3-h").clicked) player.health--;
-					if (input.getKey("F3-b").clicked) player.hunger--;
+					if (input.getMappedKey("F3-h").isClicked()) player.health--;
+					if (input.getMappedKey("F3-b").isClicked()) player.hunger--;
 
-					if (input.getKey("F3-M-0").clicked) player.moveSpeed = 1;
-					if (input.getKey("F3-M-equals").clicked) player.moveSpeed++;
-					if (input.getKey("F3-M-minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
+					if (input.getMappedKey("F3-M-0").isClicked()) player.moveSpeed = 1;
+					if (input.getMappedKey("F3-M-equals").isClicked()) player.moveSpeed++;
+					if (input.getMappedKey("F3-M-minus").isClicked() && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
 
-					if (input.getKey("F3-u").clicked) {
+					if (input.getMappedKey("F3-u").isClicked()) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
 					}
-					if (input.getKey("F3-d").clicked) {
+					if (input.getMappedKey("F3-d").isClicked()) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
 					}
 				} // End debug only cond.

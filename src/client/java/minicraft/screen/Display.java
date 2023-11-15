@@ -56,8 +56,8 @@ public class Display {
 			int prevSel = selection;
 
 			String shift = menus[selection].getCurEntry() instanceof ArrayEntry ? "shift-" : "";
-			if (input.getKey(shift+"left").clicked || input.leftTriggerPressed()) selection--;
-			if (input.getKey(shift+"right").clicked || input.rightTriggerPressed()) selection++;
+			if (input.getMappedKey(shift+"left").isClicked() || input.leftTriggerPressed()) selection--;
+			if (input.getMappedKey(shift+"right").isClicked() || input.rightTriggerPressed()) selection++;
 
 			if (prevSel != selection) {
 				Sound.play("select");

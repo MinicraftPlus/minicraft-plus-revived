@@ -14,11 +14,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
+import java.util.function.Predicate;
 
 public class InputHandler implements KeyListener {
 	/**
@@ -84,7 +86,7 @@ public class InputHandler implements KeyListener {
 	}
 
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
-	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
+	private HashMap<String, PhysicalKey> keyboard; // The actual map of key names to Key objects.
 	private String lastKeyTyped = ""; // Used for things like typing world names.
 	private String keyTypedBuffer = ""; // Used to store the last key typed before putting it into the main var during tick().
 
@@ -102,9 +104,9 @@ public class InputHandler implements KeyListener {
 		}
 
 		// I'm not entirely sure if this is necessary... but it doesn't hurt.
-		keyboard.put("SHIFT", new Key(true));
-		keyboard.put("CTRL", new Key(true));
-		keyboard.put("ALT", new Key(true));
+		keyboard.put("SHIFT", new PhysicalKey(true));
+		keyboard.put("CTRL", new PhysicalKey(true));
+		keyboard.put("ALT", new PhysicalKey(true));
 
 		controllerManager.initSDLGamepad();
 		controllerIndex = controllerManager.getControllerIndex(0);
@@ -200,8 +202,9 @@ public class InputHandler implements KeyListener {
 	public void tick() {
 		lastKeyTyped = keyTypedBuffer;
 		keyTypedBuffer = "";
+		inputMask = null;
 		synchronized ("lock") {
-			for (Key key: keyboard.values())
+			for (PhysicalKey key: keyboard.values())
 				key.tick(); // Call tick() for each key.
 		}
 
@@ -225,21 +228,41 @@ public class InputHandler implements KeyListener {
 	}
 
 	// The Key class.
-	public static class Key {
+	public static abstract class Key {
+		public abstract boolean isDown();
+
+		public abstract boolean isClicked();
+
+		public String toString() { // For debugging
+			return "down:" + isDown() + "; clicked:" + isClicked();
+		}
+	}
+
+	private static class PhysicalKey extends Key {
 		// presses = how many times the Key has been pressed.
 		// absorbs = how many key presses have been processed.
 		private int presses, absorbs;
 		// down = if the key is currently physically being held down.
 		// clicked = if the key is still being processed at the current tick.
-		public boolean down, clicked;
+		protected boolean down, clicked;
 		// sticky = true if presses reaches 3, and the key continues to be held down.
 		private boolean sticky;
 
-		boolean stayDown;
+		protected boolean stayDown;
 
-		public Key() { this(false); }
-		public Key(boolean stayDown) {
+		public PhysicalKey() { this(false); }
+		public PhysicalKey(boolean stayDown) {
 			this.stayDown = stayDown;
+		}
+
+		@Override
+		public boolean isDown() {
+			return down;
+		}
+
+		@Override
+		public boolean isClicked() {
+			return clicked;
 		}
 
 		/** toggles the key down or not down. */
@@ -279,9 +302,64 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
+	private static class CompoundedKey extends Key {
+		private final HashSet<Key> keys;
+
+		public CompoundedKey(Collection<Key> keys) {
+			this.keys = new HashSet<>(keys);
+		}
+
+		@Override
+		public boolean isDown() { // All keys down.
+			return keys.stream().allMatch(Key::isDown);
+		}
+
+		@Override
+		public boolean isClicked() { // If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
+			return isDown() && keys.stream().anyMatch(Key::isClicked);
+		}
+	}
+
+	private static class ORKey extends Key {
+		private final HashSet<Key> keys;
+
+		public ORKey(Collection<Key> keys) {
+			this.keys = new HashSet<>(keys);
+		}
+
+		@Override
+		public boolean isDown() {
+			return keys.stream().anyMatch(Key::isDown);
+		}
+
+		@Override
+		public boolean isClicked() {
+			return keys.stream().anyMatch(Key::isClicked);
+		}
+	}
+
+	private static final Predicate<String> maskAll = k -> true;
+	private static final Key keyMask = new Key() {
+		@Override
+		public boolean isDown() {
+			return false;
+		}
+
+		@Override
+		public boolean isClicked() {
+			return false;
+		}
+	};
+	private @Nullable Predicate<String> inputMask = null;
+
+	public void maskInput(@Nullable Predicate<String> filter) {
+		if (filter == null) filter = maskAll;
+		inputMask = inputMask == null ? filter : inputMask.and(filter);
+	}
+
 	/** This is used to stop all of the actions when the game is out of focus. */
 	public void releaseAll() {
-		for (Key key: keyboard.values().toArray(new Key[0])) {
+		for (PhysicalKey key: keyboard.values()) {
 			key.release();
 		}
 	}
@@ -331,31 +409,52 @@ public class InputHandler implements KeyListener {
 	}
 
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
-	public Key getKey(String keytext) { return getKey(keytext, true); }
-	private Key getKey(String keytext, boolean getFromMap) {
-		// If the passed-in key is blank, or null, then return null.
-		if (keytext == null || keytext.length() == 0) return new Key();
-
-		keytext = keytext.toUpperCase(java.util.Locale.ENGLISH); // Prevent errors due to improper "casing"
+	// For mapped keys
+	public Key getMappedKey(String keyText) {
+		keyText = keyText.toUpperCase(java.util.Locale.ENGLISH); // Prevent errors due to improper "casing"
 		synchronized ("lock") {
-			if(getFromMap) { // If false, we assume that keytext is a physical key.
-				// If the passed-in key equals one in keymap, then replace it with it's match, a key in keyboard.
-				if (keymap.containsKey(keytext))
-					keytext = keymap.get(keytext); // Converts action name to physical key name
+			// If the passed-in key equals one in keymap, then replace it with its match, a key in keyboard.
+			if (keymap.containsKey(keyText)) // If false, we assume that keytext is a physical key.
+				keyText = keymap.get(keyText); // Converts action name to physical key name
+		}
+
+		if (keyText.contains("|")) {
+			/// Multiple key possibilities exist for this action; so, combine the results of each one!
+			ArrayList<Key> keys = new ArrayList<>();
+			for (String keyposs: keyText.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
+				// It really does combine using "or":
+				keys.add(getMappedKey(keyposs));
+			}
+			return new ORKey(keys);
+		}
+
+		// Complex compound key binding support.
+		HashSet<Key> keys = new HashSet<>();
+		synchronized ("lock") {
+			String[] split = keyText.split("\\+");
+			for (String s : split) {
+				keys.add(getKey(s));
 			}
 		}
 
+		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
+		return new CompoundedKey(keys); // Return the Key object.
+	}
+	// Physical keys only
+	private Key getKey(String keytext) {
+		// If the passed-in key is blank, or null, then return null.
+		if (keytext == null || keytext.isEmpty()) return keyMask;
+
+		keytext = keytext.toUpperCase(java.util.Locale.ENGLISH); // Prevent errors due to improper "casing"
+
 		if (keytext.contains("|")) {
 			/// Multiple key possibilities exist for this action; so, combine the results of each one!
-			Key key = new Key();
+			ArrayList<Key> keys = new ArrayList<>();
 			for (String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
-				Key aKey = getKey(keyposs, false); // This time, do NOT attempt to fetch from keymap.
-
 				// It really does combine using "or":
-				key.down = key.down || aKey.down;
-				key.clicked = key.clicked || aKey.clicked;
+				keys.add(getKey(keyposs));
 			}
-			return key;
+			return new ORKey(keys);
 		}
 
 		// Complex compound key binding support.
@@ -364,10 +463,11 @@ public class InputHandler implements KeyListener {
 			String[] split = keytext.split("-");
 			for (String s : split) {
 				if (keyboard.containsKey(s))
-					keys.add(keyboard.get(s)); // Gets the key object from keyboard, if if exists.
+					// Gets the key object from keyboard, if it exists.
+					keys.add(inputMask == null || !inputMask.test(s) ? keyboard.get(s) : keyMask);
 				else {
 					// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
-					Key key = new Key(); // Make new key
+					PhysicalKey key = new PhysicalKey(); // Make new key
 					keyboard.put(s, key); // Add it to keyboard
 					keys.add(key);
 
@@ -376,17 +476,11 @@ public class InputHandler implements KeyListener {
 			}
 		}
 
-		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
+		// Returns the key itself if there is only one key.
+		if (keys.size() == 1) return keys.iterator().next();
 
-		Key key = new Key();
-		key.down = true; // The set is not empty, so this will not be returned directly.
-		key.clicked = false;
-		return keys.stream().reduce(key, (k0, k1) -> {
-			k0.down = k0.down && k1.down; // All keys down.
-			// If the whole key binding is clicked, then the all keys must be down and at least one of these is/are just clicked.
-			k0.clicked = k0.down && (k0.clicked || k1.clicked);
-			return k0;
-		}); // Return the Key object.
+		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
+		return new CompoundedKey(keys); // Return the Key object.
 	}
 
 	/// This method provides a way to press physical keys without actually generating a key event.
@@ -400,7 +494,7 @@ public class InputHandler implements KeyListener {
 		ArrayList<String> keyList = new ArrayList<>(keyboard.size());
 
 		synchronized ("lock") {
-			for (Entry<String, Key> entry : keyboard.entrySet()) {
+			for (Entry<String, PhysicalKey> entry : keyboard.entrySet()) {
 				if (entry.getValue().down) {
 					keyList.add(entry.getKey());
 				}
@@ -411,14 +505,14 @@ public class InputHandler implements KeyListener {
 	}
 
 	/// This gets a key from key text, w/o adding to the key list.
-	private Key getPhysKey(String keytext) {
+	private PhysicalKey getPhysKey(String keytext) {
 		keytext = keytext.toUpperCase();
 
 		if (keyboard.containsKey(keytext))
 			return keyboard.get(keytext);
 		else {
 			//System.out.println("UNKNOWN KEYBOARD KEY: " + keytext); // it's okay really; was just checking
-			return new Key(); // Won't matter where I'm calling it.
+			return new PhysicalKey(); // Won't matter where I'm calling it.
 		}
 	}
 
@@ -486,9 +580,9 @@ public class InputHandler implements KeyListener {
 	}
 
 	private String getCurModifiers() {
-		return (getKey("ctrl").down ? "CTRL-" : "") +
-				(getKey("alt").down ? "ALT-" : "") +
-				(getKey("shift").down ? "SHIFT-" : "");
+		return (getKey("ctrl").isDown() ? "CTRL-" : "") +
+				(getKey("alt").isDown() ? "ALT-" : "") +
+				(getKey("shift").isDown() ? "SHIFT-" : "");
 	}
 
 	/** Used by Save.java, to save user key preferences. */
@@ -580,12 +674,12 @@ public class InputHandler implements KeyListener {
 
 	public boolean inputPressed(String mapping) {
 		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
-		return getKey(mapping).clicked || (buttonMap.containsKey(mapping) && buttonPressed(buttonMap.get(mapping)));
+		return getMappedKey(mapping).isClicked() || (buttonMap.containsKey(mapping) && buttonPressed(buttonMap.get(mapping)));
 	}
 
 	public boolean inputDown(String mapping) {
 		mapping = mapping.toUpperCase(java.util.Locale.ENGLISH);
-		return getKey(mapping).down || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
+		return getMappedKey(mapping).isDown() || (buttonMap.containsKey(mapping) && buttonDown(buttonMap.get(mapping)));
 	}
 
 	/**

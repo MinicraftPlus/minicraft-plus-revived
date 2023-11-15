@@ -76,7 +76,7 @@ public class KeyInputDisplay extends Display {
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 4), StringEntry.useLines(Color.YELLOW,
 				"minicraft.displays.key_input.popup_display.press_key_sequence")));
-		} else if (input.getKey("shift-d").clicked) {
+		} else if (input.getMappedKey("shift-d").isClicked()) {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 				input.resetKeyBindings();
