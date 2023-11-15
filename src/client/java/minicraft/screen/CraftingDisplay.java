@@ -134,7 +134,7 @@ public class CraftingDisplay extends Display {
 			if (!acted)
 				recipeMenu.tick(input);
 
-			if (input.getKey("menu").clicked || (isPersonalCrafter && input.inputPressed("craft"))) {
+			if (input.getMappedKey("menu").isClicked() || (isPersonalCrafter && input.inputPressed("craft"))) {
 				Game.exitDisplay();
 				return;
 			}

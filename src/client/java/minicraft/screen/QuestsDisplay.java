@@ -427,22 +427,22 @@ public class QuestsDisplay extends Display {
 				super.tick(input);
 
 				if (questsTree.length > 0) {
-					if (input.getKey("shift").down) { // Browsing mode.
+					if (input.getMappedKey("shift").isDown()) { // Browsing mode.
 						inBrowsing = true;
-						if (input.getKey("shift-down").clicked)
+						if (input.getMappedKey("shift+cursor-down").isClicked())
 							yScroll += 3;
-						else if (input.getKey("shift-up").clicked)
+						else if (input.getMappedKey("shift+cursor-up").isClicked())
 							yScroll -= 3;
-						else if (input.getKey("shift-right").clicked)
+						else if (input.getMappedKey("shift+cursor-right").isClicked())
 							xScroll += 3;
-						else if (input.getKey("shift-left").clicked)
+						else if (input.getMappedKey("shift+cursor-left").isClicked())
 							xScroll -= 3;
 					} else {
 						if (inBrowsing) {
 							scrollIfNeeded();
 							inBrowsing = false;
 						}
-						if (input.getKey("cursor-down").clicked) {
+						if (input.getMappedKey("cursor-down").isClicked()) {
 							if (cursorY < questsTree.length - 1) {
 								cursorY++;
 								if (cursorX >= questsTree[cursorY].length)
@@ -450,7 +450,7 @@ public class QuestsDisplay extends Display {
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("cursor-up").clicked) {
+						} else if (input.getMappedKey("cursor-up").isClicked()) {
 							if (cursorY > 0) {
 								cursorY--;
 								if (cursorX >= questsTree[cursorY].length)
@@ -458,19 +458,19 @@ public class QuestsDisplay extends Display {
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("cursor-right").clicked) {
+						} else if (input.getMappedKey("cursor-right").isClicked()) {
 							if (cursorX < questsTree[cursorY].length - 1) {
 								cursorX++;
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("cursor-left").clicked) {
+						} else if (input.getMappedKey("cursor-left").isClicked()) {
 							if (cursorX > 0) {
 								cursorX--;
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("select").clicked) {
+						} else if (input.getMappedKey("select").isClicked()) {
 							Sound.play("confirm");
 							Game.setDisplay(new QuestInformationDisplay(questsTree[cursorY][cursorX]));
 						}
