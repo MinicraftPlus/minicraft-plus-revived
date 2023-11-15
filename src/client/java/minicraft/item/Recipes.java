@@ -18,21 +18,25 @@ public class Recipes {
 		craftRecipes.add(new Recipe("plank_2", "Wood_1"));
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		craftRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
 
 		workbenchRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("plank_2", "Wood_1"));
 		workbenchRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		workbenchRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
 		workbenchRecipes.add(new Recipe("Stone Brick_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Ornate Stone_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
+		workbenchRecipes.add(new Recipe("Stone Fence_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Brick_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Ornate Obsidian_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Obsidian Wall_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Door_1", "Obsidian Brick_5"));
+		workbenchRecipes.add(new Recipe("Obsidian Fence_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
 		workbenchRecipes.add(new Recipe("Furnace_1", "Stone_20"));
 		workbenchRecipes.add(new Recipe("Enchanter_1", "Wood_5", "String_2", "Lapis_10"));
