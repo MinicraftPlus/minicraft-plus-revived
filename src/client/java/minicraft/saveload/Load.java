@@ -3,6 +3,7 @@ package minicraft.saveload;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
@@ -553,6 +554,8 @@ public class Load {
 		}
 
 		ResourcePackDisplay.releaseUnloadedPacks();
+
+		Game.input.setControllerEnabled(json.optBoolean("controllerEnabled"));
 	}
 
 	private void loadUnlocksOld(String filename) {

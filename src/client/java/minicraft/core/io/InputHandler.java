@@ -269,7 +269,7 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
-	private boolean isControllerValid() {
+	public boolean isControllerUsable() {
 		return controllerEnabled && controller != null;
 	}
 
@@ -475,7 +475,7 @@ public class InputHandler implements KeyListener {
 		public void tick() {
 			clicked = false;
 			down = false;
-			if (isControllerValid()) {
+			if (isControllerUsable()) {
 				clicked = controller.isButtonJustPressed(button);
 				down = controller.isButtonPressed(button);
 			}
@@ -563,7 +563,7 @@ public class InputHandler implements KeyListener {
 	/** Simply returns the mapped value of key in keymap. */
 	public String getMapping(String actionKey) {
 		actionKey = actionKey.toUpperCase();
-		if (isControllerValid()) {
+		if (isControllerUsable()) {
 			if (buttonMap.containsKey(actionKey))
 				return buttonMap.get(actionKey).toString().replace("_", "-");
 		}
@@ -581,7 +581,7 @@ public class InputHandler implements KeyListener {
 	 * @return The selected mapping.
 	 */
 	public String selectMapping(String keyMap, String buttonMap) {
-		if (isControllerValid())
+		if (isControllerUsable())
 			return buttonMap;
 		else
 			return keyMap;
@@ -592,7 +592,7 @@ public class InputHandler implements KeyListener {
 	 * @return The input device type: 0 for keyboard, 1 for controller.
 	 */
 	public int getLastInputType() {
-		if (isControllerValid())
+		if (isControllerUsable())
 			return 1;
 		else
 			return 0;
@@ -840,10 +840,6 @@ public class InputHandler implements KeyListener {
 		return typing;
 	}
 
-	public boolean anyControllerConnected() {
-		return controllerManager.getNumControllers() > 0;
-	}
-
 	public boolean buttonPressed(ControllerButton button) {
 		return controllerKeys.get(button).isClicked();
 	}
@@ -873,7 +869,7 @@ public class InputHandler implements KeyListener {
 	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */
 	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
-		if (isControllerValid()) {
+		if (isControllerUsable()) {
 			return controller.doVibration(leftMagnitude, rightMagnitude, duration_ms);
 		} else return false;
 	}
@@ -882,7 +878,7 @@ public class InputHandler implements KeyListener {
 	private int rightTriggerCooldown = 0;
 
 	public boolean leftTriggerPressed() {
-		if (leftTriggerCooldown == 0 && isControllerValid() &&
+		if (leftTriggerCooldown == 0 && isControllerUsable() &&
 			controller.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
 			leftTriggerCooldown = 8;
 			return true;
@@ -890,7 +886,7 @@ public class InputHandler implements KeyListener {
 			return false;
 	}
 	public boolean rightTriggerPressed() {
-		if (rightTriggerCooldown == 0 && isControllerValid() &&
+		if (rightTriggerCooldown == 0 && isControllerUsable() &&
 			controller.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
 			rightTriggerCooldown = 8;
 			return true;
