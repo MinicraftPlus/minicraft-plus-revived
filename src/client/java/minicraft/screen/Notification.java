@@ -30,7 +30,7 @@ public class Notification {
 		this.expireTime = expireTime;
 		menu = new Menu.Builder(true, 2, RelPos.RIGHT,
 			StringEntry.useLines(color, false, Font.getLines(value,
-				Screen.w - (GAP + MinicraftImage.boxWidth) * 2, Screen.h, 2)))
+				Screen.w / 2 - (GAP + MinicraftImage.boxWidth) * 2, Screen.h, 2)))
 			.setPositioning(new Point(Screen.w - GAP, Screen.h - GAP), RelPos.TOP_LEFT)
 			.createMenu();
 	}
