@@ -4,17 +4,23 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BlankEntry;
+import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 
 public class OptionsWorldDisplay extends Display {
+	private final BooleanEntry controllersEntry = new BooleanEntry("minicraft.display.options_display.controller",
+		Game.input.isControllerEnabled());
+
 	public OptionsWorldDisplay() {
 		super(true);
 
@@ -65,6 +71,7 @@ public class OptionsWorldDisplay extends Display {
 			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("screenshot"),
+			controllersEntry,
 			new SelectEntry("minicraft.display.options_display.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		));
 	}
@@ -73,5 +80,6 @@ public class OptionsWorldDisplay extends Display {
 	public void onExit() {
 		new Save();
 		Game.MAX_FPS = (int) Settings.get("fps");
+		Game.input.setControllerEnabled(controllersEntry.getValue());
 	}
 }

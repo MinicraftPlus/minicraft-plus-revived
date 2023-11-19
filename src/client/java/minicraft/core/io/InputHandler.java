@@ -5,6 +5,9 @@ import com.studiohartman.jamepad.ControllerButton;
 import com.studiohartman.jamepad.ControllerIndex;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
+import minicraft.core.Game;
+import minicraft.gfx.Color;
+import minicraft.screen.Notification;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -13,6 +16,7 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,11 +56,6 @@ public class InputHandler implements KeyListener {
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
 
-	private ControllerManager controllerManager = new ControllerManager();
-	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
-	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
-	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
-
 	public String getChangedKey() {
 		String key = keyChanged + ";" + keymap.get(keyChanged);
 		keyChanged = null;
@@ -85,12 +84,17 @@ public class InputHandler implements KeyListener {
 		keyNames.put(KeyEvent.VK_CONTROL, "CTRL");
 	}
 
-	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
-	private HashMap<String, PhysicalKey> keyboard; // The actual map of key names to Key objects.
+	private final HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
+	private final HashMap<String, PhysicalKey> keyboard; // The actual map of key names to Key objects.
 	private String lastKeyTyped = ""; // Used for things like typing world names.
 	private String keyTypedBuffer = ""; // Used to store the last key typed before putting it into the main var during tick().
 
-	private final LastInputActivityListener lastInputActivityListener = new LastInputActivityListener();
+	// This controller library currently does not support controller specification (customization) with settings.
+	private final ControllerManager controllerManager = new ControllerManager();
+	private final HashMap<ControllerButton, ControllerKey> controllerKeys = new HashMap<>();
+	private final ControllerID[] controllers;
+	private @Nullable Controller controller = null;
+	private boolean controllerEnabled = false;
 
 	public InputHandler() {
 		keymap = new LinkedHashMap<>(); // Stores custom key name with physical key name in keyboard.
@@ -99,8 +103,7 @@ public class InputHandler implements KeyListener {
 		initKeyMap(); // This is seperate so I can make a "restore defaults" option.
 		initButtonMap();
 		for (ControllerButton btn : ControllerButton.values()) {
-			controllerButtonBooleanMap.put(btn, false);
-			controllerButtonBooleanMapJust.put(btn, false);
+			controllerKeys.put(btn, new ControllerKey(btn));
 		}
 
 		// I'm not entirely sure if this is necessary... but it doesn't hurt.
@@ -109,17 +112,180 @@ public class InputHandler implements KeyListener {
 		keyboard.put("ALT", new PhysicalKey(true));
 
 		controllerManager.initSDLGamepad();
-		controllerIndex = controllerManager.getControllerIndex(0);
 		controllerManager.update();
-		try {
-			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
-		} catch (ControllerUnpluggedException e) {
-			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
-		}
+		controllers = new ControllerID[4]; // Value from default gamepad Configuration#maxNumControllers
+		refreshControllerList();
+		controllerPortWatcher.start();
 	}
 	public InputHandler(Component inputSource) {
 		this();
 		inputSource.addKeyListener(this); // Add key listener to game
+	}
+
+	private void refreshControllerList() {
+		controllerManager.update();
+		int count = 0;
+		for (int i = 0; i < controllers.length; ++i) {
+			try {
+				long ptr;
+				ControllerIndex index = controllerManager.getControllerIndex(i);
+				if (controllers[i] == null) {
+					controllers[i] = new ControllerID(i, index.getName(), getControllerPid(index));
+					count++;
+				} else if (controllers[i] != null && controllers[i].ptr != (ptr = getControllerPid(index))) {
+					controllers[i] = new ControllerID(i, index.getName(), ptr);
+					count++;
+				}
+			} catch (ControllerUnpluggedException e) {
+				controllers[i] = null;
+			}
+		}
+
+		Logging.CONTROLLER.info("{} new controller(s) refreshed.", count);
+	}
+
+	// Finds the first plugged controller
+	private void searchController() {
+		for (ControllerID controllerID : controllers) {
+			if (controllerID != null) {
+				notifyControllerPortUpdate(controllerID.name, true, true);
+				controller = new Controller(controllerID);
+				return;
+			}
+		}
+
+		Game.inAppNotifications.add(new Notification(Localization.getLocalized(
+			"minicraft.notification.controllers.configured_undetected"), 120, Color.WHITE));
+		controller = null;
+	}
+
+	public boolean isControllerEnabled() {
+		return controllerEnabled;
+	}
+
+	public void setControllerEnabled(boolean controllerEnabled) {
+		if (this.controllerEnabled ^ controllerEnabled) { // If there is a change in configuration
+			this.controllerEnabled = controllerEnabled;
+			if (controllerEnabled) searchController();
+			else controller = null;
+		}
+	}
+
+	// It should first ensure that the current connection state is indeed different.
+	private void updateControllerPortState(int index, @Nullable ControllerID newController) {
+		if (newController == null) { // unplugged
+			boolean set = controller != null && controller.id.index == index;
+			notifyControllerPortUpdate(controllers[index].name, false, set);
+			controllers[index] = null;
+			if (set && controllerEnabled) searchController();
+		} else { // plugged
+			notifyControllerPortUpdate(newController.name, true, false);
+			controllers[index] = newController;
+			if (controller == null && controllerEnabled) searchController();
+		}
+	}
+
+	/**
+	 * Notifies the user about an update on a controller port.
+	 * @param controller the name of the controller
+	 * @param plugged whether the event is plugged, or else unplugged
+	 * @param set whether the controller is set as the main control
+	 */
+	private void notifyControllerPortUpdate(String controller, boolean plugged, boolean set) {
+		Game.inAppNotifications.add(new Notification(Localization.getLocalized(
+			plugged ? (set ? "minicraft.notification.controllers.configured_plugged" :
+				"minicraft.notification.controllers.controller_plugged") :
+				set ? "minicraft.notification.controllers.configured_unplugged" :
+					"minicraft.notification.controllers.controller_unplugged",
+			controller
+		), set ? 120 : 60, Color.WHITE));
+	}
+
+	private static class ControllerID {
+		public final int index;
+		public final String name; // For display
+		public final long ptr; // For identification only
+
+		public ControllerID(int i, String name, long ptr) {
+			this.index = i;
+			this.name = name;
+			this.ptr = ptr;
+		}
+	}
+
+	private class Controller {
+		private final ControllerID id;
+
+		public Controller(ControllerID id) {
+			this.id = id;
+		}
+
+		private ControllerIndex getIndex() {
+			return controllerManager.getControllerIndex(id.index);
+		}
+
+		public boolean isButtonPressed(ControllerButton button) {
+			ControllerIndex index = getIndex();
+			try {
+				boolean result = index.isButtonPressed(button);
+				if (id.ptr != getControllerPid(index)) return false;
+				return result;
+			} catch (ControllerUnpluggedException e) { // Should be auto-handled the next tick.
+				return false;
+			}
+		}
+
+		public boolean isButtonJustPressed(ControllerButton button) {
+			ControllerIndex index = getIndex();
+			try {
+				boolean result = index.isButtonJustPressed(button);
+				if (id.ptr != getControllerPid(index)) return false;
+				return result;
+			} catch (ControllerUnpluggedException e) { // Should be auto-handled the next tick.
+				return false;
+			}
+		}
+
+		public boolean doVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
+			ControllerIndex index = getIndex();
+			try {
+				boolean result = index.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+				if (id.ptr != getControllerPid(index)) return false;
+				return result;
+			} catch (ControllerUnpluggedException e) { // Should be auto-handled the next tick.
+				return false;
+			}
+		}
+
+		public float getAxisState(ControllerAxis axis) {
+			ControllerIndex index = getIndex();
+			try {
+				float result = index.getAxisState(axis);
+				if (id.ptr != getControllerPid(index)) return 0;
+				return result;
+			} catch (ControllerUnpluggedException e) { // Should be auto-handled the next tick.
+				return 0;
+			}
+		}
+	}
+
+	private boolean isControllerValid() {
+		return controllerEnabled && controller != null;
+	}
+
+	/**
+	 * Enforces to get the internal native controller pointer to fully trace controller port events.
+	 * @param index the controller index to be extracted from
+	 * @return the native controller pointer
+	 */
+	private long getControllerPid(ControllerIndex index) {
+		try {
+			Field field = index.getClass().getDeclaredField("controllerPtr");
+			field.setAccessible(true);
+			return field.getLong(index);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new UnsupportedOperationException(e); // It is unintended.
+		}
 	}
 
 	private void initKeyMap() {
@@ -204,24 +370,19 @@ public class InputHandler implements KeyListener {
 		keyTypedBuffer = "";
 		inputMask = null;
 		synchronized ("lock") {
-			for (PhysicalKey key: keyboard.values())
-				key.tick(); // Call tick() for each key.
+			// Call tick() for each key.
+			keyboard.values().forEach(PhysicalKey::tick);
 		}
 
-		lastInputActivityListener.tick();
-
-		// Also update the controller button state.
-		for (ControllerButton btn : ControllerButton.values()) {
-			try {
-				controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
-			} catch (ControllerUnpluggedException e) {
-				controllerButtonBooleanMapJust.put(btn, false);
-			} try {
-				controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
-			} catch (ControllerUnpluggedException e) {
-				controllerButtonBooleanMap.put(btn, false);
+		synchronized (controllerPortEvents) {
+			ControllerPortEvent event;
+			while ((event = controllerPortEvents.poll()) != null) {
+				updateControllerPortState(event.index, event.controller);
 			}
 		}
+
+		// Also update the controller button state.
+		controllerKeys.values().forEach(ControllerKey::tick);
 
 		if (leftTriggerCooldown > 0) leftTriggerCooldown--;
 		if (rightTriggerCooldown > 0) rightTriggerCooldown--;
@@ -302,6 +463,35 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
+	private class ControllerKey extends Key {
+		private final ControllerButton button;
+
+		private boolean down, clicked;
+
+		public ControllerKey(ControllerButton button) {
+			this.button = button;
+		}
+
+		public void tick() {
+			clicked = false;
+			down = false;
+			if (isControllerValid()) {
+				clicked = controller.isButtonJustPressed(button);
+				down = controller.isButtonPressed(button);
+			}
+		}
+
+		@Override
+		public boolean isDown() {
+			return down;
+		}
+
+		@Override
+		public boolean isClicked() {
+			return clicked;
+		}
+	}
+
 	private static class CompoundedKey extends Key {
 		private final HashSet<Key> keys;
 
@@ -373,7 +563,7 @@ public class InputHandler implements KeyListener {
 	/** Simply returns the mapped value of key in keymap. */
 	public String getMapping(String actionKey) {
 		actionKey = actionKey.toUpperCase();
-		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp) {
+		if (isControllerValid()) {
 			if (buttonMap.containsKey(actionKey))
 				return buttonMap.get(actionKey).toString().replace("_", "-");
 		}
@@ -385,13 +575,13 @@ public class InputHandler implements KeyListener {
 	}
 
 	/**
-	 * Returning the corresponding mapping depends on the device last acted.
+	 * Returning the corresponding mapping depends on the device set.
 	 * @param keyMap The keyboard mapping.
 	 * @param buttonMap The controller mapping
 	 * @return The selected mapping.
 	 */
 	public String selectMapping(String keyMap, String buttonMap) {
-		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp)
+		if (isControllerValid())
 			return buttonMap;
 		else
 			return keyMap;
@@ -402,7 +592,7 @@ public class InputHandler implements KeyListener {
 	 * @return The input device type: 0 for keyboard, 1 for controller.
 	 */
 	public int getLastInputType() {
-		if (lastInputActivityListener.lastButtonActivityTimestamp > lastInputActivityListener.lastKeyActivityTimestamp)
+		if (isControllerValid())
 			return 1;
 		else
 			return 0;
@@ -655,21 +845,11 @@ public class InputHandler implements KeyListener {
 	}
 
 	public boolean buttonPressed(ControllerButton button) {
-		return controllerButtonBooleanMapJust.get(button);
+		return controllerKeys.get(button).isClicked();
 	}
 
 	public boolean buttonDown(ControllerButton button) {
-		return controllerButtonBooleanMap.get(button);
-	}
-
-	public ArrayList<ControllerButton> getAllPressedButtons() {
-		ArrayList<ControllerButton> btnList = new ArrayList<>();
-		for (ControllerButton btn : ControllerButton.values()) {
-			if (controllerButtonBooleanMap.get(btn))
-				btnList.add(btn);
-		}
-
-		return btnList;
+		return controllerKeys.get(button).isDown();
 	}
 
 	public boolean inputPressed(String mapping) {
@@ -693,48 +873,128 @@ public class InputHandler implements KeyListener {
 	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */
 	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
-		try {
-			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
-		} catch (ControllerUnpluggedException ignored) {
-			return false;
-		}
+		if (isControllerValid()) {
+			return controller.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+		} else return false;
 	}
 
 	private int leftTriggerCooldown = 0;
 	private int rightTriggerCooldown = 0;
 
 	public boolean leftTriggerPressed() {
-		try {
-			if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
-				leftTriggerCooldown = 8;
-				return true;
-			} else
-				return false;
-		} catch (ControllerUnpluggedException e) {
+		if (leftTriggerCooldown == 0 && isControllerValid() &&
+			controller.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
+			leftTriggerCooldown = 8;
+			return true;
+		} else
 			return false;
-		}
 	}
 	public boolean rightTriggerPressed() {
-		try {
-			if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
-				rightTriggerCooldown = 8;
-				return true;
-			} else
-				return false;
-		} catch (ControllerUnpluggedException e) {
+		if (rightTriggerCooldown == 0 && isControllerValid() &&
+			controller.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
+			rightTriggerCooldown = 8;
+			return true;
+		} else
 			return false;
+	}
+
+	private final ArrayDeque<ControllerPortEvent> controllerPortEvents = new ArrayDeque<>();
+	private final ControllerPortWatcher controllerPortWatcher = new ControllerPortWatcher();
+
+	private static class ControllerPortEvent {
+		public final int index;
+		public final @Nullable ControllerID controller;
+
+		public ControllerPortEvent(int index, @Nullable ControllerID controller) {
+			this.index = index;
+			this.controller = controller;
 		}
 	}
 
-	private class LastInputActivityListener {
-		public long lastKeyActivityTimestamp = 0;
-		public long lastButtonActivityTimestamp = 0;
+	// Reserved
+//	public WatcherThreadController getControllerPortWatcherController() {
+//		return new WatcherThreadController() {
+//			@Override
+//			public void suspend() {
+//				if (!controllerPortWatcher.running)
+//					throw new IllegalStateException("Controller Port Watcher has already been suspended");
+//				controllerPortWatcher.running = false;
+//			}
+//
+//			@Override
+//			public void resume() {
+//				if (controllerPortWatcher.running)
+//					throw new IllegalStateException("Controller Port Watcher has already been resumed");
+//				controllerPortWatcher.running = true;
+//			}
+//		};
+//	}
+//
+//	public void setControllerPortListener(@Nullable Action listener) {
+//		this.controllerPortListener = listener;
+//	}
 
-		public void tick() {
-			if (getAllPressedKeys().size() > 0)
-				lastKeyActivityTimestamp = System.currentTimeMillis();
-			if (getAllPressedButtons().size() > 0)
-				lastButtonActivityTimestamp = System.currentTimeMillis();
+	private class ControllerPortWatcher extends Thread {
+//		public volatile boolean running = true;
+
+		public ControllerPortWatcher() {
+			super("Controller Port Watcher");
+		}
+
+		@Override
+		public void run() {
+			//noinspection InfiniteLoopStatement
+			while (true) {
+//				while (!running) { // (Busily) blocks if it is required to suspend this watcher thread.
+//					if (running) break; // This ensures that this loop will be broken when the value changes.
+//					try { // Prevents unnecessary dry-running and using up of excessive CPU time.
+//						//noinspection BusyWait
+//						Thread.sleep(1); // Shortly waits to ensure the status is almost instantaneous updated.
+//					} catch (InterruptedException ignored) {}
+//				}
+
+				while (true) { // Ensures that the query is empty and thus synchronized.
+					synchronized (controllerPortEvents) {
+						if (controllerPortEvents.isEmpty()) break;
+					}
+					try { // Prevents unnecessary dry-running and using up of excessive CPU time.
+						//noinspection BusyWait
+						Thread.sleep(1);
+					} catch (InterruptedException ignored) {}
+				}
+
+				controllerManager.update();
+				for (int i = 0; i < controllers.length; ++i) {
+					ControllerIndex index = controllerManager.getControllerIndex(i);
+					try {
+						String name = index.getName();
+						long ptr = getControllerPid(index);
+						boolean plug = controllers[i] == null;
+						// If the port is connected to a different controller
+						if (controllers[i] != null && controllers[i].ptr != ptr) {
+							plug = true;
+							synchronized (controllerPortEvents) { // The original one is first unplugged.
+								controllerPortEvents.add(new ControllerPortEvent(i, null));
+							}
+						}
+
+						if (plug) synchronized (controllerPortEvents) { // A new one is plugged.
+							controllerPortEvents.add(new ControllerPortEvent(i, new ControllerID(i, name, ptr)));
+						}
+					} catch (ControllerUnpluggedException e) {
+						if (controllers[i] != null) {
+							synchronized (controllerPortEvents) {
+								controllerPortEvents.add(new ControllerPortEvent(i, null));
+							}
+						}
+					}
+				}
+
+				try {
+					//noinspection BusyWait
+					Thread.sleep(80);
+				} catch (InterruptedException ignored) {}
+			}
 		}
 	}
 }
