@@ -18,6 +18,7 @@ import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.entity.rideable.RideableEntity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
@@ -129,6 +130,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	public int shirtColor = Color.get(1, 51, 51, 0); // Player shirt color.
 
+	public boolean isRiding = false;
 	public boolean isFishing = false;
 	public int maxFishingTicks = 120;
 	public int fishingTicks = maxFishingTicks;
@@ -846,7 +848,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		int yo = y - 11; // Vertical
 
 		// Renders swimming
-		if (isSwimming() && onFallDelay <= 0) {
+		if (isSwimming() && onFallDelay <= 0 && !isRiding) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 
@@ -897,11 +899,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 			// Render each corner of the sprite
-			if (isSwimming()) {
+			if (isSwimming() && !isRiding) { // Don't render the bottom half if swimming.
 				Sprite sprite = curSprite.getSprite();
 				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
 				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
-			} else { // Don't render the bottom half if swimming.
+			} else if (isRiding) { // If we are riding an entity
+				Sprite sprite = curSprite.getSprite();
+				screen.render(xo, yo + 2, sprite.spritePixels[0][0], shirtColor);
+				screen.render(xo + 8, yo + 2, sprite.spritePixels[0][1], shirtColor);
+			} else {
 				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 			}
 		}
@@ -964,10 +970,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders the furniture if the player is holding one.
 		if (activeItem instanceof FurnitureItem) {
-			Furniture furniture = ((FurnitureItem) activeItem).furniture;
-			furniture.x = x;
-			furniture.y = yo-4;
-			furniture.render(screen);
+			if (!((FurnitureItem) activeItem).isRideable) {
+				Furniture furniture = ((FurnitureItem) activeItem).furniture;
+				furniture.x = x;
+				furniture.y = yo - 4;
+				furniture.render(screen);
+			}
+			else {
+				RideableEntity rideable = ((FurnitureItem) activeItem).rideable;
+				rideable.x = x;
+				rideable.y = yo - 4;
+				rideable.render(screen);
+			}
 		}
 	}
 

@@ -8,7 +8,6 @@ import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.entity.rideable.Boat;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
@@ -26,7 +25,6 @@ public class SummonItem extends StackableItem {
 
 		items.add(new SummonItem("Totem of Air", new LinkedSprite(SpriteType.Item, "air_totem"), "Air Wizard"));
 		items.add(new SummonItem("Obsidian Poppet", new LinkedSprite(SpriteType.Item, "knight_statue"), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
-		items.add(new SummonItem("Boat", new LinkedSprite(SpriteType.Item, "missing"), "Boat"));
 
 		return items;
 	}
@@ -99,18 +97,6 @@ public class SummonItem extends StackableItem {
 					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_dungeon"));
 				}
 				break;
-			case "Boat":
-				//if (tile.id == 6) {
-					if (player.payStamina(2)) {
-						Boat b = new Boat();
-						level.add(b, player.x + 8, player.y + 8, false);
-						Logger.tag("SummonItem").debug("Summoned new Boat");
-						success = true;
-					}
-				//}
-				//else {
-				//	success = false;
-				//}
 			default:
 				Logger.tag("SummonItem").warn("Could not create SummonItem with mob, {}", mob);
 				break;

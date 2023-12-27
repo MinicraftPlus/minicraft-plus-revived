@@ -10,24 +10,24 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.util.List;
 
-import static minicraft.entity.furniture.Bed.removePlayer;
-
-public class Boat extends Entity {
+public class Boat extends RideableEntity {
 
 	private static final SpriteLinker.LinkedSprite[][] boatSprites = new SpriteLinker.LinkedSprite[][] {
-		Mob.compileSpriteList(0, 0, 3,3,0,4,"boat")
+		Mob.compileSpriteList(0, 0, 3,3,0,4,"boat"), //
+		Mob.compileSpriteList(0,3,3,3,0,4, "boat")
 	};
+
+	private static final SpriteLinker.LinkedSprite itemSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "boat");
     public Player playerInBoat = null;
 
     private int exitTimer = 0;
-    private int boatHeight = 24;
     private boolean boatAnim = false;
     protected int pushTime = 0;
 
@@ -36,56 +36,52 @@ public class Boat extends Entity {
     private Direction pushDir = Direction.NONE; // the direction to push the furniture
 
     public Boat() {
-        super(3, 3);
+        super(3, 3, "Boat", itemSprite);
     }
 
     public Boat(int xr, int yr) {
-        super(xr, yr);
+        super(xr, yr, "Boat", itemSprite);
     }
 
     @Override
     public void render(Screen screen) {
         int xo = x-8; // Horizontal
-        int yo = (y-8);// - boatHeight; // Vertical
+        int yo = y-8; // Vertical
 
         if (Game.player.equals(playerInBoat)) {
         	switch (Game.player.dir) {
-	        	case UP: // if currently attacking upwards...
-	        		screen.render(xo-4, yo-4, boatSprites[0][1].getSprite());
-	        		break;
+				case UP: // if currently attacking upwards...
+					screen.render(xo - 4, yo - 4, boatSprites[0][((playerInBoat.walkDist >> 3) & 1) + 2].getSprite());
+                    playerInBoat.render(screen);
+                    break;
+                case LEFT: // Attacking to the left... (Same as above)
+						screen.render(xo - 4, yo - 4, boatSprites[1][((playerInBoat.walkDist >> 3) & 1)].getSprite());
+					playerInBoat.render(screen);
+					break;
 
-	        	case LEFT: // Attacking to the left... (Same as above)
-					screen.render(xo-4, yo-4, boatSprites[0][2].getSprite());
-	        		break;
+				case RIGHT: // Attacking to the right (Same as above)
+							screen.render(xo - 4, yo - 4, boatSprites[1][((playerInBoat.walkDist >> 3) & 1) + 2].getSprite());
+					playerInBoat.render(screen);
+					break;
 
-	        	case RIGHT: // Attacking to the right (Same as above)
-					screen.render(xo-4, yo-4, boatSprites[0][3].getSprite());
-	        		break;
+				case DOWN: // Attacking downwards (Same as above)
+					screen.render(xo - 4, yo - 4, boatSprites[0][((playerInBoat.walkDist >> 3) & 1)].getSprite());
+					playerInBoat.render(screen);
+					break;
 
-	        	case DOWN: // Attacking downwards (Same as above)
-					screen.render(xo-4, yo-4, boatSprites[0][0].getSprite());
-	        		break;
-
-	        	case NONE:
-	        		break;
-        	}
+				case NONE:
+					break;
+			}
         }  else {
-        	screen.render(xo-4, yo-4, boatSprites[0][0]);
-        }
+			screen.render(xo - 4, yo - 4, boatSprites[0][0]);
+
+		}
     }
 
 
     @Override
     public void tick() {
     	tickTime++;
-
-    	if (tickTime /2 %8 == 0) {
-    		if (!boatAnim && boatHeight <= 3) boatHeight++;
-    		if (boatHeight == 3) boatAnim = true;
-
-    		if (boatAnim && boatHeight >= 0) boatHeight--;
-    		if (boatHeight == 0) boatAnim = false;
-    	}
 
         // moves the furniture in the correct direction.
         move(pushDir.getX(), pushDir.getY());
@@ -98,7 +94,7 @@ public class Boat extends Entity {
         if (playerInBoat != null) {
             exitTimer--;
 
-            if (exitTimer <= 0 && Game.input.getKey("EXIT").down) {
+            if (exitTimer <= 0 && Game.input.getKey("ATTACK").down) {
                 restorePlayer(playerInBoat);
 				return;
             }
@@ -109,13 +105,7 @@ public class Boat extends Entity {
             if (Game.input.getKey("MOVE-UP").down) ya -= 1;
             if (Game.input.getKey("MOVE-DOWN").down) ya += 1;
             if (Game.input.getKey("MOVE-LEFT").down) xa -= 1;
-            if (Game.input.getKey("MOVE-RIGHT").down) xa += 1;
-
-            // Water particles
-            /*if (Settings.get("particles").equals(true)) {
-                int randX = random.nextInt(10);
-                int randY = random.nextInt(9);
-            }*/
+			if (Game.input.getKey("MOVE-RIGHT").down) xa += 1;
 
             move(xa, ya);
             playerInBoat.x = x;
@@ -129,17 +119,6 @@ public class Boat extends Entity {
         return true;
     }
 
-    public boolean use(Player player) {
-		//if (playerInBoat == null) {
-			playerInBoat = player;
-			exitTimer = 10;
-			removePlayer(player);
-			return true;
-		/*} else {
-			Logger.debug("Failed"); //else in this if-else is not to be included
-			return false;
-		}*/
-	}
     @Override
     public boolean blocks(Entity entity) {
         return true;
@@ -147,19 +126,15 @@ public class Boat extends Entity {
 
     @Override
     public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if (player.activeItem instanceof ToolItem) {
+		if (player.activeItem instanceof ToolItem && playerInBoat == null) {
+			level.dropItem(x, y, Items.get("Boat"));
 			remove();
 		}
-		else {
-			//if (playerInBoat == null) {
-				playerInBoat = player;
-				exitTimer = 10;
-				removePlayer(player);
-				return true;
-			/*} else {
-				Logger.debug("Failed"); //else in this if-else is not to be included
-				return false;
-			}*/
+		else if (playerInBoat == null) {
+			player.isRiding = true;
+			playerInBoat = player;
+			exitTimer = 10;
+			return true;
 		}
 
 		//Put whatever item the player is holding into their inventory
@@ -170,7 +145,7 @@ public class Boat extends Entity {
 		return true;
 	}
 
-    public boolean move(double xa, double ya) {
+	public boolean move(double xa, double ya) {
         if (Updater.saving || (xa == 0 && ya == 0)) {
             return true; // pretend that it kept moving
         }
@@ -247,9 +222,7 @@ public class Boat extends Entity {
         }
 
         isInside.removeAll(wasInside); // remove all the entities that this one is already touching before moving.
-        for (int i = 0; i < isInside.size(); i++) {
-            Entity entity = isInside.get(i);
-
+        for (Entity entity : isInside) {
             if (entity == this) {
                 continue; // can't interact with yourself LOL
             }
@@ -266,7 +239,7 @@ public class Boat extends Entity {
         return true; // the move was successful.
     }
 
-    /*@Override
+    @Override
     protected void touchedBy(Entity entity) {
         if (level.getTile(this.x, this.y).id != 6) {
             return;
@@ -284,16 +257,23 @@ public class Boat extends Entity {
 			pushDir = player.dir; // Set pushDir to the player's dir.
 			pushTime = 10; // Set pushTime to 10.
 		}
-	}*/
+	}
 
+	/**
+	 * "Restores" the player to the world, in other words places player out of the boat
+	 *
+	 * @param player The player in the boat
+	 */
 	public void restorePlayer(Player player) {
 		if (playerInBoat != null) {
 			if (playerInBoat.getLevel() == null) {
 				Game.levels[Game.currentLevel].add(player);
-				removePlayer(playerInBoat);
+				player.isRiding = false;
+				playerInBoat = null;
 			} else {
 				playerInBoat.getLevel().add(player);
-				removePlayer(playerInBoat);
+				player.isRiding = false;
+				playerInBoat = null;
 			}
 		}
 	}
