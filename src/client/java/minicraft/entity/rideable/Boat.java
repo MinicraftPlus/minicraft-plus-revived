@@ -134,6 +134,7 @@ public class Boat extends RideableEntity {
 			player.isRiding = true;
 			playerInBoat = player;
 			exitTimer = 10;
+			playerInBoat.moveSpeed = 1.5;
 			return true;
 		}
 
