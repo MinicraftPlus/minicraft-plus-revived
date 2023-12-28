@@ -66,7 +66,10 @@ public abstract class MobAi extends Mob {
 	 */
 	protected boolean isWithinLight() {
 		return Arrays.stream(level.getEntityArray()).anyMatch(e -> e instanceof Lantern && isWithin(e.getLightRadius(), e))
-			|| !level.getMatchingTiles((tile, x, y) -> Math.hypot(Math.abs(this.x - x), Math.abs(this.y - y)) <= tile.getLightRadius(level, x, y)).isEmpty();
+			|| !level.getMatchingTiles((tile, x, y) -> {
+				int xx = Math.abs(this.x - x), yy = Math.abs(this.y - y), l = tile.getLightRadius(level, x, y);
+				return xx * xx + yy * yy <= l * l;
+		}).isEmpty();
 	}
 
 	/**
@@ -84,7 +87,7 @@ public abstract class MobAi extends Mob {
 		if (lifetime > 0) {
 			age++;
 			if (age > lifetime) {
-				boolean playerClose = getLevel().entityNearPlayer((Entity) this);
+				boolean playerClose = getLevel().entityNearPlayer(this);
 
 				if (!playerClose) {
 					remove();

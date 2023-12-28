@@ -605,6 +605,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
 			if (activeItem.isDepleted()) {
 				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
+				}
 			}
 			return;
 		}
@@ -635,7 +639,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			// If the interaction between you and an entity is successful, then return.
-			if (interact(getInteractionBox(INTERACT_DIST))) return;
+			if (interact(getInteractionBox(INTERACT_DIST))) {
+				if (activeItem.isDepleted())
+					activeItem = null;
+				return;
+			}
 
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
@@ -663,6 +671,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (activeItem.isDepleted()) {
 					// If the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
+					if (isFishing) {
+						isFishing = false;
+						fishingTicks = maxFishingTicks;
+					}
 				}
 			}
 			if (done) return; // Skip the rest if interaction was handled

@@ -23,6 +23,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
@@ -321,6 +322,15 @@ public class Renderer extends Game {
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
 			int green = (int) (dura * 2.55f); // Let duration show as normal.
+			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
+		}
+
+		// WATERING CAN CONTAINER STATUS
+		if (player.activeItem instanceof WateringCanItem) {
+			// Draws the text
+			WateringCanItem tin = (WateringCanItem) player.activeItem;
+			int dura = tin.content * 100 / tin.CAPACITY;
+			int green = (int)(dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
