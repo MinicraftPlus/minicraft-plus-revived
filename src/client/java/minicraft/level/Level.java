@@ -627,10 +627,10 @@ public class Level {
 						else add((new Creeper(lvl)), nx, ny);
 
 					} else { // Special dungeon mobs
-						if (rnd <= 40) add((new Snake(lvl)), nx, ny);
-						else if (rnd <= 75) add((new Knight(lvl)), nx, ny);
-						else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
-						else add((new Knight(lvl)), nx, ny);
+						if (rnd <= 40) add((new Snake(lvl-1)), nx, ny);
+						else if (rnd <= 75) add((new Knight(lvl-1)), nx, ny);
+						else if (rnd >= 85) add((new Snake(lvl-1)), nx, ny);
+						else add((new Knight(lvl-1)), nx, ny);
 
 					}
 
