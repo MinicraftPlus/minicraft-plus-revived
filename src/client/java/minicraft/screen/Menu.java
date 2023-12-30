@@ -172,18 +172,18 @@ public class Menu {
 		int prevSel = selection;
 		if (input.inputPressed("cursor-up")) selection--;
 		if (input.inputPressed("cursor-down")) selection++;
-		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
-		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
+		if (input.getMappedKey("shift+cursor-up").isClicked() && selectionSearcher == 0) selectionSearcher -= 2;
+		if (input.getMappedKey("shift+cursor-down").isClicked() && selectionSearcher == 0) selectionSearcher += 2;
 		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
 
 		if (useSearcherBar) {
-			if (input.getKey("searcher-bar").clicked) {
+			if (input.getMappedKey("searcher-bar").isClicked()) {
 				searcherBarActive = !searcherBarActive;
 				input.addKeyTyped("", null); // clear pressed key
 			}
 
 			if (!listSearcher.isEmpty() && selectionSearcher == 0) {
-				int speed = input.getKey("PAGE-UP").clicked ? -1 : input.getKey("PAGE-DOWN").clicked ? 1 : 0;
+				int speed = input.getMappedKey("PAGE-UP").isClicked() ? -1 : input.getMappedKey("PAGE-DOWN").isClicked() ? 1 : 0;
 				if (speed != 0) {
 					int listPosition = listPositionSearcher + speed;
 					if (listPosition < 0) {
@@ -199,13 +199,7 @@ public class Menu {
 
 			if (searcherBarActive) {
 				String typingSearcher = input.addKeyTyped(this.typingSearcher, null);
-				for (String pressedKey : input.getAllPressedKeys()) {
-					if (pressedKey.equals("ENTER")) {
-						continue;
-					}
-
-					input.getKey(pressedKey).clicked = false;
-				}
+				input.maskInput(k -> !k.equals("ENTER"));
 
 				// check if word was updated
 				if (typingSearcher.length() <= Menu.LIMIT_TYPING_SEARCHER && typingSearcher.length() != this.typingSearcher.length()) {
