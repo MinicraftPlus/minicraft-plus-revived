@@ -200,8 +200,8 @@ public abstract class Entity implements Tickable {
 			return false; // No movement can be made.
 		}
 		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x + sgn, () -> y, () -> x += sgn, hitBoxLeft, hitBoxRight,
-			(front, horTile) -> level.getTile(front, horTile).bumpedInto(level, front, horTile, this),
-			(front, horTile) -> level.getTile(front, horTile).steppedOn(level, front, horTile, this));
+			(horTile, front) -> level.getTile(front, horTile).bumpedInto(level, front, horTile, this),
+			(horTile, front) -> level.getTile(front, horTile).steppedOn(level, front, horTile, this));
 	}
 
 	/**
@@ -234,8 +234,8 @@ public abstract class Entity implements Tickable {
 			return false; // No movement can be made.
 		}
 		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x, () -> y + sgn, () -> y += sgn, hitBoxLeft, hitBoxRight,
-			(front, horTile) -> level.getTile(horTile, front).bumpedInto(level, horTile, front, this),
-			(front, horTile) -> level.getTile(horTile, front).steppedOn(level, horTile, front, this));
+			(horTile, front) -> level.getTile(horTile, front).bumpedInto(level, horTile, front, this),
+			(horTile, front) -> level.getTile(horTile, front).steppedOn(level, horTile, front, this));
 	}
 
 	/**
