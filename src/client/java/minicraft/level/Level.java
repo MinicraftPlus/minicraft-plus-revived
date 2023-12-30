@@ -35,6 +35,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.level.tile.TreeTile;
 import minicraft.util.Logging;
+import minicraft.util.MyUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -607,7 +608,7 @@ public class Level {
 		boolean spawned = false;
 		for (Player player : players) {
 			assert player.getLevel().depth == depth;
-			int lvl = World.lvlIdx(player.getLevel().depth);
+			int lvl = -MyUtils.clamp(player.getLevel().depth, -4, 0);
 			for (int i = 0; i < 30 && !spawned; i++) {
 				int rnd = random.nextInt(100);
 				int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
