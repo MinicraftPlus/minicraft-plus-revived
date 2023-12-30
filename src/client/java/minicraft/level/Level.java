@@ -951,7 +951,8 @@ public class Level {
 			if (t instanceof TorchTile)
 				return true;
 		for (Entity e : getEntitiesInRect(e -> e instanceof Lantern, new Rectangle(x, y, 8, 8, Rectangle.CENTER_DIMS))) {
-			if (Math.hypot((e.x >> 4) - x, (e.y >> 4) - y) < e.getLightRadius() - 1)
+			int xx = (e.x >> 4) - x, yy = (e.y >> 4) - y, rr = e.getLightRadius() - 1;
+			if (xx * xx + yy * yy < rr * rr)
 				return true;
 		}
 
