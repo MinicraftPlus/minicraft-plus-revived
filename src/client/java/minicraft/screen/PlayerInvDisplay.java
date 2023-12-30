@@ -100,7 +100,7 @@ public class PlayerInvDisplay extends Display {
 			if (!acted)
 				curMenu.tick(input);
 
-			if (input.getKey("menu").clicked) { // Should not listen button press.
+			if (input.getMappedKey("menu").isClicked()) { // Should not listen button press.
 				Game.exitDisplay();
 				return;
 			}
@@ -135,9 +135,9 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean deleteAll;
-					if (input.getKey("SHIFT-D").clicked || input.buttonPressed(ControllerButton.Y)) {
+					if (input.getMappedKey("SHIFT-D").isClicked() || input.buttonPressed(ControllerButton.Y)) {
 						deleteAll = true;
-					} else if (input.getKey("D").clicked || input.buttonPressed(ControllerButton.X)) {
+					} else if (input.getMappedKey("D").isClicked() || input.buttonPressed(ControllerButton.X)) {
 						deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 					} else return;
 

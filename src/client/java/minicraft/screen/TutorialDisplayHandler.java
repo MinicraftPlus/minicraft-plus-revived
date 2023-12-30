@@ -166,7 +166,7 @@ public class TutorialDisplayHandler {
 	public static void tick(InputHandler input) {
 		if (currentGuide != null) {
 			if (ControlGuide.animation > 0) ControlGuide.animation--;
-			if (input.getKey("expandQuestDisplay").clicked) {
+			if (input.getMappedKey("expandQuestDisplay").isClicked()) {
 				Logging.TUTORIAL.debug("Force-completed the guides.");
 				turnOffGuides();
 				return;
@@ -188,7 +188,7 @@ public class TutorialDisplayHandler {
 		}
 
 		if (currentOngoingElement != null) {
-			if (input.getKey("expandQuestDisplay").clicked && Game.getDisplay() == null) {
+			if (input.getMappedKey("expandQuestDisplay").isClicked() && Game.getDisplay() == null) {
 				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(currentOngoingElement.key, null, 4),
 					currentOngoingElement.description));
 			}
