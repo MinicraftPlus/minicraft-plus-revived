@@ -975,8 +975,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				furniture.x = x;
 				furniture.y = yo - 4;
 				furniture.render(screen);
-			}
-			else {
+			} else {
 				RideableEntity rideable = ((FurnitureItem) activeItem).rideable;
 				rideable.x = x;
 				rideable.y = yo - 4;
