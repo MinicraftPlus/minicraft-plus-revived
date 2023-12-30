@@ -200,8 +200,8 @@ public abstract class Entity implements Tickable {
 			return false; // No movement can be made.
 		}
 		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x + sgn, () -> y, () -> x += sgn, hitBoxLeft, hitBoxRight,
-			(horTile, front) -> level.getTile(front, horTile).bumpedInto(level, front, horTile, this),
-			(horTile, front) -> level.getTile(front, horTile).steppedOn(level, front, horTile, this));
+			(front, horTile) -> level.getTile(front, horTile).bumpedInto(level, front, horTile, this),
+			(front, horTile) -> level.getTile(front, horTile).steppedOn(level, front, horTile, this));
 	}
 
 	/**
@@ -234,8 +234,8 @@ public abstract class Entity implements Tickable {
 			return false; // No movement can be made.
 		}
 		return moveByEntityHitBoxChecks(sgn, hitBoxFront, maxFront, () -> x, () -> y + sgn, () -> y += sgn, hitBoxLeft, hitBoxRight,
-			(horTile, front) -> level.getTile(horTile, front).bumpedInto(level, horTile, front, this),
-			(horTile, front) -> level.getTile(horTile, front).steppedOn(level, horTile, front, this));
+			(front, horTile) -> level.getTile(horTile, front).bumpedInto(level, horTile, front, this),
+			(front, horTile) -> level.getTile(horTile, front).steppedOn(level, horTile, front, this));
 	}
 
 	/**
@@ -270,7 +270,7 @@ public abstract class Entity implements Tickable {
 			if (newFrontTile != frontTile) { // New tile touched
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					bumpingHandler.accept(horTile, newFrontTile);
+					bumpingHandler.accept(newFrontTile, horTile);
 				}
 				frontTile = newFrontTile;
 				handleSteppedOn = true;
@@ -294,7 +294,7 @@ public abstract class Entity implements Tickable {
 			if (handleSteppedOn) { // When the movement to a new tile successes
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					steppingHandler.accept(horTile, frontTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+					steppingHandler.accept(frontTile, horTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 				}
 			}
 			successful = true;
