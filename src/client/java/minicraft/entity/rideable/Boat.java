@@ -72,7 +72,7 @@ public class Boat extends RideableEntity {
 				case NONE:
 					break;
 			}
-        }  else {
+        } else {
 			screen.render(xo - 4, yo - 4, boatSprites[0][0]);
 
 		}
@@ -129,8 +129,7 @@ public class Boat extends RideableEntity {
 		if (player.activeItem instanceof ToolItem && playerInBoat == null) {
 			level.dropItem(x, y, Items.get("Boat"));
 			remove();
-		}
-		else if (playerInBoat == null) {
+		} else if (playerInBoat == null) {
 			player.isRiding = true;
 			playerInBoat = player;
 			exitTimer = 10;
@@ -193,6 +192,7 @@ public class Boat extends RideableEntity {
                 if (xt >= xto0 && xt <= xto1 && yt >= yto0 && yt <= yto1) {
                     continue; // skip this position if this entity's sprite is touching it
                 }
+
                 if (level.getTile(xt, yt).id != 6) {
                     return false;
                 }
@@ -245,6 +245,7 @@ public class Boat extends RideableEntity {
         if (level.getTile(this.x, this.y).id != 6) {
             return;
         }
+
         if (entity instanceof Player) {
             tryPush((Player) entity);
         }
