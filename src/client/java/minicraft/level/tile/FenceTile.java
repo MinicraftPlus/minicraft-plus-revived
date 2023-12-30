@@ -24,9 +24,9 @@ import minicraft.util.Logging;
 
 public class FenceTile extends Tile {
 
-	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_fence");
-	private static SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_fence");
-	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_fence");
+	private static final SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_fence");
+	private static final SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_fence");
+	private static final SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_fence");
 
 	protected Material type;
 
