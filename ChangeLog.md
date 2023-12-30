@@ -38,6 +38,8 @@ but some sections are changed to compliant this project.
 * Added ability to dye sheep and beds (#445)
 * Cow and sheep now graze on grasses
 * Added a trigger to auto-enable hardware acceleration
+* Added support for lower-cased letters
+* Added item description menu
 
 ### Changes
 
@@ -48,8 +50,9 @@ but some sections are changed to compliant this project.
 * If the application flag `--savedir` is present, '.playminicraft/mods/Minecraft Plus' will no longer be appended
 * Updated all ore-related and metal-related textures
 * Made the parent display render in the background
-* Made recipies unlockable
+* Made recipes unlockable
 * Made you reobtain your old clothes when putting on new clothing
+* Made you reobtain empty bottles when a bottle of potion is consumed
 * Made languages fallback to English
 * Improved the tile place indicator
 * Overhauled debugging actions
@@ -57,6 +60,8 @@ but some sections are changed to compliant this project.
 * Changed the languaging setting menu
 * Optimized CPU usage
 * Reduced food stamina cost
+* Made some strings lower-cased
+* Updated spawning and despawning conditions
 
 ### Removals
 
