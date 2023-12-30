@@ -112,8 +112,7 @@ public class FurnitureItem extends Item {
 				placed = true; // The value becomes true, which removes it from the player's active item
 
 			return true;
-		}
-		else if (tile.equals(Tiles.get("Water"))) {
+		} else if (tile.equals(Tiles.get("Water"))) {
 			Sound.play("craft");
 
 			// Placed rideable X and Y positions
