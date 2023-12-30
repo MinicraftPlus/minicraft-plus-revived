@@ -1,5 +1,5 @@
 name: publish
-on: [workflow_dispatch] # Manual trigger
+on: [ workflow_dispatch ] # Manual trigger
 jobs:
   build:
     strategy:

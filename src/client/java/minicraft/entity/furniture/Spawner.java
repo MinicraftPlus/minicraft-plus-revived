@@ -38,7 +38,7 @@ public class Spawner extends Furniture {
 
 	private final Random rnd = new Random();
 
-	private static final int ACTIVE_RADIUS = 8*16;
+	private static final int ACTIVE_RADIUS = 8 * 16;
 	private static final int minSpawnInterval = 200, maxSpawnInterval = 500;
 	private static final int minMobSpawnChance = 10; // 1 in minMobSpawnChance chance of calling trySpawn every interval.
 
@@ -48,6 +48,7 @@ public class Spawner extends Furniture {
 
 	/**
 	 * Initializes the spawners variables to the corresponding values from the mob.
+	 *
 	 * @param m The mob which this spawner will spawn.
 	 */
 	private void initMob(MobAi m) {
@@ -55,7 +56,7 @@ public class Spawner extends Furniture {
 		sprite.setColor(col = mob.col);
 
 		if (m instanceof EnemyMob) {
-			lvl = ((EnemyMob)mob).lvl;
+			lvl = ((EnemyMob) mob).lvl;
 			maxMobLevel = mob.getMaxLevel();
 		} else {
 			lvl = 1;
@@ -69,19 +70,20 @@ public class Spawner extends Furniture {
 
 	/**
 	 * Creates a new spawner for the mob m.
+	 *
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSprite(SpriteType.Item, "cow_spawner"):
-			m instanceof Pig ? new LinkedSprite(SpriteType.Item, "pig_spawner"):
-			m instanceof Sheep ? new LinkedSprite(SpriteType.Item, "sheep_spawner"):
-			m instanceof Slime ? new LinkedSprite(SpriteType.Item, "slime_spawner"):
-			m instanceof Zombie ? new LinkedSprite(SpriteType.Item, "zombie_spawner"):
-			m instanceof Creeper ? new LinkedSprite(SpriteType.Item, "creeper_spawner"):
-			m instanceof Skeleton ? new LinkedSprite(SpriteType.Item, "skeleton_spawner"):
-			m instanceof Snake ? new LinkedSprite(SpriteType.Item, "snake_spawner"):
-			m instanceof Knight ? new LinkedSprite(SpriteType.Item, "knight_spawner"):
-			new LinkedSprite(SpriteType.Item, "air_wizard_spawner"), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSprite(SpriteType.Item, "cow_spawner") :
+			m instanceof Pig ? new LinkedSprite(SpriteType.Item, "pig_spawner") :
+				m instanceof Sheep ? new LinkedSprite(SpriteType.Item, "sheep_spawner") :
+					m instanceof Slime ? new LinkedSprite(SpriteType.Item, "slime_spawner") :
+						m instanceof Zombie ? new LinkedSprite(SpriteType.Item, "zombie_spawner") :
+							m instanceof Creeper ? new LinkedSprite(SpriteType.Item, "creeper_spawner") :
+								m instanceof Skeleton ? new LinkedSprite(SpriteType.Item, "skeleton_spawner") :
+									m instanceof Snake ? new LinkedSprite(SpriteType.Item, "snake_spawner") :
+										m instanceof Knight ? new LinkedSprite(SpriteType.Item, "knight_spawner") :
+											new LinkedSprite(SpriteType.Item, "air_wizard_spawner"), 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();
@@ -89,12 +91,13 @@ public class Spawner extends Furniture {
 
 	/**
 	 * Returns the classname of a class.
+	 *
 	 * @param c The class.
 	 * @return String representation of the classname.
 	 */
 	private static String getClassName(Class<?> c) {
 		String fullName = c.getCanonicalName();
-		return fullName.substring(fullName.lastIndexOf(".")+1);
+		return fullName.substring(fullName.lastIndexOf(".") + 1);
 	}
 
 	@Override
@@ -152,11 +155,11 @@ public class Spawner extends Furniture {
 		Point pos = new Point(x >> 4, y >> 4);
 		Point[] areaPositions = level.getAreaTilePositions(pos.x, pos.y, 1);
 		ArrayList<Point> validPositions = new ArrayList<>();
-		for (Point p: areaPositions)
-			if (!( !level.getTile(p.x, p.y).mayPass(level, p.x, p.y, newmob) || mob instanceof EnemyMob && level.getTile(p.x, p.y).getLightRadius(level, p.x, p.y) > 0 ))
+		for (Point p : areaPositions)
+			if (!(!level.getTile(p.x, p.y).mayPass(level, p.x, p.y, newmob) || mob instanceof EnemyMob && level.getTile(p.x, p.y).getLightRadius(level, p.x, p.y) > 0))
 				validPositions.add(p);
 
-		if(validPositions.size() == 0) return; // Cannot spawn mob.
+		if (validPositions.size() == 0) return; // Cannot spawn mob.
 
 		Point spawnPos = validPositions.get(random.nextInt(validPositions.size()));
 
@@ -166,16 +169,16 @@ public class Spawner extends Furniture {
 		level.add(newmob);
 		Sound.play("monsterhurt");
 		for (int i = 0; i < 6; i++) {
-			 int randX = rnd.nextInt(16);
-			 int randY = rnd.nextInt(12);
-			 level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
+			int randX = rnd.nextInt(16);
+			int randY = rnd.nextInt(12);
+			level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
 		}
 	}
 
 	@Override
 	public boolean interact(Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem)item;
+			ToolItem tool = (ToolItem) item;
 
 			Sound.play("monsterhurt");
 
@@ -222,7 +225,7 @@ public class Spawner extends Furniture {
 			lvl++;
 			if (lvl > maxMobLevel) lvl = 1;
 			try {
-				EnemyMob newmob = (EnemyMob)mob.getClass().getConstructor(int.class).newInstance(lvl);
+				EnemyMob newmob = (EnemyMob) mob.getClass().getConstructor(int.class).newInstance(lvl);
 				initMob(newmob);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -234,5 +237,7 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	public @NotNull Furniture copy() { return new Spawner(mob); }
+	public @NotNull Furniture copy() {
+		return new Spawner(mob);
+	}
 }

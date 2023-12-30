@@ -23,8 +23,9 @@ public class Arrow extends Entity implements ClientTickable {
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);
 	}
+
 	public Arrow(Mob owner, int x, int y, Direction dir, int dmg) {
-		super(Math.abs(dir.getX())+1, Math.abs(dir.getY())+1);
+		super(Math.abs(dir.getX()) + 1, Math.abs(dir.getY()) + 1);
 		this.owner = owner;
 		this.x = x;
 		this.y = y;
@@ -34,9 +35,9 @@ public class Arrow extends Entity implements ClientTickable {
 		col = Color.get(-1, 111, 222, 430);
 
 		int xt = 0;
-		if(dir == Direction.LEFT) xt = 1;
-		if(dir == Direction.UP) xt = 2;
-		if(dir == Direction.DOWN) xt = 3;
+		if (dir == Direction.LEFT) xt = 1;
+		if (dir == Direction.UP) xt = 2;
+		if (dir == Direction.DOWN) xt = 3;
 		sprite.setSpritePos(xt, 0);
 
 		if (damage > 3) speed = 8;
@@ -46,10 +47,11 @@ public class Arrow extends Entity implements ClientTickable {
 
 	/**
 	 * Generates information about the arrow.
+	 *
 	 * @return string representation of owner, xdir, ydir and damage.
 	 */
 	public String getData() {
-		return owner.eid + ":" + dir.ordinal() + ":"+damage;
+		return owner.eid + ":" + dir.ordinal() + ":" + damage;
 	}
 
 	@Override
@@ -75,8 +77,8 @@ public class Arrow extends Entity implements ClientTickable {
 			}
 
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					&& !level.getTile(x / 16, y / 16).connectsToFluid
-					&& level.getTile(x / 16, y / 16).id != 16) {
+				&& !level.getTile(x / 16, y / 16).connectsToFluid
+				&& level.getTile(x / 16, y / 16).id != 16) {
 				this.remove();
 				try {
 					sprite.destroy();

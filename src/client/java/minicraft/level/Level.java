@@ -2,7 +2,6 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
-import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
@@ -53,8 +52,14 @@ public class Level {
 	private final Random random;
 
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
-	public static String getLevelName(int depth) { return levelNames[-1 * depth + 1]; }
-	public static String getDepthString(int depth) { return Localization.getLocalized("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth); }
+
+	public static String getLevelName(int depth) {
+		return levelNames[-1 * depth + 1];
+	}
+
+	public static String getDepthString(int depth) {
+		return Localization.getLocalized("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth);
+	}
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
@@ -83,7 +88,9 @@ public class Level {
 	@SuppressWarnings("Convert2Lambda")
 	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
 		@Override
-		public int applyAsInt(Entity e) { return e.y; }
+		public int applyAsInt(Entity e) {
+			return e.y;
+		}
 	});
 
 	public Entity[] getEntitiesToSave() {
@@ -98,7 +105,10 @@ public class Level {
 
 	// This is a solely a debug method I made, to make printing repetitive stuff easier.
 	// Should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
-	public void printLevelLoc(String prefix, int x, int y) { printLevelLoc(prefix, x, y, ""); }
+	public void printLevelLoc(String prefix, int x, int y) {
+		printLevelLoc(prefix, x, y, "");
+	}
+
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
 		String levelName = getLevelName(depth);
 
@@ -111,9 +121,10 @@ public class Level {
 				if (getTile(x, y).id == t.id)
 					printLevelLoc(t.name, x, y);
 	}
+
 	public void printEntityLocs(Class<? extends Entity> c) {
 		int numfound = 0;
-		for (Entity entity: getEntityArray()) {
+		for (Entity entity : getEntityArray()) {
 			if (c.isAssignableFrom(entity.getClass())) {
 				printLevelLoc(entity.toString(), entity.x >> 4, entity.y >> 4);
 				numfound++;
@@ -155,12 +166,12 @@ public class Level {
 					double dist = Math.max(xd, yd);
 					dist = dist * dist * dist * dist;
 					dist = dist * dist * dist * dist;
-					val += 1 - dist*20;
+					val += 1 - dist * 20;
 					val += 1.5; // Assuming the range of value is from 0 to 2.
 					val *= types.length / 2.0;
 					val += 1; // Incrementing index.
 					// The original val mainly falls in small interval instead of averagely.
-					val = 1.0/(3 * types.length) * Math.pow(val - 5, 2); // Quadratically bloating the value.
+					val = 1.0 / (3 * types.length) * Math.pow(val - 5, 2); // Quadratically bloating the value.
 					int idx = (int) Math.round(val - 1); // Decrementing index.
 					treeTypes[x + y * w] = (idx >= types.length || idx < 0) ? TreeTile.TreeType.OAK // Oak by default.
 						: types[idx];
@@ -173,7 +184,7 @@ public class Level {
 
 		updateMobCap();
 
-		if(!makeWorld) {
+		if (!makeWorld) {
 			int arrsize = w * h;
 			tiles = new short[arrsize];
 			data = new short[arrsize];
@@ -207,13 +218,11 @@ public class Level {
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
 						if (level == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, x, y); // Te gate should not intersect with the boss room.
-							Structure.dungeonBossRoom.draw(this, w/2, h/2); // Generating the boss room at the center.
-						}
-						else if (level == 0) { // Surface
+							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
+						} else if (level == 0) { // Surface
 							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
-						}
-						else // Any other level, the up-stairs should have dirt on all sides.
+						} else // Any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
 
 						setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
@@ -248,7 +257,9 @@ public class Level {
 		this(w, h, 0, level, parentLevel, makeWorld);
 	}
 
-	/** Level which the world is contained in */
+	/**
+	 * Level which the world is contained in
+	 */
 	public Level(int w, int h, int level, Level parentLevel) {
 		this(w, h, level, parentLevel, true);
 	}
@@ -260,17 +271,18 @@ public class Level {
 	public void checkAirWizard() {
 		checkAirWizard(true);
 	}
+
 	private void checkAirWizard(boolean check) {
 		if (depth == 1 && !AirWizard.beaten) { // Add the airwizard to the surface
 
 			boolean found = false;
 			if (check) {
-				for (Entity e: entitiesToAdd)
+				for (Entity e : entitiesToAdd)
 					if (e instanceof AirWizard) {
 						found = true;
 						break;
 					}
-				for (Entity e: entities)
+				for (Entity e : entities)
 					if (e instanceof AirWizard) {
 						found = true;
 						break;
@@ -279,7 +291,7 @@ public class Level {
 
 			if (!found) {
 				AirWizard aw = new AirWizard();
-				add(aw, w/2, h/2, true);
+				add(aw, w / 2, h / 2, true);
 			}
 		}
 	}
@@ -287,6 +299,7 @@ public class Level {
 	public void checkChestCount() {
 		checkChestCount(true);
 	}
+
 	private void checkChestCount(boolean check) {
 		// If the level is the dungeon, and we're not just loading the world...
 		if (depth != -4) return;
@@ -294,10 +307,10 @@ public class Level {
 		int numChests = 0;
 
 		if (check) {
-			for (Entity e: entitiesToAdd)
+			for (Entity e : entitiesToAdd)
 				if (e instanceof DungeonChest)
 					numChests++;
-			for (Entity e: entities)
+			for (Entity e : entities)
 				if (e instanceof DungeonChest)
 					numChests++;
 			Logging.WORLDNAMED.debug("Found " + numChests + " chests.");
@@ -368,7 +381,8 @@ public class Level {
 			boolean inLevel = entities.contains(entity);
 
 			if (!inLevel) {
-				if (Logging.logLevel) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
+				if (Logging.logLevel)
+					printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 
 				synchronized (entityLock) {
 					entities.add(entity);
@@ -440,8 +454,8 @@ public class Level {
 	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
 		// "searching" can contain any number of class names I want to print when found.
 		String clazz = entity.getClass().getCanonicalName();
-		clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-		for (String search: searching) {
+		clazz = clazz.substring(clazz.lastIndexOf(".") + 1);
+		for (String search : searching) {
 			try {
 				if (Class.forName("minicraft.entity." + search).isAssignableFrom(entity.getClass())) {
 					printLevelLoc(entityMessage + clazz, entity.x >> 4, entity.y >> 4, ": " + entity);
@@ -454,16 +468,19 @@ public class Level {
 	}
 
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
-		dropItem(x, y, mincount+random.nextInt(maxcount - mincount + 1), items);
+		dropItem(x, y, mincount + random.nextInt(maxcount - mincount + 1), items);
 	}
+
 	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
 			dropItem(x, y, items);
 	}
+
 	public void dropItem(int x, int y, Item... items) {
-		for (Item i: items)
+		for (Item i : items)
 			dropItem(x, y, i);
 	}
+
 	public ItemEntity dropItem(int x, int y, Item i) {
 		int ranx, rany;
 
@@ -514,7 +531,7 @@ public class Level {
 		int r = 8;
 
 		List<Entity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
-		for (Entity e: entities) {
+		for (Entity e : entities) {
 			int lr = e.getLightRadius();
 			if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * brightness);
 		}
@@ -541,9 +558,9 @@ public class Level {
 	}
 
 	public Tile getTile(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/ ) return Tiles.get("connector tile");
+		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
 		int id = tiles[x + y * w];
-		if(id < 0) id += 256;
+		if (id < 0) id += 256;
 		return Tiles.get(id);
 	}
 
@@ -553,7 +570,7 @@ public class Level {
 			return;
 		}
 		String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
-		int data = Tiles.get(name).getData(tilewithdata.substring(name.length()+1));
+		int data = Tiles.get(name).getData(tilewithdata.substring(name.length() + 1));
 		setTile(x, y, Tiles.get(name), data);
 	}
 
@@ -578,11 +595,18 @@ public class Level {
 		data[x + y * w] = (short) val;
 	}
 
-	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
-	public void add(Entity entity, int x, int y) { add(entity, x, y, false); }
+	public void add(Entity e) {
+		if (e == null) return;
+		add(e, e.x, e.y);
+	}
+
+	public void add(Entity entity, int x, int y) {
+		add(entity, x, y, false);
+	}
+
 	public void add(Entity entity, int x, int y, boolean tileCoords) {
-		if(entity == null) return;
-		if(tileCoords) {
+		if (entity == null) return;
+		if (tileCoords) {
 			x = x * 16 + 8;
 			y = y * 16 + 8;
 		}
@@ -599,7 +623,9 @@ public class Level {
 			entitiesToRemove.add(e);
 	}
 
-	/** Natural spawn. */
+	/**
+	 * Natural spawn.
+	 */
 	private void trySpawn() {
 		int spawnSkipChance = (int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2));
 		if (spawnSkipChance > 0 && random.nextInt(spawnSkipChance) != 0)
@@ -652,7 +678,7 @@ public class Level {
 	}
 
 	public void removeAllEnemies() {
-		for (Entity e: getEntityArray()) {
+		for (Entity e : getEntityArray()) {
 			if (e instanceof EnemyMob)
 				if (!(e instanceof AirWizard) || Game.isMode("minicraft.settings.mode.creative")) // Don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
@@ -677,34 +703,42 @@ public class Level {
 		return entityArray;
 	}
 
-	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
+	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) {
+		return getEntitiesInTiles(xt, yt, radius, false);
+	}
 
 	@SafeVarargs
-	public final List<Entity> getEntitiesInTiles(int xt, int yt, int radius, boolean includeGiven, Class<? extends Entity>... entityClasses) { return getEntitiesInTiles(xt-radius, yt-radius, xt+radius, yt+radius, includeGiven, entityClasses); }
+	public final List<Entity> getEntitiesInTiles(int xt, int yt, int radius, boolean includeGiven, Class<? extends Entity>... entityClasses) {
+		return getEntitiesInTiles(xt - radius, yt - radius, xt + radius, yt + radius, includeGiven, entityClasses);
+	}
 
 	/**
 	 * Get entities in a certain area on the level.
+	 *
 	 * @param xt0 Left
 	 * @param yt0 Top
 	 * @param xt1 Right
 	 * @param yt1 Bottom
 	 */
-	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) { return getEntitiesInTiles(xt0, yt0, xt1, yt1, false); }
+	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
+		return getEntitiesInTiles(xt0, yt0, xt1, yt1, false);
+	}
 
 	/**
 	 * Get entities in a certain area on the level, and filter them by class.
-	 * @param xt0 Left
-	 * @param yt0 Top
-	 * @param xt1 Right
-	 * @param yt1 Bottom
-	 * @param includeGiven If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
+	 *
+	 * @param xt0           Left
+	 * @param yt0           Top
+	 * @param xt1           Right
+	 * @param yt1           Bottom
+	 * @param includeGiven  If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
 	 * @param entityClasses Entities to accept.
 	 * @return A list of entities in the area.
 	 */
 	@SafeVarargs
 	public final List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1, boolean includeGiven, Class<? extends Entity>... entityClasses) {
 		List<Entity> contained = new ArrayList<>();
-		for (Entity e: getEntityArray()) {
+		for (Entity e : getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
 
@@ -729,12 +763,13 @@ public class Level {
 
 	/**
 	 * Check if there is an entity on the specified tile.
+	 *
 	 * @param x The x position of the tile.
 	 * @param y The y position of the tile
 	 * @return True if there is an entity on the tile.
 	 */
 	public final boolean isEntityOnTile(int x, int y) {
-		for (Entity e: getEntityArray()) {
+		for (Entity e : getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
 
@@ -747,7 +782,7 @@ public class Level {
 
 	public List<Entity> getEntitiesInRect(Rectangle area) {
 		List<Entity> result = new ArrayList<>();
-		for (Entity e: getEntityArray()) {
+		for (Entity e : getEntityArray()) {
 			if (e.isTouching(area))
 				result.add(e);
 		}
@@ -767,7 +802,7 @@ public class Level {
 	/// Finds all entities that are an instance of the given entity.
 	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
 		ArrayList<Entity> matches = new ArrayList<>();
-		for (Entity e: getEntityArray()) {
+		for (Entity e : getEntityArray()) {
 			if (targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
 		}
@@ -790,7 +825,7 @@ public class Level {
 		for (int i = 1; i < players.length; i++) {
 			int curxd = players[i].x - x;
 			int curyd = players[i].y - y;
-			if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
+			if (xd * xd + yd * yd > curxd * curxd + curyd * curyd) {
 				closest = players[i];
 				xd = curxd;
 				yd = curyd;
@@ -802,11 +837,12 @@ public class Level {
 
 	/**
 	 * Calculates maximum position can be reached by an entity with the front boundary of hit box by tile hit box.
-	 * @param sgn One-dimensional direction of displacement
-	 * @param d Displacement vector
-	 * @param hitBoxLeft The left boundary of hit box
-	 * @param hitBoxRight The right boundary of hit box
-	 * @param hitBoxFront The front boundary of hit box
+	 *
+	 * @param sgn                    One-dimensional direction of displacement
+	 * @param d                      Displacement vector
+	 * @param hitBoxLeft             The left boundary of hit box
+	 * @param hitBoxRight            The right boundary of hit box
+	 * @param hitBoxFront            The front boundary of hit box
 	 * @param frontTilePassableCheck The check of whether the front boundary of hit box hits the tile hit box;
 	 *                               the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return The maximum front position can be reached by tile hit box check
@@ -834,31 +870,40 @@ public class Level {
 			(sgn > 0 ? Math.min(d, (maxFrontTile << 4) - hitBoxFront + (1 << 4) - 1) : Math.max(d, (maxFrontTile << 4) - hitBoxFront));
 	}
 
-	public Point[] getAreaTilePositions(int x, int y, int r) { return getAreaTilePositions(x, y, r, r); }
+	public Point[] getAreaTilePositions(int x, int y, int r) {
+		return getAreaTilePositions(x, y, r, r);
+	}
+
 	public Point[] getAreaTilePositions(int x, int y, int rx, int ry) {
 		ArrayList<Point> local = new ArrayList<>();
-		for (int yp = y-ry; yp <= y+ry; yp++)
-			for (int xp = x-rx; xp <= x+rx; xp++)
+		for (int yp = y - ry; yp <= y + ry; yp++)
+			for (int xp = x - rx; xp <= x + rx; xp++)
 				if (xp >= 0 && xp < w && yp >= 0 && yp < h)
 					local.add(new Point(xp, yp));
 		return local.toArray(new Point[0]);
 	}
 
-	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
+	public Tile[] getAreaTiles(int x, int y, int r) {
+		return getAreaTiles(x, y, r, r);
+	}
+
 	public Tile[] getAreaTiles(int x, int y, int rx, int ry) {
 		ArrayList<Tile> local = new ArrayList<>();
 
-		for (Point p: getAreaTilePositions(x, y, rx, ry))
+		for (Point p : getAreaTilePositions(x, y, rx, ry))
 			local.add(getTile(p.x, p.y));
 
 		return local.toArray(new Tile[0]);
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) {
+		setAreaTiles(xt, yt, r, tile, data, false);
+	}
+
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, boolean overwriteStairs) {
-		for(int y = yt - r; y <= yt + r; y++) {
+		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
-				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
+				if (overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
 					setTile(x, y, tile, data);
 			}
 		}
@@ -878,15 +923,19 @@ public class Level {
 		boolean check(Tile t, int x, int y);
 	}
 
-	public List<Point> getMatchingTiles(Tile search) { return getMatchingTiles((t, x, y) -> t.equals(search)); }
+	public List<Point> getMatchingTiles(Tile search) {
+		return getMatchingTiles((t, x, y) -> t.equals(search));
+	}
+
 	public List<Point> getMatchingTiles(Tile... search) {
 		return getMatchingTiles((t, x, y) -> {
-			for (Tile poss: search)
+			for (Tile poss : search)
 				if (t.equals(poss))
 					return true;
 			return false;
 		});
 	}
+
 	public List<Point> getMatchingTiles(TileCheck condition) {
 		List<Point> matches = new ArrayList<>();
 		for (int y = 0; y < h; y++)
@@ -898,7 +947,7 @@ public class Level {
 	}
 
 	public boolean isLight(int x, int y) {
-		for (Tile t: getAreaTiles(x, y, 3))
+		for (Tile t : getAreaTiles(x, y, 3))
 			if (t instanceof TorchTile)
 				return true;
 		for (Entity e : getEntitiesInRect(e -> e instanceof Lantern, new Rectangle(x, y, 8, 8, Rectangle.CENTER_DIMS))) {
@@ -983,8 +1032,7 @@ public class Level {
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			for (int i = 0; i < 18 * (w / 128); i++) {
 
 				/// For generating spawner dungeons
@@ -1126,9 +1174,9 @@ public class Level {
 	 */
 	public void regenerateBossRoom() {
 		if (depth == -4) {
-			Structure.dungeonBossRoom.draw(tiles, w/2, h/2, w); // Generating the boss room at the center.
-			for (int x = w/2-4; x < w/2+5; x++) { // Resetting tile data.
-				for (int y = h/2-4; y < h/2+5; y++) {
+			Structure.dungeonBossRoom.draw(tiles, w / 2, h / 2, w); // Generating the boss room at the center.
+			for (int x = w / 2 - 4; x < w / 2 + 5; x++) { // Resetting tile data.
+				for (int y = h / 2 - 4; y < h / 2 + 5; y++) {
 					setData(x, y, 0);
 				}
 			}

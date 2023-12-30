@@ -68,7 +68,7 @@ public class WorldSelectDisplay extends Display {
 			}, false);
 		}
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			new Menu.Builder(false, 0, RelPos.CENTER, entries)
 				.setDisplayLength(5)
 				.setScrollPolicies(1, true)
@@ -230,7 +230,7 @@ public class WorldSelectDisplay extends Display {
 				col = Color.RED;
 				Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_too_new"), screen, Font.textHeight() * 5, col);
 			}
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version), screen, Font.textHeight() * 7/2, col);
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version), screen, Font.textHeight() * 7 / 2, col);
 		}
 
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.0", Game.input.getMapping("select")), screen, Screen.h - 60, Color.GRAY);
@@ -287,13 +287,20 @@ public class WorldSelectDisplay extends Display {
 		}
 	}
 
-	public static String getWorldName() { return worldName; }
+	public static String getWorldName() {
+		return worldName;
+	}
+
 	public static void setWorldName(String world, boolean loaded) {
 		worldName = world;
 		loadedWorld = loaded;
 	}
 
-	public static boolean hasLoadedWorld() { return loadedWorld; }
+	public static boolean hasLoadedWorld() {
+		return loadedWorld;
+	}
 
-	public static ArrayList<String> getWorldNames() { return worldNames; }
+	public static ArrayList<String> getWorldNames() {
+		return worldNames;
+	}
 }
