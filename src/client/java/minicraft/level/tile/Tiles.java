@@ -2,12 +2,12 @@ package minicraft.level.tile;
 
 import minicraft.core.CrashHandler;
 import minicraft.item.DyeItem;
-import minicraft.level.tile.farming.HeavenlyBerriesTile;
-import minicraft.level.tile.farming.HellishBerriesTile;
-import minicraft.level.tile.farming.TomatoTile;
 import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
+import minicraft.level.tile.farming.HeavenlyBerriesTile;
+import minicraft.level.tile.farming.HellishBerriesTile;
 import minicraft.level.tile.farming.PotatoTile;
+import minicraft.level.tile.farming.TomatoTile;
 import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
 
@@ -25,15 +25,15 @@ public final class Tiles {
 	public static void initTileList() {
 		Logging.TILES.debug("Initializing tile list...");
 
-		tiles.put((short)0, new GrassTile("Grass"));
-		tiles.put((short)1, new DirtTile("Dirt"));
-		tiles.put((short)2, new FlowerTile("Flower"));
-		tiles.put((short)3, new HoleTile("Hole"));
-		tiles.put((short)4, new StairsTile("Stairs Up", true));
-		tiles.put((short)5, new StairsTile("Stairs Down", false));
-		tiles.put((short)6, new WaterTile("Water"));
+		tiles.put((short) 0, new GrassTile("Grass"));
+		tiles.put((short) 1, new DirtTile("Dirt"));
+		tiles.put((short) 2, new FlowerTile("Flower"));
+		tiles.put((short) 3, new HoleTile("Hole"));
+		tiles.put((short) 4, new StairsTile("Stairs Up", true));
+		tiles.put((short) 5, new StairsTile("Stairs Down", false));
+		tiles.put((short) 6, new WaterTile("Water"));
 		// This is out of order because of lava buckets
-		tiles.put((short)17, new LavaTile("Lava"));
+		tiles.put((short) 17, new LavaTile("Lava"));
 
 		tiles.put((short)7, new RockTile("Rock"));
 		tiles.put((short)8, new TreeTile("Tree"));
@@ -65,11 +65,11 @@ public final class Tiles {
 		tiles.put((short)34, new WallTile(Tile.Material.Obsidian));
 		tiles.put((short)35, new WoolTile(DyeItem.DyeColor.WHITE));
 		// These are out of order because of the changes on wool and color system.
-		tiles.put((short)37, new WoolTile(DyeItem.DyeColor.RED));
-		tiles.put((short)38, new WoolTile(DyeItem.DyeColor.BLUE));
-		tiles.put((short)39, new WoolTile(DyeItem.DyeColor.GREEN));
-		tiles.put((short)40, new WoolTile(DyeItem.DyeColor.YELLOW));
-		tiles.put((short)41, new WoolTile(DyeItem.DyeColor.BLACK));
+		tiles.put((short) 37, new WoolTile(DyeItem.DyeColor.RED));
+		tiles.put((short) 38, new WoolTile(DyeItem.DyeColor.BLUE));
+		tiles.put((short) 39, new WoolTile(DyeItem.DyeColor.GREEN));
+		tiles.put((short) 40, new WoolTile(DyeItem.DyeColor.YELLOW));
+		tiles.put((short) 41, new WoolTile(DyeItem.DyeColor.BLACK));
 		tiles.put((short)54, new WoolTile(DyeItem.DyeColor.BROWN));
 		tiles.put((short)55, new WoolTile(DyeItem.DyeColor.PURPLE));
 		tiles.put((short)56, new WoolTile(DyeItem.DyeColor.CYAN));
@@ -97,23 +97,23 @@ public final class Tiles {
 		tiles.put((short)53, new HellishBerriesTile("Hellish Berries"));
 
 		// WARNING: don't use this tile for anything!
-		tiles.put((short)255, new ConnectTile());
+		tiles.put((short) 255, new ConnectTile());
 
-		for(short i = 0; i < 256; i++) {
-			if(tiles.get(i) == null) continue;
-			tiles.get(i).id = (short)i;
+		for (short i = 0; i < 256; i++) {
+			if (tiles.get(i) == null) continue;
+			tiles.get(i).id = (short) i;
 		}
 	}
 
 
 	static void add(int id, Tile tile) {
-		tiles.put((short)id, tile);
+		tiles.put((short) id, tile);
 		Logging.TILES.debug("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;
 	}
 
 	static {
-		for(int i = 0; i < 32768; i++)
+		for (int i = 0; i < 32768; i++)
 			oldids.add(null);
 
 		oldids.set(0, "grass");
@@ -205,6 +205,7 @@ public final class Tiles {
 	}
 
 	private static int overflowCheck = 0;
+
 	public static Tile get(String name) {
 		//System.out.println("Getting from tile list: " + name);
 
@@ -212,7 +213,7 @@ public final class Tiles {
 
 		overflowCheck++;
 
-		if(overflowCheck > 50) {
+		if (overflowCheck > 50) {
 			CrashHandler.crashHandle(new StackOverflowError("Tiles#get: " + name), new CrashHandler.ErrorInfo("Tile fetching Stacking",
 				CrashHandler.ErrorInfo.ErrorType.SERIOUS, "STACKOVERFLOW prevented in Tiles.get(), on: " + name));
 		}
@@ -222,29 +223,29 @@ public final class Tiles {
 		Tile getting = null;
 
 		boolean isTorch = false;
-		if(name.startsWith("TORCH")) {
+		if (name.startsWith("TORCH")) {
 			isTorch = true;
 			name = name.substring(6); // Cuts off torch prefix.
 		}
 
-		if(name.contains("_")) {
+		if (name.contains("_")) {
 			name = name.substring(0, name.indexOf("_"));
 		}
 
-		for(Tile t: tiles.values()) {
-			if(t == null) continue;
-			if(t.name.equals(name)) {
+		for (Tile t : tiles.values()) {
+			if (t == null) continue;
+			if (t.name.equals(name)) {
 				getting = t;
 				break;
 			}
 		}
 
-		if(getting == null) {
+		if (getting == null) {
 			Logging.TILES.info("Invalid tile requested: " + name);
-			getting = tiles.get((short)0);
+			getting = tiles.get((short) 0);
 		}
 
-		if(isTorch) {
+		if (isTorch) {
 			getting = TorchTile.getTorchTile(getting);
 		}
 
@@ -254,26 +255,24 @@ public final class Tiles {
 
 	public static Tile get(int id) {
 		//System.out.println("Requesting tile by id: " + id);
-		if(id < 0) id += 32768;
+		if (id < 0) id += 32768;
 
-		if(tiles.get((short)id) != null) {
-			return tiles.get((short)id);
-		}
-		else if(id >= 32767) {
+		if (tiles.get((short) id) != null) {
+			return tiles.get((short) id);
+		} else if (id >= 32767) {
 			return TorchTile.getTorchTile(get(id - 32767));
-		}
-		else {
+		} else {
 			Logging.TILES.info("Unknown tile id requested: " + id);
-			return tiles.get((short)0);
+			return tiles.get((short) 0);
 		}
 	}
 
 	public static boolean containsTile(int id) {
-		return tiles.get((short)id) != null;
+		return tiles.get((short) id) != null;
 	}
 
 	public static String getName(String descriptName) {
-		if(!descriptName.contains("_")) return descriptName;
+		if (!descriptName.contains("_")) return descriptName;
 		int data;
 		String[] parts = descriptName.split("_");
 		descriptName = parts[0];

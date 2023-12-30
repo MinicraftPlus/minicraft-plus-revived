@@ -48,13 +48,13 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new DungeonChest(false, true)));
 
 		// Add the various types of crafting furniture
-		for (Crafter.Type type: Crafter.Type.values()) {
+		for (Crafter.Type type : Crafter.Type.values()) {
 			items.add(new FurnitureItem(new Crafter(type)));
 		}
 
 		// Add the various lanterns
-		for (Lantern.Type type: Lantern.Type.values()) {
-			 items.add(new FurnitureItem(new Lantern(type)));
+		for (Lantern.Type type : Lantern.Type.values()) {
+			items.add(new FurnitureItem(new Lantern(type)));
 		}
 
 		// Add the various colors of bed
@@ -77,12 +77,16 @@ public class FurnitureItem extends Item {
 		placed = false;
 	}
 
-	/** Determines if you can attack enemies with furniture (you can't) */
+	/**
+	 * Determines if you can attack enemies with furniture (you can't)
+	 */
 	public boolean canAttack() {
 		return false;
 	}
 
-	/** What happens when you press the "Attack" key with the furniture in your hands */
+	/**
+	 * What happens when you press the "Attack" key with the furniture in your hands
+	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
 			Sound.play("craft");

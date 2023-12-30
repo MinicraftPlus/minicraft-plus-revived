@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -18,20 +19,23 @@ public class ClothingItem extends StackableItem {
 
 		items.add(new ClothingItem("Red Clothes", new LinkedSprite(SpriteType.Item, "red_clothes"), Color.get(1, 204, 0, 0)));
 		items.add(new ClothingItem("Blue Clothes", new LinkedSprite(SpriteType.Item, "blue_clothes"), Color.get(1, 0, 0, 204)));
-		items.add(new ClothingItem("Green Clothes",  new LinkedSprite(SpriteType.Item, "green_clothes"), Color.get(1, 0, 204, 0)));
-		items.add(new ClothingItem("Yellow Clothes",  new LinkedSprite(SpriteType.Item, "yellow_clothes"), Color.get(1, 204, 204, 0)));
-		items.add(new ClothingItem("Black Clothes",  new LinkedSprite(SpriteType.Item, "black_clothes"), Color.get(1, 51)));
-		items.add(new ClothingItem("Orange Clothes",  new LinkedSprite(SpriteType.Item, "orange_clothes"), Color.get(1, 255, 102, 0)));
-		items.add(new ClothingItem("Purple Clothes",  new LinkedSprite(SpriteType.Item, "purple_clothes"), Color.get(1, 102, 0, 153)));
-		items.add(new ClothingItem("Cyan Clothes",  new LinkedSprite(SpriteType.Item, "cyan_clothes"), Color.get(1, 0, 102, 153)));
-		items.add(new ClothingItem("Reg Clothes",  new LinkedSprite(SpriteType.Item, "reg_clothes"), Color.get(1, 51, 51, 0))); // Dark Green
+		items.add(new ClothingItem("Green Clothes", new LinkedSprite(SpriteType.Item, "green_clothes"), Color.get(1, 0, 204, 0)));
+		items.add(new ClothingItem("Yellow Clothes", new LinkedSprite(SpriteType.Item, "yellow_clothes"), Color.get(1, 204, 204, 0)));
+		items.add(new ClothingItem("Black Clothes", new LinkedSprite(SpriteType.Item, "black_clothes"), Color.get(1, 51)));
+		items.add(new ClothingItem("Orange Clothes", new LinkedSprite(SpriteType.Item, "orange_clothes"), Color.get(1, 255, 102, 0)));
+		items.add(new ClothingItem("Purple Clothes", new LinkedSprite(SpriteType.Item, "purple_clothes"), Color.get(1, 102, 0, 153)));
+		items.add(new ClothingItem("Cyan Clothes", new LinkedSprite(SpriteType.Item, "cyan_clothes"), Color.get(1, 0, 102, 153)));
+		items.add(new ClothingItem("Reg Clothes", new LinkedSprite(SpriteType.Item, "reg_clothes"), Color.get(1, 51, 51, 0))); // Dark Green
 
 		return items;
 	}
 
 	private int playerCol;
 
-	private ClothingItem(String name, LinkedSprite sprite, int pcol) { this(name, 1, sprite, pcol); }
+	private ClothingItem(String name, LinkedSprite sprite, int pcol) {
+		this(name, 1, sprite, pcol);
+	}
+
 	private ClothingItem(String name, int count, LinkedSprite sprite, int pcol) {
 		super(name, sprite, count);
 		playerCol = pcol;
@@ -42,20 +46,24 @@ public class ClothingItem extends StackableItem {
 		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
-			ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
-				.findAny().orElse(null);
-			if (lastClothing == null)
-				lastClothing = (ClothingItem) Items.get("Reg Clothes");
-			lastClothing = lastClothing.copy();
-			lastClothing.count = 1;
-			player.tryAddToInvOrDrop(lastClothing);
+			if (!Game.isMode("minicraft.settings.mode.creative")) {
+				ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
+					.findAny().orElse(null);
+				if (lastClothing == null)
+					lastClothing = (ClothingItem) Items.get("Reg Clothes");
+				lastClothing = lastClothing.copy();
+				lastClothing.count = 1;
+				player.tryAddToInvOrDrop(lastClothing);
+			}
 			player.shirtColor = playerCol;
 			return super.interactOn(true);
 		}
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull ClothingItem copy() {
 		return new ClothingItem(getName(), count, sprite, playerCol);

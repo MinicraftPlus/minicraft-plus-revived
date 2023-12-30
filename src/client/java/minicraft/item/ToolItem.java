@@ -42,7 +42,9 @@ public class ToolItem extends Item {
 		return level + typeName.toLowerCase();
 	}
 
-	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
+	/**
+	 * Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc)
+	 */
 	public ToolItem(ToolType type, int level) {
 		super(LEVEL_NAMES[level] + " " + type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")));
 
@@ -60,10 +62,13 @@ public class ToolItem extends Item {
 		dur = type.durability;
 	}
 
-	/** Gets the name of this tool (and it's type) as a display string. */
+	/**
+	 * Gets the name of this tool (and it's type) as a display string.
+	 */
 	@Override
 	public String getDisplayName() {
-		if (!type.noLevel) return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
+		if (!type.noLevel)
+			return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 		else return " " + Localization.getLocalized(type.toString());
 	}
 
@@ -71,7 +76,9 @@ public class ToolItem extends Item {
 		return dur <= 0 && type.durability > 0;
 	}
 
-	/** You can attack mobs with tools. */
+	/**
+	 * You can attack mobs with tools.
+	 */
 	public boolean canAttack() {
 		return type != ToolType.Shears;
 	}
@@ -86,7 +93,9 @@ public class ToolItem extends Item {
 		return random.nextInt(5) + damage;
 	}
 
-	/** Gets the attack damage bonus from an item/tool (sword/axe) */
+	/**
+	 * Gets the attack damage bonus from an item/tool (sword/axe)
+	 */
 	public int getAttackDamageBonus(Entity e) {
 		if (!payDurability())
 			return 0;
@@ -111,7 +120,9 @@ public class ToolItem extends Item {
 		return super.getData() + "_" + dur;
 	}
 
-	/** Sees if this item equals another. */
+	/**
+	 * Sees if this item equals another.
+	 */
 	@Override
 	public boolean equals(Item item) {
 		if (item instanceof ToolItem) {
@@ -122,7 +133,9 @@ public class ToolItem extends Item {
 	}
 
 	@Override
-	public int hashCode() { return type.name().hashCode() + level; }
+	public int hashCode() {
+		return type.name().hashCode() + level;
+	}
 
 	public @NotNull ToolItem copy() {
 		ToolItem ti;

@@ -30,7 +30,7 @@ public class EndGameDisplay extends Display {
 
 	static {
 		int maxLength = 0;
-		for (String s: scoredItems)
+		for (String s : scoredItems)
 			maxLength = Math.max(maxLength, s.length());
 	}
 
@@ -38,7 +38,7 @@ public class EndGameDisplay extends Display {
 		super(false, false);
 
 		displayTimer = Updater.normSpeed; // wait 3 seconds before rendering the menu.
-		inputDelay = Updater.normSpeed/2; // wait a half-second after rendering before allowing user input.
+		inputDelay = Updater.normSpeed / 2; // wait a half-second after rendering before allowing user input.
 
 
 		ArrayList<ListEntry> entries = new ArrayList<>();
@@ -48,7 +48,7 @@ public class EndGameDisplay extends Display {
 		entries.add(new StringEntry("minicraft.displays.end_game.display.bonuses", Color.YELLOW));
 
 		finalScore = Game.player.getScore();
-		for(String item: scoredItems)
+		for (String item : scoredItems)
 			addBonus(item);
 
 		entries.add(new StringEntry(Localization.getLocalized("minicraft.displays.end_game.display.final_score", finalScore)));
@@ -58,7 +58,7 @@ public class EndGameDisplay extends Display {
 
 		entries.add(new SelectEntry("minicraft.displays.end_game.exit", () -> Game.setDisplay(new TitleDisplay())));
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries).createMenu()
 		};
 	}
@@ -78,7 +78,7 @@ public class EndGameDisplay extends Display {
 
 	@Override
 	public void render(Screen screen) {
-		if(displayTimer <= 0)
+		if (displayTimer <= 0)
 			super.render(screen);
 	}
 

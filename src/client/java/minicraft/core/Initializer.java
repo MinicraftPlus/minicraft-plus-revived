@@ -9,40 +9,40 @@ import org.tinylog.provider.ProviderRegistry;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.LinearGradientPaint;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Objects;
 
 public class Initializer extends Game {
-	private Initializer() {}
+	private Initializer() {
+	}
 
 	/**
 	 * Reference to actual frame, also it may be null.
 	 */
 	static JFrame frame;
-	static LogoSplashCanvas logoSplash = new LogoSplashCanvas();
 	static int fra, tik; // These store the number of frames and ticks in the previous second; used for fps, at least.
 
-	public static JFrame getFrame() { return frame; }
-	public static int getCurFps() { return fra; }
+	public static JFrame getFrame() {
+		return frame;
+	}
+
+	public static int getCurFps() {
+		return fra;
+	}
 
 	static void parseArgs(String[] args) {
 		// Parses command line arguments
 		@Nullable
 		String saveDir = null;
+		boolean enableHardwareAcceleration = true;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("--savedir") && i + 1 < args.length) {
 				i++;
@@ -63,17 +63,22 @@ public class Initializer extends Game {
 				Localization.isDebugLocaleEnabled = true;
 			} else if (args[i].equalsIgnoreCase("--debug-unloc-tracing")) {
 				Localization.unlocalizedStringTracing = true;
+			} else if (args[i].equalsIgnoreCase("--no-hardware-acceleration")) {
+				enableHardwareAcceleration = false;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
+		// Reference: https://stackoverflow.com/a/13832805
+		if (enableHardwareAcceleration) System.setProperty("sun.java2d.opengl", "true");
 
 		FileHandler.determineGameDir(saveDir);
 	}
 
-	/** This is the main loop that runs the game. It:
-	 *	-keeps track of the amount of time that has passed
-	 *	-fires the ticks needed to run the game
-	 *	-fires the command to render out the screen.
+	/**
+	 * This is the main loop that runs the game. It:
+	 * -keeps track of the amount of time that has passed
+	 * -fires the ticks needed to run the game
+	 * -fires the command to render out the screen.
 	 */
 	static void run() {
 		long lastTick = System.nanoTime();
@@ -96,10 +101,22 @@ public class Initializer extends Game {
 			}
 
 			now = System.nanoTime();
-			if (now >= lastRender + 1E9D / MAX_FPS) {
+			if (now >= lastRender + 1E9D / MAX_FPS / 1.01) {
 				frames++;
 				lastRender = now;
 				Renderer.render();
+			}
+
+			try {
+				long curNano = System.nanoTime();
+				long untilNextTick = (long) (lastTick + nsPerTick - curNano);
+				long untilNextFrame = (long) (lastRender + 1E9D / MAX_FPS - curNano);
+				if (untilNextTick > 1E3 && untilNextFrame > 1E3) {
+					double timeToWait = Math.min(untilNextTick, untilNextFrame) / 1.2; // in nanosecond
+					//noinspection BusyWait
+					Thread.sleep((long) Math.floor(timeToWait / 1E6), (int) ((timeToWait - Math.floor(timeToWait)) % 1E6));
+				}
+			} catch (InterruptedException ignored) {
 			}
 
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
@@ -120,12 +137,10 @@ public class Initializer extends Game {
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
 		Renderer.canvas.setBackground(Color.BLACK);
-		logoSplash.setMinimumSize(new java.awt.Dimension(1, 1));
-		logoSplash.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = Initializer.frame = new JFrame(NAME);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout()); // Sets the layout of the window
-		frame.add(logoSplash, BorderLayout.CENTER);
+		frame.add(Renderer.canvas, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 		frame.pack(); // Squishes everything into the preferredSize.
 
 		try {
@@ -146,105 +161,39 @@ public class Initializer extends Game {
 		});
 
 		frame.addWindowListener(new WindowListener() {
-			public void windowActivated(WindowEvent e) {}
-			public void windowDeactivated(WindowEvent e) {}
-			public void windowIconified(WindowEvent e) {}
-			public void windowDeiconified(WindowEvent e) {}
-			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) { Logging.GAMEHANDLER.debug("Window closed"); }
+			public void windowActivated(WindowEvent e) {
+			}
+
+			public void windowDeactivated(WindowEvent e) {
+			}
+
+			public void windowIconified(WindowEvent e) {
+			}
+
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			public void windowOpened(WindowEvent e) {
+			}
+
+			public void windowClosed(WindowEvent e) {
+				Logging.GAMEHANDLER.debug("Window closed");
+			}
+
 			public void windowClosing(WindowEvent e) {
 				Logging.GAMEHANDLER.info("Window closing");
 				quit();
 			}
 		});
+	}
 
+	/**
+	 * Launching the main window.
+	 */
+	static void launchWindow() {
 		frame.setVisible(true);
-		logoSplash.setDisplay(true);
-		logoSplash.renderer.start();
-	}
-
-	private static class LogoSplashCanvas extends JPanel {
-		private Image logo;
-
-		{
-			try {
-				logo = ImageIO.read(Objects.requireNonNull(Initializer.class.getResourceAsStream("/assets/textures/gui/title.png")));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		private int transparency = 255;
-		private boolean display = false;
-		private boolean inAnimation = false;
-		private boolean interruptWhenAnimated = false;
-
-		public Thread renderer = new Thread(() -> {
-			do {
-				repaint();
-				if (interruptWhenAnimated && !inAnimation) break;
-			} while (!Initializer.logoSplash.renderer.isInterrupted());
-		}, "Logo Splash Screen Renderer");
-
-		@Override
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			final int w = g.getClipBounds().width;
-			final int h = g.getClipBounds().height;
-
-			// Drawing colorful background.
-			Graphics2D g2d = (Graphics2D) g;
-			int n = 6;
-			float[] fractions = new float[n];
-			Color[] colors = new Color[n];
-			for (int x = 0; x < n; x++) {
-				double sin = Math.sin(Math.PI * (255-transparency)/255.0);
-				double cos = Math.cos(Math.PI * x/n);
-				double hue = Math.abs((sin*210 + cos*45) % 360) / 360;
-				double s = 1 - Math.pow(Math.min(Math.sin(Math.cos(Math.abs(sin - cos))), 1), 4);
-				fractions[x] = (float) Math.sin((double) x/n * Math.PI/2) * x/n;
-				colors[x] = Color.getHSBColor((float) hue, (float) s, 1);
-			}
-			g2d.setPaint(new LinearGradientPaint(0, 0, w, 0, fractions, colors));
-			g2d.fillRect(0, 0, w, h);
-
-			// Drawing the centered logo.
-			if (transparency < 255) g.drawImage(logo, w/2 - logo.getWidth(frame)*2, h/2 - logo.getHeight(frame)*2, logo.getWidth(frame)*4, logo.getHeight(frame)*4, frame);
-
-			// Fading effect.
-			g.setColor(new Color(0, 0, 0, Math.max(Math.min(255 - (int) (Math.cos(transparency/255.0 * Math.PI) * 255), 255), 0)));
-			g.fillRect(0, 0, w, h);
-
-			if (inAnimation) {
-				if (display) {
-					if (transparency > 0) transparency -= 5;
-					else inAnimation = false;
-				} else {
-					if (transparency < 255) transparency += 5;
-					else inAnimation = false;
-				}
-			}
-		}
-
-		public void setDisplay(boolean display) {
-			this.display = display;
-			inAnimation = true;
-		}
-	}
-
-	/** Remove the logo splash screen and start canvas rendering. */
-	static void startCanvasRendering() {
-		logoSplash.setDisplay(false);
-		logoSplash.interruptWhenAnimated = true;
-		try {
-			logoSplash.renderer.join();
-		} catch (InterruptedException ignored) {}
-		logoSplash.renderer.interrupt();
-		frame.remove(logoSplash);
-		frame.add(Renderer.canvas, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
-		frame.pack();
-		frame.revalidate();
-		logoSplash = null; // Discard the canvas.
+		frame.requestFocus();
+		Renderer.canvas.requestFocus();
 	}
 
 	/**
@@ -252,7 +201,7 @@ public class Initializer extends Game {
 	 * that is extracted via PrintStream.
 	 *
 	 * @param throwable Throwable/Exception from which stack trace is to be
-	 *	extracted.
+	 *                  extracted.
 	 * @return String with provided Throwable's stack trace.
 	 */
 	public static String getExceptionTrace(final Throwable throwable) {
