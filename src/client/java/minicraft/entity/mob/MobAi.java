@@ -2,7 +2,6 @@ package minicraft.entity.mob;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.furniture.Lantern;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -26,11 +25,12 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Constructor for a mob with an ai.
-	 * @param sprites All of this mob's sprites.
+	 *
+	 * @param sprites   All of this mob's sprites.
 	 * @param maxHealth Maximum health of the mob.
-	 * @param lifetime How many ticks this mob can live before its removed.
-	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
-	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
+	 * @param lifetime  How many ticks this mob can live before its removed.
+	 * @param rwTime    How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance  The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	protected MobAi(LinkedSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
@@ -62,18 +62,20 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Checking whether the mob is within any light. From tiles or from lanterns.
+	 *
 	 * @return {@code true} if the mob is within any light.
 	 */
 	protected boolean isWithinLight() {
 		return Arrays.stream(level.getEntityArray()).anyMatch(e -> e instanceof Lantern && isWithin(e.getLightRadius(), e))
 			|| !level.getMatchingTiles((tile, x, y) -> {
-				int xx = Math.abs(this.x - x), yy = Math.abs(this.y - y), l = tile.getLightRadius(level, x, y);
-				return xx * xx + yy * yy <= l * l;
+			int xx = Math.abs(this.x - x), yy = Math.abs(this.y - y), l = tile.getLightRadius(level, x, y);
+			return xx * xx + yy * yy <= l * l;
 		}).isEmpty();
 	}
 
 	/**
 	 * Checks if the mob should sleep this tick.
+	 *
 	 * @return true if mob should sleep, false if not.
 	 */
 	protected boolean skipTick() {
@@ -98,7 +100,7 @@ public abstract class MobAi extends Mob {
 
 		if (getLevel() != null) {
 			boolean foundPlayer = false;
-			for (Player p: level.getPlayers()) {
+			for (Player p : level.getPlayers()) {
 				if (p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
 					foundPlayer = true;
 					break;
@@ -143,7 +145,8 @@ public abstract class MobAi extends Mob {
 
 	@Override
 	public void doHurt(int damage, Direction attackDir) {
-		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		if (isRemoved() || hurtTime > 0)
+			return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 
 		Player player = getClosestPlayer();
 		if (player != null) { // If there is a player in the level
@@ -167,8 +170,9 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Sets the mob to walk in a random direction for a given amount of time.
+	 *
 	 * @param byChance true if the mob should always get a new direction to walk, false if
-	 * there should be a chance that the mob moves.
+	 *                 there should be a chance that the mob moves.
 	 */
 	public void randomizeWalkDir(boolean byChance) { // Boolean specifies if this method, from where it's called, is called every tick, or after a random chance.
 		if (!byChance && random.nextInt(randomWalkChance) != 0) return;
@@ -182,24 +186,26 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Adds some items to the level.
+	 *
 	 * @param mincount Least amount of items to add.
 	 * @param maxcount Most amount of items to add.
-	 * @param items Which items should be added.
+	 * @param items    Which items should be added.
 	 */
 	protected void dropItem(int mincount, int maxcount, Item... items) {
-		int count = random.nextInt(maxcount-mincount+1) + mincount;
+		int count = random.nextInt(maxcount - mincount + 1) + mincount;
 		for (int i = 0; i < count; i++)
-			 level.dropItem(x, y, items);
+			level.dropItem(x, y, items);
 	}
 
 	/**
 	 * Determines if a friendly mob can spawn here.
-	 * @param level The level the mob is trying to spawn in.
-	 * @param x X map coordinate of spawn.
-	 * @param y Y map coordinate of spawn.
+	 *
+	 * @param level      The level the mob is trying to spawn in.
+	 * @param x          X map coordinate of spawn.
+	 * @param y          Y map coordinate of spawn.
 	 * @param playerDist Max distance from the player the mob can be spawned in.
 	 * @param soloRadius How far out can there not already be any entities.
-	 * This is multiplied by the monster density of the level
+	 *                   This is multiplied by the monster density of the level
 	 * @return true if the mob can spawn, false if not.
 	 */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
@@ -221,13 +227,17 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Returns the maximum level of this mob.
+	 *
 	 * @return max level of the mob.
 	 */
 	public abstract int getMaxLevel();
 
-	protected void die(int points) { die(points, 0); }
+	protected void die(int points) {
+		die(points, 0);
+	}
+
 	protected void die(int points, int multAdd) {
-		for (Player p: level.getPlayers()) {
+		for (Player p : level.getPlayers()) {
 			p.addScore(points); // Add score for mob death
 			if (multAdd != 0)
 				p.addMultiplier(multAdd);

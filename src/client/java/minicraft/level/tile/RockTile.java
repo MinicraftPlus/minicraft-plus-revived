@@ -86,7 +86,7 @@ public class RockTile extends Tile {
 				stone += random.nextInt(3) + 1;
 
 				int coal = 1;
-				if(!Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+				if (!Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
 					coal += 1;
 				}
 

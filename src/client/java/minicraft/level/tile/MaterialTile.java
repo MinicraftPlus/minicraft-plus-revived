@@ -16,12 +16,16 @@ public class MaterialTile extends Tile {
 	protected Material type;
 
 	protected MaterialTile(Material type) {
-		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (SpriteAnimation) null);
+		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" : type.name()), (SpriteAnimation) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Stone: sprite = new SpriteAnimation(SpriteType.Tile, "stone"); break;
-			case Obsidian: sprite = new SpriteAnimation(SpriteType.Tile, "obsidian"); break;
+			case Stone:
+				sprite = new SpriteAnimation(SpriteType.Tile, "stone");
+				break;
+			case Obsidian:
+				sprite = new SpriteAnimation(SpriteType.Tile, "obsidian");
+				break;
 			default:
 		}
 	}
@@ -39,9 +43,14 @@ public class MaterialTile extends Tile {
 					}
 					Item drop;
 					switch (type) {
-						case Stone: drop = Items.get("Stone"); break;
-						case Obsidian: drop = Items.get("Raw Obsidian"); break;
-						default: throw new IllegalStateException("Unexpected value: " + type);
+						case Stone:
+							drop = Items.get("Stone");
+							break;
+						case Obsidian:
+							drop = Items.get("Raw Obsidian");
+							break;
+						default:
+							throw new IllegalStateException("Unexpected value: " + type);
 					}
 					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);

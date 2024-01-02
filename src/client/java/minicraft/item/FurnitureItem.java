@@ -51,12 +51,12 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new DungeonChest(false, true)));
 
 		// Add the various types of crafting furniture
-		for (Crafter.Type type: Crafter.Type.values()) {
+		for (Crafter.Type type : Crafter.Type.values()) {
 			items.add(new FurnitureItem(new Crafter(type)));
 		}
 		// Add the various lanterns
-		for (Lantern.Type type: Lantern.Type.values()) {
-			 items.add(new FurnitureItem(new Lantern(type)));
+		for (Lantern.Type type : Lantern.Type.values()) {
+			items.add(new FurnitureItem(new Lantern(type)));
 		}
 
 		items.add(new FurnitureItem(new Tnt()));
@@ -91,12 +91,16 @@ public class FurnitureItem extends Item {
 		isRideable = true;
 	}
 
-	/** Determines if you can attack enemies with furniture (you can't) */
+	/**
+	 * Determines if you can attack enemies with furniture (you can't)
+	 */
 	public boolean canAttack() {
 		return false;
 	}
 
-	/** What happens when you press the "Attack" key with the furniture in your hands */
+	/**
+	 * What happens when you press the "Attack" key with the furniture in your hands
+	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (!isRideable && tile.mayPass(level, xt, yt, furniture)) { // IsRideable is looked at first to prevent unnecessary checking for if a boat can swim; If the furniture can go on the tile
 			Sound.play("craft");

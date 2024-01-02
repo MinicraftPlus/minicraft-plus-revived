@@ -32,13 +32,18 @@ public class FoodItem extends StackableItem {
 	private final int feed; // The amount of hunger the food "satisfies" you by.
 	private static final int staminaCost = 2; // The amount of stamina it costs to consume the food.
 
-	private FoodItem(String name, LinkedSprite sprite, int feed) { this(name, sprite, 1, feed); }
+	private FoodItem(String name, LinkedSprite sprite, int feed) {
+		this(name, sprite, 1, feed);
+	}
+
 	private FoodItem(String name, LinkedSprite sprite, int count, int feed) {
 		super(name, sprite, count);
 		this.feed = feed;
 	}
 
-	/** What happens when the player uses the item on a tile */
+	/**
+	 * What happens when the player uses the item on a tile
+	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
 		if (count > 0 && player.hunger < Player.maxHunger && player.payStamina(staminaCost)) { // If the player has hunger to fill, and stamina to pay...
@@ -50,7 +55,9 @@ public class FoodItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull FoodItem copy() {
 		return new FoodItem(getName(), sprite, count, feed);

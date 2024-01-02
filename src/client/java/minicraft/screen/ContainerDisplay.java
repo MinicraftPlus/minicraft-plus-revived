@@ -45,19 +45,22 @@ public class ContainerDisplay extends Display {
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
 
-		if (oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		if (oldSel == newSel)
+			return; // this also serves as a protection against access to menus[0] when such may not exist.
 
 		int shift = 0;
 
 		if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
 		if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
 
-		for (Menu m: menus) {
+		for (Menu m : menus) {
 			m.translate(shift, 0);
 		}
 	}
 
-	private int getOtherIdx() { return selection ^ 1; }
+	private int getOtherIdx() {
+		return selection ^ 1;
+	}
 
 	@Override
 	public void render(Screen screen) {
@@ -128,23 +131,23 @@ public class ContainerDisplay extends Display {
 
 				Item fromItem = from.get(fromSel);
 
-				boolean transferAll = input.getMappedKey("shift").isDown() || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+				boolean transferAll = input.getMappedKey("shift").isDown() || !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
 
 				Item toItem = fromItem.copy();
 
 				if (fromItem instanceof StackableItem) {
 					int move = 1;
 					if (!transferAll) {
-						((StackableItem)toItem).count = 1;
+						((StackableItem) toItem).count = 1;
 					} else {
-						move = ((StackableItem)fromItem).count;
+						move = ((StackableItem) fromItem).count;
 					}
 
 					int moved = to.add(toSel, toItem);
 					if (moved < move) {
-						((StackableItem)fromItem).count -= moved;
+						((StackableItem) fromItem).count -= moved;
 					} else if (!transferAll) {
-						((StackableItem)fromItem).count--;
+						((StackableItem) fromItem).count--;
 					} else {
 						from.remove(fromSel);
 					}

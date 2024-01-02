@@ -5,7 +5,7 @@ plugins {
 allprojects {
     apply plugin: "java"
 
-    version = "2.2.0-dev3"
+    version = "2.2.0-dev4"
 
     sourceCompatibility = 8
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -94,13 +94,13 @@ jar {
 
     from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }}
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 // Don't override if we're building a tar package.
-tasks.withType(Tar){
+tasks.withType(Tar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-tasks.withType(Zip){
+tasks.withType(Zip) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

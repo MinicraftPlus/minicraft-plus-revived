@@ -22,9 +22,11 @@ public class InputEntry extends ListEntry {
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);
 	}
+
 	public InputEntry(String prompt, String regex, int maxLen) {
 		this(prompt, regex, maxLen, "");
 	}
+
 	public InputEntry(String prompt, String regex, int maxLen, String initValue) {
 		this.prompt = prompt;
 		this.regex = regex;
@@ -56,7 +58,9 @@ public class InputEntry extends ListEntry {
 		}
 	}
 
-	public String getUserInput() { return userInput; }
+	public String getUserInput() {
+		return userInput;
+	}
 
 	public String toString() {
 		return Localization.getLocalized(prompt) + (prompt.length() == 0 ? "" : ": ") + userInput;

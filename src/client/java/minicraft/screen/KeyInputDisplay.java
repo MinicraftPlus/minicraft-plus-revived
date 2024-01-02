@@ -48,9 +48,9 @@ public class KeyInputDisplay extends Display {
 		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			.setTitle("minicraft.displays.key_input.title")
-			.setPositioning(new Point(Screen.w/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
+			.setPositioning(new Point(Screen.w / 2, Screen.h - Font.textHeight() * 5), RelPos.TOP);
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			builder.createMenu()
 		};
 	}
@@ -103,7 +103,7 @@ public class KeyInputDisplay extends Display {
 			Localization.getLocalized("minicraft.displays.key_input.display.help.3", Game.input.getMapping("exit"))
 		};
 
-		for(int i = 0; i < lines.length; i++)
-			Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);
+		for (int i = 0; i < lines.length; i++)
+			Font.drawCentered(lines[i], screen, Screen.h - Font.textHeight() * (4 - i), Color.WHITE);
 	}
 }
