@@ -26,11 +26,6 @@ public class RideableEntity extends Entity {
 
 	@Override
 	public boolean canSwim() {
-		return super.canSwim();
-	}
-
-	@Override
-	public boolean canBurn() {
-		return super.canBurn();
+		return true;
 	}
 }

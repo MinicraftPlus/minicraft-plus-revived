@@ -9,6 +9,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
+import minicraft.item.FishingRodItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PowerGloveItem;
@@ -94,18 +95,22 @@ public class Boat extends RideableEntity {
         if (playerInBoat != null) {
             exitTimer--;
 
-            if (exitTimer <= 0 && Game.input.getKey("ATTACK").down) {
-                restorePlayer(playerInBoat);
-				return;
+            if (exitTimer <= 0 && Game.input.getMappedKey("ATTACK").isDown()) {
+				if (playerInBoat.activeItem instanceof FishingRodItem) {
+					return;
+				} else {
+					restorePlayer(playerInBoat);
+					return;
+				}
             }
 
             double ya = 0;
             double xa = 0;
 
-            if (Game.input.getKey("MOVE-UP").down) ya -= 1;
-            if (Game.input.getKey("MOVE-DOWN").down) ya += 1;
-            if (Game.input.getKey("MOVE-LEFT").down) xa -= 1;
-			if (Game.input.getKey("MOVE-RIGHT").down) xa += 1;
+            if (Game.input.getMappedKey("MOVE-UP").isDown()) ya -= 1;
+            if (Game.input.getMappedKey("MOVE-DOWN").isDown()) ya += 1;
+            if (Game.input.getMappedKey("MOVE-LEFT").isDown()) xa -= 1;
+			if (Game.input.getMappedKey("MOVE-RIGHT").isDown()) xa += 1;
 
             move(xa, ya);
             playerInBoat.x = x;
@@ -141,7 +146,6 @@ public class Boat extends RideableEntity {
 		if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem)) {
 			player.getInventory().add(0, player.activeItem);
 		}
-		//make this the player's current item.
 		return true;
 	}
 
