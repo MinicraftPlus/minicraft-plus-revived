@@ -16,6 +16,11 @@ jobs:
       with:
         distribution: temurin
         java-version: 8
+
+    - name: Increment Version
+      env:
+        VERSION_s: 4+GITHUB_RUN_NUMBER
+        VERSION_f: "2.2.0-dev$VERSION_s"
         
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.4.2
@@ -26,9 +31,9 @@ jobs:
     - uses: "dciborow/action-github-releases@v1.0.1"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
+        automatic_release_tag: "$VERSION_f"
         prerelease: true
-        title: "Pre-release 2.2.0-dev%s (Nightly)"
+        title: "Version 2.2.0, Pre-release $VERSION_s (Nightly)"
         generate_release_notes: true
         files: |
           LICENSE
