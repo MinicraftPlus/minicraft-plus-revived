@@ -1,36 +1,37 @@
 name: Nightly build
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron:  '0 0 * * *'
   workflow_dispatch:
-
+  
 jobs:
   gradle:
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Change version name in build
-        run: |
-          sed -i -r "s/(?<=project\.version \= ')([\d\.]+)(?:-\w+)?(?=')/\1-dev%s/" build.gradle     
-      - uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 8
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.4.2
-
-      - name: Execute Gradle build
-        run: ./gradlew build
-
-      - uses: actions/upload-artifact@v3.1.2
-        with:
-          name: "Nightly release"
-          path: |
-            LICENSE
-            ChangeLog.md
-            build/libs/**.jar
-          if-no-files-found: error
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 8
+        
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2.4.2
+    
+    - name: Execute Gradle build
+      run: ./gradlew build
+      
+    - uses: "dciborow/action-github-releases@v1.0.1"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Pre-release 2.2.0-dev%s (Nightly)"
+        generate_release_notes: true
+        files: |
+          LICENSE
+          ChangeLog.md
+          build/libs/**.jar
+        
