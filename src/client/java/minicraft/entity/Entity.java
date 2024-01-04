@@ -376,6 +376,7 @@ public abstract class Entity implements Tickable {
 	 *
 	 * @return the closest player.
 	 */
+	@Nullable
 	protected Player getClosestPlayer() {
 		return getClosestPlayer(true);
 	}
@@ -387,6 +388,7 @@ public abstract class Entity implements Tickable {
 	 * @param returnSelf determines if the method can return itself.
 	 * @return The closest player to this entity.
 	 */
+	@Nullable
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
 			return (Player) this;
