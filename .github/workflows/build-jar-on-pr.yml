@@ -33,7 +33,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const artifact = context.payload.workflow_run.artifacts.find(a => a.name === 'minicraft');
+            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+            const { data: workflowRuns } = await octokit.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const artifact = workflowRuns.artifacts.find(a => a.name === 'minicraft');
             if (artifact) {
               const comment = `Here's the JAR file for the build: [${artifact.name}](${artifact.archive_download_url})`;
               github.issues.createComment({
