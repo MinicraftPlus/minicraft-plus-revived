@@ -97,6 +97,35 @@
       }
     }
   },
+  "minicraft.advancements.recipes.boat": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Boat_1": [
+          "Wood_10",
+          "Wood Shovel_1"
+        ]
+      }
+    }
+  },
   "minicraft.advancements.recipes.plank_wall": {
     "criteria": {
       "has_plank": {

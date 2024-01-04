@@ -838,6 +838,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 			if (e instanceof Furniture)
 				e.interact(this, null, attackDir);
+			if (e instanceof RideableEntity) {
+				int dmg = getAttackDamage(e);
+				maxDmg = Math.max(dmg, maxDmg);
+				((RideableEntity) e).hurt(this, dmg);
+			}
 		}
 		return maxDmg > 0;
 	}

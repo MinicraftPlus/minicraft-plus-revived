@@ -1153,7 +1153,7 @@ public class Load {
 				return new Snake(mobLevel);
 			case "AirWizard":
 				if (mobLevel > 1) return null;
-				return new AirWizard()
+				return new AirWizard();
 			case "Spawner":
 				return new Spawner(new Zombie(1));
 			case "Workbench":
