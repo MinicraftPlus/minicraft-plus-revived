@@ -1,0 +1,45 @@
+name: Build and Attach JAR to PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: minicraft
+          path: build/libs/*.jar
+
+      - name: Comment with JAR link
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const artifact = context.payload.workflow_run.artifacts.find(a => a.name === 'minicraft');
+            if (artifact) {
+              const comment = `Here's the JAR file for the build: [${artifact.name}](${artifact.archive_download_url})`;
+              github.issues.createComment({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
