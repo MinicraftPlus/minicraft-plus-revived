@@ -74,11 +74,13 @@ public class ObsidianKnight extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-		if (getClosestPlayer().isRemoved()) {
+		Player player = getClosestPlayer();
+		if (player == null || player.isRemoved()) {
 			active = false;
 			KnightStatue ks = new KnightStatue(health);
 			level.add(ks, x, y, false);
 			this.remove();
+			return;
 		}
 
 		// Achieve phase 2
@@ -101,7 +103,6 @@ public class ObsidianKnight extends EnemyMob {
 		}
 
 		if (attackPhase == AttackPhase.Attacking) {
-			Player player = getClosestPlayer();
 			if (attackDelay > 0) {
 				xmov = ymov = 0;
 				int dir = (attackDelay - 35) / 4 % 4; // The direction of attack.
