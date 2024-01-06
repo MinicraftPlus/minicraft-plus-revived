@@ -7,7 +7,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class WheatTile extends CropTile {
-	private final SpriteLink[] spritStages = new LinkedSprite[]{
+	private final SpriteLink[] spritStages = new SpriteLink[]{
 		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage0").createSpriteLink(),
 		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage1").createSpriteLink(),
 		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "wheat_stage2").createSpriteLink(),

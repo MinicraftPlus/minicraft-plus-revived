@@ -63,18 +63,18 @@ public class TileItem extends StackableItem {
 		};
 		items.add(new TileItem("Wheat Seeds", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "seed").createSpriteLink(), new TileModel("wheat", seedPlanting), "farmland"));
 		items.add(new TileItem("Potato", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "potato").createSpriteLink(), new TileModel("potato", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Carrot", new LinkedSprite(SpriteType.Item, "carrot"), new TileModel("carrot", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Tomato Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("tomato", seedPlanting), "farmland"));
-		items.add(new TileItem("Heavenly Berries", new LinkedSprite(SpriteType.Item, "heavenly_berries"), new TileModel("heavenly berries", TileModel.KEEP_DATA), "farmland"));
-		items.add(new TileItem("Hellish Berries", new LinkedSprite(SpriteType.Item, "hellish_berries"), new TileModel("hellish berries", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Carrot", new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteType.Item, "carrot").createSpriteLink(), new TileModel("carrot", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Tomato Seeds", new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteType.Item, "seed").createSpriteLink(), new TileModel("tomato", seedPlanting), "farmland"));
+		items.add(new TileItem("Heavenly Berries", new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteType.Item, "heavenly_berries").createSpriteLink(), new TileModel("heavenly berries", TileModel.KEEP_DATA), "farmland"));
+		items.add(new TileItem("Hellish Berries", new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteType.Item, "hellish_berries").createSpriteLink(), new TileModel("hellish berries", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Grass Seeds", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "seed").createSpriteLink(), new TileModel("grass"), "dirt"));
 
 		// Creative mode available tiles:
-		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
-		items.add(new TileItem("hole", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("hole"), "dirt", "grass"));
-		items.add(new TileItem("lava", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("lava"), "dirt", "grass", "hole"));
-		items.add(new TileItem("path", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("path"), "dirt", "grass", "hole"));
-		items.add(new TileItem("water", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("water"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Farmland", SpriteManager.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
+		items.add(new TileItem("hole", SpriteManager.missingTexture(SpriteType.Item), new TileModel("hole"), "dirt", "grass"));
+		items.add(new TileItem("lava", SpriteManager.missingTexture(SpriteType.Item), new TileModel("lava"), "dirt", "grass", "hole"));
+		items.add(new TileItem("path", SpriteManager.missingTexture(SpriteType.Item), new TileModel("path"), "dirt", "grass", "hole"));
+		items.add(new TileItem("water", SpriteManager.missingTexture(SpriteType.Item), new TileModel("water"), "dirt", "grass", "hole"));
 
 		return items;
 	}

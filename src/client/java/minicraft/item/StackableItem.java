@@ -2,7 +2,6 @@ package minicraft.item;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.gfx.SpriteManager.SpriteType;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +37,9 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Shard", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "shard").createSpriteLink()));
 		items.add(new StackableItem("Cloud Ore", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cloud_ore").createSpriteLink()));
 		items.add(new StackableItem("Glass Bottle", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "glass_bottle").createSpriteLink()));
-		items.add(new StackableItem("Tomato", new LinkedSprite(SpriteType.Item, "tomato")));
-		items.add(new StackableItem("Bone", new LinkedSprite(SpriteType.Item, "bone")));
-		items.add(new StackableItem("Fertilizer", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "fertilizer")));
+		items.add(new StackableItem("Tomato", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "tomato").createSpriteLink()));
+		items.add(new StackableItem("Bone", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "bone").createSpriteLink()));
+		items.add(new StackableItem("Fertilizer", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "fertilizer").createSpriteLink()));
 
 		return items;
 	}
