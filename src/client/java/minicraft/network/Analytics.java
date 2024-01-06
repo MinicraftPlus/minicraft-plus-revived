@@ -50,9 +50,14 @@ public enum Analytics {
 		this.token = token;
 	}
 
-	@Nullable public Future<HttpResponse<Empty>> ping() { return ping(1); }
-	@Nullable public Future<HttpResponse<Empty>> ping(int value) {
-		final String url = "https://pingdat.io?t="+token+"&v="+value;
+	@Nullable
+	public Future<HttpResponse<Empty>> ping() {
+		return ping(1);
+	}
+
+	@Nullable
+	public Future<HttpResponse<Empty>> ping(int value) {
+		final String url = "https://pingdat.io?t=" + token + "&v=" + value;
 
 		return Unirest.get(url).asEmptyAsync(new Callback<Empty>() {
 			@Override

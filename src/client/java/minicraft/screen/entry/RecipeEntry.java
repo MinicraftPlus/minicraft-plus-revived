@@ -24,7 +24,8 @@ public class RecipeEntry extends ItemEntry {
 	}
 
 	@Override
-	public void tick(InputHandler input) {}
+	public void tick(InputHandler input) {
+	}
 
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {

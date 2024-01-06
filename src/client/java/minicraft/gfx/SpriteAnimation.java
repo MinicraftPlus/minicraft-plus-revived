@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 
-/** This is not applicable for mob sprite animations. Only for generic sprite animations. */
+/**
+ * This is not applicable for mob sprite animations. Only for generic sprite animations.
+ */
 public class SpriteAnimation implements Destroyable {
 	private static final ArrayList<SpriteAnimation> spriteAnimations = new ArrayList<>();
 	private static final HashMap<String, SpriteMeta> metas = new HashMap<>();
@@ -34,7 +36,9 @@ public class SpriteAnimation implements Destroyable {
 		return metas.get(key);
 	}
 
-	/** Refreshing all currently registered animations. */
+	/**
+	 * Refreshing all currently registered animations.
+	 */
 	public static void refreshAnimations() {
 		spriteAnimations.forEach(a -> a.refreshAnimation(metas.get(a.key)));
 	}
@@ -59,15 +63,20 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Constructing animations with the provided key. The meta is given by default.
+	 *
 	 * @param type The sprite category.
-	 * @param key The sprite resource key.
+	 * @param key  The sprite resource key.
 	 */
-	public SpriteAnimation(SpriteType type, String key) { this(metas.get(key), type, key); }
+	public SpriteAnimation(SpriteType type, String key) {
+		this(metas.get(key), type, key);
+	}
+
 	/**
 	 * Constructing animations with the provided metadata and key. It should already be validated.
+	 *
 	 * @param meta The metadata of the sprite sheet.
 	 * @param type The sprite category.
-	 * @param key The sprite resource key.
+	 * @param key  The sprite resource key.
 	 */
 	public SpriteAnimation(SpriteMeta meta, SpriteType type, String key) {
 		this.type = type;
@@ -79,6 +88,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the tile class of this animation used for tile connector rendering.
+	 *
 	 * @param connectChecker The tile connection checker.
 	 * @return The instance itself.
 	 */
@@ -89,6 +99,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting if the singleton sprite is used for other tile connective rendering.
+	 *
 	 * @param connective If used for connective rendering.
 	 * @return The instance itself.
 	 */
@@ -99,6 +110,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the color of all animation frames.
+	 *
 	 * @param color The color of sprite.
 	 * @return The instance itself.
 	 */
@@ -112,6 +124,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the color of the specific animation frame.
+	 *
 	 * @param frame The specific frame.
 	 * @param color The color of sprite.
 	 * @return The instance itself.
@@ -126,6 +139,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Getting the current frame of animation.
+	 *
 	 * @return The current frame sprite.
 	 */
 	public SpriteLink getCurrentFrame() {
@@ -134,6 +148,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Getting the specific frame of animation.
+	 *
 	 * @param frame The specific frame.
 	 * @return The frame sprite.
 	 */
@@ -143,10 +158,11 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Rendering the animation on the screen.
+	 *
 	 * @param screen The screen instance.
-	 * @param level The level for rendering.
-	 * @param x The x coordinate level tile.
-	 * @param y The y coordinate level tile.
+	 * @param level  The level for rendering.
+	 * @param x      The x coordinate level tile.
+	 * @param y      The y coordinate level tile.
 	 */
 	public void render(Screen screen, Level level, int x, int y) {
 		// If border and the tile class is set.
@@ -229,7 +245,9 @@ public class SpriteAnimation implements Destroyable {
 		}
 	}
 
-	/** Refreshing the animation data for this instance. */
+	/**
+	 * Refreshing the animation data for this instance.
+	 */
 	public void refreshAnimation(SpriteMeta metadata) {
 		frame = 0;
 		frametick = 0;
@@ -265,7 +283,7 @@ public class SpriteAnimation implements Destroyable {
 			if (metadata.border != null) border = new SpriteLink.SpriteLinkBuilder(type, metadata.border).createSpriteLink(false);
 			if (metadata.corner != null) corner = new SpriteLink.SpriteLinkBuilder(type, metadata.corner).createSpriteLink(false);
 		} else {
-			animations = new SpriteLink[] {new SpriteLink.SpriteLinkBuilder(type, key).setSpriteSize(width, width).createSpriteLink(false)};
+			animations = new SpriteLink[]{new SpriteLink.SpriteLinkBuilder(type, key).setSpriteSize(width, width).createSpriteLink(false)};
 			border = null;
 			corner = null;
 		}

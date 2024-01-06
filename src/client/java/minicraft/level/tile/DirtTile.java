@@ -15,7 +15,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class DirtTile extends Tile {
-	private static SpriteAnimation[] levelSprite = new SpriteAnimation[] {
+	private static SpriteAnimation[] levelSprite = new SpriteAnimation[]{
 		new SpriteAnimation(SpriteType.Tile, "dirt"),
 		new SpriteAnimation(SpriteType.Tile, "gray_dirt"),
 		new SpriteAnimation(SpriteType.Tile, "purple_dirt")
@@ -28,18 +28,25 @@ public class DirtTile extends Tile {
 
 	protected static int dCol(int depth) {
 		switch (depth) {
-			case 1: return Color.get(1, 194, 194, 194); // Sky.
-			case 0: return Color.get(1, 129, 105, 83); // Surface.
-			case -4: return Color.get(1, 76, 30, 100); // Dungeons.
-			default: return Color.get(1, 102); // Caves.
+			case 1:
+				return Color.get(1, 194, 194, 194); // Sky.
+			case 0:
+				return Color.get(1, 129, 105, 83); // Surface.
+			case -4:
+				return Color.get(1, 76, 30, 100); // Dungeons.
+			default:
+				return Color.get(1, 102); // Caves.
 		}
 	}
 
 	protected static int dIdx(int depth) {
 		switch (depth) {
-			case 0: return 0; // Surface
-			case -4: return 2; // Dungeons
-			default: return 1; // Caves
+			case 0:
+				return 0; // Surface
+			case -4:
+				return 2; // Dungeons
+			default:
+				return 1; // Caves
 		}
 	}
 

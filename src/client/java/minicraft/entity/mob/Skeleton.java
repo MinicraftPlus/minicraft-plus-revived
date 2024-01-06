@@ -7,7 +7,7 @@ import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Items;
 
 public class Skeleton extends EnemyMob {
-	private static SpriteLink[][][] sprites = new SpriteLink[][][] {
+	private static SpriteLink[][][] sprites = new SpriteLink[][][]{
 		Mob.compileMobSpriteAnimations(0, 0, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 2, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 4, "skeleton"),
@@ -19,6 +19,7 @@ public class Skeleton extends EnemyMob {
 
 	/**
 	 * Creates a skeleton of a given level.
+	 *
 	 * @param lvl The skeleton's level.
 	 */
 	public Skeleton(int lvl) {

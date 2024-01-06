@@ -6,7 +6,7 @@ import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Items;
 
 public class Snake extends EnemyMob {
-	private static SpriteLink[][][] sprites = new SpriteLink[][][] {
+	private static SpriteLink[][][] sprites = new SpriteLink[][][]{
 		Mob.compileMobSpriteAnimations(0, 0, "snake"),
 		Mob.compileMobSpriteAnimations(0, 2, "snake"),
 		Mob.compileMobSpriteAnimations(0, 4, "snake"),
@@ -21,7 +21,7 @@ public class Snake extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			int damage = lvl + Settings.getIdx("diff");
-			((Player)entity).hurt(this, damage);
+			((Player) entity).hurt(this, damage);
 		}
 	}
 

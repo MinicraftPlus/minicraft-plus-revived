@@ -19,10 +19,13 @@ public class TorchItem extends TileItem {
 		return items;
 	}
 
-	private TorchItem() { this(1); }
+	private TorchItem() {
+		this(1);
+	}
+
 	private TorchItem(int count) {
 		super("Torch", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "torch").createSpriteLink(),
-			count, "", "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool", "grass", "sand","path","ornate stone","ornate obsidian");
+			count, null, "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool", "grass", "sand", "path", "ornate stone", "ornate obsidian");
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
@@ -39,7 +42,9 @@ public class TorchItem extends TileItem {
 	}
 
 	@Override
-	public int hashCode() { return 8931; }
+	public int hashCode() {
+		return 8931;
+	}
 
 	public @NotNull TorchItem copy() {
 		return new TorchItem(count);

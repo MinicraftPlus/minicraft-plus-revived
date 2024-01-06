@@ -2,6 +2,7 @@ package minicraft.item;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
+import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.gfx.SpriteManager.SpriteType;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +20,8 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Leather", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "leather").createSpriteLink()));
 		items.add(new StackableItem("Wheat", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "wheat").createSpriteLink()));
 		items.add(new StackableItem("Key", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "key").createSpriteLink()));
-		items.add(new StackableItem("arrow", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "arrow").createSpriteLink()));
-		items.add(new StackableItem("string", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "string").createSpriteLink()));
+		items.add(new StackableItem("Arrow", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "arrow").createSpriteLink()));
+		items.add(new StackableItem("String", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "string").createSpriteLink()));
 		items.add(new StackableItem("Coal", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "coal").createSpriteLink()));
 		items.add(new StackableItem("Iron Ore", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "iron_ore").createSpriteLink()));
 		items.add(new StackableItem("Lapis", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "lapis").createSpriteLink()));
@@ -30,13 +31,16 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Rose", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "red_flower").createSpriteLink()));
 		items.add(new StackableItem("Gunpowder", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gunpowder").createSpriteLink()));
 		items.add(new StackableItem("Slime", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "slime").createSpriteLink()));
-		items.add(new StackableItem("glass", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "glass").createSpriteLink()));
-		items.add(new StackableItem("cloth", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cloth").createSpriteLink()));
-		items.add(new StackableItem("gem", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gem").createSpriteLink()));
+		items.add(new StackableItem("Glass", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "glass").createSpriteLink()));
+		items.add(new StackableItem("Cloth", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cloth").createSpriteLink()));
+		items.add(new StackableItem("Gem", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gem").createSpriteLink()));
 		items.add(new StackableItem("Scale", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "scale").createSpriteLink()));
 		items.add(new StackableItem("Shard", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "shard").createSpriteLink()));
 		items.add(new StackableItem("Cloud Ore", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cloud_ore").createSpriteLink()));
 		items.add(new StackableItem("Glass Bottle", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "glass_bottle").createSpriteLink()));
+		items.add(new StackableItem("Tomato", new LinkedSprite(SpriteType.Item, "tomato")));
+		items.add(new StackableItem("Bone", new LinkedSprite(SpriteType.Item, "bone")));
+		items.add(new StackableItem("Fertilizer", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "fertilizer")));
 
 		return items;
 	}
@@ -48,12 +52,15 @@ public class StackableItem extends Item {
 		super(name, sprite);
 		count = 1;
 	}
+
 	protected StackableItem(String name, SpriteLink sprite, int count) {
 		this(name, sprite);
 		this.count = count;
 	}
 
-	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
+	public boolean stacksWith(Item other) {
+		return other instanceof StackableItem && other.getName().equals(getName());
+	}
 
 	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
@@ -62,7 +69,9 @@ public class StackableItem extends Item {
 		return subClassSuccess;
 	}
 
-	/** Called to determine if this item should be removed from an inventory. */
+	/**
+	 * Called to determine if this item should be removed from an inventory.
+	 */
 	@Override
 	public boolean isDepleted() {
 		return count <= 0;
@@ -75,7 +84,7 @@ public class StackableItem extends Item {
 
 	@Override
 	public String toString() {
-		return super.toString() + "-Stack_Size:"+count;
+		return super.toString() + "-Stack_Size:" + count;
 	}
 
 	public String getData() {

@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class Lantern extends Furniture {
 	public enum Type {
-		NORM ("Lantern", 9, 0),
-		IRON ("Iron Lantern", 12, 2),
-		GOLD ("Gold Lantern", 15, 4);
+		NORM("Lantern", 9, 0),
+		IRON("Iron Lantern", 12, 2),
+		GOLD("Gold Lantern", 15, 4);
 
 		protected int light, offset;
 		protected String title;
@@ -24,6 +24,7 @@ public class Lantern extends Furniture {
 
 	/**
 	 * Creates a lantern of a given type.
+	 *
 	 * @param type Type of lantern.
 	 */
 	public Lantern(Lantern.Type type) {

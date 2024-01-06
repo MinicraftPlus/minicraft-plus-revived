@@ -19,7 +19,7 @@ public class FlowerTile extends Tile {
 	private static final SpriteAnimation flowerSprite1 = new SpriteAnimation(SpriteType.Tile, "flower_shape1");
 
 	protected FlowerTile(String name) {
-		super(name, (SpriteAnimation) null);
+		super(name, null);
 		connectsToGrass = true;
 		maySpawn = true;
 	}
@@ -68,8 +68,8 @@ public class FlowerTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		level.dropItem(x *16 + 8, y * 16 + 8, 0, 1, Items.get("Flower"));
-		level.dropItem(x *16 + 8, y * 16 + 8, 0, 1, Items.get("Rose"));
+		level.dropItem(x * 16 + 8, y * 16 + 8, 0, 1, Items.get("Flower"));
+		level.dropItem(x * 16 + 8, y * 16 + 8, 0, 1, Items.get("Rose"));
 		level.setTile(x, y, Tiles.get("Grass"));
 		return true;
 	}

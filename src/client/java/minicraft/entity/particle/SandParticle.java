@@ -8,6 +8,7 @@ import java.util.Random;
 public class SandParticle extends Particle {
 	/**
 	 * Creating a sand particle.
+	 *
 	 * @param x X map position
 	 * @param y Y map position
 	 */

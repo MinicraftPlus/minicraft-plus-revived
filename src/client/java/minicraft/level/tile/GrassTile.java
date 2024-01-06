@@ -14,7 +14,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class GrassTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
 		.setSingletonWithConnective(true);
 
@@ -66,7 +66,7 @@ public class GrassTile extends Tile {
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					int data = level.getData(xt, yt);
-					level.setTile(xt, yt, Tiles.get("Dirt"));
+					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
 						level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Wheat Seeds"));

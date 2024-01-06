@@ -14,17 +14,17 @@ import java.util.ArrayList;
 public class Crafter extends Furniture {
 
 	public enum Type {
-		Workbench (new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "workbench").createSpriteLink(),
+		Workbench(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "workbench").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "workbench").createSpriteLink(), 3, 2, Recipes.workbenchRecipes),
-		Oven (new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "oven").createSpriteLink(),
+		Oven(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "oven").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "oven").createSpriteLink(), 3, 2, Recipes.ovenRecipes),
-		Furnace (new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "furnace").createSpriteLink(),
+		Furnace(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "furnace").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "furnace").createSpriteLink(), 3, 2, Recipes.furnaceRecipes),
-		Anvil (new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "anvil").createSpriteLink(),
+		Anvil(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "anvil").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "anvil").createSpriteLink(), 3, 2, Recipes.anvilRecipes),
-		Enchanter (new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "enchanter").createSpriteLink(),
+		Enchanter(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "enchanter").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "enchanter").createSpriteLink(), 7, 2, Recipes.enchantRecipes),
-		Loom (new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "loom").createSpriteLink(),
+		Loom(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "loom").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "loom").createSpriteLink(), 7, 2, Recipes.loomRecipes);
 
 		public ArrayList<Recipe> recipes;
@@ -41,12 +41,14 @@ public class Crafter extends Furniture {
 			Crafter.names.add(this.name());
 		}
 	}
+
 	public static ArrayList<String> names = new ArrayList<>();
 
 	public Crafter.Type type;
 
 	/**
 	 * Creates a crafter of a given type.
+	 *
 	 * @param type What type of crafter this is.
 	 */
 	public Crafter(Crafter.Type type) {
@@ -65,5 +67,7 @@ public class Crafter extends Furniture {
 	}
 
 	@Override
-	public String toString() { return type.name()+getDataPrints(); }
+	public String toString() {
+		return type.name() + getDataPrints();
+	}
 }
