@@ -13,8 +13,8 @@ import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -702,7 +702,7 @@ public class ResourcePackDisplay extends Display {
 		Collections.reverse(loadQuery);
 
 		// Clear all previously loaded resources.
-		Renderer.spriteLinker.resetSprites();
+		Renderer.spriteManager.resetSprites();
 		Localization.resetLocalizations();
 		BookData.resetBooks();
 		Sound.resetSounds();
@@ -726,7 +726,7 @@ public class ResourcePackDisplay extends Display {
 		SkinDisplay.releaseSkins();
 
 		SpriteAnimation.refreshAnimations();
-		Renderer.spriteLinker.updateLinkedSheets();
+		Renderer.spriteManager.updateLinkedSheets();
 		Localization.loadLanguage();
 	}
 
@@ -767,7 +767,7 @@ public class ResourcePackDisplay extends Display {
 			for (String m : pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png.json") && !isDir)) {
 				try {
 					JSONObject obj = new JSONObject(readStringFromInputStream(pack.getResourceAsStream(m)));
-					SpriteLinker.SpriteMeta meta = new SpriteLinker.SpriteMeta();
+					SpriteManager.SpriteMeta meta = new SpriteManager.SpriteMeta();
 					pngs.remove(m.substring(0, m.length() - 5));
 					BufferedImage image = ImageIO.read(pack.getResourceAsStream(m.substring(0, m.length() - 5)));
 
@@ -782,7 +782,7 @@ public class ResourcePackDisplay extends Display {
 						sheet = new MinicraftImage(image, 16, 16 * meta.frames);
 					} else
 						sheet = new MinicraftImage(image, 16, 16);
-					Renderer.spriteLinker.setSprite(type, m.substring(path.length(), m.length() - 9), sheet);
+					Renderer.spriteManager.setSprite(type, m.substring(path.length(), m.length() - 9), sheet);
 
 					JSONObject borderObj = obj.optJSONObject("border");
 					if (borderObj != null) {
@@ -792,7 +792,7 @@ public class ResourcePackDisplay extends Display {
 							String borderK = path + meta.border + ".png";
 							pngs.remove(borderK);
 							try {
-								Renderer.spriteLinker.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
+								Renderer.spriteManager.setSprite(type, meta.border, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(borderK)), 24, 24));
 							} catch (IOException e) {
 								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", borderK, m, pack.name);
 								meta.border = null;
@@ -805,7 +805,7 @@ public class ResourcePackDisplay extends Display {
 							String cornerK = path + meta.corner + ".png";
 							pngs.remove(cornerK);
 							try {
-								Renderer.spriteLinker.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
+								Renderer.spriteManager.setSprite(type, meta.corner, new MinicraftImage(ImageIO.read(pack.getResourceAsStream(cornerK)), 16, 16));
 							} catch (IOException e) {
 								Logging.RESOURCEHANDLER_RESOURCEPACK.warn(e, "Unable to read {} with {} in pack: {}", cornerK, m, pack.name);
 								meta.corner = null;
@@ -834,7 +834,7 @@ public class ResourcePackDisplay extends Display {
 					sheet = new MinicraftImage(image);
 				}
 
-				Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
+				Renderer.spriteManager.setSprite(type, p.substring(path.length(), p.length() - 4), sheet);
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load {} in pack : {}", p, pack.name);
 			}

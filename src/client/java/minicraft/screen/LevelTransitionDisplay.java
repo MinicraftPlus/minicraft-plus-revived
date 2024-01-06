@@ -6,8 +6,7 @@ import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 import java.util.function.Supplier;
 
@@ -18,7 +17,7 @@ public class LevelTransitionDisplay extends Display {
 	private int dir; // Direction that you are changing levels. (going up or down stairs)
 	private int time = 0; // Time it spends on this menu
 
-	private final Supplier<MinicraftImage> hudSheet = () -> Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud");
+	private final Supplier<MinicraftImage> hudSheet = () -> Renderer.spriteManager.getSheet(SpriteType.Gui, "hud");
 
 	public LevelTransitionDisplay(int dir) {
 		super(false,false);

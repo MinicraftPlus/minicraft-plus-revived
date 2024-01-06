@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {

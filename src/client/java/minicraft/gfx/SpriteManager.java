@@ -9,13 +9,13 @@ import javax.security.auth.Destroyable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SpriteLinker {
+public class SpriteManager {
 	/** Buffering SpriteSheet for caching. */
 	private final HashMap<String, MinicraftImage> entitySheets = new HashMap<>(),
 	guiSheets = new HashMap<>(), itemSheets = new HashMap<>(), tileSheets = new HashMap<>();
 
 	/** Storing all exist in-used LinkedSprite. */
-	private final ArrayList<LinkedSprite> linkedSheets = new ArrayList<>();
+	private final ArrayList<SpriteLink> linkedSheets = new ArrayList<>();
 
 	/** Clearing all Sprite buffers for the upcoming resource pack application. */
 	public void resetSprites() {
@@ -86,11 +86,11 @@ public class SpriteLinker {
 	 * @param type The sprite category.
 	 * @return The missing texture or null if invalid sprite category.
 	 */
-	public static LinkedSprite missingTexture(SpriteType type) {
+	public static SpriteLink missingTexture(SpriteType type) {
 		switch (type) {
-			case Entity: return LinkedSprite.MISSING_ENTITY_TEXTURE;
-			case Item: return LinkedSprite.MISSING_ITEM_TEXTURE;
-			case Tile: return LinkedSprite.MISSING_TILE_TEXTURE;
+			case Entity: return SpriteLink.MISSING_ENTITY_TEXTURE;
+			case Item: return SpriteLink.MISSING_ITEM_TEXTURE;
+			case Tile: return SpriteLink.MISSING_TILE_TEXTURE;
 			default: return null;
 		}
 	}
@@ -112,7 +112,7 @@ public class SpriteLinker {
 	/** Updating all existing LinkedSheet for resource pack application. */
 	public void updateLinkedSheets() {
 		Logging.SPRITE.debug("Updating all LinkedSprite.");
-		linkedSheets.forEach(LinkedSprite::reloadSprite);
+		linkedSheets.forEach(SpriteLink::reloadSprite);
 	}
 
 	/** The metadata of the sprite sheet. */
@@ -139,12 +139,12 @@ public class SpriteLinker {
 	}
 
 	/** A sprite collector with resource collector. */
-	public static class LinkedSprite implements Destroyable {
+	public static class SpriteLink implements Destroyable {
 		/** Textures for missing textures for entity, item or tile */
-		public static final LinkedSprite
-			MISSING_ENTITY_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, MISSING_ENTITY_KEY).createSpriteLink(true),
-			MISSING_ITEM_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, MISSING_ITEM_KEY).createSpriteLink(true),
-			MISSING_TILE_TEXTURE = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, MISSING_TILE_KEY).createSpriteLink(true);
+		public static final SpriteLink
+			MISSING_ENTITY_TEXTURE = new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, MISSING_ENTITY_KEY).createSpriteLink(true),
+			MISSING_ITEM_TEXTURE = new SpriteLink.SpriteLinkBuilder(SpriteType.Item, MISSING_ITEM_KEY).createSpriteLink(true),
+			MISSING_TILE_TEXTURE = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, MISSING_TILE_KEY).createSpriteLink(true);
 
 		private final String key; // The resource key.
 		private final SpriteType spriteType;
@@ -159,8 +159,8 @@ public class SpriteLinker {
 		private Sprite sprite = null;
 		private boolean destroyed = false; // It is not linked when destroyed.
 
-		private LinkedSprite(SpriteType spriteType, String key, HashMap<String, MinicraftImage> linkedMap,
-							 int x, int y, int w, int h, int color, int mirror, int flip, boolean immutable) {
+		private SpriteLink(SpriteType spriteType, String key, HashMap<String, MinicraftImage> linkedMap,
+		                   int x, int y, int w, int h, int color, int mirror, int flip, boolean immutable) {
 			this.key = key;
 			this.spriteType = spriteType;
 			this.linkedMap = linkedMap;
@@ -188,7 +188,7 @@ public class SpriteLinker {
 		 * @param color The color of the white tint.
 		 * @return The instance itself.
 		 */
-		public LinkedSprite setColor(int color) {
+		public SpriteLink setColor(int color) {
 			if (immutable) {
 				this.color = color;
 				if (sprite != null) sprite.color = color;
@@ -239,10 +239,10 @@ public class SpriteLinker {
 		/** Unlink this LinkedSprite from SpriteLinker. */
 		@Override
 		public void destroy() throws DestroyFailedException {
-			Renderer.spriteLinker.linkedSheets.remove(this); // Unlink this instance.
+			Renderer.spriteManager.linkedSheets.remove(this); // Unlink this instance.
 			destroyed = true;
 		}
-		/** If this {@link LinkedSprite} is unlinked from {@link SpriteLinker}. */
+		/** If this {@link SpriteLink} is unlinked from {@link SpriteManager}. */
 		@Override
 		public boolean isDestroyed() {
 			return destroyed;
@@ -255,7 +255,7 @@ public class SpriteLinker {
 			private int x, y, w, h, color = -1, mirror = 0, flip = 0;
 
 			/**
-			 * Create new {@link SpriteLinkBuilder} for the creation of {@link LinkedSprite} with the specific category and resource key.
+			 * Create new {@link SpriteLinkBuilder} for the creation of {@link SpriteLink} with the specific category and resource key.
 			 * @param spriteType The category of the sprite.
 			 * @param key The resource key of the sprite.
 			 */
@@ -332,11 +332,11 @@ public class SpriteLinker {
 				return this;
 			}
 
-			public LinkedSprite createSpriteLink() { return createSpriteLink(true); }
-			public LinkedSprite createSpriteLink(boolean immutable) {
-				HashMap<String, MinicraftImage> linkedMap = Renderer.spriteLinker.getMappingByType(spriteType);
-				LinkedSprite sprite = new LinkedSprite(spriteType, key, linkedMap, x, y, w, h, color, mirror, flip, immutable);
-				Renderer.spriteLinker.linkedSheets.add(sprite);
+			public SpriteLink createSpriteLink() { return createSpriteLink(true); }
+			public SpriteLink createSpriteLink(boolean immutable) {
+				HashMap<String, MinicraftImage> linkedMap = Renderer.spriteManager.getMappingByType(spriteType);
+				SpriteLink sprite = new SpriteLink(spriteType, key, linkedMap, x, y, w, h, color, mirror, flip, immutable);
+				Renderer.spriteManager.linkedSheets.add(sprite);
 				return sprite;
 			}
 		}

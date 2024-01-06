@@ -4,20 +4,20 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class PotatoTile extends PlantTile {
-	private LinkedSprite[] spritStages = new LinkedSprite[] {
-		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "potato_stage0").createSpriteLink(),
-		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "potato_stage1").createSpriteLink(),
-		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "potato_stage2").createSpriteLink(),
-		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "potato_stage3").createSpriteLink(),
-		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "potato_stage4").createSpriteLink(),
-		new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "potato_stage5").createSpriteLink()
+	private SpriteLink[] spritStages = new SpriteLink[] {
+		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "potato_stage0").createSpriteLink(),
+		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "potato_stage1").createSpriteLink(),
+		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "potato_stage2").createSpriteLink(),
+		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "potato_stage3").createSpriteLink(),
+		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "potato_stage4").createSpriteLink(),
+		new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "potato_stage5").createSpriteLink()
 	};
 
     public PotatoTile(String name) {

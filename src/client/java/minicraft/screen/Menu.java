@@ -12,8 +12,7 @@ import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +69,7 @@ public class Menu {
 	 */
 	private String typingSearcher;
 
-	private final Supplier<MinicraftImage> hudSheet = () -> Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud");
+	private final Supplier<MinicraftImage> hudSheet = () -> Renderer.spriteManager.getSheet(SpriteType.Gui, "hud");
 
 	private Menu() {}
 	protected Menu(Menu m) {

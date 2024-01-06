@@ -3,7 +3,7 @@ package minicraft.item;
 import minicraft.core.Updater;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
@@ -15,7 +15,7 @@ public class HeartItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		items.add(new HeartItem("Obsidian Heart",
-			new SpriteLinker.LinkedSprite.SpriteLinkBuilder(SpriteLinker.SpriteType.Item, "obsidian_heart").createSpriteLink(), 5));
+			new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Item, "obsidian_heart").createSpriteLink(), 5));
 
 		return items;
 	}
@@ -23,8 +23,8 @@ public class HeartItem extends StackableItem {
 	private int health; // The amount of health to increase by.
 	private int staminaCost; // The amount of stamina it costs to consume.
 
-	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int health) { this(name, sprite, 1, health); }
-	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int count, int health) {
+	private HeartItem(String name, SpriteManager.SpriteLink sprite, int health) { this(name, sprite, 1, health); }
+	private HeartItem(String name, SpriteManager.SpriteLink sprite, int count, int health) {
 		super(name, sprite, count);
 		this.health = health;
 		staminaCost = 7;

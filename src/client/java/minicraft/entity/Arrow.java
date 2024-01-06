@@ -5,22 +5,19 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.util.Logging;
-
-import javax.security.auth.DestroyFailedException;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 import java.util.List;
 
 public class Arrow extends Entity implements ClientTickable {
-	private static final LinkedSprite spriteRight;
-	private static final LinkedSprite spriteLeft;
-	private static final LinkedSprite spriteUp;
-	private static final LinkedSprite spriteDown;
+	private static final SpriteLink spriteRight;
+	private static final SpriteLink spriteLeft;
+	private static final SpriteLink spriteUp;
+	private static final SpriteLink spriteDown;
 
 	static {
-		LinkedSprite.SpriteLinkBuilder builder = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
+		SpriteLink.SpriteLinkBuilder builder = new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
 		spriteRight = builder.setSpritePos(0, 0).createSpriteLink();
 		spriteLeft = builder.setSpritePos(1, 0).createSpriteLink();
 		spriteUp = builder.setSpritePos(2, 0).createSpriteLink();
@@ -31,7 +28,7 @@ public class Arrow extends Entity implements ClientTickable {
 	private int damage;
 	public Mob owner;
 	private int speed;
-	private final LinkedSprite sprite;
+	private final SpriteLink sprite;
 
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);

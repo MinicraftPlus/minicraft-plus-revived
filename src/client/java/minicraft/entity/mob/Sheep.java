@@ -3,7 +3,7 @@ package minicraft.entity.mob;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -14,8 +14,8 @@ import minicraft.level.tile.Tiles;
 import org.jetbrains.annotations.Nullable;
 
 public class Sheep extends PassiveMob {
-	private static final LinkedSprite[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
-	private static final LinkedSprite[][] cutSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
+	private static final SpriteLink[][] sprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
+	private static final SpriteLink[][] cutSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
 
 	public boolean cut = false;
 
@@ -31,9 +31,9 @@ public class Sheep extends PassiveMob {
 		int xo = x - 8;
 		int yo = y - 11;
 
-		LinkedSprite[][] curAnim = cut ? cutSprites : sprites;
+		SpriteLink[][] curAnim = cut ? cutSprites : sprites;
 
-		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
+		SpriteLink curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
 			screen.render(xo, yo, curSprite.getSprite(), true);
 		} else {

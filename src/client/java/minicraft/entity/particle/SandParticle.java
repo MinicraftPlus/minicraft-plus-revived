@@ -1,7 +1,7 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 import java.util.Random;
 
@@ -13,7 +13,7 @@ public class SandParticle extends Particle {
 	 */
 	public SandParticle(int x, int y) {
 		super(x, y, 180 + new Random().nextInt(71) - 35, null);
-		sprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "sand_dust").setMirror(random.nextInt(4))
+		sprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "sand_dust").setMirror(random.nextInt(4))
 			.createSpriteLink();
 	}
 }

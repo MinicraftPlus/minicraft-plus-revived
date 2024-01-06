@@ -2,8 +2,8 @@ package minicraft.item;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.AchievementsDisplay;
@@ -26,7 +26,7 @@ public class PotionItem extends StackableItem {
 
 	private PotionItem(PotionType type) { this(type, 1); }
 	private PotionItem(PotionType type, int count) {
-		super(type.name, new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "potion")
+		super(type.name, new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "potion")
 			.setColor(type.dispColor).createSpriteLink(), count);
 		this.type = type;
 	}

@@ -20,8 +20,8 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
@@ -72,17 +72,17 @@ public class Spawner extends Furniture {
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "spawner").createSpriteLink(),
-			m instanceof Cow ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cow_spawner").createSpriteLink():
-			m instanceof Pig ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "pig_spawner").createSpriteLink():
-			m instanceof Sheep ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "sheep_spawner").createSpriteLink():
-			m instanceof Slime ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "slime_spawner").createSpriteLink():
-			m instanceof Zombie ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "zombie_spawner").createSpriteLink():
-			m instanceof Creeper ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "creeper_spawner").createSpriteLink():
-			m instanceof Skeleton ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "skeleton_spawner").createSpriteLink():
-			m instanceof Snake ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "snake_spawner").createSpriteLink():
-			m instanceof Knight ? new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "knight_spawner").createSpriteLink():
-			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "air_wizard_spawner").createSpriteLink(), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "spawner").createSpriteLink(),
+			m instanceof Cow ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cow_spawner").createSpriteLink():
+			m instanceof Pig ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "pig_spawner").createSpriteLink():
+			m instanceof Sheep ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "sheep_spawner").createSpriteLink():
+			m instanceof Slime ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "slime_spawner").createSpriteLink():
+			m instanceof Zombie ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "zombie_spawner").createSpriteLink():
+			m instanceof Creeper ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "creeper_spawner").createSpriteLink():
+			m instanceof Skeleton ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "skeleton_spawner").createSpriteLink():
+			m instanceof Snake ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "snake_spawner").createSpriteLink():
+			m instanceof Knight ? new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "knight_spawner").createSpriteLink():
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "air_wizard_spawner").createSpriteLink(), 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();

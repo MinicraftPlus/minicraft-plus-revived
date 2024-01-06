@@ -1,7 +1,7 @@
 package minicraft.gfx;
 
 import minicraft.core.CrashHandler;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -28,8 +28,8 @@ public class MinicraftImage {
 	/**
 	 * Custom size.
 	 * @param image The image to be added.
-	 * @param width The width of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
-	 * @param height The height of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
+	 * @param width The width of the {@link MinicraftImage} to be applied to the {@link SpriteLink}.
+	 * @param height The height of the {@link MinicraftImage} to be applied to the {@link SpriteLink}.
 	 * @throws IOException
 	*/
 	public MinicraftImage(BufferedImage image, int width, int height) throws IOException {

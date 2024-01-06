@@ -4,8 +4,8 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class ToolItem extends Item {
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
 		super(LEVEL_NAMES[level] + " " + type.name(),
-			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")).createSpriteLink());
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")).createSpriteLink());
 
 		this.type = type;
 		this.level = level;
@@ -55,7 +55,7 @@ public class ToolItem extends Item {
 	}
 
 	public ToolItem(ToolType type) {
-		super(type.name(), new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, getSpriteName(type.toString(), "")).createSpriteLink());
+		super(type.name(), new SpriteLink.SpriteLinkBuilder(SpriteType.Item, getSpriteName(type.toString(), "")).createSpriteLink());
 
 		this.type = type;
 		dur = type.durability;

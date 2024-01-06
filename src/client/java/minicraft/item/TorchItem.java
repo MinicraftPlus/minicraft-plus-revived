@@ -2,8 +2,8 @@ package minicraft.item;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.TorchTile;
@@ -21,7 +21,7 @@ public class TorchItem extends TileItem {
 
 	private TorchItem() { this(1); }
 	private TorchItem(int count) {
-		super("Torch", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "torch").createSpriteLink(),
+		super("Torch", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "torch").createSpriteLink(),
 			count, "", "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool", "grass", "sand","path","ornate stone","ornate obsidian");
 	}
 

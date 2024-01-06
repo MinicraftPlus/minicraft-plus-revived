@@ -5,8 +5,8 @@ import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 public class Spark extends Entity {
 	private final int lifeTime; // How much time until the spark disappears
@@ -15,7 +15,7 @@ public class Spark extends Entity {
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
 	private final AirWizard owner; // The AirWizard that created this spark
-	private final LinkedSprite sprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "spark").createSpriteLink();
+	private final SpriteLink sprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "spark").createSpriteLink();
 
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.

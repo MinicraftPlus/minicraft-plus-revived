@@ -4,8 +4,8 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.level.Level;
 
 import java.util.HashMap;
@@ -19,8 +19,8 @@ public class Bed extends Furniture {
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
 	public Bed() {
-		super("Bed", new LinkedSprite.SpriteLinkBuilder(SpriteType.Entity, "bed").createSpriteLink(),
-			new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "bed").createSpriteLink(), 3, 2);
+		super("Bed", new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "bed").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "bed").createSpriteLink(), 3, 2);
 	}
 
 	/** Called when the player attempts to get in bed. */

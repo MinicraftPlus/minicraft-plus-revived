@@ -25,8 +25,8 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.ArmorItem;
 import minicraft.item.FishingData;
 import minicraft.item.FishingRodItem;
@@ -89,8 +89,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static int baseHealth = 10;
 	public static final int maxArmor = 100;
 
-	public static LinkedSprite[][] sprites;
-	public static LinkedSprite[][] carrySprites;
+	public static SpriteLink[][] sprites;
+	public static SpriteLink[][] carrySprites;
 
 	private final Inventory inventory;
 
@@ -212,7 +212,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawny = previousInstance.spawny;
 		}
 
-		hudSheet = () -> Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud");
+		hudSheet = () -> Renderer.spriteManager.getSheet(SpriteType.Gui, "hud");
 
 		updateSprites();
 	}
@@ -823,7 +823,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void updateSprites() {
 		// Get the current skin we are using as a MobSprite array.
-		LinkedSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+		SpriteLink[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
 
 		// Assign the skin to the states.
 		sprites = selectedSkin[0];
@@ -876,10 +876,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			col = Color.WHITE; // Make the sprite white.
 		}
 
-		LinkedSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
+		SpriteLink[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
 
 		// Renders falling
-		LinkedSprite curSprite;
+		SpriteLink curSprite;
 		if (onFallDelay > 0) {
 			// This makes falling look really cool.
 			int spriteToUse = Math.round(onFallDelay / 2f) % carrySprites.length;

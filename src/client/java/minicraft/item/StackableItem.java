@@ -2,8 +2,8 @@ package minicraft.item;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,28 +15,28 @@ public class StackableItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new StackableItem("Wood", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "wood").createSpriteLink()));
-		items.add(new StackableItem("Leather", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "leather").createSpriteLink()));
-		items.add(new StackableItem("Wheat", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "wheat").createSpriteLink()));
-		items.add(new StackableItem("Key", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "key").createSpriteLink()));
-		items.add(new StackableItem("arrow", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "arrow").createSpriteLink()));
-		items.add(new StackableItem("string", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "string").createSpriteLink()));
-		items.add(new StackableItem("Coal", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "coal").createSpriteLink()));
-		items.add(new StackableItem("Iron Ore", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "iron_ore").createSpriteLink()));
-		items.add(new StackableItem("Lapis", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "lapis").createSpriteLink()));
-		items.add(new StackableItem("Gold Ore", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gold_ore").createSpriteLink()));
-		items.add(new StackableItem("Iron", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "iron_ingot").createSpriteLink()));
-		items.add(new StackableItem("Gold", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gold_ingot").createSpriteLink()));
-		items.add(new StackableItem("Rose", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "red_flower").createSpriteLink()));
-		items.add(new StackableItem("Gunpowder", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gunpowder").createSpriteLink()));
-		items.add(new StackableItem("Slime", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "slime").createSpriteLink()));
-		items.add(new StackableItem("glass", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "glass").createSpriteLink()));
-		items.add(new StackableItem("cloth", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cloth").createSpriteLink()));
-		items.add(new StackableItem("gem", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "gem").createSpriteLink()));
-		items.add(new StackableItem("Scale", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "scale").createSpriteLink()));
-		items.add(new StackableItem("Shard", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "shard").createSpriteLink()));
-		items.add(new StackableItem("Cloud Ore", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "cloud_ore").createSpriteLink()));
-		items.add(new StackableItem("Glass Bottle", new LinkedSprite.SpriteLinkBuilder(SpriteType.Item, "glass_bottle").createSpriteLink()));
+		items.add(new StackableItem("Wood", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "wood").createSpriteLink()));
+		items.add(new StackableItem("Leather", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "leather").createSpriteLink()));
+		items.add(new StackableItem("Wheat", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "wheat").createSpriteLink()));
+		items.add(new StackableItem("Key", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "key").createSpriteLink()));
+		items.add(new StackableItem("arrow", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "arrow").createSpriteLink()));
+		items.add(new StackableItem("string", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "string").createSpriteLink()));
+		items.add(new StackableItem("Coal", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "coal").createSpriteLink()));
+		items.add(new StackableItem("Iron Ore", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "iron_ore").createSpriteLink()));
+		items.add(new StackableItem("Lapis", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "lapis").createSpriteLink()));
+		items.add(new StackableItem("Gold Ore", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gold_ore").createSpriteLink()));
+		items.add(new StackableItem("Iron", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "iron_ingot").createSpriteLink()));
+		items.add(new StackableItem("Gold", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gold_ingot").createSpriteLink()));
+		items.add(new StackableItem("Rose", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "red_flower").createSpriteLink()));
+		items.add(new StackableItem("Gunpowder", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gunpowder").createSpriteLink()));
+		items.add(new StackableItem("Slime", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "slime").createSpriteLink()));
+		items.add(new StackableItem("glass", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "glass").createSpriteLink()));
+		items.add(new StackableItem("cloth", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cloth").createSpriteLink()));
+		items.add(new StackableItem("gem", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "gem").createSpriteLink()));
+		items.add(new StackableItem("Scale", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "scale").createSpriteLink()));
+		items.add(new StackableItem("Shard", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "shard").createSpriteLink()));
+		items.add(new StackableItem("Cloud Ore", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cloud_ore").createSpriteLink()));
+		items.add(new StackableItem("Glass Bottle", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "glass_bottle").createSpriteLink()));
 
 		return items;
 	}
@@ -44,11 +44,11 @@ public class StackableItem extends Item {
 	public int count;
 	public int maxCount = 100;
 
-	protected StackableItem(String name, LinkedSprite sprite) {
+	protected StackableItem(String name, SpriteLink sprite) {
 		super(name, sprite);
 		count = 1;
 	}
-	protected StackableItem(String name, LinkedSprite sprite, int count) {
+	protected StackableItem(String name, SpriteLink sprite, int count) {
 		this(name, sprite);
 		this.count = count;
 	}

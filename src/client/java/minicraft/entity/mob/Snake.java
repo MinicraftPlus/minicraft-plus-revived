@@ -2,11 +2,11 @@ package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Items;
 
 public class Snake extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+	private static SpriteLink[][][] sprites = new SpriteLink[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "snake"),
 		Mob.compileMobSpriteAnimations(0, 2, "snake"),
 		Mob.compileMobSpriteAnimations(0, 4, "snake"),

@@ -13,15 +13,15 @@ import minicraft.entity.furniture.KnightStatue;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.item.Items;
 import minicraft.screen.AchievementsDisplay;
 
 public class ObsidianKnight extends EnemyMob {
-	private static final SpriteLinker.LinkedSprite[][][] armored = new SpriteLinker.LinkedSprite[][][] {
+	private static final SpriteManager.SpriteLink[][][] armored = new SpriteManager.SpriteLink[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "obsidian_knight_armored")
 	};
-	private static final SpriteLinker.LinkedSprite[][][] broken = new SpriteLinker.LinkedSprite[][][] {
+	private static final SpriteManager.SpriteLink[][][] broken = new SpriteManager.SpriteLink[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "obsidian_knight_broken")
 	};
 	public static ObsidianKnight entity = null;

@@ -11,8 +11,8 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -22,8 +22,8 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {
-	private static LinkedSprite treeSprite = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "tree").createSpriteLink();
-	private static LinkedSprite treeSpriteFull = new LinkedSprite.SpriteLinkBuilder(SpriteType.Tile, "tree_full").createSpriteLink();
+	private static SpriteLink treeSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "tree").createSpriteLink();
+	private static SpriteLink treeSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "tree_full").createSpriteLink();
 
 	protected TreeTile(String name) {
 		super(name, null);

@@ -5,11 +5,11 @@ import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 
 public class FireSpark extends Entity {
-	private static final SpriteLinker.LinkedSprite sprite =
-		new SpriteLinker.LinkedSprite.SpriteLinkBuilder(SpriteLinker.SpriteType.Entity, "spark").createSpriteLink();
+	private static final SpriteManager.SpriteLink sprite =
+		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "spark").createSpriteLink();
 
 	private final int lifeTime; // How much time until the spark disappears
 	private final double xa, ya; // The x and y acceleration
