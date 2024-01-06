@@ -243,9 +243,9 @@ public abstract class Entity implements Tickable {
 	 * @param hitBoxLeft The left boundary of hit box
 	 * @param hitBoxRight The right boundary of hit box
 	 * @param bumpingHandler The consumer handling bumping into a new tile;
-	 * the first parameter takes the front tile position and second one takes the horizontal position
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @param steppingHandler The consumer handling stepping on a new tile;
-	 * the first parameter takes the front tile position and second one takes the horizontal position
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return {@code true} if the movement is successful, {@code false} otherwise.
 	 * @see Level#calculateMaxFrontClosestTile(int, int, int, int, int, BiPredicate)
 	 */

@@ -267,7 +267,7 @@ public class Inventory {
 	 * @param item Item to be added.
 	 * @param num How many of the item.
 	 * @param allOrNothing if true, either all items will be added or none, if false its possible to add
-	 * between 0-num items.
+	 * 	between 0-num items.
 	 */
 	public void tryAdd(int chance, Item item, int num, boolean allOrNothing) {
 		if (!allOrNothing || random.nextInt(chance) == 0)

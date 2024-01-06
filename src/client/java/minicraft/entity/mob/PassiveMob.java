@@ -25,7 +25,7 @@ public class PassiveMob extends MobAi {
 	 * Constructor for a non-hostile (passive) mob.
 	 * @param sprites The mob's sprites.
 	 * @param healthFactor Determines the mobs health. Will be multiplied by the difficulty
-	 * and then added with 5.
+	 * 	and then added with 5.
 	 */
 	public PassiveMob(LinkedSprite[][] sprites, int healthFactor) {
 		super(sprites, 5 + healthFactor * Settings.getIdx("diff"), 5 * 60 * Updater.normSpeed, 45, 40);

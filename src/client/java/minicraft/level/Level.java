@@ -840,7 +840,7 @@ public class Level {
 	 * @param hitBoxRight The right boundary of hit box
 	 * @param hitBoxFront The front boundary of hit box
 	 * @param frontTilePassableCheck The check of whether the front boundary of hit box hits the tile hit box;
-	 * the first parameter takes the front tile position and second one takes the horizontal position
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return The maximum front position can be reached by tile hit box check
 	 */
 	public static int calculateMaxFrontClosestTile(int sgn, int d, int hitBoxLeft, int hitBoxRight, int hitBoxFront,

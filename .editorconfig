@@ -8,14 +8,35 @@ charset = utf-8
 [**.java]
 indent_style = tab
 indent_size = tab
+ij_smart_tabs = true
 tab_width = 4
 ij_java_imports_layout = *, |, javax.**, |, java.**, |, $*
 ij_java_packages_to_use_import_on_demand = unset
 ij_java_class_count_to_use_import_on_demand = 99999999
 ij_java_names_count_to_use_import_on_demand = 99999999
 ij_java_use_single_class_imports = true
+ij_java_use_fq_class_names = true
 ij_java_insert_inner_class_imports = false
 ij_java_layout_static_imports_separately = true
+ij_java_space_before_array_initializer_left_brace = true
+ij_java_block_comment_add_space = true
+ij_java_line_comment_add_space = true
+ij_java_space_after_closing_angle_bracket_in_type_argument = true
+ij_java_space_before_annotation_array_initializer_left_brace = true
+ij_java_spaces_within_array_initializer_braces = true
+ij_java_spaces_within_braces = true
+ij_java_doc_add_blank_line_after_description = false
+ij_java_doc_keep_empty_lines = true
+ij_java_doc_indent_on_continuation = true
+ij_java_doc_do_not_wrap_if_one_line = true
+ij_java_keep_simple_blocks_in_one_line = true
+ij_java_keep_simple_classes_in_one_line = true
+ij_java_keep_simple_lambdas_in_one_line = true
+ij_java_keep_simple_methods_in_one_line = true
+ij_java_method_annotation_wrap = normal
+ij_java_field_annotation_wrap = normal
+ij_java_do_not_wrap_after_single_annotation = true
+ij_java_do_not_wrap_after_single_annotation_in_parameter = true
 
 [**.json]
 indent_style = space

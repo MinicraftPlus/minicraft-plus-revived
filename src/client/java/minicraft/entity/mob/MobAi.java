@@ -175,7 +175,7 @@ public abstract class MobAi extends Mob {
 	/**
 	 * Sets the mob to walk in a random direction for a given amount of time.
 	 * @param byChance true if the mob should always get a new direction to walk, false if
-	 * there should be a chance that the mob moves.
+	 * 	there should be a chance that the mob moves.
 	 */
 	public void randomizeWalkDir(boolean byChance) { // Boolean specifies if this method, from where it's called, is called every tick, or after a random chance.
 		if (!byChance && random.nextInt(randomWalkChance) != 0) return;
@@ -206,7 +206,7 @@ public abstract class MobAi extends Mob {
 	 * @param y Y map coordinate of spawn.
 	 * @param playerDist Max distance from the player the mob can be spawned in.
 	 * @param soloRadius How far out can there not already be any entities.
-	 * This is multiplied by the monster density of the level
+	 * 	This is multiplied by the monster density of the level
 	 * @return true if the mob can spawn, false if not.
 	 */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
