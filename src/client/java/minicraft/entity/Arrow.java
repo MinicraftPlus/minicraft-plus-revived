@@ -47,7 +47,6 @@ public class Arrow extends Entity implements ClientTickable {
 
 	/**
 	 * Generates information about the arrow.
-	 *
 	 * @return string representation of owner, xdir, ydir and damage.
 	 */
 	public String getData() {

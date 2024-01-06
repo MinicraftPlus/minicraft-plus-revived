@@ -207,12 +207,12 @@ public class QuestsDisplay extends Display {
 			}
 		}
 
-		seriesEntries = new SelectEntry[][]{
+		seriesEntries = new SelectEntry[][] {
 			unlocked.toArray(new SelectEntry[0]),
 			completed.toArray(new SelectEntry[0])
 		};
 
-		entrySeries = new QuestSeries[][]{
+		entrySeries = new QuestSeries[][] {
 			unlockedSeries.toArray(new QuestSeries[0]),
 			completedSeries.toArray(new QuestSeries[0])
 		};
@@ -222,7 +222,7 @@ public class QuestsDisplay extends Display {
 		super(true, true);
 		reloadEntries();
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(false, 1, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 - 20), RelPos.CENTER)
 				.setDisplayLength(5)
@@ -273,7 +273,7 @@ public class QuestsDisplay extends Display {
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new SeriesQuestViewerDisplay(series))));
 
-			menus = new Menu[]{
+			menus = new Menu[] {
 				new Menu.Builder(true, 0, RelPos.CENTER)
 					.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
 					.setEntries(new StringEntry(Localization.getLocalized(series.key)))
@@ -352,7 +352,7 @@ public class QuestsDisplay extends Display {
 
 			public SeriesQuestViewerDisplay(QuestSeries series) {
 				super(false, true);
-				menus = new Menu[]{
+				menus = new Menu[] {
 					new Menu.Builder(true, 0, RelPos.CENTER, StringEntry.useLines("minicrat.displays.quests", series.key))
 						.setPositioning(new Point(Screen.w / 2, 6), RelPos.BOTTOM)
 						.createMenu(),
@@ -658,7 +658,7 @@ public class QuestsDisplay extends Display {
 					super(false, true);
 					String state = quest.isCompleted() ? "Completed" : quest.isUnlocked() ? "Unlocked" : "Locked";
 					int color = quest.isCompleted() ? Color.GREEN : quest.isUnlocked() ? Color.WHITE : Color.GRAY;
-					menus = new Menu[]{
+					menus = new Menu[] {
 						new Menu.Builder(true, 1, RelPos.CENTER)
 							.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
 							.setEntries(new StringEntry(Localization.getLocalized(quest.getSeries().key)),
@@ -743,7 +743,7 @@ public class QuestsDisplay extends Display {
 	private void updateEntries() {
 		menus[0].setEntries(seriesEntries[selectedEntry]);
 
-		String[] entryNames = new String[]{
+		String[] entryNames = new String[] {
 			"Unlocked", "Completed"
 		};
 

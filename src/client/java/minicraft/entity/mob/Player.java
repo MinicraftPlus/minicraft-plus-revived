@@ -112,10 +112,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	private int hungerStamCnt, stamHungerTicks; // Tiers of hunger penalties before losing a burger.
 	private static final int maxHungerTicks = 400; // The cutoff value for stamHungerTicks
-	private static final int[] maxHungerStams = {10, 7, 5}; // TungerStamCnt required to lose a burger.
-	private static final int[] hungerTickCount = {120, 30, 10}; // Ticks before decrementing stamHungerTicks.
-	private static final int[] hungerStepCount = {8, 3, 1}; // Steps before decrementing stamHungerTicks.
-	private static final int[] minStarveHealth = {5, 3, 0}; // Min hearts required for hunger to hurt you.
+	private static final int[] maxHungerStams = { 10, 7, 5 }; // TungerStamCnt required to lose a burger.
+	private static final int[] hungerTickCount = { 120, 30, 10 }; // Ticks before decrementing stamHungerTicks.
+	private static final int[] hungerStepCount = { 8, 3, 1 }; // Steps before decrementing stamHungerTicks.
+	private static final int[] minStarveHealth = { 5, 3, 0 }; // Min hearts required for hunger to hurt you.
 	private int stepCount; // Used to penalize hunger for movement.
 	private int hungerChargeDelay; // The delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
@@ -251,8 +251,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Adds a new potion effect to the player.
-	 *
-	 * @param type     Type of potion.
+	 * @param type Type of potion.
 	 * @param duration How long the effect lasts.
 	 */
 	public void addPotionEffect(PotionType type, int duration) {
@@ -261,7 +260,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Adds a potion effect to the player.
-	 *
 	 * @param type Type of effect.
 	 */
 	public void addPotionEffect(PotionType type) {
@@ -270,7 +268,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Returns all the potion effects currently affecting the player.
-	 *
 	 * @return all potion effects on the player.
 	 */
 	public HashMap<PotionType, Integer> getPotionEffects() {
@@ -842,7 +839,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Calculates how much damage the player will do.
-	 *
 	 * @param e Entity being attacked.
 	 * @return How much damage the player does.
 	 */
@@ -1032,8 +1028,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Finds a starting position for the player.
-	 *
-	 * @param level     Level which the player wants to start in.
+	 * @param level Level which the player wants to start in.
 	 * @param spawnSeed Spawn seed.
 	 */
 	public void findStartPos(Level level, long spawnSeed) {
@@ -1043,7 +1038,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Finds the starting position for the player in a level.
-	 *
 	 * @param level The level.
 	 */
 	public void findStartPos(Level level) {
@@ -1082,7 +1076,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Finds a location where the player can respawn in a given level.
-	 *
 	 * @param level The level.
 	 */
 	public void respawn(Level level) {
@@ -1097,7 +1090,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Uses an amount of stamina to do an action.
-	 *
 	 * @param cost How much stamina the action requires.
 	 * @return true if the player had enough stamina, false if not.
 	 */
@@ -1159,8 +1151,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Hurt the player.
-	 *
-	 * @param damage    How much damage to do to player.
+	 * @param damage How much damage to do to player.
 	 * @param attackDir What direction to attack.
 	 */
 	public void hurt(int damage, Direction attackDir) {
@@ -1210,8 +1201,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Hurt the player directly. Don't use the armor as a shield.
-	 *
-	 * @param damage    Amount of damage to do to player
+	 * @param damage Amount of damage to do to player
 	 * @param attackDir The direction of attack.
 	 */
 	private void directHurt(int damage, Direction attackDir) {

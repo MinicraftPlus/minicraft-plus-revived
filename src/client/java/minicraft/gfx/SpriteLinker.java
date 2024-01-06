@@ -34,9 +34,8 @@ public class SpriteLinker {
 	/**
 	 * The safe size check which will be required for the higher resolution sprites must be used
 	 * before this method invoked. But in new rendering engine.
-	 *
-	 * @param t           The sheet type.
-	 * @param key         The sheet key.
+	 * @param t The sheet type.
+	 * @param key The sheet key.
 	 * @param spriteSheet The sheet.
 	 */
 	public void setSprite(SpriteType t, String key, MinicraftImage spriteSheet) {
@@ -58,8 +57,7 @@ public class SpriteLinker {
 
 	/**
 	 * Getting the sprite sheet with the category and key.
-	 *
-	 * @param t   The sprite category
+	 * @param t The sprite category
 	 * @param key The resource key.
 	 * @return The sprite sheet. <code>null</code> if not found.
 	 */
@@ -89,8 +87,7 @@ public class SpriteLinker {
 
 	/**
 	 * Setting the skin in entity sheet.
-	 *
-	 * @param key         The key of the sheet.
+	 * @param key The key of the sheet.
 	 * @param spriteSheet The sheet to be added.
 	 */
 	public void setSkin(String key, MinicraftImage spriteSheet) {
@@ -99,7 +96,6 @@ public class SpriteLinker {
 
 	/**
 	 * Getting the missing texture texture with the specific sprite type.
-	 *
 	 * @param type The sprite category.
 	 * @return The missing texture or null if invalid sprite type.
 	 */
@@ -118,7 +114,6 @@ public class SpriteLinker {
 
 	/**
 	 * Getting the sheet of missing texture with the specific sprite type.
-	 *
 	 * @param type The sprite category.
 	 * @return Ths missing texture sprite sheet or null if invalid sprite type.
 	 */
@@ -167,9 +162,8 @@ public class SpriteLinker {
 
 	/**
 	 * Linking the LinkedSprite into specific sheet map. This should only be used by {@link LinkedSprite}.
-	 *
 	 * @param sheet The sprite to be linked.
-	 * @param type  The sprite type to be linked.
+	 * @param type The sprite type to be linked.
 	 */
 	public void linkSpriteSheet(LinkedSprite sheet, SpriteType type) {
 		// Because of the private access.
@@ -209,8 +203,7 @@ public class SpriteLinker {
 
 		/**
 		 * Create new LinkedSprite for the specific category and resource key.
-		 *
-		 * @param t   The category of the sprite.
+		 * @param t The category of the sprite.
 		 * @param key The resource key of the sprite.
 		 */
 		public LinkedSprite(SpriteType t, String key) {
@@ -222,7 +215,6 @@ public class SpriteLinker {
 
 		/**
 		 * Getting the sprite sheet of the linked sprite.
-		 *
 		 * @return The current linked sprite.
 		 */
 		public MinicraftImage getSheet() {
@@ -231,7 +223,6 @@ public class SpriteLinker {
 
 		/**
 		 * Setting the sprite size.
-		 *
 		 * @param w The sprite width.
 		 * @param h The sprite height
 		 * @return The instance itself.
@@ -245,7 +236,6 @@ public class SpriteLinker {
 
 		/**
 		 * Setting the sprite position.
-		 *
 		 * @param x The x position of the sprite.
 		 * @param y The y position of the sprite.
 		 * @return The instance itself.
@@ -259,7 +249,6 @@ public class SpriteLinker {
 
 		/**
 		 * Setting the sprite position and size.
-		 *
 		 * @param x The x position of the sprite.
 		 * @param y The y position of the sprite.
 		 * @param w The sprite width.
@@ -275,7 +264,6 @@ public class SpriteLinker {
 
 		/**
 		 * Setting the white tint.
-		 *
 		 * @param color The color of the white tint.
 		 * @return The instance itself.
 		 */
@@ -287,7 +275,6 @@ public class SpriteLinker {
 
 		/**
 		 * Setting the mirror of the sprite.
-		 *
 		 * @param mirror The mirror of the sprite.
 		 * @return The instance itself.
 		 */
@@ -299,7 +286,6 @@ public class SpriteLinker {
 
 		/**
 		 * Setting the flip of the sprite sheet.
-		 *
 		 * @param flip The mirror of the sprite sheet.
 		 * @return The instance itself.
 		 */
@@ -311,7 +297,6 @@ public class SpriteLinker {
 
 		/**
 		 * Getting the sprite with the configuration.
-		 *
 		 * @return The generated sprite.
 		 */
 		public Sprite getSprite() {

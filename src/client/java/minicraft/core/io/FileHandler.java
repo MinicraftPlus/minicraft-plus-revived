@@ -58,7 +58,6 @@ public class FileHandler extends Game {
 	 * If saveDir is not null, use it as the game directory. Otherwise use the default path.
 	 * <p>
 	 * If the default path is used, check if old default path exists and if so move it to the new path.
-	 *
 	 * @param saveDir Value from --savedir argument. Null if it was not set.
 	 */
 	public static void determineGameDir(@Nullable String saveDir) {
