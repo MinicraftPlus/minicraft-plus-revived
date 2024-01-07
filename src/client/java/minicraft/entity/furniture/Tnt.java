@@ -125,10 +125,16 @@ public class Tnt extends Furniture implements ActionListener {
 
 	@Override
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
-		if (!fuseLit) {
-			fuseLit = true;
-			Sound.play("fuse");
-			return true;
+		if (player.activeItem instanceof PowerGloveItem) {
+			if (!fuseLit) {
+				return super.interact(player, item, attackDir);
+			}
+		} else {
+			if (!fuseLit) {
+				fuseLit = true;
+				Sound.play("fuse");
+				return true;
+			}
 		}
 
 		return false;
