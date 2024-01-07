@@ -11,6 +11,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
+import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
