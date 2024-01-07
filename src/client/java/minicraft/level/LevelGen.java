@@ -22,7 +22,9 @@ public class LevelGen {
 	private final int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
 
-	/** This creates noise to create random values for level generation */
+	/**
+	 * This creates noise to create random values for level generation
+	 */
 	public LevelGen(int w, int h, int featureSize) {
 		this.w = w;
 		this.h = h;
@@ -244,7 +246,7 @@ public class LevelGen {
 				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val += 1 - dist*20;
+				val += 1 - dist * 20;
 
 				switch ((String) Settings.get("Type")) {
 					case "minicraft.settings.type.island":
@@ -502,7 +504,8 @@ public class LevelGen {
 
 				if (val < -0.05) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-				}else if(val>=-0.05 && val<-0.03){map[i] = Tiles.get("Lava").id;
+				} else if (val >= -0.05 && val < -0.03) {
+					map[i] = Tiles.get("Lava").id;
 				} else {
 					if (random.nextInt(2) == 1) {
 						if (random.nextInt(2) == 1) {
@@ -510,8 +513,7 @@ public class LevelGen {
 						} else {
 							map[i] = Tiles.get("Raw Obsidian").id;
 						}
-					}
-					else {
+					} else {
 						map[i] = Tiles.get("dirt").id;
 					}
 				}
@@ -629,10 +631,10 @@ public class LevelGen {
 
 		if (depth > 2) { // The level above dungeon.
 			int r = 1;
-			int xm = w/2;
-			int ym = h/2;
+			int xm = w / 2;
+			int ym = h / 2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
-			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			int edgeMargin = w / 20; // The distance between the world enge and the lock sides.
 			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
 			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
 			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
@@ -820,8 +822,8 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed "+worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] {"Next", "0x100", "0xAAFF20"}, "Next");
+			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed " + worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[]{"Next", "0x100", "0xAAFF20"}, "Next");
 			if (op == 1) LevelGen.worldSeed = 0x100;
 			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
 			else LevelGen.worldSeed++;

@@ -25,25 +25,26 @@ public class WorldGenDisplay extends Display {
 	private static final Pattern detailedFilenamePattern;
 
 	private static final String worldNameRegex;
+
 	static {
 		if (FileHandler.OS.contains("windows")) {
 			// Reference: https://stackoverflow.com/a/6804755
 			worldNameRegex = "[^<>:\"/\\\\|?*\\x00-\\x1F]+";
 			detailedFilenamePattern = Pattern.compile(
-			"# Match a valid Windows filename (unspecified file system).          \n" +
-				"^                                # Anchor to start of string.        \n" +
-				"(?!                              # Assert filename is not: CON, PRN, \n" +
-				"  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
-				"    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
-				"    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
-				"  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
-				"  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
-				"  $                              # and end of string                 \n" +
-				")                                # End negative lookahead assertion. \n" +
-				"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
-				"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
-				"$                                # Anchor to end of string.            ",
-			Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
+				"# Match a valid Windows filename (unspecified file system).          \n" +
+					"^                                # Anchor to start of string.        \n" +
+					"(?!                              # Assert filename is not: CON, PRN, \n" +
+					"  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
+					"    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
+					"    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
+					"  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
+					"  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
+					"  $                              # and end of string                 \n" +
+					")                                # End negative lookahead assertion. \n" +
+					"[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
+					"[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
+					"$                                # Anchor to end of string.            ",
+				Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 		} else if (FileHandler.OS.contains("mac")) {
 			worldNameRegex = "[^/:]+";
 			detailedFilenamePattern = null;
@@ -59,7 +60,7 @@ public class WorldGenDisplay extends Display {
 		String seedStr = worldSeed.getUserInput();
 
 		// If there is no input seed, generate random number
-		if(seedStr.length() == 0)
+		if (seedStr.length() == 0)
 			return OptionalLong.empty();
 
 		// If the seed is only numbers, just use numbers
@@ -72,7 +73,7 @@ public class WorldGenDisplay extends Display {
 		int len = seedStr.length();
 
 		for (int i = 0; i < len; i++) {
-			seed = 31*seed + seedStr.charAt(i);
+			seed = 31 * seed + seedStr.charAt(i);
 		}
 
 		return OptionalLong.of(seed);
@@ -84,10 +85,10 @@ public class WorldGenDisplay extends Display {
 
 			@Override
 			public boolean isValid() {
-				if(!super.isValid()) return false;
+				if (!super.isValid()) return false;
 				String name = getUserInput();
-				for(String other: takenNames)
-					if(other.equalsIgnoreCase(name)) {
+				for (String other : takenNames)
+					if (other.equalsIgnoreCase(name)) {
 						if (!name.equals(lastName)) {
 							Logging.WORLD.debug("Duplicated or existed world name \"{}\".", name);
 							lastName = name;
@@ -97,7 +98,7 @@ public class WorldGenDisplay extends Display {
 					}
 
 				try { // Checking if the folder name is valid;
-					Paths.get(Game.gameDir+"/saves/"+name+"/");
+					Paths.get(Game.gameDir + "/saves/" + name + "/");
 				} catch (InvalidPathException e) {
 					if (!name.equals(lastName)) {
 						Logging.WORLD.debug("Invalid world name (InvalidPathException) \"{}\": {}", name, e.getMessage());
@@ -129,8 +130,8 @@ public class WorldGenDisplay extends Display {
 
 			@Override
 			public void render(Screen screen, int x, int y, boolean isSelected) {
-				super.render(screen, isGen?
-					(getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x):
+				super.render(screen, isGen ?
+					(getUserInput().length() > 11 ? x - (getUserInput().length() - 11) * 8 : x) :
 					x, y, isSelected);
 			}
 		};
@@ -153,8 +154,8 @@ public class WorldGenDisplay extends Display {
 		HashSet<String> controls = new HashSet<>();
 		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-up").split("/")));
 		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-down").split("/")));
-		for (String key: controls) {
-			if(key.matches("^\\w$")) {
+		for (String key : controls) {
+			if (key.matches("^\\w$")) {
 				nameHelp.setVisible(true);
 				break;
 			}
@@ -162,7 +163,9 @@ public class WorldGenDisplay extends Display {
 
 		worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
-			public boolean isValid() { return true; }
+			public boolean isValid() {
+				return true;
+			}
 		};
 
 		Menu mainMenu =
@@ -173,7 +176,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("scoretime"),
 
 				new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
-					if(!nameField.isValid()) return;
+					if (!nameField.isValid()) return;
 					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
 					Game.setDisplay(new LoadingDisplay());
 				}) {
@@ -197,9 +200,9 @@ public class WorldGenDisplay extends Display {
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu == null)
-			menus = new Menu[] { mainMenu };
+			menus = new Menu[]{mainMenu};
 		else
-			menus = new Menu[] { onScreenKeyboardMenu, mainMenu };
+			menus = new Menu[]{onScreenKeyboardMenu, mainMenu};
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;

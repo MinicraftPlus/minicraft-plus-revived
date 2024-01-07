@@ -15,9 +15,7 @@ import minicraft.level.tile.WaterTile;
 import minicraft.level.tile.farming.CropTile;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Random;
 
 public class WateringCanItem extends Item {
@@ -31,7 +29,7 @@ public class WateringCanItem extends Item {
 	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_can_filled");
 	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
 
-	private static final SpriteLinker.LinkedSprite[] spriteSplash = new SpriteLinker.LinkedSprite[] {
+	private static final SpriteLinker.LinkedSprite[] spriteSplash = new SpriteLinker.LinkedSprite[]{
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_0"),
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_1"),
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_2"),
@@ -75,15 +73,15 @@ public class WateringCanItem extends Item {
 					((CropTile) tile).fertilize(level, xt, yt, 1);
 				}
 				if (random.nextInt(5) == 0) {
-					double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
-					double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+					double x = (double) xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+					double y = (double) yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
 					level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 				}
 			} else if (tile instanceof DirtTile || tile instanceof GrassTile) {
 				if (tile instanceof GrassTile) {
 					if (random.nextInt(15) == 0) {
-						double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
-						double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+						double x = (double) xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+						double y = (double) yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
 						level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 					}
 					if (random.nextInt(60) == 0) { // Small chance for growing flowers
@@ -96,8 +94,8 @@ public class WateringCanItem extends Item {
 					if (tile instanceof DirtTile) {
 						if (t instanceof GrassTile) { // Grass tile exists.
 							if (random.nextInt(5) == 0) {
-								double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
-								double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								double x = (double) xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								double y = (double) yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
 								level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 							}
 							if (random.nextInt(10) == 0)
@@ -107,8 +105,8 @@ public class WateringCanItem extends Item {
 					} else { // tile instanceof GrassTile
 						if (t instanceof DirtTile) { // Dirt tile exists.
 							if (random.nextInt(5) == 0) {
-								double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
-								double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								double x = (double) xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+								double y = (double) yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
 								level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 							}
 							if (random.nextInt(15) == 0)

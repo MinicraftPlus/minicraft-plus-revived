@@ -31,13 +31,18 @@ public class SummonItem extends StackableItem {
 
 	private final String mob;
 
-	private SummonItem(String name, LinkedSprite sprite, String mob) { this(name, sprite, 1, mob); }
+	private SummonItem(String name, LinkedSprite sprite, String mob) {
+		this(name, sprite, 1, mob);
+	}
+
 	private SummonItem(String name, LinkedSprite sprite, int count, String mob) {
 		super(name, sprite, count);
 		this.mob = mob;
 	}
 
-	/** What happens when the player uses the item on a tile */
+	/**
+	 * What happens when the player uses the item on a tile
+	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
 
@@ -54,8 +59,7 @@ public class SummonItem extends StackableItem {
 							Logger.tag("SummonItem").debug("Summoned new Air Wizard");
 							success = true;
 						}
-					}
-					else {
+					} else {
 						Game.notifications.add(Localization.getLocalized("minicraft.notification.boss_limit"));
 					}
 				} else {
@@ -67,7 +71,7 @@ public class SummonItem extends StackableItem {
 				// Check if we are on the right level and tile
 				if (level.depth == -4) {
 					// If the player nears the center.
-					if (new Rectangle(level.w/2-3, level.h/2-3, 7, 7).contains(player.x >> 4, player.y >> 4)) {
+					if (new Rectangle(level.w / 2 - 3, level.h / 2 - 3, 7, 7).contains(player.x >> 4, player.y >> 4)) {
 						if (!ObsidianKnight.active) {
 							boolean exists = false;
 							for (Entity e : level.getEntityArray()) {
@@ -80,7 +84,7 @@ public class SummonItem extends StackableItem {
 							if (!exists) { // Prevent unintended behaviors
 								// Pay stamina
 								if (player.payStamina(2)) {
-									level.add(new KnightStatue(5000), level.w/2, level.h/2, true);
+									level.add(new KnightStatue(5000), level.w / 2, level.h / 2, true);
 									Logger.tag("SummonItem").debug("Summoned new Knight Statue");
 									success = true;
 								}
@@ -106,7 +110,9 @@ public class SummonItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull SummonItem copy() {
 		return new SummonItem(getName(), sprite, count, mob);

@@ -36,7 +36,7 @@ public class Sound {
 			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(in).getFormat());
 
 			if (!AudioSystem.isLineSupported(info)) {
-				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
+				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack, AudioSystem.getAudioFileFormat(in));
 
 				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
 				Logging.RESOURCEHANDLER_SOUND.error("-source:");
@@ -51,13 +51,11 @@ public class Sound {
 					}
 				}
 				Logging.RESOURCEHANDLER_SOUND.error("-target:");
-				for (int i = 0; i < tinfo.length; i++)
-				{
-					if (tinfo[i] instanceof DataLine.Info)
-					{
+				for (int i = 0; i < tinfo.length; i++) {
+					if (tinfo[i] instanceof DataLine.Info) {
 						DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-						for (AudioFormat af: supportedFormats)
+						for (AudioFormat af : supportedFormats)
 							Logging.RESOURCEHANDLER_SOUND.error(af);
 					}
 				}
@@ -65,7 +63,7 @@ public class Sound {
 				return;
 			}
 
-			Clip clip = (Clip)AudioSystem.getLine(info);
+			Clip clip = (Clip) AudioSystem.getLine(info);
 			clip.open(AudioSystem.getAudioInputStream(in));
 
 			clip.addLineListener(e -> {
@@ -83,26 +81,32 @@ public class Sound {
 		}
 	}
 
-	/** Recommend {@link #play(String)} and {@link #loop(String, boolean)}. */
+	/**
+	 * Recommend {@link #play(String)} and {@link #loop(String, boolean)}.
+	 */
 	@Nullable
 	public static Sound getSound(String key) {
 		return sounds.get(key);
 	}
 
-	/** This method does safe check for {@link #play()}. */
+	/**
+	 * This method does safe check for {@link #play()}.
+	 */
 	public static void play(String key) {
 		Sound sound = sounds.get(key);
 		if (sound != null) sound.play();
 	}
 
-	/** This method does safe check for {@link #loop(boolean)}. */
+	/**
+	 * This method does safe check for {@link #loop(boolean)}.
+	 */
 	public static void loop(String key, boolean start) {
 		Sound sound = sounds.get(key);
 		if (sound != null) sound.loop(start);
 	}
 
 	public void play() {
-		if (!(boolean)Settings.get("sound") || clip == null) return;
+		if (!(boolean) Settings.get("sound") || clip == null) return;
 
 		if (clip.isRunning() || clip.isActive())
 			clip.stop();
@@ -111,7 +115,7 @@ public class Sound {
 	}
 
 	public void loop(boolean start) {
-		if (!(boolean)Settings.get("sound") || clip == null) return;
+		if (!(boolean) Settings.get("sound") || clip == null) return;
 
 		if (start)
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
