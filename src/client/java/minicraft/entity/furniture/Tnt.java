@@ -125,9 +125,9 @@ public class Tnt extends Furniture implements ActionListener {
 
 	@Override
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
-		if (player.activeItem instanceof PowerGloveItem) {
+		if (heldItem instanceof PowerGloveItem) {
 			if (!fuseLit) {
-				return super.interact(player, item, attackDir);
+				return super.interact(player, heldItem, attackDir);
 			}
 		} else {
 			if (!fuseLit) {
