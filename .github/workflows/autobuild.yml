@@ -22,13 +22,6 @@ jobs:
         find: "${{ vars.VERSION }}-dev${{ vars.VERSION_old }}"
         replace: "${{ vars.VERSION }}-dev${{ vars.VERSION_s }}"
         include: "src/client/java/minicraft/core/Game.java"
-    - name: Push changes
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: "Increment Version"
-        token: ${{ secrets.LITOROMTOKEN }}
-        repository: ${{ secrets.GITHUB_REPOSITORY }}
-        branch: ${{ github.ref }}
     - name: Update gradle version
       uses: jacobtomlinson/gha-find-replace@v3
       with:
