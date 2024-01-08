@@ -2,15 +2,19 @@ package minicraft.entity.mob;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.furniture.Lantern;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
+import minicraft.level.tile.TorchTile;
 
 import java.util.Arrays;
 
@@ -66,11 +70,17 @@ public abstract class MobAi extends Mob {
 	 * @return {@code true} if the mob is within any light.
 	 */
 	protected boolean isWithinLight() {
-		return Arrays.stream(level.getEntityArray()).anyMatch(e -> e instanceof Lantern && isWithin(e.getLightRadius(), e))
-			|| !level.getMatchingTiles((tile, x, y) -> {
-			int xx = Math.abs(this.x - x), yy = Math.abs(this.y - y), l = tile.getLightRadius(level, x, y);
-			return xx * xx + yy * yy <= l * l;
-		}).isEmpty();
+		for (Entity e : level.getEntitiesInRect(e -> e instanceof Lantern, new Rectangle(x, y, 8, 8, Rectangle.CENTER_DIMS)))
+			if (e instanceof Lantern && isWithin(e.getLightRadius(), e))
+				return true;
+		for (Point p : level.getAreaTilePositions(x, y, 5)) {
+			Tile t = level.getTile(p.x, p.y);
+			int xx = Math.abs(x - p.x), yy = Math.abs(y - p.y), l = t.getLightRadius(level, p.x, p.y);
+			if (xx * xx + yy * yy <= l * l)
+				return true;
+		}
+
+		return false;
 	}
 
 	/**
