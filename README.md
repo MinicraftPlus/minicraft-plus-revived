@@ -55,7 +55,7 @@ computer.
 
 ## Localization
 
-This project is running with an external localization platform called Lokalise. You can contribute localization [here](https://app.lokalise.com/public/42925017655336d50b3007.03067253/)!
+This project is running with an external localization platform called Lokalise. You can now [head over Lokalise to contribute localization](https://app.lokalise.com/public/42925017655336d50b3007.03067253/)!
 
 ## How to build/run in development
 
