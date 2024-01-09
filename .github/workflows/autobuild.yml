@@ -1,11 +1,34 @@
 name: Nightly build
 on:
+  pull_request:
+    types: [closed]
+    branches: ["main"]
   schedule:
     - cron:  '0 0 * * *'
   workflow_dispatch:
   
 jobs:
+  conditions:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checking conditions
+      run: |
+        needed=true
+        
+        out=$( gh api \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}/runs \
+          -F "created=>$( date -d '-1 day' '+%Y-%m-%d' )T00:00:00+00:00" )
+        $out | jq -c ".workflow_runs.[] | .status" | while read object; do
+          if [ "$object" = "completed" ] || [ "$object" = "success" ] || [ "$object" = "in_progress" ] ||
+            [ "$object" = "queued" ] || [ "$object" = "requested" ] || [ "$object" = "waiting" ] || [ "$object" = "pending" ]; then
+            needed=false; fi
+        done
+        if needed; then
   gradle:
+    needs: conditions
     strategy:
       matrix:
         os: [ubuntu-latest]
