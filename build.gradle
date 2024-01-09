@@ -8,7 +8,7 @@ allprojects {
     apply plugin: "java"
 
     Properties profile = new Properties()
-    profile.load(new FileInputStream("game_profile.conf"))
+    profile.load(new FileInputStream(new File(rootDir, "game_profile.conf")))
 
     version = profile.getProperty("version")
 
