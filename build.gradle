@@ -1,3 +1,5 @@
+import groovy.json.JsonBuilder
+
 plugins {
     id 'application'
 }
@@ -5,7 +7,10 @@ plugins {
 allprojects {
     apply plugin: "java"
 
-    version = "2.2.0-dev6"
+    Properties profile = new Properties()
+    profile.load(new FileInputStream("game_profile.conf"))
+
+    version = profile.getProperty("version")
 
     sourceCompatibility = 8
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -40,6 +45,20 @@ project(":common") {
 
 project(":client") {
     archivesBaseName = "minicraft-plus"
+
+    File genDir = new File(project.buildDir, "tmp/generatedResources/")
+    genDir.mkdirs()
+    JsonBuilder json = new JsonBuilder()
+    json {
+        version version
+    }
+    File metaFile = new File(genDir.toString(), "profile.meta.json")
+    metaFile.text = json.toString()
+    processResources {
+        from(genDir) {
+            include(metaFile.getName())
+        }
+    }
 
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
