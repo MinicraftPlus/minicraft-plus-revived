@@ -4,29 +4,57 @@ on:
     types: [closed]
     branches: ["main"]
   schedule:
-    - cron:  '0 0 * * *'
+    - cron:  '0 0,4,8,12,16,20 * * *'
   workflow_dispatch:
-  
+
 jobs:
   conditions:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: Checking conditions
       run: |
         needed=true
-        
-        out=$( gh api \
+        out=$( gh api -XGET \
           -H "Accept: application/vnd.github+json" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          /repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}/runs \
-          -F "created=>$( date -d '-1 day' '+%Y-%m-%d' )T00:00:00+00:00" )
-        $out | jq -c ".workflow_runs.[] | .status" | while read object; do
-          if [ "$object" = "completed" ] || [ "$object" = "success" ] || [ "$object" = "in_progress" ] ||
-            [ "$object" = "queued" ] || [ "$object" = "requested" ] || [ "$object" = "waiting" ] || [ "$object" = "pending" ]; then
-            needed=false; fi
-        done
+          repos/${{ github.repository }}/pulls \
+          -F state=closed \
+          -F base=main \
+          -F sort=updated )
+        latest=
+        while read obj; do
+          if [[ $obj != null ]]; then
+            latest=$obj
+            break
+          fi
+        done < <( echo $out | jq -c -r ".[] | .merged_at" | tr -d "\r" )
+        [[ -z $latest ]] && echo "CONT=false" >> $GITHUB_ENV && exit 0
+        out=$( gh api -XGET \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          repos/${{ github.repository }}/actions/workflows/autobuild.yml/runs \
+          -F created=">=$latest" )
+        f="[\"completed\",\"success\",\"in_progress\",\"queued\",\"requested\",\"waiting\",\"pending\"]"
+        while read obj; do
+          if $obj; then
+            needed=false;
+            break;
+          fi
+        done < <( echo $out | jq -c --arg f "$f" ".workflow_runs.[] | .status | IN($f[])" | tr -d "\r" )
         if needed; then
+          echo "CONT=true" >> $GITHUB_ENV
+        else
+          echo "CONT=false" >> $GITHUB_ENV
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Abort
+      if: ${{ ! env.CONT }}
+      run: |
+        gh run cancel ${{ github.run_id }}
+        gh run watch ${{ github.run_id }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   gradle:
     needs: conditions
     strategy:
