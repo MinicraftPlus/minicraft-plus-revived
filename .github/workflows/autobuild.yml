@@ -14,21 +14,11 @@ jobs:
     - name: Checking conditions
       run: |
         needed=true
-        out=$( gh api -XGET \
+        out=$( gh api \
           -H "Accept: application/vnd.github+json" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          repos/${{ github.repository }}/pulls \
-          -F state=closed \
-          -F base=main \
-          -F sort=updated )
-        latest=
-        while read obj; do
-          if [[ $obj != null ]]; then
-            latest=$obj
-            break
-          fi
-        done < <( echo $out | jq -c -r ".[] | .merged_at" | tr -d "\r" )
-        [[ -z $latest ]] && echo "CONT=false" >> $GITHUB_ENV && exit 0
+          repos/${{ github.repository }}/commits )
+        latest=$( echo $out | jq -r "[.[] | select(.committer.login != \"github-actions[bot]\")] | .[0].commit.committer.date" )
         out=$( gh api -XGET \
           -H "Accept: application/vnd.github+json" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
