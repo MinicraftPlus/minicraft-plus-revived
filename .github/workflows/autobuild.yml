@@ -1,49 +1,9 @@
-name: Nightly build
+name: AutoRelease & Build
 on:
-  schedule:
-    - cron:  '0 0,4,8,12,16,20 * * *'
   workflow_dispatch:
 
 jobs:
-  conditions:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checking conditions
-      run: |
-        needed=true
-        out=$( gh api \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          repos/${{ github.repository }}/commits )
-        latest=$( echo $out | jq -r "[.[] | select(.committer.login != \"github-actions[bot]\")] | .[0].commit.committer.date" )
-        out=$( gh api -XGET \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          repos/${{ github.repository }}/actions/workflows/autobuild.yml/runs \
-          -F created=">=$latest" )
-        f="[\"completed\",\"success\",\"in_progress\",\"queued\",\"requested\",\"waiting\",\"pending\"]"
-        while read obj; do
-          if $obj; then
-            needed=false;
-            break;
-          fi
-        done < <( echo $out | jq -c --arg f "$f" ".workflow_runs.[] | .status | IN($f[])" | tr -d "\r" )
-        if needed; then
-          echo "CONT=true" >> $GITHUB_ENV
-        else
-          echo "CONT=false" >> $GITHUB_ENV
-        fi
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Abort
-      if: ${{ ! env.CONT }}
-      run: |
-        gh run cancel ${{ github.run_id }}
-        gh run watch ${{ github.run_id }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   gradle:
-    needs: conditions
     strategy:
       matrix:
         os: [ubuntu-latest]
