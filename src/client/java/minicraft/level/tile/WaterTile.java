@@ -27,25 +27,31 @@ public class WaterTile extends Tile {
 		return e.canSwim();
 	}
 
+	private Tile hole = null;
+	private Tile lava = null;
+
 	@Override
 	public boolean tick(Level level, int xt, int yt) {
+		if (hole == null) hole = Tiles.get("Hole");
+		if (lava == null) lava = Tiles.get("Lava");
+
 		int xn = xt;
 		int yn = yt;
 
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
-		if (level.getTile(xn, yn) == Tiles.get("Hole")) {
+		if (level.getTile(xn, yn) == hole) {
 			level.setTile(xn, yn, this);
 		}
 
 		// These set only the non-diagonally adjacent lava tiles to obsidian
 		for (int x = -1; x < 2; x++) {
-			if (level.getTile(xt + x, yt) == Tiles.get("Lava"))
+			if (level.getTile(xt + x, yt) == lava)
 				level.setTile(xt + x, yt, Tiles.get("Raw Obsidian"));
 		}
 		for (int y = -1; y < 2; y++) {
-			if (level.getTile(xt, yt + y) == Tiles.get("lava"))
+			if (level.getTile(xt, yt + y) == lava)
 				level.setTile(xt, yt + y, Tiles.get("Raw Obsidian"));
 		}
 		return false;
