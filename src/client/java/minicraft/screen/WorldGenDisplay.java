@@ -2,7 +2,6 @@ package minicraft.screen;
 
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
-import minicraft.core.World;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -22,13 +21,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.OptionalLong;
 import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
+	public static final String DEFAULT_NAME = "New World";
+
 	private static final Pattern detailedFilenamePattern;
 	private static final String worldNameRegex;
 	static {
@@ -90,54 +88,70 @@ public class WorldGenDisplay extends Display {
 		return OptionalLong.of(seed);
 	}
 
-	public static InputEntry makeWorldNameInput(String prompt, String initValue, boolean isGen) {
-		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
-			private String lastName;
+	/** Checks only with the filesystem. */
+	public static boolean isWorldNameLegal(String input) {
+		try { // Checking if the folder name is valid;
+			Paths.get(Game.gameDir + "/saves/" + input + "/");
+		} catch (InvalidPathException e) {
+			Logging.WORLD.debug("Invalid world name (InvalidPathException) \"{}\": {}", input, e.getMessage());
+			return false;
+		}
 
-			@Override
-			public boolean isValid() {
-				if(!super.isValid()) return false;
-				String name = getUserInput();
-				for(String other: takenNames)
-					if(other.equalsIgnoreCase(name)) {
-						if (!name.equals(lastName)) {
-							Logging.WORLD.debug("Duplicated or existed world name \"{}\".", name);
-							lastName = name;
-						}
+		if (detailedFilenamePattern != null && !detailedFilenamePattern.matcher(input).matches()) {
+			Logging.WORLD.debug("Invalid file name (Not matches to the valid pattern with the corresponding system) \"{}\".", input);
+			return false;
+		}
 
-						return false;
-					}
+		return input.length() < 120; // surety about filename length limits
+	}
 
-				try { // Checking if the folder name is valid;
-					Paths.get(Game.gameDir+"/saves/"+name+"/");
-				} catch (InvalidPathException e) {
-					if (!name.equals(lastName)) {
-						Logging.WORLD.debug("Invalid world name (InvalidPathException) \"{}\": {}", name, e.getMessage());
-						lastName = name;
-					}
+	/**
+	 * Makes an input for user configuration on world name.
+	 * @param beforeRenamed {@code null} if it is not renaming a world; else the original world name,
+	 * this will be used to check if the user input matches the original world name and thus perform no change.
+	 */
+	public static WorldNameInputEntry makeWorldNameInput(String prompt, String initValue, @Nullable String beforeRenamed) {
+		return new WorldNameInputEntry(prompt, initValue, beforeRenamed);
+	}
 
-					return false;
-				}
+	public static class WorldNameInputEntry extends InputEntry {
+		private final @Nullable String beforeRenamed;
+		private String lastInput;
+		private boolean valid;
 
-				if (detailedFilenamePattern != null) {
-					if (!detailedFilenamePattern.matcher(name).matches()) {
-						if (!name.equals(lastName)) {
-							Logging.WORLD.debug("Invalid file name (Not matches to the valid pattern with the corresponding system) \"{}\".", name);
-							lastName = name;
-						}
+		public WorldNameInputEntry(String prompt, String initValue, @Nullable String beforeRenamed) {
+			super(prompt, WorldGenDisplay.worldNameRegex, 36, initValue);
+			this.beforeRenamed = beforeRenamed;
+			valid = false;
+		}
 
-						return false;
-					}
-				}
-
-				lastName = name;
-				return name.length() <= 255; // If it is lower than the general valid folder name length.
+		@Override
+		public boolean isValid() {
+			if(!super.isValid()) return false;
+			String input = getUserInput();
+			if (input.equals(beforeRenamed)) return true;
+			if (!input.equals(lastInput)) {
+				valid = isWorldNameLegal(input);
+				lastInput = input;
 			}
 
-			@Override
-			public String getUserInput() {
-				return super.getUserInput().toLowerCase(Localization.getSelectedLocale());
-			}
+			return valid;
+		}
+
+		public @Nullable String getWorldName() {
+			return !isValid() ? null :
+				WorldSelectDisplay.getValidWorldName(getUserInput(), beforeRenamed != null);
+		}
+
+		@Override
+		public WorldNameInputEntry setRenderingBounds(IntRange bounds) {
+			return (WorldNameInputEntry) super.setRenderingBounds(bounds);
+		}
+
+		@Override
+		public WorldNameInputEntry setEntryPos(RelPos entryPos) {
+			return (WorldNameInputEntry) super.setEntryPos(entryPos);
+		}
 
 //			@Override
 //			public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
@@ -145,7 +159,6 @@ public class WorldGenDisplay extends Display {
 //					(getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x):
 //					x, y, isSelected, bounds);
 //			}
-		};
 	}
 
 	private final SelectEntry createWorld;
@@ -153,7 +166,7 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.options.world_name", WorldSelectDisplay.getWorldNames(), "", true)
+		WorldNameInputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.options.world_name", "", null)
 			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
 		worldSeed = new InputEntry("minicraft.displays.world_gen.options.seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
@@ -161,9 +174,12 @@ public class WorldGenDisplay extends Display {
 			public boolean isValid() { return true; }
 		}.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
+		StringEntry nameNotify = new StringEntry(Localization.getLocalized(
+			"minicraft.display.world_naming.world_name_notify", DEFAULT_NAME), Color.DARK_GRAY, false);
+
 		createWorld = new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
 			if(!nameField.isValid()) return;
-			WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
+			WorldSelectDisplay.setWorldName(nameField.getWorldName(), false);
 			OptionalLong seed = getSeed();
 			Long seedObj = seed.isPresent() ? seed.getAsLong() : null;
 			Game.setDisplay(new LoadingDisplay(new WorldSettings(seedObj)));
@@ -173,12 +189,18 @@ public class WorldGenDisplay extends Display {
 				Font.draw(toString(), screen, x, y, isSelectable() ? Color.CYAN : Color.tint(Color.CYAN, -1, true), bounds);
 			}
 		};
-		createWorld.setSelectable(false);
-		nameField.setChangeListener(o -> createWorld.setSelectable(nameField.isValid()));
+		nameField.setChangeListener(o -> {
+			boolean valid = nameField.isValid();
+			createWorld.setSelectable(valid);
+			nameNotify.setText(valid ?
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameField) :
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid"));
+		});
 
 		Menu mainMenu =
 			new Menu.Builder(false, 3, RelPos.CENTER,
 				nameField,
+				nameNotify,
 				new BlankEntry(),
 				worldSeed,
 				Settings.getEntry("size"),

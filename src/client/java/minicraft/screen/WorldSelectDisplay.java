@@ -5,15 +5,15 @@ import minicraft.core.Game;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.saveload.Version;
-import minicraft.screen.entry.InputEntry;
+import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
@@ -23,11 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WorldSelectDisplay extends Display {
 
@@ -112,7 +114,7 @@ public class WorldSelectDisplay extends Display {
 			WorldInfo world = worlds.get(selection);
 			menus[1].setEntries(new ListEntry[] {
 				new StringEntry(world.lastPlayed.format(dateTimeFormat), false),
-				new StringEntry(String.format("%s%s%s, Version: %s%s",
+				new StringEntry(Localization.getLocalized("minicraft.displays.world_select.world_desc",
 					world.mode.equals("minicraft.displays.world_gen.options.game_mode.hardcore") ?
 						Color.RED_CODE : "", Localization.getLocalized(world.mode), Color.WHITE_CODE,
 					world.version != null ? world.version.compareTo(Game.VERSION) > 0 ? Color.RED_CODE :
@@ -121,6 +123,8 @@ public class WorldSelectDisplay extends Display {
 					world.version == null ? "< 1.8" : world.version))
 			});
 		}
+
+		menus[1].setSelection(selection);
 	}
 
 	private static void loadWorld(WorldInfo world) {
@@ -132,11 +136,23 @@ public class WorldSelectDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
+		if (worldSelected != menus[1].getSelection()) {
+			updateWorldDescription(menus[1].getSelection());
+		}
+
 		if (input.getKey("SHIFT-C").clicked || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
+			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, null);
+			//noinspection DuplicatedCode
+			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
+				"minicraft.display.world_naming.world_name_notify", worldName), Color.DARK_GRAY, false);
+			nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()) :
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid")));
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.BLUE));
-			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName, false));
+			//noinspection DuplicatedCode
+			entries.add(nameInput);
+			entries.add(nameNotify);
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
@@ -144,18 +160,14 @@ public class WorldSelectDisplay extends Display {
 
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
-				InputEntry entry;
-
 				// The location of the world folder on the disk.
 				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
 				// Do the action.
-				entry = (InputEntry) popup.getCurEntry();
-				if (!entry.isValid())
+				if (!nameInput.isValid())
 					return false;
 				//user hits enter with a valid new name; copy is created here.
-				String newname = entry.getUserInput();
-				File newworld = new File(worldsDir + newname);
+				File newworld = new File(worldsDir + nameInput.getWorldName());
 				newworld.mkdirs();
 				Logging.GAMEHANDLER.debug("Copying world {} to world {}.", world, newworld);
 				// walk file tree
@@ -165,6 +177,7 @@ public class WorldSelectDisplay extends Display {
 					e.printStackTrace();
 				}
 
+				//noinspection DuplicatedCode
 				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
@@ -180,11 +193,18 @@ public class WorldSelectDisplay extends Display {
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
 		} else if (input.getKey("SHIFT-R").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
+			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, worldName);
+			//noinspection DuplicatedCode
+			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
+				"minicraft.display.world_naming.world_name_notify", worldName), Color.DARK_GRAY, false);
+			nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()) :
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid")));
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
-			names.remove(worldName);
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.GREEN));
-			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName, false));
+			//noinspection DuplicatedCode
+			entries.add(nameInput);
+			entries.add(nameNotify);
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
 				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
@@ -196,12 +216,11 @@ public class WorldSelectDisplay extends Display {
 				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
 				// Do the action.
-				InputEntry entry = (InputEntry) popup.getCurEntry();
-				if (!entry.isValid())
+				if (!nameInput.isValid())
 					return false;
 
 				// User hits enter with a vaild new name; name is set here:
-				String name = entry.getUserInput();
+				String name = nameInput.getWorldName();
 
 				// Try to rename the file, if it works, return
 				if (world.renameTo(new File(worldsDir + name))) {
@@ -211,6 +230,7 @@ public class WorldSelectDisplay extends Display {
 					Logging.GAMEHANDLER.error("Rename failed in WorldEditDisplay.");
 				}
 
+				//noinspection DuplicatedCode
 				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
@@ -274,17 +294,6 @@ public class WorldSelectDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 
-		int sel = menus[0].getSelection();
-		if (sel >= 0 && sel < worlds.size()) {
-			Version version = worlds.get(sel).version;
-			int col = Color.WHITE;
-			if (version.compareTo(Game.VERSION) > 0) {
-				col = Color.RED;
-				Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_too_new"), screen, Font.textHeight() * 5, col);
-			}
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version), screen, Font.textHeight() * 7/2, col);
-		}
-
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.0", Game.input.getMapping("select")), screen, Screen.h - 60, Color.GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.1", Game.input.getMapping("exit")), screen, Screen.h - 40, Color.GRAY);
 
@@ -322,19 +331,52 @@ public class WorldSelectDisplay extends Display {
 			return;
 		}
 
+
 		// Iterate between every file in worlds.
 		for (File file : worldFolders) {
 			if (file.isDirectory()) {
-				String path = worldsDir + file.getName() + "/";
-				File folder2 = new File(path);
-				folder2.mkdirs();
-				String[] files = folder2.list();
-				if (files != null && files.length > 0 && Arrays.stream(files).anyMatch(f -> f.endsWith(Save.extension))) {
-					String name = file.getName();
-					// TODO
-					worlds.add(new WorldInfo(name, new Load(name, false).getWorldVersion(), "N/A", name, LocalDateTime.now()));
+				String[] files = file.list();
+				if (files != null && files.length > 0 && Arrays.stream(files).anyMatch(f -> f.equalsIgnoreCase("Game" + Save.extension))) {
+					WorldInfo world = loadWorldInfo(file);
+					if (world != null) worlds.add(world);
 				}
 			}
+		}
+	}
+
+	@Nullable
+	private static WorldInfo loadWorldInfo(File folder) {
+		try {
+			String name = folder.getName();
+			List<String> data = Arrays.asList(Load.loadFromFile(
+				new File(folder, "Game" + Save.extension).toString(), true).split(","));
+			Version version = new Version(data.get(0));
+
+			String modeData;
+			if (version.compareTo(new Version("2.2.0-dev1")) >= 0)
+				modeData = data.get(2);
+			else if (version.compareTo(new Version("2.0.4-dev8")) >= 0)
+				modeData = data.get(1);
+			else {
+				List<String> playerData = Arrays.asList(Load.loadFromFile(
+					new File(folder, "Player" + Save.extension).toString(), true).split(","));
+				if (version.compareTo(new Version("2.0.4-dev7")) >= 0)
+					modeData = playerData.get(Integer.parseInt(playerData.get(6)) > 0 ? 11 : 9);
+				else
+					modeData = playerData.get(9);
+			}
+
+			int mode = modeData.contains(";") ? Integer.parseInt(modeData.split(";")[0]) : Integer.parseInt(modeData);
+			if (version.compareTo(new Version("2.0.3")) <= 0)
+				mode--; // We changed the min mode idx from 1 to 0.
+
+			long lastModified = folder.lastModified();
+			//noinspection unchecked
+			return new WorldInfo(name, version, ((ArrayEntry<String>) Settings.getEntry("mode")).getValue(mode), name,
+				LocalDateTime.ofEpochSecond(lastModified / 1000, (int) (lastModified % 1000) * 1000000, ZoneOffset.UTC));
+		} catch (IOException | IndexOutOfBoundsException e) {
+			Logging.WORLD.warn(e, "Unable to load world \"" + folder.getName() + "\"");
+			return null;
 		}
 	}
 
@@ -346,12 +388,26 @@ public class WorldSelectDisplay extends Display {
 
 	public static boolean hasLoadedWorld() { return loadedWorld; }
 
-	public static boolean hasWorld() { return !worlds.isEmpty(); }
+	/**
+	 * Solves for filename problems.
+	 * {@link WorldGenDisplay#isWorldNameLegal(String)} should be checked before this.
+	 */
+	public static String getValidWorldName(String input, boolean ignoreDuplicate) {
+		if (input.isEmpty()) return WorldGenDisplay.DEFAULT_NAME;
 
-	public static @Nullable String getValidWorldName(String input) {
-		if (worlds.stream().anyMatch(w -> w.name.equalsIgnoreCase(input))) {
-
+		if (!ignoreDuplicate && worlds.stream().anyMatch(w -> w.name.equalsIgnoreCase(input))) {
+			Logging.WORLD.debug("Duplicated or existed world name \"{}\".", input);
+			int count = 0;
+			File folder;
+			String filename;
+			do {
+				count++;
+				filename = String.format("%s (%d)", input, count);
+				folder = new File(Game.gameDir + "/saves/", filename);
+			} while (folder.exists());
+			return filename;
 		}
+
+		return input;
 	}
-	public static ArrayList<String> getWorldNames() { return null; }
 }

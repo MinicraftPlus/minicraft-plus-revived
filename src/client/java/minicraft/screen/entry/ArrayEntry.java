@@ -55,6 +55,8 @@ public class ArrayEntry<T> extends ListEntry {
 	public int getSelection() { return selection; }
 	public T getValue() { return options[selection]; }
 
+	public T getValue(int idx) { return options[idx]; }
+
 	public boolean valueIs(Object value) {
 		if (value instanceof String && options instanceof String[])
 			return ((String)value).equalsIgnoreCase((String)getValue());
