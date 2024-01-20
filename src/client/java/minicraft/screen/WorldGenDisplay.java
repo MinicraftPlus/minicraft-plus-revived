@@ -16,6 +16,7 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +90,7 @@ public class WorldGenDisplay extends Display {
 		return OptionalLong.of(seed);
 	}
 
-	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue, boolean isGen) {
+	public static InputEntry makeWorldNameInput(String prompt, String initValue, boolean isGen) {
 		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
 			private String lastName;
 
@@ -188,7 +189,9 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
 				new BlankEntry(),
-				createWorld
+				createWorld,
+				new StringEntry(Localization.getLocalized("minicraft.display.popup.cancel",
+					Game.input.getMapping("EXIT")), false)
 			)
 				.setTitle("minicraft.displays.world_gen.title")
 				.setMaxBoundsAsRenderingBounds()

@@ -8,6 +8,7 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
@@ -17,28 +18,61 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class WorldSelectDisplay extends Display {
 
-	private static final ArrayList<String> worldNames = new ArrayList<>();
-	private static final ArrayList<Version> worldVersions = new ArrayList<>();
+	private static final ArrayList<WorldInfo> worlds = new ArrayList<>();
 
 	private static final String worldsDir = Game.gameDir + "/saves/";
+	private static final DateTimeFormatter dateTimeFormat;
+
+	static {
+		dateTimeFormat = new DateTimeFormatterBuilder()
+			.appendValue(ChronoField.YEAR)
+			.appendLiteral('/')
+			.appendValue(ChronoField.MONTH_OF_YEAR)
+			.appendLiteral('/')
+			.appendValue(ChronoField.DAY_OF_MONTH)
+			.appendLiteral(' ')
+			.appendValue(ChronoField.HOUR_OF_DAY)
+			.appendLiteral(':')
+			.appendValue(ChronoField.MINUTE_OF_HOUR)
+			.toFormatter();
+	}
 
 	private static String worldName = "";
 	private static boolean loadedWorld = true;
 
-	static {
-		updateWorlds();
-	}
+	private int worldSelected = 0;
 
 	public WorldSelectDisplay() {
 		super(true);
+	}
+
+	public static class WorldInfo {
+		public final String name; // World name
+		public final @Nullable Version version;
+		public final String mode;
+		public final String saveName; // World save folder name
+		public final LocalDateTime lastPlayed;
+
+		public WorldInfo(String name, @Nullable Version version, String mode, String saveName, LocalDateTime lastPlayed) {
+			this.name = name;
+			this.version = version;
+			this.mode = mode;
+			this.saveName = saveName;
+			this.lastPlayed = lastPlayed;
+		}
 	}
 
 	@Override
@@ -47,6 +81,11 @@ public class WorldSelectDisplay extends Display {
 
 		worldName = "";
 		loadedWorld = true;
+		menus = new Menu[2];
+		menus[1] = new Menu.Builder(true, 2, RelPos.CENTER)
+			.setDisplayLength(3)
+			.setSize(Screen.w - 16, 8 * 5 + 2 * 2)
+			.createMenu();
 
 		// Update world list
 		updateWorlds();
@@ -54,26 +93,39 @@ public class WorldSelectDisplay extends Display {
 	}
 
 	private void updateEntries() {
-		SelectEntry[] entries = new SelectEntry[worldNames.size()];
+		ArrayList<ListEntry> entries = new ArrayList<>();
 
-		for (int i = 0; i < entries.length; i++) {
-			final String name = worldNames.get(i);
-			final Version version = worldVersions.get(i);
-			entries[i] = new SelectEntry(name, () -> {
-				// Executed when we select a world.
-				if (version.compareTo(Game.VERSION) > 0)
-					return; // cannot load a game saved by a higher version!
-				worldName = name;
-				Game.setDisplay(new LoadingDisplay(null));
-			}, false);
+		for (WorldInfo world : worlds) {
+			entries.add(new SelectEntry(world.name, () -> loadWorld(world), false));
 		}
 
-		menus = new Menu[] {
-			new Menu.Builder(false, 0, RelPos.CENTER, entries)
+		menus[0] = new Menu.Builder(false, 0, RelPos.CENTER, entries)
 				.setDisplayLength(5)
-				.setScrollPolicies(1, true)
-				.createMenu()
-		};
+				.createMenu();
+		updateWorldDescription(0);
+	}
+
+	private void updateWorldDescription(int selection) {
+		worldSelected = selection;
+		if (worlds.isEmpty()) menus[1].setEntries(new ListEntry[0]);
+		else {
+			WorldInfo world = worlds.get(selection);
+			menus[1].setEntries(new ListEntry[] {
+				new StringEntry(world.lastPlayed.format(dateTimeFormat), false),
+				new StringEntry(String.format("%s%s%s, Version: %s%s",
+					world.mode.equals("minicraft.displays.world_gen.options.game_mode.hardcore") ?
+						Color.RED_CODE : "", Localization.getLocalized(world.mode), Color.WHITE_CODE,
+					world.version != null ? world.version.compareTo(Game.VERSION) > 0 ? Color.RED_CODE :
+						// Checks if either the world or the game is pre-release.
+						world.version.toArray()[3] != 0 || Game.VERSION.toArray()[3] != 0 ? Color.GREEN_CODE : "" : "",
+					world.version == null ? "< 1.8" : world.version))
+			});
+		}
+	}
+
+	private static void loadWorld(WorldInfo world) {
+		worldName = world.name;
+		Game.setDisplay(new LoadingDisplay(null));
 	}
 
 	@Override
@@ -95,7 +147,7 @@ public class WorldSelectDisplay extends Display {
 				InputEntry entry;
 
 				// The location of the world folder on the disk.
-				File world = new File(worldsDir + worldNames.get(menus[0].getSelection()));
+				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
 				// Do the action.
 				entry = (InputEntry) popup.getCurEntry();
@@ -116,7 +168,7 @@ public class WorldSelectDisplay extends Display {
 				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
-				if (WorldSelectDisplay.getWorldNames().size() > 0) {
+				if (worlds.size() > 0) {
 					Game.exitDisplay();
 				} else {
 					Game.exitDisplay(3); // Exiting to title display.
@@ -141,7 +193,7 @@ public class WorldSelectDisplay extends Display {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 				// The location of the world folder on the disk.
-				File world = new File(worldsDir + worldNames.get(menus[0].getSelection()));
+				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
 				// Do the action.
 				InputEntry entry = (InputEntry) popup.getCurEntry();
@@ -162,7 +214,7 @@ public class WorldSelectDisplay extends Display {
 				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
-				if (WorldSelectDisplay.getWorldNames().size() > 0) {
+				if (worlds.size() > 0) {
 					Game.exitDisplay();
 				} else {
 					Game.exitDisplay(3); // Exiting to title display.
@@ -176,7 +228,7 @@ public class WorldSelectDisplay extends Display {
 		} else if (input.getKey("SHIFT-D").clicked || input.leftTriggerPressed() && input.rightTriggerPressed()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
-				Color.toStringCode(Color.tint(Color.RED, 1, true)), worldNames.get(menus[0].getSelection()),
+				Color.toStringCode(Color.tint(Color.RED, 1, true)), worlds.get(menus[0].getSelection()).name,
 				Color.RED_CODE))
 			));
 
@@ -188,7 +240,7 @@ public class WorldSelectDisplay extends Display {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 				// The location of the world folder on the disk.
-				File world = new File(worldsDir + worldNames.get(menus[0].getSelection()));
+				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
 				// Do the action.
 				Logging.GAMEHANDLER.debug("Deleting world: " + world);
@@ -201,10 +253,10 @@ public class WorldSelectDisplay extends Display {
 				Sound.play("confirm");
 				updateWorlds();
 				updateEntries();
-				if (WorldSelectDisplay.getWorldNames().size() > 0) {
+				if (worlds.size() > 0) {
 					Game.exitDisplay();
-					if (menus[0].getSelection() >= worldNames.size()) {
-						menus[0].setSelection(worldNames.size() - 1);
+					if (menus[0].getSelection() >= worlds.size()) {
+						menus[0].setSelection(worlds.size() - 1);
 					}
 				} else {
 					Game.exitDisplay(3); // Exiting to title display.
@@ -223,8 +275,8 @@ public class WorldSelectDisplay extends Display {
 		super.render(screen);
 
 		int sel = menus[0].getSelection();
-		if (sel >= 0 && sel < worldVersions.size()) {
-			Version version = worldVersions.get(sel);
+		if (sel >= 0 && sel < worlds.size()) {
+			Version version = worlds.get(sel).version;
 			int col = Color.WHITE;
 			if (version.compareTo(Game.VERSION) > 0) {
 				col = Color.RED;
@@ -255,24 +307,23 @@ public class WorldSelectDisplay extends Display {
 		}
 
 		// Get all the files (worlds) in the folder.
-		File[] worlds = worldSavesFolder.listFiles();
+		File[] worldFolders = worldSavesFolder.listFiles();
 
-		if (worlds == null) {
+		if (worldFolders == null) {
 			Logging.GAMEHANDLER.error("Game location file folder is null, somehow...");
 			return;
 		}
 
-		worldNames.clear();
-		worldVersions.clear();
+		worlds.clear();
 
 		// Check if there are no files in folder.
-		if (worlds.length == 0) {
+		if (worldFolders.length == 0) {
 			Logging.GAMEHANDLER.debug("No worlds in folder. Won't bother loading.");
 			return;
 		}
 
 		// Iterate between every file in worlds.
-		for (File file : worlds) {
+		for (File file : worldFolders) {
 			if (file.isDirectory()) {
 				String path = worldsDir + file.getName() + "/";
 				File folder2 = new File(path);
@@ -280,8 +331,8 @@ public class WorldSelectDisplay extends Display {
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && Arrays.stream(files).anyMatch(f -> f.endsWith(Save.extension))) {
 					String name = file.getName();
-					worldNames.add(name);
-					worldVersions.add(new Load(name, false).getWorldVersion());
+					// TODO
+					worlds.add(new WorldInfo(name, new Load(name, false).getWorldVersion(), "N/A", name, LocalDateTime.now()));
 				}
 			}
 		}
@@ -295,5 +346,12 @@ public class WorldSelectDisplay extends Display {
 
 	public static boolean hasLoadedWorld() { return loadedWorld; }
 
-	public static ArrayList<String> getWorldNames() { return worldNames; }
+	public static boolean hasWorld() { return !worlds.isEmpty(); }
+
+	public static @Nullable String getValidWorldName(String input) {
+		if (worlds.stream().anyMatch(w -> w.name.equalsIgnoreCase(input))) {
+
+		}
+	}
+	public static ArrayList<String> getWorldNames() { return null; }
 }

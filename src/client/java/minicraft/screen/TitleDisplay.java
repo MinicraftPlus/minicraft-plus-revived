@@ -32,18 +32,10 @@ public class TitleDisplay extends Display {
 	private boolean reverse = false;
 
 	public TitleDisplay() {
-
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
 			new BlankEntry(),
-			new SelectEntry("minicraft.displays.title.play", () -> {
-				if (WorldSelectDisplay.getWorldNames().size() > 0)
-					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("minicraft.displays.title.play.load_world", () -> Game.setDisplay(new WorldSelectDisplay())),
-						new SelectEntry("minicraft.displays.title.play.new_world", () -> Game.setDisplay(new WorldGenDisplay()))
-					).createMenu()));
-				else Game.setDisplay(new WorldGenDisplay());
-			}),
+			new SelectEntry("minicraft.displays.title.play", () -> Game.setDisplay(new WorldSelectDisplay())),
 			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
             new SelectEntry("minicraft.displays.skin", () -> Game.setDisplay(new SkinDisplay())),
 			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),

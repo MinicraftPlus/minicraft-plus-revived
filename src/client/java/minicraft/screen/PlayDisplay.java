@@ -15,7 +15,7 @@ public class PlayDisplay extends Display {
 				new BlankEntry(),
 				new BlankEntry(),
 				new SelectEntry("Singleplayer", () -> {
-					if (WorldSelectDisplay.getWorldNames().size() > 0)
+					if (WorldSelectDisplay.hasWorld())
 						Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
 								new SelectEntry("Load World", () -> Game.setDisplay(new WorldSelectDisplay())),
 								new SelectEntry("New World", () -> Game.setDisplay(new WorldGenDisplay()))

@@ -27,7 +27,9 @@ public class Color {
 
 	public static final int TRANSPARENT = Color.get(0, 0);
 	public static final int WHITE = Color.get(1, 255);
+	public static final int SILVER = Color.get(1, 210);
 	public static final int GRAY = Color.get(1, 153);
+	public static final int LIGHT_GRAY = Color.get(1, 172);
 	public static final int DARK_GRAY = Color.get(1, 51);
 	public static final int BLACK = Color.get(1, 0);
 	public static final int RED = Color.get(1, 198, 44, 44);
@@ -36,6 +38,18 @@ public class Color {
 	public static final int YELLOW = Color.get(1, 255, 255, 0);
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
 	public static final int CYAN = Color.get(1, 90, 204, 204);
+
+	// Darkened
+	public static final int DIMMED_SILVER = Color.tint(SILVER, -1, true);
+	public static final int DIMMED_GRAY = Color.tint(GRAY, -1, true);
+	public static final int DIMMED_LIGHT_GRAY = Color.tint(LIGHT_GRAY, -1, true);
+	public static final int DIMMED_DARK_GRAY = Color.tint(DARK_GRAY, -1, true);
+	public static final int DIMMED_RED = Color.tint(RED, -1, true);
+	public static final int DIMMED_GREEN = Color.tint(GREEN, -1, true);
+	public static final int DIMMED_BLUE = Color.tint(BLUE, -1, true);
+	public static final int DIMMED_YELLOW = Color.tint(YELLOW, -1, true);
+	public static final int DIMMED_MAGENTA = Color.tint(MAGENTA, -1, true);
+	public static final int DIMMED_CYAN = Color.tint(CYAN, -1, true);
 
 	public static final char COLOR_CHAR = '\u00A7';
 
