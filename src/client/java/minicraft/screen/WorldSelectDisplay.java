@@ -120,7 +120,7 @@ public class WorldSelectDisplay extends Display {
 					world.version != null ? world.version.compareTo(Game.VERSION) > 0 ? Color.RED_CODE :
 						// Checks if either the world or the game is pre-release.
 						world.version.toArray()[3] != 0 || Game.VERSION.toArray()[3] != 0 ? Color.GREEN_CODE : "" : "",
-					world.version == null ? "< 1.8" : world.version))
+					world.version == null ? "< 1.9.1" : world.version))
 			});
 		}
 
