@@ -204,7 +204,7 @@ public class Menu {
 		if (!selectable || entries.size() == 0) return;
 
 		int prevSel = selection;
-		if (input.getKey("ALT").down) {
+		if (input.getMappedKey("ALT").isDown()) {
 			if (input.inputPressed("cursor-left")) entries.get(selection).displaceRight(entryBounds.getWidth());
 			if (input.inputPressed("cursor-right")) entries.get(selection).displaceLeft(entryBounds.getWidth());
 		} else {

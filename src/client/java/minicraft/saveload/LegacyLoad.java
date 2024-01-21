@@ -182,7 +182,7 @@ public class LegacyLoad {
 	public void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
-		if (hasVersion) {
+		if (hasVersion) { // >= 1.9.1
 			worldVer = new Version(data.get(0)); // Gets the world version
 			Updater.setTime(Integer.parseInt(data.get(1)));
 			Updater.gameTime = 65000; // Prevents time cheating.
@@ -196,7 +196,7 @@ public class LegacyLoad {
 				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
 				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 			}
-		} else {
+		} else { // < 1.9.1
 			if (data.size() == 5) {
 				worldVer = new Version("1.9");
 				Updater.setTime(Integer.parseInt(data.get(0)));

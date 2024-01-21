@@ -78,7 +78,7 @@ public class KeyInputDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("EXIT").clicked) {
+		if (input.getMappedKey("EXIT").isClicked()) {
 			ArrayList<String> troubles = getAnyTroubles();
 			if (!troubles.isEmpty()) {
 				ArrayList<ListEntry> entries = new ArrayList<>();
