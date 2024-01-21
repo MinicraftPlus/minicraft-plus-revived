@@ -30,7 +30,7 @@ public class BookDisplay extends Display {
 	private final int pageOffset;
 
 	public BookDisplay(String book, boolean hasTitle) {// this(book, hasTitle, !hasTitle); }
-	//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
+		//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
 		page = 0;
 
 		if (book == null) {
@@ -42,11 +42,11 @@ public class BookDisplay extends Display {
 
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
-		for (String content: splitContents) {
+		for (String content : splitContents) {
 			String[] remainder = {content};
-			while (remainder[remainder.length-1].length() > 0) {
-				remainder = Font.getLines(remainder[remainder.length-1], WIDTH, HEIGHT, SPACING, true);
-				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // Removes the last element of remainder, which is the leftover.
+			while (remainder[remainder.length - 1].length() > 0) {
+				remainder = Font.getLines(remainder[remainder.length - 1], WIDTH, HEIGHT, SPACING, true);
+				pages.add(Arrays.copyOf(remainder, remainder.length - 1)); // Removes the last element of remainder, which is the leftover.
 			}
 		}
 
@@ -58,31 +58,32 @@ public class BookDisplay extends Display {
 		Menu.Builder builder = new Menu.Builder(true, SPACING, RelPos.CENTER);
 
 		Menu pageCount = builder // The small rect for the title
-			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
+			.setPositioning(new Point(Screen.w / 2, 0), RelPos.BOTTOM)
 			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle ? "Title" : "1/" + lines.length))
 			.setSelection(1)
 			.createMenu();
 
 		builder
-			.setPositioning(new Point(Screen.w/2, pageCount.getBounds().getBottom() + SPACING), RelPos.BOTTOM)
-			.setSize(WIDTH + MinicraftImage.boxWidth*2, HEIGHT + MinicraftImage.boxWidth*2)
+			.setPositioning(new Point(Screen.w / 2, pageCount.getBounds().getBottom() + SPACING), RelPos.BOTTOM)
+			.setSize(WIDTH + MinicraftImage.boxWidth * 2, HEIGHT + MinicraftImage.boxWidth * 2)
 			.setShouldRender(false);
 
 		menus = new Menu[lines.length + pageOffset];
 		if (showPageCount) menus[0] = pageCount;
 		for (int i = 0; i < lines.length; i++) {
-			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
+			menus[i + pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
 		}
 
-		menus[page+pageOffset].shouldRender = true;
+		menus[page + pageOffset].shouldRender = true;
 	}
 
 	private void turnPage(int dir) {
 		if (page + dir >= 0 && page + dir < lines.length) {
-			menus[page+pageOffset].shouldRender = false;
+			menus[page + pageOffset].shouldRender = false;
 			page += dir;
-			if (showPageCount) menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
-			menus[page+pageOffset].shouldRender = true;
+			if (showPageCount)
+				menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
+			menus[page + pageOffset].shouldRender = true;
 		}
 	}
 

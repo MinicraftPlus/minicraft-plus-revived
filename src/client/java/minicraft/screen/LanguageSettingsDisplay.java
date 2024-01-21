@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class LanguageSettingsDisplay extends Display {
-	private Map.Entry<ArrayList<ListEntry> ,Integer> getEntries() {
+	private Map.Entry<ArrayList<ListEntry>, Integer> getEntries() {
 		Localization.LocaleInformation[] locales = Localization.getLocales();
 		ArrayList<Localization.LocaleInformation> list = new ArrayList<>(Arrays.asList(locales));
 		list.sort((a, b) -> { // Debug language is always on top.
@@ -44,12 +44,12 @@ public class LanguageSettingsDisplay extends Display {
 
 	public LanguageSettingsDisplay() {
 		super(true);
-		Map.Entry<ArrayList<ListEntry> ,Integer> entries = getEntries();
-		menus = new Menu[] {
+		Map.Entry<ArrayList<ListEntry>, Integer> entries = getEntries();
+		menus = new Menu[]{
 			new Menu.Builder(false, 2, RelPos.CENTER, entries.getKey())
 				.setTitle("minicraft.displays.language_settings.title")
 				.setSelectable(true)
-				.setPositioning(new Point(Screen.w/2, 10), RelPos.BOTTOM)
+				.setPositioning(new Point(Screen.w / 2, 10), RelPos.BOTTOM)
 				.setSize(Screen.w, Screen.h - 30)
 				.setSelection(entries.getValue())
 				.createMenu()

@@ -20,7 +20,10 @@ public class Quest extends AdvancementElement {
 		this.parent = parent;
 	}
 
-	public QuestSeries getSeries() { return series; }
+	public QuestSeries getSeries() {
+		return series;
+	}
+
 	public @Nullable Quest getParent() {
 		if (parent != null && series != null) {
 			return series.quests.get(parent);
@@ -61,7 +64,9 @@ public class Quest extends AdvancementElement {
 			quests.values().forEach(q -> q.series = this);
 		}
 
-		public HashMap<String, Quest> getSeriesQuests() { return new HashMap<>(quests); }
+		public HashMap<String, Quest> getSeriesQuests() {
+			return new HashMap<>(quests);
+		}
 
 		@Override
 		protected boolean checkIsCompleted() {

@@ -52,7 +52,7 @@ public class CactusTile extends Tile {
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if(!(entity instanceof Mob)) return;
+		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.easy")) {
 			m.hurt(this, x, y, 1);

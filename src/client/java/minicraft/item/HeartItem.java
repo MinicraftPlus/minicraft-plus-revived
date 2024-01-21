@@ -22,14 +22,19 @@ public class HeartItem extends StackableItem {
 	private int health; // The amount of health to increase by.
 	private int staminaCost; // The amount of stamina it costs to consume.
 
-	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int health) { this(name, sprite, 1, health); }
+	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int health) {
+		this(name, sprite, 1, health);
+	}
+
 	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int count, int health) {
 		super(name, sprite, count);
 		this.health = health;
 		staminaCost = 7;
 	}
 
-	/** What happens when the player uses the item on a tile */
+	/**
+	 * What happens when the player uses the item on a tile
+	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
 
@@ -37,8 +42,7 @@ public class HeartItem extends StackableItem {
 			Player.extraHealth += health; // Permanent increase of health by health variable (Basically 5)
 			player.health += health; // Adds health to the player when used. (Almost like absorbing the item's power first time)
 			success = true;
-		}
-		else {
+		} else {
 			Updater.notifyAll("Health increase is at max!"); // When at max, health cannot be increased more and doesn't consume item
 			return false;
 		}
@@ -47,7 +51,9 @@ public class HeartItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public HeartItem clone() {
 		return new HeartItem(getName(), sprite, count, health);

@@ -11,7 +11,9 @@ import java.io.IOException;
  * As BufferedImage is heavy. Our current rendering system still depends on this array.
  */
 public class MinicraftImage {
-	/** Each sprite tile size. */
+	/**
+	 * Each sprite tile size.
+	 */
 	public static final int boxWidth = 8;
 
 	public final int width, height; // Width and height of the sprite sheet
@@ -19,19 +21,22 @@ public class MinicraftImage {
 
 	/**
 	 * Default with maximum size of image.
+	 *
 	 * @param image The image to be added.
 	 * @throws IOException if I/O exception occurs.
 	 */
 	public MinicraftImage(BufferedImage image) throws IOException {
-		 this(image, image.getWidth(), image.getHeight());
+		this(image, image.getWidth(), image.getHeight());
 	}
+
 	/**
 	 * Custom size.
-	 * @param image The image to be added.
-	 * @param width The width of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
+	 *
+	 * @param image  The image to be added.
+	 * @param width  The width of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
 	 * @param height The height of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
 	 * @throws IOException
-	*/
+	 */
 	public MinicraftImage(BufferedImage image, int width, int height) throws IOException {
 		if (width % 8 != 0)
 			CrashHandler.errorHandle(new IllegalArgumentException("Invalid width of SpriteSheet."), new CrashHandler.ErrorInfo(

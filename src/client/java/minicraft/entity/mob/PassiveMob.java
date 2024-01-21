@@ -15,6 +15,7 @@ public class PassiveMob extends MobAi {
 	/**
 	 * Constructor for a non-hostile (passive) mob.
 	 * healthFactor = 3.
+	 *
 	 * @param sprites The mob's sprites.
 	 */
 	public PassiveMob(LinkedSprite[][] sprites) {
@@ -23,12 +24,13 @@ public class PassiveMob extends MobAi {
 
 	/**
 	 * Constructor for a non-hostile (passive) mob.
-	 * @param sprites The mob's sprites.
+	 *
+	 * @param sprites      The mob's sprites.
 	 * @param healthFactor Determines the mobs health. Will be multiplied by the difficulty
-	 * and then added with 5.
+	 *                     and then added with 5.
 	 */
 	public PassiveMob(LinkedSprite[][] sprites, int healthFactor) {
-		super(sprites, 5 + healthFactor * Settings.getIdx("diff"), 5*60*Updater.normSpeed, 45, 40);
+		super(sprites, 5 + healthFactor * Settings.getIdx("diff"), 5 * 60 * Updater.normSpeed, 45, 40);
 	}
 
 	@Override
@@ -60,9 +62,10 @@ public class PassiveMob extends MobAi {
 	/**
 	 * Checks a given position in a given level to see if the mob can spawn there.
 	 * Passive mobs can only spawn on grass or flower tiles.
+	 *
 	 * @param level The level which the mob wants to spawn in.
-	 * @param x X map spawn coordinate.
-	 * @param y Y map spawn coordinate.
+	 * @param x     X map spawn coordinate.
+	 * @param y     Y map spawn coordinate.
 	 * @return true if the mob can spawn here, false if not.
 	 */
 	public static boolean checkStartPos(Level level, int x, int y) {

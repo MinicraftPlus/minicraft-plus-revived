@@ -19,9 +19,10 @@ public class Spark extends Entity {
 
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
+	 *
 	 * @param owner The AirWizard spawning the spark.
-	 * @param xa X velocity.
-	 * @param ya Y velocity.
+	 * @param xa    X velocity.
+	 * @param ya    Y velocity.
 	 */
 	public Spark(AirWizard owner, double xa, double ya) {
 		super(0, 0);
@@ -50,12 +51,14 @@ public class Spark extends Entity {
 		y = (int) yy;
 
 		Player player = getClosestPlayer();
-		if (player.isWithin(0,this)) {
-			player.hurt(owner,1);
+		if (player != null && player.isWithin(0, this)) {
+			player.hurt(owner, 1);
 		}
 	}
 
-	/** Can this entity block you? Nope. */
+	/**
+	 * Can this entity block you? Nope.
+	 */
 	public boolean isSolid() {
 		return false;
 	}
@@ -72,7 +75,6 @@ public class Spark extends Entity {
 			}
 
 
-
 			randmirror = random.nextInt(4);
 		}
 
@@ -83,6 +85,7 @@ public class Spark extends Entity {
 
 	/**
 	 * Returns the owners id as a string.
+	 *
 	 * @return the owners id as a string.
 	 */
 	public String getData() {

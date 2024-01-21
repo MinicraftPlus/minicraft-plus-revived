@@ -2,8 +2,6 @@ package minicraft.level.tile.farming;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
@@ -26,28 +24,29 @@ public class FarmTile extends Tile {
 	public FarmTile(String name) {
 		super(name, sprite);
 	}
+
 	protected FarmTile(String name, SpriteAnimation sprite) {
 		super(name, sprite);
 	}
 
-    @Override
-    public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-        if (item instanceof ToolItem) {
-            ToolItem tool = (ToolItem) item;
-            if (tool.type == ToolType.Shovel) {
-                if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+	@Override
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if (item instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item;
+			if (tool.type == ToolType.Shovel) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					int data = level.getData(xt, yt);
-                    level.setTile(xt, yt, Tiles.get("Dirt"));
-                    Sound.play("monsterhurt");
+					level.setTile(xt, yt, Tiles.get("Dirt"));
+					Sound.play("monsterhurt");
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean tick(Level level, int xt, int yt) {

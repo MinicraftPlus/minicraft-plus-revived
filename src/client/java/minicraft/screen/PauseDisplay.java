@@ -18,10 +18,10 @@ public class PauseDisplay extends Display {
 
 	public PauseDisplay() {
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
-				new BlankEntry(),
-				new SelectEntry("minicraft.displays.pause.return", () -> Game.setDisplay(null)),
-				new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsWorldDisplay())),
-				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay()))
+			new BlankEntry(),
+			new SelectEntry("minicraft.displays.pause.return", () -> Game.setDisplay(null)),
+			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsWorldDisplay())),
+			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay()))
 		));
 
 		if (TutorialDisplayHandler.inQuests())
@@ -48,7 +48,7 @@ public class PauseDisplay extends Display {
 			})
 		));
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle("minicraft.displays.pause", Color.YELLOW)
 				.createMenu()

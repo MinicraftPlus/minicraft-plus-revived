@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class Save {
 
 	/**
 	 * This is the main save method. Called by all Save() methods.
+	 *
 	 * @param worldFolder The folder of where to save
 	 */
 	private Save(File worldFolder) {
@@ -93,10 +95,11 @@ public class Save {
 
 	/**
 	 * This will save world options
+	 *
 	 * @param worldname The name of the world.
 	 */
 	public Save(String worldname) {
-		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
+		this(new File(Game.gameDir + "/saves/" + worldname + "/"));
 
 		writeGame("Game");
 		writeWorld("Level");
@@ -111,9 +114,41 @@ public class Save {
 		Updater.saving = false;
 	}
 
-	/** This will save the settings in the settings menu. */
+	/**
+	 * This will save the settings in the settings menu.
+	 */
 	public Save() {
-		this(new File(Game.gameDir+"/"));
+		this(new File(Game.gameDir + "/"));
+
+		if (Game.VERSION.getDev() != 0) { // Is dev build
+			Logging.SAVELOAD.debug("In dev build: Searching for old preferences...");
+			Version prefVer;
+			File prefFile = new File(location, "Preferences.json"); // Only this is checked when checking existence.
+			File unlocFile = new File(location, "Unlocks.json");
+			try {
+				JSONObject json = new JSONObject(Load.loadFromFile(location + "Preferences.json", false));
+				prefVer = new Version(json.getString("version"));
+			} catch (FileNotFoundException e) {
+				Logging.SAVELOAD.debug("Preferences.json is not found, ignoring...");
+				prefVer = null;
+			} catch (IOException e) {
+				Logging.SAVELOAD.error(e, "Unable to load Preferences.json, saving aborted");
+				return;
+			}
+
+			if (prefVer != null && prefVer.compareTo(Game.VERSION) < 0) {
+				Logging.SAVELOAD.info("Old preferences detected, backup performing...");
+				File prefBackupFile = new File(location + "Preferences.json.bak");
+				if (prefBackupFile.exists()) Logging.SAVELOAD.info("Overwriting old Preferences.json backup...");
+				if (prefBackupFile.delete()) Logging.SAVELOAD.trace("Preferences.json.bak is deleted.");
+				if (prefFile.renameTo(prefBackupFile)) Logging.SAVELOAD.trace("Preferences.json is renamed to Preferences.json.bak");
+				File unlocBackupFile = new File(location + "Unlocks.json.bak");
+				if (unlocBackupFile.exists()) Logging.SAVELOAD.info("Overwriting old Unlocks.json backup...");
+				if (unlocBackupFile.delete()) Logging.SAVELOAD.trace("Unlocks.json.bak is deleted.");
+				if (unlocFile.renameTo(unlocBackupFile)) Logging.SAVELOAD.trace("Unlocks.json is renamed to Unlocks.json.bak");
+			}
+		}
+
 		Logging.SAVELOAD.debug("Writing preferences and unlocks...");
 		writePrefs();
 		writeUnlocks();
@@ -121,7 +156,7 @@ public class Save {
 
 	public Save(Player player, boolean writePlayer) {
 		// This is simply for access to writeToFile.
-		this(new File(Game.gameDir+"/saves/"+WorldSelectDisplay.getWorldName() + "/"));
+		this(new File(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/"));
 		if (writePlayer) {
 			writePlayer("Player", player);
 			writeInventory("Inventory", player);
@@ -144,7 +179,7 @@ public class Save {
 		data.clear();
 
 		LoadingDisplay.progress(7);
-		if(LoadingDisplay.getPercentage() > 100) {
+		if (LoadingDisplay.getPercentage() > 100) {
 			LoadingDisplay.setPercentage(100);
 		}
 
@@ -294,7 +329,7 @@ public class Save {
 
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
 
-		for (java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
+		for (java.util.Map.Entry<PotionType, Integer> potion : player.potioneffects.entrySet())
 			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 
 		if (player.potioneffects.size() > 0)
@@ -317,6 +352,7 @@ public class Save {
 		writeInventory(player, data);
 		writeToFile(location + filename + extension, data);
 	}
+
 	public static void writeInventory(Player player, List<String> data) {
 		data.clear();
 		if (player.activeItem != null) {
@@ -333,7 +369,7 @@ public class Save {
 	private void writeEntities(String filename) {
 		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
 		for (int l = 0; l < World.levels.length; l++) {
-			for (Entity e: World.levels[l].getEntitiesToSave()) {
+			for (Entity e : World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);
 				if (saved.length() > 0)
 					data.add(saved);
@@ -345,19 +381,19 @@ public class Save {
 
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName();
-		name = name.substring(name.lastIndexOf('.')+1);
+		name = name.substring(name.lastIndexOf('.') + 1);
 		StringBuilder extradata = new StringBuilder();
 
 		// Don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 
-		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof FireSpark  || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
+		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof FireSpark || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
 			return "";
 
 		if (!isLocalSave)
 			extradata.append(":").append(e.eid);
 
 		if (e instanceof Mob) {
-			Mob m = (Mob)e;
+			Mob m = (Mob) e;
 			extradata.append(":").append(m.health);
 			if (e instanceof EnemyMob)
 				extradata.append(":").append(((EnemyMob) m).lvl);
@@ -366,21 +402,21 @@ public class Save {
 		}
 
 		if (e instanceof Chest) {
-			Chest chest = (Chest)e;
+			Chest chest = (Chest) e;
 
-			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
+			for (int ii = 0; ii < chest.getInventory().invSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
 				extradata.append(":").append(item.getData());
 			}
 
-			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
-			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked());
+			if (chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
+			if (chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked());
 		}
 
 		if (e instanceof Spawner) {
-			Spawner egg = (Spawner)e;
+			Spawner egg = (Spawner) e;
 			String mobname = egg.mob.getClass().getName();
-			mobname = mobname.substring(mobname.lastIndexOf(".")+1);
+			mobname = mobname.substring(mobname.lastIndexOf(".") + 1);
 			extradata.append(":").append(mobname).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
 		}
 
@@ -389,7 +425,7 @@ public class Save {
 		}
 
 		if (e instanceof Crafter) {
-			name = ((Crafter)e).type.name();
+			name = ((Crafter) e).type.name();
 		}
 
 		if (e instanceof KnightStatue) {

@@ -11,7 +11,7 @@ public class Screen {
 
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
-	public static final Point center = new Point(w/2, h/2);
+	public static final Point center = new Point(w / 2, h / 2);
 
 	private static final int MAXDARK = 128;
 
@@ -35,23 +35,45 @@ public class Screen {
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
 
-	/** Clears all the colors on the screen */
+	/**
+	 * Clears all the colors on the screen
+	 */
 	public void clear(int color) {
 		// Turns each pixel into a single color (clearing the screen!)
 		Arrays.fill(pixels, color);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
-	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
-    }
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) {
+		render(xp, yp, xt, yt, bits, sheet, -1);
+	}
 
-	public void render(int xp, int yp, LinkedSprite sprite) { render(xp, yp, sprite.getSprite()); }
-	public void render(int xp, int yp, Sprite sprite) { render(xp, yp, sprite, false); }
-	public void render(int xp, int yp, Sprite sprite, boolean fullbright) { render(xp, yp, sprite, 0, fullbright, 0); }
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) { render(xp, yp, sprite, mirror, fullbright, 0); }
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, false);
+	}
+
+	/**
+	 * This method takes care of assigning the correct spritesheet to assign to the sheet variable
+	 **/
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, LinkedSprite sprite) {
+		render(xp, yp, sprite.getSprite());
+	}
+
+	public void render(int xp, int yp, Sprite sprite) {
+		render(xp, yp, sprite, false);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, boolean fullbright) {
+		render(xp, yp, sprite, 0, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
+		render(xp, yp, sprite, mirror, fullbright, 0);
+	}
+
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		for (int r = 0; r < sprite.spritePixels.length; r++) {
 			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
@@ -61,16 +83,30 @@ public class Screen {
 		}
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel) { render(xp, yp, pixel, -1); }
-	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
+	public void render(int xp, int yp, Sprite.Px pixel) {
+		render(xp, yp, pixel, -1);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) {
+		render(xp, yp, pixel, 0, whiteTint);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) {
+		render(xp, yp, pixel, mirror, whiteTint, false);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) {
+		render(xp, yp, pixel, mirror, whiteTint, fullbright, 0);
+	}
+
 	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
 		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
 	}
 
-    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+	/**
+	 * Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel.
+	 */
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
@@ -131,7 +167,9 @@ public class Screen {
 		}
 	}
 
-	/** Sets the offset of the screen */
+	/**
+	 * Sets the offset of the screen
+	 */
 	public void setOffset(int xOffset, int yOffset) {
 		// This is called in few places, one of which is level.renderBackground, right before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
 		// In other words, the offset is a conversion factor from level coordinates to screen coordinates. It makes a certain coord in the level the upper left corner of the screen, when subtracted from the tile coord.
@@ -147,55 +185,64 @@ public class Screen {
 		In the end, "every other every row", will need, for example in column 1, 15 light to be lit, then 0 light to be lit, then 12 light to be lit, then 3 light to be lit. So, the pixels of lower light levels will generally be lit every other pixel, while the brighter ones appear more often. The reason for the variance in values is to provide EVERY number between 0 and 15, so that all possible light levels (below 16) are represented fittingly with their own pattern of lit and not lit.
 		16 is the minimum pixel lighness required to ensure that the pixel will always remain lit.
 	*/
-	private static final int[] dither = new int[] {
+	private static final int[] dither = new int[]{
 		0, 8, 2, 10,
 		12, 4, 14, 6,
 		3, 11, 1, 9,
 		15, 7, 13, 5
 	};
 
-	/** Overlays the screen with pixels */
-    public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
+	/**
+	 * Overlays the screen with pixels
+	 */
+	public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
 		double tintFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
 			double relTime = (Updater.tickCount % transTime) * 1.0 / transTime;
 
 			switch (Updater.getTime()) {
-				case Morning: tintFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
-				case Day: tintFactor = 0; break;
-				case Evening: tintFactor = relTime * MAXDARK; break;
-				case Night: tintFactor = MAXDARK; break;
+				case Morning:
+					tintFactor = Updater.pastDay1 ? (1 - relTime) * MAXDARK : 0;
+					break;
+				case Day:
+					tintFactor = 0;
+					break;
+				case Evening:
+					tintFactor = relTime * MAXDARK;
+					break;
+				case Night:
+					tintFactor = MAXDARK;
+					break;
 			}
 
 			if (currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
 			tintFactor *= -1; // All previous operations were assuming this was a darkening factor.
-		}
-		else if(currentLevel >= 5)
+		} else if (currentLevel >= 5)
 			tintFactor = -MAXDARK;
 
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // Current pixel on the screen
 		for (int y = 0; y < h; y++) { // loop through height of screen
-            for (int x = 0; x < w; x++) { // loop through width of screen
+			for (int x = 0; x < w; x++) { // loop through width of screen
 				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
 
-                    /// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
+					/// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
 					if (currentLevel < 3) { // if in caves...
-                        /// in the caves, not being lit means being pitch black.
+						/// in the caves, not being lit means being pitch black.
 						pixels[i] = 0;
-                    } else {
+					} else {
 						/// Outside the caves, not being lit simply means being darker.
-						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
-                    }
-                }
+						pixels[i] = Color.tintColor(pixels[i], (int) tintFactor); // darkens the color one shade.
+					}
+				}
 
 				// Increase the tinting of all colors by 20.
 				pixels[i] = Color.tintColor(pixels[i], 20);
-                i++; // Moves to the next pixel.
-            }
-        }
-    }
+				i++; // Moves to the next pixel.
+			}
+		}
+	}
 
 	public void renderLight(int x, int y, int r) {
 		// Applies offsets:
@@ -224,7 +271,8 @@ public class Screen {
 					// If the distance from the center (x,y) is less or equal to the radius...
 					int br = 255 - dist * 255 / (r * r); // area where light will be rendered. // r*r is becuase dist is still x*x+y*y, of pythag theorem.
 					// br = brightness... literally. from 0 to 255.
-					if (pixels[xx + yy * w] < br) pixels[xx + yy * w] = br; // Pixel cannot be smaller than br; in other words, the pixel color (brightness) cannot be less than br.
+					if (pixels[xx + yy * w] < br)
+						pixels[xx + yy * w] = br; // Pixel cannot be smaller than br; in other words, the pixel color (brightness) cannot be less than br.
 				}
 			}
 		}

@@ -69,7 +69,7 @@ public class SkinDisplay extends Display {
 			new Menu.Builder(false, 2, RelPos.CENTER)
 				.setDisplayLength(8)
 				.setSelectable(true)
-				.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
+				.setPositioning(new Point(Screen.w / 2, Screen.h * 3 / 5), RelPos.CENTER)
 				.createMenu()
 		);
 
@@ -137,7 +137,9 @@ public class SkinDisplay extends Display {
 		}
 	}
 
-	/** Watching the directory changes. Allowing hot-loading. */
+	/**
+	 * Watching the directory changes. Allowing hot-loading.
+	 */
 	private class WatcherThread extends Thread {
 		private WatchService watcher;
 		private volatile Thread running = this;
@@ -202,7 +204,8 @@ public class SkinDisplay extends Display {
 				Logging.RESOURCEHANDLER_SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", skinPath);
 			} catch (SecurityException e) {
 				Logging.RESOURCEHANDLER_SKIN.error("Access to file located at {} was denied. Check if game is given permission.", skinPath);
-			} else {
+			}
+			else {
 				Renderer.spriteLinker.setSkin("skin." + name, null);
 				if (skins.containsKey(name)) for (LinkedSprite[] a : skins.remove(name)) {
 					for (LinkedSprite b : a) {

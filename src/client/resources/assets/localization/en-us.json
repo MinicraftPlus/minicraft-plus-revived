@@ -193,6 +193,8 @@
   "minicraft.displays.resource_packs.display.help.move": "Move packs (SHIFT-CURSOR)",
   "minicraft.displays.resource_packs.display.help.select": "Examine (%s)",
   "minicraft.displays.resource_packs.display.title": "Resource Packs",
+  "minicraft.displays.save.popup_display.world_backup_prompt": "World Backup Prompt",
+  "minicraft.displays.save.popup_display.world_backup_prompt.msg": "The world is on version %s while you are on version %s. You are advised to perform a backup in case of irreversible world corruption. Should you like to perform a backup before continuing? (Y|N)",
   "minicraft.displays.skin": "Skins",
   "minicraft.displays.skin.display.help.select": "Select (%s) | Cancel (%s)",
   "minicraft.displays.title.display.cannot_check": "Could not check for updates.",
@@ -482,8 +484,5 @@
   "Infinite Fall": "Infinite Fall",
   "Cloud Cactus": "Cloud Cactus",
   "Raw Obsidian": "Raw Obsidian",
-  "Totem of Air": "Totem of Air",
-  "Wood Fence": "Wood Fence",
-  "Stone Fence": "Stone Fence",
-  "Obsidian Fence": "Obsidian Fence"
+  "Totem of Air": "Totem of Air"
 }

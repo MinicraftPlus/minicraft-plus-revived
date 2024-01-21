@@ -140,7 +140,7 @@ public class WorldSelectDisplay extends Display {
 			updateWorldDescription(menus[1].getSelection());
 		}
 
-		if (input.getKey("SHIFT-C").clicked || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
+		if (input.getMappedKey("SHIFT-C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, null);
 			//noinspection DuplicatedCode
 			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
@@ -192,7 +192,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-R").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
+		} else if (input.getMappedKey("SHIFT-R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, worldName);
 			//noinspection DuplicatedCode
 			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
@@ -245,7 +245,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-D").clicked || input.leftTriggerPressed() && input.rightTriggerPressed()) {
+		} else if (input.getMappedKey("SHIFT-D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
 				Color.toStringCode(Color.tint(Color.RED, 1, true)), worlds.get(menus[0].getSelection()).name,
@@ -380,13 +380,18 @@ public class WorldSelectDisplay extends Display {
 		}
 	}
 
-	public static String getWorldName() { return worldName; }
+	public static String getWorldName() {
+		return worldName;
+	}
+
 	public static void setWorldName(String world, boolean loaded) {
 		worldName = world;
 		loadedWorld = loaded;
 	}
 
-	public static boolean hasLoadedWorld() { return loadedWorld; }
+	public static boolean hasLoadedWorld() {
+		return loadedWorld;
+	}
 
 	/**
 	 * Solves for filename problems.

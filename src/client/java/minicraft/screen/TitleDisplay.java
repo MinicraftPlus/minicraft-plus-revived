@@ -33,9 +33,9 @@ public class TitleDisplay extends Display {
 
 	public TitleDisplay() {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-			new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
-			new BlankEntry(),
-			new SelectEntry("minicraft.displays.title.play", () -> Game.setDisplay(new WorldSelectDisplay())),
+				new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
+				new BlankEntry(),
+				new SelectEntry("minicraft.displays.title.play", () -> Game.setDisplay(new WorldSelectDisplay())),
 			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
             new SelectEntry("minicraft.displays.skin", () -> Game.setDisplay(new SkinDisplay())),
 			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
@@ -43,7 +43,7 @@ public class TitleDisplay extends Display {
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 					new BlankEntry(),
 					new SelectEntry("minicraft.displays.how_to_play", () -> Game.setDisplay(new HowToPlayDisplay())),
-					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new PagedDisplay(
+						new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new PagedDisplay(
 							Localization.getLocalized("minicraft.displays.title.help.storyline_guide"), BookData.storylineGuide.collect()))),
 					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new PagedDisplay(
 							Localization.getLocalized("minicraft.displays.title.help.about"), BookData.about.collect()))),
@@ -53,8 +53,8 @@ public class TitleDisplay extends Display {
 			),
 			new SelectEntry("minicraft.displays.title.quit", Game::quit)
 			)
-			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
-			.createMenu()
+				.setPositioning(new Point(Screen.w / 2, Screen.h * 3 / 5), RelPos.CENTER)
+				.createMenu()
 		);
 	}
 
@@ -76,17 +76,16 @@ public class TitleDisplay extends Display {
 
 		World.levels = new Level[World.levels.length];
 
-		if(Game.player == null)
+		if (Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
 	}
 
 	private void checkVersion() {
 		VersionInfo latestVersion = Network.getLatestVersion();
-		if(latestVersion == null) {
+		if (latestVersion == null) {
 			Network.findLatestVersion(this::checkVersion);
-		}
-		else {
+		} else {
 			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
 				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("minicraft.displays.title.display.new_version", latestVersion.releaseName), Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, Localization.getLocalized("minicraft.displays.title.select_to_download"), latestVersion.releaseUrl, Localization.getLocalized("minicraft.displays.title.link_to_version", latestVersion.releaseUrl)));
@@ -100,7 +99,7 @@ public class TitleDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("F3-r").clicked) rand = random.nextInt(splashes.length - 3) + 3;
+		if (input.getMappedKey("F3-r").isClicked()) rand = random.nextInt(splashes.length - 3) + 3;
 
 		super.tick(input);
 	}
@@ -135,7 +134,7 @@ public class TitleDisplay extends Display {
 
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
-		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
+		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol * 51, bcol * 51, bcol * 25);
 
 		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
 
