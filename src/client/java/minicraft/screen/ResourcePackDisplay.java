@@ -161,7 +161,9 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
-	/** Initializing the Display. */
+	/**
+	 * Initializing the Display.
+	 */
 	public ResourcePackDisplay() {
 		super(true, true);
 		initPacks();
@@ -178,7 +180,7 @@ public class ResourcePackDisplay extends Display {
 
 		reloadEntries();
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			builder0.setEntries(entries0)
 				.createMenu(),
 			builder1.setEntries(entries1)
@@ -194,7 +196,8 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
-		if (oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		if (oldSel == newSel)
+			return; // this also serves as a protection against access to menus[0] when such may not exist.
 		menus[0].translate(-menus[0].getBounds().getLeft(), 0);
 		menus[1].translate(Screen.w - menus[1].getBounds().getRight(), 0);
 		if (newSel == 0) {
@@ -206,7 +209,9 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
-	/** Reloading the entries to refresh the current pack list. */
+	/**
+	 * Reloading the entries to refresh the current pack list.
+	 */
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
@@ -231,10 +236,12 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
-	/** Applying the reloaded entries into the display. */
+	/**
+	 * Applying the reloaded entries into the display.
+	 */
 	private void refreshEntries() {
 		reloadEntries();
-		Menu[] newMenus = new Menu[] {
+		Menu[] newMenus = new Menu[]{
 			builder0.setEntries(entries0)
 				.createMenu(),
 			builder1.setEntries(entries1)
@@ -251,7 +258,9 @@ public class ResourcePackDisplay extends Display {
 		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
 	}
 
-	/** Watching the directory changes. Allowing hot-loading. */
+	/**
+	 * Watching the directory changes. Allowing hot-loading.
+	 */
 	private class WatcherThread extends Thread implements Closeable {
 		private WatchService watcher;
 		private volatile Thread running = this;
@@ -281,7 +290,7 @@ public class ResourcePackDisplay extends Display {
 
 						@SuppressWarnings("unchecked")
 						WatchEvent<Path> ev = (WatchEvent<Path>) event;
-        				Path filename = ev.context();
+						Path filename = ev.context();
 
 						try {
 							urls.add(FOLDER_LOCATION.toPath().resolve(filename).toFile().toURI().toURL());
@@ -322,21 +331,7 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getKey("right").clicked) { // Move cursor to the second list.
-			if (selection == 0) {
-				Sound.play("select");
-				onSelectionChange(0, 1);
-			}
-
-			return;
-		} else if (input.getKey("left").clicked) { // Move cursor to the first list.
-			if (selection == 1) {
-				Sound.play("select");
-				onSelectionChange(1, 0);
-			}
-
-			return;
-		} else if (input.getKey("shift-right").clicked) { // Move the selected pack to the second list.
+		if (input.getMappedKey("shift+cursor-right").isClicked()) { // Move the selected pack to the second list.
 			if (selection == 0 && resourcePacks.size() > 0) {
 				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
@@ -345,7 +340,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getKey("shift-left").clicked) { // Move the selected pack to the first list.
+		} else if (input.getMappedKey("shift+cursor-left").isClicked()) { // Move the selected pack to the first list.
 			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
 				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
@@ -354,7 +349,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getKey("shift-up").clicked) { // Move up the selected pack in the second list.
+		} else if (input.getMappedKey("shift+cursor-up").isClicked()) { // Move up the selected pack in the second list.
 			if (selection == 1 && menus[1].getSelection() > 0) {
 				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
@@ -364,13 +359,27 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getKey("shift-down").clicked) { // Move down the selected pack in the second list.
+		} else if (input.getMappedKey("shift+cursor-down").isClicked()) { // Move down the selected pack in the second list.
 			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
 				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
 				refreshEntries();
 				Sound.play("select");
+			}
+
+			return;
+		} else if (input.getMappedKey("cursor-right").isClicked()) { // Move cursor to the second list.
+			if (selection == 0) {
+				Sound.play("select");
+				onSelectionChange(0, 1);
+			}
+
+			return;
+		} else if (input.getMappedKey("cursor-left").isClicked()) { // Move cursor to the first list.
+			if (selection == 1) {
+				Sound.play("select");
+				onSelectionChange(1, 0);
 			}
 
 			return;
@@ -387,7 +396,8 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.WHITE);
 
 		// Info text at the bottom.
-		if (Game.input.anyControllerConnected()) Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
+		if (Game.input.anyControllerConnected())
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
@@ -410,11 +420,15 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
-	/** The object representation of resource pack. */
+	/**
+	 * The object representation of resource pack.
+	 */
 	private static class ResourcePack implements Closeable {
 		private URL packRoot;
 
-		/** 0 - before 2.2.0; 1 - 2.2.0-latest */
+		/**
+		 * 0 - before 2.2.0; 1 - 2.2.0-latest
+		 */
 		@SuppressWarnings("unused")
 		private final int packFormat; // The pack format of the pack.
 		private final String name; // The name of the pack.
@@ -432,7 +446,9 @@ public class ResourcePackDisplay extends Display {
 			refreshPack();
 		}
 
-		/** This does not include metadata refresh. */
+		/**
+		 * This does not include metadata refresh.
+		 */
 		public void refreshPack() {
 			// Refresh pack logo.png.
 			try {
@@ -468,6 +484,7 @@ public class ResourcePackDisplay extends Display {
 
 		/**
 		 * Open the stream of the zip file.
+		 *
 		 * @return {@code true} if the stream has successfully been opened.
 		 */
 		private boolean openStream() {
@@ -480,7 +497,9 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		/** Closing the stream of the zip file if opened. */
+		/**
+		 * Closing the stream of the zip file if opened.
+		 */
 		@Override
 		public void close() throws IOException {
 			if (opened) {
@@ -492,6 +511,7 @@ public class ResourcePackDisplay extends Display {
 
 		/**
 		 * Getting the stream by the path.
+		 *
 		 * @param path The path of the entry.
 		 * @return The input stream of the specified entry.
 		 * @throws IOException if an I/O error has occurred.
@@ -511,18 +531,19 @@ public class ResourcePackDisplay extends Display {
 
 		/**
 		 * Getting the subfiles under the specified entry directrory.
-		 * @param path The directory to be listed.
+		 *
+		 * @param path   The directory to be listed.
 		 * @param filter The filter to be applied.
 		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
 		 */
 		@NotNull
 		private ArrayList<String> getFiles(String path, FilesFilter filter) {
 			ArrayList<String> paths = new ArrayList<>();
-			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
+			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
 				ZipEntry entry = e.nextElement();
 				Path parent;
 				if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
-						(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
+					(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
 					paths.add(entry.getName());
 				}
 			}
@@ -533,6 +554,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Reading the string from the input stream.
+	 *
 	 * @param in The input stream to be read.
 	 * @return The returned string.
 	 */
@@ -543,6 +565,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading pack metadata of the pack.
+	 *
 	 * @param file The path of the pack.
 	 * @return The loaded pack with metadata.
 	 */
@@ -564,7 +587,9 @@ public class ResourcePackDisplay extends Display {
 		return null;
 	}
 
-	/** Intializing the packs from directory and loaded. */
+	/**
+	 * Intializing the packs from directory and loaded.
+	 */
 	public static void initPacks() {
 		// Generate resource packs folder
 		if (FOLDER_LOCATION.mkdirs()) {
@@ -573,7 +598,7 @@ public class ResourcePackDisplay extends Display {
 
 		ArrayList<URL> urls = new ArrayList<>();
 		// Read and add the .zip file to the resource pack list. Only accept files ending with .zip or directory.
-		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) ->  name.endsWith(".zip")))) {
+		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) -> name.endsWith(".zip")))) {
 			try {
 				urls.add(file.toPath().toUri().toURL());
 			} catch (MalformedURLException e) {
@@ -600,6 +625,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Finding the pack by pack's file URL.
+	 *
 	 * @param url The url for query.
 	 * @return The found resource pack. {@code null} if not found.
 	 */
@@ -621,6 +647,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Refreshing the pack list by the urls.
+	 *
 	 * @param urls The packs' url to be refreshed.
 	 */
 	private static void refreshResourcePacks(List<URL> urls) {
@@ -650,13 +677,16 @@ public class ResourcePackDisplay extends Display {
 		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
 	}
 
-	/** Releasing the unloaded packs. */
+	/**
+	 * Releasing the unloaded packs.
+	 */
 	public static void releaseUnloadedPacks() {
 		resourcePacks.clear(); // Releases unloaded packs.
 	}
 
 	/**
 	 * Loading the resource packs when loading preferences. This should only be called by {@link minicraft.saveload.Load}.
+	 *
 	 * @param names The names of the packs.
 	 */
 	public static void loadResourcePacks(String[] names) {
@@ -677,6 +707,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Getting the names of the loaded packs. This should only be called by {@link minicraft.saveload.Save}.
+	 *
 	 * @return The names of currently loaded packs.
 	 */
 	public static ArrayList<String> getLoadedPacks() {
@@ -694,7 +725,9 @@ public class ResourcePackDisplay extends Display {
 		return packs;
 	}
 
-	/** Reloading all the resources with the currently packs to be loaded. */
+	/**
+	 * Reloading all the resources with the currently packs to be loaded.
+	 */
 	@SuppressWarnings("unchecked")
 	public static void reloadResources() {
 		loadQuery.clear();
@@ -732,22 +765,32 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading the textures of the pack.
+	 *
 	 * @param pack The pack to be loaded.
 	 * @throws IOException if I/O exception occurs.
 	 */
 	private static void loadTextures(ResourcePack pack) throws IOException {
 		for (String t : pack.getFiles("assets/textures/", null)) {
 			switch (t) {
-				case "assets/textures/entity/": loadTextures(pack, SpriteType.Entity); break;
-				case "assets/textures/gui/": loadTextures(pack, SpriteType.Gui); break;
-				case "assets/textures/item/": loadTextures(pack, SpriteType.Item); break;
-				case "assets/textures/tile/": loadTextures(pack, SpriteType.Tile); break;
+				case "assets/textures/entity/":
+					loadTextures(pack, SpriteType.Entity);
+					break;
+				case "assets/textures/gui/":
+					loadTextures(pack, SpriteType.Gui);
+					break;
+				case "assets/textures/item/":
+					loadTextures(pack, SpriteType.Item);
+					break;
+				case "assets/textures/tile/":
+					loadTextures(pack, SpriteType.Tile);
+					break;
 			}
 		}
 	}
 
 	/**
 	 * Loading the categories of textures from the pack.
+	 *
 	 * @param pack The pack to be loaded.
 	 * @param type The category of textures.
 	 * @throws IOException if I/O exception occurs.
@@ -755,10 +798,18 @@ public class ResourcePackDisplay extends Display {
 	private static void loadTextures(ResourcePack pack, SpriteType type) throws IOException {
 		String path = "assets/textures/";
 		switch (type) {
-			case Entity: path += "entity/"; break;
-			case Gui: path += "gui/"; break;
-			case Item: path += "item/"; break;
-			case Tile: path += "tile/"; break;
+			case Entity:
+				path += "entity/";
+				break;
+			case Gui:
+				path += "gui/";
+				break;
+			case Item:
+				path += "item/";
+				break;
+			case Tile:
+				path += "tile/";
+				break;
 		}
 
 		ArrayList<String> pngs = pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png") && !isDir);
@@ -843,6 +894,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading localization from the pack.
+	 *
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadLocalization(ResourcePack pack) {
@@ -886,18 +938,29 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading the books from the pack.
+	 *
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadBooks(ResourcePack pack) {
-		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
+		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir)) {
 			try {
 				String book = BookData.loadBook(readStringFromInputStream(pack.getResourceAsStream(path)));
 				switch (path) {
-					case "assets/books/about.txt": BookData.about = () -> book; break;
-					case "assets/books/credits.txt": BookData.credits = () -> book; break;
-					case "assets/books/instructions.txt": BookData.instructions = () -> book; break;
-					case "assets/books/antidous.txt": BookData.antVenomBook = () -> book; break;
-					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
+					case "assets/books/about.txt":
+						BookData.about = () -> book;
+						break;
+					case "assets/books/credits.txt":
+						BookData.credits = () -> book;
+						break;
+					case "assets/books/instructions.txt":
+						BookData.instructions = () -> book;
+						break;
+					case "assets/books/antidous.txt":
+						BookData.antVenomBook = () -> book;
+						break;
+					case "assets/books/game_guide.txt":
+						BookData.storylineGuide = () -> book;
+						break;
 				}
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
@@ -907,6 +970,7 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading sounds from the pack.
+	 *
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadSounds(ResourcePack pack) {
