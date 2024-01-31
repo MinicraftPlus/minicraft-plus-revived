@@ -11,6 +11,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
+import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -125,10 +126,16 @@ public class Tnt extends Furniture implements ActionListener {
 
 	@Override
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
-		if (!fuseLit) {
-			fuseLit = true;
-			Sound.play("fuse");
-			return true;
+		if (heldItem instanceof PowerGloveItem) {
+			if (!fuseLit) {
+				return super.interact(player, heldItem, attackDir);
+			}
+		} else {
+			if (!fuseLit) {
+				fuseLit = true;
+				Sound.play("fuse");
+				return true;
+			}
 		}
 
 		return false;
