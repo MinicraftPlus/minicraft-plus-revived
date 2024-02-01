@@ -343,10 +343,6 @@ public class Load {
 		}
 	}
 
-	public Version getWorldVersion() {
-		return worldVer;
-	}
-
 	public static ArrayList<String> loadFile(String filename) throws IOException {
 		ArrayList<String> lines = new ArrayList<>();
 
