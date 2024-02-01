@@ -55,10 +55,7 @@ computer.
 
 ## Localization
 
-This project is running with an external localization platform called POEditor. You can contribute localization by
-clicking the image below!
-
-[![Minicraft+ POEditor Stats](https://minicraft-plus-poeditor-stats.vercel.app/api/card)](https://minicraft-plus-poeditor-stats.vercel.app)
+This project is running with an external localization platform called Lokalise. You can now [head over Lokalise to contribute localization](https://app.lokalise.com/public/42925017655336d50b3007.03067253/)!
 
 ## How to build/run in development
 
