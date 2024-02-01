@@ -38,9 +38,14 @@ public class DecorTile extends Tile {
 					}
 					Item drop;
 					switch (type) {
-						case Stone: drop = Items.get("Ornate Stone"); break;
-						case Obsidian: drop = Items.get("Ornate Obsidian"); break;
-						default: throw new IllegalStateException("Unexpected value: " + type);
+						case Stone:
+							drop = Items.get("Ornate Stone");
+							break;
+						case Obsidian:
+							drop = Items.get("Ornate Obsidian");
+							break;
+						default:
+							throw new IllegalStateException("Unexpected value: " + type);
 					}
 					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);

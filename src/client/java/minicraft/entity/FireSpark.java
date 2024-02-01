@@ -20,9 +20,10 @@ public class FireSpark extends Entity {
 
 	/**
 	 * Creates a new spark. Owner is the Obsidian Knight which is spawning this spark.
+	 *
 	 * @param owner The Obsidian Knight spawning the spark.
-	 * @param xa X velocity.
-	 * @param ya Y velocity.
+	 * @param xa    X velocity.
+	 * @param ya    Y velocity.
 	 */
 	public FireSpark(ObsidianKnight owner, double xa, double ya) {
 		super(0, 0);
@@ -59,7 +60,8 @@ public class FireSpark extends Entity {
 			yy += ya;
 			boolean stopped = true;
 			//noinspection RedundantIfStatement
-			if (moveX(((int) xx) - x0)) stopped = false; // This kind of difference is handled due to errors by flooring.
+			if (moveX(((int) xx) - x0))
+				stopped = false; // This kind of difference is handled due to errors by flooring.
 			if (moveY(((int) yy) - y0)) stopped = false;
 			if (stopped) {
 				this.stopped = true;
@@ -74,7 +76,9 @@ public class FireSpark extends Entity {
 		}
 	}
 
-	/** Can this entity block you? Nope. */
+	/**
+	 * Can this entity block you? Nope.
+	 */
 	public boolean isSolid() {
 		return false;
 	}
@@ -102,6 +106,7 @@ public class FireSpark extends Entity {
 
 	/**
 	 * Returns the owners id as a string.
+	 *
 	 * @return the owners id as a string.
 	 */
 	public String getData() {

@@ -39,7 +39,7 @@ public class PlayerInvDisplay extends Display {
 			.createMenu();
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
-			menus = new Menu[] {
+			menus = new Menu[]{
 				menus[0],
 				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
 					creativeInv = true;
@@ -50,10 +50,10 @@ public class PlayerInvDisplay extends Display {
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 			update();
 
-			if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
+			if (menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 		} else {
 			creativeInv = null;
-			menus = new Menu[] { menus[0], descriptionMenu };
+			menus = new Menu[]{menus[0], descriptionMenu};
 		}
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
@@ -100,7 +100,7 @@ public class PlayerInvDisplay extends Display {
 			if (!acted)
 				curMenu.tick(input);
 
-			if (input.getKey("menu").clicked) { // Should not listen button press.
+			if (input.getMappedKey("menu").isClicked()) { // Should not listen button press.
 				Game.exitDisplay();
 				return;
 			}
@@ -135,16 +135,16 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean deleteAll;
-					if (input.getKey("SHIFT-D").clicked || input.buttonPressed(ControllerButton.Y)) {
+					if (input.getMappedKey("SHIFT-D").isClicked() || input.buttonPressed(ControllerButton.Y)) {
 						deleteAll = true;
-					} else if (input.getKey("D").clicked || input.buttonPressed(ControllerButton.X)) {
-						deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+					} else if (input.getMappedKey("D").isClicked() || input.buttonPressed(ControllerButton.X)) {
+						deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
 					} else return;
 
 					if (deleteAll) {
 						from.remove(fromSel);
 					} else {
-						((StackableItem)fromItem).count--; // this is known to be valid.
+						((StackableItem) fromItem).count--; // this is known to be valid.
 					}
 
 					update();
@@ -160,13 +160,13 @@ public class PlayerInvDisplay extends Display {
 
 					boolean transferAll;
 					if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
-						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
 					} else return;
 
 					Item toItem = fromItem.copy();
 
 					if (!transferAll) {
-						((StackableItem)toItem).count = 1;
+						((StackableItem) toItem).count = 1;
 					}
 
 					to.add(toSel, toItem);
@@ -208,18 +208,23 @@ public class PlayerInvDisplay extends Display {
 			if (selection == 0) menus[1].shouldRender = false;
 			else menus[1].shouldRender = true;
 
-			if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+			if (oldSel == newSel)
+				return; // this also serves as a protection against access to menus[0] when such may not exist.
 			int shift = 0;
-			if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
-			if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
+			if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
+			if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
 			menus[0].translate(shift, 0);
 			menus[1].translate(shift, 0);
-			if (newSel == 0) descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
-			if (newSel == 1) descriptionMenuBuilder.setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
+			if (newSel == 0)
+				descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
+			if (newSel == 1)
+				descriptionMenuBuilder.setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
 		}
 	}
 
-	private int getOtherIdx() { return (selection+1) % 2; }
+	private int getOtherIdx() {
+		return (selection + 1) % 2;
+	}
 
 	private void update() {
 		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);

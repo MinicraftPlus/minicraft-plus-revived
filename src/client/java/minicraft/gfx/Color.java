@@ -56,22 +56,25 @@ public class Color {
 	// Set the color before the last color code; if the last code is: RESET or unset: no operation; REDO: RESET.
 	public static final String REDO_CODE = COLOR_CHAR + "\u0003\u0000\u0000\u0000";
 
-	/** This returns a minicraftrgb.
-	 * a should be between 0-1, r,g,and b should be 0-255 */
+	/**
+	 * This returns a minicraftrgb.
+	 * a should be between 0-1, r,g,and b should be 0-255
+	 */
 	public static int get(int a, int r, int g, int b) {
 		return (a << 24) + (r << 16) + (g << 8) + (b);
 	}
+
 	public static int get(int a, int copy) {
 		return get(a, copy, copy, copy);
 	}
 
 	public static String toStringCode(int color) {
-		return new String(new char[] {
-				Color.COLOR_CHAR,
-				(char) ((color >> 24) & 0xFF), // Alpha
-				(char) ((color >> 16) & 0xFF), // Red
-				(char) ((color >>  8) & 0xFF), // Blue
-				(char) (color         & 0xFF)  // Green
+		return new String(new char[]{
+			Color.COLOR_CHAR,
+			(char) ((color >> 24) & 0xFF), // Alpha
+			(char) ((color >> 16) & 0xFF), // Red
+			(char) ((color >> 8) & 0xFF), // Blue
+			(char) (color & 0xFF)  // Green
 		});
 	}
 
@@ -96,7 +99,9 @@ public class Color {
 		return red / 50 * 100 + green / 50 * 10 + blue / 50; // This is: rgbReadable
 	}
 
-	/** This method darkens or lightens a color by the specified amount. */
+	/**
+	 * This method darkens or lightens a color by the specified amount.
+	 */
 	public static int tint(int color, int amount, boolean isSpriteCol) {
 		if (isSpriteCol) {
 			int[] rgbBytes = separateEncodedSprite(color); // This just separates the four 8-bit sprite colors; they are still in base-6 added form.
@@ -108,19 +113,25 @@ public class Color {
 			return tint(color, amount); // This is: rgbByte
 		}
 	}
+
 	private static int tint(int rgbByte, int amount) {
 		if (rgbByte == 255) return 255; // See description of bit shifting above; it will hold the 255 value, not -1
 
 		int[] rgb = decodeRGB(rgbByte); // This returns the rgb values as 0-5 numbers.
 		for (int i = 0; i < rgb.length; i++)
-			rgb[i] = limit(rgb[i]+amount, 0, 5);
+			rgb[i] = limit(rgb[i] + amount, 0, 5);
 
 		return rgb[0] * 36 + rgb[1] * 6 + rgb[2]; // This is: rgbByte
 	}
 
-	/** seperates a 4-part sprite color (rgb4Sprite) into it's original 4 component colors (which are each rgbBytes) */
+	/**
+	 * seperates a 4-part sprite color (rgb4Sprite) into it's original 4 component colors (which are each rgbBytes)
+	 */
 	/// Reverse of Color.get(a, b, c, d).
-	public static int[] separateEncodedSprite(int rgb4Sprite) { return separateEncodedSprite(rgb4Sprite, false); }
+	public static int[] separateEncodedSprite(int rgb4Sprite) {
+		return separateEncodedSprite(rgb4Sprite, false);
+	}
+
 	public static int[] separateEncodedSprite(int rgb4Sprite, boolean convertToReadable) {
 
 		// The numbers are stored, most to least shifted, as d, c, b, a.
@@ -129,7 +140,7 @@ public class Color {
 		int c = (rgb4Sprite & 0x00_00_FF_00) >> 8;
 		int d = (rgb4Sprite & 0x00_00_00_FF);
 
-		if(convertToReadable) {
+		if (convertToReadable) {
 			// They become rgbReadable
 			a = unGet(a);
 			b = unGet(b);
@@ -137,20 +148,22 @@ public class Color {
 			d = unGet(d);
 		} // Else, they are rgbByte
 
-		return new int[] {a, b, c, d};
+		return new int[]{a, b, c, d};
 	}
 
-	/** This turns a 216 scale rgb int into a 0-5 scale "concatenated" rgb int. (aka rgbByte -> r/g/b Readables) */
+	/**
+	 * This turns a 216 scale rgb int into a 0-5 scale "concatenated" rgb int. (aka rgbByte -> r/g/b Readables)
+	 */
 	public static int[] decodeRGB(int rgbByte) {
 		int r = (rgbByte / 36) % 6;
 		int g = (rgbByte / 6) % 6;
 		int b = rgbByte % 6;
-		return new int[] {r, g, b};
+		return new int[]{r, g, b};
 	}
 
 	public static int unGet(int rgbByte) { // rgbByte -> rgbReadable
 		int[] cols = decodeRGB(rgbByte);
-		return cols[0]*100 + cols[1]*10 + cols[2];
+		return cols[0] * 100 + cols[1] * 10 + cols[2];
 	}
 
 	/// This turns a 25-bit minicraft color into a 24-bit rgb color.
@@ -165,7 +178,7 @@ public class Color {
 		int[] comps = decodeRGBColor(rgbInt);
 
 		for (int i = 0; i < comps.length; i++)
-			comps[i] = limit(comps[i]+amount, 0, 255);
+			comps[i] = limit(comps[i] + amount, 0, 255);
 
 		return comps[0] << 16 | comps[1] << 8 | comps[2];
 	}
@@ -175,7 +188,7 @@ public class Color {
 		int g = (rgbInt & 0x00_FF_00) >> 8;
 		int b = (rgbInt & 0x00_00_FF);
 
-		return new int[] {r, g, b};
+		return new int[]{r, g, b};
 	}
 
 	/// This is for color testing.

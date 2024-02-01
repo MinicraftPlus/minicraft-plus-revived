@@ -25,11 +25,11 @@ public class OreTile extends Tile {
 	private final OreType type;
 
 	public enum OreType {
-        Iron (Items.get("Iron Ore"), new SpriteAnimation(SpriteType.Tile, "iron_ore")),
-		Lapis (Items.get("Lapis"), new SpriteAnimation(SpriteType.Tile, "lapis_ore")),
-		Gold (Items.get("Gold Ore"), new SpriteAnimation(SpriteType.Tile, "gold_ore")),
-		Gem (Items.get("Gem"), new SpriteAnimation(SpriteType.Tile, "gem_ore")),
-		Cloud (Items.get("Cloud Ore"), new SpriteAnimation(SpriteType.Tile, "cloud_ore"));
+		Iron(Items.get("Iron Ore"), new SpriteAnimation(SpriteType.Tile, "iron_ore")),
+		Lapis(Items.get("Lapis"), new SpriteAnimation(SpriteType.Tile, "lapis_ore")),
+		Gold(Items.get("Gold Ore"), new SpriteAnimation(SpriteType.Tile, "gold_ore")),
+		Gem(Items.get("Gem"), new SpriteAnimation(SpriteType.Tile, "gem_ore")),
+		Cloud(Items.get("Cloud Ore"), new SpriteAnimation(SpriteType.Tile, "cloud_ore"));
 
 		private final Item drop;
 		public final SpriteAnimation sheet;
@@ -42,11 +42,11 @@ public class OreTile extends Tile {
 		private Item getOre() {
 			return drop.copy();
 		}
-    }
+	}
 
 	protected OreTile(OreType o) {
 		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), o.sheet);
-        this.type = o;
+		this.type = o;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
@@ -67,7 +67,7 @@ public class OreTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -85,9 +85,9 @@ public class OreTile extends Tile {
 		return false;
 	}
 
-    public Item getOre() {
-        return type.getOre();
-    }
+	public Item getOre() {
+		return type.getOre();
+	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
@@ -110,7 +110,7 @@ public class OreTile extends Tile {
 			} else {
 				level.setData(x, y, damage);
 			}
-			if (type.drop.equals(Items.get("gem"))){
+			if (type.drop.equals(Items.get("gem"))) {
 				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);
 			}
 			level.dropItem(x * 16 + 8, y * 16 + 8, count, type.getOre());

@@ -4,7 +4,6 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
@@ -21,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-	protected Game() {} // Can't instantiate the Game class.
+	protected Game() {
+	} // Can't instantiate the Game class.
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
-	public static final Version VERSION = new Version("2.2.0-dev3");
+	public static final Version VERSION = new Version("2.2.0-dev5");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -37,13 +37,18 @@ public class Game {
 	// DISPLAY
 	static Display currentDisplay = null;
 	static final ArrayDeque<Display> displayQuery = new ArrayDeque<>();
+
 	public static void setDisplay(@Nullable Display display) {
 		if (display == null)
 			displayQuery.clear();
 		else
 			displayQuery.add(display);
 	}
-	public static void exitDisplay() { exitDisplay(1); }
+
+	public static void exitDisplay() {
+		exitDisplay(1);
+	}
+
 	public static void exitDisplay(int depth) {
 		if (depth < 1) return; // There is nothing needed to exit.
 		if (displayQuery.isEmpty()) {
@@ -61,11 +66,16 @@ public class Game {
 				displayQuery.add(parent);
 		}
 	}
+
 	@Nullable
-	public static Display getDisplay() { return displayQuery.isEmpty() ? null : displayQuery.peekLast(); }
+	public static Display getDisplay() {
+		return displayQuery.isEmpty() ? null : displayQuery.peekLast();
+	}
 
 	// GAMEMODE
-	public static boolean isMode(String mode) { return ((String)Settings.get("mode")).equalsIgnoreCase(mode); }
+	public static boolean isMode(String mode) {
+		return ((String) Settings.get("mode")).equalsIgnoreCase(mode);
+	}
 
 	// LEVEL
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
@@ -76,7 +86,10 @@ public class Game {
 	static boolean gameOver = false; // If the player wins this is set to true.
 
 	static boolean running = true;
-	public static void quit() { running = false; }
+
+	public static void quit() {
+		running = false;
+	}
 
 
 	public static void main(String[] args) {

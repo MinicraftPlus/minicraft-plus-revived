@@ -41,19 +41,31 @@ public class Recipe {
 	public Item getProduct() {
 		return Items.get(product);
 	}
-	public Map<String, Integer> getCosts() { return new HashMap<>(costs); }
 
-	public int getAmount() { return amount; }
-	public boolean getCanCraft() { return canCraft; }
+	public Map<String, Integer> getCosts() {
+		return new HashMap<>(costs);
+	}
+
+	public int getAmount() {
+		return amount;
+	}
+
+	public boolean getCanCraft() {
+		return canCraft;
+	}
+
 	public boolean checkCanCraft(Player player) {
 		canCraft = getCanCraft(player);
 		return canCraft;
 	}
-	/** Checks if the player can craft the recipe */
+
+	/**
+	 * Checks if the player can craft the recipe
+	 */
 	private boolean getCanCraft(Player player) {
 		if (Game.isMode("minicraft.settings.mode.creative")) return true;
 
-		for (String cost: costs.keySet().toArray(new String[0])) { // Cycles through the costs list
+		for (String cost : costs.keySet().toArray(new String[0])) { // Cycles through the costs list
 			/// This method ONLY WORKS if costs does not contain two elements such that inventory.count will count an item it contains as matching more than once.
 			if (player.getInventory().count(Items.get(cost)) < costs.get(cost)) {
 				return false;
@@ -69,7 +81,7 @@ public class Recipe {
 
 		if (!Game.isMode("minicraft.settings.mode.creative")) {
 			// Remove the cost items from the inventory.
-			for (String cost: costs.keySet().toArray(new String[0])) {
+			for (String cost : costs.keySet().toArray(new String[0])) {
 				player.getInventory().removeItems(Items.get(cost), costs.get(cost));
 			}
 		}
