@@ -9,6 +9,7 @@ import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
@@ -29,6 +30,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class WorldSelectDisplay extends Display {
@@ -41,13 +43,13 @@ public class WorldSelectDisplay extends Display {
 	static {
 		dateTimeFormat = new DateTimeFormatterBuilder()
 			.appendValue(ChronoField.YEAR)
-			.appendLiteral('/')
+			.appendLiteral('/').padNext(2, '0')
 			.appendValue(ChronoField.MONTH_OF_YEAR)
-			.appendLiteral('/')
+			.appendLiteral('/').padNext(2, '0')
 			.appendValue(ChronoField.DAY_OF_MONTH)
-			.appendLiteral(' ')
+			.appendLiteral(' ').padNext(2, '0')
 			.appendValue(ChronoField.HOUR_OF_DAY)
-			.appendLiteral(':')
+			.appendLiteral(':').padNext(2, '0')
 			.appendValue(ChronoField.MINUTE_OF_HOUR)
 			.toFormatter();
 	}
@@ -87,6 +89,7 @@ public class WorldSelectDisplay extends Display {
 		menus[1] = new Menu.Builder(true, 2, RelPos.CENTER)
 			.setDisplayLength(3)
 			.setSize(Screen.w - 16, 8 * 5 + 2 * 2)
+			.setPositioning(new Point(Screen.w / 2, Screen.h - 36), RelPos.TOP)
 			.createMenu();
 
 		// Update world list
@@ -102,8 +105,10 @@ public class WorldSelectDisplay extends Display {
 		}
 
 		menus[0] = new Menu.Builder(false, 0, RelPos.CENTER, entries)
-				.setDisplayLength(5)
-				.createMenu();
+			.setDisplayLength(10)
+			.setPositioning(new Point(Screen.w / 2, 18), RelPos.BOTTOM)
+			.setScrollPolicies(1, false)
+			.createMenu();
 		updateWorldDescription(0);
 	}
 
@@ -136,11 +141,16 @@ public class WorldSelectDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (worldSelected != menus[1].getSelection()) {
-			updateWorldDescription(menus[1].getSelection());
+		if (input.getMappedKey("N").isClicked() || input.buttonPressed(ControllerButton.X)) {
+			Game.setDisplay(new WorldGenDisplay());
+			return;
 		}
 
-		if (input.getMappedKey("SHIFT-C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
+		if (worldSelected != menus[0].getSelection()) {
+			updateWorldDescription(menus[0].getSelection());
+		}
+
+		if (input.getMappedKey("C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, null);
 			//noinspection DuplicatedCode
 			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
@@ -192,7 +202,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getMappedKey("SHIFT-R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
+		} else if (input.getMappedKey("R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, worldName);
 			//noinspection DuplicatedCode
 			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
@@ -245,7 +255,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getMappedKey("SHIFT-D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
+		} else if (input.getMappedKey("D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
 				Color.toStringCode(Color.tint(Color.RED, 1, true)), worlds.get(menus[0].getSelection()).name,
@@ -294,14 +304,25 @@ public class WorldSelectDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.0", Game.input.getMapping("select")), screen, Screen.h - 60, Color.GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.1", Game.input.getMapping("exit")), screen, Screen.h - 40, Color.GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.action.play_selected",
+			Game.input.getMapping("SELECT")) + "  " +
+			Localization.getLocalized("minicraft.displays.world_select.action.return",
+				Game.input.getMapping("EXIT")), screen, Screen.h - 30, Color.DARK_GRAY);
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.2", Game.input.selectMapping("SHIFT-C", "LEFTBUMPER")), screen, Screen.h - 24, Color.BLUE);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.3", Game.input.selectMapping("SHIFT-R", "RIGHTBUMPER")), screen, Screen.h - 16, Color.GREEN);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.4", Game.input.selectMapping("SHIFT-D", "LEFTRIGHTTRIGGER")), screen, Screen.h - 8, Color.RED);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.action.create_new",
+				Game.input.selectMapping("N", "X")) + "  " + // Color.DIMMED_RED_CODE +
+			Localization.getLocalized("minicraft.displays.world_select.action.delete",
+				Game.input.selectMapping("D", "LEFTRIGHTTRIGGER")), screen, Screen.h - 20, Color.DARK_GRAY);
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.select_world"), screen, 0, Color.WHITE);
+		Font.drawCentered(// Color.DIMMED_GREEN_CODE +
+			Localization.getLocalized("minicraft.displays.world_select.action.rename",
+				Game.input.selectMapping("R", "RIGHTBUMPER")) + "  " + // Color.DIMMED_BLUE_CODE +
+			Localization.getLocalized("minicraft.displays.world_select.action.copy",
+				Game.input.selectMapping("C", "LEFTBUMPER")),
+			screen, Screen.h - 10, Color.DARK_GRAY);
+
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.select_world"),
+			screen, 0, Color.LIGHT_GRAY);
 	}
 
 	public static void updateWorlds() {
@@ -342,6 +363,8 @@ public class WorldSelectDisplay extends Display {
 				}
 			}
 		}
+
+		worlds.sort(Comparator.<WorldInfo, LocalDateTime>comparing(a -> a.lastPlayed).reversed());
 	}
 
 	@Nullable

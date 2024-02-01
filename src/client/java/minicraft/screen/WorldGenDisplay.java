@@ -128,8 +128,9 @@ public class WorldGenDisplay extends Display {
 
 		@Override
 		public boolean isValid() {
-			if(!super.isValid()) return false;
 			String input = getUserInput();
+			if (input.isEmpty()) return true; // Default value
+			if (!super.isValid()) return false;
 			if (input.equals(beforeRenamed)) return true;
 			if (!input.equals(lastInput)) {
 				valid = isWorldNameLegal(input);

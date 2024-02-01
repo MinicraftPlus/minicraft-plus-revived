@@ -65,6 +65,18 @@ public class Color {
 	public static final String MAGENTA_CODE = Color.toStringCode(Color.MAGENTA);
 	public static final String CYAN_CODE = Color.toStringCode(Color.CYAN);
 
+	// Darkened
+	public static final String DIMMED_SILVER_CODE = Color.toStringCode(DIMMED_SILVER);
+	public static final String DIMMED_GRAY_CODE = Color.toStringCode(DIMMED_GRAY);
+	public static final String DIMMED_LIGHT_GRAY_CODE = Color.toStringCode(DIMMED_LIGHT_GRAY);
+	public static final String DIMMED_DARK_GRAY_CODE = Color.toStringCode(DIMMED_DARK_GRAY);
+	public static final String DIMMED_RED_CODE = Color.toStringCode(DIMMED_RED);
+	public static final String DIMMED_GREEN_CODE = Color.toStringCode(DIMMED_GREEN);
+	public static final String DIMMED_BLUE_CODE = Color.toStringCode(DIMMED_BLUE);
+	public static final String DIMMED_YELLOW_CODE = Color.toStringCode(DIMMED_YELLOW);
+	public static final String DIMMED_MAGENTA_CODE = Color.toStringCode(DIMMED_MAGENTA);
+	public static final String DIMMED_CYAN_CODE = Color.toStringCode(DIMMED_CYAN);
+
 	/**
 	 * This returns a minicraftrgb.
 	 * a should be between 0-1, r,g,and b should be 0-255
