@@ -34,32 +34,32 @@ public class TitleDisplay extends Display {
 	public TitleDisplay() {
 
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-			new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
-			new BlankEntry(),
-			new SelectEntry("minicraft.displays.title.play", () -> {
-				if (WorldSelectDisplay.getWorldNames().size() > 0)
-					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("minicraft.displays.title.play.load_world", () -> Game.setDisplay(new WorldSelectDisplay())),
-						new SelectEntry("minicraft.displays.title.play.new_world", () -> Game.setDisplay(new WorldGenDisplay()))
-					).createMenu()));
-				else Game.setDisplay(new WorldGenDisplay());
-			}),
-			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
-            new SelectEntry("minicraft.displays.skin", () -> Game.setDisplay(new SkinDisplay())),
-			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
-			new SelectEntry("minicraft.displays.title.help", () ->
-				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-					new BlankEntry(),
-					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions.collect()))),
-					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide.collect()))),
-					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about.collect()))),
-					new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits.collect())))
-				).setTitle("minicraft.displays.title.help").createMenu()))
-			),
-			new SelectEntry("minicraft.displays.title.quit", Game::quit)
+				new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
+				new BlankEntry(),
+				new SelectEntry("minicraft.displays.title.play", () -> {
+					if (WorldSelectDisplay.getWorldNames().size() > 0)
+						Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+							new SelectEntry("minicraft.displays.title.play.load_world", () -> Game.setDisplay(new WorldSelectDisplay())),
+							new SelectEntry("minicraft.displays.title.play.new_world", () -> Game.setDisplay(new WorldGenDisplay()))
+						).createMenu()));
+					else Game.setDisplay(new WorldGenDisplay());
+				}),
+				new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
+				new SelectEntry("minicraft.displays.skin", () -> Game.setDisplay(new SkinDisplay())),
+				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
+				new SelectEntry("minicraft.displays.title.help", () ->
+					Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+						new BlankEntry(),
+						new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions.collect()))),
+						new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide.collect()))),
+						new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about.collect()))),
+						new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits.collect())))
+					).setTitle("minicraft.displays.title.help").createMenu()))
+				),
+				new SelectEntry("minicraft.displays.title.quit", Game::quit)
 			)
-			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
-			.createMenu()
+				.setPositioning(new Point(Screen.w / 2, Screen.h * 3 / 5), RelPos.CENTER)
+				.createMenu()
 		);
 	}
 
@@ -75,24 +75,22 @@ public class TitleDisplay extends Display {
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
 			if (time.getDayOfMonth() == 19) rand = 1;
-			if (time.getDayOfMonth() == 25) rand = 2;
 		} else {
-			rand = random.nextInt(splashes.length - 3) + 3;
+			rand = random.nextInt(splashes.length - 2) + 2;
 		}
 
 		World.levels = new Level[World.levels.length];
 
-		if(Game.player == null)
+		if (Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
 	}
 
 	private void checkVersion() {
 		VersionInfo latestVersion = Network.getLatestVersion();
-		if(latestVersion == null) {
+		if (latestVersion == null) {
 			Network.findLatestVersion(this::checkVersion);
-		}
-		else {
+		} else {
 			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
 				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("minicraft.displays.title.display.new_version", latestVersion.releaseName), Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, Localization.getLocalized("minicraft.displays.title.select_to_download"), latestVersion.releaseUrl, Localization.getLocalized("minicraft.displays.title.link_to_version", latestVersion.releaseUrl)));
@@ -106,7 +104,7 @@ public class TitleDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("F3-r").clicked) rand = random.nextInt(splashes.length - 3) + 3;
+		if (input.getMappedKey("F3-r").isClicked()) rand = random.nextInt(splashes.length - 3) + 3;
 
 		super.tick(input);
 	}
@@ -141,7 +139,7 @@ public class TitleDisplay extends Display {
 
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
-		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
+		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol * 51, bcol * 51, bcol * 25);
 
 		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
 
@@ -160,9 +158,8 @@ public class TitleDisplay extends Display {
 	private static final String[] splashes = {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
-		"Happy XMAS!",
-        "Now with Customizable Skins!",
-        "Skin Update by Litorom1, El Virus!",
+		// These two above have id specific functionality. Don't move or remove them.
+		"Now with skins!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",
@@ -176,10 +173,8 @@ public class TitleDisplay extends Display {
 		"Chris J is great with portals!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
-		"Oh Hi Mark",
-		"Use the force!",
 		"Keep calm!",
-		"Get him, Steve!",
+		"Get him, Paul!",
 		"Forty-Two!",
 		"Kill Creeper, get Gunpowder!",
 		"Kill Cow, get Beef!",
@@ -190,18 +185,14 @@ public class TitleDisplay extends Display {
 		"Kill Pig, get Porkchop!",
 		"Gold > Iron",
 		"Gem > Gold",
-		"Test == InDev!",
 		"Story? Uhh...",
 		"Infinite terrain? What's that?",
-		"Redstone? What's that?",
-		"Minecarts? What are those?",
 		"Windows? I prefer Doors!",
 		"2.5D FTW!",
 		"3rd dimension not included!",
 		"Null not included",
 		"Mouse not included!",
 		"No spiders included!",
-		"No Endermen included!",
 		"No chickens included!",
 		"Grab your friends!",
 		"Creepers included!",
@@ -214,13 +205,11 @@ public class TitleDisplay extends Display {
 		"Bigger Worlds!",
 		"World types!",
 		"World themes!",
-		"Sugarcane is an idea!",
 		"Milk is an idea!",
 		"So we back in the mine,",
 		"Pickaxe swinging from side to side",
 		"In search of Gems!",
 		"Life itself suspended by a thread",
-		"saying ay-oh, that creeper's KO'd!",
 		"Gimmie a bucket!",
 		"Farming with water!",
 		"Get the High-Score!",
@@ -240,13 +229,12 @@ public class TitleDisplay extends Display {
 		"Why is this blue?",
 		"Green is a nice color!",
 		"Red is my favorite color!",
-		"Made with 10000% Vitamin Z!",
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
 		"hello down there!",
 		"That guy is such a sly fox!",
-		"Hola senor!",
+		"Hola señor!",
 		"Sonic Boom!",
 		"Hakuna Matata!",
 		"One truth prevails!",
@@ -259,10 +247,9 @@ public class TitleDisplay extends Display {
 		"001100010011000000110001!",
 		"011010000110110101101101?",
 		"...zzz...",
-		"He was too redundant",
-		"Echoed Whispers...",
-		"Of Knights and Men",
-		"Breaking NEWS!",
+		"They were too redundant",
+		"Echoed whispers...",
+		"Of knights and men",
 		"Death before dishonor!",
 	};
 }

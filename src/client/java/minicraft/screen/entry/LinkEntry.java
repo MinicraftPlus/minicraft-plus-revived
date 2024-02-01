@@ -25,11 +25,22 @@ public class LinkEntry extends SelectEntry {
 
 	// note that if the failMsg should be localized, such must be done before passing them as parameters, for this class will not do it since, by default, the failMsg contains a url.
 
-	public LinkEntry(int color, String urlText) { this(color, urlText, urlText, false); }
-	public LinkEntry(int color, String text, String url) { this(color, text, url, true); }
-	public LinkEntry(int color, String text, String url, String failMsg) { this(color, text, url, failMsg, true); }
+	public LinkEntry(int color, String urlText) {
+		this(color, urlText, urlText, false);
+	}
 
-	public LinkEntry(int color, String text, String url, boolean localize) { this(color, text, url, Localization.getLocalized("Go to") + ": " + url, localize); }
+	public LinkEntry(int color, String text, String url) {
+		this(color, text, url, true);
+	}
+
+	public LinkEntry(int color, String text, String url, String failMsg) {
+		this(color, text, url, failMsg, true);
+	}
+
+	public LinkEntry(int color, String text, String url, boolean localize) {
+		this(color, text, url, Localization.getLocalized("Go to") + ": " + url, localize);
+	}
+
 	public LinkEntry(int color, String text, String url, String failMsg, boolean localize) {
 		super(text, () -> {
 			if (!checkedDesktop) {
@@ -40,7 +51,7 @@ public class LinkEntry extends SelectEntry {
 				}
 			}
 
-			if(canBrowse) {
+			if (canBrowse) {
 				// try to open the download link directly from the browser.
 				try {
 					URI uri = URI.create(url);
@@ -63,5 +74,7 @@ public class LinkEntry extends SelectEntry {
 	}
 
 	@Override
-	public int getColor(boolean isSelected) { return color; }
+	public int getColor(boolean isSelected) {
+		return color;
+	}
 }

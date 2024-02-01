@@ -16,11 +16,26 @@ public class Display {
 
 	private final boolean canExit, clearScreen;
 
-	public Display() { this(new Menu[0]); }
-	public Display(Menu... menus) { this(false, true, menus); }
-	public Display(boolean clearScreen) { this(clearScreen, true, new Menu[0]); }
-	public Display(boolean clearScreen, Menu... menus) { this(clearScreen, true, menus); }
-	public Display(boolean clearScreen, boolean canExit) { this(clearScreen, canExit, new Menu[0]); }
+	public Display() {
+		this(new Menu[0]);
+	}
+
+	public Display(Menu... menus) {
+		this(false, true, menus);
+	}
+
+	public Display(boolean clearScreen) {
+		this(clearScreen, true, new Menu[0]);
+	}
+
+	public Display(boolean clearScreen, Menu... menus) {
+		this(clearScreen, true, menus);
+	}
+
+	public Display(boolean clearScreen, boolean canExit) {
+		this(clearScreen, canExit, new Menu[0]);
+	}
+
 	public Display(boolean clearScreen, boolean canExit, Menu... menus) {
 		this.menus = menus;
 		this.canExit = canExit;
@@ -29,7 +44,10 @@ public class Display {
 	}
 
 	private boolean setParent = false;
-	/** Called during {@link Game#setDisplay} */
+
+	/**
+	 * Called during {@link Game#setDisplay}
+	 */
 	public void init(@Nullable Display parent) {
 		if (!setParent) {
 			setParent = true;
@@ -37,9 +55,12 @@ public class Display {
 		}
 	}
 
-	public void onExit() {}
+	public void onExit() {
+	}
 
-	public Display getParent() { return parent; }
+	public Display getParent() {
+		return parent;
+	}
 
 	public void tick(InputHandler input) {
 
@@ -56,8 +77,8 @@ public class Display {
 			int prevSel = selection;
 
 			String shift = menus[selection].getCurEntry() instanceof ArrayEntry ? "shift-" : "";
-			if (input.getKey(shift+"left").clicked || input.leftTriggerPressed()) selection--;
-			if (input.getKey(shift+"right").clicked || input.rightTriggerPressed()) selection++;
+			if (input.getMappedKey(shift + "left").isClicked() || input.leftTriggerPressed()) selection--;
+			if (input.getMappedKey(shift + "right").isClicked() || input.rightTriggerPressed()) selection++;
 
 			if (prevSel != selection) {
 				Sound.play("select");
@@ -68,7 +89,7 @@ public class Display {
 					selection += delta;
 					if (selection < 0) selection = menus.length - 1;
 					selection = selection % menus.length;
-				} while(!menus[selection].isSelectable() && selection != prevSel);
+				} while (!menus[selection].isSelectable() && selection != prevSel);
 
 				changedSelection = prevSel != selection;
 			}
@@ -100,7 +121,7 @@ public class Display {
 		do {
 			idx++;
 			idx = idx % menus.length;
-			if(menus[idx].shouldRender())
+			if (menus[idx].shouldRender())
 				menus[idx].render(screen);
 		} while (idx != selection);
 	}

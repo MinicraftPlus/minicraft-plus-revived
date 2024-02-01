@@ -7,8 +7,8 @@ import minicraft.screen.entry.SelectEntry;
 
 public class OptionsMainMenuDisplay extends Display {
 
-    public OptionsMainMenuDisplay() {
-        super(true, new Menu.Builder(false, 6, RelPos.LEFT,
+	public OptionsMainMenuDisplay() {
+		super(true, new Menu.Builder(false, 6, RelPos.LEFT,
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("showquests"),
@@ -20,11 +20,11 @@ public class OptionsMainMenuDisplay extends Display {
 		)
 			.setTitle("minicraft.displays.options_main_menu")
 			.createMenu());
-    }
+	}
 
-    @Override
-    public void onExit() {
-        new Save();
-        Game.MAX_FPS = (int) Settings.get("fps");
-    }
+	@Override
+	public void onExit() {
+		new Save();
+		Game.MAX_FPS = (int) Settings.get("fps");
+	}
 }

@@ -27,7 +27,7 @@ public class PlayerDeathDisplay extends Display {
 			new BlankEntry()
 		));
 
-		if(!Game.isMode("minicraft.settings.mode.hardcore")) {
+		if (!Game.isMode("minicraft.settings.mode.hardcore")) {
 			entries.add(new SelectEntry("minicraft.displays.player_death.respawn", () -> {
 				World.resetGame();
 				Game.setDisplay(null);

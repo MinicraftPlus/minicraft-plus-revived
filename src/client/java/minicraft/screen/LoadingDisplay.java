@@ -73,8 +73,13 @@ public class LoadingDisplay extends Display {
 	public static void setPercentage(float percent) {
 		percentage = percent;
 	}
-	public static float getPercentage() { return percentage; }
-	public static void setMessage(String progressType) { setMessage(progressType, true); }
+
+	public static float getPercentage() {
+		return percentage;
+	}
+
+	public static void setMessage(String progressType) {
+		setMessage(progressType, true); }
 	public static void setMessage(String progressType, boolean localize) {
 		LoadingDisplay.progressType = progressType;
 		localizeProgressType = localize;
