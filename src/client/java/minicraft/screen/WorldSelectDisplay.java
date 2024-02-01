@@ -281,7 +281,11 @@ public class WorldSelectDisplay extends Display {
 				if (files != null && files.length > 0 && Arrays.stream(files).anyMatch(f -> f.endsWith(Save.extension))) {
 					String name = file.getName();
 					worldNames.add(name);
-					worldVersions.add(new Load(name, false).getWorldVersion());
+					try {
+						worldVersions.add(new Load(name, false).getWorldVersion());
+					} catch (Load.DungeonRegenerationCancelledException | Load.BackupCreationFailedException |
+					         Load.WorldLoadingFailedException ignored) {} // This is supposed to be not happening.
+					// Ideally, this way should not be used.
 				}
 			}
 		}
