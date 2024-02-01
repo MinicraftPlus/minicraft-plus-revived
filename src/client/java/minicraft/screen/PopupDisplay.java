@@ -67,7 +67,7 @@ public class PopupDisplay extends Display {
 		Rectangle menuBounds = menus[onScreenKeyboardMenu == null ? 0 : 1].getBounds();
 		for (ListEntry entry : entries) {
 			if (entry instanceof InputEntry) {
-				((InputEntry) entry).setChangeListener(v -> update());
+				((InputEntry) entry).addChangeListener(v -> update());
 				((InputEntry) entry).setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 3, Screen.w - MinicraftImage.boxWidth * 3))
 					.setEntryPos(RelPos.CENTER)
 					.setBounds(new ListEntry.IntRange(menuBounds.getLeft() + MinicraftImage.boxWidth * 3, menuBounds.getRight() - MinicraftImage.boxWidth * 3));

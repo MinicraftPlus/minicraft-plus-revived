@@ -121,4 +121,15 @@ public class InputEntry extends ListEntry {
 	public void setChangeListener(ChangeListener l) {
 		listener = l;
 	}
+
+	public void addChangeListener(ChangeListener l) {
+		if (listener == null) listener = l;
+		else {
+			ChangeListener orig = listener;
+			listener = o -> {
+				orig.onChange(o);
+				l.onChange(o);
+			};
+		}
+	}
 }

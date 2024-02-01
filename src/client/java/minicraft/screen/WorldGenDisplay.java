@@ -195,7 +195,7 @@ public class WorldGenDisplay extends Display {
 			boolean valid = nameField.isValid();
 			createWorld.setSelectable(valid);
 			nameNotify.setText(valid ?
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameField) :
+				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameField.getWorldName()) :
 				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid"));
 		});
 
