@@ -117,7 +117,11 @@ public class Load {
 		}
 	}
 	public static class DungeonRegenerationCancelledException extends WorldLoadingInterruptedException {}
-	public static class BackupCreationFailedException extends WorldLoadingInterruptedException {}
+	public static class BackupCreationFailedException extends WorldLoadingInterruptedException {
+		public BackupCreationFailedException(@Nullable Exception cause) {
+			super(cause);
+		}
+	}
 	public static class WorldLoadingFailedException extends WorldLoadingInterruptedException {
 		public WorldLoadingFailedException(Exception cause) {
 			super(cause);
@@ -192,7 +196,7 @@ public class Load {
 									f.toPath(), FileHandler.SKIP, false);
 							} catch (IOException e) {
 								Logging.SAVELOAD.error(e, "Error occurs while performing world backup, loading aborted");
-								throw new BackupCreationFailedException();
+								throw new BackupCreationFailedException(e);
 							}
 
 							Logging.SAVELOAD.info("World backup \"{}\" is created.", filename);
@@ -202,7 +206,7 @@ public class Load {
 						Logging.SAVELOAD.debug("World loading continues...");
 					} else {
 						Logging.SAVELOAD.info("User cancelled world loading, loading aborted.");
-						throw new DungeonRegenerationCancelledException();
+						throw new BackupCreationFailedException(null);
 					}
 
 					break;
@@ -286,7 +290,7 @@ public class Load {
 							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
 							if (reAdd) World.levels[lvlidx].add(Game.player);
 						} else {
-							throw new RuntimeException(new InterruptedException("World loading interrupted."));
+							throw new DungeonRegenerationCancelledException();
 						}
 
 						break;
