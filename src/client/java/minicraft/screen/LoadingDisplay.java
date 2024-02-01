@@ -10,6 +10,7 @@ import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 
 import javax.swing.Timer;
@@ -30,14 +31,11 @@ public class LoadingDisplay extends Display {
 			try {
 				World.initWorld(settings);
 				Game.setDisplay(null);
-			} catch (RuntimeException ex) {
-				Throwable t = ex.getCause();
-				if (t instanceof InterruptedException) {
-					World.onWorldExits();
-					Game.exitDisplay(); // Exits the loading display and returns to world select display.
-					Game.setDisplay(new MessageDisplay("minicraft.displays.loading.regeneration_cancellation_popup.display"));
-				} else
-					throw ex;
+			} catch (Load.DungeonRegenerationCancelledException | Load.BackupCreationFailedException |
+			         Load.WorldLoadingFailedException ex) {
+				World.onWorldExits();
+				Game.exitDisplay(); // Exits the loading display and returns to world select display.
+				Game.setDisplay(new MessageDisplay("minicraft.displays.loading.regeneration_cancellation_popup.display"));
 			}
 		}, "World Initialization Thread").start());
 		t.setRepeats(false);

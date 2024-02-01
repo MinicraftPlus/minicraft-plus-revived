@@ -96,25 +96,38 @@ public class Load {
 	private ArrayList<String> data;
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 
-	private Version worldVer;
+	private @Nullable Version worldVer = null;
 
 	private DeathChest deathChest;
 
 	{
-		worldVer = null;
-
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
 	}
 
-	public Load(String worldname) {
+	public Load(String worldname)
+		throws BackupCreationFailedException, WorldLoadingFailedException, DungeonRegenerationCancelledException {
 		this(worldname, true);
 	}
 
-	public Load(String worldname, boolean loadGame) {
+	public static class WorldLoadingInterruptedException extends Exception {
+		public WorldLoadingInterruptedException() {}
+		public WorldLoadingInterruptedException(Exception cause) {
+			super(cause);
+		}
+	}
+	public static class DungeonRegenerationCancelledException extends WorldLoadingInterruptedException {}
+	public static class BackupCreationFailedException extends WorldLoadingInterruptedException {}
+	public static class WorldLoadingFailedException extends WorldLoadingInterruptedException {
+		public WorldLoadingFailedException(Exception cause) {
+			super(cause);
+		}
+	}
+
+	public Load(String worldname, boolean loadGame)
+		throws DungeonRegenerationCancelledException, WorldLoadingFailedException, BackupCreationFailedException {
 		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
-		if (worldVer == null) worldVer = new Version("1.8");
 
 		//if (!hasGlobalPrefs)
 		//	hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
@@ -122,7 +135,7 @@ public class Load {
 		if (!loadGame) return;
 
 		// Is dev build
-		if (Game.VERSION.getDev() != 0 && worldVer.compareTo(Game.VERSION) < 0) {
+		if (Game.VERSION.getDev() != 0 && worldVer != null && worldVer.compareTo(Game.VERSION) < 0) {
 			Logging.SAVELOAD.info("Old world detected, backup prompting...");
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
@@ -179,7 +192,7 @@ public class Load {
 									f.toPath(), FileHandler.SKIP, false);
 							} catch (IOException e) {
 								Logging.SAVELOAD.error(e, "Error occurs while performing world backup, loading aborted");
-								throw new RuntimeException(new InterruptedException("World loading interrupted."));
+								throw new BackupCreationFailedException();
 							}
 
 							Logging.SAVELOAD.info("World backup \"{}\" is created.", filename);
@@ -189,7 +202,7 @@ public class Load {
 						Logging.SAVELOAD.debug("World loading continues...");
 					} else {
 						Logging.SAVELOAD.info("User cancelled world loading, loading aborted.");
-						throw new RuntimeException(new InterruptedException("World loading interrupted."));
+						throw new DungeonRegenerationCancelledException();
 					}
 
 					break;
@@ -202,9 +215,15 @@ public class Load {
 			}
 		}
 
-		if (worldVer.compareTo(new Version("1.9.2")) < 0)
+		if (worldVer == null) {
+			try {
+				HistoricLoad.loadSave(worldname);
+			} catch (LoadingSessionFailedException e) {
+				throw new WorldLoadingFailedException(e);
+			}
+		} else if (worldVer.compareTo(new Version("1.9.2")) < 0) {
 			new LegacyLoad(worldname);
-		else {
+		} else {
 			location += "/saves/" + worldname + "/";
 
 			percentInc = 5 + World.levels.length - 1; // For the methods below, and world.
@@ -227,14 +246,14 @@ public class Load {
 				Logging.SAVELOAD.trace("Old version dungeon detected.");
 				ArrayList<ListEntry> entries = new ArrayList<>();
 				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED,
-					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.0"),
-					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.1"),
-					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.2")
+						Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.0"),
+						Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.1"),
+						Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.2")
 				)));
 
 				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
-					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.3", Game.input.getMapping("select")),
-					Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.4", Game.input.getMapping("exit"))
+						Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.3", Game.input.getMapping("select")),
+						Localization.getLocalized("minicraft.displays.loading.regeneration_popup.display.4", Game.input.getMapping("exit"))
 				)));
 
 				AtomicBoolean acted = new AtomicBoolean(false);
@@ -276,7 +295,7 @@ public class Load {
 					try {
 						//noinspection BusyWait
 						Thread.sleep(10);
-					} catch (InterruptedException ignored) {}
+					} catch (InterruptedException ignored) { }
 				}
 			}
 		}
@@ -286,7 +305,7 @@ public class Load {
 		this(Game.VERSION);
 	}
 
-	public Load(Version worldVersion) {
+	public Load(@Nullable Version worldVersion) {
 		this(false);
 		worldVer = worldVersion;
 	}
@@ -444,13 +463,13 @@ public class Load {
 		return out;
 	}
 
-	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
+	public static String loadFromFile(String filename, boolean oneLine) throws IOException {
 		StringBuilder total = new StringBuilder();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			String curLine;
 			while ((curLine = br.readLine()) != null)
-				total.append(curLine).append(isWorldSave ? "" : "\n");
+				total.append(curLine).append(oneLine ? "" : "\n");
 		}
 
 		return total.toString();
@@ -501,6 +520,7 @@ public class Load {
 	}
 
 	private void loadMode(String modedata) {
+		assert worldVer != null;
 		int mode;
 		if (modedata.contains(";")) {
 			String[] modeinfo = modedata.split(";");
@@ -683,6 +703,7 @@ public class Load {
 	}
 
 	private void loadWorld(String filename) {
+		assert worldVer != null;
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			LoadingDisplay.setMessage(Level.getDepthString(l));
 			int lvlidx = World.lvlIdx(l);
@@ -821,6 +842,7 @@ public class Load {
 	}
 
 	public void loadPlayer(Player player, List<String> origData) {
+		assert worldVer != null;
 		List<String> data = new ArrayList<>(origData);
 		player.x = Integer.parseInt(data.remove(0));
 		player.y = Integer.parseInt(data.remove(0));
@@ -965,6 +987,7 @@ public class Load {
 	}
 
 	public void loadInventory(Inventory inventory, List<String> data) {
+		assert worldVer != null;
 		inventory.clearInv();
 
 		for (String item : data) {
@@ -1280,6 +1303,93 @@ public class Load {
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
+		}
+	}
+
+	/**
+	 * Parses a string into a boolean, throws exception if the string is not a boolean.
+	 * @throws IllegalDataValueException if the string does not contain a parseable boolean.
+	 */
+	static boolean parseBoolean(String s) throws IllegalDataValueException {
+		if (s.equalsIgnoreCase("true")) return true;
+		else if (s.equalsIgnoreCase("false")) return false;
+		else throw new IllegalDataValueException("s is not a boolean value");
+	}
+
+	static class FileLoadingException extends IOException {
+		FileLoadingException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	static class LoadingSessionFailedException extends Exception {
+		LoadingSessionFailedException(String message) {
+			super(message);
+		}
+		LoadingSessionFailedException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes the whole save. */
+	static class MalformedSaveException extends Exception {
+		MalformedSaveException(String message) {
+			super(message);
+		}
+		MalformedSaveException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes the save file data. */
+	static class MalformedSaveDataException extends Exception {
+		MalformedSaveDataException(String message) {
+			super(message);
+		}
+		MalformedSaveDataException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes the save file data "format" (not only a value), or the file format. */
+	static class MalformedSaveDataFormatException extends Exception {
+		MalformedSaveDataFormatException(String message) {
+			super(message);
+		}
+		MalformedSaveDataFormatException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes the save data "value". */
+	static class MalformedSaveDataValueException extends Exception {
+		MalformedSaveDataValueException(String message) {
+			super(message);
+		}
+		MalformedSaveDataValueException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes a data value but not specifically a specific save data value. */
+	static class MalformedDataValueException extends Exception {
+		MalformedDataValueException(String message) {
+			super(message);
+		}
+		MalformedDataValueException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes a well-formatted save data value, but the value is illegal. */
+	static class IllegalSaveDataValueException extends Exception {
+		IllegalSaveDataValueException(String message) {
+			super(message);
+		}
+		IllegalSaveDataValueException(String message, Exception cause) {
+			super(message, cause);
+		}
+	}
+	/** Denotes a well-formatted data value, but the value is illegal, and not specifically a specific save data value.*/
+	static class IllegalDataValueException extends Exception {
+		IllegalDataValueException(String message) {
+			super(message);
+		}
+		IllegalDataValueException(String message, Exception cause) {
+			super(message, cause);
 		}
 	}
 }
