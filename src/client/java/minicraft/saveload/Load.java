@@ -138,9 +138,9 @@ public class Load {
 
 		if (!loadGame) return;
 
-		// Is dev build
-		if (Game.VERSION.getDev() != 0 && worldVer != null && worldVer.compareTo(Game.VERSION) < 0) {
-			Logging.SAVELOAD.info("Old world detected, backup prompting...");
+		// Is dev build or newer version
+		if (worldVer != null && (Game.VERSION.getDev() != 0 || worldVer.compareTo(Game.VERSION) < 0)) {
+			Logging.SAVELOAD.info("World of unexpected version detected, backup prompting...");
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
 				Localization.getLocalized("minicraft.displays.save.popup_display.world_backup_prompt.msg",
@@ -219,7 +219,7 @@ public class Load {
 			}
 		}
 
-		if (worldVer == null) {
+		if (worldVer == null) { // < 1.9.1
 			try {
 				HistoricLoad.loadSave(worldname);
 			} catch (LoadingSessionFailedException e) {
