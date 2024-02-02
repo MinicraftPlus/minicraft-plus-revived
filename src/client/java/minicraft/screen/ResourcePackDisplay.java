@@ -945,7 +945,7 @@ public class ResourcePackDisplay extends Display {
 					case "assets/books/antidous.txt":
 						BookData.antVenomBook = () -> book;
 						break;
-					case "assets/books/story_guide.txt":
+					case "assets/books/game_guide.txt":
 						BookData.storylineGuide = () -> book;
 						break;
 				}
