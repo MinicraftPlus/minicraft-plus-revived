@@ -270,7 +270,7 @@ public abstract class Entity implements Tickable {
 			if (newFrontTile != frontTile) { // New tile touched
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					bumpingHandler.accept(horTile, newFrontTile);
+					bumpingHandler.accept(newFrontTile, horTile);
 				}
 				frontTile = newFrontTile;
 				handleSteppedOn = true;
@@ -294,7 +294,7 @@ public abstract class Entity implements Tickable {
 			if (handleSteppedOn) { // When the movement to a new tile successes
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					steppingHandler.accept(horTile, frontTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+					steppingHandler.accept(frontTile, horTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 				}
 			}
 			successful = true;
@@ -376,6 +376,7 @@ public abstract class Entity implements Tickable {
 	 *
 	 * @return the closest player.
 	 */
+	@Nullable
 	protected Player getClosestPlayer() {
 		return getClosestPlayer(true);
 	}
@@ -387,6 +388,7 @@ public abstract class Entity implements Tickable {
 	 * @param returnSelf determines if the method can return itself.
 	 * @return The closest player to this entity.
 	 */
+	@Nullable
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
 			return (Player) this;
