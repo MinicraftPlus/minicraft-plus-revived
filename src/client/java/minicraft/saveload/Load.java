@@ -644,6 +644,7 @@ public class Load {
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("fps", json.getInt("fps"));
 		Settings.set("showquests", json.optBoolean("showquests", true));
+		Settings.set("updatecheck", json.opt("updateChecking"));
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
