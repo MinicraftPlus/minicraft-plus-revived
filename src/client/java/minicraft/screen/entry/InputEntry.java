@@ -78,7 +78,7 @@ public class InputEntry extends ListEntry {
 	}
 
 	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : Color.RED, bounds);
+		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.WHITE : COL_UNSLCT : Color.RED, bounds);
 	}
 
 	private void updateCursorDisplacement() {
