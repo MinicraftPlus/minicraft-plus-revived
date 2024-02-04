@@ -8,6 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
+import minicraft.network.GameUpdateHandler;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -32,6 +33,8 @@ public class Game {
 	public static Player player;
 
 	public static List<Localization.LocalizationString> notifications = new ArrayList<>();
+
+	public static GameUpdateHandler updateHandler;
 
 	public static int MAX_FPS;
 
@@ -100,6 +103,8 @@ public class Game {
 		// Applying Game#debug first.
 
 		Analytics.GameStartup.ping();
+
+		updateHandler = new GameUpdateHandler();
 
 		input = new InputHandler(Renderer.canvas);
 

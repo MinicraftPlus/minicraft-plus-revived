@@ -1,5 +1,6 @@
 package minicraft.core.io;
 
+import minicraft.core.Game;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
@@ -35,6 +36,8 @@ public final class Settings {
 		options.put("tutorials", new BooleanEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.tutorials"), false));
 		options.put("quests", new BooleanEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.quests"), false));
 		options.put("showquests", new BooleanEntry(new Localization.LocalizationString("Quests Panel"), true));
+
+		options.put("updatecheck", new ArrayEntry<>(new Localization.LocalizationString("minicraft.settings.update_check"), "minicraft.settings.update_check.all", "minicraft.settings.update_check.full_only", "minicraft.settings.update_check.disabled"));
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.displays.world_create.options.game_mode.score".equals(value))

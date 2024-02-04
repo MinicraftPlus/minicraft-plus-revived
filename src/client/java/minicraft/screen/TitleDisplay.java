@@ -16,12 +16,14 @@ import minicraft.level.Level;
 import minicraft.network.Network;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.LinkEntry;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TitleDisplay extends Display {
@@ -33,9 +35,6 @@ public class TitleDisplay extends Display {
 
 	public TitleDisplay() {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-				new StringEntry(new Localization.LocalizationString("minicraft.displays.title.display.checking"),
-					Color.BLUE),
-				new BlankEntry(),
 				new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.play"),
 					() -> Game.setDisplay(new WorldSelectDisplay())),
 			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display"),
@@ -77,7 +76,7 @@ public class TitleDisplay extends Display {
 		Renderer.readyToRenderGameplay = false;
 
 		// Check version
-		checkVersion();
+		Game.updateHandler.checkForUpdate();
 
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
@@ -93,33 +92,30 @@ public class TitleDisplay extends Display {
 			World.resetGame(false);
 	}
 
-	private void checkVersion() {
-		VersionInfo latestVersion = Network.getLatestVersion();
-		if (latestVersion == null) {
-			Network.findLatestVersion(this::checkVersion);
-		} else {
-			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
-				menus[0].updateEntry(0, new StringEntry(new Localization.LocalizationString(
-					"minicraft.displays.title.display.new_version", latestVersion.releaseName), Color.GREEN));
-				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, new Localization.LocalizationString(
-					"minicraft.displays.title.select_to_download"), latestVersion.releaseUrl,
-					new Localization.LocalizationString("minicraft.displays.title.link_to_version",
-						latestVersion.releaseUrl)));
-			} else if (latestVersion.releaseName.length() > 0) {
-				menus[0].updateEntry(0, new StringEntry(new Localization.LocalizationString(
-					"minicraft.displays.title.display.latest_already"), Color.DARK_GRAY));
-			} else {
-				menus[0].updateEntry(0, new StringEntry(new Localization.LocalizationString(
-					"minicraft.displays.title.display.cannot_check"), Color.RED));
-			}
-		}
-	}
-
 	@Override
 	public void tick(InputHandler input) {
 		if (input.getMappedKey("F3-r").isClicked()) rand = random.nextInt(splashes.length - 3) + 3;
 
 		super.tick(input);
+
+		VersionInfo latestVersion = Game.updateHandler.getLatestVersion();
+		if (latestVersion != null && input.getMappedKey("U").isClicked()) {
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.add(new StringEntry(new Localization.LocalizationString(latestVersion.version.getDev() > 0 ?
+				"minicraft.displays.title.update_checker.popup.display.new_pre_available" :
+				"minicraft.displays.title.update_checker.popup.display.new_available")));
+			entries.add(new StringEntry(new Localization.LocalizationString(false, latestVersion.version.toString())));
+			entries.add(new LinkEntry(Color.WHITE, new Localization.LocalizationString(
+				"minicraft.displays.title.update_checker.popup.display.action"), latestVersion.releaseUrl) {
+				@Override
+				public void tick(InputHandler input) {
+					if (input.inputPressed("SELECT"))
+						Game.exitDisplay(); // Exits popup first.
+					super.tick(input);
+				}
+			});
+			Game.setDisplay(new PopupDisplay(null, entries.toArray(new ListEntry[0])));
+		}
 	}
 
 	@Override
@@ -158,7 +154,9 @@ public class TitleDisplay extends Display {
 
 		Font.draw(Localization.getLocalized("minicraft.displays.title.display.version", Game.VERSION), screen, 1, 1, Color.get(1, 51));
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.title.display.help"), screen, Screen.h - 10, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.title.display.help"), screen, Screen.h - 20, Color.DARK_GRAY);
+
+		Font.draw(Game.updateHandler.getStatusMessage(), screen, 0, Screen.h - 8, Game.updateHandler.getStatusMessageColor());
 	}
 
 	private static final String[] splashes = {
