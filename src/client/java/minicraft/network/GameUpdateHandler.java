@@ -86,7 +86,7 @@ public class GameUpdateHandler {
 
 	public int getStatusMessageColor() {
 		return failureMessage == null ? latestUpdate == null ?
-			Color.DIMMED_DARK_GRAY : latestUpdate.color : Color.DIMMED_RED;
+			Color.DARK_GRAY : latestUpdate.color : Color.DIMMED_RED;
 	}
 
 	public boolean anyCheckDid() {
