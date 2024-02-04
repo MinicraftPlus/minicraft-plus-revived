@@ -85,7 +85,7 @@ public class ToolItem extends Item {
 
 	public boolean payDurability() {
 		if (dur <= 0) return false;
-		if (!Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) dur--;
+		if (!Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dur--;
 		return true;
 	}
 

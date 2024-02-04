@@ -36,7 +36,7 @@ public class Skeleton extends EnemyMob {
 		if (skipTick()) return;
 
 		Player player = getClosestPlayer();
-		if (player != null && randomWalkTime == 0 && !Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) { // Run if there is a player nearby, the skeleton has finished their random walk, and gamemode is not creative.
+		if (player != null && randomWalkTime == 0 && !Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) { // Run if there is a player nearby, the skeleton has finished their random walk, and gamemode is not creative.
 			artime--;
 
 			int xd = player.x - x;

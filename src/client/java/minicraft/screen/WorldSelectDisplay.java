@@ -168,7 +168,7 @@ public class WorldSelectDisplay extends Display {
 			menus[1].setEntries(new ListEntry[] {
 				new StringEntry(new Localization.LocalizationString(false, world.lastPlayed.format(dateTimeFormat))),
 				new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.world_desc",
-					world.mode.equals("minicraft.displays.world_gen.options.game_mode.hardcore") ?
+					world.mode.equals("minicraft.displays.world_create.options.game_mode.hardcore") ?
 						Color.RED_CODE : "", new Localization.LocalizationString(world.mode), Color.WHITE_CODE,
 					world.version != null ? world.version.compareTo(Game.VERSION) > 0 ? Color.RED_CODE :
 						// Checks if either the world or the game is pre-release.

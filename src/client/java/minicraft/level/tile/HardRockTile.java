@@ -40,7 +40,7 @@ public class HardRockTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -65,7 +65,7 @@ public class HardRockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int hrHealth = 200;
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) dmg = damage = hrHealth;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 

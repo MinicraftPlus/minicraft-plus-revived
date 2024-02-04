@@ -71,7 +71,7 @@ public class RockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		damage = level.getData(x, y) + dmg;
 
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) {
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			dmg = damage = maxHealth;
 			dropCoal = true;
 		}
@@ -86,7 +86,7 @@ public class RockTile extends Tile {
 				stone += random.nextInt(3) + 1;
 
 				int coal = 1;
-				if (!Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.hard")) {
+				if (!Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.hard")) {
 					coal += 1;
 				}
 

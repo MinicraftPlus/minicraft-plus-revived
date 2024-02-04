@@ -32,7 +32,7 @@ public class PlayerInvDisplay extends Display {
 			"minicraft.display.menus.inventory"), RelPos.LEFT));
 		this.player = player;
 		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
-		creativeMode = Game.isMode("minicraft.displays.world_gen.options.game_mode.creative");
+		creativeMode = Game.isMode("minicraft.displays.world_create.options.game_mode.creative");
 		itemDescription = getDescription();
 		Menu descriptionMenu = descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT)
 			.setEntries(StringEntry.useLines(Color.WHITE, false, itemDescription.split("\n")))

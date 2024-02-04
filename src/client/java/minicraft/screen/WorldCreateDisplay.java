@@ -171,10 +171,10 @@ public class WorldCreateDisplay extends Display {
 		super(true);
 
 		WorldNameInputEntry nameField = makeWorldNameInput(new Localization.LocalizationString(
-			"minicraft.displays.world_gen.options.world_name"), "", null)
+			"minicraft.displays.world_create.options.world_name"), "", null)
 			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
-		worldSeed = new InputEntry(new Localization.LocalizationString("minicraft.displays.world_gen.options.seed"),
+		worldSeed = new InputEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.seed"),
 			"[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
@@ -183,7 +183,7 @@ public class WorldCreateDisplay extends Display {
 		StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
 			"minicraft.display.world_naming.world_name_notify", DEFAULT_NAME), Color.DARK_GRAY);
 
-		createWorld = new SelectEntry(new Localization.LocalizationString("minicraft.displays.world_gen.create_world"), () -> {
+		createWorld = new SelectEntry(new Localization.LocalizationString("minicraft.displays.world_create.create_world"), () -> {
 			if (!nameField.isValid()) return;
 			WorldSelectDisplay.setWorldName(nameField.getWorldName(), false);
 			OptionalLong seed = getSeed();
@@ -222,7 +222,7 @@ public class WorldCreateDisplay extends Display {
 				new StringEntry(new Localization.LocalizationString("minicraft.display.popup.cancel",
 					Game.input.getMapping("EXIT")), Color.GRAY)
 			)
-				.setTitle(new Localization.LocalizationString("minicraft.displays.world_gen.title"))
+				.setTitle(new Localization.LocalizationString("minicraft.displays.world_create.title"))
 				.setMaxBoundsAsRenderingBounds()
 				.createMenu();
 

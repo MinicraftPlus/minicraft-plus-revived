@@ -26,7 +26,7 @@ public class Snake extends EnemyMob {
 	}
 
 	public void die() {
-		int num = Settings.get("diff").equals("minicraft.displays.world_gen.options.difficulty.hard") ? 1 : 0;
+		int num = Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.hard") ? 1 : 0;
 		dropItem(num, num + 1, Items.get("scale"));
 
 		if (random.nextInt(24 / lvl / (Settings.getIdx("diff") + 1)) == 0)

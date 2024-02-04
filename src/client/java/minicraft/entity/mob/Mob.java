@@ -253,7 +253,7 @@ public abstract class Mob extends Entity {
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
-		if (mob instanceof Player && Game.isMode("minicraft.displays.world_gen.options.game_mode.creative") && mob != this)
+		if (mob instanceof Player && Game.isMode("minicraft.displays.world_create.options.game_mode.creative") && mob != this)
 			doHurt(health, attackDir); // Kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}

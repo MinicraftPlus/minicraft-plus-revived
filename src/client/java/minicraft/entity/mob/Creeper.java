@@ -48,7 +48,7 @@ public class Creeper extends EnemyMob {
 	public void tick() {
 		super.tick();
 
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return; // Creeper should not explode if player is in creative mode
 
 		if (fuseTime > 0) {
@@ -153,7 +153,7 @@ public class Creeper extends EnemyMob {
 
 	@Override
 	protected void touchedBy(Entity entity) {
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) return;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) return;
 
 		if (entity instanceof Player) {
 			if (fuseTime == 0 && !fuseLit) {

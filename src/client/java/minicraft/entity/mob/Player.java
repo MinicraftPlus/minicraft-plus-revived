@@ -217,7 +217,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public int getMultiplier() {
-		return Game.isMode("minicraft.displays.world_gen.options.game_mode.score") ? multiplier : 1;
+		return Game.isMode("minicraft.displays.world_create.options.game_mode.score") ? multiplier : 1;
 	}
 
 	void resetMultiplier() {
@@ -226,7 +226,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public void addMultiplier(int value) {
-		if (!Game.isMode("minicraft.displays.world_gen.options.game_mode.score")) return;
+		if (!Game.isMode("minicraft.displays.world_create.options.game_mode.score")) return;
 		multiplier = Math.min(MAX_MULTIPLIER, multiplier + value);
 		multipliertime = Math.max(multipliertime, mtm - 5);
 	}
@@ -352,7 +352,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else if (onStairDelay > 0)
 			onStairDelay--; // Decrements stairDelay if it's > 0, but not on stair tile... does the player get removed from the tile beforehand, or something?
 
-		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) {
+		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			if (onFallDelay <= 0) {
 				World.scheduleLevelChange(-1);
 				onFallDelay = 40;
@@ -360,7 +360,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		} else if (onFallDelay > 0) onFallDelay--;
 
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) {
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			// Prevent stamina/hunger decay in creative mode.
 			stamina = maxStamina;
 			hunger = maxHunger;
@@ -648,7 +648,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					level.add(new Arrow(this, attackDir, tool.level));
 					attackTime = 10;
 
-					if (!Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) tool.dur--;
+					if (!Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) tool.dur--;
 
 					AchievementsDisplay.setAchievement("minicraft.achievement.bow", true);
 
@@ -1171,7 +1171,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	protected void doHurt(int damage, Direction attackDir) {
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative") || hurtTime > 0 || Bed.inBed(this))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative") || hurtTime > 0 || Bed.inBed(this))
 			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0, armorDam = 0;
@@ -1217,7 +1217,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param attackDir The direction of attack.
 	 */
 	private void directHurt(int damage, Direction attackDir) {
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative") || hurtTime > 0 || Bed.inBed(this))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative") || hurtTime > 0 || Bed.inBed(this))
 			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0;

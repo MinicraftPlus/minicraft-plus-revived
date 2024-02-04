@@ -124,7 +124,7 @@ public class TreeTile extends Tile {
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -148,7 +148,7 @@ public class TreeTile extends Tile {
 
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth = 20;
-		if (Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) dmg = damage = treeHealth;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = treeHealth;
 
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");

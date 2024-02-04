@@ -19,7 +19,7 @@ public class BossFloorTile extends FloorTile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) {
+		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {

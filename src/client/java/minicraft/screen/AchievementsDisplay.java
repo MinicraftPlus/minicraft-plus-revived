@@ -173,7 +173,7 @@ public class AchievementsDisplay extends Display {
 		Achievement a = achievements.get(id);
 
 		// Return if it is in creative mode
-		if (!allowCreative && Game.isMode("minicraft.displays.world_gen.options.game_mode.creative")) return false;
+		if (!allowCreative && Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) return false;
 		// Return if we didn't find any achievements.
 		if (a == null) return false;
 
