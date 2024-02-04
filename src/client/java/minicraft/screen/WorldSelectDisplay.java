@@ -200,159 +200,161 @@ public class WorldSelectDisplay extends Display {
 			updateWorldDescription(menus[0].getSelection());
 		}
 
-		if (input.getMappedKey("C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
-			String worldName = worlds.get(menus[0].getSelection()).name;
-			WorldCreateDisplay.WorldNameInputEntry nameInput = WorldCreateDisplay.makeWorldNameInput(null, worldName, null);
-			//noinspection DuplicatedCode
-			StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
-				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
-			nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
-				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
-					nameInput.getWorldName()) :
-				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid")));
-			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry(new Localization.LocalizationString(
-				"minicraft.displays.world_select.popups.display.change"), Color.BLUE));
-			//noinspection DuplicatedCode
-			entries.add(nameInput);
-			entries.add(nameNotify);
-			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
-				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
-				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
-			)));
-
-			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
-			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
-				// The location of the world folder on the disk.
-				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
-
-				// Do the action.
-				if (!nameInput.isValid())
-					return false;
-				//user hits enter with a valid new name; copy is created here.
-				File newworld = new File(worldsDir + nameInput.getWorldName());
-				newworld.mkdirs();
-				Logging.GAMEHANDLER.debug("Copying world {} to world {}.", world, newworld);
-				// walk file tree
-				try {
-					FileHandler.copyFolderContents(world.toPath(), newworld.toPath(), FileHandler.REPLACE_EXISTING, false);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
+		if (!worlds.isEmpty()) {
+			if (input.getMappedKey("C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
+				String worldName = worlds.get(menus[0].getSelection()).name;
+				WorldCreateDisplay.WorldNameInputEntry nameInput = WorldCreateDisplay.makeWorldNameInput(null, worldName, null);
 				//noinspection DuplicatedCode
-				Sound.play("confirm");
-				updateWorlds();
-				updateEntries();
-				if (worlds.size() > 0) {
-					Game.exitDisplay();
-				} else {
-					Game.exitDisplay(3); // Exiting to title display.
-					Game.setDisplay(new WorldCreateDisplay());
-				}
-
-				return true;
-			}));
-
-			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getMappedKey("R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
-			String worldName = worlds.get(menus[0].getSelection()).name;
-			WorldCreateDisplay.WorldNameInputEntry nameInput = WorldCreateDisplay.makeWorldNameInput(null, worldName, worldName);
-			//noinspection DuplicatedCode
-			StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
-				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
-			nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
-				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
-					nameInput.getWorldName()) :
-				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid")));
-			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry(new Localization.LocalizationString(
-				"minicraft.displays.world_select.popups.display.change"), Color.GREEN));
-			//noinspection DuplicatedCode
-			entries.add(nameInput);
-			entries.add(nameNotify);
-			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
-				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
-				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
-			)));
-
-			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
-			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
-				// The location of the world folder on the disk.
-				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
-
-				// Do the action.
-				if (!nameInput.isValid())
-					return false;
-
-				// User hits enter with a vaild new name; name is set here:
-				String name = nameInput.getWorldName();
-
-				// Try to rename the file, if it works, return
-				if (world.renameTo(new File(worldsDir + name))) {
-					Logging.GAMEHANDLER.debug("Renaming world {} to new name: {}", world, name);
-					WorldSelectDisplay.updateWorlds();
-				} else {
-					Logging.GAMEHANDLER.error("Rename failed in WorldEditDisplay.");
-				}
-
+				StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
+					"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
+				nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
+					new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
+						nameInput.getWorldName()) :
+					new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid")));
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				entries.add(new StringEntry(new Localization.LocalizationString(
+					"minicraft.displays.world_select.popups.display.change"), Color.BLUE));
 				//noinspection DuplicatedCode
-				Sound.play("confirm");
-				updateWorlds();
-				updateEntries();
-				if (worlds.size() > 0) {
-					Game.exitDisplay();
-				} else {
-					Game.exitDisplay(3); // Exiting to title display.
-					Game.setDisplay(new WorldCreateDisplay());
-				}
+				entries.add(nameInput);
+				entries.add(nameNotify);
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+					Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
+					Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
+				)));
 
-				return true;
-			}));
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					// The location of the world folder on the disk.
+					File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
-			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getMappedKey("D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
-			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
-				Color.toStringCode(Color.tint(Color.RED, 1, true)), worlds.get(menus[0].getSelection()).name,
-				Color.RED_CODE))
-			));
-
-			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
-				Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
-				Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
-			)));
-
-			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
-			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
-				// The location of the world folder on the disk.
-				File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
-
-				// Do the action.
-				Logging.GAMEHANDLER.debug("Deleting world: " + world);
-				File[] list = world.listFiles();
-				for (File file : list) {
-					file.delete();
-				}
-				world.delete();
-
-				Sound.play("confirm");
-				updateWorlds();
-				updateEntries();
-				if (worlds.size() > 0) {
-					Game.exitDisplay();
-					if (menus[0].getSelection() >= worlds.size()) {
-						menus[0].setSelection(worlds.size() - 1);
+					// Do the action.
+					if (!nameInput.isValid())
+						return false;
+					//user hits enter with a valid new name; copy is created here.
+					File newworld = new File(worldsDir + nameInput.getWorldName());
+					newworld.mkdirs();
+					Logging.GAMEHANDLER.debug("Copying world {} to world {}.", world, newworld);
+					// walk file tree
+					try {
+						FileHandler.copyFolderContents(world.toPath(), newworld.toPath(), FileHandler.REPLACE_EXISTING, false);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-				} else {
-					Game.exitDisplay(3); // Exiting to title display.
-					Game.setDisplay(new WorldCreateDisplay());
-				}
 
-				return true;
-			}));
+					//noinspection DuplicatedCode
+					Sound.play("confirm");
+					updateWorlds();
+					updateEntries();
+					if (worlds.size() > 0) {
+						Game.exitDisplay();
+					} else {
+						Game.exitDisplay(3); // Exiting to title display.
+						Game.setDisplay(new WorldCreateDisplay());
+					}
 
-			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+			} else if (input.getMappedKey("R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
+				String worldName = worlds.get(menus[0].getSelection()).name;
+				WorldCreateDisplay.WorldNameInputEntry nameInput = WorldCreateDisplay.makeWorldNameInput(null, worldName, worldName);
+				//noinspection DuplicatedCode
+				StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
+					"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
+				nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
+					new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
+						nameInput.getWorldName()) :
+					new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid")));
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				entries.add(new StringEntry(new Localization.LocalizationString(
+					"minicraft.displays.world_select.popups.display.change"), Color.GREEN));
+				//noinspection DuplicatedCode
+				entries.add(nameInput);
+				entries.add(nameNotify);
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+					Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
+					Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
+				)));
+
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					// The location of the world folder on the disk.
+					File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
+
+					// Do the action.
+					if (!nameInput.isValid())
+						return false;
+
+					// User hits enter with a vaild new name; name is set here:
+					String name = nameInput.getWorldName();
+
+					// Try to rename the file, if it works, return
+					if (world.renameTo(new File(worldsDir + name))) {
+						Logging.GAMEHANDLER.debug("Renaming world {} to new name: {}", world, name);
+						WorldSelectDisplay.updateWorlds();
+					} else {
+						Logging.GAMEHANDLER.error("Rename failed in WorldEditDisplay.");
+					}
+
+					//noinspection DuplicatedCode
+					Sound.play("confirm");
+					updateWorlds();
+					updateEntries();
+					if (worlds.size() > 0) {
+						Game.exitDisplay();
+					} else {
+						Game.exitDisplay(3); // Exiting to title display.
+						Game.setDisplay(new WorldCreateDisplay());
+					}
+
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+			} else if (input.getMappedKey("D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
+				ArrayList<ListEntry> entries = new ArrayList<>();
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
+					Color.toStringCode(Color.tint(Color.RED, 1, true)), worlds.get(menus[0].getSelection()).name,
+					Color.RED_CODE))
+				));
+
+				entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
+					Localization.getLocalized("minicraft.displays.world_select.popups.display.confirm", Game.input.getMapping("select")),
+					Localization.getLocalized("minicraft.displays.world_select.popups.display.cancel", Game.input.getMapping("exit"))
+				)));
+
+				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
+					// The location of the world folder on the disk.
+					File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
+
+					// Do the action.
+					Logging.GAMEHANDLER.debug("Deleting world: " + world);
+					File[] list = world.listFiles();
+					for (File file : list) {
+						file.delete();
+					}
+					world.delete();
+
+					Sound.play("confirm");
+					updateWorlds();
+					updateEntries();
+					if (worlds.size() > 0) {
+						Game.exitDisplay();
+						if (menus[0].getSelection() >= worlds.size()) {
+							menus[0].setSelection(worlds.size() - 1);
+						}
+					} else {
+						Game.exitDisplay(3); // Exiting to title display.
+						Game.setDisplay(new WorldCreateDisplay());
+					}
+
+					return true;
+				}));
+
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
+			}
 		}
 	}
 
