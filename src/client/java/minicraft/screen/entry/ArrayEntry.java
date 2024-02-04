@@ -47,7 +47,7 @@ public class ArrayEntry<T> extends ListEntry {
 	}
 
 	protected String getLocalizedOption(T option) { // instant localization
-		return option.toString();
+		return option instanceof String ? Localization.getLocalized((String) option) : option.toString();
 	}
 
 	public int getSelection() {

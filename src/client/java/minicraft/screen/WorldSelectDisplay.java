@@ -86,6 +86,8 @@ public class WorldSelectDisplay extends Display {
 		}
 	}
 
+	private final List<StringEntry> bottomEntries = new ArrayList<>();
+
 	@Override
 	public void init(Display parent) {
 		super.init(parent);
@@ -102,6 +104,44 @@ public class WorldSelectDisplay extends Display {
 		// Update world list
 		updateWorlds();
 		updateEntries();
+
+		// Entries on the bottom, 6 items and 3 lines, 2 items per line in order
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.action.new",
+			Game.input.selectMapping("N", "X")), Color.GRAY));
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.action.return",
+			Game.input.getMapping("EXIT")), Color.GRAY));
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString(
+			"minicraft.displays.world_select.action.play",
+			Game.input.getMapping("SELECT"))) {
+			@Override
+			public int getColor(boolean isSelected) {
+				return !worlds.isEmpty() ? Color.GRAY : Color.DIMMED_GRAY;
+			}
+		});
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString(
+			"minicraft.displays.world_select.action.delete",
+			Game.input.selectMapping("D", "LEFTRIGHTTRIGGER"))) {
+			@Override
+			public int getColor(boolean isSelected) {
+				return !worlds.isEmpty() ? Color.RED : Color.DIMMED_RED;
+			}
+		});
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString(
+			"minicraft.displays.world_select.action.rename",
+			Game.input.selectMapping("R", "RIGHTBUMPER"))) {
+			@Override
+			public int getColor(boolean isSelected) {
+				return !worlds.isEmpty() ? Color.GREEN : Color.DIMMED_GREEN;
+			}
+		});
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString(
+			"minicraft.displays.world_select.action.copy",
+			Game.input.selectMapping("C", "LEFTBUMPER"))) {
+			@Override
+			public int getColor(boolean isSelected) {
+				return !worlds.isEmpty() ? Color.BLUE : Color.DIMMED_BLUE;
+			}
+		});
 	}
 
 	private void updateEntries() {
@@ -320,23 +360,19 @@ public class WorldSelectDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.action.play_selected",
-			Game.input.getMapping("SELECT")) + "  " +
-			Localization.getLocalized("minicraft.displays.world_select.action.return",
-				Game.input.getMapping("EXIT")), screen, Screen.h - 30, Color.DARK_GRAY);
+		// Rendering entries on the bottom
+		int gap = 2 * 8; // a gap between 2 entries
+		for (int i = 0; i < 3; ++i) {
+			int leftWidth = bottomEntries.get(i * 2).getWidth();
+			int rightWidth = bottomEntries.get(i * 2 + 1).getWidth();
+			int halfTotalWidth = (leftWidth + rightWidth + gap) / 2;
+			bottomEntries.get(i * 2).render(screen, Screen.w / 2 - halfTotalWidth,
+				Screen.h - (3 - i) * 10, false, null);
+			bottomEntries.get(i * 2 + 1).render(screen, Screen.w / 2 + halfTotalWidth - rightWidth,
+				Screen.h - (3 - i) * 10, false, null);
+		}
 
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.action.create_new",
-				Game.input.selectMapping("N", "X")) + "  " + // Color.DIMMED_RED_CODE +
-			Localization.getLocalized("minicraft.displays.world_select.action.delete",
-				Game.input.selectMapping("D", "LEFTRIGHTTRIGGER")), screen, Screen.h - 20, Color.DARK_GRAY);
-
-		Font.drawCentered(// Color.DIMMED_GREEN_CODE +
-			Localization.getLocalized("minicraft.displays.world_select.action.rename",
-				Game.input.selectMapping("R", "RIGHTBUMPER")) + "  " + // Color.DIMMED_BLUE_CODE +
-			Localization.getLocalized("minicraft.displays.world_select.action.copy",
-				Game.input.selectMapping("C", "LEFTBUMPER")),
-			screen, Screen.h - 10, Color.DARK_GRAY);
-
+		// Title
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.select_world"),
 			screen, 0, Color.LIGHT_GRAY);
 	}

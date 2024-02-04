@@ -220,7 +220,7 @@ public class WorldCreateDisplay extends Display {
 				new BlankEntry(),
 				createWorld,
 				new StringEntry(new Localization.LocalizationString("minicraft.display.popup.cancel",
-					Game.input.getMapping("EXIT")))
+					Game.input.getMapping("EXIT")), Color.GRAY)
 			)
 				.setTitle(new Localization.LocalizationString("minicraft.displays.world_gen.title"))
 				.setMaxBoundsAsRenderingBounds()
