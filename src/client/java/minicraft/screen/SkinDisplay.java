@@ -113,7 +113,7 @@ public class SkinDisplay extends Display {
 	private void refreshEntries() {
 		List<ListEntry> l = new ArrayList<>();
 		for (String s : skins.keySet()) {
-			l.add(new SelectEntry(s, this::confirmExit));
+			l.add(new SelectEntry(new Localization.LocalizationString(s.startsWith("minicraft.skin"), s), this::confirmExit));
 		}
 
 		menus[0].setEntries(l);

@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
@@ -15,7 +16,8 @@ import java.util.Arrays;
 public class BookDisplay extends Display {
 
 	// null characters "\0" denote page breaks.
-	private static final String defaultBook = "This book has no text.";
+	private static final Localization.LocalizationString defaultBook =
+		new Localization.LocalizationString(false, "minicraft.displays.book.default_book");
 
 	private static final int SPACING = 3;
 	private static final int WIDTH = 8 * 32;
@@ -34,7 +36,7 @@ public class BookDisplay extends Display {
 		page = 0;
 
 		if (book == null) {
-			book = defaultBook;
+			book = defaultBook.toString();
 			hasTitle = false;
 		}
 
@@ -59,8 +61,12 @@ public class BookDisplay extends Display {
 
 		Menu pageCount = builder // The small rect for the title
 			.setPositioning(new Point(Screen.w / 2, 0), RelPos.BOTTOM)
-			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle ? "Title" : "1/" + lines.length))
-			.setSelection(1)
+			.setEntries(StringEntry.useLines(Color.BLACK, false,
+				Localization.getLocalized("minicraft.displays.book.page_counter"),
+				hasTitle ? Localization.getLocalized("minicraft.displays.book.page_counter.title") :
+					Localization.getLocalized("minicraft.displays.book.page_counter.value",
+						1, lines.length)))
+				.setSelection(1)
 			.createMenu();
 
 		builder
@@ -82,7 +88,10 @@ public class BookDisplay extends Display {
 			menus[page + pageOffset].shouldRender = false;
 			page += dir;
 			if (showPageCount)
-				menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
+				menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ?
+					new Localization.LocalizationString(true, "minicraft.displays.book.page_counter.title") :
+					new Localization.LocalizationString(true, "minicraft.displays.book.page_counter.value",
+						page + 1, lines.length), Color.BLACK));
 			menus[page + pageOffset].shouldRender = true;
 		}
 	}

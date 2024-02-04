@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
@@ -12,12 +13,15 @@ public class OptionsMainMenuDisplay extends Display {
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("showquests"),
-			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
-			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.change_key_bindings"),
+				() -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.language"),
+				() -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("screenshot"),
-			new SelectEntry("minicraft.display.options_display.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.resource_packs"),
+				() -> Game.setDisplay(new ResourcePackDisplay()))
 		)
-			.setTitle("minicraft.displays.options_main_menu")
+			.setTitle(new Localization.LocalizationString("minicraft.displays.options_main_menu"))
 			.createMenu());
 	}
 

@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -10,12 +11,12 @@ import minicraft.screen.entry.ItemEntry;
 class InventoryMenu extends ItemListMenu {
 
 	private final RelPos entryPos; // Used for copy constructor
-	private final String title; // Used for copy constructor
+	private final Localization.LocalizationString title; // Used for copy constructor
 	private final Inventory inv;
 	private final Entity holder;
 	protected boolean creativeInv = false;
 
-	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos) {
+	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title, RelPos entryPos) {
 		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;

@@ -13,44 +13,49 @@ import minicraft.screen.entry.StringEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class PauseDisplay extends Display {
 
 	public PauseDisplay() {
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 			new BlankEntry(),
-			new SelectEntry("minicraft.displays.pause.return", () -> Game.setDisplay(null)),
-			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsWorldDisplay())),
-			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay()))
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.pause.return"),
+				() -> Game.setDisplay(null)),
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display"),
+				() -> Game.setDisplay(new OptionsWorldDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.achievements"),
+				() -> Game.setDisplay(new AchievementsDisplay()))
 		));
 
 		if (TutorialDisplayHandler.inQuests())
-			entries.add(new SelectEntry("minicraft.displays.quests", () -> Game.setDisplay(new QuestsDisplay())));
+			entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.quests"),
+				() -> Game.setDisplay(new QuestsDisplay())));
 
-		entries.add(new SelectEntry("minicraft.displays.pause.save", () -> {
+		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.pause.save"), () -> {
 			Game.setDisplay(null);
 			new Save(WorldSelectDisplay.getWorldName());
 		}));
 
-		entries.addAll(Arrays.asList(
-			new SelectEntry("minicraft.displays.pause.menu", () -> {
-				ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines("minicraft.displays.pause.display.exit_popup.0")));
+		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.pause.menu"), () -> {
+			ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines("minicraft.displays.pause.display.exit_popup.0")));
 
-				items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, "minicraft.displays.pause.display.exit_popup.1")));
-				items.add(new BlankEntry());
-				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.cancel", Game::exitDisplay));
-				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.quit", () -> {
-					Game.setDisplay(new TitleDisplay());
-					World.onWorldExits();
-				}));
+			items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, "minicraft.displays.pause.display.exit_popup.1")));
+			items.add(new BlankEntry());
+			items.add(new SelectEntry(new Localization.LocalizationString(
+				"minicraft.displays.pause.display.exit_popup.cancel"), Game::exitDisplay));
+			items.add(new SelectEntry(new Localization.LocalizationString(
+				"minicraft.displays.pause.display.exit_popup.quit"), () -> {
+				Game.setDisplay(new TitleDisplay());
+				World.onWorldExits();
+			}));
 
-				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 8), items.toArray(new ListEntry[0])));
-			})
-		));
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 8), items.toArray(new ListEntry[0])));
+		}));
 
 		menus = new Menu[]{
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
-				.setTitle("minicraft.displays.pause", Color.YELLOW)
+				.setTitle(new Localization.LocalizationString("minicraft.displays.pause"), Color.YELLOW)
 				.createMenu()
 		};
 	}

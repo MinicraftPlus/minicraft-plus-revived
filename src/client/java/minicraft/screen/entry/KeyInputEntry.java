@@ -13,13 +13,13 @@ public class KeyInputEntry extends SelectEntry {
 	private String action, mapping, buffer;
 
 	public KeyInputEntry(String key, Set<String> duplicated) {
-		super("", null);
+		super(null, null);
 
 		this.action = key.substring(0, key.indexOf(";"));
 		setMapping(key.substring(key.indexOf(";") + 1), duplicated);
 	}
 
-	private void setMapping(String mapping, Set<String> duplicated) {
+	private void setMapping(String mapping, Set<String> duplicated) { // TODO when #500
 		this.mapping = mapping;
 
 		StringBuilder buffer = new StringBuilder();
@@ -53,6 +53,6 @@ public class KeyInputEntry extends SelectEntry {
 
 	@Override
 	public String toString() {
-		return Localization.getLocalized(action) + buffer + mapping;
+		return action + buffer + mapping;
 	}
 }

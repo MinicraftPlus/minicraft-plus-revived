@@ -27,7 +27,8 @@ public class WallTile extends Tile {
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
 		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
 
-	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
+	private static final Localization.LocalizationString obrickMsg = new Localization.LocalizationString(
+		"minicraft.notification.defeat_air_wizard_first");
 	protected Material type;
 
 	protected WallTile(Material type) {
@@ -60,7 +61,7 @@ public class WallTile extends Tile {
 			hurt(level, x, y, 0);
 			return true;
 		} else {
-			Game.notifications.add(Localization.getLocalized(obrickMsg));
+			Game.notifications.add(obrickMsg);
 			return false;
 		}
 	}

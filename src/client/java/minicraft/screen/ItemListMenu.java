@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.io.Localization;
 import minicraft.gfx.Point;
 import minicraft.screen.entry.ItemEntry;
 
@@ -18,7 +19,7 @@ class ItemListMenu extends Menu {
 			.setSearcherBar(true);
 	}
 
-	protected ItemListMenu(Builder b, ItemEntry[] entries, String title) {
+	protected ItemListMenu(Builder b, ItemEntry[] entries, Localization.LocalizationString title) {
 		super(b
 			.setEntries(entries)
 			.setTitle(title)
@@ -26,7 +27,7 @@ class ItemListMenu extends Menu {
 		);
 	}
 
-	protected ItemListMenu(ItemEntry[] entries, String title) {
+	protected ItemListMenu(ItemEntry[] entries, Localization.LocalizationString title) {
 		this(getBuilder(), entries, title);
 	}
 }

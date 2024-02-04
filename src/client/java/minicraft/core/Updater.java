@@ -331,12 +331,11 @@ public class Updater extends Game {
 	/**
 	 * This adds a notification to all player games.
 	 */
-	public static void notifyAll(String msg) {
+	public static void notifyAll(Localization.LocalizationString msg) {
 		notifyAll(msg, 0);
 	}
 
-	public static void notifyAll(String msg, int notetick) {
-		msg = Localization.getLocalized(msg);
+	public static void notifyAll(Localization.LocalizationString msg, int notetick) {
 		notifications.add(msg);
 		Updater.notetick = notetick;
 	}

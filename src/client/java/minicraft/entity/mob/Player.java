@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Arrow;
@@ -541,7 +542,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputPressed("pause"))
 					Game.setDisplay(new PauseDisplay());
 				if (input.inputPressed("craft") && !use())
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, new Localization.LocalizationString(
+						"minicraft.displays.crafting"), this, true));
 
 				if (input.inputDown("info")) Game.setDisplay(new InfoDisplay());
 
@@ -773,7 +775,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// For secret messages :=)
-						Game.notifications.add(itemData.substring(1));
+						Game.notifications.add(new Localization.LocalizationString(false, itemData.substring(1)));
 					} else {
 						if (Items.get(itemData).equals(Items.get("Raw Fish"))) {
 							AchievementsDisplay.setAchievement("minicraft.achievement.fish", true);

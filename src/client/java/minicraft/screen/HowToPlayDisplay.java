@@ -9,7 +9,7 @@ import minicraft.screen.entry.StringEntry;
 public class HowToPlayDisplay extends Display {
 	public HowToPlayDisplay() {
 		super(true, new Menu.Builder(false, 1, RelPos.CENTER,
-			new SelectEntry("minicraft.displays.how_to_play.general", () ->
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play.general"), () ->
 				Game.setDisplay(new PopupDisplay(null, true,
 					StringEntry.useLines(Color.WHITE, false,
 						Localization.getLocalized("minicraft.displays.how_to_play.general.display.0",
@@ -27,8 +27,8 @@ public class HowToPlayDisplay extends Display {
 							Game.input.getMapping("SEARCHER-BAR")),
 						Localization.getLocalized("minicraft.displays.how_to_play.general.display.6",
 							Game.input.getMapping("PAGE-UP"), Game.input.getMapping("PAGE-DOWN")))))),
-			new SelectEntry("minicraft.displays.how_to_play.general_controller", () ->
-				Game.setDisplay(new MessageDisplay(true,
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play.general_controller"),
+				() -> Game.setDisplay(new MessageDisplay(true,
 					"minicraft.displays.how_to_play.general_controller.display.0",
 					"minicraft.displays.how_to_play.general_controller.display.1",
 					"minicraft.displays.how_to_play.general_controller.display.2",
@@ -36,23 +36,28 @@ public class HowToPlayDisplay extends Display {
 					"minicraft.displays.how_to_play.general_controller.display.4",
 					"minicraft.displays.how_to_play.general_controller.display.5",
 					"minicraft.displays.how_to_play.general_controller.display.6"))),
-			new SelectEntry("minicraft.displays.how_to_play.in_game", () ->
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play.in_game"), () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-					new SelectEntry("minicraft.displays.how_to_play.in_game.movement", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game.movement"), () ->
 						Game.setDisplay(new PopupDisplay(null, true,
 							StringEntry.useLines(Color.WHITE, false,
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.movement.display.0",
 									Game.input.getMapping("MOVE-UP"), Game.input.getMapping("MOVE-DOWN"),
 									Game.input.getMapping("MOVE-LEFT"), Game.input.getMapping("MOVE-RIGHT")),
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.movement.display.1"))))),
-					new SelectEntry("minicraft.displays.how_to_play.in_game.world_interaction", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game.world_interaction"), () ->
 						Game.setDisplay(new PopupDisplay(null, true,
 							StringEntry.useLines(Color.WHITE, false,
-								Localization.getLocalized("minicraft.displays.how_to_play.in_game.world_interaction.display.0",
+								Localization.getLocalized(
+									"minicraft.displays.how_to_play.in_game.world_interaction.display.0",
 									Game.input.getMapping("ATTACK")),
-								Localization.getLocalized("minicraft.displays.how_to_play.in_game.world_interaction.display.1",
+								Localization.getLocalized(
+									"minicraft.displays.how_to_play.in_game.world_interaction.display.1",
 									Game.input.getMapping("PICKUP")))))),
-					new SelectEntry("minicraft.displays.how_to_play.in_game.interface", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game.interface"), () ->
 						Game.setDisplay(new PopupDisplay(null, true,
 							StringEntry.useLines(Color.WHITE, false,
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.interface.display.0",
@@ -71,7 +76,8 @@ public class HowToPlayDisplay extends Display {
 									Game.input.getMapping("INFO")),
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.interface.display.7",
 									Game.input.getMapping("QUICKSAVE")))))),
-					new SelectEntry("minicraft.displays.how_to_play.in_game.inventory", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game.inventory"), () ->
 						Game.setDisplay(new PopupDisplay(null, true,
 							StringEntry.useLines(Color.WHITE, false,
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.inventory.display.0",
@@ -82,31 +88,37 @@ public class HowToPlayDisplay extends Display {
 									Game.input.getMapping("DROP-ONE"), Game.input.getMapping("DROP-STACK")),
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.inventory.display.3"),
 								Localization.getLocalized("minicraft.displays.how_to_play.in_game.inventory.display.4")))))
-				).setTitle("minicraft.displays.how_to_play.in_game").createMenu()))),
-			new SelectEntry("minicraft.displays.how_to_play.in_game_controller", () ->
+				).setTitle(new Localization.LocalizationString("minicraft.displays.how_to_play.in_game")).createMenu()))),
+			new SelectEntry(new Localization.LocalizationString(
+				"minicraft.displays.how_to_play.in_game_controller"), () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-					new SelectEntry("minicraft.displays.how_to_play.in_game_controller.movement", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game_controller.movement"), () ->
 						Game.setDisplay(new MessageDisplay(true,
 							"minicraft.displays.how_to_play.in_game_controller.movement.display.0",
 							"minicraft.displays.how_to_play.in_game_controller.movement.display.1"))),
-					new SelectEntry("minicraft.displays.how_to_play.in_game_controller.world_interaction", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game_controller.world_interaction"), () ->
 						Game.setDisplay(new MessageDisplay(true,
 							"minicraft.displays.how_to_play.in_game_controller.world_interaction.display.0",
 							"minicraft.displays.how_to_play.in_game_controller.world_interaction.display.1"))),
-					new SelectEntry("minicraft.displays.how_to_play.in_game_controller.interface", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game_controller.interface"), () ->
 						Game.setDisplay(new MessageDisplay(true,
 							"minicraft.displays.how_to_play.in_game_controller.interface.display.0"))),
-					new SelectEntry("minicraft.displays.how_to_play.in_game_controller.inventory", () ->
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.how_to_play.in_game_controller.inventory"), () ->
 						Game.setDisplay(new MessageDisplay(true,
 							"minicraft.displays.how_to_play.in_game_controller.inventory.display.0",
 							"minicraft.displays.how_to_play.in_game_controller.inventory.display.1",
 							"minicraft.displays.how_to_play.in_game_controller.inventory.display.2",
 							"minicraft.displays.how_to_play.in_game_controller.inventory.display.3",
 							"minicraft.displays.how_to_play.in_game_controller.inventory.display.4")))
-				).setTitle("minicraft.displays.how_to_play.in_game_controller").createMenu()))),
-			new SelectEntry("minicraft.displays.how_to_play.game_goal", () ->
+				).setTitle(new Localization.LocalizationString("minicraft.displays.how_to_play.in_game_controller"))
+					.createMenu()))),
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play.game_goal"), () ->
 				Game.setDisplay(new MessageDisplay(true,
 					"minicraft.displays.how_to_play.game_goal.description")))
-		).setTitle("minicraft.displays.how_to_play").createMenu());
+		).setTitle(new Localization.LocalizationString("minicraft.displays.how_to_play")).createMenu());
 	}
 }

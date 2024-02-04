@@ -103,7 +103,7 @@ public abstract class Item {
 	}
 
 	// Returns the String that should be used to display this item in a menu or list.
-	public String getDisplayName() {
+	public String getDisplayName() { // instant localization
 		return " " + Localization.getLocalized(getName());
 	}
 

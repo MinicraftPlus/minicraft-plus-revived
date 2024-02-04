@@ -11,20 +11,16 @@ public class SelectableStringEntry extends ListEntry {
 
 	private static final int DEFAULT_COLOR = Color.WHITE;
 
-	private String text;
+	private Localization.LocalizationString text;
 	private final int color;
-	private final boolean localize;
 
 	private TextRenderTicker ticker;
 
-	public SelectableStringEntry(String text) {
+	public SelectableStringEntry(Localization.LocalizationString text) {
 		this(text, DEFAULT_COLOR);
 	}
-	public SelectableStringEntry(String text, boolean localize) { this(text, DEFAULT_COLOR, localize); } // This might be false as the text might have been localized already.
-	public SelectableStringEntry(String text, int color) { this(text, color, true); } // This should be always true with the new localization IDs.
-	public SelectableStringEntry(String text, int color, boolean localize) {
+	public SelectableStringEntry(Localization.LocalizationString text, int color) {
 		this.text = text;
-		this.localize = localize;
 		this.color = color;
 	}
 
@@ -128,7 +124,7 @@ public class SelectableStringEntry extends ListEntry {
 		ticker = renderTicker;
 	}
 
-	public void setText(String text) {
+	public void setText(Localization.LocalizationString text) {
 		this.text = text;
 	}
 
@@ -142,5 +138,5 @@ public class SelectableStringEntry extends ListEntry {
 	public int getColor(boolean isSelected) { return color; }
 
 	@Override
-	public String toString() { return localize? Localization.getLocalized(text): text; }
+	public String toString() { return text.toString(); }
 }

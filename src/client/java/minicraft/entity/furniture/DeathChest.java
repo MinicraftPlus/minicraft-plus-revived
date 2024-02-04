@@ -108,7 +108,7 @@ public class DeathChest extends Chest {
 
 				int returned = playerInv.add(i);
 				if (returned < total) {
-					Game.notifications.add("Your inventory is full!");
+					Game.notifications.add(new Localization.LocalizationString("minicraft.notification.inventory_full"));
 					return;
 				}
 
@@ -116,7 +116,7 @@ public class DeathChest extends Chest {
 			}
 
 			remove();
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.death_chest_retrieved"));
+			Game.notifications.add(new Localization.LocalizationString("minicraft.notification.death_chest_retrieved"));
 		}
 	}
 

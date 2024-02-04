@@ -25,7 +25,7 @@ public class PagedDisplay extends Display {
 	private final StringEntry[][] lines;
 	private int page = 0;
 
-	public PagedDisplay(String title, String content) {
+	public PagedDisplay(Localization.LocalizationString title, String content) {
 		ArrayList<StringEntry[]> pages = new ArrayList<>();
 		String[] blocks = content.split("\0");
 		for (String block: blocks) {
@@ -34,7 +34,8 @@ public class PagedDisplay extends Display {
 				remainder = Font.getLines(remainder[remainder.length-1], WIDTH, HEIGHT, SPACING, true);
 				// Removes the last element of remainder, which is the leftover.
 				pages.add(Arrays.stream(Arrays.copyOf(remainder, remainder.length-1))
-					.map(l -> new StringEntry(l, false)).toArray(StringEntry[]::new));
+					.map(l -> new StringEntry(new Localization.LocalizationString(false, l)))
+					.toArray(StringEntry[]::new));
 			}
 		}
 
@@ -43,7 +44,7 @@ public class PagedDisplay extends Display {
 		menus = new Menu[2];
 		menus[0] = builder // The small rect for the title
 				.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
-				.setEntries(StringEntry.useLines(Color.BLACK, false, title, getPageCounter()))
+				.setEntries(new StringEntry(title, Color.BLACK), new StringEntry(getPageCounter(), Color.BLACK))
 				.setSelection(1)
 				.createMenu();
 		menus[1] = builder
@@ -54,15 +55,16 @@ public class PagedDisplay extends Display {
 		menus[1].setEntries(lines[page]);
 	}
 
-	private String getPageCounter() {
-		return Localization.getLocalized("minicraft.displays.paged.page_counter", page + 1, lines.length);
+	private Localization.LocalizationString getPageCounter() {
+		return new Localization.LocalizationString("minicraft.displays.paged.page_counter",
+			page + 1, lines.length);
 	}
 
 	private void turnPage(int dir) {
 		int dest = MyUtils.clamp(page + dir, 0, lines.length - 1);
 		if (dest != page) {
 			page = dest;
-			menus[0].updateSelectedEntry(new StringEntry(getPageCounter(), false));
+			menus[0].updateSelectedEntry(new StringEntry(getPageCounter()));
 			menus[1].setEntries(lines[page]);
 		}
 	}

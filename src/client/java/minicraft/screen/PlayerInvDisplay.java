@@ -28,7 +28,8 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT));
+		super(new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
+			"minicraft.display.menus.inventory"), RelPos.LEFT));
 		this.player = player;
 		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.displays.world_gen.options.game_mode.creative");
@@ -41,7 +42,8 @@ public class PlayerInvDisplay extends Display {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[]{
 				menus[0],
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
+				new InventoryMenu(player, creativeInv, new Localization.LocalizationString(
+					"minicraft.displays.player_inv.container_title.items"), RelPos.RIGHT) {{
 					creativeInv = true;
 				}},
 				descriptionMenu

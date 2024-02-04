@@ -93,7 +93,6 @@ public class StackableItem extends Item {
 
 	@Override
 	public String getDisplayName() {
-		String amt = (Math.min(count, 999)) + " ";
-		return " " + amt + Localization.getLocalized(getName());
+		return " " + Math.min(count, 999) + " " + Localization.getLocalized(getName());
 	}
 }

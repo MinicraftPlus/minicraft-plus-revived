@@ -111,7 +111,8 @@ public class WorldGenDisplay extends Display {
 	 * @param beforeRenamed {@code null} if it is not renaming a world; else the original world name,
 	 * this will be used to check if the user input matches the original world name and thus perform no change.
 	 */
-	public static WorldNameInputEntry makeWorldNameInput(String prompt, String initValue, @Nullable String beforeRenamed) {
+	public static WorldNameInputEntry makeWorldNameInput(@Nullable Localization.LocalizationString prompt,
+	                                                     String initValue, @Nullable String beforeRenamed) {
 		return new WorldNameInputEntry(prompt, initValue, beforeRenamed);
 	}
 
@@ -120,7 +121,8 @@ public class WorldGenDisplay extends Display {
 		private String lastInput;
 		private boolean valid;
 
-		public WorldNameInputEntry(String prompt, String initValue, @Nullable String beforeRenamed) {
+		public WorldNameInputEntry(@Nullable Localization.LocalizationString prompt, String initValue,
+		                           @Nullable String beforeRenamed) {
 			super(prompt, WorldGenDisplay.worldNameRegex, 36, initValue);
 			this.beforeRenamed = beforeRenamed;
 			valid = false;
@@ -168,18 +170,20 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		WorldNameInputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.options.world_name", "", null)
+		WorldNameInputEntry nameField = makeWorldNameInput(new Localization.LocalizationString(
+			"minicraft.displays.world_gen.options.world_name"), "", null)
 			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
-		worldSeed = new InputEntry("minicraft.displays.world_gen.options.seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
+		worldSeed = new InputEntry(new Localization.LocalizationString("minicraft.displays.world_gen.options.seed"),
+			"[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
 		}.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
 
-		StringEntry nameNotify = new StringEntry(Localization.getLocalized(
-			"minicraft.display.world_naming.world_name_notify", DEFAULT_NAME), Color.DARK_GRAY, false);
+		StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
+			"minicraft.display.world_naming.world_name_notify", DEFAULT_NAME), Color.DARK_GRAY);
 
-		createWorld = new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
+		createWorld = new SelectEntry(new Localization.LocalizationString("minicraft.displays.world_gen.create_world"), () -> {
 			if (!nameField.isValid()) return;
 			WorldSelectDisplay.setWorldName(nameField.getWorldName(), false);
 			OptionalLong seed = getSeed();
@@ -195,8 +199,9 @@ public class WorldGenDisplay extends Display {
 			boolean valid = nameField.isValid();
 			createWorld.setSelectable(valid);
 			nameNotify.setText(valid ?
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameField.getWorldName()) :
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid"));
+				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
+					nameField.getWorldName()) :
+				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid"));
 		});
 
 		Menu mainMenu =
@@ -214,10 +219,10 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("scoretime"),
 				new BlankEntry(),
 				createWorld,
-				new StringEntry(Localization.getLocalized("minicraft.display.popup.cancel",
-					Game.input.getMapping("EXIT")), false)
+				new StringEntry(new Localization.LocalizationString("minicraft.display.popup.cancel",
+					Game.input.getMapping("EXIT")))
 			)
-				.setTitle("minicraft.displays.world_gen.title")
+				.setTitle(new Localization.LocalizationString("minicraft.displays.world_gen.title"))
 				.setMaxBoundsAsRenderingBounds()
 				.createMenu();
 

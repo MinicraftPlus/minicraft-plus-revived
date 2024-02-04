@@ -11,7 +11,8 @@ import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
 public class BossFloorTile extends FloorTile {
-	private static final String floorMsg = "minicraft.notification.defeat_obsidian_knight_first";
+	private static final Localization.LocalizationString floorMsg = new Localization.LocalizationString(
+		"minicraft.notification.defeat_obsidian_knight_first");
 
 	protected BossFloorTile() {
 		super(Material.Obsidian, "Boss Floor");
@@ -23,7 +24,7 @@ public class BossFloorTile extends FloorTile {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {
 					if (player.payStamina(1)) {
-						Game.notifications.add(Localization.getLocalized(floorMsg));
+						Game.notifications.add(floorMsg);
 						Sound.play("monsterhurt");
 						return true;
 					}

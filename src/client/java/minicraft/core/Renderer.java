@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -279,9 +280,8 @@ public class Renderer extends Game {
 				Updater.notetick = 0;
 			}
 			List<String> print = new ArrayList<>();
-			for (String n : notifications) {
-				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
-					print.add(l);
+			for (Localization.LocalizationString n : notifications) {
+				print.addAll(Arrays.asList(Font.getLines(n.toString(), Screen.w, Screen.h, 0)));
 			}
 
 			// Draw each current notification, with shadow text effect.
@@ -468,10 +468,12 @@ public class Renderer extends Game {
 			QuestSeries series = q.getSeries();
 
 			questsShown.add(!expanding ?
-				new StringEntry(Localization.getLocalized(q.key), Color.WHITE, false) :
+				new StringEntry(new Localization.LocalizationString(q.key), Color.WHITE) :
 				new StringEntry(q.shouldAllCriteriaBeCompleted() && q.getTotalNumCriteria() > 1 ?
-					String.format("%s (%d/%d)", Localization.getLocalized(series.key), q.getNumCriteriaCompleted(), q.getTotalNumCriteria()) :
-					Localization.getLocalized(series.key), Color.WHITE, false)
+					new Localization.LocalizationString(false, String.format("%s (%d/%d)",
+						Localization.getLocalized(series.key), q.getNumCriteriaCompleted(),
+						q.getTotalNumCriteria())) :
+					new Localization.LocalizationString(series.key), Color.WHITE)
 			);
 
 			if (questsShown.size() >= length) break;
@@ -481,7 +483,7 @@ public class Renderer extends Game {
 			potionRenderOffset = 9 + (Math.min(questsShown.size(), 3)) * 8 + 8 * 2;
 			new Menu.Builder(true, 0, RelPos.RIGHT, questsShown)
 				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-				.setTitle("Quests")
+				.setTitle(new Localization.LocalizationString("minicraft.displays.quests"))
 				.createMenu()
 				.render(screen);
 		} else {

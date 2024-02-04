@@ -2,6 +2,7 @@ package minicraft.item;
 
 import minicraft.core.Game;
 import minicraft.core.World;
+import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.level.Level;
@@ -40,7 +41,7 @@ public enum PotionType {
 
 				if (playerDepth == 0) {
 					// player is in overworld
-					Game.notifications.add("You can't escape from here!");
+					Game.notifications.add(new Localization.LocalizationString("You can't escape from here!"));
 					return false;
 				}
 
@@ -52,6 +53,7 @@ public enum PotionType {
 						player.findStartPos(plevel, false);
 				});
 			}
+
 			return true;
 		}
 	};

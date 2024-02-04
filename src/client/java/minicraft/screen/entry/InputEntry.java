@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class InputEntry extends ListEntry {
 
-	private String prompt;
-	private String regex;
-	private int maxLength;
+	private final @Nullable Localization.LocalizationString prompt;
+	private final String regex;
+	private final int maxLength;
 	private IntRange bounds;
 	private IntRange renderingBounds;
 	private RelPos entryPos;
@@ -23,17 +23,17 @@ public class InputEntry extends ListEntry {
 
 	private ChangeListener listener;
 
-	private ClipboardHandler clipboardHandler = new ClipboardHandler();
+	private final ClipboardHandler clipboardHandler = new ClipboardHandler();
 
-	public InputEntry(String prompt) {
+	public InputEntry(@Nullable Localization.LocalizationString prompt) {
 		this(prompt, null, 0);
 	}
 
-	public InputEntry(String prompt, String regex, int maxLen) {
+	public InputEntry(@Nullable Localization.LocalizationString prompt, String regex, int maxLen) {
 		this(prompt, regex, maxLen, "");
 	}
 
-	public InputEntry(String prompt, String regex, int maxLen, String initValue) {
+	public InputEntry(@Nullable Localization.LocalizationString prompt, String regex, int maxLen, String initValue) {
 		this.prompt = prompt;
 		this.regex = regex;
 		this.maxLength = maxLen;
@@ -58,7 +58,7 @@ public class InputEntry extends ListEntry {
 		if (input.getMappedKey("CTRL-V").isClicked()) {
 			userInput = userInput + clipboardHandler.getClipboardContents();
 		}
-		if (!userInput.equals("")) {
+		if (!userInput.isEmpty()) {
 			if (input.getMappedKey("CTRL-C").isClicked()) {
 				clipboardHandler.setClipboardContents(userInput);
 			}
@@ -74,7 +74,7 @@ public class InputEntry extends ListEntry {
 	}
 
 	public String toString() {
-		return Localization.getLocalized(prompt) + (prompt.length() == 0 ? "" : ": ") + userInput;
+		return prompt == null ? userInput : Localization.getLocalized("minicraft.display.entry", prompt, userInput);
 	}
 
 	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {

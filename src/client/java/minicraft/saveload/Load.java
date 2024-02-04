@@ -174,8 +174,9 @@ public class Load {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-					"minicraft.displays.save.popup_display.world_backup_prompt", callbacks, 2),
-					entries.toArray(new ListEntry[0])));
+					new Localization.LocalizationString("minicraft.displays.save.popup_display.world_backup_prompt"),
+				callbacks, 2),
+				entries.toArray(new ListEntry[0])));
 
 			while (true) {
 				if (acted.get()) {
@@ -283,7 +284,8 @@ public class Load {
 					if (acted.get()) {
 						if (continues.get()) {
 							Logging.SAVELOAD.trace("Regenerating dungeon (B4)...");
-							LoadingDisplay.setMessage("minicraft.displays.loading.message.dungeon_regeneration");
+							LoadingDisplay.setMessage(new Localization.LocalizationString(
+								"minicraft.displays.loading.message.dungeon_regeneration"));
 							int lvlidx = World.lvlIdx(-4);
 							boolean reAdd = Game.player.getLevel().depth == -4;
 							Level oriLevel = World.levels[lvlidx];
@@ -709,7 +711,7 @@ public class Load {
 	private void loadWorld(String filename) {
 		assert worldVer != null;
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
-			LoadingDisplay.setMessage(Level.getDepthString(l), false);
+			LoadingDisplay.setMessage(Level.getDepthString(l));
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 
@@ -804,7 +806,7 @@ public class Load {
 			}
 		}
 
-		LoadingDisplay.setMessage("minicraft.displays.loading.message.quests");
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.quests"));
 
 		if (new File(location + "Quests.json").exists()) {
 			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
@@ -840,7 +842,7 @@ public class Load {
 	}
 
 	public void loadPlayer(String filename, Player player) {
-		LoadingDisplay.setMessage("Player");
+		LoadingDisplay.setMessage(new Localization.LocalizationString("Player"));
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 	}
@@ -1037,7 +1039,7 @@ public class Load {
 	}
 
 	private void loadEntities(String filename) {
-		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.entities"));
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {

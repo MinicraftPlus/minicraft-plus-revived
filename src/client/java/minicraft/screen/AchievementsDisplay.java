@@ -69,10 +69,38 @@ public class AchievementsDisplay extends Display {
 		}
 	}
 
+	private final List<String> achievementList = new ArrayList<>();
+
 	public AchievementsDisplay() {
-		super(true, true,
-			new Menu.Builder(false, 2, RelPos.CENTER, getAchievemensAsEntries()).setSize(48, 48).createMenu(),
-			new Menu.Builder(false, 2, RelPos.BOTTOM, new StringEntry("")).setSize(200, 32).setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM).createMenu());
+		super(true, true);
+		List<ListEntry> entries = new ArrayList<>();
+		for (String id : achievements.keySet()) {
+			achievementList.add(id);
+			// Add entry to list.
+			entries.add(new SelectEntry(new Localization.LocalizationString(id), null) {
+				/**
+				 * Change the color of the selection.
+				 */
+				@Override
+				public int getColor(boolean isSelected) {
+					if (achievements.get(id).getUnlocked()) {
+						return Color.GREEN;
+					} else {
+						return Color.WHITE;
+					}
+				}
+			});
+		}
+		menus = new Menu[] {
+			new Menu.Builder(false, 2, RelPos.CENTER, entries)
+				.setSize(48, 48)
+				.createMenu(),
+			new Menu.Builder(false, 2, RelPos.BOTTOM)
+				.setSize(200, 32)
+				.setDisplayLength(1)
+				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM)
+				.createMenu()
+		};
 	}
 
 	@Override
@@ -84,10 +112,7 @@ public class AchievementsDisplay extends Display {
 			return;
 		}
 
-		ListEntry curEntry = menus[0].getCurEntry();
-		if (curEntry instanceof SelectEntry) {
-			selectedAchievement = achievements.get(((SelectEntry) curEntry).getText());
-		}
+		selectedAchievement = achievements.get(achievementList.get(menus[0].getSelection()));
 	}
 
 	@Override
@@ -100,11 +125,7 @@ public class AchievementsDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
-
-		ListEntry curEntry = menus[0].getCurEntry();
-		if (curEntry instanceof SelectEntry) {
-			selectedAchievement = achievements.get(((SelectEntry) curEntry).getText());
-		}
+		selectedAchievement = achievements.get(achievementList.get(menus[0].getSelection()));
 	}
 
 	@Override
@@ -127,7 +148,9 @@ public class AchievementsDisplay extends Display {
 			}
 
             // Achievement description.
-            menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
+            menus[1].setEntries(StringEntry.useLines(Color.WHITE,false,
+	            Font.getLines(Localization.getLocalized(selectedAchievement.description),
+		            menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
         }
     }
 
@@ -166,7 +189,8 @@ public class AchievementsDisplay extends Display {
 			achievementScore += a.score;
 
 			// Tells the player that they got an achievement.
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked", Localization.getLocalized(id)));
+			Game.notifications.add(new Localization.LocalizationString(
+				"minicraft.notification.achievement_unlocked", id));
 		} else
 			achievementScore -= a.score;
 
@@ -191,28 +215,6 @@ public class AchievementsDisplay extends Display {
 		}
 
 		return strings.toArray(new String[0]);
-	}
-
-	public static List<ListEntry> getAchievemensAsEntries() {
-		List<ListEntry> l = new ArrayList<>();
-		for (String id : achievements.keySet()) {
-			// Add entry to list.
-			l.add(new SelectEntry(id, null, true) {
-				/**
-				 * Change the color of the selection.
-				 */
-				@Override
-				public int getColor(boolean isSelected) {
-					if (achievements.get(id).getUnlocked()) {
-						return Color.GREEN;
-					} else {
-						return Color.WHITE;
-					}
-				}
-			});
-		}
-
-		return l;
 	}
 
 	/**

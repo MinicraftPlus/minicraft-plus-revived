@@ -3,6 +3,7 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
@@ -180,11 +181,12 @@ public class PopupDisplay extends Display {
 	}
 
 	public static class PopupConfig {
-		public String title;
-		public ArrayList<PopupActionCallback> callbacks;
+		public @Nullable Localization.LocalizationString title;
+		public @Nullable ArrayList<PopupActionCallback> callbacks;
 		public int entrySpacing;
 
-		public PopupConfig(@Nullable String title, @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
+		public PopupConfig(@Nullable Localization.LocalizationString title,
+		                   @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
 			this.title = title;
 			this.callbacks = callbacks;
 			this.entrySpacing = entrySpacing;

@@ -37,7 +37,7 @@ public class Menu {
 	private Rectangle renderingBounds = null;
 	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 
-	private String title = "";
+	private Localization.LocalizationString title = null;
 	private int titleColor;
 	private Point titleLoc = null; // standard point is anchor, with anchor.x + SpriteSheet.boxWidth
 	private boolean drawVertically = false;
@@ -175,7 +175,7 @@ public class Menu {
 		return new Rectangle(bounds);
 	}
 
-	String getTitle() {
+	Localization.LocalizationString getTitle() {
 		return title;
 	}
 
@@ -327,6 +327,7 @@ public class Menu {
 		renderFrame(screen);
 
 		// render the title
+		String title = this.title.toString();
 		if (title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
@@ -557,16 +558,16 @@ public class Menu {
 			return this;
 		}
 
-		public Builder setTitle(String title) {
+		public Builder setTitle(Localization.LocalizationString title) {
 			menu.title = title;
 			return this;
 		}
 
-		public Builder setTitle(String title, int color) {
+		public Builder setTitle(Localization.LocalizationString title, int color) {
 			return setTitle(title, color, false);
 		}
 
-		public Builder setTitle(String title, int color, boolean fullColor) {
+		public Builder setTitle(Localization.LocalizationString title, int color, boolean fullColor) {
 			menu.title = title;
 
 			fullTitleColor = fullColor;
@@ -628,8 +629,6 @@ public class Menu {
 			if (b == this)
 				return copy().createMenu(this);
 
-			menu.title = Localization.getLocalized(menu.title);
-
 			// set default selectability
 			if (!setSelectable) {
 				for (ListEntry entry : menu.entries) {
@@ -643,9 +642,10 @@ public class Menu {
 
 			menu.drawVertically = titlePos == RelPos.LEFT || titlePos == RelPos.RIGHT;
 
+			String title = menu.title.toString();
 			Dimension titleDim = menu.drawVertically ?
-				new Dimension(Font.textHeight() * 2, Font.textWidth(menu.title)) :
-				new Dimension(Font.textWidth(menu.title), Font.textHeight() * 2);
+				new Dimension(Font.textHeight() * 2, Font.textWidth(title)) :
+				new Dimension(Font.textWidth(title), Font.textHeight() * 2);
 
 			// find the area used by the title and/or frame, that can't be used by the entries
 
@@ -668,7 +668,7 @@ public class Menu {
 				border = new Insets();
 
 				// add title insets
-				if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
+				if (title.length() > 0 && titlePos != RelPos.CENTER) {
 					RelPos c = titlePos;
 					int space = MinicraftImage.boxWidth * 2;
 					if (c.yIndex == 0)
@@ -797,7 +797,7 @@ public class Menu {
 				menu.titleLoc.x -= MinicraftImage.boxWidth;
 
 			// set the menu title color
-			if (menu.title.length() > 0) {
+			if (title.length() > 0) {
 				if (fullTitleColor)
 					menu.titleColor = titleCol;
 				else {

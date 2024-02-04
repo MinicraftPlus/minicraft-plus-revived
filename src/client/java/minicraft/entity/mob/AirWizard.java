@@ -171,7 +171,7 @@ public class AirWizard extends EnemyMob {
 		Sound.play("bossdeath");
 
 		Analytics.AirWizardDeath.ping();
-		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
+		Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.air_wizard_defeated"));
 
 
 		// If this is the first time we beat the air wizard.
@@ -179,7 +179,7 @@ public class AirWizard extends EnemyMob {
 			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 
 			Analytics.FirstAirWizardDeath.ping();
-			Updater.notifyAll("minicraft.notification.dungeon_opened", -400);
+			Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.dungeon_opened"), -400);
 		}
 
 		beaten = true;

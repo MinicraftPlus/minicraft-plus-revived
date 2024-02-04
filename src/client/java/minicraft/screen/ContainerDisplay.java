@@ -3,6 +3,7 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.mob.Player;
@@ -20,8 +21,9 @@ public class ContainerDisplay extends Display {
 
 	public ContainerDisplay(Player player, Chest chest) {
 		super(
-			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT),
-			new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.RIGHT)
+			new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
+				"minicraft.display.menus.inventory"), RelPos.LEFT),
+			new InventoryMenu(chest, chest.getInventory(), new Localization.LocalizationString(chest.name), RelPos.RIGHT)
 		);
 
 		//pInv = player.getInventory();

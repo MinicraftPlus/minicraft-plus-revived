@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -55,7 +56,7 @@ public class HardRockTile extends Tile {
 					return true;
 				}
 			} else {
-				Game.notifications.add("minicraft.notification.gem_pickaxe_required");
+				Game.notifications.add(new Localization.LocalizationString("minicraft.notification.gem_pickaxe_required"));
 			}
 		}
 		return false;

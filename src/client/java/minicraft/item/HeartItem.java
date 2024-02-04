@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.core.Updater;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
@@ -43,7 +44,8 @@ public class HeartItem extends StackableItem {
 			player.health += health; // Adds health to the player when used. (Almost like absorbing the item's power first time)
 			success = true;
 		} else {
-			Updater.notifyAll("Health increase is at max!"); // When at max, health cannot be increased more and doesn't consume item
+			// When at max, health cannot be increased more and doesn't consume item
+			Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.health_at_max"));
 			return false;
 		}
 

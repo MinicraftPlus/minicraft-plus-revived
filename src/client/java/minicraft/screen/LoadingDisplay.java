@@ -15,16 +15,17 @@ import minicraft.saveload.Save;
 
 import javax.swing.Timer;
 
+import java.util.Objects;
+
 public class LoadingDisplay extends Display {
 
 	private static float percentage = 0;
-	private static String progressType = "";
-	private static boolean localizeProgressType = true;
+	private static Localization.LocalizationString progressType = null;
 
 	private final Timer t;
 	private final Ellipsis ellipsis = new SmoothEllipsis(new TimeUpdater());
 
-	private String msg = "";
+	private Localization.LocalizationString msg = null;
 
 	public LoadingDisplay(WorldGenDisplay.WorldSettings settings) {
 		super(true, false);
@@ -47,12 +48,11 @@ public class LoadingDisplay extends Display {
 		if (parent != null && parent.getParent() == this) return; // Undefined behaviour
 		super.init(parent);
 		percentage = 0;
-		progressType = "minicraft.displays.loading.message.world";
-		localizeProgressType = true;
+		progressType = new Localization.LocalizationString("minicraft.displays.loading.message.world");
 		if (WorldSelectDisplay.hasLoadedWorld())
-			msg = "minicraft.displays.loading.message.loading";
+			msg = new Localization.LocalizationString("minicraft.displays.loading.message.loading");
 		else
-			msg = "minicraft.displays.loading.message.generating";
+			msg = new Localization.LocalizationString("minicraft.displays.loading.message.generating");
 		t.start();
 	}
 
@@ -60,9 +60,8 @@ public class LoadingDisplay extends Display {
 	public void onExit() {
 		percentage = 0;
 		if (!WorldSelectDisplay.hasLoadedWorld()) {
-			msg = "minicraft.displays.loading.message.saving";
-			progressType = "minicraft.displays.loading.message.world";
-			localizeProgressType = true;
+			msg = new Localization.LocalizationString("minicraft.displays.loading.message.saving");
+			progressType = new Localization.LocalizationString("minicraft.displays.loading.message.world");
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.notifications.clear();
 		}
@@ -76,10 +75,8 @@ public class LoadingDisplay extends Display {
 		return percentage;
 	}
 
-	public static void setMessage(String progressType) {
-		setMessage(progressType, true); }
-	public static void setMessage(String progressType, boolean localize) {LoadingDisplay.progressType = progressType;
-	localizeProgressType = localize;
+	public static void setMessage(Localization.LocalizationString progressType) {
+		LoadingDisplay.progressType = progressType;
 	}
 
 	public static void progress(float amt) {
@@ -90,9 +87,11 @@ public class LoadingDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 		int percent = Math.round(percentage);
+		if (msg == null) // msg != null if #init has already been invoked.
+			throw new IllegalStateException("display not initialized");
 		Font.drawParagraph(screen, new FontStyle(Color.RED), 6,
-			Localization.getLocalized(msg) + (progressType.length() > 0 ? " " + (localizeProgressType ? Localization.getLocalized(progressType) : progressType) : "")
-				+ ellipsis.updateAndGet(),
+			 (progressType == null ? msg : new Localization.LocalizationString(
+				 "minicraft.displays.loading.message", msg, progressType)) + ellipsis.updateAndGet(),
 			percent + "%"
 		);
 	}

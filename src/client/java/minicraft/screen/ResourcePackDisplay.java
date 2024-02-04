@@ -217,7 +217,8 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new MessageDisplay(pack.name, pack.description)), false) {
+			entries0.add(new SelectEntry(new Localization.LocalizationString(false, pack.name),
+				() -> Game.setDisplay(new MessageDisplay(pack.name, pack.description))) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 1) return SelectEntry.COL_UNSLCT;
@@ -228,7 +229,8 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new MessageDisplay(pack.name, pack.description)), false) {
+			entries1.add(new SelectEntry(new Localization.LocalizationString(false, pack.name),
+				() -> Game.setDisplay(new MessageDisplay(pack.name, pack.description))) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 0) return SelectEntry.COL_UNSLCT;
@@ -392,7 +394,8 @@ public class ResourcePackDisplay extends Display {
 		super.tick(input);
 	}
 
-	private final StringEntry helpPositionTextEntry = new StringEntry("minicraft.displays.resource_packs.display.help.position", Color.DARK_GRAY);
+	private final StringEntry helpPositionTextEntry = new StringEntry(new Localization.LocalizationString(
+		"minicraft.displays.resource_packs.display.help.position"), Color.DARK_GRAY);
 
 	@Override
 	public void render(Screen screen) {

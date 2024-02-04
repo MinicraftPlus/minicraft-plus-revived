@@ -3,6 +3,7 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.MinicraftImage;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class CraftingDisplay extends Display {
 
 	private final Player player;
-	private final String title;
+	private final Localization.LocalizationString title;
 	private Recipe[] recipes;
 	private final List<Recipe> availableRecipes = new ArrayList<>();
 
@@ -36,11 +37,11 @@ public class CraftingDisplay extends Display {
 
 	private static final HashSet<Recipe> unlockedRecipes = new HashSet<>();
 
-	public CraftingDisplay(List<Recipe> recipes, String title, Player player) {
+	public CraftingDisplay(List<Recipe> recipes, Localization.LocalizationString title, Player player) {
 		this(recipes, title, player, false);
 	}
 
-	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
+	public CraftingDisplay(List<Recipe> recipes, Localization.LocalizationString title, Player player, boolean isPersonal) {
 		for (Recipe recipe : recipes)
 			recipe.checkCanCraft(player);
 		this.player = player;
@@ -49,11 +50,11 @@ public class CraftingDisplay extends Display {
 		availableRecipes.addAll(recipes);
 
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle("minicraft.displays.crafting.container_title.have")
+			.setTitle(new Localization.LocalizationString("minicraft.displays.crafting.container_title.have"))
 			.setTitlePos(RelPos.TOP_LEFT);
 
 		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle("minicraft.displays.crafting.container_title.cost")
+			.setTitle(new Localization.LocalizationString("minicraft.displays.crafting.container_title.cost"))
 			.setTitlePos(RelPos.TOP_LEFT);
 		refreshDisplayRecipes();
 	}

@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
@@ -30,7 +31,7 @@ public class Game {
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
 
-	public static List<String> notifications = new ArrayList<>();
+	public static List<Localization.LocalizationString> notifications = new ArrayList<>();
 
 	public static int MAX_FPS;
 

@@ -1,6 +1,7 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +27,6 @@ public class BlankEntry extends ListEntry {
 
 	@Override
 	public String toString() {
-		return " ";
+		return Localization.getLocalized("minicraft.display.entry.blank");
 	}
 }

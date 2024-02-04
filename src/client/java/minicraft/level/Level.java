@@ -57,8 +57,8 @@ public class Level {
 		return levelNames[-1 * depth + 1];
 	}
 
-	public static String getDepthString(int depth) {
-		return Localization.getLocalized("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth);
+	public static Localization.LocalizationString getDepthString(int depth) {
+		return new Localization.LocalizationString("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth);
 	}
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
@@ -84,6 +84,7 @@ public class Level {
 	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 
 	// Creates a sorter for all the entities to be rendered.
+	// Fixed since Java 9: https://bugs.openjdk.org/browse/JDK-8077667
 	//private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y); // Broken
 	@SuppressWarnings("Convert2Lambda")
 	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {

@@ -145,7 +145,7 @@ public class World extends Game {
 
 				Logging.WORLD.trace("Generating level " + i + "...");
 
-				LoadingDisplay.setMessage(Level.getDepthString(i), false);
+				LoadingDisplay.setMessage(Level.getDepthString(i));
 				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], !WorldSelectDisplay.hasLoadedWorld());
 
 				LoadingDisplay.progress(loadingInc);

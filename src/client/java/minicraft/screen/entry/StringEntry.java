@@ -33,25 +33,17 @@ public class StringEntry extends SelectableStringEntry {
 		}
 		StringEntry[] entries = new StringEntry[lns.size()];
 		for (int i = 0; i < lns.size(); i++)
-			entries[i] = new StringEntry(lns.get(i), color, false);
+			entries[i] = new StringEntry(new Localization.LocalizationString(false, lns.get(i)), color);
 
 		return entries;
 	}
 
-	public StringEntry(String text) {
+	public StringEntry(Localization.LocalizationString text) {
 		this(text, DEFAULT_COLOR);
 	}
 
-	public StringEntry(String text, boolean localize) {
-		this(text, DEFAULT_COLOR, localize);
-	} // This might be false as the text might have been localized already.
-
-	public StringEntry(String text, int color) {
-		this(text, color, true);
-	} // This should be always true with the new localization IDs.
-
-	public StringEntry(String text, int color, boolean localize) {
-		super(text, color, localize);
+	public StringEntry(Localization.LocalizationString text, int color) {
+		super(text, color);
 		setSelectable(false);
 	}
 }

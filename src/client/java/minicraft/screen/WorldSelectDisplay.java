@@ -101,7 +101,8 @@ public class WorldSelectDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 
 		for (WorldInfo world : worlds) {
-			entries.add(new SelectEntry(world.name, () -> loadWorld(world), false));
+			entries.add(new SelectEntry(new Localization.LocalizationString(false, world.name),
+				() -> loadWorld(world)));
 		}
 
 		menus[0] = new Menu.Builder(false, 0, RelPos.CENTER, entries)
@@ -118,10 +119,10 @@ public class WorldSelectDisplay extends Display {
 		else {
 			WorldInfo world = worlds.get(selection);
 			menus[1].setEntries(new ListEntry[] {
-				new StringEntry(world.lastPlayed.format(dateTimeFormat), false),
-				new StringEntry(Localization.getLocalized("minicraft.displays.world_select.world_desc",
+				new StringEntry(new Localization.LocalizationString(false, world.lastPlayed.format(dateTimeFormat))),
+				new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.world_desc",
 					world.mode.equals("minicraft.displays.world_gen.options.game_mode.hardcore") ?
-						Color.RED_CODE : "", Localization.getLocalized(world.mode), Color.WHITE_CODE,
+						Color.RED_CODE : "", new Localization.LocalizationString(world.mode), Color.WHITE_CODE,
 					world.version != null ? world.version.compareTo(Game.VERSION) > 0 ? Color.RED_CODE :
 						// Checks if either the world or the game is pre-release.
 						world.version.toArray()[3] != 0 || Game.VERSION.toArray()[3] != 0 ? Color.GREEN_CODE : "" : "",
@@ -152,15 +153,17 @@ public class WorldSelectDisplay extends Display {
 
 		if (input.getMappedKey("C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			String worldName = worlds.get(menus[0].getSelection()).name;
-			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, null);
+			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput(null, worldName, null);
 			//noinspection DuplicatedCode
-			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
-				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY, false);
+			StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
+				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
 			nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()) :
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid")));
+				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
+					nameInput.getWorldName()) :
+				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid")));
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.BLUE));
+			entries.add(new StringEntry(new Localization.LocalizationString(
+				"minicraft.displays.world_select.popups.display.change"), Color.BLUE));
 			//noinspection DuplicatedCode
 			entries.add(nameInput);
 			entries.add(nameNotify);
@@ -205,15 +208,17 @@ public class WorldSelectDisplay extends Display {
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
 		} else if (input.getMappedKey("R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			String worldName = worlds.get(menus[0].getSelection()).name;
-			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput("", worldName, worldName);
+			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput(null, worldName, worldName);
 			//noinspection DuplicatedCode
-			StringEntry nameNotify = new StringEntry(Localization.getLocalized(
-				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY, false);
+			StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
+				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
 			nameInput.setChangeListener(o -> nameNotify.setText(nameInput.isValid() ?
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()) :
-				Localization.getLocalized("minicraft.display.world_naming.world_name_notify_invalid")));
+				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
+					nameInput.getWorldName()) :
+				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid")));
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.GREEN));
+			entries.add(new StringEntry(new Localization.LocalizationString(
+				"minicraft.displays.world_select.popups.display.change"), Color.GREEN));
 			//noinspection DuplicatedCode
 			entries.add(nameInput);
 			entries.add(nameNotify);

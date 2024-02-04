@@ -29,7 +29,8 @@ public class LanguageSettingsDisplay extends Display {
 		for (Localization.LocaleInformation locale : list) {
 			boolean selected = Localization.getSelectedLanguage() == locale;
 			if (selected) index = count;
-			entries.add(new SelectEntry(locale.toString(), () -> languageSelected(locale), false) {
+			entries.add(new SelectEntry(new Localization.LocalizationString(false, locale.toString()),
+				() -> languageSelected(locale)) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selected) return isSelected ? Color.GREEN : Color.tint(Color.GRAY, 1, true);
@@ -47,7 +48,7 @@ public class LanguageSettingsDisplay extends Display {
 		Map.Entry<ArrayList<ListEntry>, Integer> entries = getEntries();
 		menus = new Menu[]{
 			new Menu.Builder(false, 2, RelPos.CENTER, entries.getKey())
-				.setTitle("minicraft.displays.language_settings.title")
+				.setTitle(new Localization.LocalizationString("minicraft.displays.language_settings.title"))
 				.setSelectable(true)
 				.setPositioning(new Point(Screen.w / 2, 10), RelPos.BOTTOM)
 				.setSize(Screen.w, Screen.h - 30)

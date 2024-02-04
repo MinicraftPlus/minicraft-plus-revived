@@ -9,32 +9,25 @@ import java.util.Arrays;
 
 public class ArrayEntry<T> extends ListEntry {
 
-	private final String label;
+	private final Localization.LocalizationString label;
 	private T[] options;
 	private boolean[] optionVis;
 
 	private int selection;
 	private boolean wrap;
-	private boolean localize;
 
 	private ChangeListener changeAction;
 
 	@SafeVarargs
-	public ArrayEntry(String label, T... options) {
-		this(label, true, true, options);
+	public ArrayEntry(Localization.LocalizationString label, T... options) {
+		this(label, true, options);
 	}
 
 	@SafeVarargs
-	public ArrayEntry(String label, boolean wrap, T... options) {
-		this(label, wrap, true, options);
-	}
-
-	@SafeVarargs
-	public ArrayEntry(String label, boolean wrap, boolean localize, T... options) {
+	public ArrayEntry(Localization.LocalizationString label, boolean wrap, T... options) {
 		this.label = label;
 		this.options = options;
 		this.wrap = wrap;
-		this.localize = localize;
 
 		optionVis = new boolean[options.length];
 		Arrays.fill(optionVis, true);
@@ -53,11 +46,7 @@ public class ArrayEntry<T> extends ListEntry {
 		setSelection(getIndex(value)); // if it is -1, setSelection simply won't set the value.
 	}
 
-	protected String getLabel() {
-		return label;
-	}
-
-	protected String getLocalizationOption(T option) {
+	protected String getLocalizedOption(T option) { // instant localization
 		return option.toString();
 	}
 
@@ -151,12 +140,7 @@ public class ArrayEntry<T> extends ListEntry {
 
 	@Override
 	public String toString() {
-		String str = Localization.getLocalized(label) + ": ";
-		String option = options[selection].toString();
-
-		str += localize ? Localization.getLocalized(option) : option;
-
-		return str;
+		return Localization.getLocalized("minicraft.display.entry", label, getLocalizedOption(options[selection]));
 	}
 
 	public void setChangeAction(ChangeListener l) {

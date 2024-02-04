@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
@@ -21,12 +22,14 @@ public class OptionsWorldDisplay extends Display {
 		List<ListEntry> entries = getEntries();
 
 		if (TutorialDisplayHandler.inTutorial()) {
-			entries.add(new SelectEntry("minicraft.displays.options_world.skip_current_tutorial", () -> {
+			entries.add(new SelectEntry(new Localization.LocalizationString(
+				"minicraft.displays.options_world.skip_current_tutorial"), () -> {
 				TutorialDisplayHandler.skipCurrent();
 				Game.exitDisplay();
 			}));
 			entries.add(new BlankEntry());
-			entries.add(new SelectEntry("minicraft.displays.options_world.turn_off_tutorials", () -> {
+			entries.add(new SelectEntry(new Localization.LocalizationString(
+				"minicraft.displays.options_world.turn_off_tutorials"), () -> {
 				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 					TutorialDisplayHandler.turnOffTutorials();
@@ -41,7 +44,8 @@ public class OptionsWorldDisplay extends Display {
 					return true;
 				}));
 
-				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig("minicraft.display.popup.title_confirm", callbacks, 4), StringEntry.useLines(Color.RED,
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(new Localization.LocalizationString(
+					"minicraft.display.popup.title_confirm"), callbacks, 4), StringEntry.useLines(Color.RED,
 					"minicraft.displays.options_world.off_tutorials_confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel")));
 			}));
 		}
@@ -52,7 +56,7 @@ public class OptionsWorldDisplay extends Display {
 
 		menus = new Menu[]{
 			new Menu.Builder(false, 6, RelPos.LEFT, entries)
-				.setTitle("minicraft.displays.options_world")
+				.setTitle(new Localization.LocalizationString("minicraft.displays.options_world"))
 				.setRemoveEntryPeaks(true)
 				.createMenu()
 		};
@@ -63,10 +67,13 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
-			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
-			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.change_key_bindings"),
+				() -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.language"),
+				() -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("screenshot"),
-			new SelectEntry("minicraft.display.options_display.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.resource_packs"),
+				() -> Game.setDisplay(new ResourcePackDisplay()))
 		));
 	}
 
