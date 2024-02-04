@@ -15,8 +15,6 @@ import minicraft.saveload.Save;
 
 import javax.swing.Timer;
 
-import java.util.Objects;
-
 public class LoadingDisplay extends Display {
 
 	private static float percentage = 0;
@@ -27,7 +25,7 @@ public class LoadingDisplay extends Display {
 
 	private Localization.LocalizationString msg = null;
 
-	public LoadingDisplay(WorldGenDisplay.WorldSettings settings) {
+	public LoadingDisplay(WorldCreateDisplay.WorldSettings settings) {
 		super(true, false);
 		t = new Timer(500, e -> new Thread(() -> { // A new thread is required as this blocks the running thread.
 			try {

@@ -152,7 +152,7 @@ public class WorldSelectDisplay extends Display {
 		super.tick(input);
 
 		if (input.getMappedKey("N").isClicked() || input.buttonPressed(ControllerButton.X)) {
-			Game.setDisplay(new WorldGenDisplay());
+			Game.setDisplay(new WorldCreateDisplay());
 			return;
 		}
 
@@ -162,7 +162,7 @@ public class WorldSelectDisplay extends Display {
 
 		if (input.getMappedKey("C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			String worldName = worlds.get(menus[0].getSelection()).name;
-			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput(null, worldName, null);
+			WorldCreateDisplay.WorldNameInputEntry nameInput = WorldCreateDisplay.makeWorldNameInput(null, worldName, null);
 			//noinspection DuplicatedCode
 			StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
 				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
@@ -208,7 +208,7 @@ public class WorldSelectDisplay extends Display {
 					Game.exitDisplay();
 				} else {
 					Game.exitDisplay(3); // Exiting to title display.
-					Game.setDisplay(new WorldGenDisplay());
+					Game.setDisplay(new WorldCreateDisplay());
 				}
 
 				return true;
@@ -217,7 +217,7 @@ public class WorldSelectDisplay extends Display {
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
 		} else if (input.getMappedKey("R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			String worldName = worlds.get(menus[0].getSelection()).name;
-			WorldGenDisplay.WorldNameInputEntry nameInput = WorldGenDisplay.makeWorldNameInput(null, worldName, worldName);
+			WorldCreateDisplay.WorldNameInputEntry nameInput = WorldCreateDisplay.makeWorldNameInput(null, worldName, worldName);
 			//noinspection DuplicatedCode
 			StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
 				"minicraft.display.world_naming.world_name_notify", nameInput.getWorldName()), Color.DARK_GRAY);
@@ -264,7 +264,7 @@ public class WorldSelectDisplay extends Display {
 					Game.exitDisplay();
 				} else {
 					Game.exitDisplay(3); // Exiting to title display.
-					Game.setDisplay(new WorldGenDisplay());
+					Game.setDisplay(new WorldCreateDisplay());
 				}
 
 				return true;
@@ -306,7 +306,7 @@ public class WorldSelectDisplay extends Display {
 					}
 				} else {
 					Game.exitDisplay(3); // Exiting to title display.
-					Game.setDisplay(new WorldGenDisplay());
+					Game.setDisplay(new WorldCreateDisplay());
 				}
 
 				return true;
@@ -438,10 +438,10 @@ public class WorldSelectDisplay extends Display {
 
 	/**
 	 * Solves for filename problems.
-	 * {@link WorldGenDisplay#isWorldNameLegal(String)} should be checked before this.
+	 * {@link WorldCreateDisplay#isWorldNameLegal(String)} should be checked before this.
 	 */
 	public static String getValidWorldName(String input, boolean ignoreDuplicate) {
-		if (input.isEmpty()) return WorldGenDisplay.DEFAULT_NAME;
+		if (input.isEmpty()) return WorldCreateDisplay.DEFAULT_NAME;
 
 		if (!ignoreDuplicate && worlds.stream().anyMatch(w -> w.name.equalsIgnoreCase(input))) {
 			Logging.WORLD.debug("Duplicated or existed world name \"{}\".", input);

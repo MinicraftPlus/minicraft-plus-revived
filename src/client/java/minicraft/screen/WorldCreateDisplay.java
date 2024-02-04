@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 import java.util.OptionalLong;
 import java.util.regex.Pattern;
 
-public class WorldGenDisplay extends Display {
+public class WorldCreateDisplay extends Display {
 	public static final String DEFAULT_NAME = "New World";
 
 	private static final Pattern detailedFilenamePattern;
@@ -123,7 +123,7 @@ public class WorldGenDisplay extends Display {
 
 		public WorldNameInputEntry(@Nullable Localization.LocalizationString prompt, String initValue,
 		                           @Nullable String beforeRenamed) {
-			super(prompt, WorldGenDisplay.worldNameRegex, 36, initValue);
+			super(prompt, WorldCreateDisplay.worldNameRegex, 36, initValue);
 			this.beforeRenamed = beforeRenamed;
 			valid = false;
 		}
@@ -167,7 +167,7 @@ public class WorldGenDisplay extends Display {
 
 	private final SelectEntry createWorld;
 
-	public WorldGenDisplay() {
+	public WorldCreateDisplay() {
 		super(true);
 
 		WorldNameInputEntry nameField = makeWorldNameInput(new Localization.LocalizationString(

@@ -12,7 +12,7 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.TutorialDisplayHandler;
-import minicraft.screen.WorldGenDisplay;
+import minicraft.screen.WorldCreateDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
@@ -103,7 +103,7 @@ public class World extends Game {
 	 * This method is used to create a brand new world, or to load an existing one from a file.
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
-	public static void initWorld(WorldGenDisplay.WorldSettings settings)
+	public static void initWorld(WorldCreateDisplay.WorldSettings settings)
 		throws Load.BackupCreationFailedException, Load.WorldLoadingFailedException,
 		Load.DungeonRegenerationCancelledException { // This is a full reset; everything.
 		Logging.WORLD.debug("Resetting world...");
