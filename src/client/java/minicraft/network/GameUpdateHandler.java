@@ -45,6 +45,7 @@ public class GameUpdateHandler {
 		Executors.newSingleThreadExecutor(r -> new Thread(r, "Game Update Checker"));
 	private String failureMessage = null;
 	private UpdateMeta latestUpdate = null;
+	private boolean checkDid = false;
 
 	public GameUpdateHandler() {}
 
@@ -88,10 +89,15 @@ public class GameUpdateHandler {
 			Color.DIMMED_DARK_GRAY : latestUpdate.color : Color.DIMMED_RED;
 	}
 
+	public boolean anyCheckDid() {
+		return checkDid;
+	}
+
 	public void checkForUpdate() {
 		String setting = (String) Settings.get("updatecheck");
 		if (!setting.equals("minicraft.settings.update_check.disabled")) {
 			boolean fullOnly = setting.equals("minicraft.settings.update_check.full_only");
+			checkDid = true;
 			executorService.submit(() -> {
 				Logging.NETWORK.debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
 				try {

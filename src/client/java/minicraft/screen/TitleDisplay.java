@@ -6,6 +6,7 @@ import minicraft.core.VersionInfo;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
@@ -156,7 +157,8 @@ public class TitleDisplay extends Display {
 
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.title.display.help"), screen, Screen.h - 20, Color.DARK_GRAY);
 
-		Font.draw(Game.updateHandler.getStatusMessage(), screen, 0, Screen.h - 8, Game.updateHandler.getStatusMessageColor());
+		if (Game.updateHandler.anyCheckDid() && !Settings.get("updatecheck").equals("minicraft.settings.update_check.disabled"))
+			Font.draw(Game.updateHandler.getStatusMessage(), screen, 0, Screen.h - 8, Game.updateHandler.getStatusMessageColor());
 	}
 
 	private static final String[] splashes = {
