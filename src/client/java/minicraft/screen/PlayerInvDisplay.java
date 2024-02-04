@@ -13,7 +13,11 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PlayerInvDisplay extends Display {
 
@@ -21,7 +25,7 @@ public class PlayerInvDisplay extends Display {
 
 	private final Player player;
 
-	private String itemDescription = "";
+	private @Nullable List<ListEntry> itemDescription = null;
 	private Menu.Builder descriptionMenuBuilder;
 
 	private final boolean creativeMode;
@@ -34,8 +38,8 @@ public class PlayerInvDisplay extends Display {
 		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.displays.world_create.options.game_mode.creative");
 		itemDescription = getDescription();
+		if (itemDescription != null) descriptionMenuBuilder.setEntries(itemDescription);
 		Menu descriptionMenu = descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT)
-			.setEntries(StringEntry.useLines(Color.WHITE, false, itemDescription.split("\n")))
 			.setSelectable(false)
 			.createMenu();
 		if (creativeMode) {
@@ -63,12 +67,14 @@ public class PlayerInvDisplay extends Display {
 			onScreenKeyboardMenu.setVisible(false);
 	}
 
-	private String getDescription() {
+	@Nullable
+	private List<ListEntry> getDescription() {
 		if (selection == 0) {
 			Inventory inv = player.getInventory();
-			return inv.invSize() == 0 ? "" : inv.get(menus[0].getSelection()).getDescription();
+			return inv.invSize() == 0 ? null : inv.get(menus[0].getSelection()).getDescription().toEntries();
 		} else {
-			return creativeInv.invSize() == 0 ? "" : creativeInv.get(menus[1].getSelection()).getDescription();
+			return creativeInv.invSize() == 0 ? null :
+				creativeInv.get(menus[1].getSelection()).getDescription().toEntries();
 		}
 	}
 
@@ -186,9 +192,9 @@ public class PlayerInvDisplay extends Display {
 
 	@Override
 	public void render(Screen screen) {
-		if (itemDescription.isEmpty()) menus[creativeMode ? 2 : 1].shouldRender = false;
+		if (itemDescription == null) menus[creativeMode ? 2 : 1].shouldRender = false;
 		else {
-			menus[creativeMode ? 2 : 1] = descriptionMenuBuilder.setEntries(StringEntry.useLines(Color.WHITE, itemDescription.split("\n")))
+			menus[creativeMode ? 2 : 1] = descriptionMenuBuilder.setEntries(itemDescription)
 				.createMenu(); // This resizes menu
 		}
 

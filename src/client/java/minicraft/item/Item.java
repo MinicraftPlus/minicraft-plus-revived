@@ -3,6 +3,7 @@ package minicraft.item;
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
@@ -10,7 +11,14 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.StringEntry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class Item {
 
@@ -94,8 +102,57 @@ public abstract class Item {
 	/**
 	 * Gets the description used for display item information.
 	 */
-	public String getDescription() {
-		return getName();
+	public ItemDescription getDescription() {
+		return new ItemDescription.Builder(Localization.getLocalized(getName())).create();
+	}
+
+	public static class ItemDescription {
+		private final String displayName;
+		private final List<String> description;
+		private final List<String> attributes;
+
+		private ItemDescription(String displayName, List<String> description, List<String> attributes) {
+			this.displayName = displayName;
+			this.description = description;
+			this.attributes = attributes;
+		}
+
+		public static class Builder {
+			private final String displayName;
+			private final ArrayList<String> description = new ArrayList<>();
+			private final ArrayList<String> attributes = new ArrayList<>();
+
+			public Builder(String displayName) {
+				this.displayName = displayName;
+			}
+
+			public Builder appendDescription(String line) {
+				description.add(line);
+				return this;
+			}
+
+			public Builder appendAttribute(String line) {
+				attributes.add(line);
+				return this;
+			}
+
+			public ItemDescription create() {
+				return new ItemDescription(displayName, description, attributes);
+			}
+		}
+
+		public List<ListEntry> toEntries() { return toEntries(null); }
+		public List<ListEntry> toEntries(@Nullable List<String> lore) {
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.add(new StringEntry(new Localization.LocalizationString(displayName)));
+			for (String l : description)
+				entries.add(new StringEntry(new Localization.LocalizationString(false, l), Color.LIGHT_GRAY));
+			if (lore != null) for (String l : lore)
+				entries.add(new StringEntry(new Localization.LocalizationString(false, l), Color.GRAY));
+			for (String l : attributes)
+				entries.add(new StringEntry(new Localization.LocalizationString(l), Color.WHITE));
+			return entries;
+		}
 	}
 
 	public final String getName() {
