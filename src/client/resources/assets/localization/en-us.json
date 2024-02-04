@@ -274,6 +274,7 @@
   "minicraft.displays.world_select.popups.display.delete": "Are you sure you want to delete\n%s\"%s\"%s?\nThis can not be undone!",
   "minicraft.displays.world_select.select_world": "Select World",
   "minicraft.displays.world_select.world_desc": "%s%s%s, Version: %s%s",
+  "minicraft.displays.world_select.world_desc.cleared": "CLEARED!",
   "minicraft.notification.achievement_unlocked": "Achievement unlocked: %s",
   "minicraft.notification.air_wizard_defeated": "Air Wizard Defeated!",
   "minicraft.notification.obsidian_knight_defeated": "Obsidian Knight: Defeated!",

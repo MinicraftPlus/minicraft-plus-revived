@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+/** Score mode ending display */
 public class EndGameDisplay extends Display {
 	private static final Random random = new Random();
 

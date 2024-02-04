@@ -15,6 +15,7 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.entry.ArrayEntry;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
@@ -64,18 +65,24 @@ public class WorldSelectDisplay extends Display {
 	}
 
 	public static class WorldInfo {
-		public final String name; // World name
+		/** The world name */
+		public final String name;
 		public final @Nullable Version version;
 		public final String mode;
-		public final String saveName; // World save folder name
+		/** The world save folder (filesystem) name */
+		public final String saveName;
 		public final LocalDateTime lastPlayed;
+		/** The state of the Air Wizard, {@code true} if defeated */
+		public final boolean cleared;
 
-		public WorldInfo(String name, @Nullable Version version, String mode, String saveName, LocalDateTime lastPlayed) {
+		public WorldInfo(String name, @Nullable Version version, String mode, String saveName, LocalDateTime lastPlayed,
+		                 boolean cleared) {
 			this.name = name;
 			this.version = version;
 			this.mode = mode;
 			this.saveName = saveName;
 			this.lastPlayed = lastPlayed;
+			this.cleared = cleared;
 		}
 	}
 
@@ -126,7 +133,9 @@ public class WorldSelectDisplay extends Display {
 					world.version != null ? world.version.compareTo(Game.VERSION) > 0 ? Color.RED_CODE :
 						// Checks if either the world or the game is pre-release.
 						world.version.toArray()[3] != 0 || Game.VERSION.toArray()[3] != 0 ? Color.GREEN_CODE : "" : "",
-					world.version == null ? "< 1.9.1" : world.version))
+					world.version == null ? "< 1.9.1" : world.version)),
+				world.cleared ? new StringEntry(new Localization.LocalizationString(
+					"minicraft.displays.world_select.world_desc.cleared"), Color.CYAN) : new BlankEntry()
 			});
 		}
 
@@ -401,9 +410,13 @@ public class WorldSelectDisplay extends Display {
 				mode--; // We changed the min mode idx from 1 to 0.
 
 			long lastModified = folder.lastModified();
+			boolean cleared = Boolean.parseBoolean(data.get(
+				version.compareTo(new Version("2.2.0-dev1")) >= 0 ? 6 :
+					version.compareTo(new Version("2.0.4-dev8")) >= 0 ? 5 : 4));
 			//noinspection unchecked
 			return new WorldInfo(name, version, ((ArrayEntry<String>) Settings.getEntry("mode")).getValue(mode), name,
-				LocalDateTime.ofEpochSecond(lastModified / 1000, (int) (lastModified % 1000) * 1000000, ZoneOffset.UTC));
+				LocalDateTime.ofEpochSecond(lastModified / 1000,
+					(int) (lastModified % 1000) * 1000000, ZoneOffset.UTC), cleared);
 		} catch (IOException | IndexOutOfBoundsException e) {
 			Logging.WORLD.warn(e, "Unable to load world \"" + folder.getName() + "\"");
 			return null;

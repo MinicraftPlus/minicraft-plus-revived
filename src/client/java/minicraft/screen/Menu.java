@@ -37,7 +37,7 @@ public class Menu {
 	private Rectangle renderingBounds = null;
 	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 
-	private Localization.LocalizationString title = null;
+	private @Nullable Localization.LocalizationString title = null;
 	private int titleColor;
 	private Point titleLoc = null; // standard point is anchor, with anchor.x + SpriteSheet.boxWidth
 	private boolean drawVertically = false;
@@ -327,8 +327,8 @@ public class Menu {
 		renderFrame(screen);
 
 		// render the title
-		String title = this.title.toString();
-		if (title.length() > 0) {
+		if (title != null) {
+			String title = this.title.toString();
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
@@ -349,7 +349,8 @@ public class Menu {
 			int spaceWidth = Font.textWidth(" ");
 			int leading = typingSearcher.length() * spaceWidth / 2;
 			// int xSearcherBar = titleLoc.x + title.length() * spaceWidth / 3 - title.length() / 2;
-			int xSearcherBar = titleLoc.x + title.length() * 8 / 2 - 16;
+			int xSearcherBar = titleLoc.x - 16;
+			if (title != null) xSearcherBar += title.toString().length() * 8 / 2;
 
 			if (xSearcherBar - leading < 0) {
 				leading += xSearcherBar - leading;
@@ -642,7 +643,7 @@ public class Menu {
 
 			menu.drawVertically = titlePos == RelPos.LEFT || titlePos == RelPos.RIGHT;
 
-			String title = menu.title.toString();
+			String title = menu.title == null ? "" : menu.title.toString();
 			Dimension titleDim = menu.drawVertically ?
 				new Dimension(Font.textHeight() * 2, Font.textWidth(title)) :
 				new Dimension(Font.textWidth(title), Font.textHeight() * 2);
