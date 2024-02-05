@@ -406,8 +406,6 @@ public class Load {
 				ex.printStackTrace();
 			}
 		}
-
-		LoadingDisplay.progress(percentInc);
 	}
 
 	/**
