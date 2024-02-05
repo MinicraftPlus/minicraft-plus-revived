@@ -113,7 +113,13 @@ public class SkinDisplay extends Display {
 	private void refreshEntries() {
 		List<ListEntry> l = new ArrayList<>();
 		for (String s : skins.keySet()) {
-			l.add(new SelectEntry(new Localization.LocalizationString(s.startsWith("minicraft.skin"), s), this::confirmExit));
+			l.add(new SelectEntry(new Localization.LocalizationString(s.startsWith("minicraft.skin"), s), this::confirmExit) {
+				@Override
+				public int getColor(boolean isSelected) {
+					if (s.equals(selectedSkin)) return isSelected ? Color.GREEN : Color.DIMMED_GREEN;
+					return super.getColor(isSelected);
+				}
+			});
 		}
 
 		menus[0].setEntries(l);

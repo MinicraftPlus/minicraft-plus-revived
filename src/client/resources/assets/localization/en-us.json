@@ -153,6 +153,7 @@
   "minicraft.displays.key_input.troublesome_input.warning.return": "Continue (%s)",
   "minicraft.displays.key_input.troublesome_input.warning.title": "Warning",
   "minicraft.displays.language_settings.title": "Language...",
+  "minicraft.displays.language_settings.disclaimer": "Language translations may not be 100%% accurate",
   "minicraft.displays.loading.message": "%1$s %2$s",
   "minicraft.displays.loading.message.dungeon_regeneration": "Regenerating B4",
   "minicraft.displays.loading.message.label.legacy": "(Legacy) %s",
