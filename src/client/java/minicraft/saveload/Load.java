@@ -111,7 +111,10 @@ public class Load {
 		extradata = new ArrayList<>();
 	}
 
-	public Load(String worldname) { this(worldname, true); }
+	public Load(String worldname) {
+		this(worldname, true);
+	}
+
 	public Load(String worldname, boolean loadGame) {
 		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
@@ -127,7 +130,7 @@ public class Load {
 		else {
 			location += "/saves/" + worldname + "/";
 
-			percentInc = 5 + World.levels.length-1; // For the methods below, and world.
+			percentInc = 5 + World.levels.length - 1; // For the methods below, and world.
 
 			percentInc = 100f / percentInc;
 
@@ -197,11 +200,15 @@ public class Load {
 		}
 	}
 
-	public Load() { this(Game.VERSION); }
+	public Load() {
+		this(Game.VERSION);
+	}
+
 	public Load(Version worldVersion) {
 		this(false);
 		worldVer = worldVersion;
 	}
+
 	public Load(boolean loadConfig) {
 		if (!loadConfig) return;
 		boolean resave = false;
@@ -254,7 +261,9 @@ public class Load {
 		}
 	}
 
-	public Version getWorldVersion() { return worldVer; }
+	public Version getWorldVersion() {
+		return worldVer;
+	}
 
 	public static ArrayList<String> loadFile(String filename) throws IOException {
 		ArrayList<String> lines = new ArrayList<>();
@@ -298,7 +307,9 @@ public class Load {
 		LoadingDisplay.progress(percentInc);
 	}
 
-	/** Source: Note: This method is copied from MiniMods. */
+	/**
+	 * Source: Note: This method is copied from MiniMods.
+	 */
 	private static ArrayList<String> splitUnwrappedCommas(String input) {
 		ArrayList<String> out = new ArrayList<>();
 		int lastIdx = 0;
@@ -321,21 +332,24 @@ public class Load {
 			if (ch == commaChar && bracketCounter.isEmpty()) {
 				String str = input.substring(lastIdx + (input.charAt(lastIdx) == commaChar ? 1 : 0), i).trim();
 				lastIdx = i;
-				if (!str.isEmpty()) out.add(str);
+				out.add(str); // Empty strings are expected.
 			} else if (ch == openBracket0) {
 				bracketCounter.push(0);
 			} else if (ch == closeBracket0) {
-				if (checkDiff.test(0)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				if (checkDiff.test(0))
+					throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
 				bracketCounter.pop();
 			} else if (ch == openBracket1) {
 				bracketCounter.push(1);
 			} else if (ch == closeBracket1) {
-				if (checkDiff.test(1)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				if (checkDiff.test(1))
+					throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
 				bracketCounter.pop();
 			} else if (ch == openBracket2) {
 				bracketCounter.push(2);
 			} else if (ch == closeBracket2) {
-				if (checkDiff.test(2)) throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
+				if (checkDiff.test(2))
+					throw new RuntimeException(String.format("Invalid closing char %s index %s. Input: \"%s\"", ch, i, input));
 				bracketCounter.pop();
 			}
 		}
@@ -435,7 +449,7 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
 
-		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
+		if (!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
 			prefVer = new Version(data.remove(0));
 
 		Settings.set("sound", Boolean.parseBoolean(data.remove(0)));
@@ -452,7 +466,7 @@ public class Load {
 			subdata = data;
 		} else {
 			MultiplayerDisplay.savedIP = data.remove(0);
-			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
+			if (prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
 				MultiplayerDisplay.savedUUID = data.remove(0);
 				MultiplayerDisplay.savedUsername = data.remove(0);
 			}
@@ -564,7 +578,7 @@ public class Load {
 	private void loadUnlocksOld(String filename) {
 		loadFromFile(location + filename + extension);
 
-		for (String unlock: data) {
+		for (String unlock : data) {
 			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
 
 			if (unlock.contains("_ScoreTime"))
@@ -591,7 +605,7 @@ public class Load {
 	}
 
 	private void loadWorld(String filename) {
-		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
+		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			LoadingDisplay.setMessage(Level.getDepthString(l));
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
@@ -641,7 +655,7 @@ public class Load {
 							default:
 								tilename = "Wool";
 						}
-					} else if (l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if (Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
 					} else if (tilename.equalsIgnoreCase("Cloud Cactus")) {
@@ -662,7 +676,7 @@ public class Load {
 				}
 			}
 
-			Level parent = World.levels[World.lvlIdx(l+1)];
+			Level parent = World.levels[World.lvlIdx(l + 1)];
 			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
 
 			Level curLevel = World.levels[lvlidx];
@@ -673,13 +687,13 @@ public class Load {
 
 			if (parent == null) continue;
 			/// confirm that there are stairs in all the places that should have stairs.
-			for (minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
+			for (minicraft.gfx.Point p : parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
 				if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
 					curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
 					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
 				}
 			}
-			for (minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
+			for (minicraft.gfx.Point p : curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
 				if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
 					parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
 					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
@@ -689,7 +703,7 @@ public class Load {
 
 		LoadingDisplay.setMessage("minicraft.displays.loading.message.quests");
 
-		if (new File(location+"Quests.json").exists()){
+		if (new File(location + "Quests.json").exists()) {
 			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
 			try {
 				Files.move(Paths.get(location, "Quests.json"), Paths.get(location, "Quests.json_old"), StandardCopyOption.REPLACE_EXISTING);
@@ -699,7 +713,7 @@ public class Load {
 		}
 
 		boolean advancementsLoadSucceeded = false;
-		if (new File(location+"advancements.json").exists()) {
+		if (new File(location + "advancements.json").exists()) {
 			try {
 				JSONObject questsObj = new JSONObject(loadFromFile(location + "advancements.json", true));
 				@SuppressWarnings("unused")
@@ -756,6 +770,7 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 	}
+
 	public void loadPlayer(Player player, List<String> origData) {
 		List<String> data = new ArrayList<>(origData);
 		player.x = Integer.parseInt(data.remove(0));
@@ -770,12 +785,11 @@ public class Load {
 		player.armor = Integer.parseInt(data.remove(0));
 
 		if (worldVer.compareTo(new Version("2.0.5-dev5")) >= 0 || player.armor > 0 || worldVer.compareTo(new Version("2.0.5-dev4")) == 0 && data.size() > 5) {
-			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
+			if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 				// Reverse order b/c we are taking from the end
-				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
-				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
-			}
-			else {
+				player.curArmor = (ArmorItem) Items.get(data.remove(data.size() - 1));
+				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size() - 1));
+			} else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
 				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
 			}
@@ -790,8 +804,9 @@ public class Load {
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
 		Level level = World.levels[Game.currentLevel];
-		if (!player.isRemoved()) player.remove(); // Removes the user player from the level, in case they would be added twice.
-		if(level != null)
+		if (!player.isRemoved())
+			player.remove(); // Removes the user player from the level, in case they would be added twice.
+		if (level != null)
 			level.add(player);
 		else
 			Logging.SAVELOAD.trace("Game level to add player {} to is null.", player);
@@ -829,8 +844,7 @@ public class Load {
 			for (int i = 0; i < 3; i++)
 				colors[i] = Integer.parseInt(String.valueOf(color.charAt(i)));
 			player.shirtColor = Color.get(1, colors[0] * 51, colors[1] * 51, colors[2] * 51);
-		}
-		else
+		} else
 			player.shirtColor = Integer.parseInt(data.remove(0));
 
 		// Just delete the slot reserved for loading legacy skins.
@@ -900,6 +914,7 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		loadInventory(inventory, data);
 	}
+
 	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
 
@@ -997,7 +1012,7 @@ public class Load {
 			int awID = Integer.parseInt(info.get(2));
 			Entity sparkOwner = Network.getEntity(awID);
 			if (sparkOwner instanceof AirWizard)
-				newEntity = new Spark((AirWizard)sparkOwner, x, y);
+				newEntity = new Spark((AirWizard) sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
 				return null;
@@ -1007,22 +1022,23 @@ public class Load {
 			if (!Crafter.names.contains(entityName)) { // Entity missing debugging
 				try {
 					Class.forName("minicraft.entity.mob." + entityName);
-				} catch (ClassNotFoundException ignored) {}
+				} catch (ClassNotFoundException ignored) {
+				}
 			}
 
 			// Check for level of AirWizard
-			if(entityName.equals("AirWizard")) {
+			if (entityName.equals("AirWizard")) {
 				mobLvl = Integer.parseInt(stuff[3]);
 			}
 
-			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
+			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".") + 1), mobLvl);
 		}
 
 		if (entityName.equals("FireSpark") && !isLocalSave) {
 			int obID = Integer.parseInt(info.get(2));
 			Entity sparkOwner = Network.getEntity(obID);
 			if (sparkOwner instanceof ObsidianKnight)
-				newEntity = new FireSpark((ObsidianKnight)sparkOwner, x, y);
+				newEntity = new FireSpark((ObsidianKnight) sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load FireSpark; owner id doesn't point to a correct entity");
 				return null;
@@ -1033,7 +1049,7 @@ public class Load {
 			return null;
 
 		if (newEntity instanceof Mob) { // This is structured the same way as in Save.java.
-			Mob mob = (Mob)newEntity;
+			Mob mob = (Mob) newEntity;
 			mob.health = Integer.parseInt(info.get(2));
 
 			Class<?> c = null;
@@ -1045,7 +1061,7 @@ public class Load {
 
 			if (EnemyMob.class.isAssignableFrom(c)) {
 				EnemyMob enemyMob = ((EnemyMob) mob);
-				enemyMob.lvl = Integer.parseInt(info.get(info.size()-2));
+				enemyMob.lvl = Integer.parseInt(info.get(info.size() - 2));
 
 				if (enemyMob.lvl == 0) {
 					Logging.SAVELOAD.debug("Level 0 mob: " + entityName);
@@ -1069,10 +1085,10 @@ public class Load {
 
 			newEntity = mob;
 		} else if (newEntity instanceof Chest) {
-			Chest chest = (Chest)newEntity;
+			Chest chest = (Chest) newEntity;
 			boolean isDeathChest = chest instanceof DeathChest;
 			boolean isDungeonChest = chest instanceof DungeonChest;
-			List<String> chestInfo = info.subList(2, info.size()-1);
+			List<String> chestInfo = info.subList(2, info.size() - 1);
 
 			int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
 			for (int idx = 0; idx < endIdx; idx++) {
@@ -1086,10 +1102,11 @@ public class Load {
 			}
 
 			if (isDeathChest) {
-				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
+				((DeathChest) chest).time = Integer.parseInt(chestInfo.get(chestInfo.size() - 1));
 			} else if (isDungeonChest) {
-				((DungeonChest)chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1)));
-				if (((DungeonChest)chest).isLocked()) World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
+				((DungeonChest) chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size() - 1)));
+				if (((DungeonChest) chest).isLocked())
+					World.levels[Integer.parseInt(info.get(info.size() - 1))].chestCount++;
 			}
 
 			newEntity = chest;
@@ -1107,7 +1124,7 @@ public class Load {
 		if (!isLocalSave) {
 			if (newEntity instanceof Arrow) {
 				int ownerID = Integer.parseInt(info.get(2));
-				Mob m = (Mob)Network.getEntity(ownerID);
+				Mob m = (Mob) Network.getEntity(ownerID);
 				if (m != null) {
 					Direction dir = Direction.values[Integer.parseInt(info.get(3))];
 					int dmg = Integer.parseInt(info.get(5));
@@ -1135,7 +1152,7 @@ public class Load {
 		if (newEntity instanceof ItemEntity && eid == -1)
 			Logging.SAVELOAD.warn("Item entity was loaded with no eid");
 
-		int curLevel = Integer.parseInt(info.get(info.size()-1));
+		int curLevel = Integer.parseInt(info.get(info.size() - 1));
 		if (World.levels[curLevel] != null) {
 			World.levels[curLevel].add(newEntity, x, y);
 		}
@@ -1146,41 +1163,73 @@ public class Load {
 	@Nullable
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
-			case "Player": return null;
-			case "RemotePlayer": return null;
-			case "Cow": return new Cow();
-			case "Sheep": return new Sheep();
-			case "Pig": return new Pig();
-			case "Zombie": return new Zombie(mobLevel);
-			case "Slime": return new Slime(mobLevel);
-			case "Creeper": return new Creeper(mobLevel);
-			case "Skeleton": return new Skeleton(mobLevel);
-			case "Knight": return new Knight(mobLevel);
-			case "Snake": return new Snake(mobLevel);
+			case "Player":
+				return null;
+			case "RemotePlayer":
+				return null;
+			case "Cow":
+				return new Cow();
+			case "Sheep":
+				return new Sheep();
+			case "Pig":
+				return new Pig();
+			case "Zombie":
+				return new Zombie(mobLevel);
+			case "Slime":
+				return new Slime(mobLevel);
+			case "Creeper":
+				return new Creeper(mobLevel);
+			case "Skeleton":
+				return new Skeleton(mobLevel);
+			case "Knight":
+				return new Knight(mobLevel);
+			case "Snake":
+				return new Snake(mobLevel);
 			case "AirWizard":
 				if (mobLevel > 1) return null;
 				return new AirWizard();
-			case "Spawner": return new Spawner(new Zombie(1));
-			case "Workbench": return new Crafter(Crafter.Type.Workbench);
-			case "Chest": return new Chest();
-			case "DeathChest": return new DeathChest();
-			case "DungeonChest": return new DungeonChest(false);
-			case "Anvil": return new Crafter(Crafter.Type.Anvil);
-			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
-			case "Loom": return new Crafter(Crafter.Type.Loom);
-			case "Furnace": return new Crafter(Crafter.Type.Furnace);
-			case "Oven": return new Crafter(Crafter.Type.Oven);
-			case "Bed": return new Bed();
-			case "Tnt": return new Tnt();
-			case "Lantern": return new Lantern(Lantern.Type.NORM);
-			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
-			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
-			case "FireParticle": return new FireParticle(0, 0);
-			case "SmashParticle": return new SmashParticle(0, 0);
-			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			case "KnightStatue": return new KnightStatue(0);
-			case "ObsidianKnight": return  new ObsidianKnight(0);
-			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
+			case "Spawner":
+				return new Spawner(new Zombie(1));
+			case "Workbench":
+				return new Crafter(Crafter.Type.Workbench);
+			case "Chest":
+				return new Chest();
+			case "DeathChest":
+				return new DeathChest();
+			case "DungeonChest":
+				return new DungeonChest(false);
+			case "Anvil":
+				return new Crafter(Crafter.Type.Anvil);
+			case "Enchanter":
+				return new Crafter(Crafter.Type.Enchanter);
+			case "Loom":
+				return new Crafter(Crafter.Type.Loom);
+			case "Furnace":
+				return new Crafter(Crafter.Type.Furnace);
+			case "Oven":
+				return new Crafter(Crafter.Type.Oven);
+			case "Bed":
+				return new Bed();
+			case "Tnt":
+				return new Tnt();
+			case "Lantern":
+				return new Lantern(Lantern.Type.NORM);
+			case "Arrow":
+				return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
+			case "ItemEntity":
+				return new ItemEntity(Items.get("unknown"), 0, 0);
+			case "FireParticle":
+				return new FireParticle(0, 0);
+			case "SmashParticle":
+				return new SmashParticle(0, 0);
+			case "TextParticle":
+				return new TextParticle("", 0, 0, 0);
+			case "KnightStatue":
+				return new KnightStatue(0);
+			case "ObsidianKnight":
+				return new ObsidianKnight(0);
+			default:
+				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

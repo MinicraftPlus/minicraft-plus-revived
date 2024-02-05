@@ -2,6 +2,7 @@ package minicraft.item;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
+import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,9 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Shard", new LinkedSprite(SpriteType.Item, "shard")));
 		items.add(new StackableItem("Cloud Ore", new LinkedSprite(SpriteType.Item, "cloud_ore")));
 		items.add(new StackableItem("Glass Bottle", new LinkedSprite(SpriteType.Item, "glass_bottle")));
+		items.add(new StackableItem("Tomato", new LinkedSprite(SpriteType.Item, "tomato")));
+		items.add(new StackableItem("Bone", new LinkedSprite(SpriteType.Item, "bone")));
+		items.add(new StackableItem("Fertilizer", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "fertilizer")));
 
 		return items;
 	}
@@ -48,12 +52,15 @@ public class StackableItem extends Item {
 		super(name, sprite);
 		count = 1;
 	}
+
 	protected StackableItem(String name, LinkedSprite sprite, int count) {
 		this(name, sprite);
 		this.count = count;
 	}
 
-	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
+	public boolean stacksWith(Item other) {
+		return other instanceof StackableItem && other.getName().equals(getName());
+	}
 
 	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
@@ -62,7 +69,9 @@ public class StackableItem extends Item {
 		return subClassSuccess;
 	}
 
-	/** Called to determine if this item should be removed from an inventory. */
+	/**
+	 * Called to determine if this item should be removed from an inventory.
+	 */
 	@Override
 	public boolean isDepleted() {
 		return count <= 0;
@@ -75,7 +84,7 @@ public class StackableItem extends Item {
 
 	@Override
 	public String toString() {
-		return super.toString() + "-Stack_Size:"+count;
+		return super.toString() + "-Stack_Size:" + count;
 	}
 
 	public String getData() {

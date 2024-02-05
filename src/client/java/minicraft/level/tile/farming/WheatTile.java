@@ -6,8 +6,8 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
-public class WheatTile extends PlantTile {
-	private LinkedSprite[] spritStages = new LinkedSprite[] {
+public class WheatTile extends CropTile {
+	private final LinkedSprite[] spritStages = new LinkedSprite[]{
 		new LinkedSprite(SpriteType.Tile, "wheat_stage0"),
 		new LinkedSprite(SpriteType.Tile, "wheat_stage1"),
 		new LinkedSprite(SpriteType.Tile, "wheat_stage2"),
@@ -17,15 +17,14 @@ public class WheatTile extends PlantTile {
 	};
 
 	public WheatTile(String name) {
-		super(name);
+		super(name, "wheat seeds");
 	}
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		int age = level.getData(x, y);
-		int icon = age / (maxAge / 5);
-
+		int age = (level.getData(x, y) >> 3) & maxAge;
 		Tiles.get("Farmland").render(screen, level, x, y);
-		screen.render(x * 16, y * 16, spritStages[icon]);
+		int stage = (int) ((float) age / maxAge * 5);
+		screen.render(x * 16, y * 16, spritStages[stage]);
 	}
 }

@@ -19,10 +19,10 @@ public class InfoDisplay extends Display {
 				"----------------------------",
 				Localization.getLocalized("minicraft.displays.info.display.exit_help", Game.input.getMapping("select"), Game.input.getMapping("exit"))
 			))
-			.setTitle("minicraft.displays.info.title")
-			.setTitlePos(RelPos.TOP_LEFT)
-			.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth), RelPos.BOTTOM_RIGHT)
-			.createMenu()
+				.setTitle("minicraft.displays.info.title")
+				.setTitlePos(RelPos.TOP_LEFT)
+				.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth), RelPos.BOTTOM_RIGHT)
+				.createMenu()
 		);
 	}
 
