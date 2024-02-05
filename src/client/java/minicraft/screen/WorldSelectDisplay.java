@@ -245,12 +245,7 @@ public class WorldSelectDisplay extends Display {
 					Sound.play("confirm");
 					updateWorlds();
 					updateEntries();
-					if (worlds.size() > 0) {
-						Game.exitDisplay();
-					} else {
-						Game.exitDisplay(3); // Exiting to title display.
-						Game.setDisplay(new WorldCreateDisplay());
-					}
+					Game.exitDisplay();
 
 					return true;
 				}));
@@ -301,12 +296,7 @@ public class WorldSelectDisplay extends Display {
 					Sound.play("confirm");
 					updateWorlds();
 					updateEntries();
-					if (worlds.size() > 0) {
-						Game.exitDisplay();
-					} else {
-						Game.exitDisplay(3); // Exiting to title display.
-						Game.setDisplay(new WorldCreateDisplay());
-					}
+					Game.exitDisplay();
 
 					return true;
 				}));
@@ -340,14 +330,9 @@ public class WorldSelectDisplay extends Display {
 					Sound.play("confirm");
 					updateWorlds();
 					updateEntries();
-					if (worlds.size() > 0) {
-						Game.exitDisplay();
-						if (menus[0].getSelection() >= worlds.size()) {
-							menus[0].setSelection(worlds.size() - 1);
-						}
-					} else {
-						Game.exitDisplay(3); // Exiting to title display.
-						Game.setDisplay(new WorldCreateDisplay());
+					Game.exitDisplay();
+					if (menus[0].getSelection() >= worlds.size()) {
+						menus[0].setSelection(worlds.size() - 1);
 					}
 
 					return true;
@@ -377,6 +362,10 @@ public class WorldSelectDisplay extends Display {
 		// Title
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.select_world"),
 			screen, 0, Color.LIGHT_GRAY);
+	}
+
+	public static boolean anyWorld() {
+		return !worlds.isEmpty();
 	}
 
 	public static void updateWorlds() {

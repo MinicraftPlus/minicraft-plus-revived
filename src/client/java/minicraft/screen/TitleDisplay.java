@@ -37,7 +37,8 @@ public class TitleDisplay extends Display {
 	public TitleDisplay() {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 				new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.play"),
-					() -> Game.setDisplay(new WorldSelectDisplay())),
+					() -> Game.setDisplay(
+						WorldSelectDisplay.anyWorld() ? new WorldSelectDisplay() : new WorldCreateDisplay())),
 			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display"),
 				() -> Game.setDisplay(new OptionsMainMenuDisplay())),
             new SelectEntry(new Localization.LocalizationString("minicraft.displays.skin"),
@@ -91,6 +92,8 @@ public class TitleDisplay extends Display {
 		if (Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
+
+		WorldSelectDisplay.updateWorlds();
 	}
 
 	@Override
