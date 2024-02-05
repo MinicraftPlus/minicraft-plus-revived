@@ -3,6 +3,7 @@ package minicraft.saveload;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
@@ -37,6 +38,7 @@ import minicraft.item.StackableItem;
 import minicraft.item.UnknownItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.LoadingDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -139,10 +141,12 @@ public class HistoricLoad {
 		String location = Game.gameDir + "/saves/" + worldName + "/";
 		String filePath;
 
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.historic"));
 		try {
 			Game.player.getInventory().clearInv(); // Prepare for loading.
 			createBackup(filePath = location + "Game" + Save.extension);
 			loadGame(filePath);
+			LoadingDisplay.progress(10);
 			// KeyPrefs are now saved in global preferences, but not world-wide.
 			createBackup(filePath = location + "KeyPrefs" + Save.extension);
 			if (new File(filePath).delete()) // World-wide KeyPrefs are ignored.
@@ -154,6 +158,7 @@ public class HistoricLoad {
 					createBackup(filePath = location + "Level" + i + Save.extension);
 					createBackup(dataPath);
 					loadLevel(filePath, dataPath, i);
+					LoadingDisplay.progress(10);
 				}
 			} catch (Load.MalformedSaveDataException e) {
 				throw new Load.MalformedSaveException("World", e);
@@ -161,11 +166,14 @@ public class HistoricLoad {
 
 			createBackup(filePath = location + "Player" + Save.extension);
 			loadPlayer(filePath);
+			LoadingDisplay.progress(10);
 			createBackup(filePath = location + "Inventory" + Save.extension);
 			loadInventory(filePath);
+			LoadingDisplay.progress(10);
 			// loadEntities is not checked by me, but I assume that it is implemented correctly.
 			createBackup(filePath = location + "Entities" + Save.extension);
 			loadEntities(filePath); // Most parts of the code are not modified.
+			LoadingDisplay.progress(10);
 		} catch (Load.MalformedSaveException e) {
 			throw new Load.LoadingSessionFailedException("Failed to load world \"" + worldName + "\"", e);
 		} catch (IndexOutOfBoundsException e) {

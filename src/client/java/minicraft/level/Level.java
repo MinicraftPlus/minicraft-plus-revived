@@ -58,7 +58,7 @@ public class Level {
 	}
 
 	public static Localization.LocalizationString getDepthString(int depth) {
-		return new Localization.LocalizationString("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth);
+		return new Localization.LocalizationString("minicraft.displays.loading.message.type.level", depth < 0 ? "B" + (-depth) : depth);
 	}
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...

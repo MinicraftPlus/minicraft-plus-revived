@@ -46,11 +46,11 @@ public class LoadingDisplay extends Display {
 		if (parent != null && parent.getParent() == this) return; // Undefined behaviour
 		super.init(parent);
 		percentage = 0;
-		progressType = new Localization.LocalizationString("minicraft.displays.loading.message.world");
+		progressType = new Localization.LocalizationString("minicraft.displays.loading.message.type.world");
 		if (WorldSelectDisplay.hasLoadedWorld())
-			msg = new Localization.LocalizationString("minicraft.displays.loading.message.loading");
+			msg = new Localization.LocalizationString("minicraft.displays.loading.message.session.loading");
 		else
-			msg = new Localization.LocalizationString("minicraft.displays.loading.message.generating");
+			msg = new Localization.LocalizationString("minicraft.displays.loading.message.session.generating");
 		t.start();
 	}
 
@@ -58,8 +58,8 @@ public class LoadingDisplay extends Display {
 	public void onExit() {
 		percentage = 0;
 		if (!WorldSelectDisplay.hasLoadedWorld()) {
-			msg = new Localization.LocalizationString("minicraft.displays.loading.message.saving");
-			progressType = new Localization.LocalizationString("minicraft.displays.loading.message.world");
+			msg = new Localization.LocalizationString("minicraft.displays.loading.message.session.saving");
+			progressType = new Localization.LocalizationString("minicraft.displays.loading.message.type.world");
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.notifications.clear();
 		}

@@ -91,7 +91,6 @@ public class Load {
 	private String location = Game.gameDir;
 
 	private static final String extension = Save.extension;
-	private float percentInc;
 
 	private ArrayList<String> data;
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
@@ -231,17 +230,18 @@ public class Load {
 		} else {
 			location += "/saves/" + worldname + "/";
 
-			percentInc = 5 + World.levels.length - 1; // For the methods below, and world.
-
-			percentInc = 100f / percentInc;
-
-			LoadingDisplay.setPercentage(0);
 			loadGame("Game"); // More of the version will be determined here
+			// 10%
 			loadWorld("Level");
+			// 65%
 			loadEntities("Entities");
+			// 75%
 			loadInventory("Inventory", Game.player.getInventory());
+			// 85%
 			loadPlayer("Player", Game.player);
+			// 100%
 
+			LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.completing"));
 			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
@@ -482,6 +482,7 @@ public class Load {
 	}
 
 	private void loadGame(String filename) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.game"));
 		loadFromFile(location + filename + extension);
 
 		worldVer = new Version(data.remove(0)); // Gets the world version
@@ -523,6 +524,8 @@ public class Load {
 			Settings.set("quests", Boolean.parseBoolean(data.remove(0)));
 			Settings.set("tutorials", Boolean.parseBoolean(data.remove(0)));
 		}
+
+		LoadingDisplay.progress(10);
 	}
 
 	private void loadMode(String modedata) {
@@ -710,6 +713,7 @@ public class Load {
 	}
 
 	private void loadWorld(String filename) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.levels"));
 		assert worldVer != null;
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			LoadingDisplay.setMessage(Level.getDepthString(l));
@@ -805,9 +809,11 @@ public class Load {
 					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
 				}
 			}
+
+			LoadingDisplay.progress(50f / World.levels.length);
 		}
 
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.quests"));
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.quests"));
 
 		if (new File(location + "Quests.json").exists()) {
 			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
@@ -840,12 +846,15 @@ public class Load {
 			AdvancementElement.resetRecipeUnlockingElements();
 			QuestsDisplay.resetGameQuests();
 		}
+
+		LoadingDisplay.progress(5);
 	}
 
 	public void loadPlayer(String filename, Player player) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("Player"));
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.player"));
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
+		LoadingDisplay.progress(15);
 	}
 
 	public void loadPlayer(Player player, List<String> origData) {
@@ -988,9 +997,11 @@ public class Load {
 	}
 
 	public void loadInventory(String filename, Inventory inventory) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.inventory"));
 		deathChest = new DeathChest();
 		loadFromFile(location + filename + extension);
 		loadInventory(inventory, data);
+		LoadingDisplay.progress(10);
 	}
 
 	public void loadInventory(Inventory inventory, List<String> data) {
@@ -1040,7 +1051,7 @@ public class Load {
 	}
 
 	private void loadEntities(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.entities"));
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.entities"));
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {
@@ -1055,6 +1066,8 @@ public class Load {
 			World.levels[i].checkChestCount();
 			World.levels[i].checkAirWizard();
 		}
+
+		LoadingDisplay.progress(10);
 	}
 
 	@Nullable
