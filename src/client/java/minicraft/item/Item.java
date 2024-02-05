@@ -45,7 +45,7 @@ public abstract class Item {
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
 		screen.render(x, y, sprite);
-		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
+		Font.drawBackground(" " + dispName, screen, x + 8, y, fontColor);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public abstract class Item {
 
 	// Returns the String that should be used to display this item in a menu or list.
 	public String getDisplayName() { // instant localization
-		return " " + Localization.getLocalized(getName());
+		return Localization.getLocalized(getName());
 	}
 
 	public boolean interactsWithWorld() {

@@ -32,7 +32,7 @@ public class ItemEntry extends ListEntry {
 
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-		super.render(screen, x, y, true, bounds);
+		super.render(screen, x + 8, y, true, bounds);
 		screen.render(x, y, item.sprite);
 	}
 
