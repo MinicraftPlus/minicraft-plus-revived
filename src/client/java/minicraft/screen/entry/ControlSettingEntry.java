@@ -1,18 +1,18 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
-import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
 import java.util.Set;
 
-public class KeyInputEntry extends SelectEntry {
+public class ControlSettingEntry extends SelectEntry {
 
-	private String action, mapping, buffer;
+	private final String action;
+	private String mapping, buffer;
 
-	public KeyInputEntry(String key, Set<String> duplicated) {
+	public ControlSettingEntry(String key, Set<String> duplicated) {
 		super(null, null);
 
 		this.action = key.substring(0, key.indexOf(";"));

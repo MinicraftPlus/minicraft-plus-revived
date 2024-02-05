@@ -9,7 +9,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.BlankEntry;
-import minicraft.screen.entry.KeyInputEntry;
+import minicraft.screen.entry.ControlSettingEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import org.intellij.lang.annotations.RegExp;
@@ -21,18 +21,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class KeyInputDisplay extends Display {
+public class ControlsSettingsDisplay extends Display {
 	@RegExp
 	private static final String regexLetter = "^\\w$";
 	private final Menu.Builder builder;
 
-	private static KeyInputEntry[] getEntries() {
+	private static ControlSettingEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
-		KeyInputEntry[] entries = new KeyInputEntry[prefs.length];
+		ControlSettingEntry[] entries = new ControlSettingEntry[prefs.length];
 		HashSet<String> duplicated = getDuplicatedMappings();
 
 		for (int i = 0; i < entries.length; i++)
-			entries[i] = new KeyInputEntry(prefs[i], duplicated);
+			entries[i] = new ControlSettingEntry(prefs[i], duplicated);
 
 		return entries;
 	}
@@ -54,7 +54,7 @@ public class KeyInputDisplay extends Display {
 		return duplicated;
 	}
 
-	public KeyInputDisplay() {
+	public ControlsSettingsDisplay() {
 		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			.setTitle(new Localization.LocalizationString("minicraft.displays.key_input.title"))

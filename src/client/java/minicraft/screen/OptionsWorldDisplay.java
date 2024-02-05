@@ -67,7 +67,7 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
 			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.change_key_bindings"),
-				() -> Game.setDisplay(new KeyInputDisplay())),
+				() -> Game.setDisplay(new ControlsSettingsDisplay())),
 			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.language"),
 				() -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("screenshot"),
