@@ -41,11 +41,18 @@ public class PauseDisplay extends Display {
 			ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines("minicraft.displays.pause.display.exit_popup.0")));
 
 			items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, "minicraft.displays.pause.display.exit_popup.1")));
+			items.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "minicraft.displays.pause.display.exit_popup.2")));
 			items.add(new BlankEntry());
 			items.add(new SelectEntry(new Localization.LocalizationString(
 				"minicraft.displays.pause.display.exit_popup.cancel"), Game::exitDisplay));
 			items.add(new SelectEntry(new Localization.LocalizationString(
 				"minicraft.displays.pause.display.exit_popup.quit"), () -> {
+				Game.setDisplay(new TitleDisplay());
+				World.onWorldExits();
+			}));
+			items.add(new SelectEntry(new Localization.LocalizationString(
+				"minicraft.displays.pause.display.exit_popup.save"), () -> {
+				new Save(WorldSelectDisplay.getWorldName());
 				Game.setDisplay(new TitleDisplay());
 				World.onWorldExits();
 			}));
