@@ -28,8 +28,7 @@ public class StringEntry extends SelectableStringEntry {
 	public static StringEntry[] useLines(int color, boolean localize, String... lines) {
 		ArrayList<String> lns = new ArrayList<>();
 		for (String l : lines) {
-			lns.addAll(Arrays.asList( Font.getLines(localize ? Localization.getLocalized(l) : l, Screen.w - 20, Screen.h * 2, 0))
-				);
+			lns.addAll(Arrays.asList(Font.getLines(localize ? Localization.getLocalized(l) : l, Screen.w - 20, Screen.h * 2, 0)));
 		}
 		StringEntry[] entries = new StringEntry[lns.size()];
 		for (int i = 0; i < lns.size(); i++)

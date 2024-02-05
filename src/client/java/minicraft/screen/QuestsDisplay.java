@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
@@ -191,7 +192,9 @@ public class QuestsDisplay extends Display {
 				() -> Game.setDisplay(new SeriesInformationDisplay(questSeries))) {
 				@Override
 				public int getColor(boolean isSelected) {
-					return isCompleted ? Color.GREEN : isUnlocked ? Color.WHITE : Color.GRAY;
+					return isCompleted ? isSelected ? Color.GREEN : Color.DIMMED_GREEN :
+						isUnlocked ? isSelected ? Color.WHITE : Color.GRAY :
+							isSelected ? Color.LIGHT_GRAY : Color.DARK_GRAY;
 				}
 			};
 
@@ -223,32 +226,16 @@ public class QuestsDisplay extends Display {
 
 		menus = new Menu[]{
 			new Menu.Builder(false, 1, RelPos.CENTER)
-				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 - 20), RelPos.CENTER)
-				.setDisplayLength(5)
+				.setPositioning(new Point(Screen.w / 2, 36), RelPos.CENTER)
+				.setDisplayLength(7)
 				.setSelectable(true)
 				.createMenu(),
-			new Menu.Builder(false, 0, RelPos.LEFT)
-				.setPositioning(new Point(Screen.w / 2 - 8 * (2 + Localization.getLocalized("minicraft.displays.quests.display.header.unlocked").length()), 30), RelPos.RIGHT)
-				.setEntries(new StringEntry(new Localization.LocalizationString(
-					"minicraft.displays.quests.display.header.unlocked"), Color.GRAY))
-				.setSelectable(false)
-				.createMenu(),
-			new Menu.Builder(false, 0, RelPos.LEFT)
-				.setPositioning(new Point(Screen.w / 2 + 8 * 2, 30), RelPos.RIGHT)
-				.setEntries(new StringEntry(new Localization.LocalizationString(
-					"minicraft.displays.quests.display.header.completed"), Color.GRAY))
-				.setSelectable(false)
-				.createMenu(),
-			new Menu.Builder(false, 0, RelPos.CENTER)
-				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 35), RelPos.CENTER)
+			new Menu.Builder(true, 2, RelPos.CENTER)
+				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 52), RelPos.CENTER)
+				.setDisplayLength(3)
+				.setSize(240, 44)
 				.setEntries(new StringEntry(new Localization.LocalizationString(
 					"minicraft.displays.quests.display.no_quest_desc")))
-				.setSelectable(false)
-				.createMenu(),
-			new Menu.Builder(false, 0, RelPos.CENTER)
-				.setPositioning(new Point(Screen.w / 2, 10), RelPos.CENTER)
-				.setEntries(new StringEntry(new Localization.LocalizationString(false,
-					Settings.getEntry("quests").toString()), Color.WHITE))
 				.setSelectable(false)
 				.createMenu()
 		};
@@ -760,24 +747,41 @@ public class QuestsDisplay extends Display {
 		}
 
 		if (menus[0].getCurEntry() != null) {
-			menus[3].setEntries(StringEntry.useLines(entrySeries[selectedEntry][menus[0].getSelection()].description));
+			menus[1].setEntries(StringEntry.useLines(Color.WHITE, false, Font.getLines(
+				Localization.getLocalized(entrySeries[selectedEntry][menus[0].getSelection()].description),
+				menus[1].getBounds().getWidth() - 2 * 8, menus[1].getBounds().getHeight() - 2 * 8, 2)));
 		} else {
-			menus[3].setEntries(StringEntry.useLines("minicraft.displays.quests.display.no_quest_desc"));
+			menus[1].setEntries(StringEntry.useLines(Color.WHITE, false, Font.getLines(
+				Localization.getLocalized("minicraft.displays.quests.display.no_quest_desc"),
+				menus[1].getBounds().getWidth() - 2 * 8, menus[1].getBounds().getHeight() - 2 * 8, 2)));
 		}
+	}
+
+	private final List<Localization.LocalizationString> headers = Arrays.asList( // Safely buffered
+		new Localization.LocalizationString("minicraft.displays.quests.display.header.unlocked"),
+		new Localization.LocalizationString("minicraft.displays.quests.display.header.completed")
+	);
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+
+		// Title
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.quests"), screen, 8, Color.SILVER);
+
+		// Headers
+		int gap = 6 * 8;
+		int widthLeft = Font.textWidth(headers.get(0).toString());
+		int widthRight = Font.textWidth(headers.get(1).toString());
+		int totalHalfWidth = (widthLeft + widthRight + gap) / 2;
+		Font.draw(headers.get(0).toString(), screen, Screen.w / 2 - totalHalfWidth, 20,
+			selectedEntry == 0 ? Color.LIGHT_GRAY : Color.DIMMED_GRAY);
+		Font.draw(headers.get(1).toString(), screen, Screen.w / 2 + totalHalfWidth - widthRight, 20,
+			selectedEntry == 1 ? Color.LIGHT_GRAY : Color.DIMMED_GRAY);
 	}
 
 	private void updateEntries() {
 		menus[0].setEntries(seriesEntries[selectedEntry]);
-
-		String[] entryNames = new String[]{
-			"minicraft.displays.quests.display.header.unlocked", "minicraft.displays.quests.display.header.completed"
-		};
-
-		for (int i = 0; i < 2; i++) {
-			menus[i + 1].updateEntry(0, new StringEntry(new Localization.LocalizationString(entryNames[i]),
-				(i == selectedEntry) ? Color.WHITE : Color.GRAY));
-		}
-
 		int select = previousSelection;
 		previousSelection = menus[0].getSelection();
 		menus[0].setSelection(select);

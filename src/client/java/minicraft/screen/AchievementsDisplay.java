@@ -6,6 +6,7 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
@@ -84,9 +85,9 @@ public class AchievementsDisplay extends Display {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (achievements.get(id).getUnlocked()) {
-						return Color.GREEN;
+						return isSelected ? Color.GREEN : Color.DIMMED_GREEN;
 					} else {
-						return Color.WHITE;
+						return isSelected ? Color.WHITE : Color.GRAY;
 					}
 				}
 			});
@@ -95,9 +96,9 @@ public class AchievementsDisplay extends Display {
 			new Menu.Builder(false, 2, RelPos.CENTER, entries)
 				.setSize(48, 48)
 				.createMenu(),
-			new Menu.Builder(false, 2, RelPos.BOTTOM)
-				.setSize(200, 32)
-				.setDisplayLength(1)
+			new Menu.Builder(true, 2, RelPos.BOTTOM)
+				.setSize(240, 38)
+				.setDisplayLength(2)
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM)
 				.createMenu()
 		};
@@ -133,7 +134,7 @@ public class AchievementsDisplay extends Display {
 		super.render(screen);
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements"), screen, 8, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements"), screen, 8, Color.SILVER);
 
 		// Achievement score.
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements.display.score", achievementScore), screen, 32, Color.GRAY);
@@ -150,7 +151,8 @@ public class AchievementsDisplay extends Display {
             // Achievement description.
             menus[1].setEntries(StringEntry.useLines(Color.WHITE,false,
 	            Font.getLines(Localization.getLocalized(selectedAchievement.description),
-		            menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
+		            menus[1].getBounds().getSize().width - 8 * 2,
+		            menus[1].getBounds().getSize().height - 8 * 2, 2)));
         }
     }
 

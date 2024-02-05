@@ -92,7 +92,10 @@ public class TutorialDisplayHandler {
 		private void tick() {
 			if (key.contains("|")) {
 				for (String k : key.split("\\|")) {
-					if (Game.input.inputDown(k)) interactedDuration++;
+					if (Game.input.inputDown(k))  {
+						interactedDuration++;
+						return;
+					}
 				}
 			} else if (Game.input.inputDown(key))
 				interactedDuration++;

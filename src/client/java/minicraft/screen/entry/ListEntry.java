@@ -35,7 +35,8 @@ public abstract class ListEntry {
 
 		String string = toString();
 
-		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
+		Font.drawColor(string.replace(contain, Color.toStringCode(isSelected ? containColor :
+			Color.tint(containColor, -1, true)) + contain + Color.WHITE_CODE), screen, x, y);
 	}
 
 	public static class IntRange {

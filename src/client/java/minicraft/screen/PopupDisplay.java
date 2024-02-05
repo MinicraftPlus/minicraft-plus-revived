@@ -47,7 +47,7 @@ public class PopupDisplay extends Display {
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, ListEntry... entries) {
 		super(clearScreen, true);
 
-		builder = new Menu.Builder(menuFrame, 0, RelPos.CENTER, entries);
+		builder = new Menu.Builder(menuFrame, config != null ? config.entrySpacing : 2, RelPos.CENTER, entries);
 
 		if (config != null) {
 			if (config.title != null)

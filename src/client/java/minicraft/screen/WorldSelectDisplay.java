@@ -106,10 +106,6 @@ public class WorldSelectDisplay extends Display {
 		updateEntries();
 
 		// Entries on the bottom, 6 items and 3 lines, 2 items per line in order
-		bottomEntries.add(new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.action.new",
-			Game.input.selectMapping("N", "X")), Color.GRAY));
-		bottomEntries.add(new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.action.return",
-			Game.input.getMapping("EXIT")), Color.GRAY));
 		bottomEntries.add(new StringEntry(new Localization.LocalizationString(
 			"minicraft.displays.world_select.action.play",
 			Game.input.getMapping("SELECT"))) {
@@ -118,6 +114,10 @@ public class WorldSelectDisplay extends Display {
 				return !worlds.isEmpty() ? Color.GRAY : Color.DIMMED_GRAY;
 			}
 		});
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.action.return",
+			Game.input.getMapping("EXIT")), Color.GRAY));
+		bottomEntries.add(new StringEntry(new Localization.LocalizationString("minicraft.displays.world_select.action.new",
+			Game.input.selectMapping("N", "X")), Color.GRAY));
 		bottomEntries.add(new StringEntry(new Localization.LocalizationString(
 			"minicraft.displays.world_select.action.delete",
 			Game.input.selectMapping("D", "LEFTRIGHTTRIGGER"))) {

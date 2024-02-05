@@ -50,7 +50,7 @@ public class PauseDisplay extends Display {
 				World.onWorldExits();
 			}));
 
-			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 8), items.toArray(new ListEntry[0])));
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 4), items.toArray(new ListEntry[0])));
 		}));
 
 		menus = new Menu[]{

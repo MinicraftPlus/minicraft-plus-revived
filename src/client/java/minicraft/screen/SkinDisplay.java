@@ -262,7 +262,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin"), screen, 16, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin"), screen, 16, Color.SILVER);
 
 		int xOffset = Screen.w / 2 - 8; // Put this in the center of the screen
 		int yOffset = 40; // Player sprite Y position
@@ -274,7 +274,7 @@ public class SkinDisplay extends Display {
 		screen.render(xOffset, yOffset, sprite);
 
 		// Help text.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.GRAY);
 	}
 
 	public static String getSelectedSkin() {

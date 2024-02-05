@@ -802,7 +802,7 @@ public class Menu {
 				if (fullTitleColor)
 					menu.titleColor = titleCol;
 				else {
-					if (!setTitleColor) titleCol = menu.hasFrame ? Color.YELLOW : Color.WHITE;
+					if (!setTitleColor) titleCol = menu.hasFrame ? Color.YELLOW : Color.SILVER;
 					menu.titleColor = titleCol; // make it match the frame color, or be transparent
 				}
 			}

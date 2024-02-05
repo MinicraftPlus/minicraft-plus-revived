@@ -64,7 +64,7 @@ public class PagedDisplay extends Display {
 		int dest = MyUtils.clamp(page + dir, 0, lines.length - 1);
 		if (dest != page) {
 			page = dest;
-			menus[0].updateSelectedEntry(new StringEntry(getPageCounter()));
+			menus[0].updateSelectedEntry(new StringEntry(getPageCounter(), Color.BLACK));
 			menus[1].setEntries(lines[page]);
 		}
 	}

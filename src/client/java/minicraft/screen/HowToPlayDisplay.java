@@ -37,7 +37,7 @@ public class HowToPlayDisplay extends Display {
 					"minicraft.displays.how_to_play.general_controller.display.5",
 					"minicraft.displays.how_to_play.general_controller.display.6"))),
 			new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play.in_game"), () ->
-				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+				Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
 					new SelectEntry(new Localization.LocalizationString(
 						"minicraft.displays.how_to_play.in_game.movement"), () ->
 						Game.setDisplay(new PopupDisplay(null, true,
@@ -91,7 +91,7 @@ public class HowToPlayDisplay extends Display {
 				).setTitle(new Localization.LocalizationString("minicraft.displays.how_to_play.in_game")).createMenu()))),
 			new SelectEntry(new Localization.LocalizationString(
 				"minicraft.displays.how_to_play.in_game_controller"), () ->
-				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+				Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
 					new SelectEntry(new Localization.LocalizationString(
 						"minicraft.displays.how_to_play.in_game_controller.movement"), () ->
 						Game.setDisplay(new MessageDisplay(true,

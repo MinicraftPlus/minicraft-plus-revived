@@ -187,6 +187,6 @@ public class KeyInputDisplay extends Display {
 		};
 
 		for (int i = 0; i < lines.length; i++)
-			Font.drawCentered(lines[i], screen, Screen.h - Font.textHeight() * (4 - i), Color.WHITE);
+			Font.drawCentered(lines[i], screen, Screen.h - Font.textHeight() * (4 - i), Color.GRAY);
 	}
 }
