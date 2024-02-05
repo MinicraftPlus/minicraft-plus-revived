@@ -100,17 +100,17 @@ public class SignDisplay extends Display {
 			}
 
 			insertChars(input.getKeysTyped(null));
-			if (input.getKey("PAGE-UP").clicked) {
+			if (input.getMappedKey("PAGE-UP").isClicked()) {
 				cursorX = rows.get(cursorY = 0).length();
 				updateCaretAnimation();
-			} else if (input.getKey("PAGE-DOWN").clicked) {
+			} else if (input.getMappedKey("PAGE-DOWN").isClicked()) {
 				cursorX = rows.get(cursorY = rows.size() - 1).length();
 				updateCaretAnimation();
 
-			} else if (input.getKey("HOME").clicked) {
+			} else if (input.getMappedKey("HOME").isClicked()) {
 				cursorX = 0;
 				updateCaretAnimation();
-			} else if (input.getKey("END").clicked) {
+			} else if (input.getMappedKey("END").isClicked()) {
 				cursorX = rows.get(cursorY).length();
 				updateCaretAnimation();
 
@@ -120,7 +120,7 @@ public class SignDisplay extends Display {
 			} else if (input.inputPressed("CURSOR-UP")) {
 				cursorX = rows.get(cursorY == 0 ? cursorY = rows.size() - 1 : --cursorY).length();
 				updateCaretAnimation();
-			} else if (input.inputPressed("CURSOR-DOWN") || input.getKey("ENTER").clicked) {
+			} else if (input.inputPressed("CURSOR-DOWN") || input.getMappedKey("ENTER").isClicked()) {
 				cursorX = rows.get(cursorY == rows.size() - 1 ? cursorY = 0 : ++cursorY).length();
 				updateCaretAnimation();
 			} else if (input.inputPressed("CURSOR-LEFT")) {
@@ -131,15 +131,15 @@ public class SignDisplay extends Display {
 				updateCaretAnimation();
 
 			// Clipboard operations
-			} else if (input.getKey("CTRL-X").clicked) {
+			} else if (input.getMappedKey("CTRL-X").isClicked()) {
 				cursorX = 0;
 				clipboard.setClipboardContents(rows.get(cursorY).toString());
 				rows.set(cursorY, new StringBuilder());
 				updateCaretAnimation();
-			} else if (input.getKey("CTRL-C").clicked) {
+			} else if (input.getMappedKey("CTRL-C").isClicked()) {
 				clipboard.setClipboardContents(rows.get(cursorY).toString());
 				updateCaretAnimation();
-			} else if (input.getKey("CTRL-V").clicked) {
+			} else if (input.getMappedKey("CTRL-V").isClicked()) {
 				insertChars(clipboard.getClipboardContents());
 			}
 		}
@@ -236,7 +236,7 @@ public class SignDisplay extends Display {
 		boolean acted = false; // Checks if typing action is needed to be handled.
 		boolean mainMethod = false;
 		if (onScreenKeyboardMenu == null || !onScreenKeyboardMenu.isVisible()) {
-			if (input.inputPressed("exit") || input.getKey("SHIFT-ENTER").clicked) {
+			if (input.inputPressed("exit") || input.getMappedKey("SHIFT-ENTER").isClicked()) {
 				updateSign(levelDepth, x, y, editor.getLines());
 				Game.exitDisplay();
 				return;
@@ -254,7 +254,7 @@ public class SignDisplay extends Display {
 			if (acted)
 				editor.tick(input);
 
-			if (input.getKey("exit").clicked || input.getKey("SHIFT-ENTER").clicked) { // Should not listen button press
+			if (input.getMappedKey("exit").isClicked() || input.getMappedKey("SHIFT-ENTER").isClicked()) { // Should not listen button press
 				updateSign(levelDepth, x, y, editor.getLines());
 				Game.exitDisplay();
 				return;
