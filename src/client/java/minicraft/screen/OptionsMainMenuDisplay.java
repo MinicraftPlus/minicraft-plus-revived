@@ -1,22 +1,16 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
-import minicraft.gfx.Color;
 import minicraft.saveload.Save;
-import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
-import minicraft.screen.entry.SelectableStringEntry;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class OptionsMainMenuDisplay extends Display {
 	private final String origUpdateCheckVal = (String) Settings.get("updatecheck");
 
 	public OptionsMainMenuDisplay() {
-		super(true, new Menu.Builder(false, 6, RelPos.LEFT,
+		super(true, new Menu.Builder(false, 6, RelPos.CENTER,
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("showquests"),
