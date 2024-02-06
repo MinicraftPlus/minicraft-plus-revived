@@ -87,6 +87,7 @@ public class PlayerInvDisplay extends Display {
 		itemDescription = getDescription();
 		if (itemDescription == null) menus[creativeMode ? 2 : 1].shouldRender = false;
 		else {
+			menus[creativeMode ? 2 : 1].shouldRender = true;
 			menus[creativeMode ? 2 : 1].setEntries(itemDescription);
 			menus[creativeMode ? 2 : 1].builder()
 				.setMenuSize(null)

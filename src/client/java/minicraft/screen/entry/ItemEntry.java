@@ -1,6 +1,8 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +36,23 @@ public class ItemEntry extends ListEntry {
 	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
 		super.render(screen, x + 16, y, true, bounds);
 		screen.render(x, y, item.sprite);
+	}
+
+	@Override
+	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds, String contain, int containColor) {
+		if (!isVisible()) {
+			return;
+		}
+
+		render(screen, x, y, isSelected, bounds);
+		if (contain == null || contain.isEmpty()) {
+			return;
+		}
+
+		String string = toString();
+
+		Font.drawColor(string.replace(contain, Color.toStringCode(isSelected ? containColor :
+			Color.tint(containColor, -1, true)) + contain + Color.WHITE_CODE), screen, x + 16, y);
 	}
 
 	@Override
