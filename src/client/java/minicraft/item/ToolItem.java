@@ -68,8 +68,8 @@ public class ToolItem extends Item {
 	@Override
 	public String getDisplayName() {
 		if (!type.noLevel)
-			return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
-		else return " " + Localization.getLocalized(type.toString());
+			return Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
+		else return Localization.getLocalized(type.toString());
 	}
 
 	public boolean isDepleted() {

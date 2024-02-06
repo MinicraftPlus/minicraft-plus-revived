@@ -32,8 +32,13 @@ public class ItemEntry extends ListEntry {
 
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-		super.render(screen, x + 8, y, true, bounds);
+		super.render(screen, x + 16, y, true, bounds);
 		screen.render(x, y, item.sprite);
+	}
+
+	@Override
+	public int getWidth() {
+		return super.getWidth() + 16;
 	}
 
 	// If you add to the length of the string, and therefore the width of the entry, then it will actually move the entry RIGHT in the inventory, instead of the intended left, because it is auto-positioned to the left side.
