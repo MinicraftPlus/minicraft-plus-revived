@@ -8,6 +8,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +33,6 @@ public class CraftingDisplay extends Display {
 	private final List<Recipe> availableRecipes = new ArrayList<>();
 
 	private RecipeMenu recipeMenu;
-	private final Menu.Builder itemCountMenu, costsMenu;
 
 	private final boolean isPersonalCrafter;
 
@@ -49,24 +50,23 @@ public class CraftingDisplay extends Display {
 		this.isPersonalCrafter = isPersonal;
 		availableRecipes.addAll(recipes);
 
-		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
+		menus = new Menu[3];
+		menus[1] = new Menu.Builder(true, 0, RelPos.LEFT)
 			.setTitle(new Localization.LocalizationString("minicraft.displays.crafting.container_title.have"))
-			.setTitlePos(RelPos.TOP_LEFT);
+			.setTitlePos(RelPos.TOP_LEFT)
+			.createMenu();
 
-		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
+		menus[2] = new Menu.Builder(true, 0, RelPos.LEFT)
 			.setTitle(new Localization.LocalizationString("minicraft.displays.crafting.container_title.cost"))
-			.setTitlePos(RelPos.TOP_LEFT);
+			.setTitlePos(RelPos.TOP_LEFT)
+			.createMenu();
 		refreshDisplayRecipes();
 	}
 
 	private void refreshDisplayRecipes() {
 		List<Recipe> recipes = availableRecipes.stream().filter(unlockedRecipes::contains).collect(Collectors.toList());
-		recipeMenu = new RecipeMenu(recipes, title, player);
+		menus[0] = recipeMenu = new RecipeMenu(recipes, title, player);
 		this.recipes = recipes.toArray(new Recipe[0]);
-		itemCountMenu.setPositioning(new Point(recipeMenu.getBounds().getRight() + MinicraftImage.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
-		costsMenu.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
-
-		menus = new Menu[]{recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
 		refreshData();
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
@@ -76,17 +76,26 @@ public class CraftingDisplay extends Display {
 
 	private void refreshData() {
 		if (recipes.length == 0) return;
+		menus[2].setEntries(getCurItemCosts());
+		menus[2].builder()
+			.setDisplayLength(0)
+			.setMenuSize(null)
+			.recalculateFrame();
+		menus[1].setEntries(Collections.singletonList(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount()))));
+		menus[1].builder()
+			.setDisplayLength(0)
+			.setMenuSize(null)
+			.recalculateFrame();
 
-		Menu prev = menus[2];
-		menus[2] = costsMenu
-			.setEntries(getCurItemCosts())
-			.createMenu();
-		menus[2].setColors(prev);
-
-		menus[1] = itemCountMenu
-			.setEntries(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount())))
-			.createMenu();
-		menus[1].setColors(prev);
+		Rectangle bounds = recipeMenu.getBounds();
+		int x = bounds.getRight() + MinicraftImage.boxWidth;
+		Rectangle countBounds = menus[1].getBounds();
+		menus[1].translate(x - countBounds.getLeft(), bounds.getTop() - countBounds.getTop());
+		Rectangle costBounds = menus[2].getBounds();
+		menus[2].translate(x - costBounds.getLeft(),
+			countBounds.getHeight() + costBounds.getHeight() + MinicraftImage.boxWidth > bounds.getHeight() ?
+				menus[1].getBounds().getBottom() - costBounds.getTop() + MinicraftImage.boxWidth :
+				bounds.getBottom() - costBounds.getHeight() - costBounds.getTop());
 	}
 
 	private int getCurItemCount() {

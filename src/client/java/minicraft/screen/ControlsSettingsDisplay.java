@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ControlsSettingsDisplay extends Display {
 	@RegExp
 	private static final String regexLetter = "^\\w$";
-	private final Menu.Builder builder;
 
 	private static ControlSettingEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
@@ -55,14 +54,10 @@ public class ControlsSettingsDisplay extends Display {
 	}
 
 	public ControlsSettingsDisplay() {
-		super(true);
-		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
+		super(true, new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			.setTitle(new Localization.LocalizationString("minicraft.displays.key_input.title"))
-			.setPositioning(new Point(Screen.w / 2, Screen.h - Font.textHeight() * 5), RelPos.TOP);
-
-		menus = new Menu[]{
-			builder.createMenu()
-		};
+			.setPositioning(new Point(Screen.w / 2, Screen.h - Font.textHeight() * 5), RelPos.TOP)
+			.createMenu());
 	}
 
 	@NotNull
@@ -111,9 +106,7 @@ public class ControlsSettingsDisplay extends Display {
 				if (input.keyToChange == null) {
 					Action action = () -> {
 						// the key has just been set, refreshes key bindings.
-						menus[0] = builder.setEntries(getEntries())
-							.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
-							.createMenu();
+						menus[0].setEntries(getEntries());
 						Game.exitDisplay();
 					};
 					String[] splitStr = input.getChangedKey().split(";", 2);
@@ -162,9 +155,7 @@ public class ControlsSettingsDisplay extends Display {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
 				input.resetKeyBindings();
-				menus[0] = builder.setEntries(getEntries())
-					.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
-					.createMenu();
+				menus[0].setEntries(getEntries());
 				Game.exitDisplay();
 				return true;
 			}));

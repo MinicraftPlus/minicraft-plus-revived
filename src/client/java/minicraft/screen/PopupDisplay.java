@@ -77,7 +77,10 @@ public class PopupDisplay extends Display {
 	}
 
 	private void update() {
-		menus[onScreenKeyboardMenu == null ? 0 : 1] = builder.createMenu();
+		menus[onScreenKeyboardMenu == null ? 0 : 1].builder()
+			.setDisplayLength(0)
+			.setMenuSize(null)
+			.recalculateFrame();
 		Rectangle menuBounds = menus[onScreenKeyboardMenu == null ? 0 : 1].getBounds();
 		for (ListEntry entry : menus[onScreenKeyboardMenu == null ? 0 : 1].getEntries()) {
 			if (entry instanceof InputEntry) {

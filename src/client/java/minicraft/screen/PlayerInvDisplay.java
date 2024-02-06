@@ -26,7 +26,6 @@ public class PlayerInvDisplay extends Display {
 	private final Player player;
 
 	private @Nullable List<ListEntry> itemDescription = null;
-	private Menu.Builder descriptionMenuBuilder;
 
 	private final boolean creativeMode;
 	private final Inventory creativeInv;
@@ -35,7 +34,7 @@ public class PlayerInvDisplay extends Display {
 		super(new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
 			"minicraft.display.menus.inventory"), RelPos.LEFT));
 		this.player = player;
-		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
+		Menu.Builder descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.displays.world_create.options.game_mode.creative");
 		itemDescription = getDescription();
 		if (itemDescription != null) descriptionMenuBuilder.setEntries(itemDescription);
@@ -86,6 +85,15 @@ public class PlayerInvDisplay extends Display {
 		boolean mainMethod = false;
 
 		itemDescription = getDescription();
+		if (itemDescription == null) menus[creativeMode ? 2 : 1].shouldRender = false;
+		else {
+			menus[creativeMode ? 2 : 1].setEntries(itemDescription);
+			menus[creativeMode ? 2 : 1].builder()
+				.setMenuSize(null)
+				.setDisplayLength(0)
+				.recalculateFrame(); // This resizes menu
+		}
+
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
@@ -192,12 +200,6 @@ public class PlayerInvDisplay extends Display {
 
 	@Override
 	public void render(Screen screen) {
-		if (itemDescription == null) menus[creativeMode ? 2 : 1].shouldRender = false;
-		else {
-			menus[creativeMode ? 2 : 1] = descriptionMenuBuilder.setEntries(itemDescription)
-				.createMenu(); // This resizes menu
-		}
-
 		super.render(screen);
 
 		// Searcher help text
@@ -224,9 +226,9 @@ public class PlayerInvDisplay extends Display {
 			menus[0].translate(shift, 0);
 			menus[1].translate(shift, 0);
 			if (newSel == 0)
-				descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
+				menus[2].builder().setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
 			if (newSel == 1)
-				descriptionMenuBuilder.setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
+				menus[2].builder().setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
 		}
 	}
 

@@ -108,8 +108,6 @@ public class ResourcePackDisplay extends Display {
 	private WatcherThread fileWatcher;
 	private ArrayList<ListEntry> entries0 = new ArrayList<>();
 	private ArrayList<ListEntry> entries1 = new ArrayList<>();
-	private Menu.Builder builder0;
-	private Menu.Builder builder1;
 	private boolean changed = false;
 
 	static { // Initializing the default pack and logo.
@@ -169,22 +167,18 @@ public class ResourcePackDisplay extends Display {
 		super(true, true);
 		initPacks();
 
-		// Left Hand Side
-		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
-			.setDisplayLength(8)
-			.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT);
-
-		// Right Hand Side
-		builder1 = new Menu.Builder(false, 2, RelPos.RIGHT)
-			.setDisplayLength(8)
-			.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT);
-
 		reloadEntries();
 
 		menus = new Menu[]{
-			builder0.setEntries(entries0)
+			new Menu.Builder(false, 2, RelPos.LEFT)
+				.setDisplayLength(8)
+				.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT)
+				.setEntries(entries0)
 				.createMenu(),
-			builder1.setEntries(entries1)
+			new Menu.Builder(false, 2, RelPos.RIGHT)
+				.setDisplayLength(8)
+				.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT)
+				.setEntries(entries1)
 				.createMenu()
 		};
 
@@ -244,18 +238,18 @@ public class ResourcePackDisplay extends Display {
 	 */
 	private void refreshEntries() {
 		reloadEntries();
-		Menu[] newMenus = new Menu[]{
-			builder0.setEntries(entries0)
-				.createMenu(),
-			builder1.setEntries(entries1)
-				.createMenu()
-		};
+		menus[0].setEntries(entries0);
+		menus[0].builder()
+			.setMenuSize(null)
+			.recalculateFrame();
+		menus[1].setEntries(entries1);
+		menus[1].builder()
+			.setMenuSize(null)
+			.recalculateFrame();
 
 		// Reapplying selections.
-		newMenus[0].setSelection(menus[0].getSelection());
-		newMenus[1].setSelection(menus[1].getSelection());
-
-		menus = newMenus;
+		menus[0].setSelection(menus[0].getSelection());
+		menus[1].setSelection(menus[1].getSelection());
 
 		/* Translate position. */
 		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
