@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Item {
+	public static final String DATA_FORMAT = "%s_%d";
 
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 

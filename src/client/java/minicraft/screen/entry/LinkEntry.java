@@ -53,7 +53,7 @@ public class LinkEntry extends SelectEntry {
 					Game.setDisplay(new TempDisplay(3000, false, true, new Menu.Builder(true, 0, RelPos.CENTER, new StringEntry(openMsg)).createMenu()));
 					desktop.browse(uri);
 				} catch (IOException e) {
-					Logger.tag("Network").error("Could not parse LinkEntry url \"" + url + "\" into valid URI:");
+					Logger.tag("Network").error("Could not parse LinkEntry url \"{}\" into valid URI:", url);
 					e.printStackTrace();
 					canBrowse = false;
 				}

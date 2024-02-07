@@ -51,8 +51,8 @@ public class ItemEntry extends ListEntry {
 
 		String string = toString();
 
-		Font.drawColor(string.replace(contain, Color.toStringCode(isSelected ? containColor :
-			Color.tint(containColor, -1, true)) + contain + Color.WHITE_CODE), screen, x + 16, y);
+		Font.drawColor(string.replace(contain, String.format("%s%s%s", Color.toStringCode(isSelected ? containColor :
+				Color.tint(containColor, -1, true)), contain, Color.WHITE_CODE)), screen, x + 16, y);
 	}
 
 	@Override

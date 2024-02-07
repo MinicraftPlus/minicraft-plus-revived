@@ -24,7 +24,7 @@ public class DoorTile extends Tile {
 	}
 
 	protected DoorTile(Material type, String name) {
-		super(type.name() + " " + (name == null ? "Door" : name), null);
+		super(String.format("%s %s", type.name(), name == null ? "Door" : name), null);
 		this.type = type;
 		switch (type) {
 			case Wood:

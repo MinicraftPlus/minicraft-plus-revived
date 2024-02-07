@@ -453,7 +453,7 @@ public class LegacyLoad {
 			case "GoldLantern":
 				return new Lantern(Lantern.Type.GOLD);
 			default:
-				Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: " + string);
+				Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: {}", string);
 				return null;
 		}
 	}

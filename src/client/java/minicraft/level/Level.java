@@ -58,7 +58,8 @@ public class Level {
 	}
 
 	public static Localization.LocalizationString getDepthString(int depth) {
-		return new Localization.LocalizationString("minicraft.displays.loading.message.type.level", depth < 0 ? "B" + (-depth) : depth);
+		return new Localization.LocalizationString("minicraft.display.level_name", depth < 0 ?
+			new Localization.LocalizationString("minicraft.display.level_name.underground", -depth) : depth);
 	}
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
@@ -132,7 +133,7 @@ public class Level {
 			}
 		}
 
-		Logging.WORLDNAMED.info("Found " + numfound + " entities in level of depth " + depth);
+		Logging.WORLDNAMED.info("Found {} entities in level of depth {}.", numfound, depth);
 	}
 
 	private void updateMobCap() {
@@ -192,7 +193,7 @@ public class Level {
 			return;
 		}
 
-		Logging.WORLD.debug("Making level " + level + "...");
+		Logging.WORLD.debug("Making level {}...", level);
 
 		maps = LevelGen.createAndValidateMap(w, h, level, seed);
 		if (maps == null) {
@@ -221,7 +222,7 @@ public class Level {
 							Structure.dungeonGate.draw(this, x, y); // Te gate should not intersect with the boss room.
 							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
 						} else if (level == 0) { // Surface
-							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
+							Logging.WORLD.trace("Setting tiles around ({},{}) to hard rock", x, y);
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						} else // Any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
@@ -314,7 +315,7 @@ public class Level {
 			for (Entity e : entities)
 				if (e instanceof DungeonChest)
 					numChests++;
-			Logging.WORLDNAMED.debug("Found " + numChests + " chests.");
+			Logging.WORLDNAMED.debug("Found {} chests.", numChests);
 		}
 
 		/// Make DungeonChests!
@@ -1186,6 +1187,6 @@ public class Level {
 	}
 
 	public String toString() {
-		return "Level(depth=" + depth + ")";
+		return String.format("Level(depth=%d)", depth);
 	}
 }

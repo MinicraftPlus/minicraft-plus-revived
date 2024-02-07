@@ -36,7 +36,7 @@ public class WallTile extends Tile {
 	}
 
 	protected WallTile(Material type, String name) {
-		super(type.name() + " " + (name == null ? "Wall" : name), null);
+		super(String.format("%s %s", type.name(), name == null ? "Wall" : name), null);
 		this.type = type;
 		switch (type) {
 			case Wood:
@@ -97,7 +97,7 @@ public class WallTile extends Tile {
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";
 			switch (type) { // Get what tile to set and what item to drop

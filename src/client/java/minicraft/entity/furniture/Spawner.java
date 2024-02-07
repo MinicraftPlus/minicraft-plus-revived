@@ -196,7 +196,7 @@ public class Spawner extends Furniture {
 			}
 
 			health -= dmg;
-			level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
+			level.add(new TextParticle(String.valueOf(dmg), x, y, Color.get(-1, 200, 300, 400)));
 			if (health <= 0) {
 				level.remove(this);
 				Sound.play("death");

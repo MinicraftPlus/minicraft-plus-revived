@@ -1,6 +1,7 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;
@@ -38,6 +39,7 @@ public class RecipeEntry extends ItemEntry {
 
 	@Override
 	public String toString() {
-		return super.toString() + (recipe.getAmount() > 1 ? " x" + recipe.getAmount() : "");
+		return recipe.getAmount() > 1 ? Localization.getLocalized("minicraft.display.inventory.recipe_entry_multi",
+			super.toString(), recipe.getAmount()) : super.toString();
 	}
 }

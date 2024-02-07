@@ -320,7 +320,7 @@ public class Updater extends Game {
 		if (t > 0 && t < times.length)
 			changeTimeOfDay(times[t]); // It just references the other one.
 		else
-			Logging.WORLD.info("Time " + t + " does not exist.");
+			Logging.WORLD.info("Time {} does not exist.", t);
 	}
 
 	public static Time getTime() {

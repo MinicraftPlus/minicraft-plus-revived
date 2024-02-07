@@ -87,10 +87,10 @@ public class LoadingDisplay extends Display {
 		int percent = Math.round(percentage);
 		if (msg == null) // msg != null if #init has already been invoked.
 			throw new IllegalStateException("display not initialized");
-		Font.drawParagraph(screen, new FontStyle(Color.RED), 6,
-			 (progressType == null ? msg : new Localization.LocalizationString(
-				 "minicraft.displays.loading.message", msg, progressType)) + ellipsis.updateAndGet(),
-			percent + "%"
-		);
+		Font.drawParagraph(screen, new FontStyle(Color.RED), 6, progressType == null ?
+			Localization.getLocalized("minicraft.displays.loading.message_no_type",
+				msg, ellipsis.updateAndGet(), percent) :
+			Localization.getLocalized("minicraft.displays.loading.message",
+				msg, progressType, ellipsis.updateAndGet(), percent));
 	}
 }

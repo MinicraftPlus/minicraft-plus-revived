@@ -32,7 +32,7 @@ public class CactusTile extends Tile {
 		int cHealth = 10;
 		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
 
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;

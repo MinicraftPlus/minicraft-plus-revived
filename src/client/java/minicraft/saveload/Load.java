@@ -187,7 +187,7 @@ public class Load {
 							File f = new File(location + "/saves/", filename);
 							while (f.exists()) { // Increments world name if world exists
 								i++;
-								filename = worldname + " (" + i + ")";
+								filename = String.format("%s (%d)", worldname, i);
 								f = new File(location + "/saves/", filename);
 							}
 							f.mkdirs();
@@ -738,7 +738,7 @@ public class Load {
 						if (Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
-							Logging.SAVELOAD.warn("Tile list doesn't contain tile " + tileID);
+							Logging.SAVELOAD.warn("Tile list doesn't contain tile {}", tileID);
 							tilename = "grass";
 						}
 					}
@@ -920,7 +920,7 @@ public class Load {
 			for (int i = 0; i < cols.length; i++)
 				cols[i] = Integer.parseInt(color[i]) / 50;
 
-			String col = "" + cols[0] + cols[1] + cols[2];
+			String col = String.format("%d%d%d", cols[0], cols[1], cols[2]);
 			Logging.SAVELOAD.debug("Getting color as " + col);
 			player.shirtColor = Integer.parseInt(col);
 		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
@@ -1154,7 +1154,7 @@ public class Load {
 				enemyMob.lvl = Integer.parseInt(info.get(info.size() - 2));
 
 				if (enemyMob.lvl == 0) {
-					Logging.SAVELOAD.debug("Level 0 mob: " + entityName);
+					Logging.SAVELOAD.debug("Level 0 mob: {}", entityName);
 					enemyMob.lvl = 1;
 				} else if (enemyMob.lvl > enemyMob.getMaxLevel()) {
 					enemyMob.lvl = enemyMob.getMaxLevel();
@@ -1319,7 +1319,7 @@ public class Load {
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
 			default:
-				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
+				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: {}", string);
 				return null;
 		}
 	}

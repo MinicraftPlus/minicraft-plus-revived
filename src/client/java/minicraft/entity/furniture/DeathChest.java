@@ -87,7 +87,7 @@ public class DeathChest extends Chest {
 
 	public void render(Screen screen) {
 		super.render(screen);
-		String timeString = (time / Updater.normSpeed) + "S";
+		String timeString = Localization.getLocalized("minicraft.display.death_chest.time_remaining", time / Updater.normSpeed);
 		Font.draw(timeString, screen, x - Font.textWidth(timeString) / 2, y - Font.textHeight() - getBounds().getHeight() / 2, Color.WHITE);
 	}
 

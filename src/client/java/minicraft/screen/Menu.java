@@ -338,8 +338,8 @@ public class Menu {
 			} else {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
-						screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 6, 0, hudSheet.getSheet());
-					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
+						screen.render(titleLoc.x + i * 8, titleLoc.y, 3, 6, 0, hudSheet.getSheet());
+					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * 8, titleLoc.y, titleColor);
 				}
 			}
 		}
@@ -361,7 +361,7 @@ public class Menu {
 					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 6, 0, hudSheet.getSheet());
 				}
 
-				Font.draw("> " + typingSearcher + " <", screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
+				Font.draw(String.format("> %s <", typingSearcher), screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
 			}
 		}
 
@@ -394,7 +394,7 @@ public class Menu {
 				if (selected && entry.isSelectable()) {
 					// draw the arrows
 					boolean hiddenOverflow = hideOverflow && entryWidth > entryBounds.getWidth();
-					Font.draw("> ", screen, hiddenOverflow ? entryBounds.getLeft() - Font.textWidth("> ") : pos.x + xDisplacement - Font.textWidth("> "), y, ListEntry.COL_SLCT);
+					Font.draw("> ", screen, hiddenOverflow ? entryBounds.getLeft() - 2 * 8 : pos.x + xDisplacement - 2 * 8, y, ListEntry.COL_SLCT);
 					Font.draw(" <", screen, hiddenOverflow ? entryBounds.getRight() : pos.x + xDisplacement + entryWidth, y, ListEntry.COL_SLCT);
 				}
 			}
@@ -854,6 +854,6 @@ public class Menu {
 	}
 
 	public String toString() {
-		return title + "-Menu[" + bounds + "]";
+		return String.format("%s-Menu[%s]", title, bounds);
 	}
 }

@@ -20,8 +20,7 @@ public final class MyUtils {
 	}
 
 	public static String plural(int num, String word) {
-		String p = num == 1 ? "" : "s";
-		return num + " " + word + p;
+		return String.format("%d %s%s", num, word, num == 1 ? "" : "s");
 	}
 
 	public static void sleep(int millis) {

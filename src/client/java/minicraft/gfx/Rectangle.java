@@ -121,6 +121,6 @@ public class Rectangle {
 	}
 
 	public String toString() {
-		return super.toString() + "[center=" + getCenter() + "; size=" + getSize() + "]";
+		return String.format("%s[center=%s; size=%s]", super.toString(), getCenter(), getSize());
 	}
 }

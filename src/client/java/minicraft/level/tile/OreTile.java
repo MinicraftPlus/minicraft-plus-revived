@@ -97,7 +97,7 @@ public class OreTile extends Tile {
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
 		if (dmg > 0) {
 			int count = random.nextInt(2);
 			if (damage >= oreH) {

@@ -242,9 +242,11 @@ public class Renderer extends Game {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
 				if (isMode("minicraft.displays.world_create.options.game_mode.creative") || ac >= 10000)
-					Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
+					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.arrow_counter_unlimited"),
+						screen, 92, Screen.h - 16); // TODO Use of "^" -> "∞"
 				else
-					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
+					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.arrow_counter", ac),
+						screen, 92, Screen.h - 16);
 				// Displays the arrow icon
 				screen.render(10 * 8 + 4, Screen.h - 16, 4, 1, 0, hudSheet.getSheet());
 			}
@@ -304,14 +306,18 @@ public class Renderer extends Game {
 			else if (Updater.scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 
-			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left", hours > 0 ? hours + "h " : "", minutes, seconds), screen, Screen.w / 2 - 9 * 8, 2, timeCol);
+			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left",
+				Localization.getLocalized(hours > 0 ? "minicraft.display.gui.score.time_left.time_hms" :
+					minutes > 0 ? "minicraft.display.gui.score.time_left.time_ms" :
+					"minicraft.display.gui.score.time_left.time_s", hours, minutes, seconds)),
+				screen, Screen.w / 2 - 9 * 8, 2, timeCol);
 
 			String scoreString = Localization.getLocalized("minicraft.display.gui.score.current_score", player.getScore());
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, Color.WHITE);
 
 			if (player.getMultiplier() > 1) {
 				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : Color.RED;
-				String mult = "X" + player.getMultiplier();
+				String mult = Localization.getLocalized("minicraft.display.gui.score_multiplier", player.getMultiplier());
 				Font.draw(mult, screen, Screen.w - Font.textWidth(mult) - 2, 4 + 2 * 8, multColor);
 			}
 		}
@@ -322,7 +328,8 @@ public class Renderer extends Game {
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
 			int green = (int) (dura * 2.55f); // Let duration show as normal.
-			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
+			Font.drawBackground(Localization.getLocalized("minicraft.display.gui.item_durability", dura),
+				screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
 		// WATERING CAN CONTAINER STATUS
@@ -493,44 +500,46 @@ public class Renderer extends Game {
 
 	private static void renderDebugInfo() {
 		// Should not localize debug info.
+		// TODO Reorganize debug screen someday
 
 		int textcol = Color.WHITE;
 
 		if (showDebugInfo) { // Renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<>();
-			info.add("VERSION: " + Initializer.VERSION);
-			info.add(Initializer.fra + " fps");
-			info.add("Day tiks: " + Updater.tickCount + " (" + Updater.getTime() + ")");
-			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
+			info.add(String.format("VERSION: %s", Initializer.VERSION));
+			info.add(String.format("%d fps", Initializer.fra));
+			info.add(String.format("Day tiks: %d (%s)", Updater.tickCount, Updater.getTime()));
+			info.add(String.format("%s tps", Updater.normSpeed * Updater.gamespeed));
 
-			info.add("walk spd: " + player.moveSpeed);
-			info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
-			info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
+			info.add(String.format("walk spd: %s", player.moveSpeed));
+			info.add(String.format("X: %d-%d", player.x / 16, player.x % 16));
+			info.add(String.format("Y: %d-%d", player.y / 16, player.y % 16));
 			if (levels[currentLevel] != null)
-				info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
-			if (isMode("minicraft.displays.world_create.options.game_mode.score")) info.add("Score: " + player.getScore());
+				info.add(String.format("Tile: %s", levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name));
+			if (isMode("minicraft.displays.world_create.options.game_mode.score"))
+				info.add(String.format("Score: %d", player.getScore()));
 
 			if (levels[currentLevel] != null) {
-				info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
+				info.add(String.format("Mob Cnt: %d/%d", levels[currentLevel].mobCount, levels[currentLevel].maxMobCount));
 			}
 
 			// Displays number of chests left, if on dungeon level.
 			if (levels[currentLevel] != null && currentLevel == 5) {
 				if (levels[5].chestCount > 0)
-					info.add("Chests: " + levels[5].chestCount);
+					info.add(String.format("Chests: %d", levels[5].chestCount));
 				else
 					info.add("Chests: Complete!");
 			}
 
 
-			info.add("Hunger stam: " + player.getDebugHunger());
+			info.add(String.format("Hunger stam: %s", player.getDebugHunger()));
 			if (player.armor > 0) {
-				info.add("Armor: " + player.armor);
-				info.add("Dam buffer: " + player.armorDamageBuffer);
+				info.add(String.format("Armor: %d", player.armor));
+				info.add(String.format("Dam buffer: %d", player.armorDamageBuffer));
 			}
 
 			if (levels[currentLevel] != null) {
-				info.add("Seed: " + levels[currentLevel].getSeed());
+				info.add(String.format("Seed: %d", levels[currentLevel].getSeed()));
 			}
 
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);

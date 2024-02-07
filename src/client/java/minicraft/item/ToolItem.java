@@ -46,7 +46,7 @@ public class ToolItem extends Item {
 	 * Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc)
 	 */
 	public ToolItem(ToolType type, int level) {
-		super(LEVEL_NAMES[level] + " " + type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")));
+		super(String.format("%s %s", LEVEL_NAMES[level], type.name()), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")));
 
 		this.type = type;
 		this.level = level;
@@ -68,7 +68,8 @@ public class ToolItem extends Item {
 	@Override
 	public String getDisplayName() {
 		if (!type.noLevel)
-			return Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
+			return Localization.getLocalized("minicraft.display.inventory.tool_item_display_name",
+				Localization.getLocalized(LEVEL_NAMES[level]), Localization.getLocalized(type.toString()));
 		else return Localization.getLocalized(type.toString());
 	}
 
@@ -117,7 +118,7 @@ public class ToolItem extends Item {
 
 	@Override
 	public String getData() {
-		return super.getData() + "_" + dur;
+		return String.format(DATA_FORMAT, super.getData(), dur);
 	}
 
 	/**

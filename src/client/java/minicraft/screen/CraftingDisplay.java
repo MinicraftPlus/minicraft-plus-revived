@@ -109,7 +109,9 @@ public class CraftingDisplay extends Display {
 		Map<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for (String itemName : costMap.keySet()) {
 			Item cost = Items.get(itemName);
-			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
+			costList.add(new ItemListing(cost, Localization.getLocalized(
+				"minicraft.displays.crafting.costs.listing_entry",
+				player.getInventory().count(cost), costMap.get(itemName))));
 		}
 
 		return costList.toArray(new ItemListing[0]);

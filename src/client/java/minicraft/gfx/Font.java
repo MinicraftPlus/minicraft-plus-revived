@@ -187,7 +187,7 @@ public class Font {
 		for (i = 1; i < words.length; i++) {
 			if (words[i].equals("\n")) break;
 
-			curWidth += textWidth(" " + words[i]);
+			curWidth += textWidth(words[i]) + 8;
 			if (curWidth > maxWidth)
 				break;
 		}

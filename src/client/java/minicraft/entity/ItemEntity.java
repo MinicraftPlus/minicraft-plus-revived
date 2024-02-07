@@ -73,7 +73,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 	 * @return string representation of this entity
 	 */
 	public String getData() {
-		return String.join(":", (new String[]{item.getData(), zz + "", lifeTime + "", time + "", xa + "", ya + "", za + ""}));
+		return String.join(":", (new String[]{item.getData(), String.valueOf(zz), String.valueOf(lifeTime),
+			String.valueOf(time), String.valueOf(xa), String.valueOf(ya), String.valueOf(za) }));
 	}
 
 	@Override

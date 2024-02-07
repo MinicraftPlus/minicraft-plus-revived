@@ -56,7 +56,7 @@ public class InputEntry extends ListEntry {
 		if (maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
 		if (input.getMappedKey("CTRL-V").isClicked()) {
-			userInput = userInput + clipboardHandler.getClipboardContents();
+			userInput += clipboardHandler.getClipboardContents();
 		}
 		if (!userInput.isEmpty()) {
 			if (input.getMappedKey("CTRL-C").isClicked()) {

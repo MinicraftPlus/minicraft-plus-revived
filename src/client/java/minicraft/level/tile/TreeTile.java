@@ -153,7 +153,7 @@ public class TreeTile extends Tile {
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
 			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));

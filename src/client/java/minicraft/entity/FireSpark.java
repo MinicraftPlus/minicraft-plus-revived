@@ -110,6 +110,6 @@ public class FireSpark extends Entity {
 	 * @return the owners id as a string.
 	 */
 	public String getData() {
-		return owner.eid + "";
+		return String.valueOf(owner.eid);
 	}
 }

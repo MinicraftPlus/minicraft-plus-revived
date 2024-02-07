@@ -1190,7 +1190,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Adds a text particle telling how much damage was done to the player, and the armor.
 			if (armorDam > 0) {
-				level.add(new TextParticle("" + damage, x, y, Color.GRAY));
+				level.add(new TextParticle(String.valueOf(damage), x, y, Color.GRAY));
 				armor -= armorDam;
 				if (armor <= 0) {
 					healthDam -= armor; // Adds armor damage overflow to health damage (minus b/c armor would be negative)
@@ -1202,7 +1202,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (healthDam > 0 || this != Game.player) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			level.add(new TextParticle(String.valueOf(damage), x, y, Color.get(-1, 504)));
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
@@ -1226,7 +1226,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (healthDam > 0 || this != Game.player) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			level.add(new TextParticle(String.valueOf(damage), x, y, Color.get(-1, 504)));
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
@@ -1236,7 +1236,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	public void remove() {
-		Logging.WORLD.trace("Removing player from level " + getLevel());
+		Logging.WORLD.trace("Removing player from level {}", getLevel());
 		super.remove();
 	}
 
@@ -1246,7 +1246,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public String getDebugHunger() {
-		return hungerStamCnt + "_" + stamHungerTicks;
+		return String.format("%d_%d", hungerStamCnt, stamHungerTicks);
 	}
 
 	/**

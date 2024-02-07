@@ -12,6 +12,7 @@ import java.util.ArrayList;
 // Some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
 
 public class StackableItem extends Item {
+	public static final String STACK_DISPLAY_NAME_FORMAT = "%s_%d";
 
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
@@ -84,15 +85,17 @@ public class StackableItem extends Item {
 
 	@Override
 	public String toString() {
-		return super.toString() + "-Stack_Size:" + count;
+		return String.format("%s-Stack_Size:%d", super.toString(), count);
 	}
 
 	public String getData() {
-		return getName() + "_" + count;
+		return String.format(DATA_FORMAT, getName(), count);
 	}
 
 	@Override
 	public String getDisplayName() {
-		return Math.min(count, 999) + " " + Localization.getLocalized(getName());
+		String s = Localization.getLocalized(getName());
+		return count < 1000 ? Localization.getLocalized("minicraft.display.inventory.stackable_item_entry", count, s) :
+			Localization.getLocalized("minicraft.display.inventory.stackable_item_entry_in_excess", s);
 	}
 }

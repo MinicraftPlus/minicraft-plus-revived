@@ -90,8 +90,8 @@ public class FontStyle {
 
 	public void setupParagraphLine(String[] para, int line, int spacing) {
 		if (para == null || line < 0 || line >= para.length) {
-			Logger.tag("FontStyle").error("FontStyle.java: " +
-				(para == null ? "paragraph is null" : "index " + line + " is invalid") + "; can't draw line.");
+			Logger.tag("FontStyle").error("FontStyle.java: {}; can't draw line.",
+				para == null ? "paragraph is null" : String.format("index %d is invalid", line));
 			return;
 		}
 

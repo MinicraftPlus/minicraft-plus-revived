@@ -130,10 +130,8 @@ public class AirWizard extends EnemyMob {
 
 		int textcol = Color.get(1, 0, 204, 0);
 		int textcol2 = Color.get(1, 0, 51, 0);
-		int percent = health / (maxHealth / 100);
-		String h = percent + "%";
-
-		if (percent < 1) h = "1%";
+		int percent = Math.max(health * 100 / maxHealth, 1);
+		String h = Localization.getLocalized("minicraft.display.boss.health_indicator", percent);
 
 		if (percent < 16) {
 			textcol = Color.get(1, 204, 0, 0);

@@ -320,7 +320,7 @@ public class WorldSelectDisplay extends Display {
 					File world = new File(worldsDir + worlds.get(menus[0].getSelection()).saveName);
 
 					// Do the action.
-					Logging.GAMEHANDLER.debug("Deleting world: " + world);
+					Logging.GAMEHANDLER.debug("Deleting world: {}", world);
 					File[] list = world.listFiles();
 					for (File file : list) {
 						file.delete();
@@ -445,7 +445,7 @@ public class WorldSelectDisplay extends Display {
 				LocalDateTime.ofEpochSecond(lastModified / 1000,
 					(int) (lastModified % 1000) * 1000000, ZoneOffset.UTC), cleared);
 		} catch (IOException | IndexOutOfBoundsException e) {
-			Logging.WORLD.warn(e, "Unable to load world \"" + folder.getName() + "\"");
+			Logging.WORLD.warn(e, "Unable to load world \"{}\"", folder.getName());
 			return null;
 		}
 	}

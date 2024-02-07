@@ -113,7 +113,7 @@ public class InputHandler implements KeyListener {
 		controllerIndex = controllerManager.getControllerIndex(0);
 		controllerManager.update();
 		try {
-			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
+			Logging.CONTROLLER.debug("Controller Detected: {}", controllerManager.getControllerIndex(0).getName());
 		} catch (ControllerUnpluggedException e) {
 			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
 		}
@@ -240,7 +240,7 @@ public class InputHandler implements KeyListener {
 		public abstract boolean isClicked();
 
 		public String toString() { // For debugging
-			return "down:" + isDown() + "; clicked:" + isClicked();
+			return String.format("down:%s; clicked:%s", isDown(), isClicked());
 		}
 	}
 
@@ -311,7 +311,7 @@ public class InputHandler implements KeyListener {
 
 		// Custom toString() method, I used it for debugging.
 		public String toString() {
-			return "down:" + down + "; clicked:" + clicked + "; presses=" + presses + "; absorbs=" + absorbs;
+			return String.format("down:%s; clicked:%s; presses=%d; absorbs=%d", down, clicked, presses, absorbs);
 		}
 	}
 
@@ -543,7 +543,7 @@ public class InputHandler implements KeyListener {
 		if (keyNames.containsKey(keycode))
 			keytext = keyNames.get(keycode);
 		else {
-			Logger.tag("INPUT").error("Could not find keyname for keycode \"" + keycode + "\"");
+			Logger.tag("INPUT").error("Could not find key name for keycode \"{}\"", keycode);
 			return;
 		}
 
@@ -553,7 +553,7 @@ public class InputHandler implements KeyListener {
 
 		//System.out.println("Toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if (pressed && keyToChange != null && !isMod(keytext)) {
-			keymap.put(keyToChange, (overwrite ? "" : keymap.get(keyToChange) + "|") + getCurModifiers() + keytext);
+			keymap.put(keyToChange, String.format("%s%s%s", overwrite ? "" : keymap.get(keyToChange) + "|", getCurModifiers(), keytext));
 			keyChanged = keyToChange;
 			keyToChange = null;
 			return;
