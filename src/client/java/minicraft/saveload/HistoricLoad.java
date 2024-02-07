@@ -184,12 +184,8 @@ public class HistoricLoad {
 
 	private static List<String> loadFile(String path) throws Load.FileLoadingException {
 		try {
-			List<String> data = Arrays.asList(Load.loadFromFile(path, true).split(","));
-			if (!data.get(data.size() - 1).isEmpty())
-				throw new Load.MalformedSaveDataFormatException("The last character is expected to be a comma (\",\")");
-			data.remove(data.size() - 1); // Removes the empty value as the last character is a comma.
-			return data;
-		} catch (IOException | Load.MalformedSaveDataFormatException e) {
+			return Arrays.asList(Load.loadFromFile(path, true).split(","));
+		} catch (IOException e) {
 			throw new Load.FileLoadingException("Failed to load \"" + path + "\"", e);
 		}
 	}
