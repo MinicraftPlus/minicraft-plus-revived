@@ -8,7 +8,7 @@ import minicraft.gfx.Screen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ListEntry {
+public abstract class ListEntry implements Screen.ScreenEntry {
 
 	public static final int COL_UNSLCT = Color.GRAY;
 	public static final int COL_SLCT = Color.WHITE;
@@ -20,14 +20,18 @@ public abstract class ListEntry {
 	 *
 	 * @param input InputHandler used to get player input.
 	 */
+	@Override
 	public abstract void tick(InputHandler input);
 
+	@Override
 	public void tickScrollingTicker(@NotNull SelectableStringEntry.EntryXAccessor accessor) {}
 
+	@Override
 	public boolean isScrollingTickerSet() { return false; }
 
 	public void hook(@NotNull Action callback) {}
 
+	@Override
 	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel bounds, int x, int y, boolean isSelected, String contain, int containColor) {
 		if (!visible) {
 			return;
@@ -54,6 +58,7 @@ public abstract class ListEntry {
 	 * @param isSelected true if the entry is selected, false otherwise
 	 * @param bounds X rendering bounds
 	 */
+	@Override
 	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel bounds, int x, int y, boolean isSelected) {
 		if (visible) {
 			String text = toString();
@@ -79,6 +84,7 @@ public abstract class ListEntry {
 	 *
 	 * @return the entry's width
 	 */
+	@Override
 	public int getWidth() {
 		return Font.textWidth(toString());
 	}

@@ -61,6 +61,17 @@ public class Screen {
 		}
 	}
 
+	/** The basic class of a GUI entry. */
+	public interface ScreenEntry {
+		int getWidth();
+		void tick(InputHandler input);
+		void tickScrollingTicker(SelectableStringEntry.EntryXAccessor accessor);
+		boolean isScrollingTickerSet();
+		void render(Screen screen, @Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected);
+		void render(Screen screen, @Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected,
+		            String contain, int containColor);
+	}
+
 	public static abstract class EntryRenderingUnit {
 		protected abstract class EntryLimitingModel extends RenderingLimitingModel {
 			@Override
@@ -162,7 +173,7 @@ public class Screen {
 		}
 
 		protected abstract Rectangle getEntryBounds(); // Global coordinate system
-		protected abstract ListEntry getDelegate();
+		protected abstract ScreenEntry getDelegate();
 
 		public void resetRelativeAnchorsSynced(RelPos newAnchor) {
 			entryAnchor = containerAnchor = newAnchor;
