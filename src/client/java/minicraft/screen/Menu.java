@@ -214,7 +214,7 @@ public class Menu {
 		}
 
 		int prevSel = selection;
-		if (input.getKey("ALT").down) {
+		if (input.getMappedKey("ALT").isDown()) {
 			if (input.inputPressed("cursor-left"))
 				entries.get(selection).translateX(MinicraftImage.boxWidth, true);
 			if (input.inputPressed("cursor-right"))
