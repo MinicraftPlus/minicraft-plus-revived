@@ -353,10 +353,10 @@ public class WorldSelectDisplay extends Display {
 			int leftWidth = bottomEntries.get(i * 2).getWidth();
 			int rightWidth = bottomEntries.get(i * 2 + 1).getWidth();
 			int halfTotalWidth = (leftWidth + rightWidth + gap) / 2;
-			bottomEntries.get(i * 2).render(screen, Screen.w / 2 - halfTotalWidth,
-				Screen.h - (3 - i) * 10, false, null);
-			bottomEntries.get(i * 2 + 1).render(screen, Screen.w / 2 + halfTotalWidth - rightWidth,
-				Screen.h - (3 - i) * 10, false, null);
+			bottomEntries.get(i * 2).render(screen, null, Screen.w / 2 - halfTotalWidth,
+				Screen.h - (3 - i) * 10, false);
+			bottomEntries.get(i * 2 + 1).render(screen, null, Screen.w / 2 + halfTotalWidth - rightWidth,
+				Screen.h - (3 - i) * 10, false);
 		}
 
 		// Title

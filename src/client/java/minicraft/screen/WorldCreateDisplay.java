@@ -148,16 +148,6 @@ public class WorldCreateDisplay extends Display {
 				WorldSelectDisplay.getValidWorldName(getUserInput(), beforeRenamed != null);
 		}
 
-		@Override
-		public WorldNameInputEntry setRenderingBounds(IntRange bounds) {
-			return (WorldNameInputEntry) super.setRenderingBounds(bounds);
-		}
-
-		@Override
-		public WorldNameInputEntry setEntryPos(RelPos entryPos) {
-			return (WorldNameInputEntry) super.setEntryPos(entryPos);
-		}
-
 //			@Override
 //			public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
 //				super.render(screen, isGen ?
@@ -178,7 +168,7 @@ public class WorldCreateDisplay extends Display {
 			"[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
-		}.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
+		};
 
 		StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
 			"minicraft.display.world_naming.world_name_notify", DEFAULT_NAME), Color.DARK_GRAY);
@@ -191,8 +181,8 @@ public class WorldCreateDisplay extends Display {
 			Game.setDisplay(new LoadingDisplay(new WorldSettings(seedObj)));
 		}) {
 			@Override
-			public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-				Font.draw(toString(), screen, x, y, isSelectable() ? Color.CYAN : Color.tint(Color.CYAN, -1, true), bounds);
+			public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
+				Font.draw(limitingModel, toString(), screen, x, y, isSelectable() ? Color.CYAN : Color.tint(Color.CYAN, -1, true));
 			}
 		};
 		nameField.setChangeListener(o -> {

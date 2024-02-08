@@ -39,19 +39,19 @@ public class ItemEntry extends ListEntry {
 	}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds, String contain, int containColor) {
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected, String contain, int containColor) {
 		if (!isVisible()) {
 			return;
 		}
 
-		render(screen, x, y, isSelected, bounds);
+		render(screen, limitingModel, x, y, isSelected);
 		if (contain == null || contain.isEmpty()) {
 			return;
 		}
 
 		String string = toString();
 
-		Font.drawColor(string.replace(contain, String.format("%s%s%s", Color.toStringCode(isSelected ? containColor :
+		Font.drawColor(limitingModel, string.replace(contain, String.format("%s%s%s", Color.toStringCode(isSelected ? containColor :
 				Color.tint(containColor, -1, true)), contain, Color.WHITE_CODE)), screen, x + 16, y);
 	}
 
