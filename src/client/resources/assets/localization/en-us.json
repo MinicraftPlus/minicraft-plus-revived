@@ -38,6 +38,8 @@
   "minicraft.control_guide.menu": "Use %s to open your inventory menu.",
   "minicraft.control_guide.move": "Use %s to move around.",
   "minicraft.display.boss.health_indicator": "%d%%",
+  "minicraft.display.boss_bar.title.air_wizard": "Air Wizard",
+  "minicraft.display.boss_bar.title.obsidian_knight": "Obsidian Knight",
   "minicraft.display.death_chest.time_remaining": "%dS",
   "minicraft.display.entries.boolean.false": "Off",
   "minicraft.display.entries.boolean.true": "On",

@@ -815,10 +815,12 @@ public class Renderer extends Game {
 		if (!player.isRemoved()) {
 			if (AirWizard.active && (player.getLevel().depth == 1)) {
 				AirWizard boss = AirWizard.entity;
-				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100), "Air wizard");
+				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100),
+					Localization.getLocalized("minicraft.display.boss_bar.title.air_wizard"));
 			} else if (ObsidianKnight.active && (player.getLevel().depth == -4)) {
 				ObsidianKnight boss = ObsidianKnight.entity;
-				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100), "Obsidian Knight");
+				renderBossbar((int) ((((float) boss.health) / boss.maxHealth) * 100),
+					Localization.getLocalized("minicraft.display.boss_bar.title.obsidian_knight"));
 			}
 		}
 
