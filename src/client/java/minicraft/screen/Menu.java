@@ -450,98 +450,37 @@ public class Menu {
 	}
 
 	/** Acts as an internal wrapping decorator of a {@link ListEntry} for the {@link Menu} environment. */
-	private class MenuListEntry {
-		private class MenuEntryLimitingModel extends Screen.RenderingLimitingModel {
-			@Override
-			public int getLeftBound() {
-				return getEntryBounds().getLeft();
-			}
+	private class MenuListEntry extends Screen.EntryRenderingUnit {
+		private class MenuEntryLimitingModel extends EntryLimitingModel {}
 
-			@Override
-			public int getRightBound() {
-				return getEntryBounds().getRight() - 1; // As this model is inclusive.
-			}
-
-			@Override
-			public int getTopBound() {
-				return getEntryBounds().getTop();
-			}
-
-			@Override
-			public int getBottomBound() {
-				return getEntryBounds().getBottom() - 1; // As this model is inclusive.
-			}
-		}
-
-		private class MenuEntryXAccessor implements SelectableStringEntry.EntryXAccessor {
-			/* Most of the methods here can be obtained by algebra. */
-
-			@Override
-			public int getWidth() {
-				return delegate.getWidth();
-			}
-
-			@Override
-			public int getX(RelPos anchor) {
-				return xPos + (menuAnchor.xIndex - anchor.xIndex) * getEntryBounds().getWidth() / 2 +
-					(anchor.xIndex - entryAnchor.xIndex) * delegate.getWidth() / 2;
-			}
-
-			@Override
-			public void setX(RelPos anchor, int x) {
-				xPos = x + (anchor.xIndex - menuAnchor.xIndex) * getEntryBounds().getWidth() / 2 +
-					(entryAnchor.xIndex - anchor.xIndex) * delegate.getWidth() / 2;
-			}
-
-			@Override
-			public void translateX(int displacement) {
-				xPos += displacement;
-			}
-
-			@Override
-			public void setAnchors(RelPos anchor) {
-				changeRelativeEntryAnchor(anchor);
-				changeRelativeMenuAnchor(anchor);
-			}
-
-			@Override
-			public int getLeftBound(RelPos anchor) {
-				return anchor.xIndex * (delegate.getWidth() - getEntryBounds().getWidth()) / 2;
-			}
-
-			@Override
-			public int getRightBound(RelPos anchor) {
-				return (2 - anchor.xIndex) * (getEntryBounds().getWidth() - delegate.getWidth()) / 2;
-			}
-		}
+		private class MenuEntryXAccessor extends EntryXAccessor {}
 
 		public final MenuEntryLimitingModel limitingModel = new MenuEntryLimitingModel();
 		public final MenuEntryXAccessor accessor = new MenuEntryXAccessor();
 		public final ListEntry delegate;
 
-		/**
-		 * A reference anchor, which is the relative position of the container menu <br>
-		 * Also, it is the relative position of the entry. <br>
-		 * Acceptable values: {@code LEFT}, {@code CENTER}, {@code RIGHT}
-		 */
-		private @NotNull RelPos menuAnchor;
-		/**
-		 * A reference anchor of the entry <br>
-		 * This is usually the same as {@link #menuAnchor}.
-		 */
-		private @NotNull RelPos entryAnchor;
-		/** The x-position of the entry at its anchor {@link #entryAnchor} relative to the menu anchor {@link #menuAnchor} */
-		private int xPos = 0;
-
 		public MenuListEntry(ListEntry delegate, @NotNull RelPos anchor) {
+			super(anchor);
 			this.delegate = delegate;
-			anchor = RelPos.getPos(anchor.xIndex, 1); // Confirms that this meets the requirement.
-			this.menuAnchor = anchor;
-			this.entryAnchor = anchor;
 		}
 
-		private Rectangle getEntryBounds() {
+		@Override
+		protected EntryLimitingModel getLimitingModel() {
+			return limitingModel;
+		}
+
+		@Override
+		protected EntryXAccessor getXAccessor() {
+			return accessor;
+		}
+
+		protected Rectangle getEntryBounds() {
 			return delegate.isSelectable() ? entryBounds : entryRenderingBounds;
+		}
+
+		@Override
+		protected ListEntry getDelegate() {
+			return delegate;
 		}
 
 		public void translateX(int displacement, boolean limit) {
@@ -551,78 +490,43 @@ public class Menu {
 				int minX;
 				int maxX;
 				if (w <= getEntryBounds().getWidth()) {
-					minX = (entryAnchor.xIndex * w - menuAnchor.xIndex * getEntryBounds().getWidth()) / 2;
-					maxX = ((2 - menuAnchor.xIndex) * getEntryBounds().getWidth() - (2 - entryAnchor.xIndex) * w) / 2;
+					minX = (entryAnchor.xIndex * w - containerAnchor.xIndex * getEntryBounds().getWidth()) / 2;
+					maxX = ((2 - containerAnchor.xIndex) * getEntryBounds().getWidth() - (2 - entryAnchor.xIndex) * w) / 2;
 				} else {
-					minX = ((2 - menuAnchor.xIndex) * getEntryBounds().getWidth() - (2 - entryAnchor.xIndex) * w) / 2;
-					maxX = (entryAnchor.xIndex * w - menuAnchor.xIndex * getEntryBounds().getWidth()) / 2;
+					minX = ((2 - containerAnchor.xIndex) * getEntryBounds().getWidth() - (2 - entryAnchor.xIndex) * w) / 2;
+					maxX = (entryAnchor.xIndex * w - containerAnchor.xIndex * getEntryBounds().getWidth()) / 2;
 				}
 				if (xPos < minX) xPos = minX;
 				if (xPos > maxX) xPos = maxX;
 			}
 		}
 
-		public void resetRelativeAnchorsSynced(RelPos newAnchor) {
-			entryAnchor = menuAnchor = newAnchor;
-			xPos = 0;
-		}
-		public void moveRelativeMenuAnchor(RelPos newAnchor) {
-			menuAnchor = newAnchor;
-			xPos = 0;
-		}
-		public void moveRelativeEntryAnchor(RelPos newAnchor) {
-			entryAnchor = newAnchor;
-			xPos = 0;
-		}
-		public void changeRelativeMenuAnchor(RelPos newAnchor) {
-			xPos += (menuAnchor.xIndex - newAnchor.xIndex) * getEntryBounds().getWidth() / 2;
-			menuAnchor = newAnchor;
-		}
-		public void changeRelativeEntryAnchor(RelPos newAnchor) {
-			xPos += (newAnchor.xIndex - entryAnchor.xIndex) * delegate.getWidth() / 2;
-			entryAnchor = newAnchor;
-		}
-
+		@Override
 		public void tick(InputHandler input) {
-			delegate.hook(() -> {
+			delegate.hook(() -> { // For input entry
 				xPos = 0; // Resets position
-				int diff = xPos + (menuAnchor.xIndex - 2) * getEntryBounds().getWidth() / 2 +
+				int diff = xPos + (containerAnchor.xIndex - 2) * getEntryBounds().getWidth() / 2 +
 					(2 - entryAnchor.xIndex) * delegate.getWidth() / 2;
 				if (diff > 0) translateX(-diff, false); // Shifts if and only if the entry exceeds the area.
 			});
-			delegate.tickScrollingTicker(accessor);
-			delegate.tick(input);
+			super.tick(input);
 		}
 
-		private void renderCursor(Screen screen, int x, int y, int entryWidth, boolean tickerSet) {
-			if (tickerSet) {
-				entryWidth = Math.min(entryWidth, getEntryBounds().getWidth());
-				x = getEntryBounds().getLeft();
+		@Override
+		protected boolean renderOutOfFrame() {
+			return renderOutOfFrame;
+		}
+
+		protected void renderExtra(Screen screen, int x, int y, int entryWidth, boolean selected) {
+			if (selected && delegate.isSelectable()) {
+				if (delegate.isScrollingTickerSet()) {
+					entryWidth = Math.min(entryWidth, getEntryBounds().getWidth());
+					x = getEntryBounds().getLeft();
+				}
+
+				Font.draw(null, "> ", screen, x - 2 * MinicraftImage.boxWidth, y, ListEntry.COL_SLCT);
+				Font.draw(null, " <", screen, x + entryWidth, y, ListEntry.COL_SLCT);
 			}
-
-			Font.draw(null, "> ", screen, x - 2 * MinicraftImage.boxWidth, y, ListEntry.COL_SLCT);
-			Font.draw(null, " <", screen, x + entryWidth, y, ListEntry.COL_SLCT);
-		}
-
-		public void render(Screen screen, int y, boolean selected) {
-			int w = delegate.getWidth(); // Reduce calculation
-			int x = getRenderX(w); // Reduce calculation
-			delegate.render(screen, renderOutOfFrame ? null : limitingModel, x, y, selected);
-			if (selected && delegate.isSelectable())
-				renderCursor(screen, x, y, w, delegate.isScrollingTickerSet());
-		}
-
-		public void render(Screen screen, int y, boolean selected, String contain, int containColor) {
-			int w = delegate.getWidth(); // Reduce calculation
-			int x = getRenderX(w); // Reduce calculation
-			delegate.render(screen, renderOutOfFrame ? null : limitingModel, x, y, selected, contain, containColor);
-			if (selected && delegate.isSelectable())
-				renderCursor(screen, x, y, w, delegate.isScrollingTickerSet());
-		}
-
-		private int getRenderX(int entryWidth) {
-			return getEntryBounds().getLeft() + xPos - entryAnchor.xIndex * entryWidth / 2 +
-				menuAnchor.xIndex * getEntryBounds().getWidth() / 2;
 		}
 	}
 

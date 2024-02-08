@@ -2,11 +2,13 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.screen.RelPos;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectableStringEntry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -56,6 +58,161 @@ public class Screen {
 
 		public boolean contains(int x, int y) { // inclusive
 			return getLeftBound() <= x && x <= getRightBound() && getTopBound() <= y && y <= getBottomBound();
+		}
+	}
+
+	public static abstract class EntryRenderingUnit {
+		protected abstract class EntryLimitingModel extends RenderingLimitingModel {
+			@Override
+			public int getLeftBound() {
+				return getEntryBounds().getLeft();
+			}
+
+			@Override
+			public int getRightBound() {
+				return getEntryBounds().getRight() - 1; // As this model is inclusive.
+			}
+
+			@Override
+			public int getTopBound() {
+				return getEntryBounds().getTop();
+			}
+
+			@Override
+			public int getBottomBound() {
+				return getEntryBounds().getBottom() - 1; // As this model is inclusive.
+			}
+		}
+
+		protected abstract class EntryXAccessor implements SelectableStringEntry.EntryXAccessor {
+			/* Most of the methods here can be obtained by algebra. */
+
+			@Override
+			public int getWidth() {
+				return getDelegate().getWidth();
+			}
+
+			@Override
+			public int getX(RelPos anchor) {
+				return xPos + (containerAnchor.xIndex - anchor.xIndex) * getEntryBounds().getWidth() / 2 +
+					(anchor.xIndex - entryAnchor.xIndex) * getDelegate().getWidth() / 2;
+			}
+
+			@Override
+			public void setX(RelPos anchor, int x) {
+				xPos = x + (anchor.xIndex - containerAnchor.xIndex) * getEntryBounds().getWidth() / 2 +
+					(entryAnchor.xIndex - anchor.xIndex) * getDelegate().getWidth() / 2;
+			}
+
+			@Override
+			public void translateX(int displacement) {
+				xPos += displacement;
+			}
+
+			@Override
+			public void setAnchors(RelPos anchor) {
+				changeRelativeEntryAnchor(anchor);
+				changeRelativeContainerAnchor(anchor);
+			}
+
+			@Override
+			public int getLeftBound(RelPos anchor) {
+				return anchor.xIndex * (getDelegate().getWidth() - getEntryBounds().getWidth()) / 2;
+			}
+
+			@Override
+			public int getRightBound(RelPos anchor) {
+				return (2 - anchor.xIndex) * (getEntryBounds().getWidth() - getDelegate().getWidth()) / 2;
+			}
+		}
+
+		protected abstract EntryLimitingModel getLimitingModel();
+		protected abstract EntryXAccessor getXAccessor();
+
+		/**
+		 * A reference anchor, which is the relative position of its container <br>
+		 * Also, it is the relative position of the entry. <br>
+		 * Acceptable values: {@code LEFT}, {@code CENTER}, {@code RIGHT}
+		 */
+		protected @NotNull RelPos containerAnchor;
+		/**
+		 * A reference anchor of the entry <br>
+		 * This is usually the same as {@link #containerAnchor}.
+		 * Acceptable values: {@code LEFT}, {@code CENTER}, {@code RIGHT}
+		 */
+		protected @NotNull RelPos entryAnchor;
+		/** The x-position of the entry at its anchor {@link #entryAnchor} relative to the container anchor {@link #containerAnchor} */
+		protected int xPos = 0;
+
+		/** This is used to prevent further exceptions to {@link RelPos}.
+		 * Here, we only use the x indices for positioning, so we can just simply shrink the acceptable value range
+		 * to an extent that we use the best. */
+		private static RelPos getRelPos(@NotNull RelPos anchor) {
+			return RelPos.getPos(anchor.xIndex, 1); // Confirms that this meets the requirement.
+		}
+
+		protected EntryRenderingUnit(@NotNull RelPos anchor) {
+			anchor = getRelPos(anchor);
+			this.containerAnchor = anchor;
+			this.entryAnchor = anchor;
+		}
+		protected EntryRenderingUnit(@NotNull RelPos containerAnchor, @NotNull RelPos entryAnchor) {
+			this.containerAnchor = getRelPos(containerAnchor);
+			this.entryAnchor = getRelPos(entryAnchor);
+		}
+
+		protected abstract Rectangle getEntryBounds(); // Global coordinate system
+		protected abstract ListEntry getDelegate();
+
+		public void resetRelativeAnchorsSynced(RelPos newAnchor) {
+			entryAnchor = containerAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void moveRelativeContainerAnchor(RelPos newAnchor) {
+			containerAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void moveRelativeEntryAnchor(RelPos newAnchor) {
+			entryAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void changeRelativeContainerAnchor(RelPos newAnchor) {
+			xPos += (containerAnchor.xIndex - newAnchor.xIndex) * getEntryBounds().getWidth() / 2;
+			containerAnchor = newAnchor;
+		}
+		public void changeRelativeEntryAnchor(RelPos newAnchor) {
+			xPos += (newAnchor.xIndex - entryAnchor.xIndex) * getDelegate().getWidth() / 2;
+			entryAnchor = newAnchor;
+		}
+
+		public void tick(InputHandler input) {
+			getDelegate().tickScrollingTicker(getXAccessor());
+			getDelegate().tick(input);
+		}
+
+		protected void renderExtra(Screen screen, int x, int y, int entryWidth, boolean selected) {}
+
+		protected boolean renderOutOfFrame() {
+			return false;
+		}
+
+		public void render(Screen screen, int y, boolean selected) {
+			int w = getDelegate().getWidth(); // Reduce calculation
+			int x = getRenderX(w); // Reduce calculation
+			getDelegate().render(screen, renderOutOfFrame() ? null : getLimitingModel(), x, y, selected);
+			renderExtra(screen, x, y, w, selected);
+		}
+
+		public void render(Screen screen, int y, boolean selected, String contain, int containColor) {
+			int w = getDelegate().getWidth(); // Reduce calculation
+			int x = getRenderX(w); // Reduce calculation
+			getDelegate().render(screen, renderOutOfFrame() ? null : getLimitingModel(), x, y, selected, contain, containColor);
+			renderExtra(screen, x, y, w, selected);
+		}
+
+		protected int getRenderX(int entryWidth) {
+			return getEntryBounds().getLeft() + xPos - entryAnchor.xIndex * entryWidth / 2 +
+				containerAnchor.xIndex * getEntryBounds().getWidth() / 2;
 		}
 	}
 
