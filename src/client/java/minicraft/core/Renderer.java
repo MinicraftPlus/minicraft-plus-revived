@@ -766,16 +766,16 @@ public class Renderer extends Game {
 			for (int i = 1; i <= 30; i++) {
 				// Renders your current red default hearts, golden hearts for 20 HP, obsidian hearts for 30 HP, or black hearts for damaged health.
 				if (i < 11) {
-					screen.render(null, (i - 1) * 8, Screen.h - 16, 0, 1, 0, hudSheet.getSheet()); // Empty Hearts
+					screen.render(null, (i - 1) * 8, Screen.h - 8, 0, 1, 0, hudSheet.getSheet()); // Empty Hearts
 				}
 				if (i < player.health + 1 && i < 11) {
-					screen.render(null, (i - 1) * 8, Screen.h - 16, 0, 0, 0, hudSheet.getSheet());  // Red Hearts
+					screen.render(null, (i - 1) * 8, Screen.h - 8, 0, 0, 0, hudSheet.getSheet());  // Red Hearts
 				}
 				if (i < player.health + 1 && i < 21 && i >= 11) {
-					screen.render(null, (i - 11) * 8, Screen.h - 16, 0, 2, 0, hudSheet.getSheet()); // Yellow Hearts
+					screen.render(null, (i - 11) * 8, Screen.h - 8, 0, 2, 0, hudSheet.getSheet()); // Yellow Hearts
 				}
 				if (i < player.health + 1 && i >= 21) {
-					screen.render(null, (i - 21) * 8, Screen.h - 16, 0, 3, 0, hudSheet.getSheet()); // Obsidian Hearts
+					screen.render(null, (i - 21) * 8, Screen.h - 8, 0, 3, 0, hudSheet.getSheet()); // Obsidian Hearts
 				}
 			}
 			for (int i = 0; i < Player.maxStat; i++) {
@@ -783,22 +783,22 @@ public class Renderer extends Game {
 				// Renders armor
 				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
-					screen.render(null, i * 8, Screen.h - 24, player.curArmor.sprite);
+					screen.render(null, i * 8, Screen.h - 16, player.curArmor.sprite);
 				}
 
 				if (player.staminaRechargeDelay > 0) {
 					// Creates the white/gray blinking effect when you run out of stamina.
 					if (player.staminaRechargeDelay / 4 % 2 == 0) {
-						screen.render(null, i * 8, Screen.h - 8, 1, 2, 0, hudSheet.getSheet());
+						screen.render(null, i * 8 + (Screen.w - 80), Screen.h - 8, 1, 2, 0, hudSheet.getSheet());
 					} else {
-						screen.render(null, i * 8, Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
+						screen.render(null, i * 8 + (Screen.w - 80), Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
 					}
 				} else {
 					// Renders your current stamina, and uncharged gray stamina.
 					if (i < player.stamina) {
-						screen.render(null, i * 8, Screen.h - 8, 1, 0, 0, hudSheet.getSheet());
+						screen.render(null, i * 8 + (Screen.w - 80), Screen.h - 8, 1, 0, 0, hudSheet.getSheet());
 					} else {
-						screen.render(null, i * 8, Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
+						screen.render(null, i * 8 + (Screen.w - 80), Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
 					}
 				}
 
