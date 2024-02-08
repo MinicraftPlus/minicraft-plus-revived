@@ -15,6 +15,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectableStringEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +30,12 @@ public class Menu {
 	private static final int LIMIT_TYPING_SEARCHER = 22;
 
 	@NotNull
-	private final ArrayList<ListEntry> entries = new ArrayList<>();
+	private final ArrayList<MenuListEntry> entries = new ArrayList<>();
 
 	private int spacing = 0;
 	private Rectangle bounds = null;
 	private Rectangle entryBounds = null;
-	private Rectangle renderingBounds = null;
+	private Rectangle entryRenderingBounds = null;
 	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 
 	private @Nullable Localization.LocalizationString title = null;
@@ -43,6 +44,7 @@ public class Menu {
 	private boolean drawVertically = false;
 
 	private boolean hasFrame;
+	private boolean renderOutOfFrame = false;
 
 	private boolean selectable = false;
 	boolean shouldRender = true;
@@ -75,12 +77,13 @@ public class Menu {
 	}
 
 	protected Menu(Menu m) {
-		entries.addAll(m.entries);
 		spacing = m.spacing;
 		bounds = m.bounds == null ? null : new Rectangle(m.bounds);
 		entryBounds = m.entryBounds == null ? null : new Rectangle(m.entryBounds);
-		renderingBounds = m.renderingBounds;
+		entryRenderingBounds = m.entryRenderingBounds == null ? null : new Rectangle(m.entryRenderingBounds);
 		entryPos = m.entryPos;
+		// Requires parameters before this.
+		setEntries(m.entries.stream().map(e -> e.delegate).toArray(ListEntry[]::new));
 		title = m.title;
 		titleColor = m.titleColor;
 		titleLoc = m.titleLoc;
@@ -94,6 +97,7 @@ public class Menu {
 		selection = m.selection;
 		dispSelection = m.dispSelection;
 		offset = m.offset;
+		renderOutOfFrame = m.renderOutOfFrame;
 
 		useSearcherBar = m.useSearcherBar;
 		selectionSearcher = 0;
@@ -114,13 +118,13 @@ public class Menu {
 		selection = Math.min(selection, entries.size() - 1);
 		selection = Math.max(0, selection);
 
-		if (!entries.get(selection).isSelectable()) {
+		if (!entries.get(selection).delegate.isSelectable()) {
 			int prevSel = selection;
 			do {
 				selection++;
 				if (selection < 0) selection = entries.size() - 1;
 				selection = selection % entries.size();
-			} while (!entries.get(selection).isSelectable() && selection != prevSel);
+			} while (!entries.get(selection).delegate.isSelectable() && selection != prevSel);
 		}
 
 		dispSelection = selection;
@@ -150,21 +154,21 @@ public class Menu {
 	}
 
 	ListEntry[] getEntries() {
-		return entries.toArray(new ListEntry[0]);
+		return entries.stream().map(a -> a.delegate).toArray(ListEntry[]::new);
 	}
-
 	protected void setEntries(ListEntry[] entries) {
 		this.entries.clear();
-		this.entries.addAll(0, Arrays.asList(entries));
+		Arrays.stream(entries)
+			.forEach(entry -> this.entries.add(new MenuListEntry(entry, entryPos)));
 	}
 
 	protected void setEntries(List<ListEntry> entries) {
 		this.entries.clear();
-		this.entries.addAll(entries);
+		entries.forEach(entry -> this.entries.add(new MenuListEntry(entry, entryPos)));
 	}
 
 	@Nullable ListEntry getCurEntry() {
-		return entries.size() == 0 ? null : entries.get(selection);
+		return entries.size() == 0 ? null : entries.get(selection).delegate;
 	}
 
 	int getNumOptions() {
@@ -197,16 +201,24 @@ public class Menu {
 	void translate(int xoff, int yoff) {
 		bounds.translate(xoff, yoff);
 		entryBounds.translate(xoff, yoff);
+		entryRenderingBounds.translate(xoff, yoff);
 		titleLoc.translate(xoff, yoff);
 	}
 
 	public void tick(InputHandler input) {
-		if (!selectable || entries.size() == 0) return;
+		if (!selectable) {
+			if (!entries.isEmpty()) entries.get(selection).tick(input);
+			return;
+		} else if (entries.size() == 0) {
+			return;
+		}
 
 		int prevSel = selection;
 		if (input.getMappedKey("ALT").isDown()) {
-			if (input.inputPressed("cursor-left")) entries.get(selection).displaceRight(entryBounds.getWidth());
-			if (input.inputPressed("cursor-right")) entries.get(selection).displaceLeft(entryBounds.getWidth());
+			if (input.inputPressed("cursor-left"))
+				entries.get(selection).translateX(MinicraftImage.boxWidth, true);
+			if (input.inputPressed("cursor-right"))
+				entries.get(selection).translateX(-MinicraftImage.boxWidth, true);
 		} else {
 			if (input.inputPressed("cursor-up")) selection--;
 			if (input.inputPressed("cursor-down")) selection++;
@@ -246,10 +258,10 @@ public class Menu {
 					listSearcher.clear();
 					listPositionSearcher = 0;
 
-					Iterator<ListEntry> entryIt = entries.iterator();
+					Iterator<MenuListEntry> entryIt = entries.iterator();
 					boolean shouldSelect = true;
 					for (int i = 0; entryIt.hasNext(); i++) {
-						ListEntry entry = entryIt.next();
+						ListEntry entry = entryIt.next().delegate;
 
 						String stringEntry = entry.toString().toLowerCase(Locale.ENGLISH);
 						String typingString = typingSearcher.toLowerCase(Locale.ENGLISH);
@@ -287,7 +299,7 @@ public class Menu {
 			selection += delta;
 			if (selection < 0) selection = entries.size() - 1;
 			selection = selection % entries.size();
-		} while (!entries.get(selection).isSelectable() && selection != prevSel);
+		} while (!entries.get(selection).delegate.isSelectable() && selection != prevSel);
 
 		// update offset and selection displayed
 		dispSelection += selection - prevSel;
@@ -332,13 +344,13 @@ public class Menu {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
-						screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 6, 0, hudSheet.getSheet());
+						screen.render(null, titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 6, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
-						screen.render(titleLoc.x + i * 8, titleLoc.y, 3, 6, 0, hudSheet.getSheet());
+						screen.render(null, titleLoc.x + i * 8, titleLoc.y, 3, 6, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * 8, titleLoc.y, titleColor);
 				}
 			}
@@ -358,7 +370,7 @@ public class Menu {
 
 			for (int i = 0; i < typingSearcher.length() + 4; i++) {
 				if (hasFrame) {
-					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 6, 0, hudSheet.getSheet());
+					screen.render(null, xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 6, 0, hudSheet.getSheet());
 				}
 
 				Font.draw(String.format("> %s <", typingSearcher), screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
@@ -373,29 +385,16 @@ public class Menu {
 			int extra = diff * (ListEntry.getHeight() + spacing) / 2;
 			y += extra;
 		}
-		ListEntry.IntRange renderingXBounds = new ListEntry.IntRange(renderingBounds.getLeft(), renderingBounds.getRight());
 		for (int i = offset; i < (wrap ? offset + displayLength : Math.min(offset + displayLength, entries.size())); i++) {
 			if (special && i - offset >= entries.size()) break;
 
 			int idx = i % entries.size();
-			ListEntry entry = entries.get(idx);
-
-			if (!(entry instanceof BlankEntry)) {
-				int entryWidth = entry.getWidth();
-				Point pos = entryPos.positionRect(new Dimension(entryWidth, ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-				boolean selected = idx == selection;
-				int xDisplacement = selected ? entry.getXDisplacement() : 0;
-				boolean hideOverflow = entry.hideWhenOverflow() && entry.isSelectable();
+			MenuListEntry entry = entries.get(idx);
+			if (!(entry.delegate instanceof BlankEntry) && entry.delegate.isVisible()) {
 				if (searcherBarActive && useSearcherBar) {
-					entry.render(screen, pos.x + xDisplacement, pos.y, selected, hideOverflow ? renderingXBounds : null, typingSearcher, Color.YELLOW);
+					entry.render(screen, y, idx == selection, typingSearcher, Color.YELLOW);
 				} else {
-					entry.render(screen, pos.x + xDisplacement, pos.y, selected, hideOverflow ? renderingXBounds : null);
-				}
-				if (selected && entry.isSelectable()) {
-					// draw the arrows
-					boolean hiddenOverflow = hideOverflow && entryWidth > entryBounds.getWidth();
-					Font.draw("> ", screen, hiddenOverflow ? entryBounds.getLeft() - 2 * 8 : pos.x + xDisplacement - 2 * 8, y, ListEntry.COL_SLCT);
-					Font.draw(" <", screen, hiddenOverflow ? entryBounds.getRight() : pos.x + xDisplacement + entryWidth, y, ListEntry.COL_SLCT);
+					entry.render(screen, y, idx == selection);
 				}
 			}
 
@@ -409,7 +408,7 @@ public class Menu {
 
 	void updateEntry(int idx, ListEntry newEntry) {
 		if (idx >= 0 && idx < entries.size())
-			entries.set(idx, newEntry);
+			entries.set(idx, new MenuListEntry(newEntry, entryPos));
 	}
 
 	public void removeSelectedEntry() {
@@ -441,7 +440,7 @@ public class Menu {
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = (x == right ? 1 : 0) + (y == bottom ? 2 : 0); // gets mirroring
 
-				screen.render(x, y, spriteoffset, 6, mirrors, hudSheet.getSheet());
+				screen.render(null, x, y, spriteoffset, 6, mirrors, hudSheet.getSheet());
 
 				if (x < right && x + MinicraftImage.boxWidth > right)
 					x = right - MinicraftImage.boxWidth;
@@ -456,6 +455,183 @@ public class Menu {
 
 	public Builder builder() {
 		return builder;
+	}
+
+	/** Acts as an internal wrapping decorator of a {@link ListEntry} for the {@link Menu} environment. */
+	private class MenuListEntry {
+		private class MenuEntryLimitingModel extends Screen.RenderingLimitingModel {
+			@Override
+			public int getLeftBound() {
+				return getEntryBounds().getLeft();
+			}
+
+			@Override
+			public int getRightBound() {
+				return getEntryBounds().getRight() - 1; // As this model is inclusive.
+			}
+
+			@Override
+			public int getTopBound() {
+				return getEntryBounds().getTop();
+			}
+
+			@Override
+			public int getBottomBound() {
+				return getEntryBounds().getBottom() - 1; // As this model is inclusive.
+			}
+		}
+
+		private class MenuEntryXAccessor implements SelectableStringEntry.EntryXAccessor {
+			/* Most of the methods here can be obtained by algebra. */
+
+			@Override
+			public int getWidth() {
+				return delegate.getWidth();
+			}
+
+			@Override
+			public int getX(RelPos anchor) {
+				return xPos + (menuAnchor.xIndex - anchor.xIndex) * getEntryBounds().getWidth() / 2 +
+					(anchor.xIndex - entryAnchor.xIndex) * delegate.getWidth() / 2;
+			}
+
+			@Override
+			public void setX(RelPos anchor, int x) {
+				xPos = x + (anchor.xIndex - menuAnchor.xIndex) * getEntryBounds().getWidth() / 2 +
+					(entryAnchor.xIndex - anchor.xIndex) * delegate.getWidth() / 2;
+			}
+
+			@Override
+			public void translateX(int displacement) {
+				xPos += displacement;
+			}
+
+			@Override
+			public void setAnchors(RelPos anchor) {
+				changeRelativeEntryAnchor(anchor);
+				changeRelativeMenuAnchor(anchor);
+			}
+
+			@Override
+			public int getLeftBound(RelPos anchor) {
+				return anchor.xIndex * (delegate.getWidth() - getEntryBounds().getWidth()) / 2;
+			}
+
+			@Override
+			public int getRightBound(RelPos anchor) {
+				return (2 - anchor.xIndex) * (getEntryBounds().getWidth() - delegate.getWidth()) / 2;
+			}
+		}
+
+		public final MenuEntryLimitingModel limitingModel = new MenuEntryLimitingModel();
+		public final MenuEntryXAccessor accessor = new MenuEntryXAccessor();
+		public final ListEntry delegate;
+
+		/**
+		 * A reference anchor, which is the relative position of the container menu <br>
+		 * Also, it is the relative position of the entry. <br>
+		 * Acceptable values: {@code LEFT}, {@code CENTER}, {@code RIGHT}
+		 */
+		private @NotNull RelPos menuAnchor;
+		/**
+		 * A reference anchor of the entry <br>
+		 * This is usually the same as {@link #menuAnchor}.
+		 */
+		private @NotNull RelPos entryAnchor;
+		/** The x-position of the entry at its anchor {@link #entryAnchor} relative to the menu anchor {@link #menuAnchor} */
+		private int xPos = 0;
+
+		public MenuListEntry(ListEntry delegate, @NotNull RelPos anchor) {
+			this.delegate = delegate;
+			anchor = RelPos.getPos(anchor.xIndex, 1); // Confirms that this meets the requirement.
+			this.menuAnchor = anchor;
+			this.entryAnchor = anchor;
+		}
+
+		private Rectangle getEntryBounds() {
+			return delegate.isSelectable() ? entryBounds : entryRenderingBounds;
+		}
+
+		public void translateX(int displacement, boolean limit) {
+			xPos += displacement;
+			if (limit) {
+				int w = delegate.getWidth();
+				int minX;
+				int maxX;
+				if (w <= getEntryBounds().getWidth()) {
+					minX = (entryAnchor.xIndex * w - menuAnchor.xIndex * getEntryBounds().getWidth()) / 2;
+					maxX = ((2 - menuAnchor.xIndex) * getEntryBounds().getWidth() - (2 - entryAnchor.xIndex) * w) / 2;
+				} else {
+					minX = ((2 - menuAnchor.xIndex) * getEntryBounds().getWidth() - (2 - entryAnchor.xIndex) * w) / 2;
+					maxX = (entryAnchor.xIndex * w - menuAnchor.xIndex * getEntryBounds().getWidth()) / 2;
+				}
+				if (xPos < minX) xPos = minX;
+				if (xPos > maxX) xPos = maxX;
+			}
+		}
+
+		public void resetRelativeAnchorsSynced(RelPos newAnchor) {
+			entryAnchor = menuAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void moveRelativeMenuAnchor(RelPos newAnchor) {
+			menuAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void moveRelativeEntryAnchor(RelPos newAnchor) {
+			entryAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void changeRelativeMenuAnchor(RelPos newAnchor) {
+			xPos += (menuAnchor.xIndex - newAnchor.xIndex) * getEntryBounds().getWidth() / 2;
+			menuAnchor = newAnchor;
+		}
+		public void changeRelativeEntryAnchor(RelPos newAnchor) {
+			xPos += (newAnchor.xIndex - entryAnchor.xIndex) * delegate.getWidth() / 2;
+			entryAnchor = newAnchor;
+		}
+
+		public void tick(InputHandler input) {
+			delegate.hook(() -> {
+				xPos = 0; // Resets position
+				int diff = xPos + (menuAnchor.xIndex - 2) * getEntryBounds().getWidth() / 2 +
+					(2 - entryAnchor.xIndex) * delegate.getWidth() / 2;
+				if (diff > 0) translateX(-diff, false); // Shifts if and only if the entry exceeds the area.
+			});
+			delegate.tickScrollingTicker(accessor);
+			delegate.tick(input);
+		}
+
+		private void renderCursor(Screen screen, int x, int y, int entryWidth, boolean tickerSet) {
+			if (tickerSet) {
+				entryWidth = Math.min(entryWidth, getEntryBounds().getWidth());
+				x = getEntryBounds().getLeft();
+			}
+
+			Font.draw(null, "> ", screen, x - 2 * MinicraftImage.boxWidth, y, ListEntry.COL_SLCT);
+			Font.draw(null, " <", screen, x + entryWidth, y, ListEntry.COL_SLCT);
+		}
+
+		public void render(Screen screen, int y, boolean selected) {
+			int w = delegate.getWidth(); // Reduce calculation
+			int x = getRenderX(w); // Reduce calculation
+			delegate.render(screen, renderOutOfFrame ? null : limitingModel, x, y, selected);
+			if (selected && delegate.isSelectable())
+				renderCursor(screen, x, y, w, delegate.isScrollingTickerSet());
+		}
+
+		public void render(Screen screen, int y, boolean selected, String contain, int containColor) {
+			int w = delegate.getWidth(); // Reduce calculation
+			int x = getRenderX(w); // Reduce calculation
+			delegate.render(screen, renderOutOfFrame ? null : limitingModel, x, y, selected, contain, containColor);
+			if (selected && delegate.isSelectable())
+				renderCursor(screen, x, y, w, delegate.isScrollingTickerSet());
+		}
+
+		private int getRenderX(int entryWidth) {
+			return getEntryBounds().getLeft() + xPos - entryAnchor.xIndex * entryWidth / 2 +
+				menuAnchor.xIndex * getEntryBounds().getWidth() / 2;
+		}
 	}
 
 	// This needs to be in the Menu class, to have access to the private constructor and fields.
@@ -478,8 +654,6 @@ public class Menu {
 		@NotNull
 		private RelPos menuPos = RelPos.CENTER;
 		private Dimension menuSize = null;
-		private Rectangle limitingBounds = null;
-		private Rectangle renderingBounds = null;
 		private boolean removeEntryPeaks = false;
 
 		private boolean searcherBar;
@@ -490,10 +664,10 @@ public class Menu {
 
 		public Builder(boolean hasFrame, int entrySpacing, RelPos entryPos, List<ListEntry> entries) {
 			menu = new Menu();
-			setEntries(entries);
 			menu.hasFrame = hasFrame;
 			menu.spacing = entrySpacing;
 			menu.entryPos = entryPos;
+			setEntries(entries);
 		}
 
 		public Builder setEntries(ListEntry... entries) {
@@ -501,8 +675,7 @@ public class Menu {
 		}
 
 		public Builder setEntries(List<ListEntry> entries) {
-			menu.entries.clear();
-			menu.entries.addAll(entries);
+			menu.setEntries(entries);
 			return this;
 		}
 
@@ -533,34 +706,14 @@ public class Menu {
 			return this;
 		}
 
-		/** This restricts the maximum bounds this menu could be. */
-		public Builder setMaxBounds(Rectangle rect) {
-			limitingBounds = rect;
-			return this;
-		}
 
-		public Builder setMaxBoundsAsMaxMenuBounds() {
-			limitingBounds = new Rectangle(0, 0, Screen.w, Screen.h, Rectangle.CORNERS);
+		public Builder setTitlePos(RelPos rp) {
+			titlePos = (rp == null ? RelPos.TOP : rp);
 			return this;
 		}
 
 		public Builder setRemoveEntryPeaks(boolean removeEntryPeaks) {
 			this.removeEntryPeaks = removeEntryPeaks;
-			return this;
-		}
-
-		public Builder setRenderingBounds(Rectangle rect) {
-			renderingBounds = rect;
-			return this;
-		}
-
-		public Builder setMaxBoundsAsRenderingBounds() {
-			renderingBounds = new Rectangle(0, 0, Screen.w, Screen.h, Rectangle.CORNERS);
-			return this;
-		}
-
-		public Builder setTitlePos(RelPos rp) {
-			titlePos = (rp == null ? RelPos.TOP : rp);
 			return this;
 		}
 
@@ -637,8 +790,8 @@ public class Menu {
 
 			// set default selectability
 			if (!setSelectable) {
-				for (ListEntry entry : menu.entries) {
-					menu.selectable = menu.selectable || entry.isSelectable();
+				for (MenuListEntry entry : menu.entries) {
+					menu.selectable = menu.selectable || entry.delegate.isSelectable();
 					if (menu.selectable)
 						break;
 				}
@@ -719,7 +872,7 @@ public class Menu {
 					// First write into an array to more easily find peaks.
 					int[] entryWidths = new int[menu.entries.size()];
 					for (int i = 0; i < menu.entries.size(); ++i) {
-						entryWidths[i] = menu.entries.get(i).getWidth();
+						entryWidths[i] = menu.entries.get(i).delegate.getWidth();
 					}
 
 					// Reference: https://www.geeksforgeeks.org/print-all-the-peaks-and-troughs-in-an-array-of-integers/
@@ -731,7 +884,7 @@ public class Menu {
 							peaks.add(entryWidths[i]);
 						} else {
 							int entryWidth = entryWidths[i];
-							if (menu.isSelectable() && !menu.entries.get(i).isSelectable())
+							if (menu.isSelectable() && !menu.entries.get(i).delegate.isSelectable())
 								entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
 							width = Math.max(width, entryWidth);
 							handled = true;
@@ -748,14 +901,15 @@ public class Menu {
 						}
 					}
 				} else {
-					for (ListEntry entry : menu.entries) {
-						int entryWidth = entry.getWidth();
-						if (menu.isSelectable() && !entry.isSelectable())
+					for (MenuListEntry entry : menu.entries) {
+						int entryWidth = entry.delegate.getWidth();
+						if (menu.isSelectable() && !entry.delegate.isSelectable())
 							entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
 						width = Math.max(width, entryWidth);
 					}
 				}
 
+				if (!menu.hasFrame && menu.entryPos.xIndex == 1) width = Screen.w; // Reduces troubles simply :)
 				if (menu.displayLength > 0) { // has been set; use to determine entry bounds
 					int height = (ListEntry.getHeight() + menu.spacing) * menu.displayLength - menu.spacing;
 
@@ -792,22 +946,17 @@ public class Menu {
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
 			menu.bounds = menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
 
-			if (limitingBounds != null) {
-				// Exceeded areas are cut off from the bounds.
-				if (!limitingBounds.intersects(menu.bounds))
-					throw new IndexOutOfBoundsException("limitingBounds does not intersect bounds");
-				int x = Math.max(limitingBounds.getLeft(), menu.bounds.getLeft()); // Get the rightmost left bound
-				int y = Math.max(limitingBounds.getTop(), menu.bounds.getTop()); // Get the bottommost top bound
-				int x1 = Math.min(limitingBounds.getBottom(), menu.bounds.getBottom()); // Get the topmost bottom bound
-				int y1 = Math.min(limitingBounds.getRight(), menu.bounds.getRight()); // Get the leftmost right bount
-				menu.bounds = new Rectangle(x, y, x1, y1, Rectangle.CORNERS); // Reset to the bounds after cut off the exceeded bounds
-			}
-
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 
-			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
+			if (menu.isSelectable()) {
+				// remove spacing for selection cursors
+				border.left -= MinicraftImage.boxWidth * 2;
+				border.right -= MinicraftImage.boxWidth * 2;
+			}
 
-			menu.renderingBounds = renderingBounds == null ? menu.entryBounds : renderingBounds;
+			menu.entryRenderingBounds = border.subtractFrom(menu.bounds);
+
+			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 
 			if (titlePos.xIndex == 0 && titlePos.yIndex != 1)
 				menu.titleLoc.x += MinicraftImage.boxWidth;
@@ -827,11 +976,13 @@ public class Menu {
 			if (padding < 0) padding = 0;
 			if (padding > 1) padding = 1;
 			menu.padding = (int) Math.floor(padding * menu.displayLength / 2);
+			if (!menu.hasFrame && removeEntryPeaks)
+				menu.renderOutOfFrame = true; // Peaks are usually hidden, so this is assumed to be true.
 		}
 
 		// returns a new Builder instance, that can be further modified to create another menu.
 		public Builder copy() {
-			Builder b = new Builder(menu.hasFrame, menu.spacing, menu.entryPos, menu.entries);
+			Builder b = new Builder(menu.hasFrame, menu.spacing, menu.entryPos);
 
 			b.menu = new Menu(menu);
 
@@ -845,8 +996,6 @@ public class Menu {
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;
 			b.searcherBar = searcherBar;
-			b.limitingBounds = limitingBounds;
-			b.renderingBounds = renderingBounds;
 			b.removeEntryPeaks = removeEntryPeaks;
 
 			return b;

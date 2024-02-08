@@ -4,6 +4,8 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.MinicraftImage;
+import minicraft.screen.RelPos;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -14,7 +16,7 @@ public class SelectableStringEntry extends ListEntry {
 	private Localization.LocalizationString text;
 	private final int color;
 
-	private TextRenderTicker ticker;
+	private EntryScrollingTicker ticker;
 
 	public SelectableStringEntry(Localization.LocalizationString text) {
 		this(text, DEFAULT_COLOR);
@@ -24,104 +26,120 @@ public class SelectableStringEntry extends ListEntry {
 		this.color = color;
 	}
 
-	protected abstract static class TextRenderTicker {
-		protected static final int DEFAULT_CYCLING_PERIOD = 90;
+	public interface EntryXAccessor {
+		int getWidth();
+		int getX(RelPos anchor);
+		void setX(RelPos anchor, int x);
+		void translateX(int displacement);
+		void setAnchors(RelPos anchor); // This is recommended to be invoked first.
+		int getLeftBound(RelPos anchor);
+		int getRightBound(RelPos anchor);
+	}
+
+	protected abstract static class EntryScrollingTicker {
+		protected static final int DEFAULT_CYCLING_PERIOD = 90; // in ticks
 
 		protected int tick = 0;
 
-		public abstract void tick();
+		public abstract void tick(@NotNull EntryXAccessor accessor);
 	}
 
-	private class HorizontalAlternatingScrollingTextRenderTicker extends TextRenderTicker {
-		private final IntRange bounds;
-		private final int originX;
-
+	private static class ExceedingHorizontallyAlternatingScrollingTicker extends EntryScrollingTicker {
 		@Range(from = -1, to = 1)
 		private int direction = 0; // Number line direction; text movement
 
-		public HorizontalAlternatingScrollingTextRenderTicker(@NotNull IntRange bounds, int originX) {
-			this.bounds = bounds;
-			this.originX = originX;
-		}
-
 		@Override
-		public void tick() {
-			int width = getWidth();
-			if (width > bounds.upper - bounds.lower) {
+		public void tick(@NotNull EntryXAccessor accessor) {
+			RelPos refAnchor = RelPos.getPos(1 - direction, 0);
+			accessor.setAnchors(refAnchor);
+			int x = accessor.getX(refAnchor);
+			// Proceeds when the entry is out of bounds.
+			if (x < accessor.getLeftBound(refAnchor) || x > accessor.getRightBound(refAnchor)) {
 				if (direction != 0) {
 					if (tick++ == 5) {
-						xDisplacement += direction * MinicraftImage.boxWidth;
-						if (originX + xDisplacement == bounds.lower || // Left side of text tips at left bound
-							originX + xDisplacement + width == bounds.upper) { // Stop if destination is reached
-							direction = 0;
+						x += direction * MinicraftImage.boxWidth;
+						if ((direction == 1 ? x - accessor.getLeftBound(refAnchor) :
+							accessor.getRightBound(refAnchor) - x) >= 0) {
+							// Alignment correction
+							x = direction == 1 ? accessor.getLeftBound(refAnchor) : accessor.getRightBound(refAnchor);
+							direction = 0; // Stops when destination is reached.
 						}
 
+						accessor.setX(refAnchor, x);
 						tick = 0;
 					}
 				} else if (tick++ == DEFAULT_CYCLING_PERIOD) {
-					if (originX + xDisplacement + width == bounds.upper) { // Right side of text tips at right bound
+					if (x <= accessor.getRightBound(refAnchor))
 						direction = 1; // Right
-					} else {
+					else
 						direction = -1; // Left
-					}
-
 					tick = 0;
 				}
-			}
+			} else tick = 0;
 		}
 	}
 
-	private class HorizontalScrollingTextRenderTicker extends TextRenderTicker {
-		private final IntRange bounds;
-		private final int originX;
+	private static class HorizontalScrollerScrollingTicker extends EntryScrollingTicker {
+		@MagicConstant(intValues = {-1, 1})
+		private final int direction;
+
+		public HorizontalScrollerScrollingTicker(@MagicConstant int direction) {
+			switch (direction) {
+				case -1: case 1:
+					this.direction = direction; break;
+				default:
+					throw new IllegalArgumentException("direction; input: " + direction);
+			}
+		}
 
 		private boolean moving = false;
 
-		public HorizontalScrollingTextRenderTicker(@NotNull IntRange bounds, int originX) {
-			this.bounds = bounds;
-			this.originX = originX;
-		}
-
 		@Override
-		public void tick() {
-			int width = getWidth();
-			if (width > bounds.upper - bounds.lower) {
+		public void tick(@NotNull EntryXAccessor accessor) {
+			RelPos refAnchor = direction == 1 ? RelPos.LEFT : RelPos.RIGHT;
+			accessor.setAnchors(refAnchor);
+			int x = accessor.getX(refAnchor);
+			int width = accessor.getWidth();
+			int lw = direction == -1 ? -width : 0;
+			int rw = direction == 1 ? width : 0;
+			// Proceeds when the entry is out of bounds.
+			if (x < accessor.getLeftBound(refAnchor) || x > accessor.getRightBound(refAnchor)) {
 				if (moving) {
 					if (tick++ == 5) {
-						if (originX + xDisplacement + width == bounds.lower) { // Right side of text tips at left bound
-							xDisplacement = bounds.upper - originX; // Moves to the rightmost
+						if (direction == 1 && x >= accessor.getRightBound(refAnchor) + rw) { // Left side reaches right bound
+							x += accessor.getLeftBound(refAnchor) - x - width;
+						} else if (direction == -1 && x <= accessor.getLeftBound(refAnchor) + lw) {
+							x += accessor.getRightBound(refAnchor) - x + width;
+						} else {
+							x += direction * MinicraftImage.boxWidth;
 						}
 
-						xDisplacement -= MinicraftImage.boxWidth;
-						if (xDisplacement == 0) { // Moves back to the original point
+						int diff = direction == 1 ? accessor.getRightBound(refAnchor) - x :
+							x - accessor.getLeftBound(refAnchor);
+						if (diff >= 0 && diff < MinicraftImage.boxWidth) { // Moves back to the original point
 							moving = false; // Pauses the scrolling
+							// Alignment correction
+							x = direction == 1 ? accessor.getRightBound(refAnchor) : accessor.getLeftBound(refAnchor);
 						}
 
+						accessor.setX(refAnchor, x);
 						tick = 0;
 					}
 				} else if (tick++ == DEFAULT_CYCLING_PERIOD) {
 					moving = true;
 					tick = 0;
 				}
-			}
+			} else tick = 0;
 		}
 	}
 
-	@Override
-	public boolean hideWhenOverflow() {
-		return true;
+	public void setExceedingAlternatingScrollingTicker() {
+		ticker = new ExceedingHorizontallyAlternatingScrollingTicker();
 	}
 
-	public void setAlternatingScrollingTextRenderTicker(@NotNull IntRange bounds, int originX) {
-		ticker = new HorizontalAlternatingScrollingTextRenderTicker(bounds, originX);
-	}
-
-	public void setScrollingTextRenderTicker(@NotNull IntRange bounds, int originX) {
-		ticker = new HorizontalScrollingTextRenderTicker(bounds, originX);
-	}
-
-	public void setRenderTicker(TextRenderTicker renderTicker) {
-		ticker = renderTicker;
+	public void setScrollerScrollingTicker() { setScrollerScrollingTicker(-1); }
+	public void setScrollerScrollingTicker(@MagicConstant int direction) {
+		ticker = new HorizontalScrollerScrollingTicker(direction);
 	}
 
 	public void setText(Localization.LocalizationString text) {
@@ -129,9 +147,17 @@ public class SelectableStringEntry extends ListEntry {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input) {}
+
+	@Override
+	public void tickScrollingTicker(@NotNull EntryXAccessor accessor) {
 		if (ticker != null)
-			ticker.tick();
+			ticker.tick(accessor);
+	}
+
+	@Override
+	public boolean isScrollingTickerSet() {
+		return ticker != null;
 	}
 
 	@Override

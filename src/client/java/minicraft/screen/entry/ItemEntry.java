@@ -33,9 +33,9 @@ public class ItemEntry extends ListEntry {
 	}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-		super.render(screen, x + 16, y, true, bounds);
-		screen.render(x, y, item.sprite);
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
+		super.render(screen, limitingModel, x + 16, y, true);
+		screen.render(null, x, y, item.sprite);
 	}
 
 	@Override

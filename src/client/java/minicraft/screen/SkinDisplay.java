@@ -271,7 +271,7 @@ public class SkinDisplay extends Display {
 
 		// Render preview of skin.
 		LinkedSprite sprite = new ArrayList<>(skins.values()).get(menus[0].getSelection())[spriteIndex / 2][spriteIndex % 2];
-		screen.render(xOffset, yOffset, sprite);
+		screen.render(null, xOffset, yOffset, sprite);
 
 		// Help text.
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.GRAY);

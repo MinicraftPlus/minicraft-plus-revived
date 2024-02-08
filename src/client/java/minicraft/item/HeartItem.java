@@ -7,6 +7,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class HeartItem extends StackableItem {
 		return false;
 	}
 
-	public HeartItem clone() {
+	public @NotNull HeartItem copy() {
 		return new HeartItem(getName(), sprite, count, health);
 	}
 }

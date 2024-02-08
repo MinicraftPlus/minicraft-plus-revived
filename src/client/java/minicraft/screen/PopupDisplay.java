@@ -69,9 +69,6 @@ public class PopupDisplay extends Display {
 		for (ListEntry entry : entries) {
 			if (entry instanceof InputEntry) {
 				((InputEntry) entry).addChangeListener(v -> update());
-				((InputEntry) entry).setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 3, Screen.w - MinicraftImage.boxWidth * 3))
-					.setEntryPos(RelPos.CENTER)
-					.setBounds(new ListEntry.IntRange(menuBounds.getLeft() + MinicraftImage.boxWidth * 3, menuBounds.getRight() - MinicraftImage.boxWidth * 3));
 			}
 		}
 	}
@@ -81,12 +78,6 @@ public class PopupDisplay extends Display {
 			.setDisplayLength(0)
 			.setMenuSize(null)
 			.recalculateFrame();
-		Rectangle menuBounds = menus[onScreenKeyboardMenu == null ? 0 : 1].getBounds();
-		for (ListEntry entry : menus[onScreenKeyboardMenu == null ? 0 : 1].getEntries()) {
-			if (entry instanceof InputEntry) {
-				((InputEntry) entry).setBounds(new ListEntry.IntRange(menuBounds.getLeft() + MinicraftImage.boxWidth * 3, menuBounds.getRight() - MinicraftImage.boxWidth * 3));
-			}
-		}
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;

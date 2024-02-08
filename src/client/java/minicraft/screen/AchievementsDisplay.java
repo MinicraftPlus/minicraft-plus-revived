@@ -94,7 +94,7 @@ public class AchievementsDisplay extends Display {
 		}
 		menus = new Menu[] {
 			new Menu.Builder(false, 2, RelPos.CENTER, entries)
-				.setSize(48, 48)
+				.setSize(Screen.w, 48)
 				.createMenu(),
 			new Menu.Builder(true, 2, RelPos.BOTTOM)
 				.setSize(240, 38)

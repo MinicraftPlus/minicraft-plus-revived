@@ -7,6 +7,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
+import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Rectangle;
@@ -171,8 +172,7 @@ public class WorldCreateDisplay extends Display {
 		super(true);
 
 		WorldNameInputEntry nameField = makeWorldNameInput(new Localization.LocalizationString(
-			"minicraft.displays.world_create.options.world_name"), "", null)
-			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
+			"minicraft.displays.world_create.options.world_name"), "", null);
 
 		worldSeed = new InputEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.seed"),
 			"[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
@@ -223,13 +223,7 @@ public class WorldCreateDisplay extends Display {
 					Game.input.getMapping("EXIT")), Color.GRAY)
 			)
 				.setTitle(new Localization.LocalizationString("minicraft.displays.world_create.title"))
-				.setMaxBoundsAsRenderingBounds()
 				.createMenu();
-
-		Rectangle menuBounds = mainMenu.getBounds();
-		ListEntry.IntRange xBounds = new ListEntry.IntRange(menuBounds.getLeft() + MinicraftImage.boxWidth * 2, menuBounds.getRight() - MinicraftImage.boxWidth * 2);
-		nameField.setBounds(xBounds);
-		worldSeed.setBounds(xBounds);
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu == null)

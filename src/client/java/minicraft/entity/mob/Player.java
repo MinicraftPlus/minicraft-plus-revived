@@ -881,21 +881,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 				// animation effect
 				if (tickTime / 8 % 2 == 0) {
-					screen.render(xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
-					screen.render(xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
+					screen.render(null, xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
+					screen.render(null, xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
 				} else {
-					screen.render(xo + 0, yo + 3, 5, 1, 0, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
+					screen.render(null, xo + 0, yo + 3, 5, 1, 0, hudSheet.getSheet());
+					screen.render(null, xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
 				}
 
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
 
 				if (tickTime / 8 % 2 == 0) {
-					screen.render(xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
-					screen.render(xo + 8, yo + 3, 6, 0, 0, hudSheet.getSheet()); // Render the mirrored lava graphic to the right.
+					screen.render(null, xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
+					screen.render(null, xo + 8, yo + 3, 6, 0, 0, hudSheet.getSheet()); // Render the mirrored lava graphic to the right.
 				} else {
-					screen.render(xo + 0, yo + 3, 6, 1, 1, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 3, 6, 1, 0, hudSheet.getSheet());
+					screen.render(null, xo + 0, yo + 3, 6, 1, 1, hudSheet.getSheet());
+					screen.render(null, xo + 8, yo + 3, 6, 1, 0, hudSheet.getSheet());
 				}
 			}
 		}
@@ -903,10 +903,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Renders indicator for what tile the item will be placed on
 		if (activeItem instanceof TileItem && !isSwimming()) {
 			Point t = getInteractionTile();
-			screen.render(t.x * 16, t.y * 16, 3, 2, 0, hudSheet.getSheet());
-			screen.render(t.x * 16 + 8, t.y * 16, 3, 2, 1, hudSheet.getSheet());
-			screen.render(t.x * 16, t.y * 16 + 8, 3, 2, 2, hudSheet.getSheet());
-			screen.render(t.x * 16 + 8, t.y * 16 + 8, 3, 2, 3, hudSheet.getSheet());
+			screen.render(null, t.x * 16, t.y * 16, 3, 2, 0, hudSheet.getSheet());
+			screen.render(null, t.x * 16 + 8, t.y * 16, 3, 2, 1, hudSheet.getSheet());
+			screen.render(null, t.x * 16, t.y * 16 + 8, 3, 2, 2, hudSheet.getSheet());
+			screen.render(null, t.x * 16 + 8, t.y * 16 + 8, 3, 2, 3, hudSheet.getSheet());
 		}
 
 		// Makes the player white if they have just gotten hurt
@@ -922,16 +922,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// This makes falling look really cool.
 			int spriteToUse = Math.round(onFallDelay / 2f) % carrySprites.length;
 			curSprite = carrySprites[spriteToUse][(walkDist >> 3) & 1];
-			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			screen.render(null, xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 			// Render each corner of the sprite
 			if (isSwimming()) {
 				Sprite sprite = curSprite.getSprite();
-				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
-				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
+				screen.render(null, xo, yo, sprite.spritePixels[0][0], shirtColor);
+				screen.render(null, xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
 			} else { // Don't render the bottom half if swimming.
-				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+				screen.render(null, xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 			}
 		}
 
@@ -939,31 +939,31 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (attackTime > 0) {
 			switch (attackDir) {
 				case UP:  // If currently attacking upwards...
-					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
-					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
+					screen.render(null, xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
+					screen.render(null, xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						screen.render(xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
+						screen.render(null, xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
-					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
-					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
+					screen.render(null, xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
+					screen.render(null, xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
+						screen.render(null, xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
-					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
-					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
+					screen.render(null, xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
+					screen.render(null, xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
+						screen.render(null, xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
-					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
+					screen.render(null, xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
+					screen.render(null, xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
+						screen.render(null, xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case NONE:
@@ -975,16 +975,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
+					screen.render(null, xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
+					screen.render(null, xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
+					screen.render(null, xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
+					screen.render(null, xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
 					break;
 				case NONE:
 					break;

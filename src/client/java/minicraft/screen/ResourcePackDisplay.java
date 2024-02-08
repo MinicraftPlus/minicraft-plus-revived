@@ -410,7 +410,7 @@ public class ResourcePackDisplay extends Display {
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++) {
 					// Resource pack logo
-					screen.render(xo + x * 8, yo + y * 8, x, y, 0, logo);
+					screen.render(null, xo + x * 8, yo + y * 8, x, y, 0, logo);
 				}
 			}
 		}

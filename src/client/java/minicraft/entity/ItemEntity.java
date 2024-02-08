@@ -132,8 +132,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 			if (time / 6 % 2 == 0) return;
 		}
 
-		screen.render(x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
-		screen.render(x - 4, y - 4 - (int) zz, item.sprite); // Item
+		screen.render(null, x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
+		screen.render(null, x - 4, y - 4 - (int) zz, item.sprite); // Item
 	}
 
 	@Override

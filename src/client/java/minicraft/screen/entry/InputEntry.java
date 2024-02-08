@@ -1,22 +1,23 @@
 package minicraft.screen.entry;
 
+import minicraft.core.Action;
 import minicraft.core.io.ClipboardHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
 import minicraft.screen.RelPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 public class InputEntry extends ListEntry {
 
 	private final @Nullable Localization.LocalizationString prompt;
 	private final String regex;
 	private final int maxLength;
-	private IntRange bounds;
-	private IntRange renderingBounds;
 	private RelPos entryPos;
 
 	private String userInput;
@@ -46,12 +47,12 @@ public class InputEntry extends ListEntry {
 		String prev = userInput;
 		userInput = input.addKeyTyped(userInput, regex);
 		if (!prev.equals(userInput)) {
-			if (listener != null) {
+			if (hook != null)
+				hook.act();
+			if (listener != null)
 				listener.onChange(userInput);
-			}
-
-			updateCursorDisplacement();
 		}
+		hook = null; // Once per tick
 
 		if (maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
@@ -69,6 +70,13 @@ public class InputEntry extends ListEntry {
 		}
 	}
 
+	private @Nullable Action hook = null;
+
+	@Override
+	public void hook(@NotNull Action callback) {
+		this.hook = callback;
+	}
+
 	public String getUserInput() {
 		return userInput;
 	}
@@ -77,41 +85,9 @@ public class InputEntry extends ListEntry {
 		return prompt == null ? userInput : Localization.getLocalized("minicraft.display.entry", prompt, userInput);
 	}
 
-	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.WHITE : COL_UNSLCT : Color.RED, bounds);
-	}
-
-	private void updateCursorDisplacement() {
-		IntRange renderingBounds = this.renderingBounds == null ? bounds : this.renderingBounds;
-		if (bounds != null && entryPos != null) {
-			int spaceWidth = renderingBounds.upper - bounds.lower;
-			int width = getWidth();
-			if (width <= spaceWidth) {
-				xDisplacement = 0;
-			} else {
-				if (entryPos.xIndex == 0) { // Left
-					xDisplacement = spaceWidth - width;
-				} else if (entryPos.xIndex == 1) { // Center
-					// Assume that the menu is rebuilt when updated.
-					xDisplacement = (spaceWidth - width) / 2;
-				} // xIndex == 2 is not handled.
-			}
-		}
-	}
-
-	public InputEntry setBounds(IntRange bounds) {
-		this.bounds = bounds;
-		return this;
-	}
-
-	public InputEntry setEntryPos(RelPos entryPos) {
-		this.entryPos = entryPos;
-		return this;
-	}
-
-	public InputEntry setRenderingBounds(IntRange bounds) {
-		this.renderingBounds = bounds;
-		return this;
+	@Override
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
+		Font.draw(limitingModel, toString(), screen, x, y, isValid() ? isSelected ? Color.WHITE : COL_UNSLCT : Color.RED);
 	}
 
 	public boolean isValid() {
