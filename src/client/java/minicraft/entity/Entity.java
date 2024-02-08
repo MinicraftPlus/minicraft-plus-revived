@@ -49,6 +49,7 @@ public abstract class Entity implements Tickable {
 	 * Assings null/none values to the instace variables.
 	 * The exception is removed which is set to true, and
 	 * lastUpdate which is set to System.nanoTime().
+	 *
 	 * @param xr X radius of entity.
 	 * @param yr Y radius of entity.
 	 */
@@ -70,48 +71,84 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Returns true if the entity is removed from the level, otherwise false.
+	 *
 	 * @return removed
 	 */
-	public boolean isRemoved() { return removed/* || level == null*/; }
+	public boolean isRemoved() {
+		return removed/* || level == null*/;
+	}
 
 	/**
 	 * Returns the level which this entity belongs in.
+	 *
 	 * @return level
 	 */
-	public Level getLevel() { return level; }
+	public Level getLevel() {
+		return level;
+	}
 
-	/** Returns a Rectangle instance using the defined bounds of the entity. */
-	protected Rectangle getBounds() { return new Rectangle(x, y, xr * 2, yr * 2, Rectangle.CENTER_DIMS); }
+	/**
+	 * Returns a Rectangle instance using the defined bounds of the entity.
+	 */
+	protected Rectangle getBounds() {
+		return new Rectangle(x, y, xr * 2, yr * 2, Rectangle.CENTER_DIMS);
+	}
 
-	/** Returns true if this entity is found in the rectangle specified by given two coordinates. */
-	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
+	/**
+	 * Returns true if this entity is found in the rectangle specified by given two coordinates.
+	 */
+	public boolean isTouching(Rectangle area) {
+		return area.intersects(getBounds());
+	}
 
-	/** Returns if this entity stops other solid entities from moving. */
-	public boolean isSolid() { return true; } // Most entities are solid
+	/**
+	 * Returns if this entity stops other solid entities from moving.
+	 */
+	public boolean isSolid() {
+		return true;
+	} // Most entities are solid
 
-	/** Determines if the given entity should prevent this entity from moving. */
-	public boolean blocks(Entity e) { return isSolid() && e.isSolid(); }
+	/**
+	 * Determines if the given entity should prevent this entity from moving.
+	 */
+	public boolean blocks(Entity e) {
+		return isSolid() && e.isSolid();
+	}
 
-	public boolean canSwim() { return false; } // Determines if the entity can swim (extended in sub-classes)
-	public boolean canWool() { return false; } // This, strangely enough, determines if the entity can walk on wool; among some other things..?
+	public boolean canSwim() {
+		return false;
+	} // Determines if the entity can swim (extended in sub-classes)
+
+	public boolean canWool() {
+		return false;
+	} // This, strangely enough, determines if the entity can walk on wool; among some other things..?
+
 	public boolean canBurn() {
 		return true;
 	} // Determines if the entity can burn.
+
 	public boolean canBeAffectedByLava() {
 		return true;
 	} // Determines if the entity can burn in lava.
+
 	public int burningDuration = 0;
 
-	public int getLightRadius() { return 0; } // Used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
+	public int getLightRadius() {
+		return 0;
+	} // Used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
 
 
-	/** If this entity is touched by another entity (extended by sub-classes) */
-	protected void touchedBy(Entity entity) {}
+	/**
+	 * If this entity is touched by another entity (extended by sub-classes)
+	 */
+	protected void touchedBy(Entity entity) {
+	}
 
 	/**
 	 * Interacts with the entity this method is called on
-	 * @param player The player attacking
-	 * @param item The item the player attacked with
+	 *
+	 * @param player    The player attacking
+	 * @param item      The item the player attacked with
 	 * @param attackDir The direction to interact
 	 * @return If the interaction was successful
 	 */
@@ -119,7 +156,9 @@ public abstract class Entity implements Tickable {
 		return false;
 	}
 
-	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
+	/**
+	 * Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.
+	 */
 	public boolean move(int xd, int yd) {
 		if (Updater.saving || (xd == 0 && yd == 0)) return true; // Pretend that it kept moving
 
@@ -134,6 +173,7 @@ public abstract class Entity implements Tickable {
 	/**
 	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.
+	 *
 	 * @param d Displacement relative to the axis.
 	 * @return true if the move was successful, false if not.
 	 */
@@ -167,6 +207,7 @@ public abstract class Entity implements Tickable {
 	/**
 	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.
+	 *
 	 * @param d Displacement relative to the axis.
 	 * @return true if the move was successful, false if not.
 	 */
@@ -199,16 +240,17 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Moves the entity by checking entity hit boxes being interacted with the given possible length of straight path.
-	 * @param sgn One-dimensional direction of displacement
-	 * @param hitBoxFront The front boundary of hit box
-	 * @param maxFront Maximum position can be reached with front hit box (firstly checked by tile hot box)
-	 * @param xMove The value of the willing x movement
-	 * @param yMove The value of the willing y movement
-	 * @param incrementMove The movement call when the movement is possible
-	 * @param hitBoxLeft The left boundary of hit box
-	 * @param hitBoxRight The right boundary of hit box
-	 * @param bumpingHandler The consumer handling bumping into a new tile;
-	 *                       the first parameter takes the front tile position and second one takes the horizontal position
+	 *
+	 * @param sgn             One-dimensional direction of displacement
+	 * @param hitBoxFront     The front boundary of hit box
+	 * @param maxFront        Maximum position can be reached with front hit box (firstly checked by tile hot box)
+	 * @param xMove           The value of the willing x movement
+	 * @param yMove           The value of the willing y movement
+	 * @param incrementMove   The movement call when the movement is possible
+	 * @param hitBoxLeft      The left boundary of hit box
+	 * @param hitBoxRight     The right boundary of hit box
+	 * @param bumpingHandler  The consumer handling bumping into a new tile;
+	 *                        the first parameter takes the front tile position and second one takes the horizontal position
 	 * @param steppingHandler The consumer handling stepping on a new tile;
 	 *                        the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return {@code true} if the movement is successful, {@code false} otherwise.
@@ -228,7 +270,7 @@ public abstract class Entity implements Tickable {
 			if (newFrontTile != frontTile) { // New tile touched
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					bumpingHandler.accept(horTile, newFrontTile);
+					bumpingHandler.accept(newFrontTile, horTile);
 				}
 				frontTile = newFrontTile;
 				handleSteppedOn = true;
@@ -252,7 +294,7 @@ public abstract class Entity implements Tickable {
 			if (handleSteppedOn) { // When the movement to a new tile successes
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					steppingHandler.accept(horTile, frontTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+					steppingHandler.accept(frontTile, horTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 				}
 			}
 			successful = true;
@@ -261,13 +303,22 @@ public abstract class Entity implements Tickable {
 		return successful;
 	}
 
-	/** Checks if the entity is able to naturally be despawned in general conditions. Handles (despawns) if true. */
-	public void handleDespawn() {}
+	/**
+	 * Checks if the entity is able to naturally be despawned in general conditions. Handles (despawns) if true.
+	 */
+	public void handleDespawn() {
+	}
 
-	/** This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items. */
-	public void die() { remove(); }
+	/**
+	 * This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items.
+	 */
+	public void die() {
+		remove();
+	}
 
-	/** Removes the entity from the level. */
+	/**
+	 * Removes the entity from the level.
+	 */
 	public void remove() {
 		if (removed && !(this instanceof ItemEntity)) // Apparently this happens fairly often with item entities.
 			Logging.ENTITY.debug("Note: remove() called on removed entity: " + this);
@@ -280,7 +331,9 @@ public abstract class Entity implements Tickable {
 			level.remove(this);
 	}
 
-	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
+	/**
+	 * This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity)
+	 */
 	public void remove(Level level) {
 		if (level != this.level) {
 			Logging.ENTITY.debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
@@ -290,7 +343,9 @@ public abstract class Entity implements Tickable {
 		}
 	}
 
-	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
+	/**
+	 * This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity)
+	 */
 	public void setLevel(Level level, int x, int y) {
 		if (level == null) {
 			Logging.ENTITY.debug("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
@@ -308,7 +363,8 @@ public abstract class Entity implements Tickable {
 
 	public boolean isWithin(int tileRadius, Entity other) {
 		if (level == null || other.getLevel() == null) return false;
-		if (level.depth != other.getLevel().depth) return false; // Obviously, if they are on different levels, they can't be next to each other.
+		if (level.depth != other.getLevel().depth)
+			return false; // Obviously, if they are on different levels, they can't be next to each other.
 
 		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // Calculate the distance between the two entities, in entity coordinates.
 
@@ -317,8 +373,10 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Returns the closest player to this entity.
+	 *
 	 * @return the closest player.
 	 */
+	@Nullable
 	protected Player getClosestPlayer() {
 		return getClosestPlayer(true);
 	}
@@ -326,9 +384,11 @@ public abstract class Entity implements Tickable {
 	/**
 	 * Returns the closes player to this entity.
 	 * If this is called on a player it can return itself.
+	 *
 	 * @param returnSelf determines if the method can return itself.
 	 * @return The closest player to this entity.
 	 */
+	@Nullable
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
 			return (Player) this;
@@ -338,7 +398,10 @@ public abstract class Entity implements Tickable {
 		return level.getClosestPlayer(x, y);
 	}
 
-	public String toString() { return getClass().getSimpleName() + getDataPrints(); }
+	public String toString() {
+		return getClass().getSimpleName() + getDataPrints();
+	}
+
 	protected List<String> getDataPrints() {
 		List<String> prints = new ArrayList<>();
 		prints.add("eid=" + eid);
@@ -351,5 +414,7 @@ public abstract class Entity implements Tickable {
 	}
 
 	@Override
-	public final int hashCode() { return eid; }
+	public final int hashCode() {
+		return eid;
+	}
 }

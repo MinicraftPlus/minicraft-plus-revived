@@ -22,7 +22,8 @@ import org.tinylog.Logger;
 import java.util.Random;
 
 public class World extends Game {
-	private World() {}
+	private World() {
+	}
 
 	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, -4}; /// This is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
 	public static final int minLevelDepth, maxLevelDepth;
@@ -44,7 +45,7 @@ public class World extends Game {
 	static {
 		int min, max;
 		min = max = idxToDepth[0];
-		for (int depth: idxToDepth) {
+		for (int depth : idxToDepth) {
 			if (depth < min)
 				min = depth;
 			if (depth > max)
@@ -54,7 +55,9 @@ public class World extends Game {
 		maxLevelDepth = max;
 	}
 
-	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
+	/**
+	 * This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this.
+	 */
 	public static int lvlIdx(int depth) {
 		if (depth > maxLevelDepth) return lvlIdx(minLevelDepth);
 		if (depth < minLevelDepth) return lvlIdx(maxLevelDepth);
@@ -65,8 +68,13 @@ public class World extends Game {
 	}
 
 
-	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
-	public static void resetGame() { resetGame(true); }
+	/**
+	 * This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain.
+	 */
+	public static void resetGame() {
+		resetGame(true);
+	}
+
 	public static void resetGame(boolean keepPlayer) {
 		Logging.WORLD.debug("Resetting...");
 		playerDeadTime = 0;
@@ -91,7 +99,8 @@ public class World extends Game {
 		}
 	}
 
-	/** This method is used to create a brand new world, or to load an existing one from a file.
+	/**
+	 * This method is used to create a brand new world, or to load an existing one from a file.
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
 	public static void initWorld() { // This is a full reset; everything.
@@ -135,7 +144,7 @@ public class World extends Game {
 				Logging.WORLD.trace("Generating level " + i + "...");
 
 				LoadingDisplay.setMessage(Level.getDepthString(i));
-				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.hasLoadedWorld());
+				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], !WorldSelectDisplay.hasLoadedWorld());
 
 				LoadingDisplay.progress(loadingInc);
 			}
@@ -159,20 +168,32 @@ public class World extends Game {
 		Logging.WORLD.trace("World initialized.");
 	}
 
-	public static long getWorldSeed() { return seed; }
-	public static void setWorldSeed(long seed) { World.seed = seed; }
+	public static long getWorldSeed() {
+		return seed;
+	}
 
-	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
-	public static void scheduleLevelChange(int dir) { scheduleLevelChange(dir, null); }
+	public static void setWorldSeed(long seed) {
+		World.seed = seed;
+	}
+
+	/**
+	 * This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level.
+	 */
+	public static void scheduleLevelChange(int dir) {
+		scheduleLevelChange(dir, null);
+	}
+
 	public static void scheduleLevelChange(int dir, @Nullable Action changeAction) {
 		onChangeAction = changeAction;
 		pendingLevelChange = dir;
 	}
 
-	/** This method changes the level that the player is currently on.
+	/**
+	 * This method changes the level that the player is currently on.
 	 * It takes 1 integer variable, which is used to tell the game which direction to go.
 	 * For example, 'changeLevel(1)' will make you go up a level,
-	 while 'changeLevel(-1)' will make you go down a level. */
+	 * while 'changeLevel(-1)' will make you go down a level.
+	 */
 	public static void changeLevel(int dir) {
 		if (onChangeAction != null) {
 			onChangeAction.act();
@@ -182,7 +203,7 @@ public class World extends Game {
 		levels[currentLevel].remove(player); // Removes the player from the current level.
 
 		int nextLevel = currentLevel + dir;
-		if (nextLevel <= -1) nextLevel = levels.length-1; // Fix accidental level underflow
+		if (nextLevel <= -1) nextLevel = levels.length - 1; // Fix accidental level underflow
 		if (nextLevel >= levels.length) nextLevel = 0; // Fix accidental level overflow
 		Logging.WORLD.trace("Setting level from {} to {}", currentLevel, nextLevel);
 		currentLevel = nextLevel;
@@ -206,6 +227,11 @@ public class World extends Game {
 		lastWorldExitTime = System.currentTimeMillis();
 	}
 
-	public static long getLastWorldExitTime() { return lastWorldExitTime; }
-	public static long getLastWorldEnterTime() { return lastWorldEnterTime; }
+	public static long getLastWorldExitTime() {
+		return lastWorldExitTime;
+	}
+
+	public static long getLastWorldEnterTime() {
+		return lastWorldEnterTime;
+	}
 }

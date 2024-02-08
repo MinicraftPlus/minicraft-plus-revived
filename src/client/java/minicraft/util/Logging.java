@@ -6,7 +6,9 @@ import org.tinylog.TaggedLogger;
 public final class Logging {
 	public static boolean logTime = false;
 	public static boolean logThread = false;
-	/** Applied only when debug mode is enabled */
+	/**
+	 * Applied only when debug mode is enabled
+	 */
 	public static boolean logTrace = false;
 	public static boolean logLevel = false;
 	public static boolean fileLogFull = false;
@@ -34,6 +36,8 @@ public final class Logging {
 	public static final TaggedLogger CONTROLLER = Logger.tag("Controller");
 	public static final TaggedLogger PLAYER = Logger.tag("Player");
 
-	/** This is defined dynamically. */
+	/**
+	 * This is defined dynamically.
+	 */
 	public static TaggedLogger WORLDNAMED = Logger.tag(null);
 }

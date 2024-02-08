@@ -30,7 +30,10 @@ public class BookItem extends Item {
 	protected BookContent book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
 
-	private BookItem(String title, LinkedSprite sprite, BookContent book) { this(title, sprite, book, false); }
+	private BookItem(String title, LinkedSprite sprite, BookContent book) {
+		this(title, sprite, book, false);
+	}
+
 	private BookItem(String title, LinkedSprite sprite, BookContent book, boolean hasTitlePage) {
 		super(title, sprite);
 		this.book = book;
@@ -43,7 +46,9 @@ public class BookItem extends Item {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull BookItem copy() {
 		return new BookItem(getName(), sprite, book, hasTitlePage);

@@ -70,8 +70,14 @@ public class LoadingDisplay extends Display {
 	public static void setPercentage(float percent) {
 		percentage = percent;
 	}
-	public static float getPercentage() { return percentage; }
-	public static void setMessage(String progressType) { LoadingDisplay.progressType = progressType; }
+
+	public static float getPercentage() {
+		return percentage;
+	}
+
+	public static void setMessage(String progressType) {
+		LoadingDisplay.progressType = progressType;
+	}
 
 	public static void progress(float amt) {
 		percentage = Math.min(100, percentage + amt);
