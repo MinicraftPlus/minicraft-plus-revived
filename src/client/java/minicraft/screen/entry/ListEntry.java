@@ -41,7 +41,7 @@ public abstract class ListEntry {
 		String string = toString();
 
 		Font.drawColor(bounds, string.replace(contain, String.format("%s%s%s", Color.toStringCode(isSelected ? containColor :
-				Color.tint(containColor, -1, true)), contain, Color.WHITE_CODE)), screen, x, y);
+				Color.tint(containColor, -1, true)), contain, Color.REDO_CODE)), screen, x, y);
 	}
 
 	/**
@@ -56,9 +56,9 @@ public abstract class ListEntry {
 	 */
 	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel bounds, int x, int y, boolean isSelected) {
 		if (visible) {
-			String text = toString().replace(Color.WHITE_CODE + Color.GRAY_CODE, Color.toStringCode(getColor(isSelected)));
+			String text = toString();
 			if (text.contains(String.valueOf(Color.COLOR_CHAR)))
-				Font.drawColor(bounds, Color.toStringCode(getColor(isSelected)) + text, screen, x, y);
+				Font.drawColor(bounds, text, screen, x, y, getColor(isSelected));
 			else
 				Font.draw(bounds, text, screen, x, y, getColor(isSelected));
 		}
