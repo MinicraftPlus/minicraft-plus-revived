@@ -26,6 +26,7 @@ public class SelectableStringEntry extends ListEntry {
 		this.color = color;
 	}
 
+	/** All values here should be in the same relative coordinate system. */
 	public interface EntryXAccessor {
 		int getWidth();
 		int getX(RelPos anchor);
