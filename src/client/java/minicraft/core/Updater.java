@@ -189,6 +189,7 @@ public class Updater extends Game {
 			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			TutorialDisplayHandler.tick(input);
 			AdvancementElement.AdvancementTrigger.tick();
+			Renderer.tickHotBar();
 
 			if (currentDisplay != null) {
 				// A menu is active.

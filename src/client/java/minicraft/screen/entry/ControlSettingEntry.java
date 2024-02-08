@@ -19,7 +19,7 @@ public class ControlSettingEntry extends SelectEntry {
 		setMapping(key.substring(key.indexOf(";") + 1), duplicated);
 	}
 
-	private void setMapping(String mapping, Set<String> duplicated) { // TODO when #500
+	private void setMapping(String mapping, Set<String> duplicated) {
 		this.mapping = mapping;
 
 		StringBuilder buffer = new StringBuilder();

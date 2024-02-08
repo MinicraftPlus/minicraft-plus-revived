@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import minicraft.core.CrashHandler.ErrorInfo;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -15,10 +16,13 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -31,9 +35,12 @@ import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectableStringEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 
@@ -218,21 +225,177 @@ public class Renderer extends Game {
 		}
 	}
 
+	private static final ItemHotBarRenderer itemHotBarRenderer = new ItemHotBarRenderer();
+
+	private static final class ItemHotBarRenderer {
+		private static final int Y_CORNER = Screen.h - 12;
+		private static final int SPRITE_X_CORNER = 84;
+		private static final int NAME_X_CORNER = 96;
+		private static final int NAME_SLOT_WIDTH = 104;
+
+		private @Nullable Item itemHeld;
+		private @Nullable ItemRenderingUnit renderingUnit;
+
+		private static class ItemRenderingUnit extends Screen.EntryRenderingUnit {
+			private class StringRenderingEntry implements Screen.ScreenEntry {
+				private final EntryScrollingTicker ticker;
+
+				public StringRenderingEntry() {
+					ticker = new HorizontalScrollerScrollingTicker(-1);
+				}
+
+				@Override
+				public int getWidth() {
+					return Font.textWidth(displayName);
+				}
+
+				@Override
+				public void tick(InputHandler input) {}
+
+				@Override
+				public void tickScrollingTicker(SelectableStringEntry.EntryXAccessor accessor) {
+					ticker.tick(accessor);
+				}
+
+				@Override
+				public boolean isScrollingTickerSet() {
+					return true;
+				}
+
+				@Override
+				public void render(Screen screen, Screen.@Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected) {
+					Font.draw(limitingModel, displayName, screen, x, y);
+				}
+
+				@Override
+				public void render(Screen screen, Screen.@Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected, String contain, int containColor) {
+					render(screen, limitingModel, x, y, selected); // The remaining parameters are ignored.
+				}
+			}
+
+			private class ItemNameRenderingLimitingModel extends EntryLimitingModel {
+				@Override
+				public int getLeftBound() {
+					return NAME_X_CORNER;
+				}
+
+				@Override
+				public int getRightBound() {
+					return NAME_X_CORNER + NAME_SLOT_WIDTH - 1;
+				}
+
+				@Override
+				public int getTopBound() {
+					return Y_CORNER;
+				}
+
+				@Override
+				public int getBottomBound() {
+					return Y_CORNER + MinicraftImage.boxWidth - 1;
+				}
+			}
+
+			private class ItemNameRenderingXAccessor extends EntryXAccessor {
+				@Override
+				public int getWidth() {
+					return Font.textWidth(displayName);
+				}
+			}
+
+			public final ItemNameRenderingLimitingModel limitingModel = new ItemNameRenderingLimitingModel();
+			public final ItemNameRenderingXAccessor accessor = new ItemNameRenderingXAccessor();
+			public final Rectangle entryBounds = new Rectangle(NAME_X_CORNER, Y_CORNER, NAME_SLOT_WIDTH,
+				MinicraftImage.boxWidth, Rectangle.CORNER_DIMS);
+
+			private final StringRenderingEntry delegate;
+			private final Sprite sprite;
+			private final String displayName;
+
+			public ItemRenderingUnit(@NotNull Item item) {
+				super(RelPos.CENTER);
+				sprite = item.sprite.getSprite();
+				displayName = item.getDisplayName();
+				delegate = new StringRenderingEntry();
+			}
+
+			public boolean matches(@NotNull Item item) {
+				return item.sprite.getSprite() == sprite && item.getDisplayName().equals(displayName);
+			}
+
+			@Override
+			protected Rectangle getEntryBounds() {
+				return entryBounds;
+			}
+
+			@Override
+			public ItemNameRenderingLimitingModel getLimitingModel() {
+				return limitingModel;
+			}
+
+			@Override
+			protected EntryXAccessor getXAccessor() {
+				return accessor;
+			}
+
+			@Override
+			public StringRenderingEntry getDelegate() {
+				return delegate;
+			}
+
+			@Override
+			public void render(Screen screen, int y, boolean selected) {
+				super.render(screen, y, selected);
+				screen.render(null, SPRITE_X_CORNER, Y_CORNER, sprite); // Fixed position
+			}
+
+			@Override
+			public void render(Screen screen, int y, boolean selected, String contain, int containColor) {
+				super.render(screen, y, selected); // The remaining parameters are ignored.
+			}
+		}
+
+		public void tick() {
+			if (itemHeld != player.activeItem) {
+				if (player.activeItem == null) {
+					itemHeld = null;
+					renderingUnit = null;
+				} else {
+					renderingUnit = new ItemRenderingUnit(itemHeld = player.activeItem);
+				}
+			} else if (itemHeld == null) {
+				renderingUnit = null;
+			} else if (renderingUnit != null && !renderingUnit.matches(itemHeld)) {
+				renderingUnit = new ItemRenderingUnit(itemHeld);
+			}
+
+			if (renderingUnit != null)
+				renderingUnit.tick(input);
+		}
+
+		public void render() {
+			if (renderingUnit != null)
+				renderingUnit.render(screen, Y_CORNER, true);
+		}
+	}
+
+	static void tickHotBar() {
+		itemHotBarRenderer.tick();
+	}
 
 	/**
 	 * Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.)
 	 */
 	private static void renderGui() {
-		// This draws the black square where the selected item would be if you were holding it
-		if (!isMode("minicraft.displays.world_create.options.game_mode.creative") || player.activeItem != null) {
-			for (int x = 10; x < 26; x++) {
-				screen.render(null, x * 8, Screen.h - 8, 5, 2, 0, hudSheet.getSheet());
-			}
-		}
-
-		// Shows active item sprite and name in bottom toolbar.
+		// Item held rendering frame
 		if (player.activeItem != null) {
-			player.activeItem.renderHUD(screen, 10 * 8, Screen.h - 8, Color.WHITE);
+			for (int x = 0; x < 16; ++x)
+				for (int y = 0; y < 2; ++y)
+					screen.render(null, 80 + x * 8, Screen.h - 2 * 8 + y * 8, x, 7 + y, 0, hudSheet.getSheet());
+			// Shows active item sprite and name in bottom toolbar.
+			itemHotBarRenderer.render();
+		} else {
+			for (int x = 0; x < 16; ++x)
+				screen.render(null, 80 + x * 8, Screen.h - 8, x, 9, 0, hudSheet.getSheet());
 		}
 
 
