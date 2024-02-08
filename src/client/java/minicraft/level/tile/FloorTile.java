@@ -15,15 +15,24 @@ import minicraft.util.AdvancementElement;
 public class FloorTile extends Tile {
 	protected Material type;
 
-	protected FloorTile(Material type) { this(type, null); }
+	protected FloorTile(Material type) {
+		this(type, null);
+	}
+
 	protected FloorTile(Material type, String name) {
-		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" + (name == null ? "" : " "+name) : type.name() + " " + (name == null ? "Bricks" : name)), null);
+		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" + (name == null ? "" : " " + name) : type.name() + " " + (name == null ? "Bricks" : name)), null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Wood: sprite = new SpriteAnimation(SpriteType.Tile, "wood_floor"); break;
-			case Stone: sprite = new SpriteAnimation(SpriteType.Tile, "stone_floor"); break;
-			case Obsidian: sprite = new SpriteAnimation(SpriteType.Tile, "obsidian_floor"); break;
+			case Wood:
+				sprite = new SpriteAnimation(SpriteType.Tile, "wood_floor");
+				break;
+			case Stone:
+				sprite = new SpriteAnimation(SpriteType.Tile, "stone_floor");
+				break;
+			case Obsidian:
+				sprite = new SpriteAnimation(SpriteType.Tile, "obsidian_floor");
+				break;
 		}
 	}
 
@@ -40,8 +49,12 @@ public class FloorTile extends Tile {
 					}
 					Item drop;
 					switch (type) {
-						case Wood: drop = Items.get("Plank"); break;
-						default: drop = Items.get(type.name() + " Brick"); break;
+						case Wood:
+							drop = Items.get("Plank");
+							break;
+						default:
+							drop = Items.get(type.name() + " Brick");
+							break;
 					}
 					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);

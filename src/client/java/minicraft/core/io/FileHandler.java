@@ -26,7 +26,8 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class FileHandler extends Game {
-	private FileHandler() {}
+	private FileHandler() {
+	}
 
 	public static final int REPLACE_EXISTING = 0;
 	public static final int RENAME_COPY = 1;
@@ -99,11 +100,11 @@ public class FileHandler extends Game {
 	}
 
 	public static String getSystemGameDir() {
-		    return systemGameDir;
+		return systemGameDir;
 	}
 
 	public static String getLocalGameDir() {
-		    return localGameDir;
+		return localGameDir;
 	}
 
 	private static void deleteFolder(File top) {
@@ -133,7 +134,7 @@ public class FileHandler extends Game {
 						newFilename = newFilename.substring(0, newFilename.lastIndexOf("."));
 						do {
 							newFilename += "(Old)";
-						} while(new File(newFilename).exists());
+						} while (new File(newFilename).exists());
 						newFilename += Save.extension;
 					}
 				}
@@ -146,12 +147,15 @@ public class FileHandler extends Game {
 				}
 				return FileVisitResult.CONTINUE;
 			}
+
 			public FileVisitResult preVisitDirectory(Path p, BasicFileAttributes bfa) {
 				return FileVisitResult.CONTINUE;
 			}
+
 			public FileVisitResult postVisitDirectory(Path p, IOException ex) {
 				return FileVisitResult.CONTINUE;
 			}
+
 			public FileVisitResult visitFileFailed(Path p, IOException ex) {
 				return FileVisitResult.CONTINUE;
 			}
@@ -179,7 +183,7 @@ public class FileHandler extends Game {
 		ArrayList<String> names = new ArrayList<>();
 		try (Stream<Path> paths = Files.walk(path)) {
 			Path finalPath = path;
-			paths.forEach(p -> names.add(finalPath.getParent().relativize(p).toString().replace('\\', '/')+
+			paths.forEach(p -> names.add(finalPath.getParent().relativize(p).toString().replace('\\', '/') +
 				(p.toFile().isDirectory() ? "/" : "")));
 			return names;
 		} catch (IOException e) {
@@ -203,7 +207,7 @@ public class FileHandler extends Game {
 
 			Path folderPath = Paths.get(fUrl.toURI());
 			Files.walk(folderPath)
-        		.forEach(p -> {
+				.forEach(p -> {
 					names.add(folderPath.relativize(p).toString().replace('\\', '/') + (p.toFile().isDirectory() ? "/" : ""));
 				});
 

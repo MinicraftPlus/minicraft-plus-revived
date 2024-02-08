@@ -1,7 +1,7 @@
 Original game by Markus Persson.
 
 Project Maintainers:
-David.b, Dillyg10, Chris J, afyber, and Makkkkus.
+David.b, Dillyg10, Chris J, afyber, Makkkkus, and Litorom1.
 
 Special contributors:
 A.L.I.C.E, Christoffer Holmesland, El-Virus, Litorom1, TheBigEye, PelletsstarPL and Ben Forge.

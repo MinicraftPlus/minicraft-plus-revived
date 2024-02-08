@@ -12,10 +12,12 @@ public class BlankEntry extends ListEntry {
 	}
 
 	@Override
-	public void tick(InputHandler input) {}
+	public void tick(InputHandler input) {
+	}
 
 	@Override
-	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {}
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
+	}
 
 	@Override
 	public int getWidth() {
@@ -23,5 +25,7 @@ public class BlankEntry extends ListEntry {
 	}
 
 	@Override
-	public String toString() { return " "; }
+	public String toString() {
+		return " ";
+	}
 }

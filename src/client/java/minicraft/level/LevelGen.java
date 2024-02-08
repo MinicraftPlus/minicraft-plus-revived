@@ -22,7 +22,9 @@ public class LevelGen {
 	private final int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
 
-	/** This creates noise to create random values for level generation */
+	/**
+	 * This creates noise to create random values for level generation
+	 */
 	public LevelGen(int w, int h, int featureSize) {
 		this.w = w;
 		this.h = h;
@@ -37,7 +39,7 @@ public class LevelGen {
 		}
 
 		int stepSize = featureSize;
-		double scale = 2 / w;
+		double scale = 2.0 / w;
 		double scaleMod = 1;
 		do {
 			int halfStep = stepSize / 2;
@@ -48,7 +50,7 @@ public class LevelGen {
 					double c = sample(x, y + stepSize); // Fetches the next value down, possibly looping back to the top of the column.
 					double d = sample(x + stepSize, y + stepSize); // Fetches the value one down, one right.
 
-					/**
+					/*
 					 * This could probably use some explaining... Note: the number values are probably only good the first time around...
 					 *
 					 * This starts with taking the average of the four numbers from before (they form a little square in adjacent tiles), each of which holds a value from -1 to 1.
@@ -82,7 +84,7 @@ public class LevelGen {
 				}
 			}
 
-			/**
+			/*
 			 * THEN... this stuff is set to repeat the system all over again!
 			 * The featureSize is halved, allowing access to further unset mids, and the scale changes...
 			 * The scale increases the first time, x1.8, but the second time it's x1.1, and after that probably a little less than 1. So, it generally increases a bit, maybe to 4 / w at tops. This results in the 5th random value being more significant than the first 4 ones in later iterations.
@@ -98,7 +100,7 @@ public class LevelGen {
 	} // This merely returns the value, like Level.getTile(x, y).
 
 	private void setSample(int x, int y, double value) {
-		/**
+		/*
 		 * This method is short, but difficult to understand. This is what I think it does:
 		 *
 		 * The values array is like a 2D array, but formatted into a 1D array; so the basic "x + y * w" is used to access a given value.
@@ -114,8 +116,7 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
-	@Nullable
-	static short[][] createAndValidateMap(int w, int h, int level, long seed) {
+	static short[] @Nullable [] createAndValidateMap(int w, int h, int level, long seed) {
 		worldSeed = seed;
 
 		if (level == 1)
@@ -155,7 +156,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[] @Nullable [] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
 			short[][] result = createUndergroundMap(w, h, depth);
@@ -196,7 +197,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateSkyMap(int w, int h) {
+	private static short[] @Nullable [] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 
 		do {
@@ -245,7 +246,7 @@ public class LevelGen {
 				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val += 1 - dist*20;
+				val += 1 - dist * 20;
 
 				switch ((String) Settings.get("Type")) {
 					case "minicraft.settings.type.island":
@@ -503,7 +504,8 @@ public class LevelGen {
 
 				if (val < -0.05) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-				}else if(val>=-0.05 && val<-0.03){map[i] = Tiles.get("Lava").id;
+				} else if (val >= -0.05 && val < -0.03) {
+					map[i] = Tiles.get("Lava").id;
 				} else {
 					if (random.nextInt(2) == 1) {
 						if (random.nextInt(2) == 1) {
@@ -511,8 +513,7 @@ public class LevelGen {
 						} else {
 							map[i] = Tiles.get("Raw Obsidian").id;
 						}
-					}
-					else {
+					} else {
 						map[i] = Tiles.get("dirt").id;
 					}
 				}
@@ -630,10 +631,10 @@ public class LevelGen {
 
 		if (depth > 2) { // The level above dungeon.
 			int r = 1;
-			int xm = w/2;
-			int ym = h/2;
+			int xm = w / 2;
+			int ym = h / 2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
-			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			int edgeMargin = w / 20; // The distance between the world enge and the lock sides.
 			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
 			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
 			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
@@ -695,7 +696,7 @@ public class LevelGen {
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
-				double dist = xd >= yd ? xd : yd;
+				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
@@ -777,7 +778,6 @@ public class LevelGen {
 
 		if (!valid) {
 			maplvls = new int[1];
-			maplvls[0] = 0;
 		}
 
 		//noinspection InfiniteLoopStatement
@@ -785,6 +785,7 @@ public class LevelGen {
 			int w = 128;
 			int h = 128;
 
+			//noinspection ConstantConditions
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 
@@ -821,11 +822,11 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)));
-			if (LevelGen.worldSeed == 0x100)
-				LevelGen.worldSeed = 0xAAFF20;
-			else
-				LevelGen.worldSeed = 0x100;
+			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed " + worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[]{"Next", "0x100", "0xAAFF20"}, "Next");
+			if (op == 1) LevelGen.worldSeed = 0x100;
+			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
+			else LevelGen.worldSeed++;
 		}
 	}
 }

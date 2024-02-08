@@ -1,5 +1,8 @@
 With the default controls...
 
-Move your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Pickup furniture and torches with V. Select an item in the inventory to equip it.
+Move your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Pickup furniture and torches with V. Select an item in the inventory to equip it. Q to drop an item or Shift + Q to drop a stack. Escape key for pause menu.
 
-The Goal: Defeat the air wizard!
+Similarly on controller move your character or with dpad or left joystick, A button to attack or select, B button to exit menus, X button for inventory, Y button for craft menu, start menu for pause menu or search in a list of items, Left Bumper to pick up furniture, Right Bumper to drop an item or use Right Joystick Button to drop a stack.
+
+The main Goal: Defeat the air wizard and Obsidian Knight! 
+Prevail, get stronger, survive!
