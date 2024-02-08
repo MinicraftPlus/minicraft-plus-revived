@@ -25,6 +25,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.WateringCanItem;
@@ -237,6 +238,268 @@ public class Renderer extends Game {
 		private @Nullable ItemRenderingUnit renderingUnit;
 
 		private static class ItemRenderingUnit extends Screen.EntryRenderingUnit {
+			private interface ItemRenderingModel {
+				static ItemRenderingModel getModel(@NotNull Item item) {
+					if (item instanceof StackableItem) {
+						return new StackableItemRenderingModel((StackableItem) item);
+					} else if (item instanceof ToolItem) {
+						return new ToolItemRenderingModel((ToolItem) item);
+					} else if (item instanceof WateringCanItem) {
+						return new WateringCanItemRenderingModel((WateringCanItem) item);
+					} else {
+						return new GeneralItemRenderingMode(item);
+					}
+				}
+
+				int getNameLeftBound();
+				int getNameSlotWidth();
+				String getName();
+				void renderExtra(Screen screen);
+				void renderBackground(Screen screen, int x, int y);
+				boolean matches(@NotNull Item item);
+			}
+
+			private static class GeneralItemRenderingMode implements ItemRenderingModel {
+				private final String name;
+
+				public GeneralItemRenderingMode(@NotNull Item item) { // For general non-stackable items
+					name = item.getDisplayName();
+				}
+
+				public int getNameLeftBound() {
+					return NAME_X_CORNER;
+				}
+
+				public int getNameSlotWidth() {
+					return NAME_SLOT_WIDTH;
+				}
+
+				public String getName() {
+					return name;
+				}
+
+				@Override
+				public void renderExtra(Screen screen) {}
+
+				@Override
+				public void renderBackground(Screen screen, int x, int y) {
+					for (int xx = 0; xx < 15; ++xx)
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, x + xx * 8, y + yy * 8, xx, 10 + yy, 0, hudSheet.getSheet());
+				}
+
+				@Override
+				public boolean matches(@NotNull Item item) {
+					return name.equals(item.getDisplayName());
+				}
+			}
+
+			private static class StackableItemRenderingModel implements ItemRenderingModel {
+				private final String name;
+				private final int amount;
+				private final String amountStr; // length: 1-3
+
+				public StackableItemRenderingModel(@NotNull StackableItem item) {
+					amountStr = (amount = item.count) < 1000 ? String.valueOf(amount) : "999";
+					name = item.getDisplayNameUndecorated();
+				}
+
+				@Override
+				public int getNameLeftBound() {
+					return NAME_X_CORNER + (amountStr.length() + 1) * MinicraftImage.boxWidth;
+				}
+
+				@Override
+				public int getNameSlotWidth() {
+					return NAME_SLOT_WIDTH - (amountStr.length() + 1) * MinicraftImage.boxWidth;
+				}
+
+				@Override
+				public String getName() {
+					return name;
+				}
+
+				@Override
+				public void renderExtra(Screen screen) {
+					Font.draw(amountStr, screen, NAME_X_CORNER, Y_CORNER);
+					if (amount > 999) { // true then length must be 3
+						screen.render(null, 120, Screen.h - 2 * 8,
+							15, 10, 0, hudSheet.getSheet());
+						screen.render(null, 120, Screen.h - 8,
+							15, 11, 0, hudSheet.getSheet());
+					}
+				}
+
+				@Override
+				public void renderBackground(Screen screen, int x, int y) {
+					int i = amountStr.length();
+					for (int xx = 0; xx < 5; ++xx)
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, x + xx * 8, y + yy * 8,
+								xx, 10 + i * 2 + yy, 0, hudSheet.getSheet());
+					for (int xx = 5; xx < 15; ++xx)
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, x + xx * 8, y + yy * 8,
+								xx, 10 + yy, 0, hudSheet.getSheet());
+				}
+
+				@Override
+				public boolean matches(@NotNull Item item) {
+					return item instanceof StackableItem && ((StackableItem) item).count == amount &&
+						name.equals(item.getDisplayNameUndecorated());
+				}
+			}
+
+			private static abstract class DurableItemRenderingModel implements ItemRenderingModel {
+				private final String name;
+
+				// For items that the status can be expressed in percentages
+				public DurableItemRenderingModel(@NotNull Item item) {
+					name = item.getDisplayName();
+				}
+
+				protected abstract int getPercentage();
+
+				@Override
+				public int getNameLeftBound() {
+//					return NAME_X_CORNER + 5 * 8;
+					return NAME_X_CORNER + 3 * 8;
+				}
+
+				@Override
+				public int getNameSlotWidth() {
+//					return NAME_SLOT_WIDTH - 5 * 8;
+					return NAME_SLOT_WIDTH - 3 * 8;
+				}
+
+				@Override
+				public String getName() {
+					return name;
+				}
+
+				@Override
+				public void renderExtra(Screen screen) {
+					int v = getPercentage();
+					int green = (int) (v * 2.55f); // Let duration show as normal.
+					int color = Color.get(1, 255 - green, green, 0);
+//					String s = Localization.getLocalized("minicraft.display.gui.item_durability", v);
+//					Font.draw(s, screen, NAME_X_CORNER + (4 - s.length()) * 8, Y_CORNER, color);
+					int d = v;
+					for (int x = 0; x < 20; ++x) {
+						if (d == 0) break;
+						int g = Math.min(d, 5);
+						d -= g;
+						--g;
+						int col = Color.get(1, 255 - 255 * g / 4, 255 * g / 4, 0);
+						for (int y = 0; y < 8; ++y) {
+							screen.pixels[NAME_X_CORNER + x + (Y_CORNER + y) * Screen.w] = col;
+						}
+					}
+					int l = Math.round(v / 12.5f);
+					for (int i = 0; i < l; ++i) {
+						screen.pixels[SPRITE_X_CORNER + 8 + (Y_CORNER + 7 - i) * Screen.w] = color;
+					}
+				}
+
+				@Override
+				public void renderBackground(Screen screen, int x, int y) {
+//					for (int xx = 0; xx < 6; ++xx)
+//						for (int yy = 0; yy < 2; ++yy)
+//							screen.render(null, x + xx * 8, y + yy * 8,
+//								5 + xx, 12 + yy, 0, hudSheet.getSheet());
+//					for (int xx = 6; xx < 15; ++xx)
+//						for (int yy = 0; yy < 2; ++yy)
+//							screen.render(null, x + xx * 8, y + yy * 8,
+//								xx, 10 + yy, 0, hudSheet.getSheet());
+					for (int xx = 0; xx < 4; ++xx)
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, x + xx * 8, y + yy * 8,
+								5 + xx, 14 + yy, 0, hudSheet.getSheet());
+					for (int xx = 4; xx < 15; ++xx)
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, x + xx * 8, y + yy * 8,
+								xx, 10 + yy, 0, hudSheet.getSheet());
+				}
+
+				@Override
+				public abstract boolean matches(@NotNull Item item);
+			}
+
+			private static class ToolItemRenderingModel extends DurableItemRenderingModel {
+				private final ToolType type;
+				private final int level;
+				private final int dur;
+				private final int percentage;
+
+				public ToolItemRenderingModel(@NotNull ToolItem item) {
+					super(item);
+					type = item.type;
+					level = item.level;
+					dur = item.dur;
+					percentage = dur * 100 / (type.durability * (level + 1));
+				}
+
+				@Override
+				protected int getPercentage() {
+					return percentage;
+				}
+
+				@Override
+				public void renderExtra(Screen screen) {
+					super.renderExtra(screen);
+					// Renders arrow counter
+					if (type == ToolType.Bow) {
+						int ac = player.getInventory().count(Items.arrowItem);
+						String s = isMode("minicraft.displays.world_create.options.game_mode.creative") || ac >= 10000 ?
+							"^" : String.valueOf(ac); // "^" is an infinite symbol. TODO Use of "^" -> "∞"
+						for (int xx = 0; xx < 3; ++xx)
+							for (int yy = 0; yy < 2; ++yy)
+								screen.render(null, 88 + xx * 8, Screen.h - 3 * 8 + yy * 8,
+									9 + xx, 14 + yy, 0, hudSheet.getSheet());
+						for (int i = 0; i < s.length() - 1; ++i)
+							for (int yy = 0; yy < 2; ++yy)
+								screen.render(null, 112 + i * 8, Screen.h - 3 * 8 + yy * 8,
+									12, 14 + yy, 0, hudSheet.getSheet());
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, 112 + (s.length() - 1) * 8, Screen.h - 3 * 8 + yy * 8,
+								13, 14 + yy, 0, hudSheet.getSheet());
+						for (int yy = 0; yy < 2; ++yy)
+							screen.render(null, 120 + (s.length() - 1) * 8, Screen.h - 3 * 8 + yy * 8,
+								14, 14 + yy, 0, hudSheet.getSheet());
+						// Displays the arrow icon
+						screen.render(null, 91, Screen.h - 3 * 8 + 4, 4, 1, 0, hudSheet.getSheet());
+						Font.draw(s, screen, 109, Screen.h - 3 * 8 + 4);
+					}
+				}
+
+				@Override
+				public boolean matches(@NotNull Item item) {
+					return item instanceof ToolItem && ((ToolItem) item).type == type &&
+						((ToolItem) item).level == level && ((ToolItem) item).dur == dur;
+				}
+			}
+
+			private static class WateringCanItemRenderingModel extends DurableItemRenderingModel {
+				private final int val;
+				private final int percentage;
+
+				public WateringCanItemRenderingModel(@NotNull WateringCanItem item) {
+					super(item);
+					val = item.content;
+					percentage = val * 100 / item.CAPACITY;
+				}
+
+				@Override
+				protected int getPercentage() {
+					return percentage;
+				}
+
+				@Override
+				public boolean matches(@NotNull Item item) {
+					return item instanceof WateringCanItem && ((WateringCanItem) item).content == val;
+				}
+			}
+
 			private class StringRenderingEntry implements Screen.ScreenEntry {
 				private final EntryScrollingTicker ticker;
 
@@ -246,7 +509,7 @@ public class Renderer extends Game {
 
 				@Override
 				public int getWidth() {
-					return Font.textWidth(displayName);
+					return Font.textWidth(renderingModel.getName());
 				}
 
 				@Override
@@ -264,7 +527,7 @@ public class Renderer extends Game {
 
 				@Override
 				public void render(Screen screen, Screen.@Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected) {
-					Font.draw(limitingModel, displayName, screen, x, y);
+					Font.draw(limitingModel, renderingModel.getName(), screen, x, y);
 				}
 
 				@Override
@@ -276,12 +539,12 @@ public class Renderer extends Game {
 			private class ItemNameRenderingLimitingModel extends EntryLimitingModel {
 				@Override
 				public int getLeftBound() {
-					return NAME_X_CORNER;
+					return renderingModel.getNameLeftBound();
 				}
 
 				@Override
 				public int getRightBound() {
-					return NAME_X_CORNER + NAME_SLOT_WIDTH - 1;
+					return renderingModel.getNameLeftBound() + renderingModel.getNameSlotWidth() - 1;
 				}
 
 				@Override
@@ -298,28 +561,31 @@ public class Renderer extends Game {
 			private class ItemNameRenderingXAccessor extends EntryXAccessor {
 				@Override
 				public int getWidth() {
-					return Font.textWidth(displayName);
+					return Font.textWidth(renderingModel.getName());
 				}
 			}
 
 			public final ItemNameRenderingLimitingModel limitingModel = new ItemNameRenderingLimitingModel();
 			public final ItemNameRenderingXAccessor accessor = new ItemNameRenderingXAccessor();
-			public final Rectangle entryBounds = new Rectangle(NAME_X_CORNER, Y_CORNER, NAME_SLOT_WIDTH,
-				MinicraftImage.boxWidth, Rectangle.CORNER_DIMS);
+			public final Rectangle entryBounds;
 
 			private final StringRenderingEntry delegate;
 			private final Sprite sprite;
-			private final String displayName;
+			private final ItemRenderingModel renderingModel;
 
 			public ItemRenderingUnit(@NotNull Item item) {
 				super(RelPos.CENTER);
 				sprite = item.sprite.getSprite();
-				displayName = item.getDisplayName();
+				renderingModel = ItemRenderingModel.getModel(item);
+				entryBounds = new Rectangle(renderingModel.getNameLeftBound(), Y_CORNER, renderingModel.getNameSlotWidth(),
+					MinicraftImage.boxWidth, Rectangle.CORNER_DIMS);
 				delegate = new StringRenderingEntry();
+				if (delegate.getWidth() > entryBounds.getWidth()) // Shifts to the left bound when the box is exceeded.
+					resetRelativeAnchorsSynced(RelPos.LEFT);
 			}
 
 			public boolean matches(@NotNull Item item) {
-				return item.sprite.getSprite() == sprite && item.getDisplayName().equals(displayName);
+				return item.sprite.getSprite() == sprite && renderingModel.matches(item);
 			}
 
 			@Override
@@ -344,13 +610,15 @@ public class Renderer extends Game {
 
 			@Override
 			public void render(Screen screen, int y, boolean selected) {
+				renderingModel.renderBackground(screen, 88, Screen.h - 2 * 8);
 				super.render(screen, y, selected);
 				screen.render(null, SPRITE_X_CORNER, Y_CORNER, sprite); // Fixed position
+				renderingModel.renderExtra(screen);
 			}
 
 			@Override
 			public void render(Screen screen, int y, boolean selected, String contain, int containColor) {
-				super.render(screen, y, selected); // The remaining parameters are ignored.
+				render(screen, y, selected); // The remaining parameters are ignored.
 			}
 		}
 
@@ -365,7 +633,7 @@ public class Renderer extends Game {
 			} else if (itemHeld == null) {
 				renderingUnit = null;
 			} else if (renderingUnit != null && !renderingUnit.matches(itemHeld)) {
-				renderingUnit = new ItemRenderingUnit(itemHeld);
+				renderingUnit = new ItemRenderingUnit(itemHeld); // Refresh
 			}
 
 			if (renderingUnit != null)
@@ -398,22 +666,6 @@ public class Renderer extends Game {
 				screen.render(null, 80 + x * 8, Screen.h - 8, x, 9, 0, hudSheet.getSheet());
 		}
 
-
-		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
-		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem) player.activeItem).type == ToolType.Bow) {
-				int ac = player.getInventory().count(Items.arrowItem);
-				// "^" is an infinite symbol.
-				if (isMode("minicraft.displays.world_create.options.game_mode.creative") || ac >= 10000)
-					Font.drawBackground(null, Localization.getLocalized("minicraft.display.gui.arrow_counter_unlimited"),
-						screen, 92, Screen.h - 16); // TODO Use of "^" -> "∞"
-				else
-					Font.drawBackground(null, Localization.getLocalized("minicraft.display.gui.arrow_counter", ac),
-						screen, 92, Screen.h - 16);
-				// Displays the arrow icon
-				screen.render(null, 10 * 8 + 4, Screen.h - 16, 4, 1, 0, hudSheet.getSheet());
-			}
-		}
 
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving)
@@ -483,25 +735,6 @@ public class Renderer extends Game {
 				String mult = Localization.getLocalized("minicraft.display.gui.score_multiplier", player.getMultiplier());
 				Font.draw(mult, screen, Screen.w - Font.textWidth(mult) - 2, 4 + 2 * 8, multColor);
 			}
-		}
-
-		// TOOL DURABILITY STATUS
-		if (player.activeItem instanceof ToolItem) {
-			// Draws the text
-			ToolItem tool = (ToolItem) player.activeItem;
-			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
-			int green = (int) (dura * 2.55f); // Let duration show as normal.
-			Font.drawBackground(Localization.getLocalized("minicraft.display.gui.item_durability", dura),
-				screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
-		}
-
-		// WATERING CAN CONTAINER STATUS
-		if (player.activeItem instanceof WateringCanItem) {
-			// Draws the text
-			WateringCanItem tin = (WateringCanItem) player.activeItem;
-			int dura = tin.content * 100 / tin.CAPACITY;
-			int green = (int) (dura * 2.55f); // Let duration show as normal.
-			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
 		// This renders the potions overlay

@@ -165,6 +165,10 @@ public abstract class Item {
 		return Localization.getLocalized(getName());
 	}
 
+	public String getDisplayNameUndecorated() {
+		return Localization.getLocalized(getName());
+	}
+
 	public boolean interactsWithWorld() {
 		return true;
 	}
