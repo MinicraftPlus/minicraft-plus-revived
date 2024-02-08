@@ -12,13 +12,12 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
 import minicraft.item.Items;
-import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.level.tile.entity.SignTileEntity;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SignDisplayMenu;
-import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public class SignTile extends Tile {
@@ -81,20 +80,7 @@ public class SignTile extends Tile {
 	}
 
 	@Override
-	public void steppedOn(Level level, int xt, int yt, Entity entity) {
-		if (entity instanceof Player) {
-			if (Renderer.signDisplayMenu == null || Renderer.signDisplayMenu.differsFrom(level.depth, xt, yt)) {
-				Renderer.signDisplayMenu = new SignDisplayMenu(level, xt, yt);
-			}
-		}
-	}
-
-	@Override
-	public void steppedOut(Level level, int xt, int yt, Entity entity) {
-		if (entity instanceof Player) {
-			if (Renderer.signDisplayMenu != null && Renderer.signDisplayMenu.matches(level.depth, xt, yt)) {
-				Renderer.signDisplayMenu = null;
-			}
-		}
+	public void onTileSet(Level level, int x, int y) {
+		level.add(new SignTileEntity(), x, y, true);
 	}
 }

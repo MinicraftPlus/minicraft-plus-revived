@@ -75,6 +75,8 @@ public abstract class Tile {
 		return maySpawn;
 	}
 
+	public void onTileSet(Level level, int x, int y) {}
+
 	/**
 	 * Returns if the player can walk on it, overrides in sub-classes
 	 */

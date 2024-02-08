@@ -683,6 +683,13 @@ public class Load {
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 
+			// Tile initialization
+			for (int x = 0; x < curLevel.w; ++x) {
+				for (int y = 0; y < curLevel.h; ++y) {
+					Tiles.get(curLevel.tiles[x + y * curLevel.w]).onTileSet(curLevel, x, y);
+				}
+			}
+
 			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
 			if (parent == null) continue;

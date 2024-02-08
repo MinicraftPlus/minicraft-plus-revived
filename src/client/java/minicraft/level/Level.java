@@ -583,6 +583,7 @@ public class Level {
 
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (short) dataVal;
+		t.onTileSet(this, x, y);
 	}
 
 	public int getData(int x, int y) {
