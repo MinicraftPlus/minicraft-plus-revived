@@ -46,27 +46,27 @@ public class TreeTile extends Tile {
 		Sprite spriteFull = treeSpriteFull.getSprite();
 
 		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, spriteFull.spritePixels[0][1]);
+			screen.render(null, x * 16 + 0, y * 16 + 0, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, sprite.spritePixels[0][0]);
+			screen.render(null, x * 16 + 0, y * 16 + 0, sprite.spritePixels[0][0]);
 		}
 
 		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, spriteFull.spritePixels[0][0]);
+			screen.render(null, x * 16 + 8, y * 16 + 0, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, sprite.spritePixels[0][1]);
+			screen.render(null, x * 16 + 8, y * 16 + 0, sprite.spritePixels[0][1]);
 		}
 
 		if (d && dl && l) {
-			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
+			screen.render(null, x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
+			screen.render(null, x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
 		if (d && dr && r) {
-			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
+			screen.render(null, x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
+			screen.render(null, x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
 		}
 	}
 

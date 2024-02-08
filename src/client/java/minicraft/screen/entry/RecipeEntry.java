@@ -28,10 +28,10 @@ public class RecipeEntry extends ItemEntry {
 	public void tick(InputHandler input) {}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
 		if (isVisible()) {
-			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT, bounds);
-			screen.render(x, y, getItem().sprite);
+			Font.draw(limitingModel, toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
+			screen.render(null, x, y, getItem().sprite);
 		}
 	}
 

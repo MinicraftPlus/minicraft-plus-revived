@@ -301,7 +301,7 @@ public class QuestsDisplay extends Display {
 			private final int[] rasterPixels;
 			private final Screen simulatedRasterScreen = new Screen() {
 				@Override
-				public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+				public void render(RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 					if (sheet == null) return; // Verifying that sheet is not null.
 					// Ignoring mirror.
 					// Validation check

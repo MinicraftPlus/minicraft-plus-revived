@@ -126,9 +126,9 @@ public abstract class MobAi extends Mob {
 
 		LinkedSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
 		if (hurtTime > 0) {
-			screen.render(xo, yo, curSprite.getSprite(), true);
+			screen.render(null, xo, yo, curSprite.getSprite(), true);
 		} else {
-			screen.render(xo, yo, curSprite.getSprite());
+			screen.render(null, xo, yo, curSprite.getSprite());
 		}
 	}
 

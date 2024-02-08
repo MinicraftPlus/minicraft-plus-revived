@@ -208,41 +208,41 @@ public class SpriteAnimation implements Destroyable {
 			if (u && l) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
 				Sprite.Px connective = singletonWithConnective ? full.spritePixels[1][1] : sparse.spritePixels[1][1];
-				if (ul) screen.render(x, y, connective, connectiveColor);
-				else if (sides == null) screen.render(x, y, full.spritePixels[1][1], full.color);
-				else screen.render(x, y, sides.spritePixels[0][0], 3, sides.color);
+				if (ul) screen.render(null, x, y, connective, connectiveColor);
+				else if (sides == null) screen.render(null, x, y, full.spritePixels[1][1], full.color);
+				else screen.render(null, x, y, sides.spritePixels[0][0], 3, sides.color);
 			} else
-				screen.render(x, y, sparse.spritePixels[u ? 1 : 0][l ? 1 : 0], sparse.color);
+				screen.render(null, x, y, sparse.spritePixels[u ? 1 : 0][l ? 1 : 0], sparse.color);
 
 			if (u && r) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
 				Sprite.Px connective = singletonWithConnective ? full.spritePixels[1][0] : sparse.spritePixels[1][1];
-				if (ur) screen.render(x + 8, y, connective, connectiveColor);
-				else if (sides == null) screen.render(x + 8, y, full.spritePixels[1][0], full.color);
-				else screen.render(x + 8, y, sides.spritePixels[0][1], 3, sides.color);
+				if (ur) screen.render(null, x + 8, y, connective, connectiveColor);
+				else if (sides == null) screen.render(null, x + 8, y, full.spritePixels[1][0], full.color);
+				else screen.render(null, x + 8, y, sides.spritePixels[0][1], 3, sides.color);
 			} else
-				screen.render(x + 8, y, sparse.spritePixels[u ? 1 : 0][r ? 1 : 2], sparse.color);
+				screen.render(null, x + 8, y, sparse.spritePixels[u ? 1 : 0][r ? 1 : 2], sparse.color);
 
 			if (d && l) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
 				Sprite.Px connective = singletonWithConnective ? full.spritePixels[0][1] : sparse.spritePixels[1][1];
-				if (dl) screen.render(x, y + 8, connective, connectiveColor);
-				else if (sides == null) screen.render(x, y + 8, full.spritePixels[0][1], full.color);
-				else screen.render(x, y + 8, sides.spritePixels[1][0], 3, sides.color);
+				if (dl) screen.render(null, x, y + 8, connective, connectiveColor);
+				else if (sides == null) screen.render(null, x, y + 8, full.spritePixels[0][1], full.color);
+				else screen.render(null, x, y + 8, sides.spritePixels[1][0], 3, sides.color);
 			} else
-				screen.render(x, y + 8, sparse.spritePixels[d ? 1 : 2][l ? 1 : 0], sparse.color);
+				screen.render(null, x, y + 8, sparse.spritePixels[d ? 1 : 2][l ? 1 : 0], sparse.color);
 
 			if (d && r) {
 				int connectiveColor = singletonWithConnective ? full.color : sparse.color;
 				Sprite.Px connective = singletonWithConnective ? full.spritePixels[0][0] : sparse.spritePixels[1][1];
-				if (dr) screen.render(x + 8, y + 8, connective, connectiveColor);
-				else if (sides == null) screen.render(x + 8, y + 8, full.spritePixels[0][0], full.color);
-				else screen.render(x + 8, y + 8, sides.spritePixels[1][1], 3, sides.color);
+				if (dr) screen.render(null, x + 8, y + 8, connective, connectiveColor);
+				else if (sides == null) screen.render(null, x + 8, y + 8, full.spritePixels[0][0], full.color);
+				else screen.render(null, x + 8, y + 8, sides.spritePixels[1][1], 3, sides.color);
 			} else
-				screen.render(x + 8, y + 8, sparse.spritePixels[d ? 1 : 2][r ? 1 : 2], sparse.color);
+				screen.render(null, x + 8, y + 8, sparse.spritePixels[d ? 1 : 2][r ? 1 : 2], sparse.color);
 
 		} else
-			screen.render(x << 4, y << 4, animations[frame]);
+			screen.render(null, x << 4, y << 4, animations[frame]);
 
 		// If there is animation.
 		if (animations.length > 1) {

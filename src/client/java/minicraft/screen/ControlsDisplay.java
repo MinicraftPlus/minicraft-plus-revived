@@ -10,10 +10,8 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectableStringEntry;
-import minicraft.screen.entry.StringEntry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ControlsDisplay extends Display {
 	private ListEntry[] keyControls;
@@ -41,8 +39,7 @@ public class ControlsDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>(23);
 		for (int i = 0; i < 23; i++) {
 			SelectableStringEntry entry = new SelectableStringEntry(String.format("minicraft.displays.controls.display.keyboard.%02d", i));
-			entry.setScrollingTextRenderTicker(
-				new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2), MinicraftImage.boxWidth * 2);
+			entry.setScrollerScrollingTicker();
 			entries.add(entry);
 		}
 		keyControls = entries.toArray(new ListEntry[0]);
@@ -52,8 +49,7 @@ public class ControlsDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>(16);
 		for (int i = 0; i < 16; i++) {
 			SelectableStringEntry entry = new SelectableStringEntry(String.format("minicraft.displays.controls.display.controller.%02d", i));
-			entry.setScrollingTextRenderTicker(
-				new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2), MinicraftImage.boxWidth * 2);
+			entry.setScrollerScrollingTicker();
 			entries.add(entry);
 		}
 		controllerControls = entries.toArray(new ListEntry[0]);

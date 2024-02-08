@@ -7,6 +7,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
+import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Rectangle;
@@ -143,8 +144,7 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true)
-			.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
+		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true);
 
 		SelectEntry nameHelp = new SelectEntry("minicraft.displays.world_gen.troublesome_input", () -> Game.setDisplay(new PopupDisplay(null, "minicraft.displays.world_gen.troublesome_input.msg"))) {
 			@Override
@@ -168,7 +168,7 @@ public class WorldGenDisplay extends Display {
 		worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
-		}.setRenderingBounds(new ListEntry.IntRange(MinicraftImage.boxWidth * 2, Screen.w - MinicraftImage.boxWidth * 2)).setEntryPos(RelPos.LEFT);
+		};
 
 		Menu mainMenu =
 			new Menu.Builder(false, 10, RelPos.LEFT,
@@ -183,8 +183,8 @@ public class WorldGenDisplay extends Display {
 					Game.setDisplay(new LoadingDisplay());
 				}) {
 					@Override
-					public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
-						Font.draw(toString(), screen, x, y, Color.CYAN, bounds);
+					public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
+						Font.draw(limitingModel, toString(), screen, x, y, Color.CYAN);
 					}
 				},
 
@@ -198,13 +198,7 @@ public class WorldGenDisplay extends Display {
 				.setDisplayLength(5)
 				.setScrollPolicies(0.8f, false)
 				.setTitle("minicraft.displays.world_gen.title")
-				.setMaxBoundsAsRenderingBounds()
 				.createMenu();
-
-		Rectangle menuBounds = mainMenu.getBounds();
-		ListEntry.IntRange xBounds = new ListEntry.IntRange(menuBounds.getLeft() + MinicraftImage.boxWidth * 2, menuBounds.getRight() - MinicraftImage.boxWidth * 2);
-		nameField.setBounds(xBounds);
-		worldSeed.setBounds(xBounds);
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu == null)

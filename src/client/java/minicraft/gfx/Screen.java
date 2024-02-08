@@ -4,6 +4,10 @@ import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.screen.RelPos;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectableStringEntry;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -41,36 +45,73 @@ public class Screen {
 		Arrays.fill(pixels, color);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
+	/** Inclusive bounds for rendering */
+	public static abstract class RenderingLimitingModel {
+		public abstract int getLeftBound();
+		public abstract int getRightBound();
+		public abstract int getTopBound();
+		public abstract int getBottomBound();
+
+		public boolean contains(int x, int y) { // inclusive
+			return getLeftBound() <= x && x <= getRightBound() && getTopBound() <= y && y <= getBottomBound();
+		}
+	}
+
+	// Just use a menu for it.
+	public static final class ScreenLimitingModel extends RenderingLimitingModel {
+		public static final ScreenLimitingModel INSTANCE = new ScreenLimitingModel();
+
+		@Override
+		public int getLeftBound() {
+			return 0;
+		}
+
+		@Override
+		public int getRightBound() {
+			return Screen.w - 1;
+		}
+
+		@Override
+		public int getTopBound() {
+			return 0;
+		}
+
+		@Override
+		public int getBottomBound() {
+			return Screen.h - 1;
+		}
+	}
+
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(limitingModel, xp, yp, xt, yt, bits, sheet, -1); }
+    public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(limitingModel, xp, yp, xt, yt, bits, sheet, whiteTint, false); }
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
+    public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
+		render(limitingModel, xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
     }
 
-	public void render(int xp, int yp, LinkedSprite sprite) { render(xp, yp, sprite.getSprite()); }
-	public void render(int xp, int yp, Sprite sprite) { render(xp, yp, sprite, false); }
-	public void render(int xp, int yp, Sprite sprite, boolean fullbright) { render(xp, yp, sprite, 0, fullbright, 0); }
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) { render(xp, yp, sprite, mirror, fullbright, 0); }
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, LinkedSprite sprite) { render(limitingModel, xp, yp, sprite.getSprite()); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite) { render(limitingModel, xp, yp, sprite, false); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite, boolean fullbright) { render(limitingModel, xp, yp, sprite, 0, fullbright, 0); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite, int mirror, boolean fullbright) { render(limitingModel, xp, yp, sprite, mirror, fullbright, 0); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		for (int r = 0; r < sprite.spritePixels.length; r++) {
 			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
 				Sprite.Px px = sprite.spritePixels[r][c];
-				render(xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
+				render(limitingModel, xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
 			}
 		}
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel) { render(xp, yp, pixel, -1); }
-	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
-		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel) { render(limitingModel, xp, yp, pixel, -1); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int whiteTint) { render(limitingModel, xp, yp, pixel, 0, whiteTint); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(limitingModel, xp, yp, pixel, mirror, whiteTint, false); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(limitingModel, xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
+		render(limitingModel, xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
 	}
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+    public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
@@ -82,7 +123,7 @@ public class Screen {
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
 
 		// Validation check
-		if (sheet == null || xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
+		if (xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
 			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
 			xt = 0;
 			yt = 0;
@@ -99,6 +140,7 @@ public class Screen {
 			if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
 			for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
 				if (x + xp < 0 || x + xp >= w) continue; // Skip rest if out of bounds.
+				if (limitingModel != null && !limitingModel.contains(x + xp, y + yp)) continue;
 
 				int xs = x; // Current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect

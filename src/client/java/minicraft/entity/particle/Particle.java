@@ -49,7 +49,7 @@ public class Particle extends Entity implements ClientTickable {
 	}
 
 	@Override
-	public void render(Screen screen) { screen.render(x, y, sprite); }
+	public void render(Screen screen) { screen.render(null, x, y, sprite); }
 
 	@Override
 	public boolean isSolid() { return false; }

@@ -33,8 +33,8 @@ public abstract class Item {
 	/** Renders an item on the HUD */
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
-		screen.render(x, y, sprite);
-		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
+		screen.render(null, x, y, sprite);
+		Font.drawBackground(null, dispName, screen, x + 8, y, fontColor);
 	}
 
 	/** Determines what happens when the player interacts with a tile */

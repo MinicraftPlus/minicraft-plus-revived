@@ -15,7 +15,7 @@ public class BlankEntry extends ListEntry {
 	public void tick(InputHandler input) {}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {}
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {}
 
 	@Override
 	public int getWidth() {

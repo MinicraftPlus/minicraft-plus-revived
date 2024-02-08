@@ -34,7 +34,7 @@ public class PotatoTile extends PlantTile {
         int icon = age / (maxAge / 5);
 
         Tiles.get("Farmland").render(screen, level, x, y);
-		screen.render(x * 16, y * 16, spritStages[icon]);
+		screen.render(null, x * 16, y * 16, spritStages[icon]);
     }
 
     @Override
