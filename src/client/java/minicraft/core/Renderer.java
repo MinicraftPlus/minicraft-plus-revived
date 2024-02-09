@@ -200,6 +200,8 @@ public class Renderer extends Game {
 		private static final int DURATION_ON_UPDATE = 90; // 1.5s
 
 		public final AppStatusElement HARDWARE_ACCELERATION_STATUS = new HardwareAccelerationElementStatus();
+		public final AppStatusElement CONTROLLER_STATUS = new ControllerElementStatus();
+		public final AppStatusElement INPUT_METHOD_STATUS = new InputMethodElementStatus();
 
 		private AppStatusBar() {}
 
@@ -218,12 +220,18 @@ public class Renderer extends Game {
 
 			// Hardware Acceleration Status (width = 16)
 			HARDWARE_ACCELERATION_STATUS.render(Screen.w - 16 * 8 + 5, 2, sheet);
+			// Controller Status (width = 14)
+			CONTROLLER_STATUS.render(Screen.w - 16 * 8 + 21 - 1, 2, sheet);
+			// Input Method Status (width = 14)
+			INPUT_METHOD_STATUS.render(Screen.w - 16 * 8 + 35 - 1, 2, sheet);
 		}
 
 		void tick() {
 			if (duration > 0)
 				duration--;
 			HARDWARE_ACCELERATION_STATUS.tick();
+			CONTROLLER_STATUS.tick();
+			INPUT_METHOD_STATUS.tick();
 		}
 
 		void show(int duration) {
@@ -255,7 +263,8 @@ public class Renderer extends Game {
 			protected void render(int x, int y, MinicraftImage sheet) {
 				if (durationUpdated > 0) {
 					if (blinking) {
-						screen.render(x, y, 10, 3 + size, 0, sheet);
+						for (int xx = 0; xx < 2; ++xx)
+							screen.render(x + xx * 8, y, 10 + xx, 3 + size, 0, sheet);
 					}
 				}
 			}
@@ -283,11 +292,11 @@ public class Renderer extends Game {
 		}
 
 		public class HardwareAccelerationElementStatus extends AppStatusElement {
-			public final int ACCELERATION_ON = 0;
-			public final int ACCELERATION_OFF = 1;
+			public static final int ACCELERATION_ON = 0;
+			public static final int ACCELERATION_OFF = 1;
 
 			@MagicConstant(intValues = {ACCELERATION_ON, ACCELERATION_OFF})
-			private int status = ACCELERATION_ON;
+			private int status;
 
 			private HardwareAccelerationElementStatus() {
 				super(0);
@@ -305,9 +314,117 @@ public class Renderer extends Game {
 				if (status == ACCELERATION_ON) {
 					for (int xx = 0; xx < 2; ++xx)
 						screen.render(x + xx * 8, y, xx, 4, 0, sheet);
-				} else {
+				} else if (status == ACCELERATION_OFF) {
 					for (int xx = 0; xx < 2; ++xx)
 						screen.render(x + xx * 8, y, 2 + xx, 4, 0, sheet);
+				}
+			}
+
+			@Override
+			public void updateStatus(int status) {
+				super.updateStatus();
+				this.status = status;
+			}
+		}
+
+		public class ControllerElementStatus extends AppStatusElement {
+			public static final int CONTROLLER_CONNECTED = 0; // Normal state, usable controller
+			public static final int CONTROLLER_UNAVAILABLE = 1; // Current controller becoming unusable
+			public static final int CONTROLLER_DISCONNECTED = 2; // System normal, no controller connected
+			public static final int CONTROLLER_PENDING = 3; // Temporary unusable or controller hanging/delaying
+			public static final int CONTROLLER_UNKNOWN = 4; // Unknown state or unknown controller (unsupported)
+			// TODO #614 tacking and referring this state
+			public static final int CONTROLLER_FUNCTION_UNAVAILABLE = 5; // System not available/malfunctioning
+//			public static final int CONTROLLER_UNDER_CONFIGURATION = 6; // Alternating 0 and 3 // Reserved
+
+			@MagicConstant(intValues = {CONTROLLER_CONNECTED, CONTROLLER_UNAVAILABLE, CONTROLLER_DISCONNECTED,
+				CONTROLLER_PENDING, CONTROLLER_UNKNOWN, CONTROLLER_FUNCTION_UNAVAILABLE})
+			private int status;
+
+			private ControllerElementStatus() {
+				super(1);
+			}
+
+			@Override
+			protected void render(int x, int y, MinicraftImage sheet) {
+				super.render(x, y, sheet);
+				if (status == CONTROLLER_CONNECTED) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_UNAVAILABLE) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 2 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_DISCONNECTED) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 4 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_PENDING) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 6 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_UNKNOWN) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 8 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_FUNCTION_UNAVAILABLE) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 10 + xx, 2, 0, sheet);
+				}
+			}
+
+			@Override
+			protected void tick() {
+				super.tick();
+				// Reserved
+			}
+
+			@Override
+			public void updateStatus(int status) {
+				super.updateStatus();
+				this.status = status;
+			}
+		}
+
+		public class InputMethodElementStatus extends AppStatusElement { // Only 2 methods: keyboard and controller
+			public static final int INPUT_KEYBOARD_ONLY = 0; // Only keyboard is accepted
+			public static final int INPUT_CONTROLLER_PRIOR = 1; // Both accepted, but controller is used priorly
+			public static final int INPUT_KEYBOARD_PRIOR = 2; // Both accepted, but keyboard is used priorly
+			// Controller is enabled, but only keyboard can be used as controller is currently unusable.
+			public static final int INPUT_CONTROLLER_UNUSABLE = 3;
+
+			@MagicConstant(intValues = {INPUT_KEYBOARD_ONLY, INPUT_CONTROLLER_PRIOR,
+				INPUT_KEYBOARD_PRIOR, INPUT_CONTROLLER_UNUSABLE})
+			private int status;
+
+			private InputMethodElementStatus() {
+				super(1);
+				status = INPUT_KEYBOARD_ONLY;
+			}
+
+			@Override
+			protected void render(int x, int y, MinicraftImage sheet) {
+				super.render(x, y, sheet);
+				if (status == INPUT_KEYBOARD_ONLY) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, xx, 5, 0, sheet);
+				} else if (status == INPUT_CONTROLLER_PRIOR) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 2 + xx, 5, 0, sheet);
+				} else if (status == INPUT_KEYBOARD_PRIOR) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 4 + xx, 5, 0, sheet);
+				} else if (status == INPUT_CONTROLLER_UNUSABLE) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 6 + xx, 5, 0, sheet);
+				}
+			}
+
+			@Override
+			protected void tick() {
+				super.tick();
+				if (status == INPUT_CONTROLLER_PRIOR || status == INPUT_KEYBOARD_PRIOR) {
+					if (!input.isControllerInUse())
+						updateStatus(INPUT_CONTROLLER_UNUSABLE);
+				} else if (status == INPUT_CONTROLLER_UNUSABLE) {
+					if (input.isControllerInUse())
+						updateStatus(INPUT_CONTROLLER_PRIOR); // As controller was enabled.
 				}
 			}
 

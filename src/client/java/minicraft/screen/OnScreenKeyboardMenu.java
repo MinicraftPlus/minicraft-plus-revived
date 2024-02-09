@@ -38,7 +38,7 @@ public class OnScreenKeyboardMenu extends Menu {
 	 */
 	@Nullable
 	public static OnScreenKeyboardMenu checkAndCreateMenu() {
-		if (Game.input.isControllerUsable()) {
+		if (Game.input.isControllerInUse()) {
 			return new OnScreenKeyboardMenu();
 		}
 
@@ -189,6 +189,9 @@ public class OnScreenKeyboardMenu extends Menu {
 	@Override
 	public void tick(InputHandler input) throws OnScreenKeyboardMenuTickActionCompleted, OnScreenKeyboardMenuBackspaceButtonActed {
 		if (keyPressed > 0) keyPressed--; // Resetting rendered pressing status.
+		if (!input.isControllerInUse()) {
+			setVisible(false);
+		}
 
 		// This is only controllable by controller.
 		if (visible) {
