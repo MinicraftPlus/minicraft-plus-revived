@@ -11,7 +11,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
-import minicraft.screen.Notification;
+import minicraft.screen.AppToast;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
@@ -179,7 +179,7 @@ public class Updater extends Game {
 		}
 
 		if (updateNoteTick) notetick++;
-		Notification notification;
+		AppToast notification;
 		if ((notification = inAppNotifications.peek()) != null) {
 			boolean refresh = true;
 			if (notification.isExpired()) {

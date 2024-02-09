@@ -27,7 +27,7 @@ import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
-import minicraft.screen.Notification;
+import minicraft.screen.AppToast;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.TutorialDisplayHandler;
@@ -124,7 +124,7 @@ public class Renderer extends Game {
 		if (currentDisplay != null) // Renders menu, if present.
 			currentDisplay.render(screen);
 
-		Notification notification;
+		AppToast notification;
 		if ((notification = inAppNotifications.peek()) != null) {
 			notification.render(screen);
 		}
