@@ -21,11 +21,6 @@ import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 public class TreeTile extends Tile {
 	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
 	private static final LinkedSprite oakSpriteFull = new LinkedSprite(SpriteType.Tile, "oak_full");
@@ -129,7 +124,7 @@ public class TreeTile extends Tile {
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -155,13 +150,13 @@ public class TreeTile extends Tile {
 		int treeHealth = 20;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
 
-		level.add(new SmashParticle(x*16, y*16));
+		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
-			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
 		} else {

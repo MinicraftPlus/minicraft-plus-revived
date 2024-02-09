@@ -14,12 +14,12 @@ import java.util.ArrayList;
 public class Crafter extends Furniture {
 
 	public enum Type {
-		Workbench (new LinkedSprite(SpriteType.Entity, "workbench"), new LinkedSprite(SpriteType.Item, "workbench"), 3, 2, Recipes.workbenchRecipes),
-		Oven (new LinkedSprite(SpriteType.Entity, "oven"), new LinkedSprite(SpriteType.Item, "oven"), 3, 2, Recipes.ovenRecipes),
-		Furnace (new LinkedSprite(SpriteType.Entity, "furnace"), new LinkedSprite(SpriteType.Item, "furnace"), 3, 2, Recipes.furnaceRecipes),
-		Anvil (new LinkedSprite(SpriteType.Entity, "anvil"), new LinkedSprite(SpriteType.Item, "anvil"), 3, 2, Recipes.anvilRecipes),
-		Enchanter (new LinkedSprite(SpriteType.Entity, "enchanter"), new LinkedSprite(SpriteType.Item, "enchanter"), 7, 2, Recipes.enchantRecipes),
-		Loom (new LinkedSprite(SpriteType.Entity, "loom"), new LinkedSprite(SpriteType.Item, "loom"), 7, 2, Recipes.loomRecipes);
+		Workbench(new LinkedSprite(SpriteType.Entity, "workbench"), new LinkedSprite(SpriteType.Item, "workbench"), 3, 2, Recipes.workbenchRecipes),
+		Oven(new LinkedSprite(SpriteType.Entity, "oven"), new LinkedSprite(SpriteType.Item, "oven"), 3, 2, Recipes.ovenRecipes),
+		Furnace(new LinkedSprite(SpriteType.Entity, "furnace"), new LinkedSprite(SpriteType.Item, "furnace"), 3, 2, Recipes.furnaceRecipes),
+		Anvil(new LinkedSprite(SpriteType.Entity, "anvil"), new LinkedSprite(SpriteType.Item, "anvil"), 3, 2, Recipes.anvilRecipes),
+		Enchanter(new LinkedSprite(SpriteType.Entity, "enchanter"), new LinkedSprite(SpriteType.Item, "enchanter"), 7, 2, Recipes.enchantRecipes),
+		Loom(new LinkedSprite(SpriteType.Entity, "loom"), new LinkedSprite(SpriteType.Item, "loom"), 7, 2, Recipes.loomRecipes);
 
 		public ArrayList<Recipe> recipes;
 		protected LinkedSprite sprite;
@@ -35,12 +35,14 @@ public class Crafter extends Furniture {
 			Crafter.names.add(this.name());
 		}
 	}
+
 	public static ArrayList<String> names = new ArrayList<>();
 
 	public Crafter.Type type;
 
 	/**
 	 * Creates a crafter of a given type.
+	 *
 	 * @param type What type of crafter this is.
 	 */
 	public Crafter(Crafter.Type type) {
@@ -59,5 +61,7 @@ public class Crafter extends Furniture {
 	}
 
 	@Override
-	public String toString() { return type.name()+getDataPrints(); }
+	public String toString() {
+		return type.name() + getDataPrints();
+	}
 }

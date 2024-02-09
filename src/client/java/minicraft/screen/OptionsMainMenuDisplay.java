@@ -10,8 +10,8 @@ public class OptionsMainMenuDisplay extends Display {
 	private final BooleanEntry controllersEntry = new BooleanEntry("minicraft.display.options_display.controller",
 		Game.input.isControllerEnabled());
 
-    public OptionsMainMenuDisplay() {
-        super(true);
+	public OptionsMainMenuDisplay() {
+		super(true);
 	    menus = new Menu[] {
 		    new Menu.Builder(false, 6, RelPos.LEFT,
 			    Settings.getEntry("fps"),

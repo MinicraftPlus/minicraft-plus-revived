@@ -13,10 +13,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Map;
-
 public class GrassTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
 		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)

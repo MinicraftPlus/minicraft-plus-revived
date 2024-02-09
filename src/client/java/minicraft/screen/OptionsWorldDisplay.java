@@ -40,7 +40,8 @@ public class OptionsWorldDisplay extends Display {
 						Game.exitDisplay();
 						try {
 							Thread.sleep(50);
-						} catch (InterruptedException ignored) {}
+						} catch (InterruptedException ignored) {
+						}
 						Game.exitDisplay();
 					});
 					return true;
@@ -55,7 +56,7 @@ public class OptionsWorldDisplay extends Display {
 			entries.add(4, Settings.getEntry("showquests"));
 		}
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			new Menu.Builder(false, 6, RelPos.LEFT, entries)
 				.setTitle("minicraft.displays.options_world")
 				.createMenu()

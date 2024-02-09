@@ -23,7 +23,7 @@ public class KeyInputEntry extends SelectEntry {
 		this.mapping = mapping;
 
 		StringBuilder buffer = new StringBuilder();
-		for (int spaces = 0; spaces < Screen.w/Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
+		for (int spaces = 0; spaces < Screen.w / Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
 			buffer.append(" ");
 
 		String newMapping = "";

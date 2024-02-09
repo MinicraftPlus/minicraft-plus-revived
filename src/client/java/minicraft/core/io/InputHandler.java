@@ -28,30 +28,29 @@ import java.util.function.Predicate;
 
 public class InputHandler implements KeyListener {
 	/**
-		This class handles key presses; this also implements MouseListener... but I have no idea why.
-		It's not used in any way. Ever. As far as I know. Anyway, here are a few tips about this class:
-
-		-This class must instantiated to be used; and it's pretty much always called "input" in the code.
-
-		-The keys are stored in two arrays, one for physical keyboard keys(called "keyboard"), and one for "keys" you make-up (called "keymap") to represent different actions ("virtual keys", you could say).
-
-		-All the Keys in the keyboard array are generated automatically as you ask for them in the code (if they don't already exist), so there's no need to define anything in the keyboard array here.
-			--Note: this shouldn't matter, but keys that are not asked for or defined as values here in keymap will be ignored when it comes to key presses.
-
-		-All the "virtual keys" in keymap "map" to a Key object in the keyboard array; that is to say,
-			keymap contains a HashMap of string keys, to string values. The keys are the names of the actions,
-			and the values are the names of the keyboard keys you physically press to do them.
-
-			-To get whether a key is pressed or not, use input.getKey("key"), where "key" is the name of the key, either physical or virtual. If virtual, all it does is then fetch the corrosponding key from keyboard anyway; but it allows one to change the controls while still making the same key requests in the code.
-
-		-If you want to have multiple possibilities at once when it comes to which key to press to do something, you can! just put a "|" between the mappings. For example, say you wanted both "wasd" and arrow key controls to work, at the same time. How you do this is in the construstor below, where it says "keymap.put(" UP, DOWN, LEFT, and RIGHT.
-
-		-This class supports modifier keys as inputs. To specify a "compound" key (one using modifiders), write "MOD1-MOD2-KEY", that is, "SHIFT-ALT-D" or "ALT-F", with a "-" between the keys. ALWAYS put the actual trigger key last, after all modifiers (the modifiers are: shift, ctrl, and alt).
-
-			--All the magic happens in the getKey() method: If the String keyname input has hyphens("-"), then it's a compound key, and it splits it up between the hyphens. Then, it compares which modifiers are currently being pressed, and which are being requested. Then, a Key object is created, which if the modifiers match, reflects the non-modifier key's "down" and "clicked" values; otherwise they're both false.
-			--If a key with no hyph is requested, it skips most of that and just gives you the Key, generating it if needed.
-
-	*/
+	 * This class handles key presses; this also implements MouseListener... but I have no idea why.
+	 * It's not used in any way. Ever. As far as I know. Anyway, here are a few tips about this class:
+	 * <p>
+	 * -This class must instantiated to be used; and it's pretty much always called "input" in the code.
+	 * <p>
+	 * -The keys are stored in two arrays, one for physical keyboard keys(called "keyboard"), and one for "keys" you make-up (called "keymap") to represent different actions ("virtual keys", you could say).
+	 * <p>
+	 * -All the Keys in the keyboard array are generated automatically as you ask for them in the code (if they don't already exist), so there's no need to define anything in the keyboard array here.
+	 * --Note: this shouldn't matter, but keys that are not asked for or defined as values here in keymap will be ignored when it comes to key presses.
+	 * <p>
+	 * -All the "virtual keys" in keymap "map" to a Key object in the keyboard array; that is to say,
+	 * keymap contains a HashMap of string keys, to string values. The keys are the names of the actions,
+	 * and the values are the names of the keyboard keys you physically press to do them.
+	 * <p>
+	 * -To get whether a key is pressed or not, use input.getKey("key"), where "key" is the name of the key, either physical or virtual. If virtual, all it does is then fetch the corrosponding key from keyboard anyway; but it allows one to change the controls while still making the same key requests in the code.
+	 * <p>
+	 * -If you want to have multiple possibilities at once when it comes to which key to press to do something, you can! just put a "|" between the mappings. For example, say you wanted both "wasd" and arrow key controls to work, at the same time. How you do this is in the construstor below, where it says "keymap.put(" UP, DOWN, LEFT, and RIGHT.
+	 * <p>
+	 * -This class supports modifier keys as inputs. To specify a "compound" key (one using modifiders), write "MOD1-MOD2-KEY", that is, "SHIFT-ALT-D" or "ALT-F", with a "-" between the keys. ALWAYS put the actual trigger key last, after all modifiers (the modifiers are: shift, ctrl, and alt).
+	 * <p>
+	 * --All the magic happens in the getKey() method: If the String keyname input has hyphens("-"), then it's a compound key, and it splits it up between the hyphens. Then, it compares which modifiers are currently being pressed, and which are being requested. Then, a Key object is created, which if the modifiers match, reflects the non-modifier key's "down" and "clicked" values; otherwise they're both false.
+	 * --If a key with no hyph is requested, it skips most of that and just gives you the Key, generating it if needed.
+	 */
 	public String keyToChange = null; // This is used when listening to change key bindings.
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
@@ -63,20 +62,22 @@ public class InputHandler implements KeyListener {
 	}
 
 	private static HashMap<Integer, String> keyNames = new HashMap<>();
+
 	static {
 		Field[] keyEventFields = KeyEvent.class.getFields();
 		ArrayList<Field> keyConstants = new ArrayList<>();
-		for (Field field: keyEventFields) {
+		for (Field field : keyEventFields) {
 			if (field.getName().contains("VK_") && (field.getType().getName().equals(int.class.getName())))
 				keyConstants.add(field);
 		}
 
-		for (Field keyConst: keyConstants) {
+		for (Field keyConst : keyConstants) {
 			String name = keyConst.getName();
 			name = name.substring(3); // Removes the "VK_"
 			try {
-				keyNames.put(((Integer)keyConst.get(0)), name);
-			} catch(IllegalAccessException ignored) {}
+				keyNames.put(((Integer) keyConst.get(0)), name);
+			} catch (IllegalAccessException ignored) {
+			}
 		}
 
 		// For compatibility becuase I'm lazy. :P
@@ -117,6 +118,7 @@ public class InputHandler implements KeyListener {
 		refreshControllerList();
 		controllerPortWatcher.start();
 	}
+
 	public InputHandler(Component inputSource) {
 		this();
 		inputSource.addKeyListener(this); // Add key listener to game
@@ -332,6 +334,7 @@ public class InputHandler implements KeyListener {
 
 	// The button mapping should not be modifiable.
 	private final HashMap<String, ControllerButton> buttonMap = new HashMap<>();
+
 	private void initButtonMap() {
 		buttonMap.put("MOVE-UP", ControllerButton.DPAD_UP);
 		buttonMap.put("MOVE-DOWN", ControllerButton.DPAD_DOWN);
@@ -364,7 +367,9 @@ public class InputHandler implements KeyListener {
 		initKeyMap();
 	}
 
-	/** Processes each key one by one, in keyboard. */
+	/**
+	 * Processes each key one by one, in keyboard.
+	 */
 	public void tick() {
 		lastKeyTyped = keyTypedBuffer;
 		keyTypedBuffer = "";
@@ -411,7 +416,10 @@ public class InputHandler implements KeyListener {
 
 		protected boolean stayDown;
 
-		public PhysicalKey() { this(false); }
+		public PhysicalKey() {
+			this(false);
+		}
+
 		public PhysicalKey(boolean stayDown) {
 			this.stayDown = stayDown;
 		}
@@ -426,17 +434,21 @@ public class InputHandler implements KeyListener {
 			return clicked;
 		}
 
-		/** toggles the key down or not down. */
+		/**
+		 * toggles the key down or not down.
+		 */
 		public void toggle(boolean pressed) {
 			down = pressed; // Set down to the passed in value; the if statement is probably unnecessary...
 			if (pressed && !sticky) presses++; // Add to the number of total presses.
 		}
 
-		/** Processes the key presses. */
+		/**
+		 * Processes the key presses.
+		 */
 		public void tick() {
 			if (absorbs < presses) { // If there are more key presses to process...
 				absorbs++; // Process them!
-				if(presses - absorbs > 3) absorbs = presses - 3;
+				if (presses - absorbs > 3) absorbs = presses - 3;
 				clicked = true; // Make clicked true, since key presses are still being processed.
 			} else { // All key presses so far for this key have been processed.
 				if (!sticky) sticky = presses > 3;
@@ -460,35 +472,6 @@ public class InputHandler implements KeyListener {
 		// Custom toString() method, I used it for debugging.
 		public String toString() {
 			return "down:" + down + "; clicked:" + clicked + "; presses=" + presses + "; absorbs=" + absorbs;
-		}
-	}
-
-	private class ControllerKey extends Key {
-		private final ControllerButton button;
-
-		private boolean down, clicked;
-
-		public ControllerKey(ControllerButton button) {
-			this.button = button;
-		}
-
-		public void tick() {
-			clicked = false;
-			down = false;
-			if (isControllerUsable()) {
-				clicked = controller.isButtonJustPressed(button);
-				down = controller.isButtonPressed(button);
-			}
-		}
-
-		@Override
-		public boolean isDown() {
-			return down;
-		}
-
-		@Override
-		public boolean isClicked() {
-			return clicked;
 		}
 	}
 
@@ -547,9 +530,11 @@ public class InputHandler implements KeyListener {
 		inputMask = inputMask == null ? filter : inputMask.and(filter);
 	}
 
-	/** This is used to stop all of the actions when the game is out of focus. */
+	/**
+	 * This is used to stop all of the actions when the game is out of focus.
+	 */
 	public void releaseAll() {
-		for (PhysicalKey key: keyboard.values()) {
+		for (PhysicalKey key : keyboard.values()) {
 			key.release();
 		}
 	}
@@ -560,7 +545,9 @@ public class InputHandler implements KeyListener {
 			keymap.put(keymapKey, keyboardKey);
 	}
 
-	/** Simply returns the mapped value of key in keymap. */
+	/**
+	 * Simply returns the mapped value of key in keymap.
+	 */
 	public String getMapping(String actionKey) {
 		actionKey = actionKey.toUpperCase();
 		if (isControllerUsable()) {
@@ -576,7 +563,8 @@ public class InputHandler implements KeyListener {
 
 	/**
 	 * Returning the corresponding mapping depends on the device set.
-	 * @param keyMap The keyboard mapping.
+	 *
+	 * @param keyMap    The keyboard mapping.
 	 * @param buttonMap The controller mapping
 	 * @return The selected mapping.
 	 */
@@ -589,6 +577,7 @@ public class InputHandler implements KeyListener {
 
 	/**
 	 * Getting the last input device type.
+	 *
 	 * @return The input device type: 0 for keyboard, 1 for controller.
 	 */
 	public int getLastInputType() {
@@ -640,7 +629,7 @@ public class InputHandler implements KeyListener {
 		if (keytext.contains("|")) {
 			/// Multiple key possibilities exist for this action; so, combine the results of each one!
 			ArrayList<Key> keys = new ArrayList<>();
-			for (String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
+			for (String keyposs : keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
 				// It really does combine using "or":
 				keys.add(getKey(keyposs));
 			}
@@ -722,8 +711,8 @@ public class InputHandler implements KeyListener {
 		//System.out.println("Interpreted key press: " + keytext);
 
 		//System.out.println("Toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
-		if( pressed && keyToChange != null && !isMod(keytext) ) {
-			keymap.put(keyToChange, ( overwrite ? "" : keymap.get(keyToChange) + "|" ) + getCurModifiers() + keytext);
+		if (pressed && keyToChange != null && !isMod(keytext)) {
+			keymap.put(keyToChange, (overwrite ? "" : keymap.get(keyToChange) + "|") + getCurModifiers() + keytext);
 			keyChanged = keyToChange;
 			keyToChange = null;
 			return;
@@ -771,15 +760,17 @@ public class InputHandler implements KeyListener {
 
 	private String getCurModifiers() {
 		return (getKey("ctrl").isDown() ? "CTRL-" : "") +
-				(getKey("alt").isDown() ? "ALT-" : "") +
-				(getKey("shift").isDown() ? "SHIFT-" : "");
+			(getKey("alt").isDown() ? "ALT-" : "") +
+			(getKey("shift").isDown() ? "SHIFT-" : "");
 	}
 
-	/** Used by Save.java, to save user key preferences. */
+	/**
+	 * Used by Save.java, to save user key preferences.
+	 */
 	public String[] getKeyPrefs() {
 		ArrayList<String> keystore = new ArrayList<>(); // Make a list for keys
 
-		for (String keyname: keymap.keySet()) // Go though each mapping
+		for (String keyname : keymap.keySet()) // Go though each mapping
 			keystore.add(keyname + ";" + keymap.get(keyname)); // Add the mapping values as one string, seperated by a semicolon.
 
 		return keystore.toArray(new String[0]); // Return the array of encoded key preferences.
@@ -797,19 +788,26 @@ public class InputHandler implements KeyListener {
 	}
 
 	/// Event methods, many to satisfy interface requirements...
-	public void keyPressed(KeyEvent ke) { toggle(ke.getExtendedKeyCode(), true); }
-	public void keyReleased(KeyEvent ke) { toggle(ke.getExtendedKeyCode(), false); }
+	public void keyPressed(KeyEvent ke) {
+		toggle(ke.getExtendedKeyCode(), true);
+	}
+
+	public void keyReleased(KeyEvent ke) {
+		toggle(ke.getExtendedKeyCode(), false);
+	}
+
 	public void keyTyped(KeyEvent ke) {
 		// Stores the last character typed
 		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 
 	private static final String control = "\\p{Print}"; // Should match only printable characters.
+
 	public String addKeyTyped(String typing, @Nullable String pattern) {
 		if (lastKeyTyped.length() > 0) {
 			String letter = lastKeyTyped;
 			lastKeyTyped = "";
-			if ( letter.matches(control) && (pattern == null || letter.matches(pattern)) || letter.equals("\b") )
+			if (letter.matches(control) && (pattern == null || letter.matches(pattern)) || letter.equals("\b"))
 				typing += letter;
 		}
 
@@ -864,7 +862,7 @@ public class InputHandler implements KeyListener {
 	 * vibration (maybe the controller doesn't support left/right vibration, maybe it was unplugged in the
 	 * middle of trying, etc...)
 	 *
-	 * @param leftMagnitude The speed for the left motor to vibrate (this should be between 0 and 1)
+	 * @param leftMagnitude  The speed for the left motor to vibrate (this should be between 0 and 1)
 	 * @param rightMagnitude The speed for the right motor to vibrate (this should be between 0 and 1)
 	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */
@@ -885,6 +883,7 @@ public class InputHandler implements KeyListener {
 		} else
 			return false;
 	}
+
 	public boolean rightTriggerPressed() {
 		if (rightTriggerCooldown == 0 && isControllerUsable() &&
 			controller.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
