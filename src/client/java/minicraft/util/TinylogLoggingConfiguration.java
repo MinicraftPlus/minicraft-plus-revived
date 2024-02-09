@@ -40,7 +40,10 @@ public class TinylogLoggingConfiguration {
 			private Set<String> tags = null;
 			private final boolean all;
 
-			public TagList(boolean all) { this.all = all; }
+			public TagList(boolean all) {
+				this.all = all;
+			}
+
 			public TagList(Set<String> tags) {
 				this.tags = tags;
 				all = false;
@@ -119,12 +122,14 @@ public class TinylogLoggingConfiguration {
 		return levels;
 	}
 
-	/** Generate all possible instances of console writer (writer1) with the configuration. */
+	/**
+	 * Generate all possible instances of console writer (writer1) with the configuration.
+	 */
 	public HashMap<ConsoleWriter, WriterConfig> generateConsoleWriters() {
 		HashMap<ConsoleWriter, WriterConfig> map = new HashMap<>();
-		for (final boolean i : new boolean[] { false, true}) {
-			for (final boolean j : new boolean[] { false, true}) {
-				for (final boolean k : new boolean[] { false, true}) {
+		for (final boolean i : new boolean[]{false, true}) {
+			for (final boolean j : new boolean[]{false, true}) {
+				for (final boolean k : new boolean[]{false, true}) {
 					map.putAll(createConsoleWriter(i, j, k));
 				}
 			}
@@ -132,7 +137,10 @@ public class TinylogLoggingConfiguration {
 
 		return map;
 	}
-	/** Generate a console writer with the configuration. */
+
+	/**
+	 * Generate a console writer with the configuration.
+	 */
 	public Map<ConsoleWriter, WriterConfig> createConsoleWriter(boolean logTime, boolean logThread, boolean logTrace) {
 		HashMap<String, String> properties = new HashMap<>();
 		String ID = String.format("writer1%s%s%s", logTime ? "T" : "F", logThread ? "T" : "F", logTrace ? "T" : "F");
@@ -148,33 +156,24 @@ public class TinylogLoggingConfiguration {
 		return Collections.singletonMap(new ConsoleWriter(properties), new WriterConfig(ID, computeLevelsFromMinimum(level), new TagList(true)));
 	}
 
-		/**
+	/**
 	 * Creates a new log entry.
 	 *
-	 * @param stackTraceElement
-	 *            Optional stack trace element of caller
-	 * @param tag
-	 *            Tag name if issued from a tagged logger
-	 * @param level
-	 *            Severity level
-	 * @param exception
-	 *            Caught exception or throwable to log
-	 * @param formatter
-	 *            Formatter for text message
-	 * @param obj
-	 *            Message to log
-	 * @param arguments
-	 *            Arguments for message
-	 * @param required
-	 *            The required log entry value array slice of the tag index of the used tag
-	 * @param contextProvider
-	 *            The context provider
+	 * @param stackTraceElement Optional stack trace element of caller
+	 * @param tag               Tag name if issued from a tagged logger
+	 * @param level             Severity level
+	 * @param exception         Caught exception or throwable to log
+	 * @param formatter         Formatter for text message
+	 * @param obj               Message to log
+	 * @param arguments         Arguments for message
+	 * @param required          The required log entry value array slice of the tag index of the used tag
+	 * @param contextProvider   The context provider
 	 * @return Filled log entry
 	 */
 	public static LogEntry createLogEntry(final StackTraceElement stackTraceElement, final String tag,
-		final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
-		final Object[] arguments, final Collection<LogEntryValue> required,
-		final TinylogContextProvider contextProvider) {
+										  final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
+										  final Object[] arguments, final Collection<LogEntryValue> required,
+										  final TinylogContextProvider contextProvider) {
 
 		Timestamp timestamp = RuntimeProvider.createTimestamp();
 		Thread thread = required.contains(LogEntryValue.THREAD) ? Thread.currentThread() : null;

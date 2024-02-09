@@ -9,7 +9,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
+	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
 
 	private Tile onType;
 	private Tile growsTo;

@@ -19,7 +19,10 @@ public class DoorTile extends Tile {
 	private SpriteAnimation closedSprite;
 	private SpriteAnimation openSprite;
 
-	protected DoorTile(Material type) { this(type, null); }
+	protected DoorTile(Material type) {
+		this(type, null);
+	}
+
 	protected DoorTile(Material type, String name) {
 		super(type.name() + " " + (name == null ? "Door" : name), null);
 		this.type = type;

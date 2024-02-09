@@ -68,7 +68,7 @@ public class WorldSelectDisplay extends Display {
 			}, false);
 		}
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			new Menu.Builder(false, 0, RelPos.CENTER, entries)
 				.setDisplayLength(5)
 				.setScrollPolicies(1, true)
@@ -80,7 +80,7 @@ public class WorldSelectDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		if (input.getKey("SHIFT-C").clicked || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
+		if (input.getMappedKey("SHIFT-C").isClicked() || input.buttonPressed(ControllerButton.LEFTBUMPER)) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			entries.add(new StringEntry("minicraft.displays.world_select.popups.display.change", Color.BLUE));
@@ -127,7 +127,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-R").clicked || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
+		} else if (input.getMappedKey("SHIFT-R").isClicked() || input.buttonPressed(ControllerButton.RIGHTBUMPER)) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			ArrayList<String> names = WorldSelectDisplay.getWorldNames();
 			names.remove(worldName);
@@ -173,7 +173,7 @@ public class WorldSelectDisplay extends Display {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, callbacks, 0), entries.toArray(new ListEntry[0])));
-		} else if (input.getKey("SHIFT-D").clicked || input.leftTriggerPressed() && input.rightTriggerPressed()) {
+		} else if (input.getMappedKey("SHIFT-D").isClicked() || input.leftTriggerPressed() && input.rightTriggerPressed()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.world_select.popups.display.delete",
 				Color.toStringCode(Color.tint(Color.RED, 1, true)), worldNames.get(menus[0].getSelection()),
@@ -230,7 +230,7 @@ public class WorldSelectDisplay extends Display {
 				col = Color.RED;
 				Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_too_new"), screen, Font.textHeight() * 5, col);
 			}
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version), screen, Font.textHeight() * 7/2, col);
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version), screen, Font.textHeight() * 7 / 2, col);
 		}
 
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.0", Game.input.getMapping("select")), screen, Screen.h - 60, Color.GRAY);
@@ -287,13 +287,20 @@ public class WorldSelectDisplay extends Display {
 		}
 	}
 
-	public static String getWorldName() { return worldName; }
+	public static String getWorldName() {
+		return worldName;
+	}
+
 	public static void setWorldName(String world, boolean loaded) {
 		worldName = world;
 		loadedWorld = loaded;
 	}
 
-	public static boolean hasLoadedWorld() { return loadedWorld; }
+	public static boolean hasLoadedWorld() {
+		return loadedWorld;
+	}
 
-	public static ArrayList<String> getWorldNames() { return worldNames; }
+	public static ArrayList<String> getWorldNames() {
+		return worldNames;
+	}
 }

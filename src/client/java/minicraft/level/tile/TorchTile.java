@@ -18,11 +18,11 @@ public class TorchTile extends Tile {
 
 	public static TorchTile getTorchTile(Tile onTile) {
 		int id = onTile.id & 0xFFFF;
-		if(id < 16384) id += 16384;
+		if (id < 16384) id += 16384;
 		else Logger.tag("TorchTile").info("Tried to place torch on torch tile...");
 
-		if(Tiles.containsTile(id))
-			return (TorchTile)Tiles.get(id);
+		if (Tiles.containsTile(id))
+			return (TorchTile) Tiles.get(id);
 		else {
 			TorchTile tile = new TorchTile(onTile);
 			Tiles.add(id, tile);
@@ -31,7 +31,7 @@ public class TorchTile extends Tile {
 	}
 
 	private TorchTile(Tile onType) {
-		super("Torch "+ onType.name, new SpriteAnimation(SpriteType.Tile, "torch"));
+		super("Torch " + onType.name, new SpriteAnimation(SpriteType.Tile, "torch"));
 		this.onType = onType;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;
@@ -48,11 +48,11 @@ public class TorchTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(item instanceof PowerGloveItem) {
+		if (item instanceof PowerGloveItem) {
 			int data = level.getData(xt, yt);
 			level.setTile(xt, yt, this.onType);
 			Sound.play("monsterhurt");
-			level.dropItem(xt*16+8, yt*16+8, Items.get("Torch"));
+			level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Torch"));
 			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 					item, this, data, xt, yt, level.depth));

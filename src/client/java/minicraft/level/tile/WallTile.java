@@ -30,14 +30,23 @@ public class WallTile extends Tile {
 	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
 	protected Material type;
 
-	protected WallTile(Material type) { this(type, null); }
+	protected WallTile(Material type) {
+		this(type, null);
+	}
+
 	protected WallTile(Material type, String name) {
 		super(type.name() + " " + (name == null ? "Wall" : name), null);
 		this.type = type;
 		switch (type) {
-			case Wood: sprite = wood; break;
-			case Stone: sprite = stone; break;
-			case Obsidian: sprite = obsidian; break;
+			case Wood:
+				sprite = wood;
+				break;
+			case Stone:
+				sprite = stone;
+				break;
+			case Obsidian:
+				sprite = obsidian;
+				break;
 		}
 	}
 

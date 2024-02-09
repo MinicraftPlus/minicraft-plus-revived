@@ -12,17 +12,34 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-/** Light-weighted exitable display with single menu. */
+/**
+ * Light-weighted exitable display with single menu.
+ */
 public class PopupDisplay extends Display {
 	// Using Color codes for coloring in title and plain text messages.
 
 	private final ArrayList<PopupActionCallback> callbacks;
 
-	public PopupDisplay(@Nullable PopupConfig config, String... messages) { this(config, false, messages); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, String... messages) { this(config, clearScreen, true, messages); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, String... messages) { this(config, clearScreen, menuFrame, StringEntry.useLines(messages)); }
-	public PopupDisplay(@Nullable PopupConfig config, ListEntry... entries) { this(config, false, entries); }
-	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, ListEntry... entries) { this(config, clearScreen, true, entries); }
+	public PopupDisplay(@Nullable PopupConfig config, String... messages) {
+		this(config, false, messages);
+	}
+
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, String... messages) {
+		this(config, clearScreen, true, messages);
+	}
+
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, String... messages) {
+		this(config, clearScreen, menuFrame, StringEntry.useLines(messages));
+	}
+
+	public PopupDisplay(@Nullable PopupConfig config, ListEntry... entries) {
+		this(config, false, entries);
+	}
+
+	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, ListEntry... entries) {
+		this(config, clearScreen, true, entries);
+	}
+
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, ListEntry... entries) {
 		super(clearScreen, true);
 
@@ -40,9 +57,9 @@ public class PopupDisplay extends Display {
 		if (Stream.of(entries).anyMatch(e -> e instanceof InputEntry))
 			onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu == null)
-			menus = new Menu[] { builder.createMenu() };
+			menus = new Menu[]{builder.createMenu()};
 		else
-			menus = new Menu[] { onScreenKeyboardMenu, builder.createMenu() };
+			menus = new Menu[]{onScreenKeyboardMenu, builder.createMenu()};
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
@@ -105,7 +122,7 @@ public class PopupDisplay extends Display {
 	private boolean tickCallbacks(InputHandler input) {
 		if (callbacks != null) {
 			for (PopupActionCallback callback : callbacks) {
-				if (callback.key == null || input.getKey(callback.key).clicked) {
+				if (callback.key == null || input.getMappedKey(callback.key).isClicked()) {
 					if (callback.callback != null && callback.callback.acts(menus[0])) {
 						// This overrides the original #tick check.
 						return true;
@@ -128,9 +145,10 @@ public class PopupDisplay extends Display {
 
 		/**
 		 * The callback acts when the key clicked.
-		 * @param key The key of the callback trigger.
+		 *
+		 * @param key      The key of the callback trigger.
 		 * @param callback The callback, when the return value is {@code true}, no more input check
-		 * will be done. It continues if {@code false}.
+		 *                 will be done. It continues if {@code false}.
 		 */
 		public PopupActionCallback(String key, ActionCallback callback) {
 			this.key = key;
