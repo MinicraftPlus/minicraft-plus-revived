@@ -25,6 +25,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
+import minicraft.screen.GameToast;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.AppToast;
@@ -128,9 +129,9 @@ public class Renderer extends Game {
 
 		appStatusBar.render();
 
-		AppToast notification;
-		if ((notification = inAppNotifications.peek()) != null) {
-			notification.render(screen);
+		AppToast toast;
+		if ((toast = inAppToasts.peek()) != null) {
+			toast.render(screen);
 		}
 
 		if (!canvas.hasFocus())
@@ -556,6 +557,11 @@ public class Renderer extends Game {
 		TutorialDisplayHandler.render(screen);
 		renderQuestsDisplay();
 		renderDebugInfo();
+
+		GameToast toast;
+		if ((toast = inGameToasts.peek()) != null) {
+			toast.render(screen);
+		}
 	}
 
 	public static void renderBossbar(int length, String title) {
