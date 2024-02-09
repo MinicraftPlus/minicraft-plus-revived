@@ -41,7 +41,9 @@ import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
 
 public class QuestsDisplay extends Display {
-	/** Unlocked but uncompleted. */
+	/**
+	 * Unlocked but uncompleted.
+	 */
 	private final static HashSet<Quest> displayableQuests = new HashSet<>(); // Temp set. Refreshed anytime.
 	private final static HashSet<QuestSeries> series = new HashSet<>();
 
@@ -209,12 +211,12 @@ public class QuestsDisplay extends Display {
 			}
 		}
 
-		seriesEntries = new SelectEntry[][] {
+		seriesEntries = new SelectEntry[][]{
 			unlocked.toArray(new SelectEntry[0]),
 			completed.toArray(new SelectEntry[0])
 		};
 
-		entrySeries = new QuestSeries[][] {
+		entrySeries = new QuestSeries[][]{
 			unlockedSeries.toArray(new QuestSeries[0]),
 			completedSeries.toArray(new QuestSeries[0])
 		};
@@ -224,7 +226,7 @@ public class QuestsDisplay extends Display {
 		super(true, true);
 		reloadEntries();
 
-		menus = new Menu[] {
+		menus = new Menu[]{
 			new Menu.Builder(false, 1, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 - 20), RelPos.CENTER)
 				.setDisplayLength(5)
@@ -260,9 +262,9 @@ public class QuestsDisplay extends Display {
 			super(false, true);
 			ArrayList<ListEntry> entries = new ArrayList<>();
 
-			entries.add(series.isCompleted() ? new StringEntry("Status: Completed", Color.GREEN):
-				series.isUnlocked() ? new StringEntry("Status: Unlocked", Color.WHITE):
-				new StringEntry("Status: Locked", Color.GRAY) // Locked series would not been shown...?
+			entries.add(series.isCompleted() ? new StringEntry("Status: Completed", Color.GREEN) :
+				series.isUnlocked() ? new StringEntry("Status: Unlocked", Color.WHITE) :
+					new StringEntry("Status: Locked", Color.GRAY) // Locked series would not been shown...?
 			);
 
 			entries.add(new StringEntry("Quests completed: " +
@@ -275,7 +277,7 @@ public class QuestsDisplay extends Display {
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new SeriesQuestViewerDisplay(series))));
 
-			menus = new Menu[] {
+			menus = new Menu[]{
 				new Menu.Builder(true, 0, RelPos.CENTER)
 					.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
 					.setEntries(new StringEntry(Localization.getLocalized(series.key)))
@@ -355,12 +357,12 @@ public class QuestsDisplay extends Display {
 
 			public SeriesQuestViewerDisplay(QuestSeries series) {
 				super(false, true);
-				menus = new Menu[] {
+				menus = new Menu[]{
 					new Menu.Builder(true, 0, RelPos.CENTER, StringEntry.useLines("minicrat.displays.quests", series.key))
-						.setPositioning(new Point(Screen.w/2, 6), RelPos.BOTTOM)
+						.setPositioning(new Point(Screen.w / 2, 6), RelPos.BOTTOM)
 						.createMenu(),
 					new Menu.Builder(true, 0, RelPos.CENTER)
-						.setPositioning(new Point(Screen.w/2, 40), RelPos.BOTTOM)
+						.setPositioning(new Point(Screen.w / 2, 40), RelPos.BOTTOM)
 						.setSize(Screen.w - 16, Screen.h - 60)
 						.createMenu()
 				};
@@ -385,7 +387,7 @@ public class QuestsDisplay extends Display {
 					});
 
 					while (childQuests.size() > 0) {
-						for (Iterator<Map.Entry<Quest, HashSet<Quest>>> it = childQuests.entrySet().iterator(); it.hasNext();) {
+						for (Iterator<Map.Entry<Quest, HashSet<Quest>>> it = childQuests.entrySet().iterator(); it.hasNext(); ) {
 							Map.Entry<Quest, HashSet<Quest>> entry = it.next();
 							Quest parent = entry.getKey();
 							ArrayList<Quest> questRow = questRowsList.stream().filter(quests1 -> quests1.contains(parent)).findAny().orElse(null);
@@ -407,11 +409,11 @@ public class QuestsDisplay extends Display {
 						int height = Font.textHeight();
 						for (int j = 0; j < questsTree[i].length; j++) { // x-axis
 							int width = Font.textWidth(Localization.getLocalized(questsTree[i][j].key));
-							treeDimensions[i][j] = new Rectangle(entryGap, entryGap, entryPadding*2 + width, entryPadding*2 + height, 0);
+							treeDimensions[i][j] = new Rectangle(entryGap, entryGap, entryPadding * 2 + width, entryPadding * 2 + height, 0);
 							if (j > 0)
-								treeDimensions[i][j].translate(treeDimensions[i][j-1].getRight() + entryGap, 0);
+								treeDimensions[i][j].translate(treeDimensions[i][j - 1].getRight() + entryGap, 0);
 							if (i > 0)
-								treeDimensions[i][j].translate(0, treeDimensions[i-1][0].getBottom() + entryGap*2);
+								treeDimensions[i][j].translate(0, treeDimensions[i - 1][0].getBottom() + entryGap * 2);
 						}
 					}
 				} else {
@@ -420,8 +422,8 @@ public class QuestsDisplay extends Display {
 				}
 
 				Rectangle menuBounds = menus[1].getBounds();
-				rasterWidth = menuBounds.getWidth() - MinicraftImage.boxWidth*2;
-				rasterHeight = menuBounds.getHeight() - MinicraftImage.boxWidth*2;
+				rasterWidth = menuBounds.getWidth() - MinicraftImage.boxWidth * 2;
+				rasterHeight = menuBounds.getHeight() - MinicraftImage.boxWidth * 2;
 				image = new MinicraftImage(rasterWidth, rasterHeight);
 				rasterPixels = image.pixels;
 				rasterX = menuBounds.getLeft() + MinicraftImage.boxWidth;
@@ -433,22 +435,22 @@ public class QuestsDisplay extends Display {
 				super.tick(input);
 
 				if (questsTree.length > 0) {
-					if (input.getKey("shift").down) { // Browsing mode.
+					if (input.getMappedKey("shift").isDown()) { // Browsing mode.
 						inBrowsing = true;
-						if (input.getKey("shift-down").clicked)
+						if (input.getMappedKey("shift+cursor-down").isClicked())
 							yScroll += 3;
-						else if (input.getKey("shift-up").clicked)
+						else if (input.getMappedKey("shift+cursor-up").isClicked())
 							yScroll -= 3;
-						else if (input.getKey("shift-right").clicked)
+						else if (input.getMappedKey("shift+cursor-right").isClicked())
 							xScroll += 3;
-						else if (input.getKey("shift-left").clicked)
+						else if (input.getMappedKey("shift+cursor-left").isClicked())
 							xScroll -= 3;
 					} else {
 						if (inBrowsing) {
 							scrollIfNeeded();
 							inBrowsing = false;
 						}
-						if (input.getKey("cursor-down").clicked) {
+						if (input.getMappedKey("cursor-down").isClicked()) {
 							if (cursorY < questsTree.length - 1) {
 								cursorY++;
 								if (cursorX >= questsTree[cursorY].length)
@@ -456,7 +458,7 @@ public class QuestsDisplay extends Display {
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("cursor-up").clicked) {
+						} else if (input.getMappedKey("cursor-up").isClicked()) {
 							if (cursorY > 0) {
 								cursorY--;
 								if (cursorX >= questsTree[cursorY].length)
@@ -464,19 +466,19 @@ public class QuestsDisplay extends Display {
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("cursor-right").clicked) {
+						} else if (input.getMappedKey("cursor-right").isClicked()) {
 							if (cursorX < questsTree[cursorY].length - 1) {
 								cursorX++;
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("cursor-left").clicked) {
+						} else if (input.getMappedKey("cursor-left").isClicked()) {
 							if (cursorX > 0) {
 								cursorX--;
 								Sound.play("select");
 								scrollIfNeeded();
 							}
-						} else if (input.getKey("select").clicked) {
+						} else if (input.getMappedKey("select").isClicked()) {
 							Sound.play("confirm");
 							Game.setDisplay(new QuestInformationDisplay(questsTree[cursorY][cursorX]));
 						}
@@ -511,8 +513,8 @@ public class QuestsDisplay extends Display {
 			private void renderRaster() {
 				if (questsTree.length == 0) {
 					String text = Localization.getLocalized("minicraft.displays.quests.display.no_quest");
-					Font.draw(text, simulatedRasterScreen, xScroll + rasterWidth/2 - Font.textWidth(text)/2,
-						yScroll + rasterHeight/2 - Font.textHeight()/2, Color.GRAY);
+					Font.draw(text, simulatedRasterScreen, xScroll + rasterWidth / 2 - Font.textWidth(text) / 2,
+						yScroll + rasterHeight / 2 - Font.textHeight() / 2, Color.GRAY);
 					return;
 				}
 
@@ -581,6 +583,7 @@ public class QuestsDisplay extends Display {
 					}
 				}
 			}
+
 			private void renderRasterPixel(int x, int y, int color) {
 				x -= xScroll;
 				y -= yScroll;
@@ -606,9 +609,10 @@ public class QuestsDisplay extends Display {
 						y = y + yi;
 						D = D + (2 * (dy - dx));
 					} else
-						D = D + 2*dy;
+						D = D + 2 * dy;
 				}
 			}
+
 			void plotLineHigh(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
 				int dx = x1 - x0;
 				int dy = y1 - y0;
@@ -626,9 +630,10 @@ public class QuestsDisplay extends Display {
 						x = x + xi;
 						D = D + (2 * (dx - dy));
 					} else
-						D = D + 2*dx;
+						D = D + 2 * dx;
 				}
 			}
+
 			void plotLine(int x0, int y0, int x1, int y1, IntPredicate yRange, int color) {
 				if (Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
 					if (x0 > x1)
@@ -648,7 +653,7 @@ public class QuestsDisplay extends Display {
 					super(false, true);
 					String state = quest.isCompleted() ? "Completed" : quest.isUnlocked() ? "Unlocked" : "Locked";
 					int color = quest.isCompleted() ? Color.GREEN : quest.isUnlocked() ? Color.WHITE : Color.GRAY;
-					menus = new Menu[] {
+					menus = new Menu[]{
 						new Menu.Builder(true, 1, RelPos.CENTER)
 							.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
 							.setEntries(new StringEntry(Localization.getLocalized(quest.getSeries().key)),
@@ -673,7 +678,10 @@ public class QuestsDisplay extends Display {
 		return new HashSet<>(displayableQuests);
 	}
 
-	public static void resetGameQuests() { resetGameQuests(true); }
+	public static void resetGameQuests() {
+		resetGameQuests(true);
+	}
+
 	private static void resetGameQuests(boolean update) {
 		series.forEach(AdvancementElement::reset);
 		if (update) refreshDisplayableQuests();
@@ -696,7 +704,9 @@ public class QuestsDisplay extends Display {
 		refreshDisplayableQuests();
 	}
 
-	/** Saving and writing all data into the given JSONObject. */
+	/**
+	 * Saving and writing all data into the given JSONObject.
+	 */
 	public static void save(JSONObject json) {
 		series.forEach(series1 -> {
 			series1.save(json);
@@ -728,12 +738,12 @@ public class QuestsDisplay extends Display {
 	private void updateEntries() {
 		menus[0].setEntries(seriesEntries[selectedEntry]);
 
-		String[] entryNames = new String[] {
+		String[] entryNames = new String[]{
 			"Unlocked", "Completed"
 		};
 
 		for (int i = 0; i < 2; i++) {
-			menus[i+1].updateEntry(0, new StringEntry(entryNames[i], (i == selectedEntry) ? Color.WHITE : Color.GRAY));
+			menus[i + 1].updateEntry(0, new StringEntry(entryNames[i], (i == selectedEntry) ? Color.WHITE : Color.GRAY));
 		}
 
 		int select = previousSelection;

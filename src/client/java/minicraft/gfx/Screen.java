@@ -21,7 +21,7 @@ public class Screen {
 
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
-	public static final Point center = new Point(w/2, h/2);
+	public static final Point center = new Point(w / 2, h / 2);
 
 	private static final int MAXDARK = 128;
 
@@ -220,7 +220,9 @@ public class Screen {
 		}
 	}
 
-	/** Clears all the colors on the screen */
+	/**
+	 * Clears all the colors on the screen
+	 */
 	public void clear(int color) {
 		// Turns each pixel into a single color (clearing the screen!)
 		if (color == 0) {
@@ -247,17 +249,37 @@ public class Screen {
 		} while ((rendering = renderings.poll()) != null);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
-	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
-    }
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) {
+		render(xp, yp, xt, yt, bits, sheet, -1);
+	}
 
-	public void render(int xp, int yp, LinkedSprite sprite) { render(xp, yp, sprite.getSprite()); }
-	public void render(int xp, int yp, Sprite sprite) { render(xp, yp, sprite, false); }
-	public void render(int xp, int yp, Sprite sprite, boolean fullbright) { render(xp, yp, sprite, 0, fullbright, 0); }
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) { render(xp, yp, sprite, mirror, fullbright, 0); }
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, false);
+	}
+
+	/**
+	 * This method takes care of assigning the correct spritesheet to assign to the sheet variable
+	 **/
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, LinkedSprite sprite) {
+		render(xp, yp, sprite.getSprite());
+	}
+
+	public void render(int xp, int yp, Sprite sprite) {
+		render(xp, yp, sprite, false);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, boolean fullbright) {
+		render(xp, yp, sprite, 0, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
+		render(xp, yp, sprite, mirror, fullbright, 0);
+	}
+
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		boolean mirrorX = (mirror & BIT_MIRROR_X) > 0; // Horizontally.
 		boolean mirrorY = (mirror & BIT_MIRROR_Y) > 0; // Vertically.
@@ -270,16 +292,30 @@ public class Screen {
 		}
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel) { render(xp, yp, pixel, -1); }
-	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
+	public void render(int xp, int yp, Sprite.Px pixel) {
+		render(xp, yp, pixel, -1);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) {
+		render(xp, yp, pixel, 0, whiteTint);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) {
+		render(xp, yp, pixel, mirror, whiteTint, false);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) {
+		render(xp, yp, pixel, mirror, whiteTint, fullbright, 0);
+	}
+
 	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
 		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
 	}
 
-    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+	/**
+	 * Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel.
+	 */
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
@@ -336,7 +372,9 @@ public class Screen {
 		queue(new DrawLineRendering(x0, y0, x1, y1, color));
 	}
 
-	/** Sets the offset of the screen */
+	/**
+	 * Sets the offset of the screen
+	 */
 	public void setOffset(int xOffset, int yOffset) {
 		// This is called in few places, one of which is level.renderBackground, right before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
 		// In other words, the offset is a conversion factor from level coordinates to screen coordinates. It makes a certain coord in the level the upper left corner of the screen, when subtracted from the tile coord.
@@ -353,23 +391,32 @@ public class Screen {
 		16 is the minimum pixel lighness required to ensure that the pixel will always remain lit.
 	*/
 
-	/** Overlays the screen with pixels */
-    public void overlay(int currentLevel, int xa, int ya) {
+	/**
+	 * Overlays the screen with pixels
+	 */
+	public void overlay(int currentLevel, int xa, int ya) {
 		double darkFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
 			double relTime = (Updater.tickCount % transTime) * 1.0 / transTime;
 
 			switch (Updater.getTime()) {
-				case Morning: darkFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
-				case Day: darkFactor = 0; break;
-				case Evening: darkFactor = relTime * MAXDARK; break;
-				case Night: darkFactor = MAXDARK; break;
+				case Morning:
+					darkFactor = Updater.pastDay1 ? (1 - relTime) * MAXDARK : 0;
+					break;
+				case Day:
+					darkFactor = 0;
+					break;
+				case Evening:
+					darkFactor = relTime * MAXDARK;
+					break;
+				case Night:
+					darkFactor = MAXDARK;
+					break;
 			}
 
 			if (currentLevel > 3) darkFactor -= (darkFactor < 10 ? darkFactor : 10);
-		}
-		else if(currentLevel >= 5)
+		} else if (currentLevel >= 5)
 			darkFactor = MAXDARK;
 
 	    // The Integer array of pixels to overlay the screen with.

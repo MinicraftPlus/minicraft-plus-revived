@@ -43,29 +43,39 @@ public final class Settings {
 
 	/**
 	 * Returns the value of the specified option.
+	 *
 	 * @param option The setting to get.
 	 * @return The value of the setting
 	 */
-	public static Object get(String option) { return options.get(option.toLowerCase()).getValue(); }
+	public static Object get(String option) {
+		return options.get(option.toLowerCase()).getValue();
+	}
 
 	/**
 	 * Returns the index of the value in the list of values for the specified option.
+	 *
 	 * @param option The setting to get.
 	 * @return The index of the setting.
 	 */
-	public static int getIdx(String option) { return options.get(option.toLowerCase()).getSelection(); }
+	public static int getIdx(String option) {
+		return options.get(option.toLowerCase()).getSelection();
+	}
 
 	/**
 	 * Return the ArrayEntry object associated with the given option name.
+	 *
 	 * @param option The setting to get.
 	 * @return The ArrayEntry.
 	 */
-	public static ArrayEntry<?> getEntry(String option) { return options.get(option.toLowerCase()); }
+	public static ArrayEntry<?> getEntry(String option) {
+		return options.get(option.toLowerCase());
+	}
 
 	/**
 	 * Sets the value of the given option name, to the given value, provided it is a valid value for that option.
+	 *
 	 * @param option The setting to edit.
-	 * @param value The value to change to.
+	 * @param value  The value to change to.
 	 */
 	public static void set(String option, Object value) {
 		options.get(option.toLowerCase()).setValue(value);
@@ -73,8 +83,9 @@ public final class Settings {
 
 	/**
 	 * Sets the index of the value of the given option, provided it is a valid index.
+	 *
 	 * @param option The setting to edit.
-	 * @param idx Index to select.
+	 * @param idx    Index to select.
 	 */
 	public static void setIdx(String option, int idx) {
 		options.get(option.toLowerCase()).setSelection(idx);
@@ -83,6 +94,7 @@ public final class Settings {
 	/**
 	 * Gets the refresh rate of the default monitor.
 	 * Safely handles headless environments (if that were to happen for some reason).
+	 *
 	 * @return The refresh rate if successful. 60 if not.
 	 */
 	private static int getDefaultRefreshRate() {

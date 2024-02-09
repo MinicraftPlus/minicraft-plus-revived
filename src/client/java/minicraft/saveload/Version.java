@@ -7,7 +7,10 @@ public class Version implements Comparable<Version> {
 	private int make, major, minor, dev;
 	private boolean valid = true;
 
-	public Version(String version) { this(version, true); }
+	public Version(String version) {
+		this(version, true);
+	}
+
 	private Version(String version, boolean printError) {
 		String[] nums = version.split("\\.");
 		try {
@@ -39,12 +42,18 @@ public class Version implements Comparable<Version> {
 		}
 	}
 
-	public boolean isValid() { return valid; }
-	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
+	public boolean isValid() {
+		return valid;
+	}
+
+	public static boolean isValid(String version) {
+		return new Version(version, false).isValid();
+	}
 
 	/**
 	 * The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object, ov.
 	 * (this.compareTo(new Version("1.0.0") < 0 is the same as this < 1.0.0)
+	 *
 	 * @param ov The version to compare to.
 	 */
 	public int compareTo(@NotNull Version ov) {
@@ -54,9 +63,10 @@ public class Version implements Comparable<Version> {
 	/**
 	 * The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object, ov.
 	 * (this.compareTo(new Version("1.0.0") < 0 is the same as this < 1.0.0)
-	 * @param ov The version to compare to.
+	 *
+	 * @param ov        The version to compare to.
 	 * @param ignoreDev If we should ignore dev versions in this comparison.
- 	 */
+	 */
 	public int compareTo(@NotNull Version ov, boolean ignoreDev) {
 		if (make != ov.make) return Integer.compare(make, ov.make);
 		if (major != ov.major) return Integer.compare(major, ov.major);
@@ -73,7 +83,11 @@ public class Version implements Comparable<Version> {
 	}
 
 	@Override
-	public String toString() { return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev); }
+	public String toString() {
+		return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev);
+	}
 
-	public int[] toArray() { return new int[]{ make, major, minor, dev }; }
+	public int[] toArray() {
+		return new int[]{make, major, minor, dev};
+	}
 }

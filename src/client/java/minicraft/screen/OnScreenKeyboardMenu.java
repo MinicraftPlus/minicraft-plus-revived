@@ -36,6 +36,7 @@ public class OnScreenKeyboardMenu extends Menu {
 
 	/**
 	 * This checks if there is any controller connected. If true, create the instance. No otherwise.
+	 *
 	 * @return The created menu instance. `null` if there is no controller connected.
 	 */
 	@Nullable
@@ -194,7 +195,7 @@ public class OnScreenKeyboardMenu extends Menu {
 
 		// This is only controllable by controller.
 		if (visible) {
-			VirtualKey[][] keys = shiftPressed? keysB: keysF;
+			VirtualKey[][] keys = shiftPressed ? keysB : keysF;
 			if (input.buttonPressed(ControllerButton.A)) { // Select
 				keys[y][x].press();
 				Sound.play("select"); // Lack of sounds.
@@ -248,12 +249,13 @@ public class OnScreenKeyboardMenu extends Menu {
 	public void setVisible(boolean visible) {
 		if (this.visible != visible) {
 			Rectangle rec = getBounds();
-			translate(0, visible? -rec.getHeight(): rec.getHeight());
+			translate(0, visible ? -rec.getHeight() : rec.getHeight());
 			this.visible = visible;
 		}
 
 		keyPressed = 0;
 	}
+
 	public boolean isVisible() {
 		return visible;
 	}
@@ -273,7 +275,7 @@ public class OnScreenKeyboardMenu extends Menu {
 
 		final int keyHeight = 14;
 		final int keyWidth = 16;
-		VirtualKey[][] keys = shiftPressed? keysB: keysF;
+		VirtualKey[][] keys = shiftPressed ? keysB : keysF;
 		MinicraftImage sheet = Renderer.spriteLinker.getSheet(SpriteLinker.SpriteType.Gui, "osk");
 		for (int r = 0; r < keys.length; r++) {
 			int totalLength = (keys[r].length * keyWidth);
@@ -286,13 +288,13 @@ public class OnScreenKeyboardMenu extends Menu {
 				VirtualKey key = keys[r][c];
 				int color = keyPressed > 0 && r == this.y && c == this.x? 0x1EFEFF0: 0x1FDFDFD;
 				if (key == backspace) {
-					screen.render(x, y, 0, 0, keyWidth, keyHeight, sheet, color);
+					screen.render(x, y, 0, 0, keyWidth , keyHeight , sheet, color);
 				} else if (key == shiftKey) {
-					screen.render(x, y, keyWidth, 0, keyWidth, keyHeight, sheet, color);
+					screen.render(x, y, keyWidth , 0, keyWidth , keyHeight , sheet, color);
 				} else if (key == spaceBar) {
-					screen.render(x, y, 0, keyHeight, keyWidth, keyHeight, sheet, color);
+					screen.render(x, y, 0, keyHeight, keyWidth , keyHeight , sheet, color);
 				} else
-					Font.draw(String.valueOf(key.output), screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
+					Font.draw(String.valueOf(key.output), screen, x + keyWidth / 2 - 3, y + keyHeight / 2 - 3, color);
 
 				screen.drawRect(x, y, keyWidth, keyHeight, 0x1BCBCBC); // border
 
@@ -306,6 +308,9 @@ public class OnScreenKeyboardMenu extends Menu {
 		}
 	}
 
-	public static class OnScreenKeyboardMenuTickActionCompleted extends RuntimeException {}
-	public static class OnScreenKeyboardMenuBackspaceButtonActed extends RuntimeException {}
+	public static class OnScreenKeyboardMenuTickActionCompleted extends RuntimeException {
+	}
+
+	public static class OnScreenKeyboardMenuBackspaceButtonActed extends RuntimeException {
+	}
 }

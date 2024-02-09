@@ -20,9 +20,10 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	/**
 	 * Creates an item entity of the item item at position (x,y) with size 2*2.
+	 *
 	 * @param item Item to add as item entity
-	 * @param x position on map
-	 * @param y position on map
+	 * @param x    position on map
+	 * @param y    position on map
 	 */
 	public ItemEntity(Item item, int x, int y) {
 		super(2, 2);
@@ -45,15 +46,16 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	/**
 	 * Creates an item entity of the item item at position (x,y) with size 2*2.
-	 * @param item Item to add as item entity.
-	 * @param x position on map
-	 * @param y position on map
-	 * @param zz z position?
+	 *
+	 * @param item     Item to add as item entity.
+	 * @param x        position on map
+	 * @param y        position on map
+	 * @param zz       z position?
 	 * @param lifetime lifetime (in ticks) of the entity.
-	 * @param time starting time (in ticks) of the entity.
-	 * @param xa x velocity
-	 * @param ya y velocity
-	 * @param za z velocity?
+	 * @param time     starting time (in ticks) of the entity.
+	 * @param xa       x velocity
+	 * @param ya       y velocity
+	 * @param za       z velocity?
 	 */
 	public ItemEntity(Item item, int x, int y, double zz, int lifetime, int time, double xa, double ya, double za) {
 		this(item, x, y);
@@ -67,10 +69,11 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	/**
 	 * Returns a string representation of the itementity
+	 *
 	 * @return string representation of this entity
 	 */
 	public String getData() {
-		return String.join(":", (new String[] {item.getData(), zz + "", lifeTime+"", time + "", xa + "", ya + "", za + ""}));
+		return String.join(":", (new String[]{item.getData(), zz + "", lifeTime + "", time + "", xa + "", ya + "", za + ""}));
 	}
 
 	@Override
@@ -128,18 +131,18 @@ public class ItemEntity extends Entity implements ClientTickable {
 			if (time / 6 % 2 == 0) return;
 		}
 
-		screen.render(x-4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
+		screen.render(x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
 		screen.render(x - 4, y - 4 - (int) zz, item.sprite); // Item
 	}
 
 	@Override
 	protected void touchedBy(Entity entity) {
-		if(!(entity instanceof Player)) return; // For the time being, we only care when a player touches an item.
+		if (!(entity instanceof Player)) return; // For the time being, we only care when a player touches an item.
 
 		if (time > 30) { // Conditional prevents this from being collected immediately.
 			if (!pickedUp) {// Don't register if we are online and a player touches it; the client will register that.
 				pickedUp = true;
-				((Player)entity).pickupItem(this);
+				((Player) entity).pickupItem(this);
 				pickedUp = isRemoved();
 			}
 		}

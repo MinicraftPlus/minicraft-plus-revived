@@ -17,12 +17,17 @@ public class ItemEntry extends ListEntry {
 
 	private Item item;
 
-	public ItemEntry(Item i) { this.item = i; }
+	public ItemEntry(Item i) {
+		this.item = i;
+	}
 
-	public Item getItem() { return item; }
+	public Item getItem() {
+		return item;
+	}
 
 	@Override
-	public void tick(InputHandler input) {}
+	public void tick(InputHandler input) {
+	}
 
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {
