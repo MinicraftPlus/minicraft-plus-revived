@@ -170,7 +170,7 @@ public class CraftingDisplay extends Display {
 				refreshData();
 			}
 
-			if ((input.inputPressed("select") || input.inputPressed("attack")) && recipeMenu.getSelection() >= 0) {
+			if (input.inputPressed("select") && recipeMenu.getSelection() >= 0) {
 				// check the selected recipe
 				if (recipes.length == 0) return;
 				Recipe selectedRecipe = recipes[recipeMenu.getSelection()];

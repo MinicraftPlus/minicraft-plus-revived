@@ -4,6 +4,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -43,6 +44,15 @@ public class ControlSettingEntry extends SelectEntry {
 		else if (input.getMappedKey("a").isClicked())
 			// Add a binding, don't remove previous.
 			input.addKeyBinding(action);
+	}
+
+	@Override
+	public void render(Screen screen, Screen.@Nullable RenderingLimitingModel bounds, int x, int y, boolean isSelected) {
+		if (isVisible()) {
+			String text = toString();
+			Font.drawColor(bounds, isSelected ? text : text.replaceAll(Color.RED_CODE, Color.DIMMED_RED_CODE),
+				screen, x, y, getColor(isSelected));
+		}
 	}
 
 	@Override

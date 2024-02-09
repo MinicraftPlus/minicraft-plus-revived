@@ -18,39 +18,64 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ControlsSettingsDisplay extends Display {
 	@RegExp
-	private static final String regexLetter = "^\\w$";
+	private static final String regexPrintable = "\\p{Print}";
 
 	private static ControlSettingEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
 		ControlSettingEntry[] entries = new ControlSettingEntry[prefs.length];
-		HashSet<String> duplicated = getDuplicatedMappings();
+		HashMap<Set<String>, HashSet<String>> duplicated = getDuplicatedMappings();
 
-		for (int i = 0; i < entries.length; i++)
-			entries[i] = new ControlSettingEntry(prefs[i], duplicated);
+		for (int i = 0; i < entries.length; i++) {
+			String k = prefs[i].substring(0, prefs[i].indexOf(';'));
+			entries[i] = new ControlSettingEntry(prefs[i], duplicated.entrySet().stream()
+				.filter(e -> e.getKey().contains(k)).flatMap(e -> e.getValue().stream()).collect(Collectors.toSet()));
+		}
 
 		return entries;
 	}
 
-	private static HashSet<String> getDuplicatedMappings() {
-		HashSet<String> existedMappings = new HashSet<>();
-		HashSet<String> duplicated = new HashSet<>();
-		for (String pref : Game.input.getKeyPrefs()) {
-			String[] mappings = pref.substring(pref.indexOf(";") + 1).split("\\|");
-			for (String mapping : mappings) {
-				if (existedMappings.contains(mapping)) {
-					duplicated.add(mapping);
-				} else {
-					existedMappings.add(mapping);
+	private static final Set<Set<String>> INTERACTING_CONTROL_GROUPS = Stream.of(
+		// In App // CURSOR should be fixed and immutable, right?
+		Stream.of("CURSOR-UP", "CURSOR-DOWN", "CURSOR-LEFT", "CURSOR-RIGHT", "SELECT", "EXIT",
+			"SEARCHER-BAR", "PAGE-UP", "PAGE-DOWN", "SCREENSHOT", "FULLSCREEN").collect(Collectors.toSet()),
+		// During gameplay
+		Stream.of("MOVE-UP", "MOVE-DOWN", "MOVE-LEFT", "MOVE-RIGHT", "QUICKSAVE", "ATTACK", "MENU",
+			"CRAFT", "PICKUP", "DROP-ONE", "DROP-STACK", "PAUSE", "POTIONEFFECTS", "SIMPPOTIONEFFECTS",
+			"EXPANDQUESTDISPLAY", "TOGGLEHUD", "SCREENSHOT", "INFO", "FULLSCREEN").collect(Collectors.toSet()),
+		// Menus during gameplay
+		Stream.of("CURSOR-UP", "CURSOR-DOWN", "CURSOR-LEFT", "CURSOR-RIGHT", "SELECT", "EXIT", "MENU",
+			"CRAFT", "DROP-ONE", "DROP-STACK", "SEARCHER-BAR", "PAGE-UP", "PAGE-DOWN", "SCREENSHOT", "FULLSCREEN")
+			.collect(Collectors.toSet())
+	).collect(Collectors.toSet());
+
+	private static HashMap<Set<String>, HashSet<String>> getDuplicatedMappings() {
+		HashMap<Set<String>, HashSet<String>> duplicatedMappings = new HashMap<>();
+		for (Set<String> group : INTERACTING_CONTROL_GROUPS) {
+			HashSet<String> existedMappings = new HashSet<>();
+			HashSet<String> duplicated = new HashSet<>();
+			for (String key : group) {
+				String[] mappings = Game.input.getMapping(key).split("/");
+				for (String mapping : mappings) {
+					if (existedMappings.contains(mapping)) {
+						duplicated.add(mapping);
+					} else {
+						existedMappings.add(mapping);
+					}
 				}
 			}
+
+			duplicatedMappings.put(group, duplicated);
 		}
 
-		return duplicated;
+		return duplicatedMappings;
 	}
 
 	public ControlsSettingsDisplay() {
@@ -64,9 +89,11 @@ public class ControlsSettingsDisplay extends Display {
 	private ArrayList<String> getAnyTroubles() {
 		ArrayList<String> troubles = new ArrayList<>();
 		for (String pref : Game.input.getKeyPrefs()) {
-			String[] mappings = pref.substring(pref.indexOf(";") + 1).split("\\|");
-			if (Arrays.stream(mappings).anyMatch(k -> k.matches(regexLetter)))
-				troubles.add(pref.substring(0, pref.indexOf(";")));
+			if (pref.startsWith("CURSOR-")) {
+				String[] mappings = pref.substring(pref.indexOf(";") + 1).split("\\|");
+				if (Arrays.stream(mappings).anyMatch(k -> k.matches(regexPrintable)))
+					troubles.add(pref.substring(0, pref.indexOf(";")));
+			}
 		}
 		return troubles;
 	}
@@ -111,7 +138,7 @@ public class ControlsSettingsDisplay extends Display {
 					};
 					String[] splitStr = input.getChangedKey().split(";", 2);
 					String[] keyStr = splitStr[1].split("\\|");
-					if (splitStr[0].startsWith("CURSOR-") && Arrays.stream(keyStr).anyMatch(k -> k.matches(regexLetter))) {
+					if (splitStr[0].startsWith("CURSOR-") && Arrays.stream(keyStr).anyMatch(k -> k.matches(regexPrintable))) {
 						ArrayList<ListEntry> entries = new ArrayList<>();
 						Collections.addAll(entries, StringEntry.useLines("minicraft.displays.key_input.troublesome_input.warning.msg"));
 						entries.add(new BlankEntry());
@@ -123,7 +150,7 @@ public class ControlsSettingsDisplay extends Display {
 						ArrayList<PopupDisplay.PopupActionCallback> callbacks1 = new ArrayList<>();
 						callbacks1.add(new PopupDisplay.PopupActionCallback("ENTER", m -> {
 							input.setKey(splitStr[0],
-								Arrays.stream(keyStr).filter(k -> !k.matches(regexLetter)).collect(Collectors.joining("|")));
+								Arrays.stream(keyStr).filter(k -> !k.matches(regexPrintable)).collect(Collectors.joining("|")));
 							Game.exitDisplay();
 							action.act();
 							return true;

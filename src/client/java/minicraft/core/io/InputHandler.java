@@ -146,6 +146,9 @@ public class InputHandler implements KeyListener {
 		keymap.put("PICKUP", "V|P"); // Pickup torches / furniture; this replaces the power glove.
 		keymap.put("DROP-ONE", "Q"); // Drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
 		keymap.put("DROP-STACK", "SHIFT-Q"); // Drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
+		// Another possible way: DROP-STACK fixed as SHIFT+DROP-ONE and disable SHIFT modifier for DROP-ONE
+		// This may be more handy, because in the same time, there should only be either one of these 2 inputted.
+		// SHIFT acts as a switch between them, and it is fixed, so fewer accidents or unexpected behaviours could happen.
 
 		// Toggle inventory searcher bar
 		keymap.put("SEARCHER-BAR", "SHIFT-F");

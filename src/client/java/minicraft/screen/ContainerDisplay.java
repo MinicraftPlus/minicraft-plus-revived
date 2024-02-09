@@ -115,7 +115,7 @@ public class ContainerDisplay extends Display {
 		}
 
 		if (mainMethod || !onScreenKeyboardMenu.isVisible())
-			if (input.inputPressed("attack")) {
+			if (input.inputPressed("SELECT")) {
 				if (curMenu.getEntries().length == 0) return;
 
 				// switch inventories
