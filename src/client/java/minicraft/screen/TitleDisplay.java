@@ -106,15 +106,6 @@ public class TitleDisplay extends Display {
 	public void tick(InputHandler input) {
 		if (input.getMappedKey("F3-r").isClicked()) rand = random.nextInt(splashes.length - 3) + 3;
 
-		if (input.getMappedKey("1").isClicked())
-			Game.inAppNotifications.add(new AppToast(AppToast.AppToastFrame.FRAME_GENERAL, "General TEST MESSAGE"));
-		if (input.getMappedKey("2").isClicked())
-			Game.inAppNotifications.add(new AppToast(AppToast.AppToastFrame.FRAME_URGENT, "URGENT TEST MESSAGE"));
-		if (input.getMappedKey("3").isClicked())
-			Game.inAppNotifications.add(new AppToast(AppToast.AppToastFrame.FRAME_WINDOW, "WiNdOw TEST MESSAGE"));
-		if (input.getMappedKey("4").isClicked())
-			Game.inAppNotifications.add(new AppToast(AppToast.AppToastFrame.FRAME_BRICK, "BricK TEST MESSAGE"));
-
 		super.tick(input);
 	}
 

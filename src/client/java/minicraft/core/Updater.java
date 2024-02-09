@@ -178,6 +178,9 @@ public class Updater extends Game {
 			scoreTime--;
 		}
 
+		Renderer.appStatusBar.tick();
+		if (input.getMappedKey("9").isDown())
+			Renderer.appStatusBar.show(1);
 		if (updateNoteTick) notetick++;
 		AppToast notification;
 		if ((notification = inAppNotifications.peek()) != null) {
