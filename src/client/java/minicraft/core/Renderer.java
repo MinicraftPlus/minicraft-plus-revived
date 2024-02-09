@@ -207,7 +207,6 @@ public class Renderer extends Game {
 
 		private void render() {
 			if (duration == 0) return;
-
 			MinicraftImage sheet = spriteLinker.getSheet(SpriteType.Gui, "app_status_bar"); // Obtains sheet.
 
 			// Background
@@ -224,6 +223,7 @@ public class Renderer extends Game {
 		void tick() {
 			if (duration > 0)
 				duration--;
+			HARDWARE_ACCELERATION_STATUS.tick();
 		}
 
 		void show(int duration) {
@@ -254,11 +254,6 @@ public class Renderer extends Game {
 
 			protected void render(int x, int y, MinicraftImage sheet) {
 				if (durationUpdated > 0) {
-					durationUpdated--;
-					if (blinkTick == 0) {
-						blinkTick = BLINK_PERIOD;
-						blinking = !blinking;
-					} else blinkTick--;
 					if (blinking) {
 						screen.render(x, y, 10, 3 + size, 0, sheet);
 					}
@@ -266,7 +261,13 @@ public class Renderer extends Game {
 			}
 
 			protected void tick() {
-
+				if (durationUpdated > 0) {
+					durationUpdated--;
+					if (blinkTick == 0) {
+						blinkTick = BLINK_PERIOD;
+						blinking = !blinking;
+					} else blinkTick--;
+				}
 			}
 
 			protected void updateStatus() {
