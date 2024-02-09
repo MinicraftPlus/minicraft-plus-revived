@@ -156,6 +156,7 @@ public class WorldSelectDisplay extends Display {
 			.setDisplayLength(10)
 			.setPositioning(new Point(Screen.w / 2, 18), RelPos.BOTTOM)
 			.setScrollPolicies(1, false)
+			.setSearcherBar(true)
 			.createMenu();
 		updateWorldDescription(0);
 	}
