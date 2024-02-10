@@ -1,13 +1,13 @@
 package minicraft.item;
 
-import minicraft.gfx.SpriteLinker;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager;
+import minicraft.gfx.SpriteManager.SpriteType;
 import org.jetbrains.annotations.NotNull;
 
 public class UnknownItem extends StackableItem {
 
 	protected UnknownItem(String reqName) {
-		super(reqName, SpriteLinker.missingTexture(SpriteType.Item));
+		super(reqName, SpriteManager.missingTexture(SpriteType.Item));
 	}
 
 	public @NotNull UnknownItem copy() {

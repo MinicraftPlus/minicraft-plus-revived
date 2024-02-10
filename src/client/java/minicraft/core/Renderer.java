@@ -16,9 +16,8 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -53,6 +52,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class Renderer extends Game {
 	private Renderer() {
@@ -63,7 +63,7 @@ public class Renderer extends Game {
 	static float SCALE = 3;
 
 	public static Screen screen; // Creates the main screen
-	public static SpriteLinker spriteLinker = new SpriteLinker(); // The sprite linker for sprites
+	public static final SpriteManager spriteManager = new SpriteManager(); // The sprite linker for sprites
 
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
@@ -76,8 +76,6 @@ public class Renderer extends Game {
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
 	private static int potionRenderOffset = 0;
-
-	private static LinkedSprite hudSheet;
 
 	public static MinicraftImage loadDefaultSkinSheet() {
 		MinicraftImage skinsSheet;
@@ -103,9 +101,12 @@ public class Renderer extends Game {
 
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
+	}
+
+	private static MinicraftImage getHudSheet() {
+		return Renderer.spriteManager.getSheet(SpriteType.Gui, "hud");
 	}
 
 
@@ -197,7 +198,7 @@ public class Renderer extends Game {
 		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...Right border.
 		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
-			MinicraftImage cloud = spriteLinker.getSheet(SpriteType.Tile, "cloud_background");
+			MinicraftImage cloud = spriteManager.getSheet(SpriteType.Tile, "cloud_background");
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// Creates the background for the sky (and dungeon) level:
@@ -222,10 +223,11 @@ public class Renderer extends Game {
 	 * Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.)
 	 */
 	private static void renderGui() {
+		MinicraftImage hudSheet = getHudSheet();
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
-				screen.render(x * 8, Screen.h - 8, 5, 2, 0, hudSheet.getSheet());
+				screen.render(x * 8, Screen.h - 8, 5, 2, 0, hudSheet);
 			}
 		}
 
@@ -245,7 +247,7 @@ public class Renderer extends Game {
 				else
 					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
 				// Displays the arrow icon
-				screen.render(10 * 8 + 4, Screen.h - 16, 4, 1, 0, hudSheet.getSheet());
+				screen.render(10 * 8 + 4, Screen.h - 16, 4, 1, 0, hudSheet);
 			}
 		}
 
@@ -363,16 +365,16 @@ public class Renderer extends Game {
 			for (int i = 1; i <= 30; i++) {
 				// Renders your current red default hearts, golden hearts for 20 HP, obsidian hearts for 30 HP, or black hearts for damaged health.
 				if (i < 11) {
-					screen.render((i - 1) * 8, Screen.h - 16, 0, 1, 0, hudSheet.getSheet()); // Empty Hearts
+					screen.render((i - 1) * 8, Screen.h - 16, 0, 1, 0, hudSheet); // Empty Hearts
 				}
 				if (i < player.health + 1 && i < 11) {
-					screen.render((i - 1) * 8, Screen.h - 16, 0, 0, 0, hudSheet.getSheet());  // Red Hearts
+					screen.render((i - 1) * 8, Screen.h - 16, 0, 0, 0, hudSheet);  // Red Hearts
 				}
 				if (i < player.health + 1 && i < 21 && i >= 11) {
-					screen.render((i - 11) * 8, Screen.h - 16, 0, 2, 0, hudSheet.getSheet()); // Yellow Hearts
+					screen.render((i - 11) * 8, Screen.h - 16, 0, 2, 0, hudSheet); // Yellow Hearts
 				}
 				if (i < player.health + 1 && i >= 21) {
-					screen.render((i - 21) * 8, Screen.h - 16, 0, 3, 0, hudSheet.getSheet()); // Obsidian Hearts
+					screen.render((i - 21) * 8, Screen.h - 16, 0, 3, 0, hudSheet); // Obsidian Hearts
 				}
 			}
 			for (int i = 0; i < Player.maxStat; i++) {
@@ -386,24 +388,24 @@ public class Renderer extends Game {
 				if (player.staminaRechargeDelay > 0) {
 					// Creates the white/gray blinking effect when you run out of stamina.
 					if (player.staminaRechargeDelay / 4 % 2 == 0) {
-						screen.render(i * 8, Screen.h - 8, 1, 2, 0, hudSheet.getSheet());
+						screen.render(i * 8, Screen.h - 8, 1, 2, 0, hudSheet);
 					} else {
-						screen.render(i * 8, Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
+						screen.render(i * 8, Screen.h - 8, 1, 1, 0, hudSheet);
 					}
 				} else {
 					// Renders your current stamina, and uncharged gray stamina.
 					if (i < player.stamina) {
-						screen.render(i * 8, Screen.h - 8, 1, 0, 0, hudSheet.getSheet());
+						screen.render(i * 8, Screen.h - 8, 1, 0, 0, hudSheet);
 					} else {
-						screen.render(i * 8, Screen.h - 8, 1, 1, 0, hudSheet.getSheet());
+						screen.render(i * 8, Screen.h - 8, 1, 1, 0, hudSheet);
 					}
 				}
 
 				// Renders hunger
 				if (i < player.hunger) {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2, 0, 0, hudSheet.getSheet());
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2, 0, 0, hudSheet);
 				} else {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2, 1, 0, hudSheet.getSheet());
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2, 1, 0, hudSheet);
 				}
 			}
 		}
@@ -435,21 +437,22 @@ public class Renderer extends Game {
 		int INACTIVE_BOSSBAR = 4; // sprite x position
 		int ACTIVE_BOSSBAR = 5; // sprite x position
 
+		MinicraftImage hudSheet = getHudSheet();
 
-		screen.render(x + (max_bar_length * 2), y, 0, INACTIVE_BOSSBAR, 1, hudSheet.getSheet()); // left corner
+		screen.render(x + (max_bar_length * 2), y, 0, INACTIVE_BOSSBAR, 1, hudSheet); // left corner
 
 		// The middle
 		for (int bx = 0; bx < max_bar_length; bx++) {
 			for (int by = 0; by < 1; by++) {
-				screen.render(x + bx * 2, y + by * 8, 3, INACTIVE_BOSSBAR, 0, hudSheet.getSheet());
+				screen.render(x + bx * 2, y + by * 8, 3, INACTIVE_BOSSBAR, 0, hudSheet);
 			}
 		}
 
-		screen.render(x - 5, y, 0, ACTIVE_BOSSBAR, 0, hudSheet.getSheet()); // right corner
+		screen.render(x - 5, y, 0, ACTIVE_BOSSBAR, 0, hudSheet); // right corner
 
 		for (int bx = 0; bx < bar_length; bx++) {
 			for (int by = 0; by < 1; by++) {
-				screen.render(x + bx * 2, y + by * 8, 3, ACTIVE_BOSSBAR, 0, hudSheet.getSheet());
+				screen.render(x + bx * 2, y + by * 8, 3, ACTIVE_BOSSBAR, 0, hudSheet);
 			}
 		}
 
@@ -549,26 +552,27 @@ public class Renderer extends Game {
 		int yy = (HEIGHT - 8) / 2; // The height of the box
 		int w = msg.length(); // Length of message in characters.
 		int h = 1;
+		MinicraftImage hudSheet = getHudSheet();
 
 		// Renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0, 6, 0, hudSheet.getSheet());
-		screen.render(xx + w * 8, yy - 8, 0, 6, 1, hudSheet.getSheet());
-		screen.render(xx - 8, yy + 8, 0, 6, 2, hudSheet.getSheet());
-		screen.render(xx + w * 8, yy + 8, 0, 6, 3, hudSheet.getSheet());
+		screen.render(xx - 8, yy - 8, 0, 6, 0, hudSheet);
+		screen.render(xx + w * 8, yy - 8, 0, 6, 1, hudSheet);
+		screen.render(xx - 8, yy + 8, 0, 6, 2, hudSheet);
+		screen.render(xx + w * 8, yy + 8, 0, 6, 3, hudSheet);
 
 		// Renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1, 6, 0, hudSheet.getSheet()); // ...Top part
-			screen.render(xx + x * 8, yy + 8, 1, 6, 2, hudSheet.getSheet()); // ...Bottom part
+			screen.render(xx + x * 8, yy - 8, 1, 6, 0, hudSheet); // ...Top part
+			screen.render(xx + x * 8, yy + 8, 1, 6, 2, hudSheet); // ...Bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2, 6, 0, hudSheet.getSheet()); // ...Left part
-			screen.render(xx + w * 8, yy + y * 8, 2, 6, 1, hudSheet.getSheet()); // ...Right part
+			screen.render(xx - 8, yy + y * 8, 2, 6, 0, hudSheet); // ...Left part
+			screen.render(xx + w * 8, yy + y * 8, 2, 6, 1, hudSheet); // ...Right part
 		}
 
 		// The middle
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy, 3, 6, 0, hudSheet.getSheet());
+			screen.render(xx + x * 8, yy, 3, 6, 0, hudSheet);
 		}
 
 		// Renders the focus nagger text with a flash effect...

@@ -2,8 +2,8 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 import java.util.Arrays;
 
@@ -58,7 +58,7 @@ public class Screen {
 		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
 	}
 
-	public void render(int xp, int yp, LinkedSprite sprite) {
+	public void render(int xp, int yp, SpriteLink sprite) {
 		render(xp, yp, sprite.getSprite());
 	}
 
@@ -73,7 +73,6 @@ public class Screen {
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
 		render(xp, yp, sprite, mirror, fullbright, 0);
 	}
-
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		for (int r = 0; r < sprite.spritePixels.length; r++) {
 			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
@@ -119,7 +118,7 @@ public class Screen {
 
 		// Validation check
 		if (sheet == null || xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
-			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
+			sheet = Renderer.spriteManager.missingSheet(SpriteType.Item);
 			xt = 0;
 			yt = 0;
 		}

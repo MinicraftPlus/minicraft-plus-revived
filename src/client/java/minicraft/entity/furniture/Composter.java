@@ -2,17 +2,21 @@ package minicraft.entity.furniture;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import org.jetbrains.annotations.Nullable;
 
 public class Composter extends Furniture {
-	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "composter");
-	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "composter_filled");
-	private static final SpriteLinker.LinkedSprite spriteFull = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "composter_full");
-	private static final SpriteLinker.LinkedSprite itemSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "composter");
+	private static final SpriteManager.SpriteLink sprite =
+		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "composter").createSpriteLink();
+	private static final SpriteManager.SpriteLink spriteFilled =
+		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "composter_filled").createSpriteLink();
+	private static final SpriteManager.SpriteLink spriteFull =
+		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "composter_full").createSpriteLink();
+	private static final SpriteManager.SpriteLink itemSprite =
+		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Item, "composter").createSpriteLink();
 
 	private static final int MAX_COMPOST = 7;
 	private int compost = 0;

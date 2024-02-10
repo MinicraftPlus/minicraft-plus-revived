@@ -12,7 +12,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -40,7 +40,7 @@ import java.util.Objects;
  * Many skins can be put according to the number of files.
  */
 public class SkinDisplay extends Display {
-	private static final LinkedHashMap<String, LinkedSprite[][]> skins = new LinkedHashMap<>();
+	private static final LinkedHashMap<String, SpriteLink[][]> skins = new LinkedHashMap<>();
 	private static final ArrayList<String> defaultSkins = new ArrayList<>();
 	private static final MinicraftImage defaultSheet;
 	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/skins");
@@ -61,7 +61,6 @@ public class SkinDisplay extends Display {
 		selectedSkin = defaultSkins.get(0);
 
 		Logging.RESOURCEHANDLER_SKIN.debug("Refreshing skins.");
-		refreshSkins();
 	}
 
 	public SkinDisplay() {
@@ -77,17 +76,18 @@ public class SkinDisplay extends Display {
 		refreshSkins();
 		refreshEntries();
 		menus[0].setSelection(new ArrayList<>(skins.keySet()).indexOf(selectedSkin));
+		Renderer.spriteManager.refreshSkins();
 	}
 
 	public static void refreshSkins() {
-		Renderer.spriteLinker.clearSkins();
+		Renderer.spriteManager.clearSkins();
 		skins.clear();
 
 		// Pointing the keys to the default sheet,
-		Renderer.spriteLinker.setSkin("skin.minicraft.skin.paul", defaultSheet);
-		Renderer.spriteLinker.setSkin("skin.minicraft.skin.paul_cape", defaultSheet);
-		Renderer.spriteLinker.setSkin("skin.minicraft.skin.minecraft_steve", defaultSheet);
-		Renderer.spriteLinker.setSkin("skin.minicraft.skin.minecraft_alex", defaultSheet);
+		Renderer.spriteManager.setSkin("skin.minicraft.skin.paul", defaultSheet);
+		Renderer.spriteManager.setSkin("skin.minicraft.skin.paul_cape", defaultSheet);
+		Renderer.spriteManager.setSkin("skin.minicraft.skin.minecraft_steve", defaultSheet);
+		Renderer.spriteManager.setSkin("skin.minicraft.skin.minecraft_alex", defaultSheet);
 
 		skins.put("minicraft.skin.paul", Mob.compileMobSpriteAnimations(0, 0, "skin.minicraft.skin.paul"));
 		skins.put("minicraft.skin.paul_cape", Mob.compileMobSpriteAnimations(0, 4, "skin.minicraft.skin.paul_cape"));
@@ -123,16 +123,7 @@ public class SkinDisplay extends Display {
 	public static void releaseSkins() {
 		for (String skin : new ArrayList<>(skins.keySet())) {
 			if (!defaultSkins.contains(skin) && !skin.equals(selectedSkin)) {
-				Renderer.spriteLinker.setSkin("skin." + skin, null);
-				if (skins.containsKey(skin)) for (LinkedSprite[] a : skins.remove(skin)) {
-					for (LinkedSprite b : a) {
-						try {
-							b.destroy();
-						} catch (DestroyFailedException e) {
-							Logging.RESOURCEHANDLER_SKIN.trace(e);
-						}
-					}
-				}
+				deregisterSkin(skin);
 			}
 		}
 	}
@@ -198,7 +189,7 @@ public class SkinDisplay extends Display {
 			String name = skinPath.substring(0, skinPath.length() - 4);
 			if (file.exists()) try {
 				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 32);
-				Renderer.spriteLinker.setSkin("skin." + name, sheet);
+				Renderer.spriteManager.setSkin("skin." + name, sheet);
 				skins.put(name, Mob.compileMobSpriteAnimations(0, 0, "skin." + name));
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", skinPath);
@@ -206,15 +197,19 @@ public class SkinDisplay extends Display {
 				Logging.RESOURCEHANDLER_SKIN.error("Access to file located at {} was denied. Check if game is given permission.", skinPath);
 			}
 			else {
-				Renderer.spriteLinker.setSkin("skin." + name, null);
-				if (skins.containsKey(name)) for (LinkedSprite[] a : skins.remove(name)) {
-					for (LinkedSprite b : a) {
-						try {
-							b.destroy();
-						} catch (DestroyFailedException e) {
-							Logging.RESOURCEHANDLER_SKIN.trace(e);
-						}
-					}
+				deregisterSkin(name);
+			}
+		}
+	}
+
+	private static void deregisterSkin(String name) {
+		Renderer.spriteManager.setSkin("skin." + name, null);
+		if (skins.containsKey(name)) for (SpriteLink[] a : skins.remove(name)) {
+			for (SpriteLink b : a) {
+				try {
+					b.destroy();
+				} catch (DestroyFailedException e) {
+					Logging.RESOURCEHANDLER_SKIN.trace(e);
 				}
 			}
 		}
@@ -264,7 +259,7 @@ public class SkinDisplay extends Display {
 		int spriteIndex = (step / 40) % 8; // 9 = 8 Frames for sprite
 
 		// Render preview of skin.
-		LinkedSprite sprite = new ArrayList<>(skins.values()).get(menus[0].getSelection())[spriteIndex / 2][spriteIndex % 2];
+		SpriteLink sprite = new ArrayList<>(skins.values()).get(menus[0].getSelection())[spriteIndex / 2][spriteIndex % 2];
 		screen.render(xOffset, yOffset, sprite);
 
 		// Help text.
@@ -282,8 +277,8 @@ public class SkinDisplay extends Display {
 
 	// First array is one of the four animations.
 	@NotNull
-	public static LinkedSprite[][][] getSkinAsMobSprite() {
-		LinkedSprite[][][] mobSprites = new LinkedSprite[2][][];
+	public static SpriteLink[][][] getSkinAsMobSprite() {
+		SpriteLink[][][] mobSprites = new SpriteLink[2][][];
 
 		if (!skins.keySet().contains(selectedSkin)) selectedSkin = defaultSkins.get(0);
 		if (defaultSkins.contains(selectedSkin)) {

@@ -3,9 +3,9 @@ package minicraft.gfx;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteMeta;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteMeta;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.util.Logging;
@@ -43,7 +43,7 @@ public class SpriteAnimation implements Destroyable {
 		spriteAnimations.forEach(a -> a.refreshAnimation(metas.get(a.key)));
 	}
 
-	private LinkedSprite[] animations;
+	private SpriteLink[] animations;
 	private SpriteMeta metadata; // The metadata of the sprite sheet.
 	private int frame = 0; // The current frame of the animation.
 	private int frametick = 0; // The current tick of the current frame. It would be always 0 if no animation.
@@ -52,14 +52,14 @@ public class SpriteAnimation implements Destroyable {
 	private boolean destoryed = false; // Whether this instance is still registered.
 
 	// Border settings.
-	private LinkedSprite border = null;
-	private LinkedSprite corner = null;
+	private SpriteLink border = null;
+	private SpriteLink corner = null;
 	private BiFunction<Tile, Boolean, Boolean> connectChecker;
 	private boolean singletonWithConnective = false;
 
 	// Refreshing only data.
-	private SpriteType type;
-	private String key;
+	private final SpriteType type;
+	private final String key;
 
 	/**
 	 * Constructing animations with the provided key. The meta is given by default.
@@ -115,7 +115,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @return The instance itself.
 	 */
 	public SpriteAnimation setColor(int color) {
-		for (LinkedSprite sprite : animations) {
+		for (SpriteLink sprite : animations) {
 			sprite.setColor(color);
 		}
 
@@ -138,51 +138,11 @@ public class SpriteAnimation implements Destroyable {
 	}
 
 	/**
-	 * Setting the mirror of all animation frames.
-	 *
-	 * @param mirror The mirror of sprite/
-	 * @return The instance itself.
-	 */
-	public SpriteAnimation setMirror(int mirror) {
-		for (LinkedSprite sprite : animations) {
-			sprite.setMirror(mirror);
-		}
-
-		return this;
-	}
-
-	/**
-	 * Setting the mirror of the specific animation frame.
-	 *
-	 * @param frame  The specific frame.
-	 * @param mirror The mirror of sprite.
-	 * @return The instance itself.
-	 */
-	public SpriteAnimation setMirror(int frame, int mirror) {
-		if (frame < 0) frame = 0;
-		if (frame >= animations.length) frame = animations.length - 1;
-		animations[frame].setMirror(mirror);
-
-		return this;
-	}
-
-	/**
-	 * Setting the sprite sheet mirror of all frames.
-	 *
-	 * @param mirror The mirror of sprite sheet.
-	 * @return The instance itself.
-	 */
-	public SpriteAnimation setSpriteMirror(int mirror) {
-		for (LinkedSprite sprite : animations) sprite.setFlip(mirror);
-		return this;
-	}
-
-	/**
 	 * Getting the current frame of animation.
 	 *
 	 * @return The current frame sprite.
 	 */
-	public LinkedSprite getCurrentFrame() {
+	public SpriteLink getCurrentFrame() {
 		return animations[frame];
 	}
 
@@ -192,7 +152,7 @@ public class SpriteAnimation implements Destroyable {
 	 * @param frame The specific frame.
 	 * @return The frame sprite.
 	 */
-	public LinkedSprite getFrame(int frame) {
+	public SpriteLink getFrame(int frame) {
 		return animations[frame];
 	}
 
@@ -292,9 +252,9 @@ public class SpriteAnimation implements Destroyable {
 		frame = 0;
 		frametick = 0;
 		this.metadata = metadata;
-		MinicraftImage sheet = Renderer.spriteLinker.getSheet(type, key);
+		MinicraftImage sheet = Renderer.spriteManager.getSheet(type, key);
 		if (sheet == null) {
-			animations = new LinkedSprite[]{SpriteLinker.missingTexture(type)};
+			animations = new SpriteLink[] {SpriteManager.missingTexture(type)};
 			border = null;
 			corner = null;
 			return;
@@ -304,7 +264,7 @@ public class SpriteAnimation implements Destroyable {
 
 		// Destroying all previous LinkedSprite.
 		try {
-			if (animations != null) for (LinkedSprite sprite : animations) sprite.destroy();
+			if (animations != null) for (SpriteLink sprite : animations) sprite.destroy();
 			if (border != null) border.destroy();
 			if (corner != null) corner.destroy();
 		} catch (DestroyFailedException e) {
@@ -313,16 +273,17 @@ public class SpriteAnimation implements Destroyable {
 
 		if (metadata != null) {
 			if (metadata.frames < 1) metadata.frames = 1;
-			animations = new LinkedSprite[metadata.frames];
+			animations = new SpriteLink[metadata.frames];
 			for (int f = 0; f < animations.length; f++) {
-				animations[f] = new LinkedSprite(type, key).setSpriteDim(0, f * width, width, width);
+				animations[f] = new SpriteLink.SpriteLinkBuilder(type, key).setSpriteDim(0, f * width, width, width)
+					.createSpriteLink(false);
 			}
 
 			// Tile sprite only.
-			if (metadata.border != null) border = new LinkedSprite(type, metadata.border);
-			if (metadata.corner != null) corner = new LinkedSprite(type, metadata.corner);
+			if (metadata.border != null) border = new SpriteLink.SpriteLinkBuilder(type, metadata.border).createSpriteLink(false);
+			if (metadata.corner != null) corner = new SpriteLink.SpriteLinkBuilder(type, metadata.corner).createSpriteLink(false);
 		} else {
-			animations = new LinkedSprite[]{new LinkedSprite(type, key).setSpriteSize(width, width)};
+			animations = new SpriteLink[]{new SpriteLink.SpriteLinkBuilder(type, key).setSpriteSize(width, width).createSpriteLink(false)};
 			border = null;
 			corner = null;
 		}
@@ -331,7 +292,7 @@ public class SpriteAnimation implements Destroyable {
 	@Override
 	public void destroy() throws DestroyFailedException {
 		spriteAnimations.remove(this);
-		if (animations != null) for (LinkedSprite sprite : animations) sprite.destroy();
+		if (animations != null) for (SpriteLink sprite : animations) sprite.destroy();
 		if (border != null) border.destroy();
 		if (corner != null) corner.destroy();
 		destoryed = true;
