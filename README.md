@@ -39,6 +39,12 @@ version, or older versions.
 * Support for several languages
 * and many, many more!
 
+## System Prerequisites
+
+Our game only supports Windows, MacOS and Linux. Furthermore, newer platform versions are required for controllers.
+
+For Java, you may check out [system requirements for Java](https://www.java.com/en/download/help/sysreq.html).
+
 ## Current goals and ideas
 
 Take a look at the [ideas](ideas/) folder or
