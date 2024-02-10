@@ -33,9 +33,9 @@ ij_java_keep_simple_blocks_in_one_line = true
 ij_java_keep_simple_classes_in_one_line = true
 ij_java_keep_simple_lambdas_in_one_line = true
 ij_java_keep_simple_methods_in_one_line = true
-ij_java_method_annotation_wrap = normal
-ij_java_field_annotation_wrap = normal
-ij_java_do_not_wrap_after_single_annotation = true
+ij_java_method_annotation_wrap = on_every_item
+ij_java_field_annotation_wrap = on_every_item
+ij_java_do_not_wrap_after_single_annotation = false
 ij_java_do_not_wrap_after_single_annotation_in_parameter = true
 
 [**.json]
