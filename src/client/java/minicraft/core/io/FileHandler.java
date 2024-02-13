@@ -140,6 +140,7 @@ public class FileHandler extends Game {
 				}
 
 				Path newFile = new File(newFilename).toPath();
+				newFile.getParent().toFile().mkdirs();
 				try {
 					Files.copy(file, newFile, StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException ex) {
