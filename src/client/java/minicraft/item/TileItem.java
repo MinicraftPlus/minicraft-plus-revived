@@ -120,7 +120,7 @@ public class TileItem extends StackableItem {
 		}
 
 		public static Tile getTile(@Nullable TileModel model) {
-			return model == null ? Tiles.get(0) : Tiles.get(model.tile);
+			return model == null ? Tiles.get((short) 0) : Tiles.get(model.tile);
 		}
 
 		public static int getTileData(@Nullable TileModel model, Tile tile, Tile target, Level level, int xt, int yt, Player player, Direction attackDir) {
