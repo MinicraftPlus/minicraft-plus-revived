@@ -38,6 +38,7 @@ import minicraft.item.UnknownItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -779,7 +780,7 @@ public class HistoricLoad {
 				for (int i = 0; i < data.size(); i++) {
 					try {
 						loadToInventory(data.get(i), inv, deathChest);
-					} catch (Load.MalformedSaveDataValueException | Load.IllegalSaveDataValueException e) {
+					} catch (Load.IllegalSaveDataValueException | Load.MalformedDataValueException e) {
 						throw new Load.MalformedSaveDataValueException("Index " + i, e);
 					}
 				}
@@ -797,18 +798,17 @@ public class HistoricLoad {
 	}
 
 	private static void loadToInventory(String data, Inventory inv, @Nullable DeathChest deathChest)
-		throws Load.IllegalSaveDataValueException, Load.MalformedSaveDataValueException {
+		throws Load.IllegalSaveDataValueException, Load.MalformedDataValueException {
 		Matcher matcher = ITEM_REGEX.matcher(data);
 		if (matcher.matches()) {
 			String itemName = matcher.group(1);
 			Item item = Items.get(Load.subOldName(itemName
 				.replace("P.", "Potion")
 				.replace("Fish Rod", "Fishing Rod")
-				.replace("bed", "Bed"), new Version("0.0.0"))
-				.replace("St.", "Stone "));
+				.replace("bed", "Bed"), new Version("0.0.0")));
 			if (item instanceof UnknownItem)
-				throw new Load.MalformedSaveDataValueException("Item name",
-					new Load.IllegalSaveDataValueException("Input: " + data));
+				throw new Load.MalformedDataValueException("Item name",
+					new Load.IllegalDataValueException("Input: " + data));
 			int count = 1;
 			String countStr = matcher.group(2);
 			if (countStr != null) { // When ";<amount>" exists.
@@ -817,7 +817,7 @@ public class HistoricLoad {
 					if (count == 0) count = 1; // I am not sure about this.
 					validateIntegralData(count, POSITIVE_INTEGER_CHECK);
 				} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
-					throw new Load.MalformedSaveDataValueException(
+					throw new Load.MalformedDataValueException(
 						"Item count", e);
 				}
 			}
@@ -858,9 +858,14 @@ public class HistoricLoad {
 							mobLvl = Integer.parseInt(info.get(info.size() - 2));
 					} catch (ClassNotFoundException ignored) { }
 
-					Entity newEntity = getEntity(entityName, Game.player, mobLvl);
+					Entity newEntity;
+					try {
+						newEntity = getEntity(entityName, Game.player, mobLvl);
+					} catch (Load.IllegalDataValueException e) {
+						throw new Load.IllegalSaveDataValueException("Entity", e);
+					}
 
-					if (newEntity != null && newEntity != Game.player) { // the method never returns null, but...
+					if (newEntity != Game.player) { // the method never returns null, but...
 						int currentlevel;
 						if (newEntity instanceof Mob) {
 							Mob mob = (Mob) newEntity;
@@ -879,7 +884,7 @@ public class HistoricLoad {
 								if (itemData.isEmpty()) continue; // this skips any null items
 								try {
 									loadToInventory(itemData, chest.getInventory(), null);
-								} catch (Load.IllegalSaveDataValueException | Load.MalformedSaveDataValueException e) {
+								} catch (Load.IllegalSaveDataValueException | Load.MalformedDataValueException e) {
 									throw new Load.IllegalSaveDataValueException("Data Index " + idx, e);
 								}
 							}
@@ -893,10 +898,13 @@ public class HistoricLoad {
 							currentlevel = Integer.parseInt(info.get(info.size() - 1));
 							World.levels[currentlevel].add(chest instanceof DeathChest ? chest : chest instanceof DungeonChest ? (DungeonChest) chest : chest, x, y);
 						} else if (newEntity instanceof Spawner) {
-							MobAi mob = (MobAi) getEntity(info.get(2), Game.player, Integer.parseInt(info.get(3)));
-							currentlevel = Integer.parseInt(info.get(info.size() - 1));
-							if (mob != null)
+							try {
+								MobAi mob = (MobAi) getEntity(info.get(2), Game.player, Integer.parseInt(info.get(3)));
+								currentlevel = Integer.parseInt(info.get(info.size() - 1));
 								World.levels[currentlevel].add(new Spawner(mob), x, y);
+							} catch (Load.IllegalDataValueException e) {
+								throw new Load.IllegalSaveDataValueException("Spawner entity", e);
+							}
 						} else {
 							currentlevel = Integer.parseInt(info.get(2));
 							World.levels[currentlevel].add(newEntity, x, y);
@@ -912,7 +920,9 @@ public class HistoricLoad {
 		}
 	}
 
-	private static Entity getEntity(String string, Player player, int mobLevel) {
+	@NotNull
+	private static Entity getEntity(String string, Player player, int mobLevel)
+			throws Load.IllegalDataValueException {
 		switch (string) {
 			case "Player":
 				return player;
@@ -935,7 +945,7 @@ public class HistoricLoad {
 			case "Snake":
 				return new Snake(mobLevel);
 			case "AirWizard":
-				if (mobLevel > 1) return null;
+				if (mobLevel > 1) throw new Load.IllegalDataValueException("Mob level: " + mobLevel);
 				return new AirWizard();
 			case "Spawner":
 				return new Spawner(new Zombie(1));
@@ -968,8 +978,8 @@ public class HistoricLoad {
 			case "GoldLantern":
 				return new Lantern(Lantern.Type.GOLD);
 			default:
-				Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: " + string);
-				return null;
+				Logger.tag("SaveLoad/HistoricLoad").error("Unknown entity requested: " + string);
+				throw new Load.IllegalDataValueException("Input: " + string);
 		}
 	}
 }
