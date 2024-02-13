@@ -137,35 +137,22 @@ public class HistoricLoad {
 
 	static void loadSave(String worldName) throws Load.LoadingSessionFailedException {
 		String location = Game.gameDir + "/saves/" + worldName + "/";
-		String filePath;
-
 		try {
 			Game.player.getInventory().clearInv(); // Prepare for loading.
-			createBackup(filePath = location + "Game" + Save.extension);
-			loadGame(filePath);
-			// KeyPrefs are now saved in global preferences, but not world-wide.
-			createBackup(filePath = location + "KeyPrefs" + Save.extension);
-			if (new File(filePath).delete()) // World-wide KeyPrefs are ignored.
-				Logging.SAVELOAD.debug("\"{}\" is deleted.", filePath);
-
+			loadGame(location + "Game" + Save.extension);
+			// KeyPrefs is handled later.
 			try {
 				for (int i = 0; i < 6; ++i) {
-					String dataPath = location + "Level" + i + "data" + Save.extension;
-					createBackup(filePath = location + "Level" + i + Save.extension);
-					createBackup(dataPath);
-					loadLevel(filePath, dataPath, i);
+					loadLevel(location + "Level" + i + Save.extension, location + "Level" + i + "data" + Save.extension, i);
 				}
 			} catch (Load.MalformedSaveDataException e) {
 				throw new Load.MalformedSaveException("World", e);
 			}
 
-			createBackup(filePath = location + "Player" + Save.extension);
-			loadPlayer(filePath);
-			createBackup(filePath = location + "Inventory" + Save.extension);
-			loadInventory(filePath);
+			loadPlayer(location + "Player" + Save.extension);
+			loadInventory(location + "Inventory" + Save.extension);
 			// loadEntities is not checked by me, but I assume that it is implemented correctly.
-			createBackup(filePath = location + "Entities" + Save.extension);
-			loadEntities(filePath); // Most parts of the code are not modified.
+			loadEntities(location + "Entities" + Save.extension); // Most parts of the code are not modified.
 		} catch (Load.MalformedSaveException e) {
 			throw new Load.LoadingSessionFailedException("Failed to load world \"" + worldName + "\"", e);
 		} catch (IndexOutOfBoundsException e) {
@@ -180,6 +167,21 @@ public class HistoricLoad {
 			 */
 			throw new AssertionError(e);
 		}
+
+		// Do backups for all files, when the whole world is successfully loaded.
+		createBackup(location + "KeyPrefs" + Save.extension);
+		// KeyPrefs are now saved in global preferences, but not world-wide.
+		if (new File(location + "KeyPrefs" + Save.extension).delete()) // World-wide KeyPrefs are ignored.
+			Logging.SAVELOAD.debug("\"{}\" is deleted.", location + "KeyPrefs" + Save.extension);
+		createBackup(location + "Game" + Save.extension);
+		createBackup(location + "KeyPrefs" + Save.extension);
+		for (int i = 0; i < 6; ++i) {
+			createBackup(location + "Level" + i + Save.extension);
+			createBackup(location + "Level" + i + "data" + Save.extension);
+		}
+		createBackup(location + "Player" + Save.extension);
+		createBackup(location + "Inventory" + Save.extension);
+		createBackup(location + "Entities" + Save.extension);
 	}
 
 	private static List<String> loadFile(String path) throws Load.FileLoadingException {
