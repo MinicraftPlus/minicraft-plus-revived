@@ -25,12 +25,12 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
-import minicraft.screen.GameToast;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.AppToast;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.Toast;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
@@ -559,7 +559,7 @@ public class Renderer extends Game {
 		renderQuestsDisplay();
 		renderDebugInfo();
 
-		GameToast toast;
+		Toast toast;
 		if ((toast = inGameToasts.peek()) != null) {
 			toast.render(screen);
 		}

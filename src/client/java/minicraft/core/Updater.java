@@ -10,10 +10,10 @@ import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
-import minicraft.screen.GameToast;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.AppToast;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.Toast;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
@@ -228,7 +228,7 @@ public class Updater extends Game {
 				}
 
 				player.tick(); // Ticks the player when there's no menu.
-				GameToast gameToast;
+				Toast gameToast;
 				if ((gameToast = inGameToasts.peek()) != null) {
 					boolean refresh = true;
 					if (gameToast.isExpired()) {
