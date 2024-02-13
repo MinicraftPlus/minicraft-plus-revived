@@ -170,10 +170,13 @@ public class HistoricLoad {
 		}
 
 		// Do backups for all files, when the whole world is successfully loaded.
-		createBackup(location + "KeyPrefs" + Save.extension);
-		// KeyPrefs are now saved in global preferences, but not world-wide.
-		if (new File(location + "KeyPrefs" + Save.extension).delete()) // World-wide KeyPrefs are ignored.
-			Logging.SAVELOAD.debug("\"{}\" is deleted.", location + "KeyPrefs" + Save.extension);
+		File keyPrefsFile = new File(location + "KeyPrefs" + Save.extension);
+		if (keyPrefsFile.exists()) {
+			createBackup(location + "KeyPrefs" + Save.extension);
+			// KeyPrefs are now saved in global preferences, but not world-wide.
+			if (new File(location + "KeyPrefs" + Save.extension).delete()) // World-wide KeyPrefs are ignored.
+				Logging.SAVELOAD.debug("\"{}\" is deleted.", location + "KeyPrefs" + Save.extension);
+		}
 		createBackup(location + "Game" + Save.extension);
 		for (int i = 0; i < 6; ++i) {
 			createBackup(location + "Level" + i + Save.extension);
