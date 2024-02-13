@@ -805,10 +805,7 @@ public class HistoricLoad {
 		Matcher matcher = ITEM_REGEX.matcher(data);
 		if (matcher.matches()) {
 			String itemName = matcher.group(1);
-			Item item = Items.get(Load.subOldName(itemName
-				.replace("P.", "Potion")
-				.replace("Fish Rod", "Fishing Rod")
-				.replace("bed", "Bed"), new Version("0.0.0")));
+			Item item = Items.get(resolveItemName(itemName));
 			if (item instanceof UnknownItem)
 				throw new Load.MalformedDataValueException("Item name",
 					new Load.IllegalDataValueException("Input: " + data));
@@ -841,6 +838,93 @@ public class HistoricLoad {
 		} else {
 			throw new Load.IllegalSaveDataValueException("Input: " + data);
 		}
+	}
+
+	private static String resolveItemName(String itemName) {
+		/*
+		 * Item Name Change History (UTC)
+		 *
+		 * Notes:
+		 * - "St.BrickWall" Stone Wall -> unknown version change to be resolved, so resolved here.
+		 * - Note that "Cooked Pork" and "Pork Chop" were 2 separated items, but resolved later?
+		 *
+		 * Commit History
+		 *
+		 * c3f2e0ea Apr 02, 2017 (23:01)
+		 * - Item "Fish Rod" is removed.
+		 * - Tool type "Rod" is added, and "Wood Rod" is added with "Wood" level.
+		 * 3e572c1e Mar 31, 2017 (19:38)
+		 * - Items added: "Ob.BrickWall", "Obsidian Door"
+		 * 9c1abfe2 Mar 29, 2017 (06:01)
+		 * - " P." is trimmed out from potions' names except for item "Potion".
+		 * - "P." is instead changed to "Potion".
+		 * f95343bf Mar 24, 2017 (04:48)
+		 * - List of spawners changed.
+		 * - New list of spawners: "Cow Spawner", "Pig Spawner", "Sheep Spawner", "Slime Spawner", "Zombie Spawner",
+		 *   "Creeper Spawner", "Skeleton Spawner", "Snake Spawner", "Knight Spawner", "AirWizard Spawner",
+		 *   "AirWizardII Spawner"
+		 * 01d8e558 Mar 21, 2017 (23:26)
+		 * - Spawners are implemented.
+		 * - Items added: "Zombie Spawner", "Slime Spawner", "Knight Spawner", "Snake Spawner", "Skeleton Spawner",
+		 *   "Creeper Spawner", "AirWizard Spawner", "AirWizard Spawner" (duplicated), "Pig Spawner", "Sheep Spawner"
+		 * 13507725 Mar 20, 2017 (10:18)
+		 * - Item "Key" added
+		 * aa565e20 Mar 20, 2017 (01:09)
+		 * - Colored wools and clothes implemented.
+		 * - 5 "Wool" variations are renamed to the corresponding colors.
+		 * - Items added: "Red Clothes", "Blue Clothes", "Green Clothes", "Yellow Clothes", "Black Clothes",
+		 *   "Orange Clothes", "Purple Clothes", "Cyan Clothes", "Reg Clothes"
+		 * - "Wool" items renamed: "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool"
+		 * - One "Wool" is kept.
+		 * d97784ce Mar 19, 2017 (11:48)
+		 * - Potions added: "Potion", "Speed P.", "Light P.", "Swim P.", "Energy P.", "Regen P.", "Time P.",
+		 *   "Lava P.", "Shield P.", "Haste P."
+		 * 3fb901de Mar 11, 2017 (07:34)
+		 * - Renamed class "bed" to "Bed", but no effect to the entity name and item name.
+		 * 0fbeae59 Feb 26, 2017 (06:22)
+		 * - Dungeon Chest "D.Chest" -> "Dungeon Chest"
+		 * - "Cooked Pork" is added as a food, but at the same time, "Pork Chop" exists.
+		 * 11c3260d Feb 25, 2017 (22:52) First commit
+		 * - Save/Load is not added yet, but items exist.
+		 * - 6 "Wool" variations existed, but with the same name
+		 * - "bed" existed as class name but not as item name even furniture name.
+		 *
+		 * Several items that have doubt to be saved, and not included in the check and mappings:
+		 * - "D.Chest" Dungeon Chest -> cannot be picked up # Since the initial
+		 * - "God Lantern" -> not included in ListItems; no longer existed # Since the initial
+		 * - "God Workbench" -> not included in ListItems; no longer existed # Since the initial
+		 */
+
+		switch (itemName) {
+			// Since the initial
+				// It was not set that can be picked up, but still checked here.
+			case "D.Chest": // Until Feb 26, 2017
+				itemName = "Dungeon Chest"; break;
+			case "St.BrickWall": // Until 1.9.4-dev4?
+				itemName = "Stone Wall"; break;
+			case "Fish Rod": // ?
+				itemName = "Fishing Rod"; break;
+			case "Speed P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Speed Potion"; break;
+			case "Light P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Light Potion"; break;
+			case "Swim P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Swim Potion"; break;
+			case "Energy P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Energy Potion"; break;
+			case "Regen P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Regen Potion"; break;
+			case "Time P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Time Potion"; break;
+			case "Lava P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Lava Potion"; break;
+			case "Shield P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Shield Potion"; break;
+			case "Haste P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Haste Potion"; break;
+		}
+
+		return Load.subOldName(itemName, new Version("0.0.0"));
 	}
 
 	private static void loadEntities(String path) throws Load.MalformedSaveException {

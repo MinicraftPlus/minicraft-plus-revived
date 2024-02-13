@@ -982,8 +982,8 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
-			if (name.startsWith("Potion"))
-				name = name.replace("Potion", "Awkward Potion");
+			if (name.equals("Potion"))
+				name = "Awkward Potion";
 		}
 
 		return name;
