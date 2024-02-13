@@ -174,7 +174,6 @@ public class HistoricLoad {
 		if (new File(location + "KeyPrefs" + Save.extension).delete()) // World-wide KeyPrefs are ignored.
 			Logging.SAVELOAD.debug("\"{}\" is deleted.", location + "KeyPrefs" + Save.extension);
 		createBackup(location + "Game" + Save.extension);
-		createBackup(location + "KeyPrefs" + Save.extension);
 		for (int i = 0; i < 6; ++i) {
 			createBackup(location + "Level" + i + Save.extension);
 			createBackup(location + "Level" + i + "data" + Save.extension);
