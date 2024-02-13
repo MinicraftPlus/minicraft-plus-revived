@@ -122,7 +122,7 @@ public class Load {
 		if (!loadGame) return;
 
 		// Is dev build
-		if (Game.VERSION.getDev() != 0 && worldVer.compareTo(Game.VERSION) < 0) {
+		if (Game.VERSION.isDev() && worldVer.compareTo(Game.VERSION) < 0) {
 			Logging.SAVELOAD.info("Old world detected, backup prompting...");
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
