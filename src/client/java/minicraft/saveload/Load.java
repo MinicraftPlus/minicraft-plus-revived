@@ -48,7 +48,9 @@ import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.TorchTile;
 import minicraft.network.Network;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
@@ -665,8 +667,15 @@ public class Load {
 						}
 					}
 
-					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+
+					Tile tile = Tiles.get(tilename);
+					if (tile instanceof TorchTile && tile != TorchTile.DELEGATE) {
+						tiles[tileArrIdx] = TorchTile.DELEGATE.id;
+						tdata[tileArrIdx] = ((TorchTile) tile).getOnType();
+					} else {
+						tiles[tileArrIdx] = tile.id;
+						tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					}
 				}
 			}
 

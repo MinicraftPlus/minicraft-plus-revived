@@ -34,7 +34,9 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.TorchTile;
 import minicraft.screen.LoadingDisplay;
 import minicraft.util.Logging;
 import org.tinylog.Logger;
@@ -231,8 +233,14 @@ public class LegacyLoad {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
-					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					Tile tile = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))));
+					if (tile instanceof TorchTile && tile != TorchTile.DELEGATE) {
+						tiles[tileArrIdx] = TorchTile.DELEGATE.id;
+						tdata[tileArrIdx] = ((TorchTile) tile).getOnType();
+					} else {
+						tiles[tileArrIdx] = tile.id;
+						tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					}
 				}
 			}
 
