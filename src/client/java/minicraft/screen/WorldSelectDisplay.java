@@ -283,7 +283,7 @@ public class WorldSelectDisplay extends Display {
 					worldNames.add(name);
 					try {
 						worldVersions.add(new Load(name, false).getWorldVersion());
-					} catch (Load.DungeonRegenerationCancelledException | Load.BackupCreationFailedException |
+					} catch (Load.UserPromptCancelledException | Load.BackupCreationFailedException |
 					         Load.WorldLoadingFailedException ignored) {} // This is supposed to be not happening.
 					// Ideally, this way should not be used.
 				}

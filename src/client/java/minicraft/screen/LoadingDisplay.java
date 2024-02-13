@@ -12,6 +12,7 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.StringEntry;
 
 import javax.swing.Timer;
 
@@ -31,12 +32,23 @@ public class LoadingDisplay extends Display {
 			try {
 				World.initWorld();
 				Game.setDisplay(null);
-			} catch (Load.DungeonRegenerationCancelledException | Load.BackupCreationFailedException |
-			         Load.WorldLoadingFailedException ex) {
+			} catch (Load.UserPromptCancelledException ex) {
 				World.onWorldExits();
 				Game.exitDisplay(); // Exits the loading display and returns to world select display.
 				Game.setDisplay(new PopupDisplay(null,
-					"minicraft.displays.loading.regeneration_cancellation_popup.display"));
+					"minicraft.displays.loading.user_cancellation_popup.display"));
+			} catch (Load.BackupCreationFailedException ex) {
+				World.onWorldExits();
+				Game.exitDisplay(); // Exits the loading display and returns to world select display.
+				Game.setDisplay(new PopupDisplay(null,
+					StringEntry.useLines(Color.WHITE, false, Localization.getLocalized(
+						"minicraft.displays.loading.backup_creation_failed_popup", ex.getCause().getMessage()))));
+			} catch (Load.WorldLoadingFailedException ex) {
+				World.onWorldExits();
+				Game.exitDisplay(); // Exits the loading display and returns to world select display.
+				Game.setDisplay(new PopupDisplay(null,
+					StringEntry.useLines(Color.WHITE, false, Localization.getLocalized(
+						"minicraft.displays.loading.loading_failed_popup", ex.getCause().getMessage()))));
 			}
 		}, "World Initialization Thread").start());
 		t.setRepeats(false);

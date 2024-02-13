@@ -65,6 +65,7 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,7 +107,7 @@ public class Load {
 	}
 
 	public Load(String worldname)
-		throws BackupCreationFailedException, WorldLoadingFailedException, DungeonRegenerationCancelledException {
+		throws BackupCreationFailedException, WorldLoadingFailedException, UserPromptCancelledException {
 		this(worldname, true);
 	}
 
@@ -116,20 +117,20 @@ public class Load {
 			super(cause);
 		}
 	}
-	public static class DungeonRegenerationCancelledException extends WorldLoadingInterruptedException {}
+	public static class UserPromptCancelledException extends WorldLoadingInterruptedException {}
 	public static class BackupCreationFailedException extends WorldLoadingInterruptedException {
-		public BackupCreationFailedException(@Nullable Exception cause) {
+		public BackupCreationFailedException(@NotNull Exception cause) {
 			super(cause);
 		}
 	}
 	public static class WorldLoadingFailedException extends WorldLoadingInterruptedException {
-		public WorldLoadingFailedException(Exception cause) {
+		public WorldLoadingFailedException(@NotNull Exception cause) {
 			super(cause);
 		}
 	}
 
 	public Load(String worldname, boolean loadGame)
-		throws DungeonRegenerationCancelledException, WorldLoadingFailedException, BackupCreationFailedException {
+		throws UserPromptCancelledException, WorldLoadingFailedException, BackupCreationFailedException {
 		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
 
@@ -206,7 +207,7 @@ public class Load {
 						Logging.SAVELOAD.debug("World loading continues...");
 					} else {
 						Logging.SAVELOAD.info("User cancelled world loading, loading aborted.");
-						throw new BackupCreationFailedException(null);
+						throw new UserPromptCancelledException();
 					}
 
 					break;
@@ -290,7 +291,7 @@ public class Load {
 							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
 							if (reAdd) World.levels[lvlidx].add(Game.player);
 						} else {
-							throw new DungeonRegenerationCancelledException();
+							throw new UserPromptCancelledException();
 						}
 
 						break;

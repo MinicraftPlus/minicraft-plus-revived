@@ -105,7 +105,7 @@ public class World extends Game {
 	 **/
 	public static void initWorld()
 		throws Load.BackupCreationFailedException, Load.WorldLoadingFailedException,
-		Load.DungeonRegenerationCancelledException { // This is a full reset; everything.
+		Load.UserPromptCancelledException { // This is a full reset; everything.
 		Logging.WORLD.debug("Resetting world...");
 
 		PlayerDeathDisplay.shouldRespawn = false;
