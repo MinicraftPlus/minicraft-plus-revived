@@ -19,9 +19,18 @@ public class Cow extends PassiveMob {
 
 	public void die() {
 		int min = 0, max = 0;
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {min = 1; max = 3;}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {min = 1; max = 2;}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {min = 0; max = 1;}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
+			min = 1;
+			max = 3;
+		}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+			min = 1;
+			max = 2;
+		}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+			min = 0;
+			max = 1;
+		}
 
 		dropItem(min, max, Items.get("leather"), Items.get("raw beef"));
 
@@ -31,12 +40,9 @@ public class Cow extends PassiveMob {
 	@Override
 	public void tick() {
 		super.tick();
-		if (random.nextInt(1000) == 0) { // Grazing without any benefits.
-			Tile tile = level.getTile(x >> 4, y >> 4);
-			// If tall grasses are present, these are consumed and then turn into grass tiles.
-			if (tile instanceof GrassTile) {
-				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
-			}
+		Tile tile = level.getTile(x >> 4, y >> 4);
+		if (tile instanceof GrassTile && random.nextInt(1000) == 0) { // Grazing without any benefits.
+			level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
 		}
 	}
 }

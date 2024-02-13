@@ -36,9 +36,12 @@ public class CraftingDisplay extends Display {
 
 	private static final HashSet<Recipe> unlockedRecipes = new HashSet<>();
 
-	public CraftingDisplay(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
+	public CraftingDisplay(List<Recipe> recipes, String title, Player player) {
+		this(recipes, title, player, false);
+	}
+
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
-		for(Recipe recipe: recipes)
+		for (Recipe recipe : recipes)
 			recipe.checkCanCraft(player);
 		this.player = player;
 		this.title = title;
@@ -59,10 +62,10 @@ public class CraftingDisplay extends Display {
 		List<Recipe> recipes = availableRecipes.stream().filter(unlockedRecipes::contains).collect(Collectors.toList());
 		recipeMenu = new RecipeMenu(recipes, title, player);
 		this.recipes = recipes.toArray(new Recipe[0]);
-		itemCountMenu.setPositioning(new Point(recipeMenu.getBounds().getRight()+MinicraftImage.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
+		itemCountMenu.setPositioning(new Point(recipeMenu.getBounds().getRight() + MinicraftImage.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 		costsMenu.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 
-		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
+		menus = new Menu[]{recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
 		refreshData();
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
@@ -94,7 +97,7 @@ public class CraftingDisplay extends Display {
 		if (recipes.length == 0) return new ItemListing[0];
 
 		Map<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
-		for(String itemName: costMap.keySet()) {
+		for (String itemName : costMap.keySet()) {
 			Item cost = Items.get(itemName);
 			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
 		}
@@ -134,7 +137,7 @@ public class CraftingDisplay extends Display {
 			if (!acted)
 				recipeMenu.tick(input);
 
-			if (input.getKey("menu").clicked || (isPersonalCrafter && input.inputPressed("craft"))) {
+			if (input.getMappedKey("menu").isClicked() || (isPersonalCrafter && input.inputPressed("craft"))) {
 				Game.exitDisplay();
 				return;
 			}
@@ -160,12 +163,12 @@ public class CraftingDisplay extends Display {
 				if (recipes.length == 0) return;
 				Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
 				if (selectedRecipe.getCanCraft()) {
-					if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
-						AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
-						AchievementsDisplay.setAchievement("minicraft.achievement.planks",true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
-						AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
+					if (selectedRecipe.getProduct().equals(Items.get("Workbench"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking", true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.planks", true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.doors", true);
 					} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||

@@ -50,11 +50,11 @@ public class TorchTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(item instanceof PowerGloveItem) {
+		if (item instanceof PowerGloveItem) {
 			int data = level.getData(xt, yt);
 			level.setTile(xt, yt, onType);
 			Sound.play("monsterhurt");
-			level.dropItem(xt*16+8, yt*16+8, Items.get("Torch"));
+			level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Torch"));
 			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 					item, this, data, xt, yt, level.depth));

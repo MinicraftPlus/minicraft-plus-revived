@@ -21,7 +21,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Workbench_1": ["Wood_10"]
+        "Workbench_1": [
+          "Wood_10"
+        ]
       }
     }
   },
@@ -60,7 +62,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Torch_2": ["Wood_1", "coal_1"]
+        "Torch_2": [
+          "Wood_1",
+          "coal_1"
+        ]
       }
     }
   },
@@ -86,7 +91,9 @@
     ],
     "rewards": {
       "recipes": {
-        "plank_2": ["Wood_1"]
+        "plank_2": [
+          "Wood_1"
+        ]
       }
     }
   },
@@ -112,7 +119,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Plank Wall_1": ["plank_3"]
+        "Plank Wall_1": [
+          "plank_3"
+        ]
       }
     }
   },
@@ -138,7 +147,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Door_1": ["plank_5"]
+        "Wood Door_1": [
+          "plank_5"
+        ]
       }
     }
   },
@@ -190,7 +201,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Lantern_1": ["Wood_8", "slime_4", "glass_3"]
+        "Lantern_1": [
+          "Wood_8",
+          "slime_4",
+          "glass_3"
+        ]
       }
     }
   },
@@ -216,7 +231,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Stone Brick_1": ["Stone_2"]
+        "Stone Brick_1": [
+          "Stone_2"
+        ]
       }
     }
   },
@@ -242,7 +259,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Stone Brick_1": ["Stone_2"]
+        "Stone Brick_1": [
+          "Stone_2"
+        ]
       }
     }
   },
@@ -268,7 +287,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Stone Wall_1": ["Stone Brick_3"]
+        "Stone Wall_1": [
+          "Stone Brick_3"
+        ]
       }
     }
   },
@@ -294,7 +315,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Stone Door_1": ["Stone Brick_5"]
+        "Stone Door_1": [
+          "Stone Brick_5"
+        ]
       }
     }
   },
@@ -320,7 +343,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Obsidian Brick_1": ["Raw Obsidian_2"]
+        "Obsidian Brick_1": [
+          "Raw Obsidian_2"
+        ]
       }
     }
   },
@@ -346,7 +371,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Ornate Obsidian_1": ["Raw Obsidian_2"]
+        "Ornate Obsidian_1": [
+          "Raw Obsidian_2"
+        ]
       }
     }
   },
@@ -372,7 +399,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Obsidian Wall_1": ["Obsidian Brick_3"]
+        "Obsidian Wall_1": [
+          "Obsidian Brick_3"
+        ]
       }
     }
   },
@@ -398,7 +427,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Obsidian Door_1": ["Obsidian Brick_5"]
+        "Obsidian Door_1": [
+          "Obsidian Brick_5"
+        ]
       }
     }
   },
@@ -424,7 +455,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Oven_1": ["Stone_15"]
+        "Oven_1": [
+          "Stone_15"
+        ]
       }
     }
   },
@@ -450,7 +483,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Furnace_1": ["Stone_20"]
+        "Furnace_1": [
+          "Stone_20"
+        ]
       }
     }
   },
@@ -502,7 +537,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Enchanter_1": ["Wood_5", "String_2", "Lapis_10"]
+        "Enchanter_1": [
+          "Wood_5",
+          "String_2",
+          "Lapis_10"
+        ]
       }
     }
   },
@@ -528,7 +567,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Chest_1": ["Wood_20"]
+        "Chest_1": [
+          "Wood_20"
+        ]
       }
     }
   },
@@ -554,7 +595,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Anvil_1": ["iron_5"]
+        "Anvil_1": [
+          "iron_5"
+        ]
       }
     }
   },
@@ -593,7 +636,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Tnt_1": ["Gunpowder_10", "Sand_8"]
+        "Tnt_1": [
+          "Gunpowder_10",
+          "Sand_8"
+        ]
       }
     }
   },
@@ -632,7 +678,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Loom_1": ["Wood_10", "Wool_5"]
+        "Loom_1": [
+          "Wood_10",
+          "Wool_5"
+        ]
       }
     }
   },
@@ -671,7 +720,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Fishing Rod_1": ["Wood_10", "String_3"]
+        "Wood Fishing Rod_1": [
+          "Wood_10",
+          "String_3"
+        ]
       }
     }
   },
@@ -710,7 +762,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Fishing Rod_1": ["Iron_10", "String_3"]
+        "Iron Fishing Rod_1": [
+          "Iron_10",
+          "String_3"
+        ]
       }
     }
   },
@@ -749,7 +804,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Fishing Rod_1": ["Gold_10", "String_3"]
+        "Gold Fishing Rod_1": [
+          "Gold_10",
+          "String_3"
+        ]
       }
     }
   },
@@ -788,7 +846,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Fishing Rod_1": ["Gem_10", "String_3"]
+        "Gem Fishing Rod_1": [
+          "Gem_10",
+          "String_3"
+        ]
       }
     }
   },
@@ -814,7 +875,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Sword_1": ["Wood_5"]
+        "Wood Sword_1": [
+          "Wood_5"
+        ]
       }
     }
   },
@@ -840,7 +903,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Axe_1": ["Wood_5"]
+        "Wood Axe_1": [
+          "Wood_5"
+        ]
       }
     }
   },
@@ -866,7 +931,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Hoe_1": ["Wood_5"]
+        "Wood Hoe_1": [
+          "Wood_5"
+        ]
       }
     }
   },
@@ -892,7 +959,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Pickaxe_1": ["Wood_5"]
+        "Wood Pickaxe_1": [
+          "Wood_5"
+        ]
       }
     }
   },
@@ -918,7 +987,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Shovel_1": ["Wood_5"]
+        "Wood Shovel_1": [
+          "Wood_5"
+        ]
       }
     }
   },
@@ -957,7 +1028,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Wood Bow_1": ["Wood_5", "string_2"]
+        "Wood Bow_1": [
+          "Wood_5",
+          "string_2"
+        ]
       }
     }
   },
@@ -996,7 +1070,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Rock Sword_1": ["Wood_5", "Stone_5"]
+        "Rock Sword_1": [
+          "Wood_5",
+          "Stone_5"
+        ]
       }
     }
   },
@@ -1035,7 +1112,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Rock Sword_1": ["Wood_5", "Stone_5"]
+        "Rock Sword_1": [
+          "Wood_5",
+          "Stone_5"
+        ]
       }
     }
   },
@@ -1074,7 +1154,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Rock Axe_1": ["Wood_5", "Stone_5"]
+        "Rock Axe_1": [
+          "Wood_5",
+          "Stone_5"
+        ]
       }
     }
   },
@@ -1113,7 +1196,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Rock Pickaxe_1": ["Wood_5", "Stone_5"]
+        "Rock Pickaxe_1": [
+          "Wood_5",
+          "Stone_5"
+        ]
       }
     }
   },
@@ -1152,7 +1238,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Rock Shovel_1": ["Wood_5", "Stone_5"]
+        "Rock Shovel_1": [
+          "Wood_5",
+          "Stone_5"
+        ]
       }
     }
   },
@@ -1204,7 +1293,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Rock Bow_1": ["Wood_5", "Stone_5", "string_2"]
+        "Rock Bow_1": [
+          "Wood_5",
+          "Stone_5",
+          "string_2"
+        ]
       }
     }
   },
@@ -1243,7 +1336,10 @@
     ],
     "rewards": {
       "recipes": {
-        "arrow_3": ["Wood_2", "Stone_2"]
+        "arrow_3": [
+          "Wood_2",
+          "Stone_2"
+        ]
       }
     }
   },
@@ -1269,7 +1365,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Leather Armor_1": ["leather_10"]
+        "Leather Armor_1": [
+          "leather_10"
+        ]
       }
     }
   },
@@ -1295,7 +1393,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Snake Armor_1": ["scale_15"]
+        "Snake Armor_1": [
+          "scale_15"
+        ]
       }
     }
   },
@@ -1321,7 +1421,9 @@
     ],
     "rewards": {
       "recipes": {
-        "String_2": ["Wool_1"]
+        "String_2": [
+          "Wool_1"
+        ]
       }
     }
   },
@@ -1360,7 +1462,10 @@
     ],
     "rewards": {
       "recipes": {
-        "red wool_1": ["Wool_1", "rose_1"]
+        "red wool_1": [
+          "Wool_1",
+          "rose_1"
+        ]
       }
     }
   },
@@ -1399,7 +1504,10 @@
     ],
     "rewards": {
       "recipes": {
-        "blue wool_1": ["Wool_1", "Lapis_1"]
+        "blue wool_1": [
+          "Wool_1",
+          "Lapis_1"
+        ]
       }
     }
   },
@@ -1438,7 +1546,10 @@
     ],
     "rewards": {
       "recipes": {
-        "green wool_1": ["Wool_1", "Cactus_1"]
+        "green wool_1": [
+          "Wool_1",
+          "Cactus_1"
+        ]
       }
     }
   },
@@ -1477,7 +1588,10 @@
     ],
     "rewards": {
       "recipes": {
-        "yellow wool_1": ["Wool_1", "Flower_1"]
+        "yellow wool_1": [
+          "Wool_1",
+          "Flower_1"
+        ]
       }
     }
   },
@@ -1516,7 +1630,10 @@
     ],
     "rewards": {
       "recipes": {
-        "black wool_1": ["Wool_1", "coal_1"]
+        "black wool_1": [
+          "Wool_1",
+          "coal_1"
+        ]
       }
     }
   },
@@ -1555,7 +1672,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Bed_1": ["Wood_5", "Wool_3"]
+        "Bed_1": [
+          "Wood_5",
+          "Wool_3"
+        ]
       }
     }
   },
@@ -1594,7 +1714,10 @@
     ],
     "rewards": {
       "recipes": {
-        "blue clothes_1": ["cloth_5", "Lapis_1"]
+        "blue clothes_1": [
+          "cloth_5",
+          "Lapis_1"
+        ]
       }
     }
   },
@@ -1633,7 +1756,10 @@
     ],
     "rewards": {
       "recipes": {
-        "green clothes_1": ["cloth_5", "Cactus_1"]
+        "green clothes_1": [
+          "cloth_5",
+          "Cactus_1"
+        ]
       }
     }
   },
@@ -1672,7 +1798,10 @@
     ],
     "rewards": {
       "recipes": {
-        "yellow clothes_1": ["cloth_5", "Flower_1"]
+        "yellow clothes_1": [
+          "cloth_5",
+          "Flower_1"
+        ]
       }
     }
   },
@@ -1711,7 +1840,10 @@
     ],
     "rewards": {
       "recipes": {
-        "black clothes_1": ["cloth_5", "coal_1"]
+        "black clothes_1": [
+          "cloth_5",
+          "coal_1"
+        ]
       }
     }
   },
@@ -1763,7 +1895,11 @@
     ],
     "rewards": {
       "recipes": {
-        "orange clothes_1": ["cloth_5", "rose_1", "Flower_1"]
+        "orange clothes_1": [
+          "cloth_5",
+          "rose_1",
+          "Flower_1"
+        ]
       }
     }
   },
@@ -1815,7 +1951,11 @@
     ],
     "rewards": {
       "recipes": {
-        "purple clothes_1": ["cloth_5", "Lapis_1", "rose_1"]
+        "purple clothes_1": [
+          "cloth_5",
+          "Lapis_1",
+          "rose_1"
+        ]
       }
     }
   },
@@ -1867,7 +2007,11 @@
     ],
     "rewards": {
       "recipes": {
-        "cyan clothes_1": ["cloth_5", "Lapis_1", "Cactus_1"]
+        "cyan clothes_1": [
+          "cloth_5",
+          "Lapis_1",
+          "Cactus_1"
+        ]
       }
     }
   },
@@ -1893,7 +2037,9 @@
     ],
     "rewards": {
       "recipes": {
-        "reg clothes_1": ["cloth_5"]
+        "reg clothes_1": [
+          "cloth_5"
+        ]
       }
     }
   },
@@ -1919,7 +2065,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Armor_1": ["iron_10"]
+        "Iron Armor_1": [
+          "iron_10"
+        ]
       }
     }
   },
@@ -1945,7 +2093,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Armor_1": ["gold_10"]
+        "Gold Armor_1": [
+          "gold_10"
+        ]
       }
     }
   },
@@ -1971,7 +2121,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Armor_1": ["gem_65"]
+        "Gem Armor_1": [
+          "gem_65"
+        ]
       }
     }
   },
@@ -1997,7 +2149,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Empty Bucket_1": ["iron_5"]
+        "Empty Bucket_1": [
+          "iron_5"
+        ]
       }
     }
   },
@@ -2049,7 +2203,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Lantern_1": ["iron_8", "slime_5", "glass_4"]
+        "Iron Lantern_1": [
+          "iron_8",
+          "slime_5",
+          "glass_4"
+        ]
       }
     }
   },
@@ -2101,7 +2259,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Lantern_1": ["gold_10", "slime_5", "glass_4"]
+        "Gold Lantern_1": [
+          "gold_10",
+          "slime_5",
+          "glass_4"
+        ]
       }
     }
   },
@@ -2140,7 +2302,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Sword_1": ["Wood_5", "iron_5"]
+        "Iron Sword_1": [
+          "Wood_5",
+          "iron_5"
+        ]
       }
     }
   },
@@ -2179,7 +2344,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Claymore_1": ["Iron Sword_1", "shard_15"]
+        "Iron Claymore_1": [
+          "Iron Sword_1",
+          "shard_15"
+        ]
       }
     }
   },
@@ -2218,7 +2386,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Axe_1": ["Wood_5", "iron_5"]
+        "Iron Axe_1": [
+          "Wood_5",
+          "iron_5"
+        ]
       }
     }
   },
@@ -2257,7 +2428,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Hoe_1": ["Wood_5", "iron_5"]
+        "Iron Hoe_1": [
+          "Wood_5",
+          "iron_5"
+        ]
       }
     }
   },
@@ -2296,7 +2470,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Pickaxe_1": ["Wood_5", "iron_5"]
+        "Iron Pickaxe_1": [
+          "Wood_5",
+          "iron_5"
+        ]
       }
     }
   },
@@ -2335,7 +2512,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Shovel_1": ["Wood_5", "iron_5"]
+        "Iron Shovel_1": [
+          "Wood_5",
+          "iron_5"
+        ]
       }
     }
   },
@@ -2387,7 +2567,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Iron Bow_1": ["Wood_5", "iron_5", "string_2"]
+        "Iron Bow_1": [
+          "Wood_5",
+          "iron_5",
+          "string_2"
+        ]
       }
     }
   },
@@ -2426,7 +2610,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Sword_1": ["Wood_5", "gold_5"]
+        "Gold Sword_1": [
+          "Wood_5",
+          "gold_5"
+        ]
       }
     }
   },
@@ -2465,7 +2652,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Claymore_1": ["Gold Sword_1", "shard_15"]
+        "Gold Claymore_1": [
+          "Gold Sword_1",
+          "shard_15"
+        ]
       }
     }
   },
@@ -2504,7 +2694,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Axe_1": ["Wood_5", "gold_5"]
+        "Gold Axe_1": [
+          "Wood_5",
+          "gold_5"
+        ]
       }
     }
   },
@@ -2543,7 +2736,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Hoe_1": ["Wood_5", "gold_5"]
+        "Gold Hoe_1": [
+          "Wood_5",
+          "gold_5"
+        ]
       }
     }
   },
@@ -2582,7 +2778,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Pickaxe_1": ["Wood_5", "gold_5"]
+        "Gold Pickaxe_1": [
+          "Wood_5",
+          "gold_5"
+        ]
       }
     }
   },
@@ -2621,7 +2820,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Shovel_1": ["Wood_5", "gold_5"]
+        "Gold Shovel_1": [
+          "Wood_5",
+          "gold_5"
+        ]
       }
     }
   },
@@ -2673,7 +2875,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Bow_1": ["Wood_5", "gold_5", "string_2"]
+        "Gold Bow_1": [
+          "Wood_5",
+          "gold_5",
+          "string_2"
+        ]
       }
     }
   },
@@ -2712,7 +2918,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Sword_1": ["Wood_5", "gem_50"]
+        "Gem Sword_1": [
+          "Wood_5",
+          "gem_50"
+        ]
       }
     }
   },
@@ -2751,7 +2960,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Claymore_1": ["Gem Sword_1", "shard_15"]
+        "Gem Claymore_1": [
+          "Gem Sword_1",
+          "shard_15"
+        ]
       }
     }
   },
@@ -2790,7 +3002,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Axe_1": ["Wood_5", "gem_50"]
+        "Gem Axe_1": [
+          "Wood_5",
+          "gem_50"
+        ]
       }
     }
   },
@@ -2829,7 +3044,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Hoe_1": ["Wood_5", "gem_50"]
+        "Gem Hoe_1": [
+          "Wood_5",
+          "gem_50"
+        ]
       }
     }
   },
@@ -2868,7 +3086,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Pickaxe_1": ["Wood_5", "gem_50"]
+        "Gem Pickaxe_1": [
+          "Wood_5",
+          "gem_50"
+        ]
       }
     }
   },
@@ -2907,7 +3128,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Shovel_1": ["Wood_5", "gem_50"]
+        "Gem Shovel_1": [
+          "Wood_5",
+          "gem_50"
+        ]
       }
     }
   },
@@ -2959,7 +3183,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Gem Bow_1": ["Wood_5", "gem_50", "string_2"]
+        "Gem Bow_1": [
+          "Wood_5",
+          "gem_50",
+          "string_2"
+        ]
       }
     }
   },
@@ -2985,7 +3213,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Shears_1": ["Iron_4"]
+        "Shears_1": [
+          "Iron_4"
+        ]
       }
     }
   },
@@ -3024,7 +3254,10 @@
     ],
     "rewards": {
       "recipes": {
-        "iron_1": ["iron Ore_4", "coal_1"]
+        "iron_1": [
+          "iron Ore_4",
+          "coal_1"
+        ]
       }
     }
   },
@@ -3063,7 +3296,10 @@
     ],
     "rewards": {
       "recipes": {
-        "gold_1": ["gold Ore_4", "coal_1"]
+        "gold_1": [
+          "gold Ore_4",
+          "coal_1"
+        ]
       }
     }
   },
@@ -3102,7 +3338,10 @@
     ],
     "rewards": {
       "recipes": {
-        "glass_1": ["sand_4", "coal_1"]
+        "glass_1": [
+          "sand_4",
+          "coal_1"
+        ]
       }
     }
   },
@@ -3128,7 +3367,9 @@
     ],
     "rewards": {
       "recipes": {
-        "glass bottle_1": ["glass_3"]
+        "glass bottle_1": [
+          "glass_3"
+        ]
       }
     }
   },
@@ -3167,7 +3408,10 @@
     ],
     "rewards": {
       "recipes": {
-        "cooked pork_1": ["raw pork_1", "coal_1"]
+        "cooked pork_1": [
+          "raw pork_1",
+          "coal_1"
+        ]
       }
     }
   },
@@ -3206,7 +3450,10 @@
     ],
     "rewards": {
       "recipes": {
-        "steak_1": ["raw beef_1", "coal_1"]
+        "steak_1": [
+          "raw beef_1",
+          "coal_1"
+        ]
       }
     }
   },
@@ -3245,7 +3492,10 @@
     ],
     "rewards": {
       "recipes": {
-        "cooked fish_1": ["raw fish_1", "coal_1"]
+        "cooked fish_1": [
+          "raw fish_1",
+          "coal_1"
+        ]
       }
     }
   },
@@ -3271,7 +3521,9 @@
     ],
     "rewards": {
       "recipes": {
-        "bread_1": ["wheat_4"]
+        "bread_1": [
+          "wheat_4"
+        ]
       }
     }
   },
@@ -3297,7 +3549,9 @@
     ],
     "rewards": {
       "recipes": {
-        "Baked Potato_1": ["Potato_1"]
+        "Baked Potato_1": [
+          "Potato_1"
+        ]
       }
     }
   },
@@ -3336,7 +3590,10 @@
     ],
     "rewards": {
       "recipes": {
-        "Gold Apple_1": ["apple_1", "gold_8"]
+        "Gold Apple_1": [
+          "apple_1",
+          "gold_8"
+        ]
       }
     }
   },
@@ -3375,7 +3632,10 @@
     ],
     "rewards": {
       "recipes": {
-        "awkward potion_1": ["glass bottle_1", "Lapis_3"]
+        "awkward potion_1": [
+          "glass bottle_1",
+          "Lapis_3"
+        ]
       }
     }
   },
@@ -3414,7 +3674,10 @@
     ],
     "rewards": {
       "recipes": {
-        "speed potion_1": ["awkward potion_1", "Cactus_5"]
+        "speed potion_1": [
+          "awkward potion_1",
+          "Cactus_5"
+        ]
       }
     }
   },
@@ -3453,7 +3716,10 @@
     ],
     "rewards": {
       "recipes": {
-        "light potion_1": ["awkward potion_1", "slime_5"]
+        "light potion_1": [
+          "awkward potion_1",
+          "slime_5"
+        ]
       }
     }
   },
@@ -3492,7 +3758,10 @@
     ],
     "rewards": {
       "recipes": {
-        "swim potion_1": ["awkward potion_1", "raw fish_5"]
+        "swim potion_1": [
+          "awkward potion_1",
+          "raw fish_5"
+        ]
       }
     }
   },
@@ -3544,7 +3813,11 @@
     ],
     "rewards": {
       "recipes": {
-        "haste potion_1": ["awkward potion_1", "Wood_5", "Stone_5"]
+        "haste potion_1": [
+          "awkward potion_1",
+          "Wood_5",
+          "Stone_5"
+        ]
       }
     }
   },
@@ -3583,7 +3856,10 @@
     ],
     "rewards": {
       "recipes": {
-        "lava potion_1": ["awkward potion_1", "Lava Bucket_1"]
+        "lava potion_1": [
+          "awkward potion_1",
+          "Lava Bucket_1"
+        ]
       }
     }
   },
@@ -3622,7 +3898,10 @@
     ],
     "rewards": {
       "recipes": {
-        "energy potion_1": ["awkward potion_1", "gem_25"]
+        "energy potion_1": [
+          "awkward potion_1",
+          "gem_25"
+        ]
       }
     }
   },
@@ -3661,7 +3940,10 @@
     ],
     "rewards": {
       "recipes": {
-        "regen potion_1": ["awkward potion_1", "Gold Apple_1"]
+        "regen potion_1": [
+          "awkward potion_1",
+          "Gold Apple_1"
+        ]
       }
     }
   },
@@ -3713,7 +3995,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Health potion_1": ["awkward potion_1", "GunPowder_2", "Leather Armor_1"]
+        "Health potion_1": [
+          "awkward potion_1",
+          "GunPowder_2",
+          "Leather Armor_1"
+        ]
       }
     }
   },
@@ -3765,7 +4051,11 @@
     ],
     "rewards": {
       "recipes": {
-        "Escape potion_1": ["awkward potion_1", "GunPowder_3", "Lapis_7"]
+        "Escape potion_1": [
+          "awkward potion_1",
+          "GunPowder_3",
+          "Lapis_7"
+        ]
       }
     }
   },
@@ -3830,7 +4120,12 @@
     ],
     "rewards": {
       "recipes": {
-        "Totem of Air_1": ["gold_10", "gem_10", "Lapis_5","Cloud Ore_5"]
+        "Totem of Air_1": [
+          "gold_10",
+          "gem_10",
+          "Lapis_5",
+          "Cloud Ore_5"
+        ]
       }
     }
   }
