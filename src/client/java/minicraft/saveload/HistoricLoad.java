@@ -26,6 +26,8 @@ import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
 import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
@@ -71,6 +73,8 @@ public class HistoricLoad {
 	 *   - Although in some time periods, max armor is saved instead of armor point, it is still loaded as armor point.
 	 *   - Skin-On is an abandoned feature. It controls whether to render the player skin suits,
 	 *     which has already been removed now.
+	 *   - Note that conical class name is saved and "com.mojang.ld22.entity." is trimmed when entity is saved,
+	 *     unintended "particle." exists as entity name.
 	 *
 	 * Commit History
 	 * (1.9.1) 1930f326 Apr 12, 2017 (23:30) # 1.9.1 has been released on the next day (01:53)
@@ -1064,6 +1068,10 @@ public class HistoricLoad {
 				return new Lantern(Lantern.Type.IRON);
 			case "GoldLantern":
 				return new Lantern(Lantern.Type.GOLD);
+			case "particle.SmashParticle":
+				return new SmashParticle(0, 0);
+			case "particle.TextParticle":
+				return new TextParticle("UNKNOWN", 0, 0, 0);
 			default:
 				Logger.tag("SaveLoad/HistoricLoad").error("Unknown entity requested: " + string);
 				throw new Load.IllegalDataValueException("Input: " + string);
