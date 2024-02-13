@@ -225,10 +225,26 @@ public class HistoricLoad {
 	}
 
 	/** Validates for integral data when it is not loaded but a validation is required. */
-	private static void validateIntegralSaveData(String data, String msg)
-		throws Load.MalformedSaveDataValueException {
+	private static void validateIntegralSaveData(String data, String msg) throws Load.MalformedSaveDataValueException {
 		try {
 			validateIntegralData(Integer.parseInt(data), null);
+		} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
+			throw new Load.MalformedSaveDataValueException(msg, e);
+		}
+	}
+
+	private static final Predicate<Float> POSITIVE_FLOAT_CHECK = v -> v > 0;
+	private static final Predicate<Float> NON_NEGATIVE_FLOAT_CHECK = v -> v >= 0;
+
+	private static void validateFloatData(float data, @Nullable Predicate<Float> condition)
+		throws Load.IllegalSaveDataValueException {
+		if (!(condition == null ? POSITIVE_FLOAT_CHECK : condition).test(data))
+			throw new Load.IllegalSaveDataValueException("Input: " + data);
+	}
+
+	private static void validateFloatSaveData(String data, String msg) throws Load.MalformedSaveDataValueException {
+		try {
+			validateFloatData(Float.parseFloat(data), null);
 		} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
 			throw new Load.MalformedSaveDataValueException(msg, e);
 		}
@@ -265,7 +281,7 @@ public class HistoricLoad {
 			validateIntegralSaveData(data.get(1), "Index 1 (Auto-save time interval)");
 
 			// Index 2 (Game speed) -> Updater#gamespeed is now no longer saved in saves; data validation only.
-			validateIntegralSaveData(data.get(2), "Index 2 (Game speed)");
+			validateFloatSaveData(data.get(2), "Index 2 (Game speed)");
 
 			if (data.size() == 4) { // before Mar 11, 2017
 				try {
@@ -337,7 +353,7 @@ public class HistoricLoad {
 
 			try {
 				depth = Integer.parseInt(dataA.get(2));
-				validateIntegralData(depth, v -> v >= 0 && v <= 4);
+				validateIntegralData(depth, v -> v >= -4 && v <= 1);
 			} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
 				throw new Load.MalformedSaveDataValueException("Index 2 (Level depth)", e);
 			}
@@ -750,7 +766,7 @@ public class HistoricLoad {
 		}
 	}
 
-	private static final Pattern ITEM_REGEX = Pattern.compile("([\\w ]+)(?:;(\\d+))?");
+	private static final Pattern ITEM_REGEX = Pattern.compile("([\\w .]+)(?:;(\\d+))?");
 
 	private static void loadInventory(String path) throws Load.MalformedSaveException {
 		DeathChest deathChest = new DeathChest();
@@ -787,7 +803,8 @@ public class HistoricLoad {
 			Item item = Items.get(Load.subOldName(itemName
 				.replace("P.", "Potion")
 				.replace("Fish Rod", "Fishing Rod")
-				.replace("bed", "Bed"), new Version("0.0.0")));
+				.replace("bed", "Bed"), new Version("0.0.0"))
+				.replace("St.", "Stone "));
 			if (item instanceof UnknownItem)
 				throw new Load.MalformedSaveDataValueException("Item name",
 					new Load.IllegalSaveDataValueException("Input: " + data));

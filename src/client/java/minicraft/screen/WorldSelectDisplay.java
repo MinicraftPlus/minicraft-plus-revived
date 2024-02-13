@@ -61,7 +61,7 @@ public class WorldSelectDisplay extends Display {
 			final Version version = worldVersions.get(i);
 			entries[i] = new SelectEntry(name, () -> {
 				// Executed when we select a world.
-				if (version.compareTo(Game.VERSION) > 0)
+				if (version != null && version.compareTo(Game.VERSION) > 0)
 					return; // cannot load a game saved by a higher version!
 				worldName = name;
 				Game.setDisplay(new LoadingDisplay());
@@ -226,11 +226,11 @@ public class WorldSelectDisplay extends Display {
 		if (sel >= 0 && sel < worldVersions.size()) {
 			Version version = worldVersions.get(sel);
 			int col = Color.WHITE;
-			if (version.compareTo(Game.VERSION) > 0) {
+			if (version != null && version.compareTo(Game.VERSION) > 0) {
 				col = Color.RED;
 				Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_too_new"), screen, Font.textHeight() * 5, col);
 			}
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version), screen, Font.textHeight() * 7 / 2, col);
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_version", (version == null ? "<1.9.1" : (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version)), screen, Font.textHeight() * 7 / 2, col);
 		}
 
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.help.0", Game.input.getMapping("select")), screen, Screen.h - 60, Color.GRAY);
