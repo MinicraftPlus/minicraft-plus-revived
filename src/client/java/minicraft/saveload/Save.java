@@ -120,7 +120,7 @@ public class Save {
 	public Save() {
 		this(new File(Game.gameDir + "/"));
 
-		if (Game.VERSION.getDev() != 0) { // Is dev build
+		if (Game.VERSION.isDev()) { // Is dev build
 			Logging.SAVELOAD.debug("In dev build: Searching for old preferences...");
 			Version prefVer;
 			File prefFile = new File(location, "Preferences.json"); // Only this is checked when checking existence.
