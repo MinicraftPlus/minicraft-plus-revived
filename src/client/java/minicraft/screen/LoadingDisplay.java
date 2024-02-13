@@ -42,16 +42,25 @@ public class LoadingDisplay extends Display {
 				Game.exitDisplay(); // Exits the loading display and returns to world select display.
 				Game.setDisplay(new PopupDisplay(null,
 					StringEntry.useLines(Color.WHITE, false, Localization.getLocalized(
-						"minicraft.displays.loading.backup_creation_failed_popup", ex.getCause().getMessage()))));
+						"minicraft.displays.loading.backup_creation_failed_popup", getErrorMessage(ex)))));
 			} catch (Load.WorldLoadingFailedException ex) {
 				World.onWorldExits();
 				Game.exitDisplay(); // Exits the loading display and returns to world select display.
 				Game.setDisplay(new PopupDisplay(null,
 					StringEntry.useLines(Color.WHITE, false, Localization.getLocalized(
-						"minicraft.displays.loading.loading_failed_popup", ex.getCause().getMessage()))));
+						"minicraft.displays.loading.loading_failed_popup", getErrorMessage(ex)))));
 			}
 		}, "World Initialization Thread").start());
 		t.setRepeats(false);
+	}
+
+	private String getErrorMessage(Throwable e) {
+		StringBuilder msg = new StringBuilder(e.getMessage());
+		while ((e = e.getCause()) != null) {
+			msg.append(": ").append(e.getMessage());
+		}
+
+		return msg.toString();
 	}
 
 	@Override
