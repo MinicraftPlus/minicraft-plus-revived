@@ -26,6 +26,7 @@ import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
 import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
+import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -49,6 +50,7 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -125,6 +127,39 @@ public class HistoricLoad {
 	 *   - Dungeon locking feature is disabled and forcedly set to "unlocked".
 	 * 473bbe5b Feb 26, 2017 (06:21)
 	 * - Save/Load system added
+	 * - Potion system is disabled.
+	 * (1.8; May 2013)
+	 * - Mostly the same as the initial commit except that potion exists. Therefore, it is the same as Mar 19, 2017
+	 *   for Player save file format.
+	 * - FireParticle exists.
+	 *
+	 * Known Bugs with Old Versions (at least existed before 1.9.1)
+	 * - Level saves using WorldGenMenu#sized to save level size
+	 *   - Existed since Save/Load system was added (also for 1.8), remained unfixed even after 1.9.1
+	 *   - Steps to reproduce in old versions:
+	 *     - Let the world size setting in World Creation menu be the desired value.
+	 *     - Load another world with a world size different from the value set in the menu.
+	 *     - Save the loaded world.
+	 *     - The resultant world save would use the set value from the menu, instead of Level#h and Level#w.
+	 *     - The world save is then corrupted.
+	 *   - If the world save is then tried being loaded in the old version, it crashes with IndexOutOfBoundsException.
+	 *   - This bug is regarded as a possible case and handled with an on-demand data fixer.
+	 * - Entities save using entity class (binary) name to save entity keys
+	 *   - Existed since Save/Load system was added (also for 1.8), remained unfixed even after 1.9.1
+	 *   - Reasons for exception to occur in old versions:
+	 *     - When an entity is saved, its class name is obtained with "com.mojang.ld22.entity." trimmed, but not fully
+	 *       applicable to all entities.
+	 *     - If the entity class is not barely just belongs to the entity package, but a subpackage underneath it,
+	 *       a tailing package subpackage path is append to the entity key.
+	 *     - In the old versions, there existed only (2 to 3) particle types that belong to a subpackage under entity.
+	 *     - However, since the lifespans of the particles are short, the chance to get them to be saved is low,
+	 *       and any entity in the world is saved in old versions.
+	 *   - Results in old versions:
+	 *     - In 1.8, unknown entity is loaded as an empty Entity instance, and existed in the world forever.
+	 *     - Starting from the first commit adding Save/Load system, an error log is printed instead, without it loaded.
+	 *   - This exception has been included here with 3 particle cases.
+	 * - (Unknown) For 1.8, player's position is sometimes saved in obviously different values.
+	 *   - It can be out of the level for a 128-sized world.
 	 *
 	 * Initial Save Structure (473bbe5b+0fbeae59)
 	 *   - Game.miniplussave
@@ -337,6 +372,8 @@ public class HistoricLoad {
 		}
 	}
 
+	private static final int[] legalWorldSizes = new int[] { 128, 256, 512 };
+
 	private static void loadLevel(String pathA, String pathB, int index) throws Load.MalformedSaveDataException {
 		try {
 			List<String> dataA = loadFile(pathA);
@@ -346,6 +383,7 @@ public class HistoricLoad {
 					"Corrupted .miniplussave (Level data count: " + dataA.size() + ")");
 
 			int w, h, depth;
+			//noinspection DuplicatedCode
 			try {
 				w = Integer.parseInt(dataA.get(0));
 				validateIntegralData(w, null);
@@ -372,6 +410,125 @@ public class HistoricLoad {
 				Logging.SAVELOAD.error("Non-squared ({}, {}) level size is not supported.", w, h);
 				throw new Load.MalformedSaveDataValueException("Level width (Index 0) & height (Index 1)",
 					new Load.IllegalSaveDataValueException("width: " + w + "; height: " + h));
+			}
+
+			// Recovery attempt for a known bug about corrupted world size; details above
+			if (dataA.size() != 3 + w * h && dataA.size() - 3 == dataB.size()) {
+				// If both data sets match the case, an auto fix is available.
+				// Otherwise, an exception will still be thrown, if it is still illegal.
+				// Additional modifications to the world save causing case mismatch are not allowed.
+				for (int a : legalWorldSizes) {
+					for (int b : legalWorldSizes) {
+						if (a != b && dataA.size() == 3 + a * a && b == w) {
+							Load.setDataFixer(new Load.AutoDataFixer() {
+								@Override
+								protected void performFix(String worldName) {
+									// Corruption Validation
+									setMessageValidating();
+									String location = Game.gameDir + "/saves/" + worldName + "/";
+									int[] levelWidths = new int[6];
+									int[] levelHeights = new int[6];
+									int[] levelSizes = new int[6];
+									ArrayList<List<String>> dataAs = new ArrayList<>(6);
+									for (int i = 0; i < 6; ++i) {
+										try {
+											List<String> dataA = loadFile(location + "Level" + i + Save.extension);
+											List<String> dataB = loadFile(location + "Level" + i +
+												"data" + Save.extension);
+											int w, h;
+											//noinspection DuplicatedCode
+											try {
+												w = Integer.parseInt(dataA.get(0));
+												validateIntegralData(w, null);
+											} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
+												throw new Load.MalformedSaveDataValueException("Index 0 (Level width)", e);
+											}
+
+											try {
+												h = Integer.parseInt(dataA.get(1));
+												validateIntegralData(h, null);
+											} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
+												throw new Load.MalformedSaveDataValueException("Index 1 (Level height)", e);
+											}
+
+											if (w != h || Arrays.stream(legalWorldSizes).noneMatch(v -> v == w) ||
+												dataA.size() - 3 != dataB.size() ||
+												Arrays.stream(legalWorldSizes).noneMatch(v -> v * v == dataB.size())) {
+												Logging.SAVELOAD.error("Unexpected value set detected: w: {}; h: {}; " +
+													"Level{} data count: {}; Level{}data data count: {}", w, h,
+													i, dataA.size(), i, dataB.size());
+												Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+													worldName);
+												finish(false);
+												return; // Cancelled
+											}
+
+											levelWidths[i] = w;
+											levelHeights[i] = h;
+											levelSizes[i] = dataB.size();
+											dataAs.add(dataA);
+										} catch (Load.FileLoadingException e) {
+											Logging.SAVELOAD.error(e, "Unable to load Level {} save data", i);
+											Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+												worldName);
+											finish(false);
+											return; // Cancelled
+										} catch (Load.MalformedSaveDataValueException e) {
+											Logging.SAVELOAD.error(e, "Malformed Level {} save data", i);
+											Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+												worldName);
+											finish(false);
+											return; // Cancelled
+										}
+									}
+
+									for (int i = 1; i < 6; ++i) {
+										if (levelWidths[i] != levelWidths[0] || levelHeights[i] != levelHeights[0] ||
+											levelSizes[i] != levelSizes[0]) {
+											Logging.SAVELOAD.error("Inconsistent level sizes detected (found level {}: " +
+												"(w: {}; h: {}; data count: {}); expected (level 0): (w: {}; h: {}; " +
+												"data count: {})), but disallowed in this save recovery.", i,
+												levelWidths[i], levelHeights[i], levelSizes[i],
+												levelWidths[0], levelHeights[0], levelSizes[0]);
+											Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+												worldName);
+											finish(false);
+											return; // Cancelled
+										}
+									}
+
+									// Validation Completed; Perform Recovery
+									setMessagePerforming();
+									for (int v : legalWorldSizes) {
+										if (v * v == levelSizes[0]) {
+											// v is now the desired world size.
+											for (int i = 0; i < 6; ++i) {
+												List<String> dataA = dataAs.get(i);
+												// Replacing the original size values with the desired value.
+												dataA.set(0, String.valueOf(v));
+												dataA.set(1, String.valueOf(v));
+												// Resaving the recovered data.
+												try {
+													Save.writeToFile(location + "Level" + i + Save.extension,
+														dataA.toArray(new String[0]), true);
+												} catch (IOException e) {
+													Logging.SAVELOAD.error(e, "Unable to save recovered data");
+													Logging.SAVELOAD.warn(
+														"World save recovery for world \"{}\" failed.", worldName);
+													finish(false);
+													return; // Cancelled
+												}
+											}
+										}
+									}
+
+									// Recovery successfully completed.
+									finish(true);
+								}
+							});
+						}
+					}
+				}
 			}
 
 			if (dataA.size() < 3 + w * h)
@@ -1072,6 +1229,8 @@ public class HistoricLoad {
 				return new SmashParticle(0, 0);
 			case "particle.TextParticle":
 				return new TextParticle("UNKNOWN", 0, 0, 0);
+			case "particle.FireParticle": // Added since Mar 18, 2017 (04:44) c15adeb8
+				return new FireParticle(0, 0);
 			default:
 				Logger.tag("SaveLoad/HistoricLoad").error("Unknown entity requested: " + string);
 				throw new Load.IllegalDataValueException("Input: " + string);
