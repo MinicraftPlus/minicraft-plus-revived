@@ -247,7 +247,7 @@ public class HistoricLoad {
 				Logging.SAVELOAD.trace("Backup \"{}\" is successfully created for \"{}\".",
 					bakFile.getPath(), file.getPath());
 			} else {
-				Logging.SAVELOAD.warn("Backup \"{}\" created for \"{}\" is unexpectedly disappeared",
+				Logging.SAVELOAD.warn("Backup \"{}\" created for \"{}\" has unexpectedly disappeared",
 					bakFile.getPath(), file.getPath());
 			}
 		} catch (FileAlreadyExistsException e) { // This should not be thrown as REPLACE_EXISTING is set.
