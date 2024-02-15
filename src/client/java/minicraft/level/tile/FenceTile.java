@@ -41,7 +41,6 @@ public class FenceTile extends Tile {
 		switch (type) {
 			case Wood:
 				sprite = wood;
-				connectsToGrass = true;
 				break;
 			case Stone:
 				sprite = stone;
@@ -105,39 +104,15 @@ public class FenceTile extends Tile {
 			if (tool.type == type.getRequiredTool()) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					int data = level.getData(xt, yt);
-					hurt(level, xt, yt, tool.getDamage());
+					Sound.play("monsterhurt");
+					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(name));
+					level.setTile(xt, yt, Tiles.get(level.getData(xt, yt)));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));
 					return true;
 				}
 			}
-		}
-		return false;
-	}
-
-	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + dmg;
-		int fenceHealth = 5;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = fenceHealth;
-
-		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.play("monsterhurt");
-		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
-
-		if (damage >= fenceHealth) {
-			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 1, Items.get(name));
-			level.setTile(x, y, Tiles.get(level.getData(x, y)));
-		} else {
-			level.setData(x, y, damage);
-		}
-	}
-
-	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt);
-		if (damage > 0) {
-			level.setData(xt, yt, damage - 1);
-			return true;
 		}
 		return false;
 	}
