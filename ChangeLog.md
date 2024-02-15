@@ -32,7 +32,6 @@ but some sections are changed to compliant this project.
 * Added world-wide seed
 * Added controller support
 * Added on-screen keyboard
-* Added logo splash screen
 * Added glass bottle and made potions return glass bottles when used
 * Added dyes (#445)
 * Added coloured sheep (#445)
