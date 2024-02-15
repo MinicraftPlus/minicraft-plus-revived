@@ -28,18 +28,17 @@ public class FenceTile extends Tile {
 	private static final SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_fence");
 	private static final SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_fence");
 
-	protected Material type;
+	protected final Material type;
 
-	protected SpriteAnimation top, bottom, left, right;
+	protected final SpriteAnimation top, bottom, left, right;
 
 	public boolean connectUp = false, connectDown = false, connectLeft = false, connectRight = false;
 
 	protected FenceTile(Material type) { this(type, null); }
 	protected FenceTile(Material type, String name) {
-		super(type.name() + " " + (name == null ? "Fence" : name), null);
+		super(type + " " + (name == null ? "Fence" : name), null);
 		this.type = type;
-		switch (type)
-		{
+		switch (type) {
 			case Wood:
 				sprite = wood;
 				connectsToGrass = true;
@@ -51,14 +50,13 @@ public class FenceTile extends Tile {
 				sprite = obsidian;
 				break;
 		}
-		top = new SpriteAnimation(SpriteType.Tile, type.name().toLowerCase() + "_fence_top");
-		bottom = new SpriteAnimation(SpriteType.Tile, type.name().toLowerCase() + "_fence_bottom");
-		left = new SpriteAnimation(SpriteType.Tile, type.name().toLowerCase() + "_fence_left");
-		right = new SpriteAnimation(SpriteType.Tile, type.name().toLowerCase() + "_fence_right");
+		top = new SpriteAnimation(SpriteType.Tile, type.toString().toLowerCase() + "_fence_top");
+		bottom = new SpriteAnimation(SpriteType.Tile, type.toString().toLowerCase() + "_fence_bottom");
+		left = new SpriteAnimation(SpriteType.Tile, type.toString().toLowerCase() + "_fence_left");
+		right = new SpriteAnimation(SpriteType.Tile, type.toString().toLowerCase() + "_fence_right");
 	}
 
-	public void updateConnections(Level level, int x, int y)
-	{
+	public void updateConnections(Level level, int x, int y) {
 		connectUp = level.getTile(x, y - 1).name.equals(name);
 		connectDown = level.getTile(x, y + 1).name.equals(name);
 		connectLeft = level.getTile(x - 1, y).name.equals(name);
@@ -69,17 +67,9 @@ public class FenceTile extends Tile {
 		return false;
 	}
 
-	public void render(Screen screen, Level level, int x, int y)
-	{
-		switch (type)
-		{
-			case Wood: Tiles.get("Grass").render(screen, level, x, y); break;
-			case Stone: Tiles.get("Stone Bricks").render(screen, level, x, y); break;
-			case Obsidian: Tiles.get("Obsidian").render(screen, level, x, y); break;
-		}
-
+	public void render(Screen screen, Level level, int x, int y) {
+		Tiles.get(level.getData(x, y)).render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
-
 		updateConnections(level, x, y);
 
 		// up
@@ -133,31 +123,11 @@ public class FenceTile extends Tile {
 
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
-
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
 
 		if (damage >= fenceHealth) {
-			String itemName = "", tilename = "";
-			switch (type) { // Get what tile to set and what item to drop
-				case Wood: {
-					itemName = "Wood Fence";
-					tilename = "Grass";
-					break;
-				}
-				case Stone: {
-					itemName = "Stone Fence";
-					tilename = "Stone Bricks";
-					break;
-				}
-				case Obsidian: {
-					itemName = "Obsidian Fence";
-					tilename = "Obsidian";
-					break;
-				}
-			}
-
-			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 1, Items.get(itemName));
-			level.setTile(x, y, Tiles.get(tilename));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 1, Items.get(name));
+			level.setTile(x, y, Tiles.get(level.getData(x, y)));
 		} else {
 			level.setData(x, y, damage);
 		}
@@ -170,9 +140,5 @@ public class FenceTile extends Tile {
 			return true;
 		}
 		return false;
-	}
-
-	public String getName(int data) {
-		return Material.values[data].name() + " Fence";
 	}
 }
