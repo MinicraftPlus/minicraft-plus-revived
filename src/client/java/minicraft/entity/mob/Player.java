@@ -536,14 +536,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.inputPressed("craft") && !use()) {
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
+					return;
+				} else if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
 					return;
 				} else if (input.inputPressed("pause")) {
 					Game.setDisplay(new PauseDisplay());
-					return;
-				} else if (input.inputPressed("craft") && !use()) {
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 					return;
 				} else if (input.inputDown("info")) {
 					Game.setDisplay(new InfoDisplay());
