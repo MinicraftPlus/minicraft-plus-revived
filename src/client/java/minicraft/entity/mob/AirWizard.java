@@ -22,7 +22,7 @@ public class AirWizard extends EnemyMob {
 	};
 
 	public static boolean beaten = false;
-	public static boolean active = true;
+	public static boolean active = false;
 	public static AirWizard entity = null;
 
 	private int attackDelay = 0;
