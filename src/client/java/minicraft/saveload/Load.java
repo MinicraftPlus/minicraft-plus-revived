@@ -40,6 +40,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
+import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -629,25 +630,29 @@ public class Load {
 						}
 					}
 
-					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
+					if (tilename.equalsIgnoreCase("Wool")) {
+						if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+							switch (Integer.parseInt(extradata.get(tileidx))) {
+								case 1:
+									tilename = "Red Wool";
+									break;
+								case 2:
+									tilename = "Yellow Wool";
+									break;
+								case 3:
+									tilename = "Green Wool";
+									break;
+								case 4:
+									tilename = "Blue Wool";
+									break;
+								case 5:
+									tilename = "Black Wool";
+									break;
+								default:
+									tilename = "White Wool";
+							}
+						} else if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
+							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if (Math.random() < 0.8) // don't replace *all* the lapis
@@ -867,6 +872,8 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
+			if (name.startsWith("Wool"))
+				name = name.replace("Wool", "White Wool");
 			if (name.startsWith("Potion"))
 				name = name.replace("Potion", "Awkward Potion");
 		}
@@ -980,6 +987,14 @@ public class Load {
 				newEntity = new Spark((AirWizard) sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
+				return null;
+			}
+		} else if (entityName.contains(" Bed")) { // with a space, meaning that the bed has a color name in the front
+			String colorName = entityName.substring(0, entityName.length() - 4).toUpperCase().replace(' ', '_');
+			try {
+				newEntity = new Bed(DyeItem.DyeColor.valueOf(colorName));
+			} catch (IllegalArgumentException e) {
+				Logging.SAVELOAD.error("Invalid bed variant: `{}`, skipping.", entityName);
 				return null;
 			}
 		} else {
@@ -1129,27 +1144,17 @@ public class Load {
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
 			case "Player":
-				return null;
 			case "RemotePlayer":
 				return null;
-			case "Cow":
-				return new Cow();
-			case "Sheep":
-				return new Sheep();
-			case "Pig":
-				return new Pig();
-			case "Zombie":
-				return new Zombie(mobLevel);
-			case "Slime":
-				return new Slime(mobLevel);
-			case "Creeper":
-				return new Creeper(mobLevel);
-			case "Skeleton":
-				return new Skeleton(mobLevel);
-			case "Knight":
-				return new Knight(mobLevel);
-			case "Snake":
-				return new Snake(mobLevel);
+			case "Cow": return new Cow();
+			case "Sheep": return new Sheep();
+			case "Pig": return new Pig();
+			case "Zombie": return new Zombie(mobLevel);
+			case "Slime": return new Slime(mobLevel);
+			case "Creeper": return new Creeper(mobLevel);
+			case "Skeleton": return new Skeleton(mobLevel);
+			case "Knight": return new Knight(mobLevel);
+			case "Snake": return new Snake(mobLevel);
 			case "AirWizard":
 				if (mobLevel > 1) return null;
 				return new AirWizard();
