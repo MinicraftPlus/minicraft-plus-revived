@@ -86,13 +86,13 @@ public class CropTile extends FarmTile {
 				if (downRight) points *= 0.98125;
 			}
 
-			if (random.nextInt((int) (100/points) + 1) < (fertilization/30 + 1)) // fertilization >= 0
+			if (random.nextInt((int) (100 / points) + 1) < (fertilization / 30 + 1)) // fertilization >= 0
 				level.setData(xt, yt, data = (data & ~(maxAge << 3)) + ((stage + 1) << 3)); // Incrementing the stage by 1.
 			successful = true;
 		}
 
 		if (fertilization > 0) {
-			level.setData(xt, yt, (data & (0b111 + (maxAge << 3))) + ((fertilization - 1) << (3 + (maxAge + 1)/2)));
+			level.setData(xt, yt, (data & (0b111 + (maxAge << 3))) + ((fertilization - 1) << (3 + (maxAge + 1) / 2)));
 			successful = true;
 		}
 
@@ -107,8 +107,8 @@ public class CropTile extends FarmTile {
 			((StackableItem) item).count--;
 			Random random = new Random();
 			for (int i = 0; i < 2; ++i) {
-				double x = (double)xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
-				double y = (double)yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+				double x = (double) xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
+				double y = (double) yt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
 				level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 			}
 			int fertilization = getFertilization(level.getData(xt, yt));
@@ -130,7 +130,9 @@ public class CropTile extends FarmTile {
 		return super.interact(level, xt, yt, player, item, attackDir);
 	}
 
-	/** Default harvest method, used for everything that doesn't really need any special behavior. */
+	/**
+	 * Default harvest method, used for everything that doesn't really need any special behavior.
+	 */
 	protected void harvest(Level level, int x, int y, Entity entity) {
 		int data = level.getData(x, y);
 		int age = (data >> 3) & maxAge;
@@ -145,7 +147,7 @@ public class CropTile extends FarmTile {
 		}
 
 		if (age == maxAge && entity instanceof Player) {
-			((Player)entity).addScore(random.nextInt(5) + 1);
+			((Player) entity).addScore(random.nextInt(5) + 1);
 		}
 
 		// Play sound.
@@ -155,7 +157,7 @@ public class CropTile extends FarmTile {
 	}
 
 	public int getFertilization(int data) {
-		return data >> (3 + (maxAge + 1)/2);
+		return data >> (3 + (maxAge + 1) / 2);
 	}
 
 	/**
@@ -170,6 +172,6 @@ public class CropTile extends FarmTile {
 		if (fertilization < 0) fertilization = 0;
 		if (fertilization > 511) fertilization = 511; // The maximum possible value to be reached.
 		// If this value exceeds 511, the final value would be greater than the hard maximum value that short can be.
-		level.setData(x, y, (data & (0b111 + (maxAge << 3))) + (fertilization << (3 + (maxAge + 1)/2)));
+		level.setData(x, y, (data & (0b111 + (maxAge << 3))) + (fertilization << (3 + (maxAge + 1) / 2)));
 	}
 }

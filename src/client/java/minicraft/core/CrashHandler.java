@@ -28,10 +28,18 @@ import java.io.StringWriter;
 import java.util.concurrent.Future;
 
 public class CrashHandler {
-	public static void crashHandle(Thread thread, Throwable throwable) { crashHandle(throwable); }
-	public static void crashHandle(Throwable throwable) { crashHandle(throwable, new ErrorInfo(true)); }
-	/** This handles application crashing errors by giving notification to the user clearly.<br>
-	 * The user can only exit the program. */
+	public static void crashHandle(Thread thread, Throwable throwable) {
+		crashHandle(throwable);
+	}
+
+	public static void crashHandle(Throwable throwable) {
+		crashHandle(throwable, new ErrorInfo(true));
+	}
+
+	/**
+	 * This handles application crashing errors by giving notification to the user clearly.<br>
+	 * The user can only exit the program.
+	 */
 	public static void crashHandle(Throwable throwable, ErrorInfo info) {
 		Logging.CRASHHANDLER.error(throwable);
 
@@ -45,7 +53,8 @@ public class CrashHandler {
 		if (GraphicsEnvironment.isHeadless() && ping != null) {
 			try {
 				ping.get();
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+			}
 			return;
 		}
 
@@ -100,11 +109,20 @@ public class CrashHandler {
 		System.exit(info.type.exitCode);
 	}
 
-	public static void errorHandle(Throwable throwable) { errorHandle(throwable, new ErrorInfo()); }
-	public static void errorHandle(Throwable throwable, ErrorInfo info) { errorHandle(throwable, info, null); }
-	/** This handles application crashing errors by giving notification to the user clearly.<br>
+	public static void errorHandle(Throwable throwable) {
+		errorHandle(throwable, new ErrorInfo());
+	}
+
+	public static void errorHandle(Throwable throwable, ErrorInfo info) {
+		errorHandle(throwable, info, null);
+	}
+
+	/**
+	 * This handles application crashing errors by giving notification to the user clearly.<br>
 	 * The user can ignore the error, continue handling the error or exit the program (only in serious errors or error reports).
-	 * @param handling The handling function of the error. */
+	 *
+	 * @param handling The handling function of the error.
+	 */
 	public static void errorHandle(Throwable throwable, ErrorInfo info, @Nullable Action handling) {
 		throwable.printStackTrace();
 
@@ -118,7 +136,8 @@ public class CrashHandler {
 		if (GraphicsEnvironment.isHeadless() && ping != null) {
 			try {
 				ping.get();
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+			}
 			return;
 		}
 
@@ -161,13 +180,18 @@ public class CrashHandler {
 		dialog.setVisible(true); // Shows the dialog.
 	}
 
-	/** Getting the stack trace display component. */
+	/**
+	 * Getting the stack trace display component.
+	 */
 	private static JScrollPane getErrorScrollPane(String stackTrace) {
 		JTextArea errorDisplay = new JTextArea(stackTrace);
 		errorDisplay.setEditable(false);
 		return new JScrollPane(errorDisplay);
 	}
-	/** Getting the panel for crashing handling dialog. */
+
+	/**
+	 * Getting the panel for crashing handling dialog.
+	 */
 	private static JPanel getCrashPanel(ErrorInfo info, JScrollPane errorPane, JDialog dialog, String stackTrace) {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(errorPane);
@@ -190,6 +214,7 @@ public class CrashHandler {
 		panel.add(buttonPanel, BorderLayout.SOUTH);
 		return panel;
 	}
+
 	private static JPanel getErrorPanel(ErrorInfo info, JScrollPane errorPane, JDialog dialog, String stackTrace, Action callback, Future<HttpResponse<Empty>> ping) {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(errorPane);
@@ -249,13 +274,31 @@ public class CrashHandler {
 		public final String message;
 		public final boolean serious;
 
-		public ErrorInfo() { this(false); }
-		public ErrorInfo(boolean crashing) { this(crashing ? "General Application Crash" : "General Application Error",
-			crashing ? ErrorType.DEFAULT : ErrorType.REPORT); }
-		public ErrorInfo(String topic) { this(topic, ErrorType.DEFAULT); }
-		public ErrorInfo(String topic, ErrorType type) { this(topic, type, type.exitCode != 0); }
-		public ErrorInfo(String topic, ErrorType type, boolean serious) { this(topic, type, serious, null); }
-		public ErrorInfo(String topic, ErrorType type, String message) { this(topic, type, type.exitCode < 0, message); }
+		public ErrorInfo() {
+			this(false);
+		}
+
+		public ErrorInfo(boolean crashing) {
+			this(crashing ? "General Application Crash" : "General Application Error",
+				crashing ? ErrorType.DEFAULT : ErrorType.REPORT);
+		}
+
+		public ErrorInfo(String topic) {
+			this(topic, ErrorType.DEFAULT);
+		}
+
+		public ErrorInfo(String topic, ErrorType type) {
+			this(topic, type, type.exitCode != 0);
+		}
+
+		public ErrorInfo(String topic, ErrorType type, boolean serious) {
+			this(topic, type, serious, null);
+		}
+
+		public ErrorInfo(String topic, ErrorType type, String message) {
+			this(topic, type, type.exitCode < 0, message);
+		}
+
 		public ErrorInfo(String topic, ErrorType type, boolean serious, String message) {
 			this.title = topic;
 			this.type = type;
@@ -263,17 +306,21 @@ public class CrashHandler {
 			this.serious = serious;
 		}
 
-		/** The error types. Add more types when needed. */
+		/**
+		 * The error types. Add more types when needed.
+		 */
 		public static enum ErrorType {
-			DEFAULT (-1, "Unhandled error"),
-			UNEXPECTED (-2, "Unexpected error"),
-			UNHANDLEABLE (-3, "Unhandleable error"),
-			SERIOUS (1, "Serious error"),
-			HANDLED (0, "Handled error"),
-			REPORT (0, "Error report"),
+			DEFAULT(-1, "Unhandled error"),
+			UNEXPECTED(-2, "Unexpected error"),
+			UNHANDLEABLE(-3, "Unhandleable error"),
+			SERIOUS(1, "Serious error"),
+			HANDLED(0, "Handled error"),
+			REPORT(0, "Error report"),
 			;
 
-			/** The exit codes are referring to https://www.techiedelight.com/exit-codes-java-system-exit-method/ */
+			/**
+			 * The exit codes are referring to https://www.techiedelight.com/exit-codes-java-system-exit-method/
+			 */
 			public final int exitCode;
 			public final String name;
 

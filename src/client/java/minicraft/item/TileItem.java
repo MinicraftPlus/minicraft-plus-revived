@@ -44,7 +44,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Stone Fence", new LinkedSprite(SpriteType.Item, "stone_fence"), new TileModel("Stone Fence"), "Stone Bricks"));
 		items.add(new TileItem("Raw Obsidian", new LinkedSprite(SpriteType.Item, "obsidian"), new TileModel("Raw Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Brick", new LinkedSprite(SpriteType.Item, "obsidian_brick"), new TileModel("Obsidian"), "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Ornate Obsidian", new LinkedSprite(SpriteType.Item, "obsidian_brick"), new TileModel("Ornate Obsidian"),"hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Ornate Obsidian", new LinkedSprite(SpriteType.Item, "obsidian_brick"), new TileModel("Ornate Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", new LinkedSprite(SpriteType.Item, "obsidian_wall"), new TileModel("Obsidian Wall"), "Obsidian"));
 		items.add(new TileItem("Obsidian Door", new LinkedSprite(SpriteType.Item, "obsidian_door"), new TileModel("Obsidian Door"), "Obsidian"));
 		items.add(new TileItem("Obsidian Fence", new LinkedSprite(SpriteType.Item, "obsidian_fence"), new TileModel("Obsidian Fence"), "Obsidian"));
@@ -88,15 +88,17 @@ public class TileItem extends StackableItem {
 	protected TileItem(String name, LinkedSprite sprite, TileModel model, String... validTiles) {
 		this(name, sprite, 1, model, Arrays.asList(validTiles));
 	}
+
 	protected TileItem(String name, LinkedSprite sprite, int count, TileModel model, String... validTiles) {
 		this(name, sprite, count, model, Arrays.asList(validTiles));
 	}
+
 	protected TileItem(String name, LinkedSprite sprite, int count, @Nullable TileModel model, List<String> validTiles) {
 		super(name, sprite, count);
 		this.model = model;
 		this.validTiles = new ArrayList<>();
-		for (String tile: validTiles)
-			 this.validTiles.add(tile.toUpperCase());
+		for (String tile : validTiles)
+			this.validTiles.add(tile.toUpperCase());
 	}
 
 	public static class TileModel {
@@ -111,7 +113,10 @@ public class TileItem extends StackableItem {
 			int getTileData(Tile model, Tile target, Level level, int xt, int yt, Player player, Direction attackDir);
 		}
 
-		public TileModel(String tile) { this(tile, DEFAULT_DATA); }
+		public TileModel(String tile) {
+			this(tile, DEFAULT_DATA);
+		}
+
 		public TileModel(String tile, TileDataGetter data) {
 			this.tile = tile.toUpperCase();
 			this.data = data;
@@ -148,11 +153,9 @@ public class TileItem extends StackableItem {
 			String note = "";
 			if (model.tile.contains("WALL")) {
 				note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
-			}
-			else if (model.tile.contains("DOOR")) {
+			} else if (model.tile.contains("DOOR")) {
 				note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
-			}
-			else if ((model.tile.contains("BRICK") || model.tile.contains("PLANK") || model.tile.equals("STONE") || model.tile.contains("ORNATE"))) {
+			} else if ((model.tile.contains("BRICK") || model.tile.contains("PLANK") || model.tile.equals("STONE") || model.tile.contains("ORNATE"))) {
 				note = Localization.getLocalized("minicraft.notification.dig_hole");
 			}
 
@@ -166,11 +169,13 @@ public class TileItem extends StackableItem {
 
 	@Override
 	public boolean equals(Item other) {
-		return super.equals(other) && (model == null || model.equals(((TileItem)other).model));
+		return super.equals(other) && (model == null || model.equals(((TileItem) other).model));
 	}
 
 	@Override
-	public int hashCode() { return super.hashCode() + (model == null ? 0xFF123 : model.hashCode()); }
+	public int hashCode() {
+		return super.hashCode() + (model == null ? 0xFF123 : model.hashCode());
+	}
 
 	public @NotNull TileItem copy() {
 		return new TileItem(getName(), sprite, count, model, validTiles);
