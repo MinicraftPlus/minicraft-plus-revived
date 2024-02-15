@@ -550,7 +550,6 @@ public class Menu {
 		@NotNull
 		private RelPos menuPos = RelPos.CENTER;
 		private Dimension menuSize = null;
-		private boolean removeEntryPeaks = false;
 
 		private boolean searcherBar;
 
@@ -605,11 +604,6 @@ public class Menu {
 
 		public Builder setTitlePos(RelPos rp) {
 			titlePos = (rp == null ? RelPos.TOP : rp);
-			return this;
-		}
-
-		public Builder setRemoveEntryPeaks(boolean removeEntryPeaks) {
-			this.removeEntryPeaks = removeEntryPeaks;
 			return this;
 		}
 
@@ -752,46 +746,11 @@ public class Menu {
 
 			if (menuSize == null) {
 				int width = titleDim.width;
-				// There should be valid peaks to be handled when the number of entries is greater than 1.
-				if (removeEntryPeaks && menu.entries.size() > 1) {
-					// First write into an array to more easily find peaks.
-					int[] entryWidths = new int[menu.entries.size()];
-					for (int i = 0; i < menu.entries.size(); ++i) {
-						entryWidths[i] = menu.entries.get(i).delegate.getWidth();
-					}
-
-					// Reference: https://www.geeksforgeeks.org/print-all-the-peaks-and-troughs-in-an-array-of-integers/
-					boolean handled = false; // For security check.
-					ArrayList<Integer> peaks = new ArrayList<>();
-					for (int i = 0; i < entryWidths.length; ++i) {
-						// Checks if the element is greater than the neighbours
-						if ((i == 0 || entryWidths[i] > entryWidths[i - 1]) && (i == entryWidths.length - 1 || entryWidths[i] > entryWidths[i + 1])) {
-							peaks.add(entryWidths[i]);
-						} else {
-							int entryWidth = entryWidths[i];
-							if (menu.isSelectable() && !menu.entries.get(i).delegate.isSelectable())
-								entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
-							width = Math.max(width, entryWidth);
-							handled = true;
-						}
-					}
-
-					if (!handled) width = Math.max(width, Arrays.stream(entryWidths).max().getAsInt());
-					else {
-						if (peaks.size() > 0) { // Count in the peaks into the resultant width with small ratio.
-							double peaksAvg = (double) peaks.stream().mapToInt(a -> a).sum() / peaks.size();
-							double ratio = .07 / Math.max(peaksAvg / width - 1, .07); // max is used to prevent extreme case.
-							width = (int) (width * ratio + (1 - ratio) * peaksAvg);
-							width -= width % MinicraftImage.boxWidth; // strip extra pixels
-						}
-					}
-				} else {
-					for (MenuListEntry entry : menu.entries) {
-						int entryWidth = entry.delegate.getWidth();
-						if (menu.isSelectable() && !entry.delegate.isSelectable())
-							entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
-						width = Math.max(width, entryWidth);
-					}
+				for (MenuListEntry entry : menu.entries) {
+					int entryWidth = entry.delegate.getWidth();
+					if (menu.isSelectable() && !entry.delegate.isSelectable())
+						entryWidth = Math.max(0, entryWidth - MinicraftImage.boxWidth * 4);
+					width = Math.max(width, entryWidth);
 				}
 
 				if (!menu.hasFrame && menu.entryPos.xIndex == 1) width = Screen.w; // Reduces troubles simply :)
@@ -864,9 +823,6 @@ public class Menu {
 
 			menu.useSearcherBar = searcherBar;
 
-			if (!menu.hasFrame && removeEntryPeaks)
-				menu.renderOutOfFrame = true; // Peaks are usually hidden, so this is assumed to be true.
-
 			// done setting defaults/values; return the new menu
 
 			menu.init(); // any setup the menu does by itself right before being finished.
@@ -889,7 +845,6 @@ public class Menu {
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;
 			b.searcherBar = searcherBar;
-			b.removeEntryPeaks = removeEntryPeaks;
 
 			return b;
 		}

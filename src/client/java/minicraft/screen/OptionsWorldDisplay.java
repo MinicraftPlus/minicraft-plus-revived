@@ -53,7 +53,6 @@ public class OptionsWorldDisplay extends Display {
 		menus = new Menu[]{
 			new Menu.Builder(false, 6, RelPos.LEFT, entries)
 				.setTitle("minicraft.displays.options_world")
-				.setRemoveEntryPeaks(true)
 				.createMenu()
 		};
 	}
