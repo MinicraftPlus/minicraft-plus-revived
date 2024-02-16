@@ -80,7 +80,7 @@ public final class Tiles {
 		tiles.put((short) 51, new CarrotTile("Carrot"));
 		tiles.put((short) 52, new HeavenlyBerriesTile("Heavenly Berries"));
 		tiles.put((short) 53, new HellishBerriesTile("Hellish Berries"));
-		tiles.put((short) 54, TorchTile.DELEGATE);
+		tiles.put((short) 54, new TorchTile());
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());
@@ -208,12 +208,6 @@ public final class Tiles {
 
 		Tile getting = null;
 
-		boolean isTorch = false;
-		if (name.startsWith("TORCH") && name.length() > 5) {
-			isTorch = true;
-			name = name.substring(6); // Cuts off torch prefix.
-		}
-
 		if (name.contains("_")) {
 			name = name.substring(0, name.indexOf("_"));
 		}
@@ -229,10 +223,6 @@ public final class Tiles {
 		if (getting == null) {
 			Logging.TILES.info("Invalid tile requested: " + name);
 			getting = tiles.get((short) 0);
-		}
-
-		if (isTorch) {
-			getting = TorchTile.getTorchTile(getting);
 		}
 
 		overflowCheck = 0;

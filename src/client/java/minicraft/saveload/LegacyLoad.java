@@ -233,14 +233,8 @@ public class LegacyLoad {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					Tile tile = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))));
-					if (tile instanceof TorchTile && tile != TorchTile.DELEGATE) {
-						tiles[tileArrIdx] = TorchTile.DELEGATE.id;
-						tdata[tileArrIdx] = ((TorchTile) tile).getOnType();
-					} else {
-						tiles[tileArrIdx] = tile.id;
-						tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
-					}
+					Load.loadTile(tiles, tdata, tileArrIdx, Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))),
+						extradata.get(tileidx));
 				}
 			}
 

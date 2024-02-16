@@ -85,6 +85,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Load {
 
@@ -667,15 +669,7 @@ public class Load {
 						}
 					}
 
-
-					Tile tile = Tiles.get(tilename);
-					if (tile instanceof TorchTile && tile != TorchTile.DELEGATE) {
-						tiles[tileArrIdx] = TorchTile.DELEGATE.id;
-						tdata[tileArrIdx] = ((TorchTile) tile).getOnType();
-					} else {
-						tiles[tileArrIdx] = tile.id;
-						tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
-					}
+					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -736,6 +730,19 @@ public class Load {
 			TutorialDisplayHandler.reset(false);
 			AdvancementElement.resetRecipeUnlockingElements();
 			QuestsDisplay.resetGameQuests();
+		}
+	}
+
+	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
+
+	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+		Matcher matcher;
+		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
+			tiles[idx] = 54; // ID of TORCH tile
+			data[idx] = Tiles.get(matcher.group(1)).id;
+		} else {
+			tiles[idx] = Tiles.get(tileName).id;
+			data[idx] = Short.parseShort(tileData);
 		}
 	}
 

@@ -16,44 +16,27 @@ import org.tinylog.Logger;
 import java.util.HashMap;
 
 public class TorchTile extends Tile {
-	public static final TorchTile DELEGATE = new TorchTile(new ConnectTile()); // ConnectTile is used for placeholder.
-
-	private static final HashMap<Integer, TorchTile> instances = new HashMap<>();
-
-	private final Tile onType;
-
-	/** @param onTile The tile identified by tile data. */
-	public static TorchTile getTorchTile(Tile onTile) {
-		if (onTile instanceof TorchTile) return (TorchTile) onTile;
-		int id = onTile.id & 0xFFFF;
-		if (instances.containsKey(id)) return instances.get(id);
-		TorchTile tile = new TorchTile(onTile);
-		instances.put(id, tile);
-		return tile;
-	}
-
-	private TorchTile(Tile onType) {
+	protected TorchTile() {
 		super("Torch", new SpriteAnimation(SpriteType.Tile, "torch"));
-		this.onType = onType;
 	}
 
 	@Override
 	public boolean connectsToSand(Level level, int x, int y) {
-		return onType.connectsToSand(level, x, y);
+		return Tiles.get((short) level.getData(x, y)).connectsToSand(level, x, y);
 	}
 
 	@Override
 	public boolean connectsToFluid(Level level, int x, int y) {
-		return onType.connectsToFluid(level, x, y);
+		return Tiles.get((short) level.getData(x, y)).connectsToFluid(level, x, y);
 	}
 
 	@Override
 	public boolean connectsToGrass(Level level, int x, int y) {
-		return onType.connectsToGrass(level, x, y);
+		return Tiles.get((short) level.getData(x, y)).connectsToGrass(level, x, y);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		onType.render(screen, level, x, y);
+		Tiles.get((short) level.getData(x, y)).render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
 	}
 
@@ -61,14 +44,10 @@ public class TorchTile extends Tile {
 		return 5;
 	}
 
-	public short getOnType() {
-		return onType.id;
-	}
-
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
 			int data = level.getData(xt, yt);
-			level.setTile(xt, yt, onType);
+			level.setTile(xt, yt, Tiles.get((short) data));
 			Sound.play("monsterhurt");
 			level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Torch"));
 			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(

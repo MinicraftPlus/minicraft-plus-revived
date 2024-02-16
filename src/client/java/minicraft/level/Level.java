@@ -559,14 +559,7 @@ public class Level {
 
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
-		short id = tiles[x + y * w];
-		Tile tile;
-
-		if ((tile = Tiles.get(id)) == TorchTile.DELEGATE) {
-			return TorchTile.getTorchTile(Tiles.get((short) getData(x, y)));
-		}
-
-		return tile;
+		return Tiles.get(tiles[x + y * w]);
 	}
 
 	/**
