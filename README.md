@@ -8,7 +8,7 @@
 Minicraft+ is an overhaul mod of Minicraft, a game made by Markus "Notch" Persson in the Ludum Dare 22 contest. To learn
 more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), talk to the community at
 our [Discord](https://discord.me/minicraft), or check out
-our [Fandom Wiki](https://minicraft.fandom.com/wiki/Minicraft_Wiki).
+our [wiki.gg Wiki](https://minicraft.wiki.gg/wiki/).
 
 Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest
 version, or older versions.
@@ -38,6 +38,12 @@ version, or older versions.
 * Quests
 * Support for several languages
 * and many, many more!
+
+## System Prerequisites
+
+Our game only supports Windows, MacOS and Linux. Furthermore, newer platform versions are required for controllers.
+
+For Java, you may check out [system requirements for Java](https://www.java.com/en/download/help/sysreq.html).
 
 ## Current goals and ideas
 
