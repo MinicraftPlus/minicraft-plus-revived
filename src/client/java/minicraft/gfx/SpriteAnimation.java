@@ -15,7 +15,6 @@ import javax.security.auth.Destroyable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.BiFunction;
 
 /**
  * This is not applicable for mob sprite animations. Only for generic sprite animations.
@@ -54,7 +53,7 @@ public class SpriteAnimation implements Destroyable {
 	// Border settings.
 	private LinkedSprite border = null;
 	private LinkedSprite corner = null;
-	private BiFunction<Tile, Boolean, Boolean> connectChecker;
+	private TileConnectionChecker connectionChecker;
 	private boolean singletonWithConnective = false;
 
 	// Refreshing only data.
@@ -86,14 +85,19 @@ public class SpriteAnimation implements Destroyable {
 		spriteAnimations.add(this);
 	}
 
+	@FunctionalInterface
+	public interface TileConnectionChecker {
+		boolean check(Level level, int x, int y, Tile tile, boolean side);
+	}
+
 	/**
 	 * Setting the tile class of this animation used for tile connector rendering.
 	 *
-	 * @param connectChecker The tile connection checker.
+	 * @param connectionChecker The tile connection checker.
 	 * @return The instance itself.
 	 */
-	public SpriteAnimation setConnectChecker(BiFunction<Tile, Boolean, Boolean> connectChecker) {
-		this.connectChecker = connectChecker;
+	public SpriteAnimation setConnectionChecker(TileConnectionChecker connectionChecker) {
+		this.connectionChecker = connectionChecker;
 		return this;
 	}
 
@@ -206,16 +210,16 @@ public class SpriteAnimation implements Destroyable {
 	 */
 	public void render(Screen screen, Level level, int x, int y) {
 		// If border and the tile class is set.
-		if (connectChecker != null && (border != null || corner != null)) {
-			boolean u = connectChecker.apply(level.getTile(x, y - 1), true);
-			boolean d = connectChecker.apply(level.getTile(x, y + 1), true);
-			boolean l = connectChecker.apply(level.getTile(x - 1, y), true);
-			boolean r = connectChecker.apply(level.getTile(x + 1, y), true);
+		if (connectionChecker != null && (border != null || corner != null)) {
+			boolean u = connectionChecker.check(level, x, y, level.getTile(x, y - 1), true);
+			boolean d = connectionChecker.check(level, x, y, level.getTile(x, y + 1), true);
+			boolean l = connectionChecker.check(level, x, y, level.getTile(x - 1, y), true);
+			boolean r = connectionChecker.check(level, x, y, level.getTile(x + 1, y), true);
 
-			boolean ul = connectChecker.apply(level.getTile(x - 1, y - 1), false);
-			boolean dl = connectChecker.apply(level.getTile(x - 1, y + 1), false);
-			boolean ur = connectChecker.apply(level.getTile(x + 1, y - 1), false);
-			boolean dr = connectChecker.apply(level.getTile(x + 1, y + 1), false);
+			boolean ul = connectionChecker.check(level, x, y, level.getTile(x - 1, y - 1), false);
+			boolean dl = connectionChecker.check(level, x, y, level.getTile(x - 1, y + 1), false);
+			boolean ur = connectionChecker.check(level, x, y, level.getTile(x + 1, y - 1), false);
+			boolean dr = connectionChecker.check(level, x, y, level.getTile(x + 1, y + 1), false);
 
 			x = x << 4;
 			y = y << 4;

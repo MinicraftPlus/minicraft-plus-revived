@@ -57,7 +57,11 @@ public class TreeTile extends Tile {
 
 	protected TreeTile(String name) {
 		super(name, null);
-		connectsToGrass = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	@SuppressWarnings("PointlessArithmeticExpression")
