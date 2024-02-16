@@ -55,11 +55,27 @@ public class FenceTile extends Tile {
 		right = new SpriteAnimation(SpriteType.Tile, type.toString().toLowerCase() + "_fence_right");
 	}
 
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return Tiles.get((short) level.getData(x, y)).connectsToSand(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return Tiles.get((short) level.getData(x, y)).connectsToFluid(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return Tiles.get((short) level.getData(x, y)).connectsToGrass(level, x, y);
+	}
+
 	public void updateConnections(Level level, int x, int y) {
-		connectUp = level.getTile(x, y - 1).name.equals(name);
-		connectDown = level.getTile(x, y + 1).name.equals(name);
-		connectLeft = level.getTile(x - 1, y).name.equals(name);
-		connectRight = level.getTile(x + 1, y).name.equals(name);
+		// TODO Tile#updateNeighbourhood
+		connectUp = level.getTile(x, y - 1) instanceof FenceTile;
+		connectDown = level.getTile(x, y + 1) instanceof FenceTile;
+		connectLeft = level.getTile(x - 1, y) instanceof FenceTile;
+		connectRight = level.getTile(x + 1, y) instanceof FenceTile;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
