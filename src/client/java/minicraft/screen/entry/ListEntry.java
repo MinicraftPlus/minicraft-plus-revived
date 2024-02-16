@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class ListEntry implements Screen.ScreenEntry {
 
-	public static final int COL_UNSLCT = Color.GRAY;
+	public static final int COL_UNSLCT = Color.LIGHT_GRAY;
 	public static final int COL_SLCT = Color.WHITE;
 
 	private boolean selectable = true, visible = true;
