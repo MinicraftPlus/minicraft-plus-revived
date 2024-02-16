@@ -1,28 +1,37 @@
 package minicraft.screen;
 
+import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import org.jetbrains.annotations.Nullable;
 
 class InventoryMenu extends ItemListMenu {
 
 	private final Inventory inv;
 	private final Entity holder;
-	protected boolean creativeInv = false;
+	private final boolean creativeInv;
+	private final @Nullable Action onStackUpdateListener; // The length of the entry shown may change when there is an update to the stack.
 
-	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos) {
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, @Nullable Action onStackUpdateListener) { this(holder, inv, title, entryPos, false, onStackUpdateListener); }
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv) { this(holder, inv, title, entryPos, creativeInv, null); }
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv, @Nullable Action onStackUpdateListener) {
 		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
+		this.creativeInv = creativeInv;
+		this.onStackUpdateListener = onStackUpdateListener;
 	}
 
 	InventoryMenu(InventoryMenu model) {
 		super(ItemListMenu.getBuilder(), ItemEntry.useItems(model.inv.getItems()), model.getTitle());
 		this.inv = model.inv;
 		this.holder = model.holder;
+		this.creativeInv = model.creativeInv;
+		this.onStackUpdateListener = model.onStackUpdateListener;
 		setSelection(model.getSelection());
 	}
 
@@ -46,6 +55,10 @@ class InventoryMenu extends ItemListMenu {
 				} else {
 					// drop the whole item.
 					removeSelectedEntry();
+				}
+
+				if (onStackUpdateListener != null) {
+					onStackUpdateListener.act();
 				}
 			}
 
