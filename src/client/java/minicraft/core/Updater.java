@@ -180,7 +180,7 @@ public class Updater extends Game {
 		}
 
 		Renderer.appStatusBar.tick();
-		if (input.getMappedKey("9").isDown())
+		if (input.getMappedKey("BACK_QUOTE").isDown())
 			Renderer.appStatusBar.show(1);
 		if (updateNoteTick) notetick++;
 		AppToast appToast;
