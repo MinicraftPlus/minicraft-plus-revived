@@ -123,8 +123,6 @@ public class InputHandler implements KeyListener {
 			controllerManager.initSDLGamepad();
 			controllerManager.update();
 			controllerIndex = controllerManager.getControllerIndex(0);
-			searchController();
-			controllerPortWatcher.start();
 			controllerInit = true;
 		} catch (IllegalStateException | SharedLibraryLoadRuntimeException | UnsatisfiedLinkError e) {
 			Logging.CONTROLLER.error(e, "Controllers are not support, being disabled.");
@@ -132,6 +130,14 @@ public class InputHandler implements KeyListener {
 		this.controllerManager = controllerManager;
 		this.controllerIndex = controllerIndex;
 		controllersSupported = controllerInit;
+		if (controllerInit) {
+			searchController(true);
+			controllerPortWatcher.start();
+		}
+
+		if (!controllersSupported)
+			Renderer.appStatusBar.CONTROLLER_STATUS.updateStatus(
+				Renderer.AppStatusBar.ControllerElementStatus.CONTROLLER_FUNCTION_UNAVAILABLE);
 	}
 
 	public InputHandler(Component inputSource) {
@@ -140,18 +146,25 @@ public class InputHandler implements KeyListener {
 	}
 
 	// Searches if there is any controller connected.
-	private void searchController() {
+	private void searchController(boolean initial) {
 		if (controllerIndex == null) return;
 		if (controllerIndex.isConnected()) {
 			if (controller == null) {
 				controller = new Controller(controllerIndex);
 				Renderer.appStatusBar.CONTROLLER_STATUS.updateStatus(
 					Renderer.AppStatusBar.ControllerElementStatus.CONTROLLER_CONNECTED);
+				testController();
 			} // else no effect
 		} else {
 			controller = null;
-			Renderer.appStatusBar.CONTROLLER_STATUS.updateStatus(
+			if (!initial) Renderer.appStatusBar.CONTROLLER_STATUS.updateStatus(
 				Renderer.AppStatusBar.ControllerElementStatus.CONTROLLER_DISCONNECTED);
+		}
+	}
+
+	private void testController() {
+		if (isControllerInUse()) {
+			controller.doVibration(.25F, .25F, 400);
 		}
 	}
 
@@ -165,12 +178,19 @@ public class InputHandler implements KeyListener {
 			Renderer.appStatusBar.INPUT_METHOD_STATUS.updateStatus(controllerEnabled ?
 				Renderer.AppStatusBar.InputMethodElementStatus.INPUT_CONTROLLER_PRIOR :
 				Renderer.AppStatusBar.InputMethodElementStatus.INPUT_KEYBOARD_ONLY);
+			testController();
 		}
 	}
 
 	private void handleControllerUnplugged() {
 		Renderer.appStatusBar.CONTROLLER_STATUS.updateStatus(
 			Renderer.AppStatusBar.ControllerElementStatus.CONTROLLER_UNAVAILABLE);
+	}
+
+	private void handleControllerNormal() {
+		Renderer.appStatusBar.CONTROLLER_STATUS.notifyStatusIf(status ->
+			status == Renderer.AppStatusBar.ControllerElementStatus.CONTROLLER_UNAVAILABLE ?
+				Renderer.AppStatusBar.ControllerElementStatus.CONTROLLER_CONNECTED : status);
 	}
 
 	private class Controller {
@@ -182,7 +202,9 @@ public class InputHandler implements KeyListener {
 
 		public boolean isButtonPressed(ControllerButton button) {
 			try {
-				return index.isButtonPressed(button);
+				boolean v = index.isButtonPressed(button);
+				handleControllerNormal();
+				return v;
 			} catch (ControllerUnpluggedException e) {
 				handleControllerUnplugged();
 				return false;
@@ -191,7 +213,9 @@ public class InputHandler implements KeyListener {
 
 		public boolean isButtonJustPressed(ControllerButton button) {
 			try {
-				return index.isButtonJustPressed(button);
+				boolean v = index.isButtonJustPressed(button);
+				handleControllerNormal();
+				return v;
 			} catch (ControllerUnpluggedException e) {
 				handleControllerUnplugged();
 				return false;
@@ -200,7 +224,9 @@ public class InputHandler implements KeyListener {
 
 		public boolean doVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
 			try {
-				return index.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+				boolean v = index.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+				handleControllerNormal();
+				return v;
 			} catch (ControllerUnpluggedException e) {
 				handleControllerUnplugged();
 				return false;
@@ -209,7 +235,9 @@ public class InputHandler implements KeyListener {
 
 		public float getAxisState(ControllerAxis axis) {
 			try {
-				return index.getAxisState(axis);
+				float v = index.getAxisState(axis);
+				handleControllerNormal();
+				return v;
 			} catch (ControllerUnpluggedException e) {
 				handleControllerUnplugged();
 				return 0;
@@ -315,7 +343,7 @@ public class InputHandler implements KeyListener {
 			while ((event = controllerPortEvents.poll()) != null) {
 				switch (event) {
 					case PLUGGED:
-						searchController();
+						searchController(false);
 						break;
 					case UNPLUGGED:
 						controller = null;

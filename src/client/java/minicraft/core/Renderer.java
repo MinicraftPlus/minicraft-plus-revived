@@ -37,6 +37,7 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 
@@ -56,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 public class Renderer extends Game {
 	private Renderer() {
@@ -288,6 +290,8 @@ public class Renderer extends Game {
 
 			public abstract void updateStatus(int status);
 
+			public void notifyStatusIf(UnaryOperator<@NotNull Integer> operator) {}
+
 			protected void initialize() {}
 		}
 
@@ -343,6 +347,7 @@ public class Renderer extends Game {
 
 			private ControllerElementStatus() {
 				super(1);
+				status = CONTROLLER_DISCONNECTED; // Default state
 			}
 
 			@Override
@@ -379,6 +384,14 @@ public class Renderer extends Game {
 			public void updateStatus(int status) {
 				super.updateStatus();
 				this.status = status;
+			}
+
+			@Override
+			public void notifyStatusIf(UnaryOperator<@NotNull Integer> operator) {
+				int status = this.status;
+				//noinspection MagicConstant
+				if ((status = operator.apply(status)) != this.status)
+					updateStatus(status);
 			}
 		}
 
