@@ -41,9 +41,6 @@ public abstract class Tile {
 
 	public short id;
 
-	public boolean connectsToGrass = false;
-	public boolean connectsToSand = false;
-	public boolean connectsToFluid = false;
 	public int light = 1;
 	protected boolean maySpawn = false;
 
@@ -162,12 +159,14 @@ public abstract class Tile {
 		return false;
 	}
 
-	/**
-	 * Sees if the tile connects to a fluid.
-	 */
-	public boolean connectsToLiquid() {
-		return connectsToFluid;
-	}
+	/** Whether the tile connects to grass tile in appearance. */
+	public boolean connectsToGrass(Level level, int x, int y) { return false; }
+
+	/** Whether the tile connects to sand tile in appearance. */
+	public boolean connectsToSand(Level level, int x, int y) { return false; }
+
+	/** Whether the tile connects to fluid tile in appearance. */
+	public boolean connectsToFluid(Level level, int x, int y) { return false; }
 
 	/**
 	 * @deprecated This should be planned to be removed as this method is not ideally used.
