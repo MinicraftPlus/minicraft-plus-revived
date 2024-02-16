@@ -1,5 +1,6 @@
 package minicraft.core.io;
 
+import com.badlogic.gdx.utils.SharedLibraryLoadRuntimeException;
 import com.studiohartman.jamepad.Configuration;
 import com.studiohartman.jamepad.ControllerAxis;
 import com.studiohartman.jamepad.ControllerButton;
@@ -7,6 +8,7 @@ import com.studiohartman.jamepad.ControllerIndex;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 import minicraft.core.Renderer;
+import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -52,6 +54,7 @@ public class InputHandler implements KeyListener {
 	public String keyToChange = null; // This is used when listening to change key bindings.
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
+	private final boolean controllersSupported;
 
 	public String getChangedKey() {
 		String key = keyChanged + ";" + keymap.get(keyChanged);
@@ -110,14 +113,25 @@ public class InputHandler implements KeyListener {
 		keyboard.put("CTRL", new PhysicalKey(true));
 		keyboard.put("ALT", new PhysicalKey(true));
 
-		Configuration configuration = new Configuration();
-		configuration.maxNumControllers = 1; // Only handles one controller connection at the same time.
-		controllerManager = new ControllerManager(configuration);
-		controllerManager.initSDLGamepad();
-		controllerManager.update();
-		controllerIndex = controllerManager.getControllerIndex(0);
-		searchController();
-		controllerPortWatcher.start();
+		boolean controllerInit = false;
+		ControllerManager controllerManager = null;
+		ControllerIndex controllerIndex = null;
+		try {
+			Configuration configuration = new Configuration();
+			configuration.maxNumControllers = 1; // Only handles one controller connection at the same time.
+			controllerManager = new ControllerManager(configuration);
+			controllerManager.initSDLGamepad();
+			controllerManager.update();
+			controllerIndex = controllerManager.getControllerIndex(0);
+			searchController();
+			controllerPortWatcher.start();
+			controllerInit = true;
+		} catch (IllegalStateException | SharedLibraryLoadRuntimeException | UnsatisfiedLinkError e) {
+			Logging.CONTROLLER.error(e, "Controllers are not support, being disabled.");
+		}
+		this.controllerManager = controllerManager;
+		this.controllerIndex = controllerIndex;
+		controllersSupported = controllerInit;
 	}
 
 	public InputHandler(Component inputSource) {
@@ -204,7 +218,7 @@ public class InputHandler implements KeyListener {
 	}
 
 	public final boolean isControllerInUse() {
-		return controllerEnabled && controller != null;
+		return controllersSupported && controllerEnabled && controller != null;
 	}
 
 	private void initKeyMap() {
@@ -313,7 +327,9 @@ public class InputHandler implements KeyListener {
 		}
 
 		// Also update the controller button state.
-		controllerKeys.values().forEach(ControllerKey::tick);
+		if (controllersSupported) {
+			controllerKeys.values().forEach(ControllerKey::tick);
+		}
 
 		if (leftTriggerCooldown > 0) leftTriggerCooldown--;
 		if (rightTriggerCooldown > 0) rightTriggerCooldown--;
