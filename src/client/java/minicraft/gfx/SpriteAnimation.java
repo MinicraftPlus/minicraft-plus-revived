@@ -211,15 +211,15 @@ public class SpriteAnimation implements Destroyable {
 	public void render(Screen screen, Level level, int x, int y) {
 		// If border and the tile class is set.
 		if (connectionChecker != null && (border != null || corner != null)) {
-			boolean u = connectionChecker.check(level, x, y, level.getTile(x, y - 1), true);
-			boolean d = connectionChecker.check(level, x, y, level.getTile(x, y + 1), true);
-			boolean l = connectionChecker.check(level, x, y, level.getTile(x - 1, y), true);
-			boolean r = connectionChecker.check(level, x, y, level.getTile(x + 1, y), true);
+			boolean u = connectionChecker.check(level, x, y - 1, level.getTile(x, y - 1), true);
+			boolean d = connectionChecker.check(level, x, y + 1, level.getTile(x, y + 1), true);
+			boolean l = connectionChecker.check(level, x - 1, y, level.getTile(x - 1, y), true);
+			boolean r = connectionChecker.check(level, x + 1, y, level.getTile(x + 1, y), true);
 
-			boolean ul = connectionChecker.check(level, x, y, level.getTile(x - 1, y - 1), false);
-			boolean dl = connectionChecker.check(level, x, y, level.getTile(x - 1, y + 1), false);
-			boolean ur = connectionChecker.check(level, x, y, level.getTile(x + 1, y - 1), false);
-			boolean dr = connectionChecker.check(level, x, y, level.getTile(x + 1, y + 1), false);
+			boolean ul = connectionChecker.check(level, x - 1, y - 1, level.getTile(x - 1, y - 1), false);
+			boolean dl = connectionChecker.check(level, x - 1, y + 1, level.getTile(x - 1, y + 1), false);
+			boolean ur = connectionChecker.check(level, x + 1, y - 1, level.getTile(x + 1, y - 1), false);
+			boolean dr = connectionChecker.check(level, x + 1, y + 1, level.getTile(x + 1, y + 1), false);
 
 			x = x << 4;
 			y = y << 4;
