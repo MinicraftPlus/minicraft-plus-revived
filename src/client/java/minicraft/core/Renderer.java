@@ -172,9 +172,9 @@ public class Renderer extends Game {
 				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
 				AffineTransform at = new AffineTransform();
 				at.scale(scale, scale); // Setting the scaling.
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 
-				// Use this solution without larger scales which use up a lot memory.
+				// Use this solution without larger scales which use up a lot of memory.
 				// With scale 20, up to around 360MB overall RAM use.
 				BufferedImage after = scaleOp.filter(before, null);
 				ImageIO.write(after, "png", file);
