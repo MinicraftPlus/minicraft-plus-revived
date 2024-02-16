@@ -103,11 +103,7 @@ public class DeathChest extends Chest {
 		if (other instanceof Player) {
 			Inventory playerInv = ((Player) other).getInventory();
 			for (Item i : inventory.getItems()) {
-				int total = 1;
-				if (i instanceof StackableItem) total = ((StackableItem) i).count;
-
-				int returned = playerInv.add(i);
-				if (returned < total) {
+				if (playerInv.add(i) != null) {
 					Game.notifications.add("Your inventory is full!");
 					return;
 				}

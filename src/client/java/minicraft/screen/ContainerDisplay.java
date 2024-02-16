@@ -19,13 +19,10 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 
 	public ContainerDisplay(Player player, Chest chest) {
-		super(
-			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT),
-			new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.RIGHT)
-		);
-
-		//pInv = player.getInventory();
-		//cInv = chest.getInventory();
+		menus = new Menu[] {
+			new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.LEFT, this::update),
+			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT, this::update)
+		};
 		this.player = player;
 		this.chest = chest;
 
@@ -140,12 +137,11 @@ public class ContainerDisplay extends Display {
 					if (!transferAll) {
 						((StackableItem) toItem).count = 1;
 					} else {
-						move = ((StackableItem) fromItem).count;
+						move = ((StackableItem) toItem).count;
 					}
 
-					int moved = to.add(toSel, toItem);
-					if (moved < move) {
-						((StackableItem) fromItem).count -= moved;
+					if (to.add(toItem) != null) {
+						((StackableItem)fromItem).count -= move - ((StackableItem) toItem).count;
 					} else if (!transferAll) {
 						((StackableItem) fromItem).count--;
 					} else {
@@ -153,8 +149,7 @@ public class ContainerDisplay extends Display {
 					}
 					update();
 				} else {
-					int moved = to.add(toSel, toItem);
-					if (moved == 1) {
+					if (to.add(toItem) == null) {
 						from.remove(fromSel);
 						update();
 					}
@@ -162,6 +157,9 @@ public class ContainerDisplay extends Display {
 			}
 	}
 
+	/** @deprecated This method is no longer in use by the removal of multiplayer system.
+	 * Also, the game is paused when the display is shown, so it is not possible for the player to pickup items during this period. */
+	@Deprecated
 	public void onInvUpdate(ItemHolder holder) {
 		if (holder == player || holder == chest) {
 			update();

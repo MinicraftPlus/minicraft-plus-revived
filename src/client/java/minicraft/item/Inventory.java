@@ -2,6 +2,7 @@ package minicraft.item;
 
 import minicraft.entity.furniture.Furniture;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -57,57 +58,46 @@ public class Inventory {
 	}
 
 	/**
-	 * Adds an item to the inventory
-	 */
-	public int add(@Nullable Item item) {
-		if (item != null)
-			return add(items.size(), item);  // Adds the item to the end of the inventory list
-		return 0;
-	}
-
-	/**
 	 * Adds several copies of the same item to the end of the inventory.
 	 *
 	 * @param item Item to be added.
 	 * @param num  Amount of items to add.
+	 * @return the remaining item not being added; empty if whole stack of items has been added successfully
 	 */
-	public int add(Item item, int num) {
-		int total = 0;
-		for (int i = 0; i < num; i++)
-			total += add(item.copy());
-		return total;
+	public List<Item> add(@NotNull Item item, int num) {
+		ArrayList<Item> remaining = new ArrayList<>();
+		for (int i = 0; i < num; i++) {
+			Item remain = add(item.copy());
+			if (remain != null) remaining.add(remain);
+		}
+		return remaining;
 	}
 
 	/**
-	 * Adds an item to a specific spot in the inventory.
-	 *
-	 * @param slot Index to place item at.
+	 * Adds an item at the end of the inventory.
 	 * @param item Item to be added.
-	 * @return The number of items added.
+	 * @return the remaining item not being added; {@code null} if whole stack of items has been added successfully
 	 */
-	public int add(int slot, Item item) {
-
+	public @Nullable Item add(@Nullable Item item) {
+		if (item == null) return null;
 		// Do not add to inventory if it is a PowerGlove
 		if (item instanceof PowerGloveItem) {
 			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
-			return 0;
+			return null;
 		}
 
 		if (item instanceof StackableItem) { // If the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-			int total = toTake.count;
-
 			for (Item value : items) {
 				if (toTake.stacksWith(value)) {
 					StackableItem stack = (StackableItem) value;
-
 					if (!unlimited) {
 						if (stack.count < stack.maxCount) {
 							int r = stack.maxCount - stack.count;
 							if (r >= toTake.count) {
 								// Matching implies that the other item is stackable, too.
 								stack.count += toTake.count;
-								return total;
+								return null;
 							} else {
 								toTake.count -= r;
 								stack.count += r;
@@ -115,42 +105,40 @@ public class Inventory {
 						}
 					} else {
 						stack.count += toTake.count;
-						return total;
+						return null;
 					}
 				}
 			}
 
 			if (!unlimited) {
 				if (items.size() < maxItem) {
-					int c = (int) Math.ceil(toTake.count / 100.0);
-					for (int i = 0; i < c; i++) {
+					while (toTake.count > 0) {
+						if (items.size() == maxItem) return toTake;
 						StackableItem adding = toTake.copy();
-						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
-						if (adding.count == 0) break;
-						if (items.size() == maxItem) return total - toTake.count;
+						adding.count = Math.min(toTake.count, toTake.maxCount);
 						items.add(adding); // Add the item to the items list
 						toTake.count -= adding.count;
 					}
-					return total;
+					return null;
 				} else {
-					return total - toTake.count;
+					return toTake;
 				}
 			} else {
-				items.add(slot, toTake);
-				return total;
+				items.add(toTake);
+				return null;
 			}
 		}
 
 		if (!unlimited) {
 			if (items.size() < maxItem) {
-				items.add(slot, item); // Add the item to the items list
-				return 1;
+				items.add(item); // Add the item to the items list
+				return null;
 			} else {
-				return 0;
+				return item;
 			}
 		} else {
-			items.add(slot, item);
-			return 1;
+			items.add(item);
+			return null;
 		}
 	}
 

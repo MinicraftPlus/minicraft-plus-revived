@@ -14,6 +14,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
 
 public class PlayerInvDisplay extends Display {
 
@@ -28,7 +29,7 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT));
+		InventoryMenu invMenu = new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT, this::update);
 		this.player = player;
 		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.settings.mode.creative");
@@ -40,20 +41,18 @@ public class PlayerInvDisplay extends Display {
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[]{
-				menus[0],
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
-					creativeInv = true;
-				}},
+				invMenu,
+				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT, true),
 				descriptionMenu
 			};
 
-			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+			menus[1].translate(invMenu.getBounds().getWidth() + padding, 0);
 			update();
 
-			if (menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
+			if (invMenu.getNumOptions() == 0) onSelectionChange(0, 1);
 		} else {
 			creativeInv = null;
-			menus = new Menu[]{menus[0], descriptionMenu};
+			menus = new Menu[]{invMenu, descriptionMenu};
 		}
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
@@ -129,7 +128,6 @@ public class PlayerInvDisplay extends Display {
 					}
 
 					from = player.getInventory();
-					to = creativeInv;
 
 					int fromSel = curMenu.getSelection();
 					Item fromItem = from.get(fromSel);
@@ -159,17 +157,19 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean transferAll;
-					if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
-						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
+					if (input.getMappedKey("SHIFT-SELECT").isClicked()) {
+						transferAll = true;
+					} else if (input.inputPressed("SELECT")) { // If stack limit is available, this can transfer whole stack
+						transferAll = !(fromItem instanceof StackableItem);
 					} else return;
 
 					Item toItem = fromItem.copy();
+					if (toItem instanceof StackableItem && transferAll)
+						((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
 
-					if (!transferAll) {
-						((StackableItem) toItem).count = 1;
-					}
+					if (to.add(toItem) != null)
+						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
 
-					to.add(toSel, toItem);
 					update();
 				}
 
@@ -228,9 +228,7 @@ public class PlayerInvDisplay extends Display {
 
 	private void update() {
 		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]) {{
-			creativeInv = true;
-		}};
+		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 		itemDescription = getDescription();
