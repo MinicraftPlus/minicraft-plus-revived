@@ -144,6 +144,10 @@ public class Font {
 		new FontStyle(color).setYPos(y).draw(msg, screen);
 	}
 
+	public static void drawColorCentered(String msg, Screen screen, int y, int color) {
+		drawColor(msg, screen, Screen.w / 2 - Font.textWidth(msg) / 2, y, color);
+	}
+
 
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
 	public static void drawParagraph(String para, Screen screen, FontStyle style, int lineSpacing) {

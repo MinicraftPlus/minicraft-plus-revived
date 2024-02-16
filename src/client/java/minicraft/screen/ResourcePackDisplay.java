@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
@@ -328,8 +329,9 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getMappedKey("shift+cursor-right").isClicked()) { // Move the selected pack to the second list.
-			if (selection == 0 && resourcePacks.size() > 0) {
+		if (input.getMappedKey("CURSOR-RIGHT").isClicked() && // Move the selected pack to the second list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
+			if (selection == 0 && !resourcePacks.isEmpty()) {
 				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
 				refreshEntries();
@@ -337,7 +339,8 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-left").isClicked()) { // Move the selected pack to the first list.
+		} else if (input.getMappedKey("CURSOR-LEFT").isClicked() && // Move the selected pack to the first list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
 			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
 				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
@@ -346,7 +349,8 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-up").isClicked()) { // Move up the selected pack in the second list.
+		} else if (input.getMappedKey("CURSOR-UP").isClicked() && // Higher the selected pack in the second list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
 			if (selection == 1 && menus[1].getSelection() > 0) {
 				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
@@ -356,7 +360,8 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-down").isClicked()) { // Move down the selected pack in the second list.
+		} else if (input.getMappedKey("CURSOR-DOWN").isClicked() && // Lower the selected pack in the second list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
 			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
 				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
@@ -393,10 +398,19 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.SILVER);
 
 		// Info text at the bottom.
-		if (Game.input.anyControllerConnected())
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move"), screen, Screen.h - 25, Color.GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.GRAY);
+		if (selection == 0) {
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move_right", Game.input.selectMapping("SHIFT", "LEFTBUMPER"), Game.input.getMapping("CURSOR-RIGHT")), screen, Screen.h - 26, resourcePacks.isEmpty() ? Color.DIMMED_GRAY : Color.GRAY);
+		} else if (selection == 1) {
+			boolean canUp = menus[1].getSelection() > 0;
+			boolean canDown = menus[1].getSelection() < loadedPacks.size() - 1;
+			boolean moveable = loadedPacks.get(menus[1].getSelection()) != defaultPack;
+			Font.drawColorCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move_priority", Game.input.selectMapping("SHIFT", "LEFTBUMPER"),
+				canUp ? Game.input.getMapping("CURSOR-UP") : Color.DIMMED_GRAY_CODE + Game.input.getMapping("CURSOR-UP") + Color.RESET_CODE,
+				canDown ? Game.input.getMapping("CURSOR-DOWN") : Color.DIMMED_GRAY_CODE + Game.input.getMapping("CURSOR-DOWN") + Color.RESET_CODE), screen, Screen.h - 34, moveable ? Color.GRAY : Color.DIMMED_GRAY);
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move_left", Game.input.selectMapping("SHIFT", "LEFTBUMPER"), Game.input.getMapping("CURSOR-LEFT")), screen, Screen.h - 26, moveable ? Color.GRAY : Color.DIMMED_GRAY);
+		}
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 18, Color.GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.browse", Game.input.selectMapping("CURSOR", "DPAD")), screen, Screen.h - 10, Color.GRAY);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
