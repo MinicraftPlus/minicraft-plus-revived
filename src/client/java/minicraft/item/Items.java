@@ -45,6 +45,7 @@ public class Items {
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
 		addAll(WateringCanItem.getAllInstances());
+		addAll(EntitySummonItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {

@@ -12,6 +12,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.ItemHolder;
+import minicraft.entity.PlayerRideable;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
@@ -116,7 +117,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private static final int[] hungerTickCount = {120, 30, 10}; // Ticks before decrementing stamHungerTicks.
 	private static final int[] hungerStepCount = {8, 3, 1}; // Steps before decrementing stamHungerTicks.
 	private static final int[] minStarveHealth = {5, 3, 0}; // Min hearts required for hunger to hurt you.
+	private static final int maxRideStaminaTick = 180;
 	private int stepCount; // Used to penalize hunger for movement.
+	private int rideStaminaTick;
 	private int hungerChargeDelay; // The delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 
@@ -134,6 +137,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int maxFishingTicks = 120;
 	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
+
+	private @Nullable PlayerRideable ride = null;
 
 	private LinkedSprite hudSheet;
 
@@ -474,16 +479,25 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
 			if ((vec.x != 0 || vec.y != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
-				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				int xd = (int) (vec.x * spd);
-				int yd = (int) (vec.y * spd);
+				PlayerRideable ride;
+				if ((ride = getRide()) != null) {
+					if (!ride.rideTick(this, vec)) {
+						if (ride.stopRiding(this)) {
+							this.ride = null;
+						}
+					}
+				} else {
+					double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
+					int xd = (int) (vec.x * spd);
+					int yd = (int) (vec.y * spd);
 
-				Direction newDir = Direction.getDirection(xd, yd);
-				if (newDir == Direction.NONE) newDir = dir;
+					Direction newDir = Direction.getDirection(xd, yd);
+					if (newDir == Direction.NONE) newDir = dir;
 
-				// Move the player
-				boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
-				if (moved) stepCount++;
+					// Move the player
+					boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
+					if (moved) stepCount++;
+				}
 			}
 
 
@@ -609,6 +623,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
+
+		if (ride != null) { // Stops riding when the player interacts with attacking.
+			if (ride.stopRiding(this)) {
+				ride = null;
+				return;
+			}
+		}
 
 		if (isFishing) {
 			isFishing = false;
@@ -806,8 +827,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		for (Entity e : entities) {
 			if (e instanceof Furniture && ((Furniture) e).use(this))
 				return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			else if (e instanceof PlayerRideable && getRide() != e && canRide() && ((PlayerRideable) e).startRiding(this)) {
+				ride = (PlayerRideable) e;
+				return true;
+			}
 		}
 		return false;
+	}
+
+	private boolean canRide() {
+		return ride == null;
+	}
+
+	@Nullable
+	private PlayerRideable getRide() {
+		return ride;
 	}
 
 	/**
