@@ -10,6 +10,6 @@ public interface PlayerRideable {
 	/** @return {@code true} if the {@code player} successfully rode on the ride. */
 	boolean startRiding(Player player);
 
-	/** @return {@code true} if the {@code player} successfully stopped from the ride, or was not on the ride. */
-	boolean stopRiding(Player player);
+	/** Stops from the ride. */
+	void stopRiding(Player player);
 }

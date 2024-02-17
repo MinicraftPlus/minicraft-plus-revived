@@ -1,6 +1,7 @@
 package minicraft.entity.vehicle;
 
 import minicraft.core.Updater;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.PlayerRideable;
@@ -8,6 +9,8 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.item.Items;
+import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
@@ -30,12 +33,28 @@ public class Boat extends Entity implements PlayerRideable {
 
 	@Override
 	public void tick() {
+		if (isRemoved()) return;
+		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava"))
+			hurt();
 		// Moves the furniture in the correct direction.
 		move(pushDir.getX(), pushDir.getY());
 		pushDir = Direction.NONE;
 
 		if (pushTime > 0) pushTime--; // Update pushTime by subtracting 1.
 		else multiPushTime = 0;
+	}
+
+	public void hurt() {
+		if (isRemoved())
+			return;
+		die();
+	}
+
+	@Override
+	public void die() {
+		level.dropItem(x, y, Items.get("Boat"));
+		Sound.play("monsterhurt");
+		super.die();
 	}
 
 	public boolean isInWater() {
@@ -90,9 +109,8 @@ public class Boat extends Entity implements PlayerRideable {
 	}
 
 	@Override
-	public boolean stopRiding(Player player) {
+	public void stopRiding(Player player) {
 		if (passenger == player)
 			passenger = null;
-		return true;
 	}
 }

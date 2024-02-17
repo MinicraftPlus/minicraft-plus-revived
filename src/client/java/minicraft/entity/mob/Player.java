@@ -19,6 +19,7 @@ import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
@@ -42,8 +43,10 @@ import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.level.tile.LavaTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.WaterTile;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.AchievementsDisplay;
@@ -57,6 +60,7 @@ import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -482,9 +486,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				PlayerRideable ride;
 				if ((ride = getRide()) != null) {
 					if (!ride.rideTick(this, vec)) {
-						if (ride.stopRiding(this)) {
-							this.ride = null;
-						}
+						ride.stopRiding(this);
+						this.ride = null;
 					}
 				} else {
 					double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
@@ -617,6 +620,89 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			activeItem = null;
 	}
 
+	private void stopRiding(@NotNull PlayerRideable ride) {
+		if (this.ride != ride) return;
+		Point p = findNearestLand();
+		ride.stopRiding(this);
+		this.ride = null;
+		x = p.x * 16 + 8;
+		y = p.y * 16 + 8;
+	}
+
+	private boolean isTileForLand(Level level, int x, int y) {
+		Tile tile = level.getTile(x, y);
+		return tile.mayPass(level, x, y, this) && !(tile instanceof WaterTile || tile instanceof LavaTile);
+	}
+
+	private Point findNearestLand() {
+		// Tiles nearby
+		int xt = x >> 4;
+		int yt = y >> 4;
+		if (dir.getX() != 0) { // x-axis
+			// orthogonal to the direction pointing to
+			if (isTileForLand(level, xt, yt - 1))
+				return new Point(xt, yt - 1);
+			if (isTileForLand(level, xt, yt + 1))
+				return new Point(xt, yt + 1);
+			// parallel to the direction pointing to
+			if (isTileForLand(level, xt - 1, yt))
+				return new Point(xt - 1, yt);
+			if (isTileForLand(level, xt + 1, yt))
+				return new Point(xt + 1, yt);
+		} else { // y-axis
+			// orthogonal to the direction pointing to
+			if (isTileForLand(level, xt - 1, yt))
+				return new Point(xt - 1, yt);
+			if (isTileForLand(level, xt + 1, yt))
+				return new Point(xt + 1, yt);
+			// parallel to the direction pointing to
+			if (isTileForLand(level, xt, yt - 1))
+				return new Point(xt, yt - 1);
+			if (isTileForLand(level, xt, yt + 1))
+				return new Point(xt, yt + 1);
+		}
+
+		// Cross-nearby
+		if (isTileForLand(level, xt - 1, yt - 1))
+			return new Point(xt - 1, yt - 1);
+		if (isTileForLand(level, xt + 1, yt - 1))
+			return new Point(xt + 1, yt - 1);
+		if (isTileForLand(level, xt + 1, yt + 1))
+			return new Point(xt + 1, yt + 1);
+		if (isTileForLand(level, xt - 1, yt + 1))
+			return new Point(xt - 1, yt + 1);
+
+		// Right-hand-side or left-hand-side tile
+		switch (dir) {
+			case DOWN:
+				if (level.getTile(xt - 1, yt).mayPass(level, xt - 1, yt, this))
+					return new Point(xt - 1, yt);
+				if (level.getTile(xt + 1, yt).mayPass(level, xt + 1, yt, this))
+					return new Point(xt + 1, yt);
+				break;
+			case UP:
+				if (level.getTile(xt + 1, yt).mayPass(level, xt + 1, yt, this))
+					return new Point(xt + 1, yt);
+				if (level.getTile(xt - 1, yt).mayPass(level, xt - 1, yt, this))
+					return new Point(xt - 1, yt);
+				break;
+			case LEFT:
+				if (level.getTile(xt, yt - 1).mayPass(level, xt, yt - 1, this))
+					return new Point(xt, yt - 1);
+				if (level.getTile(xt, yt + 1).mayPass(level, xt, yt + 1, this))
+					return new Point(xt, yt + 1);
+				break;
+			case RIGHT:
+				if (level.getTile(xt, yt + 1).mayPass(level, xt, yt + 1, this))
+					return new Point(xt, yt + 1);
+				if (level.getTile(xt, yt - 1).mayPass(level, xt, yt - 1, this))
+					return new Point(xt, yt - 1);
+				break;
+		}
+
+		return new Point(xt, yt); // Same tile
+	}
+
 	/**
 	 * This method is called when we press the attack button.
 	 */
@@ -625,10 +711,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
 
 		if (ride != null) { // Stops riding when the player interacts with attacking.
-			if (ride.stopRiding(this)) {
-				ride = null;
-				return;
-			}
+			stopRiding(ride);
+			return;
 		}
 
 		if (isFishing) {
@@ -867,9 +951,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int dmg = getAttackDamage(e);
 				maxDmg = Math.max(dmg, maxDmg);
 				((Mob) e).hurt(this, dmg, attackDir);
-			}
-			if (e instanceof Furniture)
+			} else if (e instanceof Furniture)
 				e.interact(this, null, attackDir);
+			else if (e instanceof Boat && e != ride)
+				((Boat) e).hurt();
 		}
 		return maxDmg > 0;
 	}
