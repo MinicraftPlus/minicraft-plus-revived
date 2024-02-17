@@ -142,7 +142,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
 
-	private @Nullable PlayerRideable ride = null;
+	private @Nullable Entity ride = null;
 
 	private LinkedSprite hudSheet;
 
@@ -483,10 +483,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
 			if ((vec.x != 0 || vec.y != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
-				PlayerRideable ride;
-				if ((ride = getRide()) != null) {
-					if (!ride.rideTick(this, vec)) {
-						ride.stopRiding(this);
+				Entity ride;
+				if ((ride = getRide()) != null && ride instanceof PlayerRideable) {
+					if (!((PlayerRideable) ride).rideTick(this, vec)) {
+						((PlayerRideable) ride).stopRiding(this);
 						this.ride = null;
 					}
 				} else {
@@ -620,13 +620,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			activeItem = null;
 	}
 
-	private void stopRiding(@NotNull PlayerRideable ride) {
-		if (this.ride != ride) return;
+	private void stopRiding(@NotNull Entity ride) {
+		if (this.ride != ride || !(ride instanceof PlayerRideable)) return;
 		Point p = findNearestLand();
-		ride.stopRiding(this);
+		((PlayerRideable) ride).stopRiding(this);
 		this.ride = null;
-		x = p.x * 16 + 8;
-		y = p.y * 16 + 8;
+		if (p != null) {
+			x = p.x * 16 + 8;
+			y = p.y * 16 + 8;
+		} else {
+			p = findAlternativeLandingPoint();
+			x = p.x;
+			y = p.y;
+		}
 	}
 
 	private boolean isTileForLand(Level level, int x, int y) {
@@ -634,7 +640,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return tile.mayPass(level, x, y, this) && !(tile instanceof WaterTile || tile instanceof LavaTile);
 	}
 
-	private Point findNearestLand() {
+	private @Nullable Point findNearestLand() {
 		// Tiles nearby
 		int xt = x >> 4;
 		int yt = y >> 4;
@@ -672,35 +678,49 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isTileForLand(level, xt - 1, yt + 1))
 			return new Point(xt - 1, yt + 1);
 
+		return null;
+	}
+
+	private Point findAlternativeLandingPoint() {
+		int xt = x >> 4;
+		int yt = y >> 4;
 		// Right-hand-side or left-hand-side tile
 		switch (dir) {
 			case DOWN:
-				if (level.getTile(xt - 1, yt).mayPass(level, xt - 1, yt, this))
-					return new Point(xt - 1, yt);
-				if (level.getTile(xt + 1, yt).mayPass(level, xt + 1, yt, this))
-					return new Point(xt + 1, yt);
+				xt = (x - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x - 12, y);
+				xt = (x + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x + 12, y);
 				break;
 			case UP:
-				if (level.getTile(xt + 1, yt).mayPass(level, xt + 1, yt, this))
-					return new Point(xt + 1, yt);
-				if (level.getTile(xt - 1, yt).mayPass(level, xt - 1, yt, this))
-					return new Point(xt - 1, yt);
+				xt = (x + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x + 12, y);
+				xt = (x - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x - 12, y);
 				break;
 			case LEFT:
-				if (level.getTile(xt, yt - 1).mayPass(level, xt, yt - 1, this))
-					return new Point(xt, yt - 1);
-				if (level.getTile(xt, yt + 1).mayPass(level, xt, yt + 1, this))
-					return new Point(xt, yt + 1);
+				yt = (y - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y - 12);
+				yt = (y + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y + 12);
 				break;
 			case RIGHT:
-				if (level.getTile(xt, yt + 1).mayPass(level, xt, yt + 1, this))
-					return new Point(xt, yt + 1);
-				if (level.getTile(xt, yt - 1).mayPass(level, xt, yt - 1, this))
-					return new Point(xt, yt - 1);
+				yt = (y + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y + 12);
+				yt = (y - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y - 12);
 				break;
 		}
 
-		return new Point(xt, yt); // Same tile
+		return new Point(x, y); // Same position
 	}
 
 	/**
@@ -912,7 +932,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (e instanceof Furniture && ((Furniture) e).use(this))
 				return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 			else if (e instanceof PlayerRideable && getRide() != e && canRide() && ((PlayerRideable) e).startRiding(this)) {
-				ride = (PlayerRideable) e;
+				ride = e;
 				return true;
 			}
 		}
@@ -924,7 +944,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Nullable
-	private PlayerRideable getRide() {
+	private Entity getRide() {
 		return ride;
 	}
 
