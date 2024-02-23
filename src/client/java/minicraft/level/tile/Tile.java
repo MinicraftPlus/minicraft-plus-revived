@@ -194,7 +194,7 @@ public abstract class Tile {
 			int tileid = curLevel.tiles[pos];
 			int tiledata = curLevel.data[pos];
 
-			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
+			return String.format("%s;%d;%d;%d", lvlidx, pos, tileid, tiledata);
 		} catch (NullPointerException | IndexOutOfBoundsException ignored) {
 		}
 

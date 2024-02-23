@@ -49,7 +49,7 @@ public class Chest extends Furniture implements ItemHolder {
 
 	public void populateInvRandom(String lootTable, int depth) {
 		try {
-			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[]{});
+			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[0]);
 
 			for (String line : lines) {
 				//System.out.println(line);
@@ -65,7 +65,7 @@ public class Chest extends Furniture implements ItemHolder {
 				}
 			}
 		} catch (IOException e) {
-			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Loot table", CrashHandler.ErrorInfo.ErrorType.REPORT, "Couldn't read loot table \"" + lootTable + ".txt" + "\""));
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Loot table", CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Couldn't read loot table \"%s.txt\"", lootTable)));
 		}
 	}
 

@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import java.util.StringJoiner;
+
 /**
  * This class represents a group of pixels on their sprite sheet(s).
  */
@@ -22,12 +24,12 @@ public class Sprite {
 	}
 
 	public String toString() {
-		StringBuilder out = new StringBuilder(getClass().getName().replace("minicraft.gfx.", "") + "; pixels:");
+		StringBuilder out = new StringBuilder(getClass().getSimpleName())
+			.append("; pixels: ");
 		for (Px[] row : spritePixels)
 			for (Px pixel : row)
-				out.append("\n").append(pixel.toString());
-		out.append("\n");
-
+				out.append(pixel.toString()).append(";;");
+		out.setLength(out.length() - 2);
 		return out.toString();
 	}
 
@@ -47,7 +49,7 @@ public class Sprite {
 		}
 
 		public String toString() {
-			return "SpritePixel:x=" + x + ";y=" + y + ";mirror=" + mirror;
+			return String.format("SpritePixel:x=%d;y=%d;mirror=%d", x, y, mirror);
 		}
 	}
 }

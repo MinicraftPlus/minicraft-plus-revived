@@ -1,6 +1,7 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
@@ -51,7 +52,7 @@ public class Crafter extends Furniture {
 	}
 
 	public boolean use(Player player) {
-		Game.setDisplay(new CraftingDisplay(type.recipes, type.name(), player));
+		Game.setDisplay(new CraftingDisplay(type.recipes, new Localization.LocalizationString(type.name()), player));
 		return true;
 	}
 

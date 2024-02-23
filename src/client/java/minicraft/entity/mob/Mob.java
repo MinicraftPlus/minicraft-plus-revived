@@ -253,7 +253,7 @@ public abstract class Mob extends Entity {
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
-		if (mob instanceof Player && Game.isMode("minicraft.settings.mode.creative") && mob != this)
+		if (mob instanceof Player && Game.isMode("minicraft.displays.world_create.options.game_mode.creative") && mob != this)
 			doHurt(health, attackDir); // Kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
@@ -302,7 +302,7 @@ public abstract class Mob extends Entity {
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 
-		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
+		level.add(new TextParticle(String.valueOf(heal), x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > (Player.baseHealth + Player.extraHealth))
 			health = (Player.baseHealth + Player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum

@@ -18,6 +18,6 @@ public class ItemListing extends ItemEntry {
 
 	@Override
 	public String toString() {
-		return " " + info;
+		return info;
 	}
 }

@@ -35,9 +35,9 @@ public class Sheep extends PassiveMob {
 
 		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
-			screen.render(xo, yo, curSprite.getSprite(), true);
+			screen.render(null, xo, yo, curSprite.getSprite(), true);
 		} else {
-			screen.render(xo, yo, curSprite);
+			screen.render(null, xo, yo, curSprite);
 		}
 	}
 
@@ -67,15 +67,15 @@ public class Sheep extends PassiveMob {
 
 	public void die() {
 		int min = 0, max = 0;
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.easy")) {
 			min = 1;
 			max = 3;
 		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.normal")) {
 			min = 1;
 			max = 2;
 		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.hard")) {
 			min = 0;
 			max = 2;
 		}

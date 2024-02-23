@@ -71,10 +71,10 @@ public class TileItem extends StackableItem {
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
-		items.add(new TileItem("hole", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("hole"), "dirt", "grass"));
-		items.add(new TileItem("lava", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("lava"), "dirt", "grass", "hole"));
-		items.add(new TileItem("path", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("path"), "dirt", "grass", "hole"));
-		items.add(new TileItem("water", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("water"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Hole", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("hole"), "dirt", "grass"));
+		items.add(new TileItem("Lava", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("lava"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Path", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("path"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Water", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("water"), "dirt", "grass", "hole"));
 
 		return items;
 	}
@@ -147,16 +147,16 @@ public class TileItem extends StackableItem {
 		Logger.tag("TileItem").debug("{} cannot be placed on {}.", model, tile.name);
 
 		if (model != null) {
-			String note = "";
+			Localization.LocalizationString note = null;
 			if (model.tile.contains("WALL")) {
-				note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
+				note = new Localization.LocalizationString("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 			} else if (model.tile.contains("DOOR")) {
-				note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
+				note = new Localization.LocalizationString("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 			} else if ((model.tile.contains("BRICK") || model.tile.contains("PLANK") || model.tile.equals("STONE") || model.tile.contains("ORNATE"))) {
-				note = Localization.getLocalized("minicraft.notification.dig_hole");
+				note = new Localization.LocalizationString("minicraft.notification.dig_hole");
 			}
 
-			if (note.length() > 0) {
+			if (note != null) {
 				Game.notifications.add(note);
 			}
 		}

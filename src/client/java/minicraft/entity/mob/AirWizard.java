@@ -52,7 +52,7 @@ public class AirWizard extends EnemyMob {
 	public void tick() {
 		super.tick();
 
-		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) return; // Should not attack if player is in creative
 
 		if (attackDelay > 0) {
 			xmov = ymov = 0;
@@ -130,10 +130,8 @@ public class AirWizard extends EnemyMob {
 
 		int textcol = Color.get(1, 0, 204, 0);
 		int textcol2 = Color.get(1, 0, 51, 0);
-		int percent = health / (maxHealth / 100);
-		String h = percent + "%";
-
-		if (percent < 1) h = "1%";
+		int percent = Math.max(health * 100 / maxHealth, 1);
+		String h = Localization.getLocalized("minicraft.display.boss.health_indicator", percent);
 
 		if (percent < 16) {
 			textcol = Color.get(1, 204, 0, 0);
@@ -171,7 +169,7 @@ public class AirWizard extends EnemyMob {
 		Sound.play("bossdeath");
 
 		Analytics.AirWizardDeath.ping();
-		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
+		Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.air_wizard_defeated"));
 
 
 		// If this is the first time we beat the air wizard.
@@ -179,7 +177,7 @@ public class AirWizard extends EnemyMob {
 			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 
 			Analytics.FirstAirWizardDeath.ping();
-			Updater.notifyAll("minicraft.notification.dungeon_opened", -400);
+			Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.dungeon_opened"), -400);
 		}
 
 		beaten = true;

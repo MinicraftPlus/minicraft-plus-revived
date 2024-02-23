@@ -79,8 +79,8 @@ public class Spark extends Entity {
 		}
 
 		sprite.setMirror(randmirror);
-		screen.render(x - 4, y - 4 + 2, sprite.getSprite(), 0, false, Color.BLACK); // renders the shadow on the ground
-		screen.render(x - 4, y - 4 - 2, sprite); // Renders the spark
+		screen.render(null, x - 4, y - 4 + 2, sprite.getSprite(), 0, false, Color.BLACK); // renders the shadow on the ground
+		screen.render(null, x - 4, y - 4 - 2, sprite); // Renders the spark
 	}
 
 	/**
@@ -89,6 +89,6 @@ public class Spark extends Entity {
 	 * @return the owners id as a string.
 	 */
 	public String getData() {
-		return owner.eid + "";
+		return String.valueOf(owner.eid);
 	}
 }

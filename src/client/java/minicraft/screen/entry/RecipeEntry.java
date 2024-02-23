@@ -1,9 +1,11 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -28,15 +30,16 @@ public class RecipeEntry extends ItemEntry {
 	}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected) {
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
 		if (isVisible()) {
-			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
-			screen.render(x, y, getItem().sprite);
+			Font.draw(limitingModel, toString(), screen, x + 16, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
+			screen.render(null, x, y, getItem().sprite);
 		}
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + (recipe.getAmount() > 1 ? " x" + recipe.getAmount() : "");
+		return recipe.getAmount() > 1 ? Localization.getLocalized("minicraft.display.inventory.recipe_entry_multi",
+			super.toString(), recipe.getAmount()) : super.toString();
 	}
 }

@@ -16,7 +16,8 @@ public class BossWallTile extends WallTile {
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
 		.setConnectChecker((tile, side) -> tile.getClass() == BossWallTile.class);
 
-	private static final String wallMsg = "minicraft.notification.defeat_obsidian_knight_first";
+	private static final Localization.LocalizationString wallMsg = new Localization.LocalizationString(
+		"minicraft.notification.defeat_obsidian_knight_first");
 
 	protected BossWallTile() {
 		super(Material.Obsidian, "Boss Wall");
@@ -24,12 +25,12 @@ public class BossWallTile extends WallTile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative")) {
+		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {
 					if (player.payStamina(1)) {
-						Game.notifications.add(Localization.getLocalized(wallMsg));
+						Game.notifications.add(wallMsg);
 						Sound.play("monsterhurt");
 						return true;
 					}

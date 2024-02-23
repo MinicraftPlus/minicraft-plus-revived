@@ -1,19 +1,20 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
-import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class KeyInputEntry extends SelectEntry {
+public class ControlSettingEntry extends SelectEntry {
 
-	private String action, mapping, buffer;
+	private final String action;
+	private String mapping, buffer;
 
-	public KeyInputEntry(String key, Set<String> duplicated) {
-		super("", null);
+	public ControlSettingEntry(String key, Set<String> duplicated) {
+		super(null, null);
 
 		this.action = key.substring(0, key.indexOf(";"));
 		setMapping(key.substring(key.indexOf(";") + 1), duplicated);
@@ -26,11 +27,10 @@ public class KeyInputEntry extends SelectEntry {
 		for (int spaces = 0; spaces < Screen.w / Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
 			buffer.append(" ");
 
-		String newMapping = "";
+		StringBuilder newMapping = new StringBuilder();
 		for (String k : mapping.split("\\|")) {
-			if (duplicated.contains(k)) k = Color.RED_CODE + k;
-			k = Color.GRAY_CODE + k + Color.WHITE_CODE;
-			newMapping += k + "|";
+			if (duplicated.contains(k)) k = Color.RED_CODE + k + Color.RESET_CODE;
+			newMapping.append(k).append("|");
 		}
 
 		this.mapping = newMapping.substring(0, newMapping.length() - 1);
@@ -47,12 +47,21 @@ public class KeyInputEntry extends SelectEntry {
 	}
 
 	@Override
+	public void render(Screen screen, Screen.@Nullable RenderingLimitingModel bounds, int x, int y, boolean isSelected) {
+		if (isVisible()) {
+			String text = toString();
+			Font.drawColor(bounds, isSelected ? text : text.replaceAll(Color.RED_CODE, Color.DIMMED_RED_CODE),
+				screen, x, y, getColor(isSelected));
+		}
+	}
+
+	@Override
 	public int getWidth() {
 		return Screen.w;
 	}
 
 	@Override
 	public String toString() {
-		return Localization.getLocalized(action) + buffer + mapping;
+		return action + buffer + mapping;
 	}
 }

@@ -21,35 +21,6 @@ public class Network extends Game {
 
 	private static final Random random = new Random();
 
-	private static VersionInfo latestVersion = null;
-
-
-	@Nullable
-	public static VersionInfo getLatestVersion() {
-		return latestVersion;
-	}
-
-	public static void findLatestVersion(Action callback) {
-		new Thread(() -> {
-			Logging.NETWORK.debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
-			try {
-				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").asJson();
-				if (response.getStatus() != 200) {
-					Logging.NETWORK.error("Version request returned status code " + response.getStatus() + ": " + response.getStatusText());
-					Logging.NETWORK.error("Response body: " + response.getBody());
-					latestVersion = new VersionInfo(VERSION, "", "");
-				} else {
-					latestVersion = new VersionInfo(new JSONObject(response.getBody().getArray().getJSONObject(0).toString()));
-				}
-			} catch (UnirestException e) {
-				e.printStackTrace();
-				latestVersion = new VersionInfo(VERSION, "", "");
-			}
-
-			callback.act(); // finished.
-		}).start();
-	}
-
 	@Nullable
 	public static Entity getEntity(int eid) {
 		for (Level level : levels) {

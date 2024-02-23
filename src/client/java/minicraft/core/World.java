@@ -12,7 +12,7 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.TutorialDisplayHandler;
-import minicraft.screen.WorldGenDisplay;
+import minicraft.screen.WorldCreateDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
@@ -103,7 +103,9 @@ public class World extends Game {
 	 * This method is used to create a brand new world, or to load an existing one from a file.
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
-	public static void initWorld() { // This is a full reset; everything.
+	public static void initWorld(WorldCreateDisplay.WorldSettings settings)
+		throws Load.BackupCreationFailedException, Load.WorldLoadingFailedException,
+		Load.DungeonRegenerationCancelledException { // This is a full reset; everything.
 		Logging.WORLD.debug("Resetting world...");
 
 		PlayerDeathDisplay.shouldRespawn = false;
@@ -134,14 +136,14 @@ public class World extends Game {
 
 			worldSize = (Integer) Settings.get("size");
 
-			seed = WorldGenDisplay.getSeed().orElse(new Random().nextLong());
+			seed = settings.seed == null ? new Random().nextLong() : settings.seed;
 			random = new Random(seed);
 
 			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // The .002 is for floating point errors, in case they occur.
 			for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 				// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 
-				Logging.WORLD.trace("Generating level " + i + "...");
+				Logging.WORLD.trace("Generating level {}...", i);
 
 				LoadingDisplay.setMessage(Level.getDepthString(i));
 				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], !WorldSelectDisplay.hasLoadedWorld());

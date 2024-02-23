@@ -79,27 +79,27 @@ public class TreeTile extends Tile {
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
 		if (isUpTileSame && isUpLeftTileSame && isLeftTileSame) {
-			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
+			screen.render(null, x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
+			screen.render(null, x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
 		}
 
 		if (isUpTileSame && isUpRightTileSame && isRightTileSame) {
-			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
+			screen.render(null, x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
+			screen.render(null, x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
 		}
 
 		if (isDownTileSame && isDownLeftTileSame && isLeftTileSame) {
-			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
+			screen.render(null, x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
+			screen.render(null, x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
 		if (isDownTileSame && isDownRightTileSame && isRightTileSame) {
-			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
+			screen.render(null, x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
+			screen.render(null, x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
 		}
 	}
 
@@ -124,7 +124,7 @@ public class TreeTile extends Tile {
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -148,12 +148,12 @@ public class TreeTile extends Tile {
 
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth = 20;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = treeHealth;
 
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
 			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));

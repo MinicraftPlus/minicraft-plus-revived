@@ -13,7 +13,11 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PlayerInvDisplay extends Display {
 
@@ -21,27 +25,28 @@ public class PlayerInvDisplay extends Display {
 
 	private final Player player;
 
-	private String itemDescription = "";
-	private Menu.Builder descriptionMenuBuilder;
+	private @Nullable List<ListEntry> itemDescription = null;
 
 	private final boolean creativeMode;
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT));
+		super(new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
+			"minicraft.display.menus.inventory"), RelPos.LEFT));
 		this.player = player;
-		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
-		creativeMode = Game.isMode("minicraft.settings.mode.creative");
+		Menu.Builder descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
+		creativeMode = Game.isMode("minicraft.displays.world_create.options.game_mode.creative");
 		itemDescription = getDescription();
+		if (itemDescription != null) descriptionMenuBuilder.setEntries(itemDescription);
 		Menu descriptionMenu = descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT)
-			.setEntries(StringEntry.useLines(Color.WHITE, false, itemDescription.split("\n")))
 			.setSelectable(false)
 			.createMenu();
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[]{
 				menus[0],
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
+				new InventoryMenu(player, creativeInv, new Localization.LocalizationString(
+					"minicraft.displays.player_inv.container_title.items"), RelPos.RIGHT) {{
 					creativeInv = true;
 				}},
 				descriptionMenu
@@ -61,12 +66,14 @@ public class PlayerInvDisplay extends Display {
 			onScreenKeyboardMenu.setVisible(false);
 	}
 
-	private String getDescription() {
+	@Nullable
+	private List<ListEntry> getDescription() {
 		if (selection == 0) {
 			Inventory inv = player.getInventory();
-			return inv.invSize() == 0 ? "" : inv.get(menus[0].getSelection()).getDescription();
+			return inv.invSize() == 0 ? null : inv.get(menus[0].getSelection()).getDescription().toEntries();
 		} else {
-			return creativeInv.invSize() == 0 ? "" : creativeInv.get(menus[1].getSelection()).getDescription();
+			return creativeInv.invSize() == 0 ? null :
+				creativeInv.get(menus[1].getSelection()).getDescription().toEntries();
 		}
 	}
 
@@ -78,6 +85,16 @@ public class PlayerInvDisplay extends Display {
 		boolean mainMethod = false;
 
 		itemDescription = getDescription();
+		if (itemDescription == null) menus[creativeMode ? 2 : 1].shouldRender = false;
+		else {
+			menus[creativeMode ? 2 : 1].shouldRender = true;
+			menus[creativeMode ? 2 : 1].setEntries(itemDescription);
+			menus[creativeMode ? 2 : 1].builder()
+				.setMenuSize(null)
+				.setDisplayLength(0)
+				.recalculateFrame(); // This resizes menu
+		}
+
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
@@ -122,7 +139,7 @@ public class PlayerInvDisplay extends Display {
 
 				Inventory from, to;
 				if (selection == 0) {
-					if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+					if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 						player.activeItem = player.getInventory().remove(menus[0].getSelection());
 						Game.exitDisplay();
 						return;
@@ -159,7 +176,7 @@ public class PlayerInvDisplay extends Display {
 					Item fromItem = from.get(fromSel);
 
 					boolean transferAll;
-					if (input.inputPressed("attack")) { // If stack limit is available, this can transfer whole stack
+					if (input.inputPressed("SELECT")) { // If stack limit is available, this can transfer whole stack
 						transferAll = !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
 					} else return;
 
@@ -174,7 +191,7 @@ public class PlayerInvDisplay extends Display {
 				}
 
 			} else {
-				if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+				if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 					player.activeItem = player.getInventory().remove(menus[0].getSelection());
 					Game.exitDisplay();
 				}
@@ -184,12 +201,6 @@ public class PlayerInvDisplay extends Display {
 
 	@Override
 	public void render(Screen screen) {
-		if (itemDescription.isEmpty()) menus[creativeMode ? 2 : 1].shouldRender = false;
-		else {
-			menus[creativeMode ? 2 : 1] = descriptionMenuBuilder.setEntries(StringEntry.useLines(Color.WHITE, itemDescription.split("\n")))
-				.createMenu(); // This resizes menu
-		}
-
 		super.render(screen);
 
 		// Searcher help text
@@ -216,9 +227,9 @@ public class PlayerInvDisplay extends Display {
 			menus[0].translate(shift, 0);
 			menus[1].translate(shift, 0);
 			if (newSel == 0)
-				descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
+				menus[2].builder().setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
 			if (newSel == 1)
-				descriptionMenuBuilder.setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
+				menus[2].builder().setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
 		}
 	}
 
@@ -228,9 +239,7 @@ public class PlayerInvDisplay extends Display {
 
 	private void update() {
 		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]) {{
-			creativeInv = true;
-		}};
+		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 		itemDescription = getDescription();

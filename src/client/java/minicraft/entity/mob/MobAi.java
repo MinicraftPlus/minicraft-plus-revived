@@ -141,9 +141,9 @@ public abstract class MobAi extends Mob {
 
 		LinkedSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
 		if (hurtTime > 0) {
-			screen.render(xo, yo, curSprite.getSprite(), true);
+			screen.render(null, xo, yo, curSprite.getSprite(), true);
 		} else {
-			screen.render(xo, yo, curSprite.getSprite());
+			screen.render(null, xo, yo, curSprite.getSprite());
 		}
 	}
 
@@ -168,7 +168,7 @@ public abstract class MobAi extends Mob {
 				Sound.play("monsterhurt");
 			}
 		}
-		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
+		level.add(new TextParticle(String.valueOf(damage), x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
 
 		super.doHurt(damage, attackDir);
 	}

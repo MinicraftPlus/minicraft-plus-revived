@@ -6,7 +6,7 @@ plugins {
 allprojects {
     apply plugin: "java"
 
-    version = "2.2.0-dev5"
+    version = "2.2.0-dev6"
 
     sourceCompatibility = 8
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -107,7 +107,7 @@ publishing {
 				username = System.getenv("GITHUB_ACTOR")
 				password = System.getenv("GITHUB_TOKEN")
 			}
-		} 
+		}
 	}
 }
 

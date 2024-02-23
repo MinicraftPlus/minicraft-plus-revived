@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Arrow;
@@ -216,7 +217,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public int getMultiplier() {
-		return Game.isMode("minicraft.settings.mode.score") ? multiplier : 1;
+		return Game.isMode("minicraft.displays.world_create.options.game_mode.score") ? multiplier : 1;
 	}
 
 	void resetMultiplier() {
@@ -225,7 +226,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public void addMultiplier(int value) {
-		if (!Game.isMode("minicraft.settings.mode.score")) return;
+		if (!Game.isMode("minicraft.displays.world_create.options.game_mode.score")) return;
 		multiplier = Math.min(MAX_MULTIPLIER, multiplier + value);
 		multipliertime = Math.max(multipliertime, mtm - 5);
 	}
@@ -351,7 +352,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else if (onStairDelay > 0)
 			onStairDelay--; // Decrements stairDelay if it's > 0, but not on stair tile... does the player get removed from the tile beforehand, or something?
 
-		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("minicraft.settings.mode.creative")) {
+		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			if (onFallDelay <= 0) {
 				World.scheduleLevelChange(-1);
 				onFallDelay = 40;
@@ -359,7 +360,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		} else if (onFallDelay > 0) onFallDelay--;
 
-		if (Game.isMode("minicraft.settings.mode.creative")) {
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 			// Prevent stamina/hunger decay in creative mode.
 			stamina = maxStamina;
 			hunger = maxHunger;
@@ -541,7 +542,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputPressed("pause"))
 					Game.setDisplay(new PauseDisplay());
 				if (input.inputPressed("craft") && !use())
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, new Localization.LocalizationString(
+						"minicraft.displays.crafting"), this, true));
 
 				if (input.inputDown("info")) Game.setDisplay(new InfoDisplay());
 
@@ -646,7 +648,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					level.add(new Arrow(this, attackDir, tool.level));
 					attackTime = 10;
 
-					if (!Game.isMode("minicraft.settings.mode.creative")) tool.dur--;
+					if (!Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) tool.dur--;
 
 					AchievementsDisplay.setAchievement("minicraft.achievement.bow", true);
 
@@ -773,7 +775,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// For secret messages :=)
-						Game.notifications.add(itemData.substring(1));
+						Game.notifications.add(new Localization.LocalizationString(false, itemData.substring(1)));
 					} else {
 						if (Items.get(itemData).equals(Items.get("Raw Fish"))) {
 							AchievementsDisplay.setAchievement("minicraft.achievement.fish", true);
@@ -879,21 +881,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 				// animation effect
 				if (tickTime / 8 % 2 == 0) {
-					screen.render(xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
-					screen.render(xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
+					screen.render(null, xo + 0, yo + 3, 5, 0, 0, hudSheet.getSheet()); // Render the water graphic
+					screen.render(null, xo + 8, yo + 3, 5, 0, 1, hudSheet.getSheet()); // Render the mirrored water graphic to the right.
 				} else {
-					screen.render(xo + 0, yo + 3, 5, 1, 0, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
+					screen.render(null, xo + 0, yo + 3, 5, 1, 0, hudSheet.getSheet());
+					screen.render(null, xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
 				}
 
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
 
 				if (tickTime / 8 % 2 == 0) {
-					screen.render(xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
-					screen.render(xo + 8, yo + 3, 6, 0, 0, hudSheet.getSheet()); // Render the mirrored lava graphic to the right.
+					screen.render(null, xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
+					screen.render(null, xo + 8, yo + 3, 6, 0, 0, hudSheet.getSheet()); // Render the mirrored lava graphic to the right.
 				} else {
-					screen.render(xo + 0, yo + 3, 6, 1, 1, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 3, 6, 1, 0, hudSheet.getSheet());
+					screen.render(null, xo + 0, yo + 3, 6, 1, 1, hudSheet.getSheet());
+					screen.render(null, xo + 8, yo + 3, 6, 1, 0, hudSheet.getSheet());
 				}
 			}
 		}
@@ -901,10 +903,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Renders indicator for what tile the item will be placed on
 		if (activeItem instanceof TileItem && !isSwimming()) {
 			Point t = getInteractionTile();
-			screen.render(t.x * 16, t.y * 16, 3, 2, 0, hudSheet.getSheet());
-			screen.render(t.x * 16 + 8, t.y * 16, 3, 2, 1, hudSheet.getSheet());
-			screen.render(t.x * 16, t.y * 16 + 8, 3, 2, 2, hudSheet.getSheet());
-			screen.render(t.x * 16 + 8, t.y * 16 + 8, 3, 2, 3, hudSheet.getSheet());
+			screen.render(null, t.x * 16, t.y * 16, 3, 2, 0, hudSheet.getSheet());
+			screen.render(null, t.x * 16 + 8, t.y * 16, 3, 2, 1, hudSheet.getSheet());
+			screen.render(null, t.x * 16, t.y * 16 + 8, 3, 2, 2, hudSheet.getSheet());
+			screen.render(null, t.x * 16 + 8, t.y * 16 + 8, 3, 2, 3, hudSheet.getSheet());
 		}
 
 		// Makes the player white if they have just gotten hurt
@@ -920,16 +922,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// This makes falling look really cool.
 			int spriteToUse = Math.round(onFallDelay / 2f) % carrySprites.length;
 			curSprite = carrySprites[spriteToUse][(walkDist >> 3) & 1];
-			screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+			screen.render(null, xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 			// Render each corner of the sprite
 			if (isSwimming()) {
 				Sprite sprite = curSprite.getSprite();
-				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
-				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
+				screen.render(null, xo, yo, sprite.spritePixels[0][0], shirtColor);
+				screen.render(null, xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
 			} else { // Don't render the bottom half if swimming.
-				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
+				screen.render(null, xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 			}
 		}
 
@@ -937,31 +939,31 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (attackTime > 0) {
 			switch (attackDir) {
 				case UP:  // If currently attacking upwards...
-					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
-					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
+					screen.render(null, xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
+					screen.render(null, xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						screen.render(xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
+						screen.render(null, xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
-					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
-					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
+					screen.render(null, xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
+					screen.render(null, xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
+						screen.render(null, xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
-					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
-					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
+					screen.render(null, xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
+					screen.render(null, xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
+						screen.render(null, xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
-					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
+					screen.render(null, xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
+					screen.render(null, xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
+						screen.render(null, xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
 					}
 					break;
 				case NONE:
@@ -973,16 +975,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
+					screen.render(null, xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
+					screen.render(null, xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
+					screen.render(null, xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
+					screen.render(null, xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
 					break;
 				case NONE:
 					break;
@@ -1169,7 +1171,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	protected void doHurt(int damage, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative") || hurtTime > 0 || Bed.inBed(this))
 			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0, armorDam = 0;
@@ -1188,7 +1190,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Adds a text particle telling how much damage was done to the player, and the armor.
 			if (armorDam > 0) {
-				level.add(new TextParticle("" + damage, x, y, Color.GRAY));
+				level.add(new TextParticle(String.valueOf(damage), x, y, Color.GRAY));
 				armor -= armorDam;
 				if (armor <= 0) {
 					healthDam -= armor; // Adds armor damage overflow to health damage (minus b/c armor would be negative)
@@ -1200,7 +1202,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (healthDam > 0 || this != Game.player) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			level.add(new TextParticle(String.valueOf(damage), x, y, Color.get(-1, 504)));
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
@@ -1215,7 +1217,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param attackDir The direction of attack.
 	 */
 	private void directHurt(int damage, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative") || hurtTime > 0 || Bed.inBed(this))
 			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0;
@@ -1224,7 +1226,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (healthDam > 0 || this != Game.player) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			level.add(new TextParticle(String.valueOf(damage), x, y, Color.get(-1, 504)));
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
@@ -1234,7 +1236,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	public void remove() {
-		Logging.WORLD.trace("Removing player from level " + getLevel());
+		Logging.WORLD.trace("Removing player from level {}", getLevel());
 		super.remove();
 	}
 
@@ -1244,7 +1246,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public String getDebugHunger() {
-		return hungerStamCnt + "_" + stamHungerTicks;
+		return String.format("%d_%d", hungerStamCnt, stamHungerTicks);
 	}
 
 	/**

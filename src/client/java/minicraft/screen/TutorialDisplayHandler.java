@@ -92,7 +92,10 @@ public class TutorialDisplayHandler {
 		private void tick() {
 			if (key.contains("|")) {
 				for (String k : key.split("\\|")) {
-					if (Game.input.inputDown(k)) interactedDuration++;
+					if (Game.input.inputDown(k))  {
+						interactedDuration++;
+						return;
+					}
 				}
 			} else if (Game.input.inputDown(key))
 				interactedDuration++;
@@ -154,7 +157,7 @@ public class TutorialDisplayHandler {
 		currentOngoingElement = null;
 		Settings.set("tutorials", false);
 		Logging.TUTORIAL.debug("Tutorial completed.");
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
+		Game.notifications.add(new Localization.LocalizationString("minicraft.notification.tutorials_completed"));
 	}
 
 	private static void turnOffGuides() {
@@ -191,7 +194,8 @@ public class TutorialDisplayHandler {
 
 		if (currentOngoingElement != null) {
 			if (input.getMappedKey("expandQuestDisplay").isClicked() && Game.getDisplay() == null) {
-				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(currentOngoingElement.key, null, 4),
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(new Localization.LocalizationString(
+					currentOngoingElement.key), null, 4),
 					currentOngoingElement.description));
 			}
 		}
@@ -202,7 +206,7 @@ public class TutorialDisplayHandler {
 	 */
 	public static void render(Screen screen) {
 		if (currentGuide != null) { // Is ongoing.
-			String[] lines = Font.getLines(Localization.getLocalized(currentGuide.display.get()), Screen.w, Screen.h, 0);
+			String[] lines = Font.getLines(currentGuide.display.get(), Screen.w, Screen.h, 0);
 			if (ControlGuide.animation > 0) {
 				int textWidth = Font.textWidth(lines);
 				int xPadding = Screen.w / 2 - (textWidth + 8) / 2;

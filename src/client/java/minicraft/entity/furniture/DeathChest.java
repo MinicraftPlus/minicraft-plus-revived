@@ -34,11 +34,11 @@ public class DeathChest extends Chest {
 		this.sprite = normalSprite;
 
 		/// Set the expiration time based on the world difficulty.
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.easy")) {
 			time = 300 * Updater.normSpeed;
-		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+		} else if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.normal")) {
 			time = 120 * Updater.normSpeed;
-		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+		} else if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.hard")) {
 			time = 30 * Updater.normSpeed;
 		}
 	}
@@ -87,7 +87,7 @@ public class DeathChest extends Chest {
 
 	public void render(Screen screen) {
 		super.render(screen);
-		String timeString = (time / Updater.normSpeed) + "S";
+		String timeString = Localization.getLocalized("minicraft.display.death_chest.time_remaining", time / Updater.normSpeed);
 		Font.draw(timeString, screen, x - Font.textWidth(timeString) / 2, y - Font.textHeight() - getBounds().getHeight() / 2, Color.WHITE);
 	}
 
@@ -108,7 +108,7 @@ public class DeathChest extends Chest {
 
 				int returned = playerInv.add(i);
 				if (returned < total) {
-					Game.notifications.add("Your inventory is full!");
+					Game.notifications.add(new Localization.LocalizationString("minicraft.notification.inventory_full"));
 					return;
 				}
 
@@ -116,7 +116,7 @@ public class DeathChest extends Chest {
 			}
 
 			remove();
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.death_chest_retrieved"));
+			Game.notifications.add(new Localization.LocalizationString("minicraft.notification.death_chest_retrieved"));
 		}
 	}
 
