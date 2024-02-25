@@ -217,6 +217,14 @@ public class Updater extends Game {
 
 				// For debugging only
 				{
+					// Quick Level change: move the player for -1, or 1 levels
+					if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-S").isClicked()) {
+						Game.setDisplay(new LevelTransitionDisplay(-1));
+
+					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
+						Game.setDisplay(new LevelTransitionDisplay(1));
+					}
+					
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
