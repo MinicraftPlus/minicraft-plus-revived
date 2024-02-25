@@ -14,6 +14,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.screen.entry.BlankEntry;
+import minicraft.screen.entry.ItemEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectableStringEntry;
 import org.jetbrains.annotations.NotNull;
@@ -223,7 +224,7 @@ public class Menu {
 		}
 
 		int prevSel = selection;
-		if (!input.getMappedKey("ALT").isDown() && entries.get(selection).delegate.isScrollingTickerSet()) {
+		if (input.getMappedKey("ALT").isDown() && !entries.get(selection).delegate.isScrollingTickerSet()) {
 			if (input.inputPressed("cursor-left"))
 				entries.get(selection).translateX(MinicraftImage.boxWidth, true);
 			if (input.inputPressed("cursor-right"))
@@ -354,7 +355,7 @@ public class Menu {
 		// render the title
 		if (title != null) {
 			String title = this.title.toString();
-			int spriteX = renderSelectionLevel && selected ? 7 : 3;
+			int spriteX = !renderSelectionLevel || selected ? 3 : 7;
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
@@ -445,7 +446,7 @@ public class Menu {
 
 		int bottom = bounds.getBottom() - MinicraftImage.boxWidth;
 		int right = bounds.getRight() - MinicraftImage.boxWidth;
-		int xOffset = renderSelectionLevel && selected ? 4 : 0;
+		int xOffset = !renderSelectionLevel || selected ? 0 : 4;
 
 		for (int y = bounds.getTop(); y <= bottom; y += MinicraftImage.boxWidth) { // loop through the height of the bounds
 			for (int x = bounds.getLeft(); x <= right; x += MinicraftImage.boxWidth) { // loop through the width of the bounds
@@ -475,16 +476,39 @@ public class Menu {
 	/** Acts as an internal wrapping decorator of a {@link ListEntry} for the {@link Menu} environment. */
 	private class MenuListEntry extends Screen.EntryRenderingUnit {
 		private class MenuEntryLimitingModel extends EntryLimitingModel {}
+		private class ItemMenuEntryLimitingModel extends MenuEntryLimitingModel {
+			@Override
+			public int getLeftBound() {
+				return super.getLeftBound() + 2 * MinicraftImage.boxWidth;
+			}
+		}
 
 		private class MenuEntryXAccessor extends EntryXAccessor {}
+		private class ItemMenuEntryXAccessor extends MenuEntryXAccessor {
+			@Override
+			public int getLeftBound(RelPos anchor) {
+				return anchor.xIndex *
+					(getDelegate().getWidth() - getEntryBounds().getWidth() + 2 * MinicraftImage.boxWidth) / 2;
+			}
+		}
 
-		public final MenuEntryLimitingModel limitingModel = new MenuEntryLimitingModel();
-		public final MenuEntryXAccessor accessor = new MenuEntryXAccessor();
+		public final MenuEntryLimitingModel limitingModel;
+		public final MenuEntryXAccessor accessor;
 		public final ListEntry delegate;
 
 		public MenuListEntry(ListEntry delegate, @NotNull RelPos anchor) {
 			super(anchor);
 			this.delegate = delegate;
+			resetRelativeAnchorsSynced(anchor);
+			limitingModel = delegate instanceof ItemEntry ? new ItemMenuEntryLimitingModel() : new MenuEntryLimitingModel();
+			accessor = delegate instanceof ItemEntry ? new ItemMenuEntryXAccessor() : new MenuEntryXAccessor();
+		}
+
+		@Override
+		public void resetRelativeAnchorsSynced(RelPos newAnchor) {
+			super.resetRelativeAnchorsSynced(newAnchor);
+			if (delegate instanceof ItemEntry)
+				xPos = 2 * MinicraftImage.boxWidth;
 		}
 
 		@Override
@@ -541,12 +565,14 @@ public class Menu {
 		}
 
 		protected void renderExtra(Screen screen, int x, int y, int entryWidth, boolean selected) {
-			if (selected && delegate.isSelectable()) {
-				if (delegate.isScrollingTickerSet()) {
-					entryWidth = Math.min(entryWidth, getEntryBounds().getWidth());
-					x = getEntryBounds().getLeft();
-				}
+			if (delegate.isScrollingTickerSet()) {
+				entryWidth = Math.min(entryWidth, getEntryBounds().getWidth());
+				x = getEntryBounds().getLeft();
+			}
 
+			if (delegate instanceof ItemEntry)
+				((ItemEntry) delegate).renderIcon(screen, x, y);
+			if (selected && delegate.isSelectable()) {
 				Font.draw(null, "> ", screen, x - 2 * MinicraftImage.boxWidth, y, ListEntry.COL_SLCT);
 				Font.draw(null, " <", screen, x + entryWidth, y, ListEntry.COL_SLCT);
 			}

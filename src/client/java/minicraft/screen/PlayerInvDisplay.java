@@ -51,6 +51,8 @@ public class PlayerInvDisplay extends Display {
 				}},
 				descriptionMenu
 			};
+
+			onSelectionChange(1, 0);
 		} else {
 			creativeInv = null;
 			menus = new Menu[]{menus[0], descriptionMenu};

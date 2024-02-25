@@ -35,14 +35,22 @@ public class ItemEntry extends ListEntry {
 	}
 
 	@Override
+	public boolean isScrollingTickerSet() {
+		return true;
+	}
+
+	@Override
 	public void tickScrollingTicker(@NotNull EntryXAccessor accessor) {
 		ticker.tick(accessor);
 	}
 
 	@Override
 	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
-		super.render(screen, limitingModel, x + 16, y, true);
-		screen.render(limitingModel, x, y, item.sprite);
+		super.render(screen, limitingModel, x, y, true);
+	}
+
+	public void renderIcon(Screen screen, int x, int y) {
+		screen.render(null, x, y, item.sprite);
 	}
 
 	@Override
@@ -59,7 +67,7 @@ public class ItemEntry extends ListEntry {
 		String string = toString();
 
 		Font.drawColor(limitingModel, string.replace(contain, String.format("%s%s%s", Color.toStringCode(isSelected ? containColor :
-				Color.tint(containColor, -1, true)), contain, Color.WHITE_CODE)), screen, x + 16, y);
+				Color.tint(containColor, -1, true)), contain, Color.WHITE_CODE)), screen, x, y);
 	}
 
 	@Override

@@ -32,8 +32,7 @@ public class RecipeEntry extends ItemEntry {
 	@Override
 	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
 		if (isVisible()) {
-			Font.draw(limitingModel, toString(), screen, x + 16, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
-			screen.render(null, x, y, getItem().sprite);
+			Font.draw(limitingModel, toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
 		}
 	}
 

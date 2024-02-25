@@ -75,13 +75,15 @@ public class CraftingDisplay extends Display {
 	}
 
 	private void refreshData() {
-		if (recipes.length == 0) return;
-		menus[2].setEntries(getCurItemCosts());
+		if (recipes.length != 0) {
+			menus[2].setEntries(getCurItemCosts());
+			menus[1].setEntries(Collections.singletonList(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount()))));
+		}
+
 		menus[2].builder()
 			.setDisplayLength(0)
 			.setMenuSize(null)
 			.recalculateFrame();
-		menus[1].setEntries(Collections.singletonList(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount()))));
 		menus[1].builder()
 			.setDisplayLength(0)
 			.setMenuSize(null)

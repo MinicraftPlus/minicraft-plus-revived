@@ -19,7 +19,7 @@ class ItemListMenu extends Menu {
 	}
 
 	static Builder getBuilder(@MagicConstant(intValues = { POS_LEFT, POS_RIGHT }) int slot) {
-		Builder builder = new Builder(true, 0, slot == POS_LEFT ? RelPos.LEFT : RelPos.RIGHT)
+		Builder builder = new Builder(true, 0, RelPos.LEFT)
 			.setDisplayLength(DISPLAY_LENGTH)
 			.setSelectable(true)
 			.setScrollPolicies(1, false)
