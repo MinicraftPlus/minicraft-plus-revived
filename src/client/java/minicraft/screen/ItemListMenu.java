@@ -1,22 +1,45 @@
 package minicraft.screen;
 
 import minicraft.core.io.Localization;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
 import minicraft.screen.entry.ItemEntry;
+import org.intellij.lang.annotations.MagicConstant;
 
 class ItemListMenu extends Menu {
+	public static final int POS_LEFT = 0;
+	public static final int POS_RIGHT = 1;
+
+	private static final int PADDING = 10;
+	private static final int DISPLAY_LENGTH = 9;
 
 	static Builder getBuilder() {
-		return getBuilder(RelPos.LEFT);
+		return getBuilder(POS_LEFT);
 	}
 
-	static Builder getBuilder(RelPos entryPos) {
-		return new Builder(true, 0, entryPos)
-			.setPositioning(new Point(9, 9), RelPos.BOTTOM_RIGHT)
-			.setDisplayLength(9)
+	static Builder getBuilder(@MagicConstant(intValues = { POS_LEFT, POS_RIGHT }) int slot) {
+		Builder builder = new Builder(true, 0, slot == POS_LEFT ? RelPos.LEFT : RelPos.RIGHT)
+			.setDisplayLength(DISPLAY_LENGTH)
 			.setSelectable(true)
 			.setScrollPolicies(1, false)
-			.setSearcherBar(true);
+			.setSearcherBar(true)
+			.setShouldRenderSelectionLevel(true);
+		switch (slot) { // Padding exists at the center between 2 slots.
+			case ItemListMenu.POS_LEFT:
+				builder.setPositioning(new Point(PADDING, PADDING), RelPos.BOTTOM_RIGHT)
+					.setSize(Screen.w / 2 - PADDING - PADDING / 2, // Occupy left half
+						(2 + DISPLAY_LENGTH) * MinicraftImage.boxWidth);
+				break;
+			case ItemListMenu.POS_RIGHT:
+				builder.setPositioning(new Point(Screen.w - PADDING, PADDING), RelPos.BOTTOM_LEFT)
+					.setSize(Screen.w / 2 - PADDING - PADDING / 2, // Occupy right half
+						(2 + DISPLAY_LENGTH) * MinicraftImage.boxWidth);
+				break;
+			default:
+				throw new IllegalArgumentException("for input slot: " + slot);
+		}
+		return builder;
 	}
 
 	protected ItemListMenu(Builder b, ItemEntry[] entries, Localization.LocalizationString title) {

@@ -7,31 +7,19 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import org.intellij.lang.annotations.MagicConstant;
 
 class InventoryMenu extends ItemListMenu {
 
-	private final RelPos entryPos; // Used for copy constructor
-	private final Localization.LocalizationString title; // Used for copy constructor
 	private final Inventory inv;
 	private final Entity holder;
 	protected boolean creativeInv = false;
 
-	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title, RelPos entryPos) {
-		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
+	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot) {
+		super(ItemListMenu.getBuilder(slot), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
-		this.title = title;
-		this.entryPos = entryPos;
-	}
-
-	InventoryMenu(InventoryMenu model) {
-		super(ItemListMenu.getBuilder(model.entryPos), ItemEntry.useItems(model.inv.getItems()), model.title);
-		this.inv = model.inv;
-		this.holder = model.holder;
-		this.creativeInv = model.creativeInv;
-		this.title = model.title;
-		this.entryPos = model.entryPos;
-		setSelection(model.getSelection());
 	}
 
 	@Override
@@ -61,6 +49,11 @@ class InventoryMenu extends ItemListMenu {
 				holder.getLevel().dropItem(holder.x, holder.y, drop);
 			}
 		}
+	}
+
+	public void refresh() {
+		setEntries(ItemEntry.useItems(inv.getItems()));
+		setSelection(getSelection());
 	}
 
 	@Override

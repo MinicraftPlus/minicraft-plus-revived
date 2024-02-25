@@ -32,7 +32,7 @@ public class PlayerInvDisplay extends Display {
 
 	public PlayerInvDisplay(Player player) {
 		super(new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
-			"minicraft.display.menus.inventory"), RelPos.LEFT));
+			"minicraft.display.menus.inventory"), ItemListMenu.POS_LEFT));
 		this.player = player;
 		Menu.Builder descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.displays.world_create.options.game_mode.creative");
@@ -46,16 +46,11 @@ public class PlayerInvDisplay extends Display {
 			menus = new Menu[]{
 				menus[0],
 				new InventoryMenu(player, creativeInv, new Localization.LocalizationString(
-					"minicraft.displays.player_inv.container_title.items"), RelPos.RIGHT) {{
+					"minicraft.displays.player_inv.container_title.items"), ItemListMenu.POS_RIGHT) {{
 					creativeInv = true;
 				}},
 				descriptionMenu
 			};
-
-			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
-			update();
-
-			if (menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 		} else {
 			creativeInv = null;
 			menus = new Menu[]{menus[0], descriptionMenu};
@@ -165,7 +160,7 @@ public class PlayerInvDisplay extends Display {
 					}
 
 					update();
-
+					((InventoryMenu) curMenu).refresh();
 				} else {
 					from = creativeInv;
 					to = player.getInventory();
@@ -188,6 +183,7 @@ public class PlayerInvDisplay extends Display {
 
 					to.add(toSel, toItem);
 					update();
+					((InventoryMenu) menus[otherIdx]).refresh();
 				}
 
 			} else {
@@ -221,11 +217,6 @@ public class PlayerInvDisplay extends Display {
 
 			if (oldSel == newSel)
 				return; // this also serves as a protection against access to menus[0] when such may not exist.
-			int shift = 0;
-			if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
-			if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-			menus[0].translate(shift, 0);
-			menus[1].translate(shift, 0);
 			if (newSel == 0)
 				menus[2].builder().setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
 			if (newSel == 1)
@@ -234,13 +225,10 @@ public class PlayerInvDisplay extends Display {
 	}
 
 	private int getOtherIdx() {
-		return (selection + 1) % 2;
+		return selection ^ 1;
 	}
 
 	private void update() {
-		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
-		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 		itemDescription = getDescription();
 	}

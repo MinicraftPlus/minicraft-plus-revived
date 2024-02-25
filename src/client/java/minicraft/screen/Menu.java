@@ -47,6 +47,7 @@ public class Menu {
 	private boolean renderOutOfFrame = false;
 
 	private boolean selectable = false;
+	private boolean renderSelectionLevel = false;
 	boolean shouldRender = true;
 
 	private int displayLength = 0;
@@ -90,6 +91,7 @@ public class Menu {
 		drawVertically = m.drawVertically;
 		hasFrame = m.hasFrame;
 		selectable = m.selectable;
+		renderSelectionLevel = m.renderSelectionLevel;
 		shouldRender = m.shouldRender;
 		displayLength = m.displayLength;
 		padding = m.padding;
@@ -140,7 +142,7 @@ public class Menu {
 
 		if (idx < 0) idx = 0;
 
-		this.selection = idx;
+		updateEntrySelection(idx);
 
 		doScroll();
 	}
@@ -205,6 +207,13 @@ public class Menu {
 		titleLoc.translate(xoff, yoff);
 	}
 
+	private void updateEntrySelection(int newSel) {
+		if (selection == newSel) return;
+		if (selection >= 0 && selection < entries.size())
+			entries.get(selection).resetRelativeAnchorsSynced(entryPos); // Reset old selectable entry position
+		selection = newSel;
+	}
+
 	public void tick(InputHandler input) {
 		if (!selectable) {
 			if (!entries.isEmpty()) entries.get(selection).tick(input);
@@ -214,19 +223,20 @@ public class Menu {
 		}
 
 		int prevSel = selection;
-		if (input.getMappedKey("ALT").isDown()) {
+		if (!input.getMappedKey("ALT").isDown() && entries.get(selection).delegate.isScrollingTickerSet()) {
 			if (input.inputPressed("cursor-left"))
 				entries.get(selection).translateX(MinicraftImage.boxWidth, true);
 			if (input.inputPressed("cursor-right"))
 				entries.get(selection).translateX(-MinicraftImage.boxWidth, true);
 		} else {
-			if (input.inputPressed("cursor-up")) selection--;
-			if (input.inputPressed("cursor-down")) selection++;
+			if (input.inputPressed("cursor-up")) updateEntrySelection(selection - 1);
+			if (input.inputPressed("cursor-down")) updateEntrySelection(selection + 1);
 			if (input.getMappedKey("shift+cursor-up").isClicked() && selectionSearcher == 0) selectionSearcher -= 2;
 			if (input.getMappedKey("shift+cursor-down").isClicked() && selectionSearcher == 0) selectionSearcher += 2;
-			if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
+			if (prevSel != selection && selectionSearcher != 0) updateEntrySelection(prevSel);
 		}
 
+		int newSel = selection;
 		if (useSearcherBar) {
 			if (input.getMappedKey("searcher-bar").isClicked()) {
 				searcherBarActive = !searcherBarActive;
@@ -283,23 +293,25 @@ public class Menu {
 			if (selectionSearcher != 0) {
 				boolean downDirection = selectionSearcher > 0;
 				selectionSearcher += downDirection ? -1 : 1;
-				selection += downDirection ? 1 : -1;
+				newSel += downDirection ? 1 : -1;
 			}
 		}
 
-		int delta = selection - prevSel;
-		selection = prevSel;
+		int delta = newSel - prevSel;
+		updateEntrySelection(prevSel);
 		if (delta == 0) {
 			entries.get(selection).tick(input); // only ticks the entry on a frame where the selection cursor has not moved.
 			return;
 		} else
 			Sound.play("select");
 
+		newSel = selection;
 		do {
-			selection += delta;
-			if (selection < 0) selection = entries.size() - 1;
-			selection = selection % entries.size();
-		} while (!entries.get(selection).delegate.isSelectable() && selection != prevSel);
+			newSel += delta;
+			if (newSel < 0) newSel = entries.size() - 1;
+			newSel = newSel % entries.size();
+		} while (!entries.get(newSel).delegate.isSelectable() && newSel != prevSel);
+		updateEntrySelection(newSel);
 
 		// update offset and selection displayed
 		dispSelection += selection - prevSel;
@@ -335,22 +347,24 @@ public class Menu {
 		this.offset = offset;
 	}
 
-	public void render(Screen screen) {
-		renderFrame(screen);
+	public void render(Screen screen) { render(screen, true); }
+	public void render(Screen screen, boolean selected) {
+		renderFrame(screen, selected);
 
 		// render the title
 		if (title != null) {
 			String title = this.title.toString();
+			int spriteX = renderSelectionLevel && selected ? 7 : 3;
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
-						screen.render(null, titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 6, 0, hudSheet.getSheet());
+						screen.render(null, titleLoc.x, titleLoc.y + i * Font.textHeight(), spriteX, 6, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else {
 				for (int i = 0; i < title.length(); i++) {
 					if (hasFrame)
-						screen.render(null, titleLoc.x + i * 8, titleLoc.y, 3, 6, 0, hudSheet.getSheet());
+						screen.render(null, titleLoc.x + i * 8, titleLoc.y, spriteX, 6, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * 8, titleLoc.y, titleColor);
 				}
 			}
@@ -415,9 +429,9 @@ public class Menu {
 		entries.remove(selection);
 
 		if (selection >= entries.size())
-			selection = entries.size() - 1;
+			updateEntrySelection(entries.size() - 1);
 		if (selection < 0)
-			selection = 0;
+			updateEntrySelection(0);
 
 		doScroll();
 	}
@@ -426,18 +440,19 @@ public class Menu {
 		titleColor = model.titleColor;
 	}
 
-	private void renderFrame(Screen screen) {
+	private void renderFrame(Screen screen, boolean selected) {
 		if (!hasFrame) return;
 
 		int bottom = bounds.getBottom() - MinicraftImage.boxWidth;
 		int right = bounds.getRight() - MinicraftImage.boxWidth;
+		int xOffset = renderSelectionLevel && selected ? 4 : 0;
 
 		for (int y = bounds.getTop(); y <= bottom; y += MinicraftImage.boxWidth) { // loop through the height of the bounds
 			for (int x = bounds.getLeft(); x <= right; x += MinicraftImage.boxWidth) { // loop through the width of the bounds
 
 				boolean xend = x == bounds.getLeft() || x == right;
 				boolean yend = y == bounds.getTop() || y == bottom;
-				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
+				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))) + xOffset; // determines which sprite to use
 				int mirrors = (x == right ? 1 : 0) + (y == bottom ? 2 : 0); // gets mirroring
 
 				screen.render(null, x, y, spriteoffset, 6, mirrors, hudSheet.getSheet());
@@ -657,6 +672,11 @@ public class Menu {
 		public Builder setSelectable(boolean selectable) {
 			setSelectable = true;
 			menu.selectable = selectable;
+			return this;
+		}
+
+		public Builder setShouldRenderSelectionLevel(boolean renderSelectionLevel) {
+			menu.renderSelectionLevel = renderSelectionLevel;
 			return this;
 		}
 

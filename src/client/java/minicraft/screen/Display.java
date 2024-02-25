@@ -122,7 +122,7 @@ public class Display {
 			idx++;
 			idx = idx % menus.length;
 			if (menus[idx].shouldRender())
-				menus[idx].render(screen);
-		} while (idx != selection);
+				menus[idx].render(screen, selection == idx);
+		} while (idx != selection); // All menus are rendered, but selected menu is last rendered.
 	}
 }

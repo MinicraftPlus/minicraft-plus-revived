@@ -5,6 +5,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class ItemEntry extends ListEntry {
 		return entries;
 	}
 
-	private Item item;
+	private final EntryScrollingTicker ticker = new HorizontalScrollerScrollingTicker(-1);
+	private final Item item;
 
 	public ItemEntry(Item i) {
 		this.item = i;
@@ -33,9 +35,14 @@ public class ItemEntry extends ListEntry {
 	}
 
 	@Override
+	public void tickScrollingTicker(@NotNull EntryXAccessor accessor) {
+		ticker.tick(accessor);
+	}
+
+	@Override
 	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
 		super.render(screen, limitingModel, x + 16, y, true);
-		screen.render(null, x, y, item.sprite);
+		screen.render(limitingModel, x, y, item.sprite);
 	}
 
 	@Override
