@@ -38,23 +38,18 @@ public class SandTile extends Tile {
 
 	public void steppedOn(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob) {
-			if (random.nextInt(3) == 0) {
-				int spawnX = entity.x - 8 + random.nextInt(5)-2;
-				int spawnY = entity.y - 8 + random.nextInt(5)-2;
-				for (Direction dir : Direction.values()) {
-					Tile neighbour = level.getTile(x + dir.getX(), y + dir.getY());
-					if (neighbour != null) {
-						if (!(neighbour instanceof SandTile)) { // Particles only spawn on sand tiles.
-							if (dir.getX() < 0) // Offsets
-								if (entity.x%16 < 8) spawnX += 8 - entity.x%16;
-							if (dir.getX() > 0)
-								if (entity.x%16 > 7) spawnX -= entity.x%16 - 8;
-							if (dir.getY() < 0)
-								if (entity.y%16 < 8) spawnY += 8 - entity.y%16;
-							if (dir.getY() > 0)
-								if (entity.y%16 > 7) spawnY -= entity.y%16 - 8;
-						}
-					}
+			if (((Mob) entity).walkDist % 8 == 0) { // Mob animation changes by every 2^3 in walkDist.
+				int spawnX = entity.x - 4; // Shifting is done to ensure that the center of particle is located
+				int spawnY = entity.y - 4; // at the center of the mob.
+				switch (((Mob) entity).dir) { // Shifting along the orthogonal axis of direction.
+					case NONE: // UNKNOWN
+						return;
+					case UP: case DOWN: // y-axis
+						spawnX += (random.nextInt(2) + 2) * (((((Mob) entity).walkDist) >> 3) % 2 == 0 ? 1 : -1);
+						break;
+					case LEFT: case RIGHT: // x-axis
+						spawnY += (random.nextInt(2) + 2) * (((((Mob) entity).walkDist) >> 3) % 2 == 0 ? 1 : -1);
+						break;
 				}
 
 				level.add(new SandParticle(spawnX, spawnY));

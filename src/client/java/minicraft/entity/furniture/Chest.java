@@ -21,11 +21,17 @@ import java.util.Random;
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
 
-	public Chest() { this("Chest"); }
+	public Chest() {
+		this("Chest");
+	}
 
-	public Chest(String name) { this(name, new LinkedSprite(SpriteType.Item, "chest")); }
+	public Chest(String name) {
+		this(name, new LinkedSprite(SpriteType.Item, "chest"));
+	}
+
 	/**
 	 * Creates a chest with a custom name.
+	 *
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
@@ -34,7 +40,9 @@ public class Chest extends Furniture implements ItemHolder {
 		inventory = new Inventory(); // Initialize the inventory.
 	}
 
-	/** This is what occurs when the player uses the "Menu" command near this */
+	/**
+	 * This is what occurs when the player uses the "Menu" command near this
+	 */
 	public boolean use(Player player) {
 		Game.setDisplay(new ContainerDisplay(player, this));
 		return true;
@@ -78,7 +86,7 @@ public class Chest extends Furniture implements ItemHolder {
 	public void die() {
 		if (level != null) {
 			List<Item> items = inventory.getItems();
-			level.dropItem(x, y, items.toArray(new Item[items.size()]));
+			level.dropItem(x, y, items.toArray(new Item[0]));
 		}
 		super.die();
 	}

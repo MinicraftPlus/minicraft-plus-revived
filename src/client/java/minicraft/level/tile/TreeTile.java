@@ -22,48 +22,81 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {
-	private static LinkedSprite treeSprite = new LinkedSprite(SpriteType.Tile, "tree");
-	private static LinkedSprite treeSpriteFull = new LinkedSprite(SpriteType.Tile, "tree_full");
+	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
+	private static final LinkedSprite oakSpriteFull = new LinkedSprite(SpriteType.Tile, "oak_full");
+	private static final LinkedSprite spruceSprite = new LinkedSprite(SpriteType.Tile, "spruce");
+	private static final LinkedSprite spruceSpriteFull = new LinkedSprite(SpriteType.Tile, "spruce_full");
+	private static final LinkedSprite birchSprite = new LinkedSprite(SpriteType.Tile, "birch");
+	private static final LinkedSprite birchSpriteFull = new LinkedSprite(SpriteType.Tile, "birch_full");
+	private static final LinkedSprite ashSprite = new LinkedSprite(SpriteType.Tile, "ash");
+	private static final LinkedSprite ashSpriteFull = new LinkedSprite(SpriteType.Tile, "ash_full");
+	private static final LinkedSprite aspenSprite = new LinkedSprite(SpriteType.Tile, "aspen");
+	private static final LinkedSprite aspenSpriteFull = new LinkedSprite(SpriteType.Tile, "aspen_full");
+	private static final LinkedSprite firSprite = new LinkedSprite(SpriteType.Tile, "fir");
+	private static final LinkedSprite firSpriteFull = new LinkedSprite(SpriteType.Tile, "fir_full");
+	private static final LinkedSprite willowSprite = new LinkedSprite(SpriteType.Tile, "willow");
+	private static final LinkedSprite willowSpriteFull = new LinkedSprite(SpriteType.Tile, "willow_full");
+
+	public enum TreeType {
+		OAK(oakSprite, oakSpriteFull),
+		SPRUCE(spruceSprite, spruceSpriteFull),
+		BIRCH(birchSprite, birchSpriteFull),
+		ASH(ashSprite, ashSpriteFull),
+		ASPEN(aspenSprite, aspenSpriteFull),
+		FIR(firSprite, firSpriteFull),
+		WILLOW(willowSprite, willowSpriteFull);
+
+		private final LinkedSprite treeSprite;
+		private final LinkedSprite treeSpriteFull;
+
+		TreeType(LinkedSprite treeSprite, LinkedSprite treeSpriteFull) {
+			this.treeSprite = treeSprite;
+			this.treeSpriteFull = treeSpriteFull;
+		}
+	}
 
 	protected TreeTile(String name) {
 		super(name, null);
 		connectsToGrass = true;
 	}
 
+	@SuppressWarnings("PointlessArithmeticExpression")
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 
-		boolean u = level.getTile(x, y - 1) == this;
-		boolean l = level.getTile(x - 1, y) == this;
-		boolean r = level.getTile(x + 1, y) == this;
-		boolean d = level.getTile(x, y + 1) == this;
-		boolean ul = level.getTile(x - 1, y - 1) == this;
-		boolean ur = level.getTile(x + 1, y - 1) == this;
-		boolean dl = level.getTile(x - 1, y + 1) == this;
-		boolean dr = level.getTile(x + 1, y + 1) == this;
+		TreeType thisType = level.treeTypes[x + y * level.w];
+		// Checking whether the target direction has targeted the same TreeTile
+		boolean isUpTileSame = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
+		boolean isLeftTileSame = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
+		boolean isRightTileSame = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
+		boolean isDownTileSame = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
+		boolean isUpLeftTileSame = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
+		boolean isUpRightTileSame = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
+		boolean isDownLeftTileSame = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
+		boolean isDownRightTileSame = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
 
-		Sprite sprite = treeSprite.getSprite();
-		Sprite spriteFull = treeSpriteFull.getSprite();
+		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
+		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
-		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, spriteFull.spritePixels[0][1]);
+		if (isUpTileSame && isUpLeftTileSame && isLeftTileSame) {
+			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, sprite.spritePixels[0][0]);
+			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
 		}
 
-		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, spriteFull.spritePixels[0][0]);
+		if (isUpTileSame && isUpRightTileSame && isRightTileSame) {
+			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, sprite.spritePixels[0][1]);
+			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
 		}
 
-		if (d && dl && l) {
+		if (isDownTileSame && isDownLeftTileSame && isLeftTileSame) {
 			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
 		} else {
 			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
 		}
 
-		if (d && dr && r) {
+		if (isDownTileSame && isDownRightTileSame && isRightTileSame) {
 			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
 		} else {
 			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
@@ -91,7 +124,7 @@ public class TreeTile extends Tile {
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -117,13 +150,13 @@ public class TreeTile extends Tile {
 		int treeHealth = 20;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
 
-		level.add(new SmashParticle(x*16, y*16));
+		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
-			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
 		} else {

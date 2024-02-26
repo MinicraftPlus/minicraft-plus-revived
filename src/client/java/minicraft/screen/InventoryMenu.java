@@ -32,17 +32,17 @@ class InventoryMenu extends ItemListMenu {
 
 		boolean dropOne = input.inputPressed("drop-one");
 
-		if(getNumOptions() > 0 && (dropOne || input.inputPressed("drop-stack"))) {
-			ItemEntry entry = ((ItemEntry)getCurEntry());
-			if(entry == null) return;
+		if (getNumOptions() > 0 && (dropOne || input.inputPressed("drop-stack"))) {
+			ItemEntry entry = ((ItemEntry) getCurEntry());
+			if (entry == null) return;
 			Item invItem = entry.getItem();
 			Item drop = invItem.copy();
 
 			if (!creativeInv) {
-				if (dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (dropOne && drop instanceof StackableItem && ((StackableItem) drop).count > 1) {
 					// just drop one from the stack
-					((StackableItem)drop).count = 1;
-					((StackableItem)invItem).count--;
+					((StackableItem) drop).count = 1;
+					((StackableItem) invItem).count--;
 				} else {
 					// drop the whole item.
 					removeSelectedEntry();

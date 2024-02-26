@@ -32,8 +32,9 @@ public abstract class Mob extends Entity {
 	/**
 	 * Default constructor for a mob.
 	 * Default x radius is 4, and y radius is 3.
+	 *
 	 * @param sprites All of this mob's sprites.
-	 * @param health The mob's max health.
+	 * @param health  The mob's max health.
 	 */
 	public Mob(LinkedSprite[][] sprites, int health) {
 		super(4, 3);
@@ -79,19 +80,22 @@ public abstract class Mob extends Entity {
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
 		int xd = 0, yd = 0;
 		if (xKnockback != 0) {
-			xd = (int)Math.ceil(xKnockback/2);
-			xKnockback -= xKnockback/Math.abs(xKnockback);
+			xd = (int) Math.ceil(xKnockback / 2);
+			xKnockback -= xKnockback / Math.abs(xKnockback);
 		}
 		if (yKnockback != 0) {
-			yd = (int)Math.ceil(yKnockback/2);
-			yKnockback -= yKnockback/Math.abs(yKnockback);
+			yd = (int) Math.ceil(yKnockback / 2);
+			yKnockback -= yKnockback / Math.abs(yKnockback);
 		}
 
 		move(xd, yd, false);
 	}
 
 	@Override
-	public boolean move(int xd, int yd) { return move(xd, yd, true); } // Move the mob, overrides from Entity
+	public boolean move(int xd, int yd) {
+		return move(xd, yd, true);
+	} // Move the mob, overrides from Entity
+
 	private boolean move(int xd, int yd, boolean changeDir) { // Knockback shouldn't change mob direction
 		if (level == null) return false; // Stopped b/c there's no level to move in!
 
@@ -117,9 +121,9 @@ public abstract class Mob extends Entity {
 
 			// This part makes it so you can't move in a direction that you are currently being knocked back from.
 			if (xKnockback != 0)
-				xd = Math.copySign(xd, xKnockback)*-1 != xd ? xd : 0; // If xKnockback and xd have different signs, do nothing, otherwise, set xd to 0.
+				xd = Math.copySign(xd, xKnockback) * -1 != xd ? xd : 0; // If xKnockback and xd have different signs, do nothing, otherwise, set xd to 0.
 			if (yKnockback != 0)
-				yd = Math.copySign(yd, yKnockback)*-1 != yd ? yd : 0; // Same as above.
+				yd = Math.copySign(yd, yKnockback) * -1 != yd ? yd : 0; // Same as above.
 
 			moved = super.move(xd, yd); // Call the move method from Entity
 		}
@@ -127,22 +131,30 @@ public abstract class Mob extends Entity {
 		return moved;
 	}
 
-	/** The mob immediately despawns if the distance of the closest player is greater than the return value of this. */
+	/**
+	 * The mob immediately despawns if the distance of the closest player is greater than the return value of this.
+	 */
 	protected int getDespawnDistance() {
-		return 80;
+		return 1280;
 	}
 
-	/** The mob randomly despawns if the distance of the closest player is greater than the return value of this. */
+	/**
+	 * The mob randomly despawns if the distance of the closest player is greater than the return value of this.
+	 */
 	protected int getNoDespawnDistance() {
-		return 40;
+		return 640;
 	}
 
-	/** @see #handleDespawn() */
+	/**
+	 * @see #handleDespawn()
+	 */
 	protected boolean removeWhenFarAway(@SuppressWarnings("unused") double distance) {
 		return true;
 	}
 
-	/** This is an easy way to make a list of sprites that are all part of the same "Sprite", so they have similar parameters, but they're just at different locations on the spreadsheet. */
+	/**
+	 * This is an easy way to make a list of sprites that are all part of the same "Sprite", so they have similar parameters, but they're just at different locations on the spreadsheet.
+	 */
 	public static LinkedSprite[] compileSpriteList(int sheetX, int sheetY, int width, int height, int mirror, int number, String key) {
 		LinkedSprite[] sprites = new LinkedSprite[number];
 		for (int i = 0; i < sprites.length; i++)
@@ -190,15 +202,17 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Checks if this Mob is currently on a light tile; if so, the mob sprite is brightened.
+	 *
 	 * @return true if the mob is on a light tile, false if not.
 	 */
 	public boolean isLight() {
 		if (level == null) return false;
-		return level.isLight(x>>4, y>>4);
+		return level.isLight(x >> 4, y >> 4);
 	}
 
 	/**
 	 * Checks if the mob is swimming (standing on a liquid tile).
+	 *
 	 * @return true if the mob is swimming, false if not.
 	 */
 	public boolean isSwimming() {
@@ -209,37 +223,42 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Do damage to the mob this method is called on.
-	 * @param tile The tile that hurt the player
-	 * @param x The x position of the mob
-	 * @param y The x position of the mob
+	 *
+	 * @param tile   The tile that hurt the player
+	 * @param x      The x position of the mob
+	 * @param y      The x position of the mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
 		Direction attackDir = Direction.getDirection(dir.getDir() ^ 1); // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd.
-		if (!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey(PotionType.Lava)))
+		if (!(tile == Tiles.get("lava") && this instanceof Player && ((Player) this).potioneffects.containsKey(PotionType.Lava)))
 			doHurt(damage, tile.mayPass(level, x, y, this) ? Direction.NONE : attackDir); // Call the method that actually performs damage, and set it to no particular direction
 	}
 
 	/**
 	 * Do damage to the mob this method is called on.
-	 * @param mob The mob that hurt this mob
+	 *
+	 * @param mob    The mob that hurt this mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
-	public void hurt(Mob mob, int damage) { hurt(mob, damage, getAttackDir(mob, this)); }
+	public void hurt(Mob mob, int damage) {
+		hurt(mob, damage, getAttackDir(mob, this));
+	}
 
 	/**
 	 * Do damage to the mob this method is called on.
-	 * @param mob The mob that hurt this mob
-	 * @param damage The amount of damage to hurt the mob with
+	 *
+	 * @param mob       The mob that hurt this mob
+	 * @param damage    The amount of damage to hurt the mob with
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
-		if (mob instanceof Player && Game.isMode("minicraft.settings.mode.creative") && mob != this) doHurt(health, attackDir); // Kill the mob instantly
+		if (mob instanceof Player && Game.isMode("minicraft.settings.mode.creative") && mob != this)
+			doHurt(health, attackDir); // Kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 
 	/**
-	 *
 	 * @param sec duration in seconds
 	 */
 	public void burn(int sec) {
@@ -248,30 +267,36 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Executed when a TNT bomb explodes near this mob.
+	 *
 	 * @param tnt The TNT exploding.
 	 * @param dmg The amount of damage the explosion does.
 	 */
-	public void onExploded(Tnt tnt, int dmg) { doHurt(dmg, getAttackDir(tnt, this)); }
+	public void onExploded(Tnt tnt, int dmg) {
+		doHurt(dmg, getAttackDir(tnt, this));
+	}
 
 	/**
 	 * Hurt the mob, based on only damage and a direction
 	 * This is overridden in Player.java
-	 * @param damage The amount of damage to hurt the mob with
+	 *
+	 * @param damage    The amount of damage to hurt the mob with
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	protected void doHurt(int damage, Direction attackDir) {
-		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		if (isRemoved() || hurtTime > 0)
+			return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 
 		health -= damage; // Actually change the health
 
 		// Add the knockback in the correct direction
-		xKnockback = attackDir.getX()*6;
-		yKnockback = attackDir.getY()*6;
+		xKnockback = attackDir.getX() * 6;
+		yKnockback = attackDir.getY() * 6;
 		hurtTime = 10; // Set a delay before we can be hurt again
 	}
 
 	/**
 	 * Restores health to this mob.
+	 *
 	 * @param heal How much health is restored.
 	 */
 	public void heal(int heal) { // Restore health on the mob
@@ -279,7 +304,8 @@ public abstract class Mob extends Entity {
 
 		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
-		if (health > (Player.baseHealth + Player.extraHealth)) health = (Player.baseHealth + Player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum
+		if (health > (Player.baseHealth + Player.extraHealth))
+			health = (Player.baseHealth + Player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum
 	}
 
 	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
@@ -288,6 +314,7 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * This checks how the {@code attacker} can damage this mob.
+	 *
 	 * @param attacker The attacker entity.
 	 * @return The calculated damage.
 	 */

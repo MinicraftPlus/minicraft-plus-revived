@@ -12,7 +12,9 @@ import minicraft.item.PowerGloveItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Many furniture classes are very similar; they might not even need to be there at all... */
+/**
+ * Many furniture classes are very similar; they might not even need to be there at all...
+ */
 
 public class Furniture extends Entity {
 
@@ -25,7 +27,8 @@ public class Furniture extends Entity {
 	/**
 	 * Constructor for the furniture entity.
 	 * Size will be set to 3.
-	 * @param name Name of the furniture.
+	 *
+	 * @param name   Name of the furniture.
 	 * @param sprite Furniture sprite.
 	 */
 	public Furniture(String name, LinkedSprite sprite, LinkedSprite itemSprite) {
@@ -35,10 +38,11 @@ public class Furniture extends Entity {
 	/**
 	 * Constructor for the furniture entity.
 	 * Radius is only used for collision detection.
-	 * @param name Name of the furniture.
+	 *
+	 * @param name   Name of the furniture.
 	 * @param sprite Furniture sprite.
-	 * @param xr Horizontal radius.
-	 * @param yr Vertical radius.
+	 * @param xr     Horizontal radius.
+	 * @param yr     Vertical radius.
 	 */
 	public Furniture(String name, LinkedSprite sprite, LinkedSprite itemSprite, int xr, int yr) {
 		// All of these are 2x2 on the spritesheet; radius is for collisions only.
@@ -67,11 +71,19 @@ public class Furniture extends Entity {
 		else multiPushTime = 0;
 	}
 
-	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { screen.render(x-8, y-8, sprite); }
+	/**
+	 * Draws the furniture on the screen.
+	 */
+	public void render(Screen screen) {
+		screen.render(x - 8, y - 8, sprite);
+	}
 
-	/** Called when the player presses the MENU key in front of this. */
-	public boolean use(Player player) { return false; }
+	/**
+	 * Called when the player presses the MENU key in front of this.
+	 */
+	public boolean use(Player player) {
+		return false;
+	}
 
 	@Override
 	public boolean blocks(Entity e) {
@@ -86,23 +98,25 @@ public class Furniture extends Entity {
 
 	/**
 	 * Used in PowerGloveItem.java to let the user pick up furniture.
+	 *
 	 * @param player The player picking up the furniture.
 	 */
 	@Override
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
 			Sound.play("monsterhurt");
-				remove();
-				if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
-					player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory
-				player.activeItem = new FurnitureItem(this); // Make this the player's current item.
-				return true;
+			remove();
+			if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
+				player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory
+			player.activeItem = new FurnitureItem(this); // Make this the player's current item.
+			return true;
 		}
 		return false;
 	}
 
 	/**
 	 * Tries to let the player push this furniture.
+	 *
 	 * @param player The player doing the pushing.
 	 */
 	public void tryPush(Player player) {
@@ -113,5 +127,7 @@ public class Furniture extends Entity {
 	}
 
 	@Override
-	public boolean canWool() { return true; }
+	public boolean canWool() {
+		return true;
+	}
 }

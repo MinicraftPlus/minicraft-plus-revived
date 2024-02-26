@@ -24,6 +24,7 @@ public class Structure {
 		tiles = new HashSet<>();
 		furniture = new HashMap<>();
 	}
+
 	public Structure(Structure struct) {
 		this.tiles = struct.tiles;
 		this.furniture = struct.furniture;
@@ -32,14 +33,15 @@ public class Structure {
 	public void setTile(int x, int y, Tile tile) {
 		tiles.add(new TilePoint(x, y, tile));
 	}
+
 	public void addFurniture(int x, int y, Furniture furniture) {
 		this.furniture.put(new Point(x, y), furniture);
 	}
 
 	public void draw(Level level, int xt, int yt) { draw(level, xt, yt, f -> {}); }
 	public void draw(Level level, int xt, int yt, Consumer<Furniture> furnitureHandler) {
-		for (TilePoint p: tiles)
-			 level.setTile(xt+p.x, yt+p.y, p.t);
+		for (TilePoint p : tiles)
+			level.setTile(xt + p.x, yt + p.y, p.t);
 
 		for (Point p: furniture.keySet()) {
 			Furniture fur = furniture.get(p).copy();
@@ -49,7 +51,7 @@ public class Structure {
 	}
 
 	public void draw(short[] map, int xt, int yt, int mapWidth) {
-		for (TilePoint p: tiles)
+		for (TilePoint p : tiles)
 			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
 	}
 
@@ -72,7 +74,7 @@ public class Structure {
 			for (int c = 0; c < dataLines[i].length(); c++) {
 				if (dataLines[i].charAt(c) != '*') {
 					Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
-					this.setTile(-width / 2 + i, - height / 2 + c, tile);
+					this.setTile(-width / 2 + i, -height / 2 + c, tile);
 				}
 			}
 		}
@@ -131,21 +133,21 @@ public class Structure {
 	static {
 		dungeonGate = new Structure();
 		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",
-					"WWDWW\n" +
-					"WOOOW\n" +
-					"DOOOD\n" +
-					"WOOOW\n" +
-					"WWDWW"
+			"WWDWW\n" +
+				"WOOOW\n" +
+				"DOOOD\n" +
+				"WOOOW\n" +
+				"WWDWW"
 		);
 		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
 
 		dungeonLock = new Structure();
 		dungeonLock.setData("O:Obsidian,W:Obsidian Wall",
-					"WWWWW\n" +
-					"WOOOW\n" +
-					"WOOOW\n" +
-					"WOOOW\n" +
-					"WWWWW"
+			"WWWWW\n" +
+				"WOOOW\n" +
+				"WOOOW\n" +
+				"WOOOW\n" +
+				"WWWWW"
 		);
 		dungeonBossRoom = new Structure();
 		dungeonBossRoom.setData("O:Obsidian Boss Floor,D:Obsidian Boss Door,W:Obsidian Boss Wall",
@@ -159,7 +161,7 @@ public class Structure {
 				"WOOOOOOOW\n" +
 				"WWWWDWWWW"
 		);
-		dungeonBossRoom.addFurniture(0,0,new KnightStatue(5000));
+		dungeonBossRoom.addFurniture(0, 0, new KnightStatue(5000));
 
 		dungeonSpawner = new Structure();
 		dungeonSpawner.setData("F:Grass,W:Obsidian Wall,O:Ornate Obsidian,D:Obsidian Door",
@@ -174,8 +176,8 @@ public class Structure {
 
 		lavaPool = new Structure();
 		lavaPool.setData("L:Lava",
-					"LL\n" +
-					"LL"
+			"LL\n" +
+				"LL"
 		);
 
 		ornateLavaPool = new Structure();
@@ -210,94 +212,94 @@ public class Structure {
 				"WOOOOOW\n" +
 				"WWWDWWW"
 		);
-		dungeonChest.addFurniture(0,0, new DungeonChest(null));
+		dungeonChest.addFurniture(0, 0, new DungeonChest(null));
 
 		mobDungeonCenter = new Structure();
 		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
-					"WWBWW\n" +
-					"WBBBW\n" +
-					"BBBBB\n" +
-					"WBBBW\n" +
-					"WWBWW"
+			"WWBWW\n" +
+				"WBBBW\n" +
+				"BBBBB\n" +
+				"WBBBW\n" +
+				"WWBWW"
 		);
 		mobDungeonNorth = new Structure();
 		mobDungeonNorth.setData("B:Stone Bricks,W:Stone Wall",
-					"WWWWW\n" +
-					"WBBBB\n" +
-					"BBBBB\n" +
-					"WBBBB\n" +
-					"WWWWW"
+			"WWWWW\n" +
+				"WBBBB\n" +
+				"BBBBB\n" +
+				"WBBBB\n" +
+				"WWWWW"
 		);
 		mobDungeonSouth = new Structure();
 		mobDungeonSouth.setData("B:Stone Bricks,W:Stone Wall",
-					"WWWWW\n" +
-					"BBBBW\n" +
-					"BBBBB\n" +
-					"BBBBW\n" +
-					"WWWWW"
+			"WWWWW\n" +
+				"BBBBW\n" +
+				"BBBBB\n" +
+				"BBBBW\n" +
+				"WWWWW"
 		);
 		mobDungeonEast = new Structure();
 		mobDungeonEast.setData("B:Stone Bricks,W:Stone Wall",
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WWBWW"
+			"WBBBW\n" +
+				"WBBBW\n" +
+				"WBBBW\n" +
+				"WBBBW\n" +
+				"WWBWW"
 		);
 		mobDungeonWest = new Structure();
 		mobDungeonWest.setData("B:Stone Bricks,W:Stone Wall",
-					"WWBWW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW"
+			"WWBWW\n" +
+				"WBBBW\n" +
+				"WBBBW\n" +
+				"WBBBW\n" +
+				"WBBBW"
 		);
 
 		airWizardHouse = new Structure();
 		airWizardHouse.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
-					"WWWWWWW\n" +
-					"WFFFFFW\n" +
-					"DFFFFFW\n" +
-					"WFFFFFW\n" +
-					"WWWWWWW"
+			"WWWWWWW\n" +
+				"WFFFFFW\n" +
+				"DFFFFFW\n" +
+				"WFFFFFW\n" +
+				"WWWWWWW"
 		);
 		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.GOLD));
 		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
 
 		villageHouseNormal = new Structure();
 		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",
-					"WWWWW\n" +
-					"WFFFW\n" +
-					"WFFFD\n" +
-					"WFFFG\n" +
-					"WWWWW"
+			"WWWWW\n" +
+				"WFFFW\n" +
+				"WFFFD\n" +
+				"WFFFG\n" +
+				"WWWWW"
 		);
 
 		villageHouseTwoDoor = new Structure();
 		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",
-					"WWWWW\n" +
-					"WFFFW\n" +
-					"DFFFW\n" +
-					"WFFFW\n" +
-					"WWDWW"
+			"WWWWW\n" +
+				"WFFFW\n" +
+				"DFFFW\n" +
+				"WFFFW\n" +
+				"WWDWW"
 		);
 
 		villageRuinedOverlay1 = new Structure();
 		villageRuinedOverlay1.setData("G:Grass,F:Wood Planks",
-					"**FG*\n" +
-					"F*GG*\n" +
-					"*G**F\n" +
-					"G*G**\n" +
-					"***G*"
+			"**FG*\n" +
+				"F*GG*\n" +
+				"*G**F\n" +
+				"G*G**\n" +
+				"***G*"
 		);
 
 		villageRuinedOverlay2 = new Structure();
 		villageRuinedOverlay2.setData("G:Grass,F:Wood Planks",
-					"F**G*\n" +
-					"*****\n" +
-					"*GG**\n" +
-					"F**G*\n" +
-					"*F**G"
+			"F**G*\n" +
+				"*****\n" +
+				"*GG**\n" +
+				"F**G*\n" +
+				"*F**G"
 		);
 	}
 }

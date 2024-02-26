@@ -26,6 +26,7 @@ public class DungeonChest extends Chest {
 
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
+	 *
 	 * @param random Populate the inventory of the DungeonChest using the loot table system with the given {@link Random} provider.
 	 *               {@code null} if populating the inventory is not intended.
 	 */
@@ -52,9 +53,9 @@ public class DungeonChest extends Chest {
 			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
 			boolean invKey = player.getInventory().count(Items.get("key")) > 0;
 
-			if(activeKey || invKey) { // If the player has a key...
+			if (activeKey || invKey) { // If the player has a key...
 				if (activeKey) { // Remove activeItem
-					StackableItem key = (StackableItem)player.activeItem;
+					StackableItem key = (StackableItem) player.activeItem;
 					key.count--;
 				} else { // Remove from inv
 					player.getInventory().removeItem(Items.get("key"));
@@ -76,8 +77,7 @@ public class DungeonChest extends Chest {
 			}
 
 			return false; // the chest is locked, and the player has no key.
-		}
-		else return super.use(player); // the chest was already unlocked.
+		} else return super.use(player); // the chest was already unlocked.
 	}
 
 	/**
@@ -107,13 +107,13 @@ public class DungeonChest extends Chest {
 	 */
 	@Override
 	protected void touchedBy(Entity entity) {
-		if(!isLocked) // can only be pushed if unlocked.
+		if (!isLocked) // can only be pushed if unlocked.
 			super.touchedBy(entity);
 	}
 
 	@Override
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if(!isLocked)
+		if (!isLocked)
 			return super.interact(player, item, attackDir);
 		return false;
 	}
