@@ -50,10 +50,10 @@ public class Vector2ValueOption extends ListEntry implements UserMutable {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("CURSOR-LEFT").clicked) {
+		if (input.getMappedKey("CURSOR-LEFT").isClicked()) {
 			if (selection > 0) selection--;
 			Sound.play("select");
-		} else if (input.getKey("CURSOR-RIGHT").clicked) {
+		} else if (input.getMappedKey("CURSOR-RIGHT").isClicked()) {
 			if (selection < INPUT_ENTRY_COUNT - 1) selection++;
 			Sound.play("select");
 		} else {

@@ -40,7 +40,7 @@ public class SelectableListInputEntry extends InputEntry {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("SELECT").clicked) {
+		if (input.getMappedKey("SELECT").isClicked()) {
 			Sound.play("confirm");
 			Game.setDisplay(new ListItemSelectDisplay<>(list, this::setUserInput));
 			return;

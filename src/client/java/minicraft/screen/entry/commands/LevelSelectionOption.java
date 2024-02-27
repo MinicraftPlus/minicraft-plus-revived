@@ -38,7 +38,7 @@ public class LevelSelectionOption extends TargetedInputEntry<Integer> {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("ENTER").clicked) {
+		if (input.getMappedKey("ENTER").isClicked()) {
 			if (typing) {
 				if (isValid()) { // Only to change when the input is valid.
 					int level = getValue();
@@ -48,11 +48,11 @@ public class LevelSelectionOption extends TargetedInputEntry<Integer> {
 			} else // !typing
 				typing = true;
 		} else if (!typing) {
-			if (input.getKey("CURSOR-LEFT").clicked) {
+			if (input.getMappedKey("CURSOR-LEFT").isClicked()) {
 				selection = Math.max(selection - 1, 0);
 				Sound.play("select");
 				setUserInput(String.valueOf(levelDepths[selection]));
-			} else if (input.getKey("CURSOR-RIGHT").clicked) {
+			} else if (input.getMappedKey("CURSOR-RIGHT").isClicked()) {
 				selection = Math.min(selection + 1, levelDepths.length - 1);
 				Sound.play("select");
 				setUserInput(String.valueOf(levelDepths[selection]));

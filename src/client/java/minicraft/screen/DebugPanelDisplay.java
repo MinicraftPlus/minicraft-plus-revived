@@ -266,7 +266,8 @@ public class DebugPanelDisplay extends Display {
 
 				@Override
 				public void tick(InputHandler input) {
-					if (input.getKey("CURSOR-LEFT").clicked || input.getKey("CURSOR-RIGHT").clicked) {
+					if (input.getMappedKey("CURSOR-LEFT").isClicked() ||
+						input.getMappedKey("CURSOR-RIGHT").isClicked()) {
 						specific = !specific;
 						Sound.play("select");
 						if (listener != null) listener.onChange(specific);
@@ -803,7 +804,7 @@ public class DebugPanelDisplay extends Display {
 
 		@Override
 		public void tick(InputHandler input) {
-			if (input.getKey("EXIT").clicked) {
+			if (input.getMappedKey("EXIT").isClicked()) {
 				if (onCancel != null) onCancel.act();
 				Game.exitDisplay(); // Exits the current display and the debug panel
 				return;

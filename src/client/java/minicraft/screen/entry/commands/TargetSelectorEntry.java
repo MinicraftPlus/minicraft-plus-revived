@@ -255,7 +255,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 			@Override
 			public void tick(InputHandler input) {
-				if (input.getKey("EXIT").clicked) {
+				if (input.getMappedKey("EXIT").isClicked()) {
 					if (specifyOption.getValue()) {
 						specify = true;
 						if (levelOption.getUserInput().isEmpty()) {
@@ -404,7 +404,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 			@Override
 			public void tick(InputHandler input) {
-				if (input.getKey("D").clicked) {
+				if (input.getMappedKey("D").isClicked()) {
 					int index = menus[0].getSelection();
 					if (index < argumentOptions.size()) {
 						argumentOptions.remove(entryMap.get(menus[0].getCurEntry()));
@@ -441,13 +441,13 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 					@Override
 					public void tick(InputHandler input) {
-						if (input.getKey("ENTER").clicked) {
+						if (input.getMappedKey("ENTER").isClicked()) {
 							ranged = !ranged;
 							if (selection == 1) selection = 0;
-						} else if (input.getKey("CURSOR-LEFT").clicked) {
+						} else if (input.getMappedKey("CURSOR-LEFT").isClicked()) {
 							if (selection == 1) selection = 0;
 							Sound.play("select");
-						} else if (input.getKey("CURSOR-RIGHT").clicked) {
+						} else if (input.getMappedKey("CURSOR-RIGHT").isClicked()) {
 							if (ranged) {
 								if (selection == 0) selection = 1;
 								Sound.play("select");
@@ -707,7 +707,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 							typeList.keySet().stream().map(t -> new ListEntry() {
 								@Override
 								public void tick(InputHandler input) {
-									if (input.getKey("ENTER").clicked) {
+									if (input.getMappedKey("ENTER").isClicked()) {
 										typeList.compute(t, (ty, v) -> // null -> true -> false -> null
 											boolMap.get(v));
 									}
@@ -730,7 +730,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 							.createMenu()) {
 							@Override
 							public void tick(InputHandler input) {
-								if (input.getKey("EXIT").clicked) {
+								if (input.getMappedKey("EXIT").isClicked()) {
 									listener.onChange(null);
 									Game.exitDisplay();
 									return;
@@ -759,7 +759,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 					@Override
 					public void tick(InputHandler input) {
-						if (input.getKey("SELECT").clicked) {
+						if (input.getMappedKey("SELECT").isClicked()) {
 							Sound.play("select");
 							Game.setDisplay(display);
 						}
@@ -1057,7 +1057,7 @@ public class TargetSelectorEntry extends ArrayEntry<TargetSelectorEntry.TargetSc
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("SELECT").clicked) {
+		if (input.getMappedKey("SELECT").isClicked()) {
 			Sound.play("confirm");
 			Game.setDisplay(configDisplay);
 		} else {
