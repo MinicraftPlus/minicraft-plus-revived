@@ -29,7 +29,7 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		InventoryMenu invMenu = new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT, this::update);
+		menus = new Menu[] { new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT, this::update) };
 		this.player = player;
 		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
 		creativeMode = Game.isMode("minicraft.settings.mode.creative");
@@ -41,18 +41,18 @@ public class PlayerInvDisplay extends Display {
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[]{
-				invMenu,
+				menus[0],
 				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT, true),
 				descriptionMenu
 			};
 
-			menus[1].translate(invMenu.getBounds().getWidth() + padding, 0);
+			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 			update();
 
-			if (invMenu.getNumOptions() == 0) onSelectionChange(0, 1);
+			if (menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 		} else {
 			creativeInv = null;
-			menus = new Menu[]{invMenu, descriptionMenu};
+			menus = new Menu[]{menus[0], descriptionMenu};
 		}
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
