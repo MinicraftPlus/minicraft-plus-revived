@@ -33,6 +33,7 @@ public class OnScreenKeyboardMenu extends Menu {
 
 	/**
 	 * This checks if there is any controller connected. If true, create the instance. No otherwise.
+	 *
 	 * @return The created menu instance. `null` if there is no controller connected.
 	 */
 	@Nullable
@@ -191,7 +192,7 @@ public class OnScreenKeyboardMenu extends Menu {
 
 		// This is only controllable by controller.
 		if (visible) {
-			VirtualKey[][] keys = shiftPressed? keysB: keysF;
+			VirtualKey[][] keys = shiftPressed ? keysB : keysF;
 			if (input.buttonPressed(ControllerButton.A)) { // Select
 				keys[y][x].press();
 				Sound.play("select"); // Lack of sounds.
@@ -245,12 +246,13 @@ public class OnScreenKeyboardMenu extends Menu {
 	public void setVisible(boolean visible) {
 		if (this.visible != visible) {
 			Rectangle rec = getBounds();
-			translate(0, visible? -rec.getHeight(): rec.getHeight());
+			translate(0, visible ? -rec.getHeight() : rec.getHeight());
 			this.visible = visible;
 		}
 
 		keyPressed = 0;
 	}
+
 	public boolean isVisible() {
 		return visible;
 	}
@@ -281,7 +283,7 @@ public class OnScreenKeyboardMenu extends Menu {
 		}
 
 		final int keyHeight = 14;
-		VirtualKey[][] keys = shiftPressed? keysB: keysF;
+		VirtualKey[][] keys = shiftPressed ? keysB : keysF;
 		for (int r = 0; r < keys.length; r++) {
 			final int defaultKeyWidth = 16;
 			int keyWidth = defaultKeyWidth;
@@ -299,72 +301,74 @@ public class OnScreenKeyboardMenu extends Menu {
 					keyWidth = defaultKeyWidth * 2;
 				else
 					keyWidth = defaultKeyWidth;
-				int color = keyPressed > 0 && r == this.y && c == this.x? 0x1EFEFF0: 0x1FDFDFD;
+				int color = keyPressed > 0 && r == this.y && c == this.x ? 0x1EFEFF0 : 0x1FDFDFD;
 				if (key == backspace) { // Rendering the backspace.
 					// Rendering the cross.
-					colorPixel.accept(x + 1 + keyWidth/2 + (y + keyHeight/2) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 + 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 - 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 - 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + (y + keyHeight / 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 1 + (y + keyHeight / 2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 1 + (y + keyHeight / 2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 1 + (y + keyHeight / 2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 1 + (y + keyHeight / 2 + 1) * Screen.w, color);
 
 					// Rendering the upper base.
-					colorPixel.accept(x + 1 + keyWidth/2 - 3 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 2 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 2 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 3 + (y + keyHeight/2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 3 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 2 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 1 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 1 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 2 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 3 + (y + keyHeight / 2 - 3) * Screen.w, color);
 
 					// Rendering the lower base.
-					colorPixel.accept(x + 1 + keyWidth/2 - 3 + (y + keyHeight/2 + 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 2 + (y + keyHeight/2 + 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 1 + (y + keyHeight/2 + 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + (y + keyHeight/2 + 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 1 + (y + keyHeight/2 + 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 2 + (y + keyHeight/2 + 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 3 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 3 + (y + keyHeight / 2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 2 + (y + keyHeight / 2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 1 + (y + keyHeight / 2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + (y + keyHeight / 2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 1 + (y + keyHeight / 2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 2 + (y + keyHeight / 2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 3 + (y + keyHeight / 2 + 3) * Screen.w, color);
 
 					// Rendering the left angle.
-					colorPixel.accept(x + 1 + keyWidth/2 - 4 + (y + keyHeight/2 - 2) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 5 + (y + keyHeight/2 - 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 6 + (y + keyHeight/2) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 5 + (y + keyHeight/2 + 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 - 4 + (y + keyHeight/2 + 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 4 + (y + keyHeight / 2 - 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 5 + (y + keyHeight / 2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 6 + (y + keyHeight / 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 5 + (y + keyHeight / 2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 - 4 + (y + keyHeight / 2 + 2) * Screen.w, color);
 
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 - 3) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 - 2) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 - 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 + 1) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 + 2) * Screen.w, color);
-					colorPixel.accept(x + 1 + keyWidth/2 + 4 + (y + keyHeight/2 + 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2 - 3) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2 - 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2 - 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2 + 1) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2 + 2) * Screen.w, color);
+					colorPixel.accept(x + 1 + keyWidth / 2 + 4 + (y + keyHeight / 2 + 3) * Screen.w, color);
 				} else if (key == shiftKey) { // Rendering "SYM".
-					Font.draw("S", screen, x + keyWidth/2 - 3 - defaultKeyWidth/2, y + keyHeight/2 - 3, color);
-					Font.draw("Y", screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
-					Font.draw("M", screen, x + keyWidth/2 - 3 + defaultKeyWidth/2, y + keyHeight/2 - 3, color);
+					Font.draw("S", screen, x + keyWidth / 2 - 3 - defaultKeyWidth / 2, y + keyHeight / 2 - 3, color);
+					Font.draw("Y", screen, x + keyWidth / 2 - 3, y + keyHeight / 2 - 3, color);
+					Font.draw("M", screen, x + keyWidth / 2 - 3 + defaultKeyWidth / 2, y + keyHeight / 2 - 3, color);
 				} else if (key == spaceBar) { // Rendering "underscore".
 					for (int i = 1; i < 19; i++) {
-						colorPixel.accept(x + keyWidth/2 + i - 9 + (y + keyHeight/2 + 2) * Screen.w, color);
+						colorPixel.accept(x + keyWidth / 2 + i - 9 + (y + keyHeight / 2 + 2) * Screen.w, color);
 					}
 				} else
-					Font.draw(String.valueOf(key.output), screen, x + keyWidth/2 - 3, y + keyHeight/2 - 3, color);
+					Font.draw(String.valueOf(key.output), screen, x + keyWidth / 2 - 3, y + keyHeight / 2 - 3, color);
 
 				for (int i = 0; i <= keyHeight; i++) { // Rendering left and right border.
 					colorPixel.accept(x + (y + i) * Screen.w, 0x1BCBCBC);
 					colorPixel.accept(x + keyWidth + (y + i) * Screen.w, 0x1BCBCBC);
-				} for (int i = 0; i <= keyWidth; i++) { // Rendering top and bottom border.
+				}
+				for (int i = 0; i <= keyWidth; i++) { // Rendering top and bottom border.
 					colorPixel.accept(x + i + y * Screen.w, 0x1BCBCBC);
 					colorPixel.accept(x + i + (y + keyHeight) * Screen.w, 0x1BCBCBC);
 				}
 
 				if (this.x == c && this.y == r) {
-					color = keyPressed > 0? 0x1EFEFF0: 0x1DFDFE0;
+					color = keyPressed > 0 ? 0x1EFEFF0 : 0x1DFDFE0;
 					for (int i = 1; i < keyHeight; i++) { // Rendering left and right border.
 						colorPixel.accept(x + 1 + (y + i) * Screen.w, color);
 						colorPixel.accept(x - 1 + keyWidth + (y + i) * Screen.w, color);
-					} for (int i = 1; i < keyWidth; i++) { // Rendering top and bottom border.
+					}
+					for (int i = 1; i < keyWidth; i++) { // Rendering top and bottom border.
 						colorPixel.accept(x + i + (y + 1) * Screen.w, color);
 						colorPixel.accept(x + i + (y - 1 + keyHeight) * Screen.w, color);
 					}
@@ -375,6 +379,9 @@ public class OnScreenKeyboardMenu extends Menu {
 		}
 	}
 
-	public static class OnScreenKeyboardMenuTickActionCompleted extends RuntimeException {}
-	public static class OnScreenKeyboardMenuBackspaceButtonActed extends RuntimeException {}
+	public static class OnScreenKeyboardMenuTickActionCompleted extends RuntimeException {
+	}
+
+	public static class OnScreenKeyboardMenuBackspaceButtonActed extends RuntimeException {
+	}
 }

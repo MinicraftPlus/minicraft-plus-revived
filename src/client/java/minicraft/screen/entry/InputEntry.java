@@ -31,9 +31,11 @@ public class InputEntry extends ListEntry implements UserMutable {
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);
 	}
+
 	public InputEntry(String prompt, String regex, int maxLen) {
 		this(prompt, regex, maxLen, "");
 	}
+
 	public InputEntry(String prompt, String regex, int maxLen, String initValue) {
 		this.prompt = prompt;
 		this.regex = regex;
@@ -51,21 +53,23 @@ public class InputEntry extends ListEntry implements UserMutable {
 
 		if (maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
-		if (input.getKey("CTRL-V").clicked) {
+		if (input.getMappedKey("CTRL-V").isClicked()) {
 			userInput = userInput + clipboardHandler.getClipboardContents();
 		}
 		if (!userInput.equals("")) {
-			if (input.getKey("CTRL-C").clicked) {
+			if (input.getMappedKey("CTRL-C").isClicked()) {
 				clipboardHandler.setClipboardContents(userInput);
 			}
-			if (input.getKey("CTRL-X").clicked) {
+			if (input.getMappedKey("CTRL-X").isClicked()) {
 				clipboardHandler.setClipboardContents(userInput);
 				userInput = "";
 			}
 		}
 	}
 
-	public String getUserInput() { return userInput; }
+	public String getUserInput() {
+		return userInput;
+	}
 
 	public void setUserInput(String text) {
 		userInput = text;

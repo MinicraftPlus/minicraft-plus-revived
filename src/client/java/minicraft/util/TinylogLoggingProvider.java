@@ -25,7 +25,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-/** Originally copied from {@link org.tinylog.core.TinylogLoggingProvider} */
+/**
+ * Originally copied from {@link org.tinylog.core.TinylogLoggingProvider}
+ */
 public class TinylogLoggingProvider implements LoggingProvider {
 
 	private final TinylogContextProvider context;
@@ -40,7 +42,9 @@ public class TinylogLoggingProvider implements LoggingProvider {
 	private ConsoleWriter currentConsoleWriter;
 	private FileWriter currentFileWriter;
 
-	/** */
+	/**
+	 *
+	 */
 	public TinylogLoggingProvider() {
 		TinylogLoggingConfiguration config = new TinylogLoggingConfiguration();
 		context = new TinylogContextProvider();
@@ -74,7 +78,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 			ctr.setAccessible(true);
 			writingThread = ctr.newInstance(writers.keySet());
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+				 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -91,7 +95,9 @@ public class TinylogLoggingProvider implements LoggingProvider {
 		}
 	}
 
-	/** Applying the configuration in {@link Logging} */
+	/**
+	 * Applying the configuration in {@link Logging}
+	 */
 	public void init() {
 		currentConsoleWriter = consoleWriters.get(String.format("writer1%s%s%s", Logging.logTime ? "T" : "F", Logging.logThread ? "T" : "F", Logging.logTrace ? "T" : "F"));
 		currentFileWriter = fileWriters.get("writer2" + (Logging.fileLogFull ? "Full" : ""));
@@ -119,7 +125,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 	@Override
 	public void log(final int depth, final String tag, final Level level, final Throwable exception, final MessageFormatter formatter,
-		final Object obj, final Object... arguments) {
+					final Object obj, final Object... arguments) {
 		StackTraceElement stackTraceElement;
 		if (fullStackTraceRequired.get(currentConsoleWriter) || tag.equals("LOC")) {
 			stackTraceElement = RuntimeProvider.getCallerStackTraceElement(depth + 1);
@@ -136,7 +142,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 	@Override
 	public void log(final String loggerClassName, final String tag, final Level level, final Throwable exception,
-		final MessageFormatter formatter, final Object obj, final Object... arguments) {
+					final MessageFormatter formatter, final Object obj, final Object... arguments) {
 		StackTraceElement stackTraceElement;
 		if (fullStackTraceRequired.get(currentConsoleWriter) || tag.equals("LOC")) {
 			stackTraceElement = RuntimeProvider.getCallerStackTraceElement(loggerClassName);
@@ -171,11 +177,11 @@ public class TinylogLoggingProvider implements LoggingProvider {
 	 * Outputs a log entry to all passed writers.
 	 */
 	private void output(final StackTraceElement stackTraceElement, final String tag,
-	final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
-	final Object[] arguments) {
+						final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
+						final Object[] arguments) {
 
 		LogEntry logEntry = TinylogLoggingConfiguration.createLogEntry(stackTraceElement, tag, level, exception, formatter,
-		obj, arguments, requiredLogEntryValues, context);
+			obj, arguments, requiredLogEntryValues, context);
 
 		Consumer<Writer> addToThread = writer -> {
 			WriterConfig cfg = writers.get(writer);

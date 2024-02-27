@@ -21,7 +21,8 @@ import minicraft.util.Logging;
 import java.awt.GraphicsDevice;
 
 public class Updater extends Game {
-	private Updater() {}
+	private Updater() {
+	}
 
 	// TIME AND TICKS
 
@@ -33,8 +34,8 @@ public class Updater extends Game {
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	static int time = 0; // Facilites time of day / sunlight.
 	public static final int dayLength = 64800; // This value determines how long one game day is.
-	public static final int sleepEndTime = dayLength/8; // This value determines when the player "wakes up" in the morning.
-	public static final int sleepStartTime = dayLength/2+dayLength/8; // This value determines when the player allowed to sleep.
+	public static final int sleepEndTime = dayLength / 8; // This value determines when the player "wakes up" in the morning.
+	public static final int sleepStartTime = dayLength / 2 + dayLength / 8; // This value determines when the player allowed to sleep.
 	//public static int noon = 32400; // This value determines when the sky switches from getting lighter to getting darker.
 
 	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your
@@ -58,10 +59,10 @@ public class Updater extends Game {
 	public static int screenshot = 0; // Counter for screenshot queries.
 
 	public enum Time {
-		Morning (0),
-		Day (dayLength/4),
-		Evening (dayLength/2),
-		Night (dayLength/4*3);
+		Morning(0),
+		Day(dayLength / 4),
+		Evening(dayLength / 2),
+		Night(dayLength / 4 * 3);
 
 		public int tickTime;
 
@@ -92,12 +93,12 @@ public class Updater extends Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-		if (input.getKey("FULLSCREEN").clicked) {
+		if (input.getMappedKey("FULLSCREEN").isClicked()) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
 		}
 
-		if (input.getKey("screenshot").clicked) {
+		if (input.getMappedKey("screenshot").isClicked()) {
 			screenshot++;
 		}
 
@@ -119,7 +120,10 @@ public class Updater extends Game {
 			// assert curDisplay == prevDisplay;
 			currentDisplay = displayQuery.peek();
 			assert currentDisplay != null;
-			currentDisplay.init(prevDisplay);
+			if (prevDisplay.getParent() == currentDisplay)
+				prevDisplay.onExit();
+			else
+				currentDisplay.init(prevDisplay);
 		}
 
 		Level level = levels[currentLevel];
@@ -141,7 +145,7 @@ public class Updater extends Game {
 		}
 
 		// Auto-save tick; marks when to do autosave.
-		if(!paused)
+		if (!paused)
 			asTick++;
 		if (asTick > astime) {
 			if ((boolean) Settings.get("autosave") && !gameOver && player.health > 0) {
@@ -153,7 +157,7 @@ public class Updater extends Game {
 		}
 
 		// Increment tickCount if the game is not paused
-		if (!paused && timeFlow) setTime(tickCount+1);
+		if (!paused && timeFlow) setTime(tickCount + 1);
 
 		// SCORE MODE ONLY
 
@@ -208,12 +212,12 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (currentDisplay == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (currentDisplay == null && input.getMappedKey("F3").isClicked()) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 
 				// For debugging only
-				if (debug && currentDisplay == null && input.getKey("F4").clicked) {
+				if (debug && currentDisplay == null && input.getMappedKey("F4").isClicked()) {
 					Game.setDisplay(new DebugPanelDisplay());
 				}
 			} // End "menu-null" conditional
@@ -240,6 +244,7 @@ public class Updater extends Game {
 	public static void changeTimeOfDay(Time t) {
 		setTime(t.tickTime);
 	}
+
 	// This one works too.
 	public static void changeTimeOfDay(int t) {
 		Time[] times = Time.values();
@@ -254,10 +259,13 @@ public class Updater extends Game {
 		return times[time];
 	}
 
-	/** This adds a notification to all player games. */
+	/**
+	 * This adds a notification to all player games.
+	 */
 	public static void notifyAll(String msg) {
 		notifyAll(msg, 0);
 	}
+
 	public static void notifyAll(String msg, int notetick) {
 		msg = Localization.getLocalized(msg);
 		notifications.add(msg);

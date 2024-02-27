@@ -4,6 +4,6 @@ include "common"
 include "client"
 include "server"
 
-rootProject.children.each {project ->
+rootProject.children.each { project ->
     project.projectDir = new File(settingsDir, "src/${project.name}")
 }

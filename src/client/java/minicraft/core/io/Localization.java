@@ -28,7 +28,8 @@ public class Localization {
 
 	/**
 	 * Get the provided key's localization for the currently selected language.
-	 * @param key The key to localize.
+	 *
+	 * @param key       The key to localize.
 	 * @param arguments The additional arguments to format the localized string.
 	 * @return A localized string.
 	 */
@@ -40,12 +41,14 @@ public class Localization {
 		try {
 			Double.parseDouble(key);
 			return key; // This is a number; don't try to localize it
-		} catch(NumberFormatException ignored) {}
+		} catch (NumberFormatException ignored) {
+		}
 
 		String localString = localization.get(key);
 
 		if (localString == null && Game.debug) {
-			if (!knownUnlocalizedStrings.containsKey(selectedLocale)) knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
+			if (!knownUnlocalizedStrings.containsKey(selectedLocale))
+				knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {
 				Logger.tag("LOC").trace(unlocalizedStringTracing ? new Throwable("Tracing") : null, "{}: '{}' is unlocalized.", selectedLocale.toLanguageTag(), key);
 				knownUnlocalizedStrings.get(selectedLocale).add(key);
@@ -61,12 +64,16 @@ public class Localization {
 
 	/**
 	 * Gets the currently selected locale.
+	 *
 	 * @return A locale object.
 	 */
-	public static Locale getSelectedLocale() { return selectedLocale; }
+	public static Locale getSelectedLocale() {
+		return selectedLocale;
+	}
 
 	/**
 	 * Get the currently selected locale, but as a full name without the country code.
+	 *
 	 * @return A string with the name of the language.
 	 */
 	@NotNull
@@ -76,20 +83,27 @@ public class Localization {
 
 	/**
 	 * Gets a  list of all the known locales.
+	 *
 	 * @return A list of locales.
 	 */
 	@NotNull
-	public static LocaleInformation[] getLocales() { return localeInfo.values().toArray(new LocaleInformation[0]); }
+	public static LocaleInformation[] getLocales() {
+		return localeInfo.values().toArray(new LocaleInformation[0]);
+	}
 
 	/**
 	 * Changes the selected language and loads it.
 	 * If the provided language doesn't exist, it loads the default locale.
+	 *
 	 * @param newLanguage The language-country code of the language to load.
 	 */
 	public static void changeLanguage(@NotNull String newLanguage) {
 		changeLanguage(Locale.forLanguageTag(newLanguage));
 	}
-	/** @see #changeLanguage(String) */
+
+	/**
+	 * @see #changeLanguage(String)
+	 */
 	public static void changeLanguage(@NotNull Locale newLanguage) {
 		selectedLocale = newLanguage;
 		loadLanguage();
