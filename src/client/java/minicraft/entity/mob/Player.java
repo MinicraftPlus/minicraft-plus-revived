@@ -495,16 +495,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
 				Item drop = activeItem.copy();
 
-				if (input.inputPressed("drop-one") && drop instanceof StackableItem && ((StackableItem) drop).count > 1) {
-					// Drop one from stack
-					((StackableItem) activeItem).count--;
-					((StackableItem) drop).count = 1;
-				} else {
+				if (!input.inputPressed("drop-stack") || !(drop instanceof StackableItem) || ((StackableItem) drop).count <= 1) {
 					activeItem = null; // Remove it from the "inventory"
 					if (isFishing) {
 						isFishing = false;
 						fishingTicks = maxFishingTicks;
 					}
+				} else {
+					// Drop one from stack
+					((StackableItem) activeItem).count--;
+					((StackableItem) drop).count = 1;
 				}
 
 				level.dropItem(x, y, drop);

@@ -48,13 +48,13 @@ class InventoryMenu extends ItemListMenu {
 			Item drop = invItem.copy();
 
 			if (!creativeInv) {
-				if (dropOne && drop instanceof StackableItem && ((StackableItem) drop).count > 1) {
+				if (!dropOne || !(drop instanceof StackableItem) || ((StackableItem) drop).count <= 1) {
+					// drop the whole item.
+					removeSelectedEntry();
+				} else {
 					// just drop one from the stack
 					((StackableItem) drop).count = 1;
 					((StackableItem) invItem).count--;
-				} else {
-					// drop the whole item.
-					removeSelectedEntry();
 				}
 
 				if (onStackUpdateListener != null) {
