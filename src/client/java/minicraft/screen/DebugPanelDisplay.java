@@ -685,7 +685,6 @@ public class DebugPanelDisplay extends Display {
 					return true; // No action.
 				}
 
-				int given;
 				String itemName;
 				if (!itemSelEntry.isValid()) {
 					Logging.WORLDNAMED.error("Item specified is invalid: {}.", itemSelEntry.getUserInput());
@@ -697,12 +696,18 @@ public class DebugPanelDisplay extends Display {
 						Logging.WORLDNAMED.error("Item specified is unknown: {}.", itemSelEntry.getUserInput());
 						return true;
 					} else {
-						given = inventory.add(item, count);
 						itemName = item.getName();
+						if (item instanceof StackableItem) {
+							((StackableItem) item).count = count;
+							Game.player.tryAddToInvOrDrop(item);
+						} else {
+							for (int i = 0; i < count; ++i)
+								Game.player.tryAddToInvOrDrop(item);
+						}
 					}
 				}
 
-				Logging.WORLDNAMED.info("Gave {} * {}.", given, itemName);
+				Logging.WORLDNAMED.info("Gave {} * {}.", count, itemName);
 				return true;
 			}, display -> itemSelEntry.isValid() && countEntry.isValid(),
 				Arrays.asList(optionEntry, optionEntry1)));
