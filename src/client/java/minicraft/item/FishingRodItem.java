@@ -34,10 +34,10 @@ public class FishingRodItem extends Item {
 	 * If you want to know the percent chance of a category (let's say tool, which is third)
 	 * You have to subtract 1 + the "tool" number from the number before it (for the first number subtract from 100)*/
 	private static final int[][] LEVEL_CHANCES = {
-		{44, 14, 9, 4}, // They're in the order "fish", "junk", "tools", "rare"
-		{24, 14, 9, 4}, // Iron has very high chance of fish
-		{59, 49, 9, 4}, // Gold has very high chance of tools
-		{79, 69, 59, 4} // Gem has very high chance of rare items
+		{ 44, 14, 9, 4 }, // They're in the order "fish", "junk", "tools", "rare"
+		{ 24, 14, 9, 4 }, // Iron has very high chance of fish
+		{ 59, 49, 9, 4 }, // Gold has very high chance of tools
+		{ 79, 69, 59, 4 } // Gem has very high chance of rare items
 	};
 
 	private static final String[] LEVEL_NAMES = {

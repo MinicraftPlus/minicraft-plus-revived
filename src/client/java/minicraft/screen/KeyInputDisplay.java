@@ -50,7 +50,7 @@ public class KeyInputDisplay extends Display {
 			.setTitle("minicraft.displays.key_input.title")
 			.setPositioning(new Point(Screen.w / 2, Screen.h - Font.textHeight() * 5), RelPos.TOP);
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			builder.createMenu()
 		};
 	}

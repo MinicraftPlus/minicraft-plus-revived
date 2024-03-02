@@ -77,7 +77,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 			ctr.setAccessible(true);
 			writingThread = ctr.newInstance(writers.keySet());
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+		         | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -124,7 +124,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 	@Override
 	public void log(final int depth, final String tag, final Level level, final Throwable exception, final MessageFormatter formatter,
-					final Object obj, final Object... arguments) {
+	                final Object obj, final Object... arguments) {
 		StackTraceElement stackTraceElement;
 		if (fullStackTraceRequired.get(currentConsoleWriter) || tag.equals("LOC")) {
 			stackTraceElement = RuntimeProvider.getCallerStackTraceElement(depth + 1);
@@ -141,7 +141,7 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 	@Override
 	public void log(final String loggerClassName, final String tag, final Level level, final Throwable exception,
-					final MessageFormatter formatter, final Object obj, final Object... arguments) {
+	                final MessageFormatter formatter, final Object obj, final Object... arguments) {
 		StackTraceElement stackTraceElement;
 		if (fullStackTraceRequired.get(currentConsoleWriter) || tag.equals("LOC")) {
 			stackTraceElement = RuntimeProvider.getCallerStackTraceElement(loggerClassName);
@@ -176,8 +176,8 @@ public class TinylogLoggingProvider implements LoggingProvider {
 	 * Outputs a log entry to all passed writers.
 	 */
 	private void output(final StackTraceElement stackTraceElement, final String tag,
-						final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
-						final Object[] arguments) {
+	                    final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
+	                    final Object[] arguments) {
 
 		LogEntry logEntry = TinylogLoggingConfiguration.createLogEntry(stackTraceElement, tag, level, exception, formatter,
 			obj, arguments, requiredLogEntryValues, context);
@@ -196,7 +196,6 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 	/**
 	 * Gets all writers of the provider.
-	 *
 	 * @return All writers
 	 */
 	public Collection<Writer> getWriters() {

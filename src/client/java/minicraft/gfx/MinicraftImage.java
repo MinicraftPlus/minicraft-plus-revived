@@ -21,7 +21,6 @@ public class MinicraftImage {
 
 	/**
 	 * Default with maximum size of image.
-	 *
 	 * @param image The image to be added.
 	 * @throws IOException if I/O exception occurs.
 	 */
@@ -31,9 +30,8 @@ public class MinicraftImage {
 
 	/**
 	 * Custom size.
-	 *
-	 * @param image  The image to be added.
-	 * @param width  The width of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
+	 * @param image The image to be added.
+	 * @param width The width of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
 	 * @param height The height of the {@link MinicraftImage} to be applied to the {@link LinkedSprite}.
 	 * @throws IOException
 	 */

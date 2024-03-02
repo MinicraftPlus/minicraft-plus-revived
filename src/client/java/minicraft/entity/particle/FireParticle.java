@@ -9,7 +9,6 @@ public class FireParticle extends Particle {
 	/**
 	 * Creates a new particle at the given position. It has a lifetime of 30 ticks
 	 * and a fire looking sprite.
-	 *
 	 * @param x X map position
 	 * @param y Y map position
 	 */

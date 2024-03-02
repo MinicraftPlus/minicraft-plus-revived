@@ -53,7 +53,6 @@ public class Version implements Comparable<Version> {
 	/**
 	 * The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object, ov.
 	 * (this.compareTo(new Version("1.0.0") < 0 is the same as this < 1.0.0)
-	 *
 	 * @param ov The version to compare to.
 	 */
 	public int compareTo(@NotNull Version ov) {
@@ -63,8 +62,7 @@ public class Version implements Comparable<Version> {
 	/**
 	 * The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object, ov.
 	 * (this.compareTo(new Version("1.0.0") < 0 is the same as this < 1.0.0)
-	 *
-	 * @param ov        The version to compare to.
+	 * @param ov The version to compare to.
 	 * @param ignoreDev If we should ignore dev versions in this comparison.
 	 */
 	public int compareTo(@NotNull Version ov, boolean ignoreDev) {
@@ -88,6 +86,6 @@ public class Version implements Comparable<Version> {
 	}
 
 	public int[] toArray() {
-		return new int[]{make, major, minor, dev};
+		return new int[] { make, major, minor, dev };
 	}
 }

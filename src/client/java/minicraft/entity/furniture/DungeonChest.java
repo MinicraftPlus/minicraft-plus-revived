@@ -27,7 +27,6 @@ public class DungeonChest extends Chest {
 
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
-	 *
 	 * @param populateInv Populate the inventory of the DungeonChest using the loot table system.
 	 */
 	public DungeonChest(boolean populateInv) {

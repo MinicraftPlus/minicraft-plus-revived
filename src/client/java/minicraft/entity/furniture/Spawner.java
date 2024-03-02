@@ -48,7 +48,6 @@ public class Spawner extends Furniture {
 
 	/**
 	 * Initializes the spawners variables to the corresponding values from the mob.
-	 *
 	 * @param m The mob which this spawner will spawn.
 	 */
 	private void initMob(MobAi m) {
@@ -70,7 +69,6 @@ public class Spawner extends Furniture {
 
 	/**
 	 * Creates a new spawner for the mob m.
-	 *
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
@@ -91,7 +89,6 @@ public class Spawner extends Furniture {
 
 	/**
 	 * Returns the classname of a class.
-	 *
 	 * @param c The class.
 	 * @return String representation of the classname.
 	 */

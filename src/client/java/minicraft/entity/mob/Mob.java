@@ -32,9 +32,8 @@ public abstract class Mob extends Entity {
 	/**
 	 * Default constructor for a mob.
 	 * Default x radius is 4, and y radius is 3.
-	 *
 	 * @param sprites All of this mob's sprites.
-	 * @param health  The mob's max health.
+	 * @param health The mob's max health.
 	 */
 	public Mob(LinkedSprite[][] sprites, int health) {
 		super(4, 3);
@@ -202,7 +201,6 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Checks if this Mob is currently on a light tile; if so, the mob sprite is brightened.
-	 *
 	 * @return true if the mob is on a light tile, false if not.
 	 */
 	public boolean isLight() {
@@ -212,7 +210,6 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Checks if the mob is swimming (standing on a liquid tile).
-	 *
 	 * @return true if the mob is swimming, false if not.
 	 */
 	public boolean isSwimming() {
@@ -223,10 +220,9 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Do damage to the mob this method is called on.
-	 *
-	 * @param tile   The tile that hurt the player
-	 * @param x      The x position of the mob
-	 * @param y      The x position of the mob
+	 * @param tile The tile that hurt the player
+	 * @param x The x position of the mob
+	 * @param y The x position of the mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
@@ -237,8 +233,7 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Do damage to the mob this method is called on.
-	 *
-	 * @param mob    The mob that hurt this mob
+	 * @param mob The mob that hurt this mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
 	public void hurt(Mob mob, int damage) {
@@ -247,9 +242,8 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Do damage to the mob this method is called on.
-	 *
-	 * @param mob       The mob that hurt this mob
-	 * @param damage    The amount of damage to hurt the mob with
+	 * @param mob The mob that hurt this mob
+	 * @param damage The amount of damage to hurt the mob with
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
@@ -267,7 +261,6 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Executed when a TNT bomb explodes near this mob.
-	 *
 	 * @param tnt The TNT exploding.
 	 * @param dmg The amount of damage the explosion does.
 	 */
@@ -278,8 +271,7 @@ public abstract class Mob extends Entity {
 	/**
 	 * Hurt the mob, based on only damage and a direction
 	 * This is overridden in Player.java
-	 *
-	 * @param damage    The amount of damage to hurt the mob with
+	 * @param damage The amount of damage to hurt the mob with
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	protected void doHurt(int damage, Direction attackDir) {
@@ -296,7 +288,6 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * Restores health to this mob.
-	 *
 	 * @param heal How much health is restored.
 	 */
 	public void heal(int heal) { // Restore health on the mob
@@ -314,7 +305,6 @@ public abstract class Mob extends Entity {
 
 	/**
 	 * This checks how the {@code attacker} can damage this mob.
-	 *
 	 * @param attacker The attacker entity.
 	 * @return The calculated damage.
 	 */

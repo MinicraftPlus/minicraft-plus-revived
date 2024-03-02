@@ -7,7 +7,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Skeleton extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][]{
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 2, "skeleton"),
 		Mob.compileMobSpriteAnimations(0, 4, "skeleton"),
@@ -19,7 +19,6 @@ public class Skeleton extends EnemyMob {
 
 	/**
 	 * Creates a skeleton of a given level.
-	 *
 	 * @param lvl The skeleton's level.
 	 */
 	public Skeleton(int lvl) {
@@ -51,8 +50,8 @@ public class Skeleton extends EnemyMob {
 	}
 
 	public void die() {
-		int[] diffrands = {20, 20, 30};
-		int[] diffvals = {13, 18, 28};
+		int[] diffrands = { 20, 20, 30 };
+		int[] diffvals = { 13, 18, 28 };
 		int diff = Settings.getIdx("diff");
 
 		int count = random.nextInt(3 - diff) + 1;

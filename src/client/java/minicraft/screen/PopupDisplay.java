@@ -57,9 +57,9 @@ public class PopupDisplay extends Display {
 		if (Stream.of(entries).anyMatch(e -> e instanceof InputEntry))
 			onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu == null)
-			menus = new Menu[]{builder.createMenu()};
+			menus = new Menu[] { builder.createMenu() };
 		else
-			menus = new Menu[]{onScreenKeyboardMenu, builder.createMenu()};
+			menus = new Menu[] { onScreenKeyboardMenu, builder.createMenu() };
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
@@ -145,10 +145,9 @@ public class PopupDisplay extends Display {
 
 		/**
 		 * The callback acts when the key clicked.
-		 *
-		 * @param key      The key of the callback trigger.
+		 * @param key The key of the callback trigger.
 		 * @param callback The callback, when the return value is {@code true}, no more input check
-		 *                 will be done. It continues if {@code false}.
+		 * 	will be done. It continues if {@code false}.
 		 */
 		public PopupActionCallback(String key, ActionCallback callback) {
 			this.key = key;

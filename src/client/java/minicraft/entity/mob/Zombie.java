@@ -5,7 +5,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Zombie extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][]{
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "zombie"),
 		Mob.compileMobSpriteAnimations(0, 2, "zombie"),
 		Mob.compileMobSpriteAnimations(0, 4, "zombie"),
@@ -14,7 +14,6 @@ public class Zombie extends EnemyMob {
 
 	/**
 	 * Creates a zombie of the given level.
-	 *
 	 * @param lvl Zombie's level.
 	 */
 	public Zombie(int lvl) {

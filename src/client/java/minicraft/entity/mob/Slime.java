@@ -8,18 +8,17 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][]{
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "slime")},
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "slime")},
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "slime")},
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "slime")}
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "slime") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "slime") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "slime") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "slime") }
 	};
 
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
 
 	/**
 	 * Creates a slime of the given level.
-	 *
 	 * @param lvl Slime's level.
 	 */
 	public Slime(int lvl) {

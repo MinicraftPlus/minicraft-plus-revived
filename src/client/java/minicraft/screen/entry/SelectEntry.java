@@ -16,8 +16,7 @@ public class SelectEntry extends ListEntry {
 	 * Creates a new entry which acts as a button.
 	 * Can do an action when it is selected.
 	 * Localizes the provided string.
-	 *
-	 * @param text     Text displayed on this entry
+	 * @param text Text displayed on this entry
 	 * @param onSelect Action which happens when the entry is selected
 	 */
 	public SelectEntry(String text, Action onSelect) {
@@ -32,7 +31,6 @@ public class SelectEntry extends ListEntry {
 
 	/**
 	 * Changes the text of the entry.
-	 *
 	 * @param text new text
 	 */
 	void setText(String text) {

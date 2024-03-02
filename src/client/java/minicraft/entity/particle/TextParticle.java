@@ -13,10 +13,9 @@ public class TextParticle extends Particle {
 
 	/**
 	 * Creates a text particle which shows a message on the screen.
-	 *
 	 * @param msg Message to display
-	 * @param x   X map position
-	 * @param y   Y map position
+	 * @param x X map position
+	 * @param y Y map position
 	 * @param col Text color
 	 */
 	public TextParticle(String msg, int x, int y, int col) {
@@ -63,7 +62,6 @@ public class TextParticle extends Particle {
 
 	/**
 	 * Returns the message and color divied by the character :.
-	 *
 	 * @return string representation of the particle
 	 */
 	public String getData() {

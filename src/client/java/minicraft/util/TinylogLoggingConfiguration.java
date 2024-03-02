@@ -127,9 +127,9 @@ public class TinylogLoggingConfiguration {
 	 */
 	public HashMap<ConsoleWriter, WriterConfig> generateConsoleWriters() {
 		HashMap<ConsoleWriter, WriterConfig> map = new HashMap<>();
-		for (final boolean i : new boolean[]{false, true}) {
-			for (final boolean j : new boolean[]{false, true}) {
-				for (final boolean k : new boolean[]{false, true}) {
+		for (final boolean i : new boolean[] { false, true }) {
+			for (final boolean j : new boolean[] { false, true }) {
+				for (final boolean k : new boolean[] { false, true }) {
 					map.putAll(createConsoleWriter(i, j, k));
 				}
 			}
@@ -158,22 +158,21 @@ public class TinylogLoggingConfiguration {
 
 	/**
 	 * Creates a new log entry.
-	 *
 	 * @param stackTraceElement Optional stack trace element of caller
-	 * @param tag               Tag name if issued from a tagged logger
-	 * @param level             Severity level
-	 * @param exception         Caught exception or throwable to log
-	 * @param formatter         Formatter for text message
-	 * @param obj               Message to log
-	 * @param arguments         Arguments for message
-	 * @param required          The required log entry value array slice of the tag index of the used tag
-	 * @param contextProvider   The context provider
+	 * @param tag Tag name if issued from a tagged logger
+	 * @param level Severity level
+	 * @param exception Caught exception or throwable to log
+	 * @param formatter Formatter for text message
+	 * @param obj Message to log
+	 * @param arguments Arguments for message
+	 * @param required The required log entry value array slice of the tag index of the used tag
+	 * @param contextProvider The context provider
 	 * @return Filled log entry
 	 */
 	public static LogEntry createLogEntry(final StackTraceElement stackTraceElement, final String tag,
-										  final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
-										  final Object[] arguments, final Collection<LogEntryValue> required,
-										  final TinylogContextProvider contextProvider) {
+	                                      final Level level, final Throwable exception, final MessageFormatter formatter, final Object obj,
+	                                      final Object[] arguments, final Collection<LogEntryValue> required,
+	                                      final TinylogContextProvider contextProvider) {
 
 		Timestamp timestamp = RuntimeProvider.createTimestamp();
 		Thread thread = required.contains(LogEntryValue.THREAD) ? Thread.currentThread() : null;

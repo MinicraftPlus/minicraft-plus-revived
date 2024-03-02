@@ -27,8 +27,7 @@ public class Localization {
 
 	/**
 	 * Get the provided key's localization for the currently selected language.
-	 *
-	 * @param key       The key to localize.
+	 * @param key The key to localize.
 	 * @param arguments The additional arguments to format the localized string.
 	 * @return A localized string.
 	 */
@@ -63,7 +62,6 @@ public class Localization {
 
 	/**
 	 * Gets the currently selected locale.
-	 *
 	 * @return A locale object.
 	 */
 	public static Locale getSelectedLocale() {
@@ -72,7 +70,6 @@ public class Localization {
 
 	/**
 	 * Get the currently selected locale, but as a full name without the country code.
-	 *
 	 * @return A string with the name of the language.
 	 */
 	@NotNull
@@ -82,7 +79,6 @@ public class Localization {
 
 	/**
 	 * Gets a  list of all the known locales.
-	 *
 	 * @return A list of locales.
 	 */
 	@NotNull
@@ -93,7 +89,6 @@ public class Localization {
 	/**
 	 * Changes the selected language and loads it.
 	 * If the provided language doesn't exist, it loads the default locale.
-	 *
 	 * @param newLanguage The language-country code of the language to load.
 	 */
 	public static void changeLanguage(@NotNull String newLanguage) {
