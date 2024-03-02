@@ -26,6 +26,7 @@ public class FlowerTile extends Tile {
 
 	public boolean tick(Level level, int xt, int yt) {
 		// TODO revise this method.
+		//noinspection DuplicatedCode
 		if (random.nextInt(30) != 0) return false; // Skips every 31 tick.
 
 		int xn = xt;
