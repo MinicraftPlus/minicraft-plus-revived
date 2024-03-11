@@ -15,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class SignItem extends TileItem {
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "sign");
+	private static final String[] solidTiles = { "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool",
+	"Green Wool", "Yellow Wool", "Black Wool", "grass", "sand", "path", "ornate stone", "ornate obsidian" };
+
 
 	public static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
@@ -24,7 +27,7 @@ public class SignItem extends TileItem {
 
 	private SignItem() { this(1); }
 	private SignItem(int count) {
-		super("Sign", sprite, count, null, "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool", "grass", "sand");
+		super("Sign", sprite, count, null, solidTiles);
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {

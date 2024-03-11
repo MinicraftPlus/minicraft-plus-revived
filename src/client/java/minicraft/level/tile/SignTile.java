@@ -42,9 +42,21 @@ public class SignTile extends Tile {
 	private SignTile(Tile onType) {
 		super("Sign "+ onType.name, sprite);
 		this.onType = onType;
-		this.connectsToSand = onType.connectsToSand;
-		this.connectsToGrass = onType.connectsToGrass;
-		this.connectsToFluid = onType.connectsToFluid;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return onType.connectsToSand(level, x, y);//Tiles.get((short) level.getData(x, y)).connectsToSand(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return onType.connectsToFluid(level, x, y);//Tiles.get((short) level.getData(x, y)).connectsToFluid(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return onType.connectsToGrass(level, x, y);//Tiles.get((short) level.getData(x, y)).connectsToGrass(level, x, y);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
