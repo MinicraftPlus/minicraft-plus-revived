@@ -115,8 +115,8 @@ public class Recipes {
 		anvilRecipes.add(new Recipe("Shears_1", "Iron_4"));
 		anvilRecipes.add(new Recipe("Watering Can_1", "Iron_3"));
 
-		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
-		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));
+		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_3", "coal_1"));
+		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_3", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass_1", "sand_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass bottle_1", "glass_3"));
 
