@@ -32,19 +32,26 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Dirt", new LinkedSprite(SpriteType.Item, "dirt"), new TileModel("dirt"), "hole", "water", "lava"));
 		items.add(new TileItem("Natural Rock", new LinkedSprite(SpriteType.Item, "stone"), new TileModel("rock"), "hole", "dirt", "sand", "grass", "path", "water", "lava"));
 
+		String[] solidTiles = { "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool",
+			"Green Wool", "Yellow Wool", "Black Wool", "grass", "sand", "path", "ornate stone", "ornate obsidian" };
+		TileModel.TileDataGetter placeOverWithID = (model1, target, level, xt, yt, player, attackDir) -> target.id;
+
 		items.add(new TileItem("Plank", new LinkedSprite(SpriteType.Item, "plank"), new TileModel("Wood Planks"), "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", new LinkedSprite(SpriteType.Item, "plank_wall"), new TileModel("Wood Wall"), "Wood Planks"));
 		items.add(new TileItem("Wood Door", new LinkedSprite(SpriteType.Item, "wood_door"), new TileModel("Wood Door"), "Wood Planks"));
+		items.add(new TileItem("Wood Fence", new LinkedSprite(SpriteType.Item, "wood_fence"), new TileModel("Wood Fence", placeOverWithID), solidTiles));
 		items.add(new TileItem("Stone", new LinkedSprite(SpriteType.Item, "stone"), new TileModel("Stone"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Brick", new LinkedSprite(SpriteType.Item, "stone_brick"), new TileModel("Stone Bricks"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Ornate Stone", new LinkedSprite(SpriteType.Item, "stone_brick"), new TileModel("Ornate Stone"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Wall", new LinkedSprite(SpriteType.Item, "stone_wall"), new TileModel("Stone Wall"), "Stone Bricks"));
-		items.add(new TileItem("Stone Door", new LinkedSprite(SpriteType.Item, "stone_door"), new TileModel("Stone Door"), "Stone Bricks"));
+		items.add(new TileItem("Stone Door", new LinkedSprite(SpriteType.Item, "stone_wall"), new TileModel("Stone Door"), "Stone Bricks"));
+		items.add(new TileItem("Stone Fence", new LinkedSprite(SpriteType.Item, "stone_fence"), new TileModel("Stone Fence", placeOverWithID), solidTiles));
 		items.add(new TileItem("Raw Obsidian", new LinkedSprite(SpriteType.Item, "obsidian"), new TileModel("Raw Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Brick", new LinkedSprite(SpriteType.Item, "obsidian_brick"), new TileModel("Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Ornate Obsidian", new LinkedSprite(SpriteType.Item, "obsidian_brick"), new TileModel("Ornate Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", new LinkedSprite(SpriteType.Item, "obsidian_wall"), new TileModel("Obsidian Wall"), "Obsidian"));
 		items.add(new TileItem("Obsidian Door", new LinkedSprite(SpriteType.Item, "obsidian_door"), new TileModel("Obsidian Door"), "Obsidian"));
+		items.add(new TileItem("Obsidian Fence", new LinkedSprite(SpriteType.Item, "obsidian_fence"), new TileModel("Obsidian Fence", placeOverWithID), solidTiles));
 
 		items.add(new TileItem("Wool", new LinkedSprite(SpriteType.Item, "wool"), new TileModel("Wool"), "hole", "water"));
 		items.add(new TileItem("Red Wool", new LinkedSprite(SpriteType.Item, "red_wool"), new TileModel("Red Wool"), "hole", "water"));

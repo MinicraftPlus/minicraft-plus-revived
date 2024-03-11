@@ -33,9 +33,21 @@ public class TorchTile extends Tile {
 	private TorchTile(Tile onType) {
 		super("Torch " + onType.name, new SpriteAnimation(SpriteType.Tile, "torch"));
 		this.onType = onType;
-		this.connectsToSand = onType.connectsToSand;
-		this.connectsToGrass = onType.connectsToGrass;
-		this.connectsToFluid = onType.connectsToFluid;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return onType.connectsToSand(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return onType.connectsToFluid(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return onType.connectsToGrass(level, x, y);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
