@@ -8,12 +8,16 @@ import minicraft.level.Level;
 
 public class WaterTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "water")
-		.setConnectChecker((tile, side) -> tile.connectsToFluid)
+		.setConnectionChecker((level, x, y, tile, side) -> tile.connectsToFluid(level, x, y))
 		.setSingletonWithConnective(true);
 
 	protected WaterTile(String name) {
 		super(name, sprite);
-		connectsToFluid = true;
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return true;
 	}
 
 	@Override
