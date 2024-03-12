@@ -2,6 +2,8 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.screen.entry.ListEntry;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,24 +24,25 @@ public class Font {
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 
 	public static void draw(String msg, Screen screen, int x, int y) {
-		draw(msg, screen, x, y, -1);
+		draw(null, msg, screen, x, y, -1); }
+	public static void draw(@Nullable Screen.RenderingLimitingModel bounds, String msg, Screen screen, int x, int y) { draw(bounds, msg, screen, x, y, -1);
 	}
 
 	/**
 	 * Draws the message to the x & y coordinates on the screen.
 	 */
-	public static void
-	draw(String msg, Screen screen, int x, int y, int whiteTint) {
+	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) { draw(null, msg, screen, x, y, whiteTint); }
+	public static void draw(@Nullable Screen.RenderingLimitingModel bounds, String msg, Screen screen, int x, int y, int whiteTint) {
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
 			if (ix >= 0) {
 				// If that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i + 1)), y, ix % 32, ix / 32, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "font"), whiteTint);
+				screen.render(bounds, x + i * textWidth(msg.substring(i, i + 1)), y, ix % 32, ix / 32, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "font"), whiteTint);
 			}
 		}
 	}
 
-	public static void drawColor(String message, Screen screen, int x, int y) {
+	public static void drawColor(@Nullable Screen.RenderingLimitingModel bounds, String message, Screen screen, int x, int y) {
 		// Set default color message if it doesn't have initially
 		if (message.charAt(0) != Color.COLOR_CHAR) {
 			message = Color.WHITE_CODE + message;
@@ -63,22 +66,24 @@ public class Font {
 				color = Color.WHITE_CODE;
 			}
 
-			Font.draw(text, screen, x + leading, y, Color.get(color));
+			Font.draw(bounds, text, screen, x + leading, y, Color.get(color));
 			leading += Font.textWidth(text);
 		}
 	}
 
 	public static void drawBackground(String msg, Screen screen, int x, int y) {
-		drawBackground(msg, screen, x, y, -1);
+		drawBackground(null, msg, screen, x, y, -1); }
+	public static void drawBackground(@Nullable Screen.RenderingLimitingModel bounds, String msg, Screen screen, int x, int y) { drawBackground(bounds, msg, screen, x, y, -1);
 	}
 
-	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
+	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) { drawBackground(null, msg, screen, x, y, whiteTint); }
+	public static void drawBackground(@Nullable Screen.RenderingLimitingModel bounds, String msg, Screen screen, int x, int y, int whiteTint) {
 		for (int i = 0; i < msg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(msg.substring(i, i + 1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
+			screen.render(null, x + i * textWidth(msg.substring(i, i + 1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
 		}
 
 		// Renders the text
-		draw(msg, screen, x, y, whiteTint);
+		draw(bounds, msg, screen, x, y, whiteTint);
 	}
 
 	public static int textWidth(String text) { // Filtering out coloring codes.
