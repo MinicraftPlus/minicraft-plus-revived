@@ -18,21 +18,25 @@ public class Recipes {
 		craftRecipes.add(new Recipe("plank_2", "Wood_1"));
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		craftRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
 
 		workbenchRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("plank_2", "Wood_1"));
 		workbenchRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		workbenchRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
 		workbenchRecipes.add(new Recipe("Stone Brick_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Ornate Stone_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
+		workbenchRecipes.add(new Recipe("Stone Fence_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Brick_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Ornate Obsidian_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Obsidian Wall_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Door_1", "Obsidian Brick_5"));
+		workbenchRecipes.add(new Recipe("Obsidian Fence_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
 		workbenchRecipes.add(new Recipe("Furnace_1", "Stone_20"));
 		workbenchRecipes.add(new Recipe("Enchanter_1", "Wood_5", "String_2", "Lapis_10"));
@@ -109,9 +113,10 @@ public class Recipes {
 		anvilRecipes.add(new Recipe("Gem Shovel_1", "Wood_5", "gem_50"));
 		anvilRecipes.add(new Recipe("Gem Bow_1", "Wood_5", "gem_50", "string_2"));
 		anvilRecipes.add(new Recipe("Shears_1", "Iron_4"));
+		anvilRecipes.add(new Recipe("Watering Can_1", "Iron_3"));
 
-		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
-		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));
+		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_3", "coal_1"));
+		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_3", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass_1", "sand_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass bottle_1", "glass_3"));
 
@@ -132,7 +137,8 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("regen potion_1", "awkward potion_1", "Gold Apple_1"));
 		enchantRecipes.add(new Recipe("Health Potion_1", "awkward potion_1", "GunPowder_2", "Leather Armor_1"));
 		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "GunPowder_3", "Lapis_7"));
-		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5"));
-		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5","Shard_15"));
+		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5", "Cloud Ore_5"));
+		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5", "Shard_15"));
+		enchantRecipes.add(new Recipe("Arcane Fertilizer_3", "Lapis_6", "Bone_2"));
 	}
 }

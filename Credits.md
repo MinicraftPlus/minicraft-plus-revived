@@ -1,16 +1,21 @@
 ## Credits
+
 Original game by Markus "Notch" Persson.
 
 ### Former maintainers
+
 * David.b
 * Dillyg10
 * Chris J
 * afyber
-
-### Current maintainer
 * Makkkkus
 
+### Current maintainer
+
+* Litorom1
+
 ### Code contributions from
+
 * A.L.I.C.E
 * BenCheung0422
 * Christoffer Holmesland
@@ -21,11 +26,13 @@ Original game by Markus "Notch" Persson.
 * rocketedsocks
 
 ### Art contributions from
+
 * TheBigEye
 * JamesTDG
 * Geek_Joystick
 
 ### Localisation contributions from
+
 * A.L.I.C.E
 * Christoffer Holmesland
 * GladfanIsHere

@@ -49,7 +49,7 @@ public class Sound {
 			DataLine.Info info = new DataLine.Info(Clip.class, format);
 
 			if (!AudioSystem.isLineSupported(info)) {
-				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack,  AudioSystem.getAudioFileFormat(in));
+				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"\" is not supported: {}", key, pack, AudioSystem.getAudioFileFormat(in));
 
 				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
 				Logging.RESOURCEHANDLER_SOUND.error("-source:");
@@ -64,13 +64,11 @@ public class Sound {
 					}
 				}
 				Logging.RESOURCEHANDLER_SOUND.error("-target:");
-				for (int i = 0; i < tinfo.length; i++)
-				{
-					if (tinfo[i] instanceof DataLine.Info)
-					{
+				for (int i = 0; i < tinfo.length; i++) {
+					if (tinfo[i] instanceof DataLine.Info) {
 						DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-						for (AudioFormat af: supportedFormats)
+						for (AudioFormat af : supportedFormats)
 							Logging.RESOURCEHANDLER_SOUND.error(af);
 					}
 				}
@@ -92,19 +90,25 @@ public class Sound {
 		}
 	}
 
-	/** Recommend {@link #play(String)} and {@link #loop(String, int)}. */
+	/**
+	 * Recommend {@link #play(String)} and {@link #loop(String, int)}.
+	 */
 	@Nullable
 	public static Sound getSound(String key) {
 		return sounds.get(key);
 	}
 
-	/** This method does safe check for {@link #play()}. */
+	/**
+	 * This method does safe check for {@link #play()}.
+	 */
 	public static void play(String key) {
 		Sound sound = sounds.get(key);
 		if (sound != null) sound.play();
 	}
 
-	/** This method does safe check for {@link #loop(int)}. */
+	/**
+	 * This method does safe check for {@link #loop(int)}.
+	 */
 	public static void loop(String key, int count) {
 		Sound sound = sounds.get(key);
 		if (sound != null) sound.loop(count);
@@ -130,7 +134,7 @@ public class Sound {
 	}
 
 	public void play() {
-		if (!(boolean)Settings.get("sound")) return;
+		if (!(boolean) Settings.get("sound")) return;
 
 		Clip clip = createClip();
 		if (clip != null) {
@@ -139,7 +143,7 @@ public class Sound {
 	}
 
 	public void loop(int count) {
-		if (!(boolean)Settings.get("sound")) return;
+		if (!(boolean) Settings.get("sound")) return;
 
 		Clip clip = createClip();
 		if (clip != null) {

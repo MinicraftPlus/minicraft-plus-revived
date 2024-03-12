@@ -22,7 +22,7 @@ public class ControlsDisplay extends Display {
 	public ControlsDisplay() {
 		super(true, true, new Menu.Builder(false, 0, RelPos.CENTER)
 			.setSelectable(true)
-			.setPositioning(new Point(Screen.w/2, 20), RelPos.BOTTOM)
+			.setPositioning(new Point(Screen.w / 2, 20), RelPos.BOTTOM)
 			.setDisplayLength(17)
 			.createMenu()
 		);
@@ -51,7 +51,7 @@ public class ControlsDisplay extends Display {
 	}
 
 	private void switchingControls() {
-		menus[0].setEntries(displaying == 0? keyControls: controllerControls);
+		menus[0].setEntries(displaying == 0 ? keyControls : controllerControls);
 		menus[0].setSelection(0);
 	}
 
@@ -60,7 +60,7 @@ public class ControlsDisplay extends Display {
 		super.render(screen);
 
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.controls"), screen, 0, Color.WHITE);
-		Font.drawCentered(Localization.getLocalized(displaying == 0? "minicraft.displays.controls.display.keyboard": "minicraft.displays.controls.display.controller"), screen, 10, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized(displaying == 0 ? "minicraft.displays.controls.display.keyboard" : "minicraft.displays.controls.display.controller"), screen, 10, Color.WHITE);
 
 		if (displaying == 0) { // If displaying keyboard mappings.
 			Font.drawCentered(Localization.getLocalized("minicraft.displays.controls.display.keyboard.desc"), screen, Screen.h - 16, Color.GRAY);

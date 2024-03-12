@@ -28,7 +28,10 @@ public class ArmorItem extends StackableItem {
 	private final int staminaCost;
 	public final int level;
 
-	private ArmorItem(String name, LinkedSprite sprite, float health, int level) { this(name, sprite, 1, health, level); }
+	private ArmorItem(String name, LinkedSprite sprite, float health, int level) {
+		this(name, sprite, 1, health, level);
+	}
+
 	private ArmorItem(String name, LinkedSprite sprite, int count, float health, int level) {
 		super(name, sprite, count);
 		this.armor = health;
@@ -48,7 +51,9 @@ public class ArmorItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull ArmorItem copy() {
 		return new ArmorItem(getName(), sprite, count, armor, level);

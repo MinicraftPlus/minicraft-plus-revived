@@ -16,7 +16,9 @@ but some sections are changed to compliant this project.
 * Added obsidian knight as the second boss
 * Added limitation to inventories
 * Added limitation to stackable items
-* Added four new debug arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`
+* Added seven new debug
+  arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`, `--debug-level`, `--debug-locale`, `--debug-unloc-tracing`
+* Added a new argument for disabling hardware acceleration - `--no-hardware-acceleration`
 * Added a toggle for HUD display
 * Added a toggle for simplified effect display
 * Added a new menu for creative mode
@@ -30,12 +32,14 @@ but some sections are changed to compliant this project.
 * Added world-wide seed
 * Added controller support
 * Added on-screen keyboard
-* Added logo splash screen
 * Added glass bottle and made potions return glass bottles when used
 * Added dyes (#445)
 * Added coloured sheep (#445)
 * Added ability to dye sheep and beds (#445)
 * Cow and sheep now graze on grasses
+* Added a trigger to auto-enable hardware acceleration
+* Added support for lower-cased letters
+* Added item description menu
 
 ### Changes
 
@@ -46,11 +50,18 @@ but some sections are changed to compliant this project.
 * If the application flag `--savedir` is present, '.playminicraft/mods/Minecraft Plus' will no longer be appended
 * Updated all ore-related and metal-related textures
 * Made the parent display render in the background
-* Made recipies unlockable
+* Made recipes unlockable
 * Made you reobtain your old clothes when putting on new clothing
+* Made you reobtain empty bottles when a bottle of potion is consumed
 * Made languages fallback to English
 * Improved the tile place indicator
 * Overhauled debugging actions
+* Overhauled the farming system
+* Changed the languaging setting menu
+* Optimized CPU usage
+* Reduced food stamina cost
+* Made some strings lower-cased
+* Updated spawning and despawning conditions
 
 ### Removals
 
@@ -62,6 +73,7 @@ but some sections are changed to compliant this project.
 * Fixed rendering positioning problem of color code styled texts
 * Fixed lights disappearing when out of screen
 * Fixed animals and items destroying plants
+* Fixed various old world loading crashes
 
 ## [2.1.3]
 
@@ -400,7 +412,11 @@ but some sections are changed to compliant this project.
 >     * Added an Iron Lantern at the entrance of the purple dungeon
 
 [2.2.0]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.3...HEAD
+
 [2.1.3]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.2...v2.1.3
+
 [2.1.2]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.1...v2.1.2
+
 [2.1.1]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.1.0...v2.1.1
+
 [2.1.0]: https://github.com/MinicraftPlus/minicraft-plus-revived/compare/v2.0.7...v2.1.0

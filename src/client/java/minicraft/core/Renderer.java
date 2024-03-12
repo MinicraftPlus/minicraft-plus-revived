@@ -23,6 +23,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
@@ -168,9 +169,9 @@ public class Renderer extends Game {
 				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
 				AffineTransform at = new AffineTransform();
 				at.scale(scale, scale); // Setting the scaling.
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 
-				// Use this solution without larger scales which use up a lot memory.
+				// Use this solution without larger scales which use up a lot of memory.
 				// With scale 20, up to around 360MB overall RAM use.
 				BufferedImage after = scaleOp.filter(before, null);
 				ImageIO.write(after, "png", file);
@@ -324,6 +325,15 @@ public class Renderer extends Game {
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
+		// WATERING CAN CONTAINER STATUS
+		if (player.activeItem instanceof WateringCanItem) {
+			// Draws the text
+			WateringCanItem tin = (WateringCanItem) player.activeItem;
+			int dura = tin.content * 100 / tin.CAPACITY;
+			int green = (int) (dura * 2.55f); // Let duration show as normal.
+			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
+		}
+
 		// This renders the potions overlay
 		if (player.showpotioneffects && player.potioneffects.size() > 0) {
 
@@ -435,7 +445,7 @@ public class Renderer extends Game {
 			}
 		}
 
-		screen.render(x - 5 , y , 0, ACTIVE_BOSSBAR, 0, hudSheet.getSheet()); // right corner
+		screen.render(x - 5, y, 0, ACTIVE_BOSSBAR, 0, hudSheet.getSheet()); // right corner
 
 		for (int bx = 0; bx < bar_length; bx++) {
 			for (int by = 0; by < 1; by++) {
@@ -457,10 +467,10 @@ public class Renderer extends Game {
 		for (Quest q : quests) {
 			QuestSeries series = q.getSeries();
 
-			questsShown.add(!expanding?
-				new StringEntry(Localization.getLocalized(q.key), Color.WHITE, false):
+			questsShown.add(!expanding ?
+				new StringEntry(Localization.getLocalized(q.key), Color.WHITE, false) :
 				new StringEntry(q.shouldAllCriteriaBeCompleted() && q.getTotalNumCriteria() > 1 ?
-					String.format("%s (%d/%d)", Localization.getLocalized(series.key),  q.getNumCriteriaCompleted(), q.getTotalNumCriteria()) :
+					String.format("%s (%d/%d)", Localization.getLocalized(series.key), q.getNumCriteriaCompleted(), q.getTotalNumCriteria()) :
 					Localization.getLocalized(series.key), Color.WHITE, false)
 			);
 

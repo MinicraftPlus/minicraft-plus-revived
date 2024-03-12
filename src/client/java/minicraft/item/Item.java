@@ -25,42 +25,57 @@ public abstract class Item {
 		sprite = SpriteLinker.missingTexture(SpriteType.Item);
 		this.name = name;
 	}
+
 	protected Item(String name, LinkedSprite sprite) {
 		this.name = name;
 		this.sprite = sprite;
 	}
 
-	/** Renders an item on the HUD */
+	/**
+	 * Renders an item on the HUD
+	 */
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
 		screen.render(x, y, sprite);
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 
-	/** Determines what happens when the player interacts with a tile */
+	/**
+	 * Determines what happens when the player interacts with a tile
+	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
 	}
 
-	/** Returning true causes this item to be removed from the player's active item slot */
+	/**
+	 * Returning true causes this item to be removed from the player's active item slot
+	 */
 	public boolean isDepleted() {
 		return false;
 	}
 
-	/** Returns if the item can attack mobs or not */
+	/**
+	 * Returns if the item can attack mobs or not
+	 */
 	public boolean canAttack() {
 		return false;
 	}
 
-	/** Sees if an item equals another item */
+	/**
+	 * Sees if an item equals another item
+	 */
 	public boolean equals(Item item) {
 		return item != null && item.getClass().equals(getClass()) && item.name.equals(name);
 	}
 
 	@Override
-	public int hashCode() { return name.hashCode(); }
+	public int hashCode() {
+		return name.hashCode();
+	}
 
-	/** This returns a copy of this item, in all necessary detail. */
+	/**
+	 * This returns a copy of this item, in all necessary detail.
+	 */
 	@NotNull
 	public abstract Item copy();
 
@@ -69,22 +84,30 @@ public abstract class Item {
 		return name + "-Item";
 	}
 
-	/** Gets the necessary data to send over a connection. This data should always be directly input-able into Items.get() to create a valid item with the given properties. */
+	/**
+	 * Gets the necessary data to send over a connection. This data should always be directly input-able into Items.get() to create a valid item with the given properties.
+	 */
 	public String getData() {
 		return name;
 	}
 
-	/** Gets the description used for display item information. */
+	/**
+	 * Gets the description used for display item information.
+	 */
 	public String getDescription() {
 		return getName();
 	}
 
-	public final String getName() { return name; }
+	public final String getName() {
+		return name;
+	}
 
 	// Returns the String that should be used to display this item in a menu or list.
 	public String getDisplayName() {
 		return " " + Localization.getLocalized(getName());
 	}
 
-	public boolean interactsWithWorld() { return true; }
+	public boolean interactsWithWorld() {
+		return true;
+	}
 }
