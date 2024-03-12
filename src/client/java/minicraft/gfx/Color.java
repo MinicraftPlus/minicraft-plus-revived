@@ -51,6 +51,11 @@ public class Color {
 	public static final String MAGENTA_CODE = Color.toStringCode(Color.MAGENTA);
 	public static final String CYAN_CODE = Color.toStringCode(Color.CYAN);
 
+	// Reset color to the original setting of the string.
+	public static final String RESET_CODE = COLOR_CHAR + "\u0002\u0000\u0000\u0000";
+	// Set the color before the last color code; if the last code is: RESET or unset: no operation; REDO: RESET.
+	public static final String REDO_CODE = COLOR_CHAR + "\u0003\u0000\u0000\u0000";
+
 	/**
 	 * This returns a minicraftrgb.
 	 * a should be between 0-1, r,g,and b should be 0-255
