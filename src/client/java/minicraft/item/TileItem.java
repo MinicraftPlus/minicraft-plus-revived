@@ -76,8 +76,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Hellish Berries", new LinkedSprite(SpriteType.Item, "hellish_berries"), new TileModel("hellish berries", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
 
-		String[] solidTiles = { "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool", "grass", "sand", "path", "ornate stone", "ornate obsidian" };
-		items.add(new TileItem("Torch", new LinkedSprite(SpriteType.Item, "torch"), new TileModel("Torch", (model1, target, level, xt, yt, player, attackDir) -> target.id), solidTiles));
+		items.add(new TileItem("Torch", new LinkedSprite(SpriteType.Item, "torch"), new TileModel("Torch", placeOverWithID), solidTiles));
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
