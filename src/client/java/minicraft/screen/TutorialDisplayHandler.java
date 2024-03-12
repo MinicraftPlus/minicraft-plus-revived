@@ -207,15 +207,13 @@ public class TutorialDisplayHandler {
 				int textWidth = Font.textWidth(lines);
 				int xPadding = Screen.w / 2 - (textWidth + 8) / 2;
 				int yPadding = Screen.h / 2 - (lines.length * 8 + 8) / 2;
-				int yPad = Screen.h / 2 - (lines.length * 8) / 2;
-				for (int i = 0; i < lines.length * 8 + 8; i++) { // Background.
-					for (int j = 0; j < textWidth + 8; j++) {
-						screen.pixels[xPadding + j + (yPadding + i) * Screen.w] =
-							i == 0 || i == lines.length * 8 + 7 ||
-								j == 0 || j == textWidth + 7 ? Color.WHITE : Color.BLUE;
-					}
-				}
+				screen.fillRect(xPadding + 1, yPadding + 1, textWidth + 6, lines.length * 8 + 6, Color.BLUE);
+				screen.drawAxisLine(xPadding, yPadding, 0, textWidth + 8, Color.WHITE); // left border
+				screen.drawAxisLine(xPadding, yPadding + lines.length * 8 + 7, 0, textWidth + 8, Color.WHITE); // right border
+				screen.drawAxisLine(xPadding, yPadding, 1, lines.length * 8 + 8, Color.WHITE); // top border
+				screen.drawAxisLine(xPadding + lines.length * 8 + 7, yPadding, 1, lines.length * 8 + 8, Color.WHITE); // bottom border
 
+				int yPad = Screen.h/2 - (lines.length * 8)/2;
 				for (int i = 0; i < lines.length; i++) {
 					Font.drawCentered(lines[i], screen, yPad + 8 * i, Color.WHITE);
 				}
@@ -230,10 +228,8 @@ public class TutorialDisplayHandler {
 				int length = bounds.getWidth() - 4;
 				int bottom = bounds.getBottom() - 2;
 				int left = bounds.getLeft() + 2;
-				for (int i = 0; i < length * currentGuide.interactedDuration / currentGuide.duration; i++) {
-					screen.pixels[left + i + bottom * Screen.w] = Color.WHITE;
-					screen.pixels[left + i + (bottom - 1) * Screen.w] = Color.WHITE;
-				}
+				screen.drawAxisLine(left, bottom, 0, length * currentGuide.interactedDuration / currentGuide.duration, Color.WHITE);
+				screen.drawAxisLine(left, bottom - 1, 0, length * currentGuide.interactedDuration / currentGuide.duration, Color.WHITE);
 			}
 		} else if (currentOngoingElement != null) { // Is ongoing.
 			Menu menu = new Menu.Builder(true, 0, RelPos.RIGHT)
