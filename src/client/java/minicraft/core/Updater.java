@@ -10,7 +10,9 @@ import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
+import minicraft.screen.GameToast;
 import minicraft.screen.LevelTransitionDisplay;
+import minicraft.screen.AppToast;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
@@ -177,7 +179,20 @@ public class Updater extends Game {
 			scoreTime--;
 		}
 
+		Renderer.appStatusBar.tick();
+		if (input.getMappedKey("9").isDown())
+			Renderer.appStatusBar.show(1);
 		if (updateNoteTick) notetick++;
+		AppToast appToast;
+		if ((appToast = inAppToasts.peek()) != null) {
+			boolean refresh = true;
+			if (appToast.isExpired()) {
+				inAppToasts.pop(); // Removes
+				refresh = (appToast = inAppToasts.peek()) != null; // Tries getting new
+			}
+
+			if (refresh) appToast.tick();
+		}
 
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!Renderer.canvas.hasFocus()) {
@@ -213,6 +228,16 @@ public class Updater extends Game {
 				}
 
 				player.tick(); // Ticks the player when there's no menu.
+				GameToast gameToast;
+				if ((gameToast = inGameToasts.peek()) != null) {
+					boolean refresh = true;
+					if (gameToast.isExpired()) {
+						inGameToasts.pop(); // Removes
+						refresh = (gameToast = inGameToasts.peek()) != null; // Tries getting new
+					}
+
+					if (refresh) gameToast.tick();
+				}
 
 				if (level != null) {
 					level.tick(true);
@@ -337,7 +362,7 @@ public class Updater extends Game {
 
 	public static void notifyAll(String msg, int notetick) {
 		msg = Localization.getLocalized(msg);
-		notifications.add(msg);
+		inGameNotifications.add(msg);
 		Updater.notetick = notetick;
 	}
 }
