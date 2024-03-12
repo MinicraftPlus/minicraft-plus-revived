@@ -36,6 +36,7 @@ public class Color {
 	public static final int YELLOW = Color.get(1, 255, 255, 0);
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
 	public static final int CYAN = Color.get(1, 90, 204, 204);
+	public static final int GOLD = Color.get(1, 255, 193, 37);
 
 	public static final char COLOR_CHAR = '\u00A7';
 
