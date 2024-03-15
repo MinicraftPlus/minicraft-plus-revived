@@ -71,7 +71,8 @@ Because this project uses a build tool called gradle it is very easy to build or
 2. Extract the contents of the folder.
 3. Open command prompt and enter `cd <folder_location>`, this will open the folder in the command prompt.
 4. Type `gradlew run` or `gradlew build` to run or build the program. This might take some time. If on unix, add "./" to
-   the front.
+   the front. 
+   If you are using Windows Powershell you need to put ".\" in front of gradlew
     1. If you built the project, the jar file is found in `build/libs`
     2. If you get an error screaming that you're missing java. You need
        to [set up](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) your
