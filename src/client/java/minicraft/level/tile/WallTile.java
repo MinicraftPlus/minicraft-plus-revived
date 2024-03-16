@@ -21,23 +21,32 @@ import minicraft.util.AdvancementElement;
 
 public class WallTile extends Tile {
 	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 	private static SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 
 	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
 	protected Material type;
 
-	protected WallTile(Material type) { this(type, null); }
+	protected WallTile(Material type) {
+		this(type, null);
+	}
+
 	protected WallTile(Material type, String name) {
 		super(type.name() + " " + (name == null ? "Wall" : name), null);
 		this.type = type;
 		switch (type) {
-			case Wood: sprite = wood; break;
-			case Stone: sprite = stone; break;
-			case Obsidian: sprite = obsidian; break;
+			case Wood:
+				sprite = wood;
+				break;
+			case Stone:
+				sprite = stone;
+				break;
+			case Obsidian:
+				sprite = obsidian;
+				break;
 		}
 	}
 

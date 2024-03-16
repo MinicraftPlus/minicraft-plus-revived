@@ -11,7 +11,9 @@ public class TutorialElement extends AdvancementElement {
 		super(key, description, criteria, rewards, new HashSet<>(), new HashMap<>(), new HashSet<>());
 	}
 
-	/** Updating and refreshing by the data in this element. */
+	/**
+	 * Updating and refreshing by the data in this element.
+	 */
 	public void update() {
 		super.update();
 		TutorialDisplayHandler.updateCompletedElement(this);

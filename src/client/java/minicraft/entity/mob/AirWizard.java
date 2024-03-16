@@ -16,13 +16,13 @@ import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
 public class AirWizard extends EnemyMob {
-	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][]{
 		Mob.compileMobSpriteAnimations(0, 0, "air_wizard"),
 		Mob.compileMobSpriteAnimations(0, 2, "air_wizard")
 	};
 
 	public static boolean beaten = false;
-	public static boolean active = true;
+	public static boolean active = false;
 	public static AirWizard entity = null;
 
 	private int attackDelay = 0;
@@ -32,7 +32,9 @@ public class AirWizard extends EnemyMob {
 	/**
 	 * This is used by the spawner to spawn air wizards. {@code lvl} is unused.
 	 */
-	public AirWizard(int lvl) { this(); }
+	public AirWizard(int lvl) {
+		this();
+	}
 
 	/**
 	 * Constructor for the AirWizard.
@@ -85,7 +87,7 @@ public class AirWizard extends EnemyMob {
 		if (player != null && randomWalkTime == 0) { // If there is a player around, and the walking is not random
 			int xd = player.x - x; // The horizontal distance between the player and the air wizard.
 			int yd = player.y - y; // The vertical distance between the player and the air wizard.
-			if (xd * xd + yd * yd < 16*16 * 2*2) {
+			if (xd * xd + yd * yd < 16 * 16 * 2 * 2) {
 				/// Move away from the player if less than 2 blocks away
 
 				this.xmov = 0; // Accelerations
@@ -96,12 +98,12 @@ public class AirWizard extends EnemyMob {
 				if (xd > 0) this.xmov = -1;
 				if (yd < 0) this.ymov = +1;
 				if (yd > 0) this.ymov = -1;
-			} else if (xd * xd + yd * yd > 16*16 * 15*15) {// 15 squares away
+			} else if (xd * xd + yd * yd > 16 * 16 * 15 * 15) {// 15 squares away
 
 				/// Drags the airwizard to the player, maintaining relative position.
 				double hypot = Math.sqrt(xd * xd + yd * yd);
-				int newxd = (int)(xd * Math.sqrt(16*16 * 15*15) / hypot);
-				int newyd = (int)(yd * Math.sqrt(16*16 * 15*15) / hypot);
+				int newxd = (int) (xd * Math.sqrt(16 * 16 * 15 * 15) / hypot);
+				int newyd = (int) (yd * Math.sqrt(16 * 16 * 15 * 15) / hypot);
 				x = player.x - newxd;
 				y = player.y - newyd;
 			}
@@ -136,30 +138,31 @@ public class AirWizard extends EnemyMob {
 		if (percent < 16) {
 			textcol = Color.get(1, 204, 0, 0);
 			textcol2 = Color.get(1, 51, 0, 0);
-		}
-		else if (percent < 51) {
+		} else if (percent < 51) {
 			textcol = Color.get(1, 204, 204, 9);
 			textcol2 = Color.get(1, 51, 51, 0);
 		}
 		int textwidth = Font.textWidth(h);
-		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);
-		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
+		Font.draw(h, screen, (x - textwidth / 2) + 1, y - 17, textcol2);
+		Font.draw(h, screen, (x - textwidth / 2), y - 18, textcol);
 	}
 
 	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 1 damage points.
-			((Player)entity).hurt(this, 1);
+			((Player) entity).hurt(this, 1);
 		}
 	}
 
-	/** What happens when the air wizard dies */
+	/**
+	 * What happens when the air wizard dies
+	 */
 	@Override
 	public void die() {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // If the player is still here
-			for (Player p: players) {
+			for (Player p : players) {
 				p.addScore(100000); // Give the player 100K points.
 				dropItem(5, 10, Items.get("cloud ore")); // Drop cloud ore to guarantee respawn.
 			}
@@ -187,5 +190,7 @@ public class AirWizard extends EnemyMob {
 	}
 
 	@Override
-	public int getMaxLevel() { return 2; }
+	public int getMaxLevel() {
+		return 2;
+	}
 }

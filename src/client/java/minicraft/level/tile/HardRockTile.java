@@ -22,7 +22,7 @@ import minicraft.util.AdvancementElement;
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hardrock")
-		.setConnectChecker((tile, side) -> tile.getClass() == HardRockTile.class)
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof HardRockTile)
 		.setSingletonWithConnective(true);
 
 	protected HardRockTile(String name) {
@@ -39,7 +39,7 @@ public class HardRockTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

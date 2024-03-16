@@ -20,7 +20,11 @@ public class CactusTile extends Tile {
 
 	protected CactusTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return true;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -52,7 +56,7 @@ public class CactusTile extends Tile {
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if(!(entity instanceof Mob)) return;
+		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
 			m.hurt(this, x, y, 1);
