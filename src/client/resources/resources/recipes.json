@@ -3333,7 +3333,7 @@
     "rewards": {
       "recipes": {
         "iron_1": [
-          "iron Ore_4",
+          "iron Ore_3",
           "coal_1"
         ]
       }
@@ -3375,7 +3375,7 @@
     "rewards": {
       "recipes": {
         "gold_1": [
-          "gold Ore_4",
+          "gold Ore_3",
           "coal_1"
         ]
       }
