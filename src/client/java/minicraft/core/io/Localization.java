@@ -1,5 +1,6 @@
 package minicraft.core.io;
 
+import minicraft.core.Game;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -45,7 +46,7 @@ public class Localization {
 
 		String localString = localization.get(key);
 
-		if (localString == null) {
+		if (localString == null && Game.debug) {
 			if (!knownUnlocalizedStrings.containsKey(selectedLocale))
 				knownUnlocalizedStrings.put(selectedLocale, new HashSet<>());
 			if (!knownUnlocalizedStrings.get(selectedLocale).contains(key)) {

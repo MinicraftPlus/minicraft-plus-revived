@@ -1,5 +1,6 @@
 package minicraft.util;
 
+import minicraft.core.Game;
 import minicraft.util.TinylogLoggingConfiguration.WriterConfig;
 import org.tinylog.Level;
 import org.tinylog.core.ConfigurationParser;
@@ -184,7 +185,8 @@ public class TinylogLoggingProvider implements LoggingProvider {
 
 		Consumer<Writer> addToThread = writer -> {
 			WriterConfig cfg = writers.get(writer);
-			if (cfg.levels.contains(level) && cfg.tags.contains(tag))
+			if ((level.ordinal() > Level.DEBUG.ordinal() || Game.debug) &&
+				cfg.levels.contains(level) && cfg.tags.contains(tag))
 				writingThread.add(writer, logEntry);
 		};
 
