@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
@@ -27,14 +28,28 @@ import java.util.Optional;
 public class Sound {
 	// Creates sounds from their respective files
 	private static final HashMap<String, Sound> sounds = new HashMap<>();
+	private static final LinkedList<AudioPointer> pointers = new LinkedList<>();
+	private static final AudioFormat STANDARD_FORMAT =
+		new AudioFormat(44100, 16, 2, true, true);
+	private static final SourceDataLine dataLine;
+	private static final int internalBufferSize;
 
-	private final DataLine.Info info;
+	/*
+	 * Only 2/16/44100 and 1/16/44100 PCM_SIGNED are supported.
+	 */
+
+	static {
+		try {
+			dataLine = AudioSystem.getSourceDataLine(STANDARD_FORMAT);
+			dataLine.open();
+			// Assume DirectAudioDevice is used
+			internalBufferSize = ((int) (STANDARD_FORMAT.getFrameRate() / 2)) * STANDARD_FORMAT.getFrameSize();
+		} catch (LineUnavailableException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private final short[] raw;
-	private final AudioFormat format;
-	private final long length;
-	private final int internalBufferSize;
-	private final SourceDataLine dataLine;
-	private final LinkedList<AudioPointer> pointers = new LinkedList<>();
 
 	private class AudioPointer {
 		private int offset = 0;
@@ -45,15 +60,8 @@ public class Sound {
 		}
 	}
 
-	private Sound(DataLine.Info info, short[] raw, AudioFormat format, long length) throws LineUnavailableException {
-		this.info = info;
+	private Sound(short[] raw) {
 		this.raw = raw;
-		this.format = format;
-		this.length = length;
-		dataLine = AudioSystem.getSourceDataLine(format);
-		dataLine.open();
-		// Assume DirectAudioDevice is used
-		internalBufferSize = ((int) (format.getFrameRate() / 2)) * format.getFrameSize();
 	}
 
 	public static void resetSounds() {
@@ -62,9 +70,16 @@ public class Sound {
 
 	public static void loadSound(String key, InputStream in, String pack) {
 		try {
-			AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(in);
-			AudioFormat format = fileFormat.getFormat();
+			AudioInputStream ain = AudioSystem.getAudioInputStream(in);
+			AudioFormat format = ain.getFormat();
 			DataLine.Info info = new DataLine.Info(Clip.class, format);
+
+			if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED ||
+				format.getChannels() > 2 || format.getSampleRate() != 44100 ||
+				format.getSampleSizeInBits() != 16) {
+				Logging.RESOURCEHANDLER_SOUND.error("Unsupported audio format of file \"{}\" in pack \"{}\": {}",
+					key, pack, format);
+			}
 
 			if (!AudioSystem.isLineSupported(info)) {
 				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"{}\" in pack \"{}\" is not supported: {}", key, pack, AudioSystem.getAudioFileFormat(in));
@@ -97,7 +112,7 @@ public class Sound {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			byte[] buf = new byte[8192];
 			int length;
-			while ((length = in.read(buf)) != -1) {
+			while ((length = ain.read(buf)) != -1) {
 				out.write(buf, 0, length);
 			}
 			short[] raw0 = new short[out.size()/2];
@@ -110,7 +125,7 @@ public class Sound {
 					raw1[i * 2] = raw0[i];
 					raw1[i * 2 + 1] = raw0[i];
 				}
-			} else if (format.getChannels() != 2) {
+			} else if (format.getChannels() != 2) { // This should not be executed.
 				Logging.RESOURCEHANDLER_SOUND.error(
 					"Audio source \"{}\" in pack \"{}\" is neither mono nor stereo, which is not supported.",
 					key, pack);
@@ -119,10 +134,8 @@ public class Sound {
 				raw1 = raw0;
 			}
 
-			sounds.put(key, new Sound(info, raw1, new AudioFormat(format.getEncoding(), format.getSampleRate(),
-				format.getSampleSizeInBits(), 2, format.getFrameSize() * 2 / format.getChannels(), format.getFrameRate(),
-				true, format.properties()), fileFormat.getFrameLength()));
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+			sounds.put(key, new Sound(raw1));
+		} catch (UnsupportedAudioFileException | IOException e) {
 			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Audio Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT,
 				String.format("Could not load audio: %s in pack: %s", key, pack)));
 		}
@@ -153,10 +166,6 @@ public class Sound {
 	}
 
 	public static void tick() {
-		sounds.forEach((k, v) -> v.tick0());
-	}
-
-	private void tick0() {
 		dataLine.start();
 		// internalBufferSize - dataLine.available() == used buffer
 		// Proceed data and then buffer into the data line.
