@@ -52,8 +52,7 @@ public class Sound {
 		this.length = length;
 		dataLine = AudioSystem.getSourceDataLine(format);
 		dataLine.open();
-//		internalBufferSize = format.getFrameSize() * Math.max(format.getFrameSize() * 32,
-//			((int) (format.getFrameRate() / 2)) * format.getFrameSize()); // From SoftMixingSourceDataLine
+		// Assume DirectAudioDevice is used
 		internalBufferSize = ((int) (format.getFrameRate() / 2)) * format.getFrameSize();
 	}
 
