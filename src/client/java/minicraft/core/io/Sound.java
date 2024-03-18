@@ -2,9 +2,9 @@ package minicraft.core.io;
 
 import minicraft.core.CrashHandler;
 import minicraft.util.Logging;
+import minicraft.util.MyUtils;
 import org.jetbrains.annotations.Nullable;
 
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -31,6 +31,7 @@ public class Sound {
 	private static final LinkedList<AudioPointer> pointers = new LinkedList<>();
 	private static final AudioFormat STANDARD_FORMAT =
 		new AudioFormat(44100, 16, 2, true, true);
+	private static final int MAX_BUFFER_SIZE = 4096;
 	private static final SourceDataLine dataLine;
 	private static final int internalBufferSize;
 
@@ -170,26 +171,41 @@ public class Sound {
 		// internalBufferSize - dataLine.available() == used buffer
 		// Proceed data and then buffer into the data line.
 		// For 2/16/44100, 2940 bytes would be proceeded per tick.
-		if (internalBufferSize - dataLine.available() > 4096) return;
-		int available = Math.min(dataLine.available(), 4096) / 2; // in 16bit (short)
+		if (internalBufferSize - dataLine.available() > MAX_BUFFER_SIZE) return;
+		int available = Math.min(dataLine.available(), MAX_BUFFER_SIZE) / 2; // in 16bit (short)
 		if (available <= 0) return; // Skips tick if buffer is large causing latency
 		byte[] buf = new byte[available * 2];
 		short[] bufShort = new short[available];
 		while (available > 0) {
-			int mixed = 0;
-			int c = 0;
+			/* Audio Mixing Algorithm
+			 * Reference Algorithm: https://stackoverflow.com/a/25102339
+			 * And here, converted equations are used: (U_i is an unsigned short value)
+			 * Z = U_i, if n = 1
+			 * Z = product{U_i} / 32768^{n-1}, if quiet
+			 * Z = 2 * sum{U_i} - product{U_i} / 32768^{n-1} - 65536 * (n-1), otherwise
+			 */
+
+			boolean quiet = true;
+			int n = 0;
+			int sum = 0;
+			float mul = 1;
 			for (Iterator<AudioPointer> iterator = pointers.iterator(); iterator.hasNext(); ) {
 				AudioPointer pointer = iterator.next();
 				Optional<Short> d = pointer.getData();
 				if (!d.isPresent()) iterator.remove();
 				else {
-					mixed += d.get();
-					c++;
+					int val = d.get() + 32768; // Turning to unsigned
+					if (quiet && val >= 32768) quiet = false;
+					mul *= val;
+					if (n != 0) mul /= 32768;
+					sum += val;
+					n++;
 				}
 			}
 
-			if (c == 0) break; // No more data to be written
-			bufShort[bufShort.length - available] = (short) (mixed / c); // Average mixed
+			if (n == 0) break; // No more data to be written
+			bufShort[bufShort.length - available] = (short) (n == 1 ? sum - 32768 : MyUtils.clamp((int) (quiet ?
+				mul : 2 * sum - mul - 65536 * (n - 1)), 0, 65535) - 32768); // Turning back to signed
 			available--;
 		}
 
