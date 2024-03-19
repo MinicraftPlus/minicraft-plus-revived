@@ -2,7 +2,6 @@ package minicraft.core.io;
 
 import minicraft.core.CrashHandler;
 import minicraft.util.Logging;
-import minicraft.util.MyUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.sound.sampled.AudioFormat;
@@ -178,34 +177,59 @@ public class Sound {
 		short[] bufShort = new short[available];
 		while (available > 0) {
 			/* Audio Mixing Algorithm
-			 * Reference Algorithm: https://stackoverflow.com/a/25102339
-			 * And here, converted equations are used: (U_i is an unsigned short value)
-			 * Z = U_i, if n = 1
-			 * Z = product{U_i} / 32768^{n-1}, if quiet
-			 * Z = 2 * sum{U_i} - product{U_i} / 32768^{n-1} - 65536 * (n-1), otherwise
+			 * Reference Article: https://stackoverflow.com/a/25102339
+			 * It is pointed out that, non-linear mixing algorithms are not the correct ways to perform mixing,
+			 * but it should be instead handled by (dynamic range) compression.
+			 * For now, C = sum{U_i} / n is not enough, but compression should be applied.
+			 *
+			 * It is noticed that for the quiet sounds, the sounds become quieter when mixed, even overall.
+			 * So, an upward compression is required. We now define a quiet sound to be a signal smaller than
+			 * a one-fourth of the maximum value.
+			 * For each quiet signal, we gain an upward compression factor and finally multiplied altogether to the
+			 * resultant value. And we can get the factor by a non-linear equation:
+			 *   F = log2((D-U)/D+1)+1, where F is the factor, D is the one-fourth value, U is the signal value.
+			 * Note that U ∈ [0, D), (D-U)/D ∈ (0, 1], F ∈ (1, 2].
+			 * But we cannot have this too big, so we make this into F^(1/3), where 2^(1/3) is approximately 1.26.
+			 * This can make sure that the factor would not go great.
+			 * Then, make sure that the factor cannot overflow the value,
+			 *   G = sqrt(product{F_i}),
+			 * as a final factor, would then be used.
+			 *
+			 * Finally, if the value really goes close to the maximum value even overflow, like 0.9 of the maximum value,
+			 * we can then apply an ultimate equation:
+			 *   H = (J) / (J + 1) * E,
+			 * where H is the value to add with the cut value (0.9 of the maximum), J is the exceeded value and
+			 * E is the certain amount smaller than 0.1 of the maximum, say 0.05 of it here.
+			 * We can get a compressed sound and also limited from the maximum, with 0.95x of the maximum.
 			 */
 
-			boolean quiet = true;
 			int n = 0;
 			int sum = 0;
-			float mul = 1;
+			double factor = 1;
 			for (Iterator<AudioPointer> iterator = pointers.iterator(); iterator.hasNext(); ) {
 				AudioPointer pointer = iterator.next();
 				Optional<Short> d = pointer.getData();
 				if (!d.isPresent()) iterator.remove();
 				else {
-					int val = d.get() + 32768; // Turning to unsigned
-					if (quiet && val >= 32768) quiet = false;
-					mul *= val;
-					if (n != 0) mul /= 32768;
-					sum += val;
+					int val = d.get(); // Signed
+					int net = Math.abs(val); // Bounds are halved for absolute of signed value
+					if (net < 8192)
+						factor *= Math.pow(Math.log1p((8192 - net) / 8192D) / Math.log(2) + 1, 1D/3);
+					sum += val + 32768; // Turning to unsigned
 					n++;
 				}
 			}
 
-			if (n == 0) break; // No more data to be written
-			bufShort[bufShort.length - available] = (short) (n == 1 ? sum - 32768 : MyUtils.clamp((int) (quiet ?
-				mul : 2 * sum - mul - 65536 * (n - 1)), 0, 65535) - 32768); // Turning back to signed
+			if (n == 0) break; // No more data to be written at the moment
+			double val = (double) sum / n - 32768; // To signed
+			val *= Math.sqrt(factor);
+			double net = Math.abs(val); // Bounds are halved for absolute of signed value
+			if (net > 32768*.9D) {
+				val = (32768*.9D + ((net - 32768*.9D) / (net - 32768*.9D + 1) * 32768/10D)) * Math.signum(val);
+			}
+
+			// val should be between -32768 and 32767 exclusively
+			bufShort[bufShort.length - available] = (short) val;
 			available--;
 		}
 
