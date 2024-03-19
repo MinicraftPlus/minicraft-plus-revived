@@ -3333,7 +3333,7 @@
     "rewards": {
       "recipes": {
         "iron_1": [
-          "iron Ore_4",
+          "iron Ore_3",
           "coal_1"
         ]
       }
@@ -3375,7 +3375,7 @@
     "rewards": {
       "recipes": {
         "gold_1": [
-          "gold Ore_4",
+          "gold Ore_3",
           "coal_1"
         ]
       }
@@ -4075,7 +4075,7 @@
       "recipes": {
         "Health potion_1": [
           "awkward potion_1",
-          "GunPowder_2",
+          "Gunpowder_2",
           "Leather Armor_1"
         ]
       }
@@ -4131,7 +4131,7 @@
       "recipes": {
         "Escape potion_1": [
           "awkward potion_1",
-          "GunPowder_3",
+          "Gunpowder_3",
           "Lapis_7"
         ]
       }
