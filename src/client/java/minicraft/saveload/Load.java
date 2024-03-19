@@ -870,6 +870,20 @@ public class Load {
 					costs[j] = costsJson.getString(j);
 				}
 
+				// Skipping removed vanilla recipes
+				if (worldVer.compareTo(new Version("2.2.0-dev6")) <= 0) {
+					// Iron Ore * 4 + Coal * 1 => Iron * 1
+					if (key.equalsIgnoreCase("iron_1") &&
+						costs.length == 2 && costs[0].equalsIgnoreCase("iron Ore_4") &&
+						costs[1].equalsIgnoreCase("coal_1"))
+						continue;
+					// Gold Ore * 4 + Coal * 1 => Gold * 1
+					if (key.equalsIgnoreCase("gold_1") &&
+						costs.length == 2 && costs[0].equalsIgnoreCase("gold Ore_4") &&
+						costs[1].equalsIgnoreCase("coal_1"))
+						continue;
+				}
+
 				recipes.add(new Recipe(key, costs));
 			}
 
