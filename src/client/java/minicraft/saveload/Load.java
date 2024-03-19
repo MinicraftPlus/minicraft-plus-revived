@@ -1176,7 +1176,7 @@ public class Load {
 			case "DeathChest":
 				return new DeathChest();
 			case "DungeonChest":
-				return new DungeonChest(false);
+				return new DungeonChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":
