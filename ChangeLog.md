@@ -40,6 +40,7 @@ but some sections are changed to compliant this project.
 * Added a trigger to auto-enable hardware acceleration
 * Added support for lower-cased letters
 * Added item description menu
+* Added fences
 
 ### Changes
 
@@ -62,6 +63,9 @@ but some sections are changed to compliant this project.
 * Reduced food stamina cost
 * Made some strings lower-cased
 * Updated spawning and despawning conditions
+* Iron and goal now require 3 ores instead of 4 for crafting
+* Renamed `assets/books/story_guide.txt` to `assets/books/game_guide.txt`
+* Updated `assets/books/game_guide.txt` and `assets/books/instructions.txt`
 
 ### Removals
 
@@ -73,7 +77,10 @@ but some sections are changed to compliant this project.
 * Fixed rendering positioning problem of color code styled texts
 * Fixed lights disappearing when out of screen
 * Fixed animals and items destroying plants
-* Fixed various old world loading crashes
+* Fixed various old world loading crashes, including migration to the new destination
+* Fixed possible crash when Air Wizard is not loaded
+* Fixed minor loading bugs to dungeon chests
+* Fixed performance issue in WaterTile ticking
 
 ## [2.1.3]
 
