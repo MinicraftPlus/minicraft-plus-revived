@@ -738,7 +738,7 @@ public class Load {
 	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
 		Matcher matcher;
 		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
-			tiles[idx] = 54; // ID of TORCH tile
+			tiles[idx] = 57; // ID of TORCH tile
 			data[idx] = Tiles.get(matcher.group(1)).id;
 		} else {
 			tiles[idx] = Tiles.get(tileName).id;
