@@ -72,6 +72,8 @@ public abstract class Tile {
 		return maySpawn;
 	}
 
+	public void onTileSet(Level level, int x, int y) {}
+
 	/**
 	 * Returns if the player can walk on it, overrides in sub-classes
 	 */
@@ -130,6 +132,9 @@ public abstract class Tile {
 	 */
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 	}
+
+	/** What happens when you have just stepped out the tile (ex: sign) */
+	public void steppedOut(Level level, int xt, int yt, Entity entity) {}
 
 	/**
 	 * Called when you hit an item on a tile (ex: Pickaxe on rock).

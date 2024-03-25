@@ -560,7 +560,7 @@ public class Level {
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
 		int id = tiles[x + y * w];
-		if (id < 0) id += 256;
+		if (id < 0) id += 32768;
 		return Tiles.get(id);
 	}
 
@@ -583,6 +583,7 @@ public class Level {
 
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (short) dataVal;
+		t.onTileSet(this, x, y);
 	}
 
 	public int getData(int x, int y) {
