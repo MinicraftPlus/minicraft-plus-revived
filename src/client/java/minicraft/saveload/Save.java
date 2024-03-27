@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,6 +119,36 @@ public class Save {
 	 */
 	public Save() {
 		this(new File(Game.gameDir + "/"));
+
+		if (Game.VERSION.getDev() != 0) { // Is dev build
+			Logging.SAVELOAD.debug("In dev build: Searching for old preferences...");
+			Version prefVer;
+			File prefFile = new File(location, "Preferences.json"); // Only this is checked when checking existence.
+			File unlocFile = new File(location, "Unlocks.json");
+			try {
+				JSONObject json = new JSONObject(Load.loadFromFile(location + "Preferences.json", false));
+				prefVer = new Version(json.getString("version"));
+			} catch (FileNotFoundException e) {
+				Logging.SAVELOAD.debug("Preferences.json is not found, ignoring...");
+				prefVer = null;
+			} catch (IOException e) {
+				Logging.SAVELOAD.error(e, "Unable to load Preferences.json, saving aborted");
+				return;
+			}
+
+			if (prefVer != null && prefVer.compareTo(Game.VERSION) < 0) {
+				Logging.SAVELOAD.info("Old preferences detected, backup performing...");
+				File prefBackupFile = new File(location + "Preferences.json.bak");
+				if (prefBackupFile.exists()) Logging.SAVELOAD.info("Overwriting old Preferences.json backup...");
+				if (prefBackupFile.delete()) Logging.SAVELOAD.trace("Preferences.json.bak is deleted.");
+				if (prefFile.renameTo(prefBackupFile)) Logging.SAVELOAD.trace("Preferences.json is renamed to Preferences.json.bak");
+				File unlocBackupFile = new File(location + "Unlocks.json.bak");
+				if (unlocBackupFile.exists()) Logging.SAVELOAD.info("Overwriting old Unlocks.json backup...");
+				if (unlocBackupFile.delete()) Logging.SAVELOAD.trace("Unlocks.json.bak is deleted.");
+				if (unlocFile.renameTo(unlocBackupFile)) Logging.SAVELOAD.trace("Unlocks.json is renamed to Unlocks.json.bak");
+			}
+		}
+
 		Logging.SAVELOAD.debug("Writing preferences and unlocks...");
 		writePrefs();
 		writeUnlocks();

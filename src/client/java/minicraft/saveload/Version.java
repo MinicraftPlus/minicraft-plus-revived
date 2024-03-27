@@ -82,6 +82,11 @@ public class Version implements Comparable<Version> {
 		return 0; // The versions are equal.
 	}
 
+	public int getMake() { return make; }
+	public int getMajor() { return major; }
+	public int getMinor() { return minor; }
+	public int getDev() { return dev; }
+
 	@Override
 	public String toString() {
 		return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev);
