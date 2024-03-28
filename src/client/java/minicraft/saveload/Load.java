@@ -38,6 +38,7 @@ import minicraft.entity.mob.Zombie;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.entity.rideable.Boat;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
@@ -1223,6 +1224,8 @@ public class Load {
 				return new KnightStatue(0);
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
+      case "Boat":
+        return new Boat();
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
