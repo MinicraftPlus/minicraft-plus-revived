@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.gfx.Color;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.screen.entry.StringEntry;
@@ -12,7 +13,7 @@ public class InfoDisplay extends Display {
 
 	public InfoDisplay() {
 		//noinspection SuspiciousNameCombination
-		super(new Menu.Builder(true, 4, RelPos.LEFT, StringEntry.useLines(
+		super(new Menu.Builder(true, 4, RelPos.LEFT, StringEntry.useLines(Color.WHITE, false,
 				"----------------------------",
 				Localization.getLocalized("minicraft.displays.info.display.time", getTimeString()),
 				Localization.getLocalized("minicraft.displays.info.display.score", Game.player.getScore()),

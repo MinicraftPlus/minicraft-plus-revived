@@ -76,12 +76,14 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Hellish Berries", new LinkedSprite(SpriteType.Item, "hellish_berries"), new TileModel("hellish berries", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
 
+		items.add(new TileItem("Torch", new LinkedSprite(SpriteType.Item, "torch"), new TileModel("Torch", placeOverWithID), solidTiles));
+
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
-		items.add(new TileItem("hole", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("hole"), "dirt", "grass"));
-		items.add(new TileItem("lava", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("lava"), "dirt", "grass", "hole"));
-		items.add(new TileItem("path", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("path"), "dirt", "grass", "hole"));
-		items.add(new TileItem("water", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("water"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Hole", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("hole"), "dirt", "grass"));
+		items.add(new TileItem("Lava", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("lava"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Path", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("path"), "dirt", "grass", "hole"));
+		items.add(new TileItem("Water", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("water"), "dirt", "grass", "hole"));
 
 		return items;
 	}
@@ -113,7 +115,7 @@ public class TileItem extends StackableItem {
 		public final TileDataGetter data;
 
 		@FunctionalInterface
-		interface TileDataGetter {
+		public interface TileDataGetter {
 			int getTileData(Tile model, Tile target, Level level, int xt, int yt, Player player, Direction attackDir);
 		}
 
@@ -127,7 +129,7 @@ public class TileItem extends StackableItem {
 		}
 
 		public static Tile getTile(@Nullable TileModel model) {
-			return model == null ? Tiles.get(0) : Tiles.get(model.tile);
+			return model == null ? Tiles.get((short) 0) : Tiles.get(model.tile);
 		}
 
 		public static int getTileData(@Nullable TileModel model, Tile tile, Tile target, Level level, int xt, int yt, Player player, Direction attackDir) {
