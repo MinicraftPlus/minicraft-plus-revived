@@ -37,6 +37,7 @@ ij_java_method_annotation_wrap = on_every_item
 ij_java_field_annotation_wrap = on_every_item
 ij_java_do_not_wrap_after_single_annotation = false
 ij_java_do_not_wrap_after_single_annotation_in_parameter = true
+ij_java_indent_case_from_switch = true
 
 [**.json]
 indent_style = space

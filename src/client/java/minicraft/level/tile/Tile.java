@@ -166,7 +166,7 @@ public abstract class Tile {
 
 	/**
 	 * @deprecated This should be planned to be removed as this method is not ideally used.
-	 * The current only usage is in {@link Level#setTile(int, int, String)}.
+	 * 	The current only usage is in {@link Level#setTile(int, int, String)}.
 	 */
 	@Deprecated
 	public int getData(String data) {
@@ -179,7 +179,7 @@ public abstract class Tile {
 
 	/**
 	 * @deprecated Similar to {@link #getData(String)}. Also, param {@code thisData} is unused.
-	 * The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
+	 * 	The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
 	 */
 	@Deprecated
 	public boolean matches(int thisData, String tileInfo) {

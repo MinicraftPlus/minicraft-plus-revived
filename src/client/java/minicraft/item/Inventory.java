@@ -1,6 +1,5 @@
 package minicraft.item;
 
-import minicraft.entity.furniture.Furniture;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 

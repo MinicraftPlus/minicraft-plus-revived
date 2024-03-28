@@ -9,7 +9,6 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
@@ -27,7 +26,7 @@ public class DungeonChest extends Chest {
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
 	 * @param random Populate the inventory of the DungeonChest using the loot table system with the given {@link Random} provider.
-	 *               {@code null} if populating the inventory is not intended.
+	 *    {@code null} if populating the inventory is not intended.
 	 */
 	public DungeonChest(@Nullable Random random) {
 		this(random, false);

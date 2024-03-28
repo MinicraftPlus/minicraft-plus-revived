@@ -261,7 +261,7 @@ public class QuestsDisplay extends Display {
 				series.isUnlocked() ? new StringEntry(Localization.getLocalized("minicraft.displays.quests.quest_info.display.status",
 					Localization.getLocalized("minicraft.displays.quests.quest_info.display.status.unlocked")), Color.WHITE, false) :
 					new StringEntry(Localization.getLocalized("minicraft.displays.quests.quest_info.display.status",
-					Localization.getLocalized("minicraft.displays.quests.quest_info.display.status.locked")), Color.GRAY, false) // Locked series would not been shown...?
+						Localization.getLocalized("minicraft.displays.quests.quest_info.display.status.locked")), Color.GRAY, false) // Locked series would not been shown...?
 			);
 
 			entries.add(new StringEntry(Localization.getLocalized("minicraft.displays.quests.quest_info.display.quests_completed_count",

@@ -1,6 +1,5 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
