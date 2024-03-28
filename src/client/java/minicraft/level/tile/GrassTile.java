@@ -15,13 +15,17 @@ import minicraft.util.AdvancementElement;
 
 public class GrassTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
-		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
+		.setConnectionChecker((level, x, y, tile, side) -> !side || tile.connectsToGrass(level, x, y))
 		.setSingletonWithConnective(true);
 
 	protected GrassTile(String name) {
 		super(name, sprite);
-		connectsToGrass = true;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	public boolean tick(Level level, int xt, int yt) {

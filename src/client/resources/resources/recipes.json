@@ -153,6 +153,32 @@
       }
     }
   },
+  "minicraft.advancements.recipes.wood_fence": {
+    "criteria": {
+      "has_plank": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "plank"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_plank"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Wood Fence_1": ["plank_3"]
+      }
+    }
+  },
   "minicraft.advancements.recipes.lantern": {
     "criteria": {
       "has_wood": {
@@ -321,6 +347,32 @@
       }
     }
   },
+  "minicraft.advancements.recipes.stone_fence": {
+    "criteria": {
+      "has_stone_brick": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "stone brick"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_stone_brick"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Stone Fence_1": ["Stone Brick_3"]
+      }
+    }
+  },
   "minicraft.advancements.recipes.obsidian_brick": {
     "criteria": {
       "has_raw_obsidian": {
@@ -430,6 +482,32 @@
         "Obsidian Door_1": [
           "Obsidian Brick_5"
         ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.obsidian_fence": {
+    "criteria": {
+      "has_obsidian_brick": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "obsidian brick"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_obsidian_brick"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Obsidian Fence_1": ["Obsidian Brick_3"]
       }
     }
   },
@@ -3255,7 +3333,7 @@
     "rewards": {
       "recipes": {
         "iron_1": [
-          "iron Ore_4",
+          "iron Ore_3",
           "coal_1"
         ]
       }
@@ -3297,7 +3375,7 @@
     "rewards": {
       "recipes": {
         "gold_1": [
-          "gold Ore_4",
+          "gold Ore_3",
           "coal_1"
         ]
       }
@@ -3997,7 +4075,7 @@
       "recipes": {
         "Health potion_1": [
           "awkward potion_1",
-          "GunPowder_2",
+          "Gunpowder_2",
           "Leather Armor_1"
         ]
       }
@@ -4053,7 +4131,7 @@
       "recipes": {
         "Escape potion_1": [
           "awkward potion_1",
-          "GunPowder_3",
+          "Gunpowder_3",
           "Lapis_7"
         ]
       }

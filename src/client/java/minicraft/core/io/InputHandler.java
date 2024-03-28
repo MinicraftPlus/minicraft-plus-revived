@@ -1,5 +1,6 @@
 package minicraft.core.io;
 
+import com.badlogic.gdx.utils.SharedLibraryLoadRuntimeException;
 import com.studiohartman.jamepad.ControllerAxis;
 import com.studiohartman.jamepad.ControllerButton;
 import com.studiohartman.jamepad.ControllerIndex;
@@ -51,7 +52,8 @@ public class InputHandler implements KeyListener {
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
 
-	private ControllerManager controllerManager = new ControllerManager();
+	private final boolean controllersSupported;
+	private ControllerManager controllerManager;
 	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
 	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
 	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
@@ -109,14 +111,22 @@ public class InputHandler implements KeyListener {
 		keyboard.put("CTRL", new PhysicalKey(true));
 		keyboard.put("ALT", new PhysicalKey(true));
 
-		controllerManager.initSDLGamepad();
-		controllerIndex = controllerManager.getControllerIndex(0);
-		controllerManager.update();
+		boolean controllerInit = false;
 		try {
-			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
-		} catch (ControllerUnpluggedException e) {
-			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
+			controllerManager = new ControllerManager();
+			controllerManager.initSDLGamepad();
+			controllerIndex = controllerManager.getControllerIndex(0);
+			controllerManager.update();
+			try {
+				Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
+			} catch (ControllerUnpluggedException e) {
+				Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
+			}
+			controllerInit = true;
+		} catch (IllegalStateException | SharedLibraryLoadRuntimeException | UnsatisfiedLinkError e) {
+			Logging.CONTROLLER.error(e, "Controllers are not support, being disabled.");
 		}
+		controllersSupported = controllerInit;
 	}
 
 	public InputHandler(Component inputSource) {
@@ -216,16 +226,18 @@ public class InputHandler implements KeyListener {
 		lastInputActivityListener.tick();
 
 		// Also update the controller button state.
-		for (ControllerButton btn : ControllerButton.values()) {
-			try {
-				controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
-			} catch (ControllerUnpluggedException e) {
-				controllerButtonBooleanMapJust.put(btn, false);
-			}
-			try {
-				controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
-			} catch (ControllerUnpluggedException e) {
-				controllerButtonBooleanMap.put(btn, false);
+		if (controllersSupported) {
+			for (ControllerButton btn : ControllerButton.values()) {
+				try {
+					controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
+				} catch (ControllerUnpluggedException e) {
+					controllerButtonBooleanMapJust.put(btn, false);
+				}
+				try {
+					controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
+				} catch (ControllerUnpluggedException e) {
+					controllerButtonBooleanMap.put(btn, false);
+				}
 			}
 		}
 
@@ -678,7 +690,7 @@ public class InputHandler implements KeyListener {
 	}
 
 	public boolean anyControllerConnected() {
-		return controllerManager.getNumControllers() > 0;
+		return controllersSupported && controllerManager.getNumControllers() > 0;
 	}
 
 	public boolean buttonPressed(ControllerButton button) {
@@ -719,38 +731,44 @@ public class InputHandler implements KeyListener {
 	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */
 	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
-		try {
-			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
-		} catch (ControllerUnpluggedException ignored) {
-			return false;
-		}
+		if (controllersSupported) {
+			try {
+				return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+			} catch (ControllerUnpluggedException ignored) {
+				return false;
+			}
+		} else return false;
 	}
 
 	private int leftTriggerCooldown = 0;
 	private int rightTriggerCooldown = 0;
 
 	public boolean leftTriggerPressed() {
-		try {
-			if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
-				leftTriggerCooldown = 8;
-				return true;
-			} else
+		if (controllersSupported) {
+			try {
+				if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
+					leftTriggerCooldown = 8;
+					return true;
+				} else
+					return false;
+			} catch (ControllerUnpluggedException e) {
 				return false;
-		} catch (ControllerUnpluggedException e) {
-			return false;
-		}
+			}
+		} else return false;
 	}
 
 	public boolean rightTriggerPressed() {
-		try {
-			if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
-				rightTriggerCooldown = 8;
-				return true;
-			} else
+		if (controllersSupported) {
+			try {
+				if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
+					rightTriggerCooldown = 8;
+					return true;
+				} else
+					return false;
+			} catch (ControllerUnpluggedException e) {
 				return false;
-		} catch (ControllerUnpluggedException e) {
-			return false;
-		}
+			}
+		} else return false;
 	}
 
 	private class LastInputActivityListener {

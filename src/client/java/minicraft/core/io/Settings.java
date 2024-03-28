@@ -32,9 +32,9 @@ public final class Settings {
 		options.put("type", new ArrayEntry<>("minicraft.settings.type", "minicraft.settings.type.island", "minicraft.settings.type.box", "minicraft.settings.type.mountain", "minicraft.settings.type.irregular"));
 
 		// TODO localize these labels
-		options.put("tutorials", new BooleanEntry("Tutorials", false));
-		options.put("quests", new BooleanEntry("Quests", false));
-		options.put("showquests", new BooleanEntry("Quests Panel", true));
+		options.put("tutorials", new BooleanEntry("minicraft.settings.tutorials", false));
+		options.put("quests", new BooleanEntry("minicraft.settings.quests", false));
+		options.put("showquests", new BooleanEntry("minicraft.settings.show_quests", true));
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))

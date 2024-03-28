@@ -514,7 +514,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				attack();
 			}
 
-			if (input.inputPressed("menu") && activeItem != null) {
+			if ((input.inputPressed("menu") || input.inputPressed("craft")) && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem) activeItem;
@@ -533,14 +533,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.inputPressed("pause"))
-					Game.setDisplay(new PauseDisplay());
-				if (input.inputPressed("craft") && !use())
+				if (input.inputPressed("craft") && !use()) {
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
-
-				if (input.inputDown("info")) Game.setDisplay(new InfoDisplay());
+					return;
+				} else if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+					Game.setDisplay(new PlayerInvDisplay(this));
+					return;
+				} else if (input.inputPressed("pause")) {
+					Game.setDisplay(new PauseDisplay());
+					return;
+				} else if (input.inputDown("info")) {
+					Game.setDisplay(new InfoDisplay());
+					return;
+				}
 
 				if (input.inputDown("quicksave") && !Updater.saving) {
 					Updater.saving = true;

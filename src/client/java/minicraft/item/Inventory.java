@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Inventory {
-	private final Random random = new Random();
 	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 
 	protected int maxItem = 27;
@@ -263,42 +262,26 @@ public class Inventory {
 
 	/**
 	 * Tries to add an item to the inventory.
+	 * @param random The {@code Random} number generator.
 	 * @param chance Chance for the item to be added.
 	 * @param item Item to be added.
 	 * @param num How many of the item.
 	 * @param allOrNothing if true, either all items will be added or none, if false its possible to add
 	 * 	between 0-num items.
 	 */
-	public void tryAdd(int chance, Item item, int num, boolean allOrNothing) {
+	public void tryAdd(Random random, int chance, Item item, int num, boolean allOrNothing) {
 		if (!allOrNothing || random.nextInt(chance) == 0)
 			for (int i = 0; i < num; i++)
 				if (allOrNothing || random.nextInt(chance) == 0)
 					add(item.copy());
 	}
 
-	public void tryAdd(int chance, @Nullable Item item, int num) {
+	public void tryAdd(Random random, int chance, @Nullable Item item, int num) {
 		if (item == null) return;
 		if (item instanceof StackableItem) {
 			((StackableItem) item).count *= num;
-			tryAdd(chance, item, 1, true);
+			tryAdd(random, chance, item, 1, true);
 		} else
-			tryAdd(chance, item, num, false);
-	}
-
-	public void tryAdd(int chance, @Nullable Item item) {
-		tryAdd(chance, item, 1);
-	}
-
-	public void tryAdd(int chance, ToolType type, int lvl) {
-		tryAdd(chance, new ToolItem(type, lvl));
-	}
-
-	/**
-	 * Tries to add an Furniture to the inventory.
-	 * @param chance Chance for the item to be added.
-	 * @param type Type of furniture to add.
-	 */
-	public void tryAdd(int chance, Furniture type) {
-		tryAdd(chance, new FurnitureItem(type));
+			tryAdd(random, chance, item, num, false);
 	}
 }
