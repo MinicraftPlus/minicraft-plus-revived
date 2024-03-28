@@ -318,7 +318,7 @@ public class Level {
 
 		/// Make DungeonChests!
 		for (int i = numChests; i < 10 * (w / 128); i++) {
-			DungeonChest d = new DungeonChest(true);
+			DungeonChest d = new DungeonChest(random);
 			boolean addedchest = false;
 			while (!addedchest) { // Keep running until we successfully add a DungeonChest
 
@@ -1029,7 +1029,7 @@ public class Level {
 						Chest c = new Chest();
 						int chance = -depth;
 
-						c.populateInvRandom("minidungeon", chance);
+						c.populateInvRandom(random, "minidungeon", chance);
 
 						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
 					}
@@ -1084,7 +1084,7 @@ public class Level {
 					add(sp);
 					for (int rpt = 0; rpt < 2; rpt++) {
 						if (random.nextInt(2) != 0) continue;
-						DungeonChest c = new DungeonChest(true);
+						DungeonChest c = new DungeonChest(random);
 						chestCount++;
 
 						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
@@ -1144,7 +1144,7 @@ public class Level {
 						// Add a chest to some of the houses
 						if (hasChest) {
 							Chest c = new Chest();
-							c.populateInvRandom("villagehouse", 1);
+							c.populateInvRandom(random, "villagehouse", 1);
 							add(c, (x + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
 						}
 					}
@@ -1165,7 +1165,10 @@ public class Level {
 					if (random.nextInt(2) == 1) {
 						Structure.dungeonGarden.draw(this, x, y);
 					} else {
-						Structure.dungeonChest.draw(this, x, y);
+						Structure.dungeonChest.draw(this, x, y, furniture -> {
+							if (furniture instanceof DungeonChest)
+								((DungeonChest) furniture).populateInv(random);
+						});
 					}
 				}
 			}

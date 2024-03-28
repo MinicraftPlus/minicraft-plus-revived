@@ -604,7 +604,7 @@ public class Load {
 
 	private void loadWorld(String filename) {
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
-			LoadingDisplay.setMessage(Level.getDepthString(l));
+			LoadingDisplay.setMessage(Level.getDepthString(l), false);
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 
@@ -842,6 +842,20 @@ public class Load {
 				String[] costs = new String[costsJson.length()];
 				for (int j = 0; j < costsJson.length(); j++) {
 					costs[j] = costsJson.getString(j);
+				}
+
+				// Skipping removed vanilla recipes
+				if (worldVer.compareTo(new Version("2.2.0-dev6")) <= 0) {
+					// Iron Ore * 4 + Coal * 1 => Iron * 1
+					if (key.equalsIgnoreCase("iron_1") &&
+						costs.length == 2 && costs[0].equalsIgnoreCase("iron Ore_4") &&
+						costs[1].equalsIgnoreCase("coal_1"))
+						continue;
+					// Gold Ore * 4 + Coal * 1 => Gold * 1
+					if (key.equalsIgnoreCase("gold_1") &&
+						costs.length == 2 && costs[0].equalsIgnoreCase("gold Ore_4") &&
+						costs[1].equalsIgnoreCase("coal_1"))
+						continue;
 				}
 
 				recipes.add(new Recipe(key, costs));
@@ -1178,7 +1192,7 @@ public class Load {
 			case "DeathChest":
 				return new DeathChest();
 			case "DungeonChest":
-				return new DungeonChest(false);
+				return new DungeonChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":
