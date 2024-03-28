@@ -47,8 +47,12 @@ public class FlowerTile extends Tile {
 
 	protected FlowerTile(String name) {
 		super(name, null);
-		connectsToGrass = true;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
