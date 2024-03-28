@@ -18,59 +18,45 @@ import minicraft.level.Level;
 import minicraft.level.tile.entity.SignTileEntity;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SignDisplayMenu;
+import minicraft.util.AdvancementElement;
 import org.tinylog.Logger;
 
 public class SignTile extends Tile {
-	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "sign");
-
-	private final Tile onType;
-
-	public static SignTile getSignTile(Tile onTile) {
-		int id = onTile.id & 0xFFFF;
-		if(id < 16384) id += 16384;
-		else Logger.tag("SignTile").info("Tried to place torch on torch or sign tile...");
-
-		if(Tiles.containsTile(id)) {
-			return (SignTile)Tiles.get(id);
-		} else {
-			SignTile tile = new SignTile(onTile);
-			Tiles.add(id, tile);
-			return tile;
-		}
-	}
-
-	private SignTile(Tile onType) {
-		super("Sign "+ onType.name, sprite);
-		this.onType = onType;
+	protected SignTile() {
+		super("Sign", new SpriteAnimation(SpriteLinker.SpriteType.Tile, "sign"));
 	}
 
 	@Override
 	public boolean connectsToSand(Level level, int x, int y) {
-		return onType.connectsToSand(level, x, y);//Tiles.get((short) level.getData(x, y)).connectsToSand(level, x, y);
+		return Tiles.get((short) level.getData(x, y)).connectsToSand(level, x, y);
 	}
 
 	@Override
 	public boolean connectsToFluid(Level level, int x, int y) {
-		return onType.connectsToFluid(level, x, y);//Tiles.get((short) level.getData(x, y)).connectsToFluid(level, x, y);
+		return Tiles.get((short) level.getData(x, y)).connectsToFluid(level, x, y);
 	}
 
 	@Override
 	public boolean connectsToGrass(Level level, int x, int y) {
-		return onType.connectsToGrass(level, x, y);//Tiles.get((short) level.getData(x, y)).connectsToGrass(level, x, y);
+		return Tiles.get((short) level.getData(x, y)).connectsToGrass(level, x, y);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		onType.render(screen, level, x, y);
+		Tiles.get((short) level.getData(x, y)).render(screen, level, x, y);
 		sprite.render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item != null) {
 			if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
-				level.setTile(xt, yt, this.onType);
+				int data = level.getData(xt, yt);
+				level.setTile(xt, yt, Tiles.get((short) data));
 				SignDisplay.removeSign(level.depth, xt, yt);
 				Sound.play("monsterhurt");
 				level.dropItem(xt*16+8, yt*16+8, Items.get("Sign"));
+				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+						item, this, data, xt, yt, level.depth));
 				return true;
 			}
 		} else { // TODO Add a way to lock signs
