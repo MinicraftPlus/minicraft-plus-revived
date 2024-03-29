@@ -12,6 +12,9 @@ import minicraft.util.Logging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -253,5 +256,9 @@ public final class Tiles {
 
 	public static HashMap<Short, Tile> getAll() {
 		return new HashMap<>(tiles);
+	}
+
+	public static Set<String> getRegisteredTileKeys() {
+		return tiles.values().stream().map(t -> t.name).collect(Collectors.toCollection(TreeSet::new));
 	}
 }
