@@ -30,15 +30,14 @@ public class EnemyMob extends MobAi {
 	 * Constructor for a hostile (enemy) mob. The level determines what the mob does. sprites contains all the graphics and animations for the mob.
 	 * lvlcols is the different color the mob has depending on its level. isFactor determines if the mob's health should be affected by the level and
 	 * the difficulty.
-	 *
-	 * @param lvl        The mob's level.
+	 * @param lvl The mob's level.
 	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
-	 * @param health     How much health the mob has.
-	 * @param isFactor   false if maxHealth=health, true if maxHealth=health*level*level*difficulty
+	 * @param health How much health the mob has.
+	 * @param isFactor false if maxHealth=health, true if maxHealth=health*level*level*difficulty
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
-	 * @param lifetime   How many ticks this mob will live.
-	 * @param rwTime     How long the mob will walk in a random direction. (random walk duration)
-	 * @param rwChance   The chance of this mob will walk in a random direction (random walk chance)
+	 * @param lifetime How many ticks this mob will live.
+	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
 		super(lvlSprites[0], isFactor ? (lvl == 0 ? 1 : lvl * lvl) * health * ((Double) (Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
@@ -50,14 +49,13 @@ public class EnemyMob extends MobAi {
 	/**
 	 * Constructor for a hostile (enemy) mob.
 	 * Lifetime will be set to 60 * Game.normSpeed.
-	 *
-	 * @param lvl        The mob's level.
+	 * @param lvl The mob's level.
 	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
-	 * @param health     How much health the mob has.
-	 * @param isFactor   false if maxHealth=health, true if maxHealth=health*level*level*difficulty
+	 * @param health How much health the mob has.
+	 * @param isFactor false if maxHealth=health, true if maxHealth=health*level*level*difficulty
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
-	 * @param rwTime     How long the mob will walk in a random direction. (random walk duration)
-	 * @param rwChance   The chance of this mob will walk in a random direction (random walk chance)
+	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
 		this(lvl, lvlSprites, health, isFactor, detectDist, 60 * Updater.normSpeed, rwTime, rwChance);
@@ -68,10 +66,9 @@ public class EnemyMob extends MobAi {
 	 * isFactor=true,
 	 * rwTime=60,
 	 * rwChance=200.
-	 *
-	 * @param lvl        The mob's level.
+	 * @param lvl The mob's level.
 	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
-	 * @param health     How much health the mob has.
+	 * @param health How much health the mob has.
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
 	 */
 	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, int detectDist) {
@@ -124,10 +121,9 @@ public class EnemyMob extends MobAi {
 
 	/**
 	 * Determines if the mob can spawn at the giving position in the given map.
-	 *
 	 * @param level The level which the mob wants to spawn in.
-	 * @param x     X map spawn coordinate.
-	 * @param y     Y map spawn coordinate.
+	 * @param x X map spawn coordinate.
+	 * @param y Y map spawn coordinate.
 	 * @return true if the mob can spawn here, false if not.
 	 */
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob

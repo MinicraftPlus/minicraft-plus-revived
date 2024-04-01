@@ -415,8 +415,7 @@ public class InputHandler implements KeyListener {
 
 	/**
 	 * Returning the corresponding mapping depends on the device last acted.
-	 *
-	 * @param keyMap    The keyboard mapping.
+	 * @param keyMap The keyboard mapping.
 	 * @param buttonMap The controller mapping
 	 * @return The selected mapping.
 	 */
@@ -429,7 +428,6 @@ public class InputHandler implements KeyListener {
 
 	/**
 	 * Getting the last input device type.
-	 *
 	 * @return The input device type: 0 for keyboard, 1 for controller.
 	 */
 	public int getLastInputType() {
@@ -728,8 +726,7 @@ public class InputHandler implements KeyListener {
 	 * This will return false if the controller doesn't support vibration or if SDL was unable to start
 	 * vibration (maybe the controller doesn't support left/right vibration, maybe it was unplugged in the
 	 * middle of trying, etc...)
-	 *
-	 * @param leftMagnitude  The speed for the left motor to vibrate (this should be between 0 and 1)
+	 * @param leftMagnitude The speed for the left motor to vibrate (this should be between 0 and 1)
 	 * @param rightMagnitude The speed for the right motor to vibrate (this should be between 0 and 1)
 	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */

@@ -29,7 +29,7 @@ public class WateringCanItem extends Item {
 	private static final SpriteLinker.LinkedSprite spriteFilled = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "watering_can_filled");
 	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
 
-	private static final SpriteLinker.LinkedSprite[] spriteSplash = new SpriteLinker.LinkedSprite[]{
+	private static final SpriteLinker.LinkedSprite[] spriteSplash = new SpriteLinker.LinkedSprite[] {
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_0"),
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_1"),
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "splash_2"),

@@ -14,9 +14,6 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.TorchTile;
-
-import java.util.Arrays;
 
 public abstract class MobAi extends Mob {
 
@@ -29,12 +26,11 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Constructor for a mob with an ai.
-	 *
-	 * @param sprites   All of this mob's sprites.
+	 * @param sprites All of this mob's sprites.
 	 * @param maxHealth Maximum health of the mob.
-	 * @param lifetime  How many ticks this mob can live before its removed.
-	 * @param rwTime    How long the mob will walk in a random direction. (random walk duration)
-	 * @param rwChance  The chance of this mob will walk in a random direction (random walk chance)
+	 * @param lifetime How many ticks this mob can live before its removed.
+	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	protected MobAi(LinkedSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
@@ -66,7 +62,6 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Checking whether the mob is within any light. From tiles or from lanterns.
-	 *
 	 * @return {@code true} if the mob is within any light.
 	 */
 	protected boolean isWithinLight() {
@@ -85,7 +80,6 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Checks if the mob should sleep this tick.
-	 *
 	 * @return true if mob should sleep, false if not.
 	 */
 	protected boolean skipTick() {
@@ -180,9 +174,8 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Sets the mob to walk in a random direction for a given amount of time.
-	 *
 	 * @param byChance true if the mob should always get a new direction to walk, false if
-	 *                 there should be a chance that the mob moves.
+	 * 	there should be a chance that the mob moves.
 	 */
 	public void randomizeWalkDir(boolean byChance) { // Boolean specifies if this method, from where it's called, is called every tick, or after a random chance.
 		if (!byChance && random.nextInt(randomWalkChance) != 0) return;
@@ -196,10 +189,9 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Adds some items to the level.
-	 *
 	 * @param mincount Least amount of items to add.
 	 * @param maxcount Most amount of items to add.
-	 * @param items    Which items should be added.
+	 * @param items Which items should be added.
 	 */
 	protected void dropItem(int mincount, int maxcount, Item... items) {
 		int count = random.nextInt(maxcount - mincount + 1) + mincount;
@@ -209,13 +201,12 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Determines if a friendly mob can spawn here.
-	 *
-	 * @param level      The level the mob is trying to spawn in.
-	 * @param x          X map coordinate of spawn.
-	 * @param y          Y map coordinate of spawn.
+	 * @param level The level the mob is trying to spawn in.
+	 * @param x X map coordinate of spawn.
+	 * @param y Y map coordinate of spawn.
 	 * @param playerDist Max distance from the player the mob can be spawned in.
 	 * @param soloRadius How far out can there not already be any entities.
-	 *                   This is multiplied by the monster density of the level
+	 * 	This is multiplied by the monster density of the level
 	 * @return true if the mob can spawn, false if not.
 	 */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
@@ -237,7 +228,6 @@ public abstract class MobAi extends Mob {
 
 	/**
 	 * Returns the maximum level of this mob.
-	 *
 	 * @return max level of the mob.
 	 */
 	public abstract int getMaxLevel();

@@ -7,20 +7,14 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
-import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
-import minicraft.util.Logging;
 
 public class FenceTile extends Tile {
 
@@ -35,6 +29,7 @@ public class FenceTile extends Tile {
 	public boolean connectUp = false, connectDown = false, connectLeft = false, connectRight = false;
 
 	protected FenceTile(Material type) { this(type, null); }
+
 	protected FenceTile(Material type, String name) {
 		super(type + " " + (name == null ? "Fence" : name), null);
 		this.type = type;
@@ -113,7 +108,7 @@ public class FenceTile extends Tile {
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -139,6 +134,6 @@ public class FenceTile extends Tile {
 			Sound.play("monsterhurt");
 			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get(name));
 			level.setTile(x, y, Tiles.get((short) level.getData(x, y)));
-		};
+		}
 	}
 }

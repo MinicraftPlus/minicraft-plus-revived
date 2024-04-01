@@ -11,9 +11,6 @@ import minicraft.item.Items;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
-import org.tinylog.Logger;
-
-import java.util.HashMap;
 
 public class TorchTile extends Tile {
 	protected TorchTile() {
