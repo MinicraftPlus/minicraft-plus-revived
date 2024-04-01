@@ -79,7 +79,9 @@ public class LoadingDisplay extends Display {
 	}
 
 	public static void setMessage(String progressType) {
-		setMessage(progressType, true); }
+		setMessage(progressType, true);
+	}
+
 	public static void setMessage(String progressType, boolean localize) {
 		LoadingDisplay.progressType = progressType;
 		localizeProgressType = localize;

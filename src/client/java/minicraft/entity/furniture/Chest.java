@@ -31,7 +31,6 @@ public class Chest extends Furniture implements ItemHolder {
 
 	/**
 	 * Creates a chest with a custom name.
-	 *
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
@@ -50,7 +49,7 @@ public class Chest extends Furniture implements ItemHolder {
 
 	public void populateInvRandom(Random random, String lootTable, @SuppressWarnings("unused") int depth) { // depth is unused
 		try {
-			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[]{});
+			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[] {});
 
 			for (String line : lines) {
 				//System.out.println(line);

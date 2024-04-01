@@ -56,7 +56,7 @@ public class PauseDisplay extends Display {
 			new StringEntry(selectString, Color.GRAY, false)
 		));
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle("minicraft.displays.pause", Color.YELLOW)
 				.createMenu()

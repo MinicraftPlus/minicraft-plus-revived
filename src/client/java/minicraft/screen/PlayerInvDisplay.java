@@ -39,7 +39,7 @@ public class PlayerInvDisplay extends Display {
 			.createMenu();
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
-			menus = new Menu[]{
+			menus = new Menu[] {
 				menus[0],
 				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT) {{
 					creativeInv = true;
@@ -53,7 +53,7 @@ public class PlayerInvDisplay extends Display {
 			if (menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 		} else {
 			creativeInv = null;
-			menus = new Menu[]{menus[0], descriptionMenu};
+			menus = new Menu[] { menus[0], descriptionMenu };
 		}
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
@@ -93,7 +93,7 @@ public class PlayerInvDisplay extends Display {
 			try {
 				onScreenKeyboardMenu.tick(input);
 			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
-					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+			         OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
 				acted = true;
 			}
 

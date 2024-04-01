@@ -62,9 +62,8 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Constructing animations with the provided key. The meta is given by default.
-	 *
 	 * @param type The sprite category.
-	 * @param key  The sprite resource key.
+	 * @param key The sprite resource key.
 	 */
 	public SpriteAnimation(SpriteType type, String key) {
 		this(metas.get(key), type, key);
@@ -72,10 +71,9 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Constructing animations with the provided metadata and key. It should already be validated.
-	 *
 	 * @param meta The metadata of the sprite sheet.
 	 * @param type The sprite category.
-	 * @param key  The sprite resource key.
+	 * @param key The sprite resource key.
 	 */
 	public SpriteAnimation(SpriteMeta meta, SpriteType type, String key) {
 		this.type = type;
@@ -92,7 +90,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the tile class of this animation used for tile connector rendering.
-	 *
 	 * @param connectionChecker The tile connection checker.
 	 * @return The instance itself.
 	 */
@@ -103,7 +100,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting if the singleton sprite is used for other tile connective rendering.
-	 *
 	 * @param connective If used for connective rendering.
 	 * @return The instance itself.
 	 */
@@ -114,7 +110,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the color of all animation frames.
-	 *
 	 * @param color The color of sprite.
 	 * @return The instance itself.
 	 */
@@ -128,7 +123,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the color of the specific animation frame.
-	 *
 	 * @param frame The specific frame.
 	 * @param color The color of sprite.
 	 * @return The instance itself.
@@ -143,7 +137,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the mirror of all animation frames.
-	 *
 	 * @param mirror The mirror of sprite/
 	 * @return The instance itself.
 	 */
@@ -157,8 +150,7 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the mirror of the specific animation frame.
-	 *
-	 * @param frame  The specific frame.
+	 * @param frame The specific frame.
 	 * @param mirror The mirror of sprite.
 	 * @return The instance itself.
 	 */
@@ -172,7 +164,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the sprite sheet mirror of all frames.
-	 *
 	 * @param mirror The mirror of sprite sheet.
 	 * @return The instance itself.
 	 */
@@ -183,7 +174,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Getting the current frame of animation.
-	 *
 	 * @return The current frame sprite.
 	 */
 	public LinkedSprite getCurrentFrame() {
@@ -192,7 +182,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Getting the specific frame of animation.
-	 *
 	 * @param frame The specific frame.
 	 * @return The frame sprite.
 	 */
@@ -202,11 +191,10 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Rendering the animation on the screen.
-	 *
 	 * @param screen The screen instance.
-	 * @param level  The level for rendering.
-	 * @param x      The x coordinate level tile.
-	 * @param y      The y coordinate level tile.
+	 * @param level The level for rendering.
+	 * @param x The x coordinate level tile.
+	 * @param y The y coordinate level tile.
 	 */
 	public void render(Screen screen, Level level, int x, int y) {
 		// If border and the tile class is set.
@@ -298,7 +286,7 @@ public class SpriteAnimation implements Destroyable {
 		this.metadata = metadata;
 		MinicraftImage sheet = Renderer.spriteLinker.getSheet(type, key);
 		if (sheet == null) {
-			animations = new LinkedSprite[]{SpriteLinker.missingTexture(type)};
+			animations = new LinkedSprite[] { SpriteLinker.missingTexture(type) };
 			border = null;
 			corner = null;
 			return;
@@ -326,7 +314,7 @@ public class SpriteAnimation implements Destroyable {
 			if (metadata.border != null) border = new LinkedSprite(type, metadata.border);
 			if (metadata.corner != null) corner = new LinkedSprite(type, metadata.corner);
 		} else {
-			animations = new LinkedSprite[]{new LinkedSprite(type, key).setSpriteSize(width, width)};
+			animations = new LinkedSprite[] { new LinkedSprite(type, key).setSpriteSize(width, width) };
 			border = null;
 			corner = null;
 		}

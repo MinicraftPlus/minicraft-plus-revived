@@ -68,7 +68,6 @@ public class Save {
 
 	/**
 	 * This is the main save method. Called by all Save() methods.
-	 *
 	 * @param worldFolder The folder of where to save
 	 */
 	private Save(File worldFolder) {
@@ -97,7 +96,6 @@ public class Save {
 
 	/**
 	 * This will save world options
-	 *
 	 * @param worldname The name of the world.
 	 */
 	public Save(String worldname) {

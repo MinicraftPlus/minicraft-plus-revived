@@ -11,7 +11,6 @@ import minicraft.level.tile.Tiles;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.function.Consumer;
 
 // this stores structures that can be drawn at any location.
@@ -38,15 +37,16 @@ public class Structure {
 		this.furniture.put(new Point(x, y), furniture);
 	}
 
-	public void draw(Level level, int xt, int yt) { draw(level, xt, yt, f -> {}); }
+	public void draw(Level level, int xt, int yt) { draw(level, xt, yt, f -> { }); }
+
 	public void draw(Level level, int xt, int yt, Consumer<Furniture> furnitureHandler) {
 		for (TilePoint p : tiles)
 			level.setTile(xt + p.x, yt + p.y, p.t);
 
-		for (Point p: furniture.keySet()) {
+		for (Point p : furniture.keySet()) {
 			Furniture fur = furniture.get(p).copy();
 			furnitureHandler.accept(fur);
-			level.add(fur, xt+p.x, yt+p.y, true);
+			level.add(fur, xt + p.x, yt + p.y, true);
 		}
 	}
 
