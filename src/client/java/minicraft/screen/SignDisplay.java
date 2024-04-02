@@ -163,16 +163,9 @@ public class SignDisplay extends Display {
 				int cursorX = lineBeginning + displayX;
 				int cursorY = bounds.getTop() + MinicraftImage.boxWidth + displayY;
 				if (this.cursorX == rows.get(this.cursorY).length()) { // Replace cursor
-					int cursorRenderY = cursorY + MinicraftImage.boxWidth - 1;
-					for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 1 pixel high and 8 pixel wide
-						int idx = cursorX + i + cursorRenderY * Screen.w;
-						screen.pixels[idx] = Color.getLightnessFromRGB(screen.pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
-					}
+					screen.drawLineSpecial(cursorX, cursorY + MinicraftImage.boxWidth - 1, 0, MinicraftImage.boxWidth);
 				} else { // Insert cursor
-					for (int i = 0; i < MinicraftImage.boxWidth; i++) { // 8 pixel high and 1 pixel wide
-						int idx = cursorX + (cursorY + i) * Screen.w;
-						screen.pixels[idx] = Color.getLightnessFromRGB(screen.pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
-					}
+					screen.drawLineSpecial(cursorX, cursorY, 1, MinicraftImage.boxWidth);
 				}
 			}
 		}

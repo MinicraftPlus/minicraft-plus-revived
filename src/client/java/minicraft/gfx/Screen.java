@@ -197,6 +197,37 @@ public class Screen {
 		}
 	}
 
+	/** Placeholder way, for Sign cursor rendering */
+	private class DrawLineSpecialRendering implements Rendering {
+		private final int x0, y0, l;
+		private final @MagicConstant(intValues = {0, 1}) int axis; // 0: x-axis; 1: Y-axis
+
+		public DrawLineSpecialRendering(int x0, int y0, int l, int axis) {
+			this.x0 = x0;
+			this.y0 = y0;
+			this.l = l;
+			this.axis = axis;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+			switch (axis) {
+				case 0:
+					for (int i = 0; i < l; i++) { // 1 pixel high and 8 pixel wide
+						int idx = x0 + i + y0 * Screen.w;
+						pixels[idx] = Color.getLightnessFromRGB(pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+					}
+					break;
+				case 1:
+					for (int i = 0; i < l; i++) { // 8 pixel high and 1 pixel wide
+						int idx = x0 + (y0 + i) * Screen.w;
+						pixels[idx] = Color.getLightnessFromRGB(pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+					}
+					break;
+			}
+		}
+	}
+
 	private class OverlayRendering implements Rendering {
 		private final int currentLevel, xa, ya;
 		private final double darkFactor;
@@ -370,6 +401,11 @@ public class Screen {
 
 	public void drawLine(int x0, int y0, int x1, int y1, int color) {
 		queue(new DrawLineRendering(x0, y0, x1, y1, color));
+	}
+
+	/** Placeholder line drawing method specialized for sign cursor drawing */
+	public void drawLineSpecial(int x0, int y0, @MagicConstant(intValues = {0, 1}) int axis, int l) {
+		queue(new DrawLineSpecialRendering(x0, y0, l, axis));
 	}
 
 	/**
