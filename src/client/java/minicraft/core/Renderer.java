@@ -29,6 +29,7 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
@@ -71,6 +72,8 @@ public class Renderer extends Game {
 
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
+
+	public static SignDisplayMenu signDisplayMenu = null;
 
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
@@ -174,9 +177,9 @@ public class Renderer extends Game {
 				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
 				AffineTransform at = new AffineTransform();
 				at.scale(scale, scale); // Setting the scaling.
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 
-				// Use this solution without larger scales which use up a lot memory.
+				// Use this solution without larger scales which use up a lot of memory.
 				// With scale 20, up to around 360MB overall RAM use.
 				BufferedImage after = scaleOp.filter(before, null);
 				ImageIO.write(after, "png", file);
@@ -425,6 +428,7 @@ public class Renderer extends Game {
 
 		TutorialDisplayHandler.render(screen);
 		renderQuestsDisplay();
+		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
 	}
 

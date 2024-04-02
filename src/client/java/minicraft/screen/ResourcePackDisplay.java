@@ -185,7 +185,7 @@ public class ResourcePackDisplay extends Display {
 
 		reloadEntries();
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			builder0.setEntries(entries0)
 				.createMenu(),
 			builder1.setEntries(entries1)
@@ -246,7 +246,7 @@ public class ResourcePackDisplay extends Display {
 	 */
 	private void refreshEntries() {
 		reloadEntries();
-		Menu[] newMenus = new Menu[]{
+		Menu[] newMenus = new Menu[] {
 			builder0.setEntries(entries0)
 				.createMenu(),
 			builder1.setEntries(entries1)
@@ -259,8 +259,8 @@ public class ResourcePackDisplay extends Display {
 
 		menus = newMenus;
 
-		/* Translate position. */
-		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
+		// Translate position.
+		onSelectionChange(selection ^ 1, selection);
 	}
 
 	/**
@@ -489,7 +489,6 @@ public class ResourcePackDisplay extends Display {
 
 		/**
 		 * Open the stream of the zip file.
-		 *
 		 * @return {@code true} if the stream has successfully been opened.
 		 */
 		private boolean openStream() {
@@ -516,7 +515,6 @@ public class ResourcePackDisplay extends Display {
 
 		/**
 		 * Getting the stream by the path.
-		 *
 		 * @param path The path of the entry.
 		 * @return The input stream of the specified entry.
 		 * @throws IOException if an I/O error has occurred.
@@ -536,8 +534,7 @@ public class ResourcePackDisplay extends Display {
 
 		/**
 		 * Getting the subfiles under the specified entry directrory.
-		 *
-		 * @param path   The directory to be listed.
+		 * @param path The directory to be listed.
 		 * @param filter The filter to be applied.
 		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
 		 */
@@ -559,7 +556,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Reading the string from the input stream.
-	 *
 	 * @param in The input stream to be read.
 	 * @return The returned string.
 	 */
@@ -570,7 +566,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading pack metadata of the pack.
-	 *
 	 * @param file The path of the pack.
 	 * @return The loaded pack with metadata.
 	 */
@@ -630,7 +625,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Finding the pack by pack's file URL.
-	 *
 	 * @param url The url for query.
 	 * @return The found resource pack. {@code null} if not found.
 	 */
@@ -652,7 +646,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Refreshing the pack list by the urls.
-	 *
 	 * @param urls The packs' url to be refreshed.
 	 */
 	private static void refreshResourcePacks(List<URL> urls) {
@@ -691,7 +684,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading the resource packs when loading preferences. This should only be called by {@link minicraft.saveload.Load}.
-	 *
 	 * @param names The names of the packs.
 	 */
 	public static void loadResourcePacks(String[] names) {
@@ -712,7 +704,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Getting the names of the loaded packs. This should only be called by {@link minicraft.saveload.Save}.
-	 *
 	 * @return The names of currently loaded packs.
 	 */
 	public static ArrayList<String> getLoadedPacks() {
@@ -770,7 +761,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading the textures of the pack.
-	 *
 	 * @param pack The pack to be loaded.
 	 * @throws IOException if I/O exception occurs.
 	 */
@@ -795,7 +785,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading the categories of textures from the pack.
-	 *
 	 * @param pack The pack to be loaded.
 	 * @param type The category of textures.
 	 * @throws IOException if I/O exception occurs.
@@ -930,7 +919,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading localization from the pack.
-	 *
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadLocalization(ResourcePack pack) {
@@ -974,7 +962,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading the books from the pack.
-	 *
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadBooks(ResourcePack pack) {
@@ -1006,7 +993,6 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading sounds from the pack.
-	 *
 	 * @param pack The pack to be loaded.
 	 */
 	private static void loadSounds(ResourcePack pack) {

@@ -20,10 +20,9 @@ public class FireSpark extends Entity {
 
 	/**
 	 * Creates a new spark. Owner is the Obsidian Knight which is spawning this spark.
-	 *
 	 * @param owner The Obsidian Knight spawning the spark.
-	 * @param xa    X velocity.
-	 * @param ya    Y velocity.
+	 * @param xa X velocity.
+	 * @param ya Y velocity.
 	 */
 	public FireSpark(ObsidianKnight owner, double xa, double ya) {
 		super(0, 0);
@@ -106,7 +105,6 @@ public class FireSpark extends Entity {
 
 	/**
 	 * Returns the owners id as a string.
-	 *
 	 * @return the owners id as a string.
 	 */
 	public String getData() {

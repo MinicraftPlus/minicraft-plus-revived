@@ -36,7 +36,6 @@ public class OnScreenKeyboardMenu extends Menu {
 
 	/**
 	 * This checks if there is any controller connected. If true, create the instance. No otherwise.
-	 *
 	 * @return The created menu instance. `null` if there is no controller connected.
 	 */
 	@Nullable

@@ -25,7 +25,6 @@ public class MinicraftImage {
 	 * Initializes a {@code MinicraftImage} instance from the provided size.
 	 * All values are filled with zero after construction.
 	 * @param width the final width of this image
-	 *
 	 * @param height the final height of this image
 	 * @throws IllegalArgumentException if either {@code width} or {@code height} is zero or negative
 	 */
@@ -50,8 +49,7 @@ public class MinicraftImage {
 	/**
 	 * Constructs a {@code MinicraftImage} with the given size from the source {@code BufferedImage}.
 	 * If the requested size is out of the source's dimension, the remaining values will be left {@code 0}.
-	 *
-	 * @param image  the {@code BufferedImage} to be constructed from
+	 * @param image the {@code BufferedImage} to be constructed from
 	 * @param width  the requested width for this image, must be a non-zero natural number
 	 * @param height the requested height for this image, must be a non-zero natural number
 	 * @throws IllegalArgumentException if either {@code width} or {@code height} is zero or negative

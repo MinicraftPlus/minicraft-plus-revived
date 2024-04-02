@@ -26,6 +26,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.Sheep;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Point;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
@@ -36,6 +37,7 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
@@ -50,6 +52,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Save {
 
@@ -65,7 +68,6 @@ public class Save {
 
 	/**
 	 * This is the main save method. Called by all Save() methods.
-	 *
 	 * @param worldFolder The folder of where to save
 	 */
 	private Save(File worldFolder) {
@@ -94,7 +96,6 @@ public class Save {
 
 	/**
 	 * This will save world options
-	 *
 	 * @param worldname The name of the world.
 	 */
 	public Save(String worldname) {
@@ -261,17 +262,36 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		JSONObject fileObj = new JSONObject();
-		fileObj.put("Version", Game.VERSION.toString());
-		TutorialDisplayHandler.save(fileObj);
-		AdvancementElement.saveRecipeUnlockingElements(fileObj);
-		QuestsDisplay.save(fileObj);
+		{ // Advancements
+			JSONObject fileObj = new JSONObject();
+			fileObj.put("Version", Game.VERSION.toString());
+			TutorialDisplayHandler.save(fileObj);
+			AdvancementElement.saveRecipeUnlockingElements(fileObj);
+			QuestsDisplay.save(fileObj);
+			try {
+				writeJSONToFile(location + "advancements.json", fileObj.toString(4));
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logging.SAVELOAD.error("Unable to write advancements.json.");
+			}
+		}
 
-		try {
-			writeJSONToFile(location + "advancements.json", fileObj.toString(4));
-		} catch (IOException e) {
-			e.printStackTrace();
-			Logging.SAVELOAD.error("Unable to write advancements.json.");
+		{ // Sign Data
+			JSONObject fileObj = new JSONObject();
+			fileObj.put("Version", Game.VERSION.toString());
+			JSONArray dataObj = new JSONArray();
+			SignDisplay.getSignTexts().forEach((key, value) -> dataObj.put(new JSONObject()
+				.put("level", key.getKey())
+				.put("x", key.getValue().x)
+				.put("y", key.getValue().y)
+				.put("lines", value)));
+			fileObj.put("signs", dataObj);
+			try {
+				writeJSONToFile(location + "signs.json", fileObj.toString(4));
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logging.SAVELOAD.error("Unable to write signs.json.");
+			}
 		}
 	}
 
