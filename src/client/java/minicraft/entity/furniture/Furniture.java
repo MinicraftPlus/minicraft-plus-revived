@@ -27,8 +27,7 @@ public class Furniture extends Entity {
 	/**
 	 * Constructor for the furniture entity.
 	 * Size will be set to 3.
-	 *
-	 * @param name   Name of the furniture.
+	 * @param name Name of the furniture.
 	 * @param sprite Furniture sprite.
 	 */
 	public Furniture(String name, LinkedSprite sprite, LinkedSprite itemSprite) {
@@ -38,11 +37,10 @@ public class Furniture extends Entity {
 	/**
 	 * Constructor for the furniture entity.
 	 * Radius is only used for collision detection.
-	 *
-	 * @param name   Name of the furniture.
+	 * @param name Name of the furniture.
 	 * @param sprite Furniture sprite.
-	 * @param xr     Horizontal radius.
-	 * @param yr     Vertical radius.
+	 * @param xr Horizontal radius.
+	 * @param yr Vertical radius.
 	 */
 	public Furniture(String name, LinkedSprite sprite, LinkedSprite itemSprite, int xr, int yr) {
 		// All of these are 2x2 on the spritesheet; radius is for collisions only.
@@ -98,7 +96,6 @@ public class Furniture extends Entity {
 
 	/**
 	 * Used in PowerGloveItem.java to let the user pick up furniture.
-	 *
 	 * @param player The player picking up the furniture.
 	 */
 	@Override
@@ -116,7 +113,6 @@ public class Furniture extends Entity {
 
 	/**
 	 * Tries to let the player push this furniture.
-	 *
 	 * @param player The player doing the pushing.
 	 */
 	public void tryPush(Player player) {

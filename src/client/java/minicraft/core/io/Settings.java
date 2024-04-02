@@ -32,9 +32,9 @@ public final class Settings {
 		options.put("type", new ArrayEntry<>("minicraft.settings.type", "minicraft.settings.type.island", "minicraft.settings.type.box", "minicraft.settings.type.mountain", "minicraft.settings.type.irregular"));
 
 		// TODO localize these labels
-		options.put("tutorials", new BooleanEntry("Tutorials", false));
-		options.put("quests", new BooleanEntry("Quests", false));
-		options.put("showquests", new BooleanEntry("Quests Panel", true));
+		options.put("tutorials", new BooleanEntry("minicraft.settings.tutorials", false));
+		options.put("quests", new BooleanEntry("minicraft.settings.quests", false));
+		options.put("showquests", new BooleanEntry("minicraft.settings.show_quests", true));
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
@@ -43,7 +43,6 @@ public final class Settings {
 
 	/**
 	 * Returns the value of the specified option.
-	 *
 	 * @param option The setting to get.
 	 * @return The value of the setting
 	 */
@@ -53,7 +52,6 @@ public final class Settings {
 
 	/**
 	 * Returns the index of the value in the list of values for the specified option.
-	 *
 	 * @param option The setting to get.
 	 * @return The index of the setting.
 	 */
@@ -63,7 +61,6 @@ public final class Settings {
 
 	/**
 	 * Return the ArrayEntry object associated with the given option name.
-	 *
 	 * @param option The setting to get.
 	 * @return The ArrayEntry.
 	 */
@@ -73,9 +70,8 @@ public final class Settings {
 
 	/**
 	 * Sets the value of the given option name, to the given value, provided it is a valid value for that option.
-	 *
 	 * @param option The setting to edit.
-	 * @param value  The value to change to.
+	 * @param value The value to change to.
 	 */
 	public static void set(String option, Object value) {
 		options.get(option.toLowerCase()).setValue(value);
@@ -83,9 +79,8 @@ public final class Settings {
 
 	/**
 	 * Sets the index of the value of the given option, provided it is a valid index.
-	 *
 	 * @param option The setting to edit.
-	 * @param idx    Index to select.
+	 * @param idx Index to select.
 	 */
 	public static void setIdx(String option, int idx) {
 		options.get(option.toLowerCase()).setSelection(idx);
@@ -94,7 +89,6 @@ public final class Settings {
 	/**
 	 * Gets the refresh rate of the default monitor.
 	 * Safely handles headless environments (if that were to happen for some reason).
-	 *
 	 * @return The refresh rate if successful. 60 if not.
 	 */
 	private static int getDefaultRefreshRate() {

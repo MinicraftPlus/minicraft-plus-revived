@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
@@ -30,7 +31,6 @@ public class Chest extends Furniture implements ItemHolder {
 
 	/**
 	 * Creates a chest with a custom name.
-	 *
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
@@ -47,15 +47,15 @@ public class Chest extends Furniture implements ItemHolder {
 		return true;
 	}
 
-	public void populateInvRandom(String lootTable, int depth) {
+	public void populateInvRandom(Random random, String lootTable, @SuppressWarnings("unused") int depth) { // depth is unused
 		try {
-			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[]{});
+			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[] {});
 
 			for (String line : lines) {
 				//System.out.println(line);
 				String[] data = line.split(",");
 				if (!line.startsWith(":")) {
-					inventory.tryAdd(Integer.parseInt(data[0]), Items.get(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
+					inventory.tryAdd(random, Integer.parseInt(data[0]), Items.get(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
 				} else if (inventory.invSize() == 0) {
 					// Adds the "fallback" items to ensure there's some stuff
 					String[] fallbacks = line.substring(1).split(":");

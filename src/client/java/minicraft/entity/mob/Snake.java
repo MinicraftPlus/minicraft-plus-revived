@@ -6,7 +6,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Snake extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][]{
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "snake"),
 		Mob.compileMobSpriteAnimations(0, 2, "snake"),
 		Mob.compileMobSpriteAnimations(0, 4, "snake"),
