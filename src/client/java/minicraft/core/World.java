@@ -11,6 +11,7 @@ import minicraft.screen.CraftingDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.QuestsDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldGenDisplay;
 import minicraft.screen.WorldSelectDisplay;
@@ -159,9 +160,12 @@ public class World extends Game {
 			CraftingDisplay.resetRecipeUnlocks();
 			TutorialDisplayHandler.reset(true);
 			AdvancementElement.resetRecipeUnlockingElements();
+			SignDisplay.resetSignTexts();
 		}
 
 		Renderer.readyToRenderGameplay = true;
+
+		Renderer.signDisplayMenu = null;
 
 		PlayerDeathDisplay.shouldRespawn = true;
 

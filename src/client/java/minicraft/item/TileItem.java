@@ -12,6 +12,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +78,10 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
 
 		items.add(new TileItem("Torch", new LinkedSprite(SpriteType.Item, "torch"), new TileModel("Torch", placeOverWithID), solidTiles));
+		items.add(new TileItem("Sign", new LinkedSprite(SpriteType.Item, "sign"), new TileModel("Sign", (model1, target, level, xt, yt, player, attackDir) -> {
+			Game.setDisplay(new SignDisplay(level, xt, yt));
+			return placeOverWithID.getTileData(model1, target, level, xt, yt, player, attackDir);
+		}), solidTiles));
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteLinker.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));

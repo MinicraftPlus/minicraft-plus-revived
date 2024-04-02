@@ -162,7 +162,11 @@ public abstract class Entity implements Tickable {
 		//noinspection RedundantIfStatement
 		if (moveX(xd)) stopped = false; // Becomes false if horizontal movement was successful.
 		if (moveY(yd)) stopped = false; // Becomes false if vertical movement was successful.
-
+		if (!stopped) {
+			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
+			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
+			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+		}
 		return !stopped;
 	}
 
