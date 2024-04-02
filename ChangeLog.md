@@ -64,6 +64,7 @@ but some sections are changed to compliant this project.
 * Renamed `assets/books/story_guide.txt` to `assets/books/game_guide.txt`
 * Updated `assets/books/game_guide.txt` and `assets/books/instructions.txt`
 * Sand footprints are now more accurately placed
+* Optimized rendering
 
 ### Removals
 
