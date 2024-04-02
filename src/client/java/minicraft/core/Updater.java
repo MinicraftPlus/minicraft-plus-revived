@@ -2,6 +2,7 @@ package minicraft.core;
 
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
@@ -170,6 +171,8 @@ public class Updater extends Game {
 		}
 
 		if (updateNoteTick) notetick++;
+
+		Sound.tick();
 
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!Renderer.canvas.hasFocus()) {
