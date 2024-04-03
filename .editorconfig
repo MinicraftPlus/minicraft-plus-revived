@@ -15,7 +15,6 @@ ij_java_packages_to_use_import_on_demand = unset
 ij_java_class_count_to_use_import_on_demand = 99999999
 ij_java_names_count_to_use_import_on_demand = 99999999
 ij_java_use_single_class_imports = true
-ij_java_use_fq_class_names = true
 ij_java_insert_inner_class_imports = false
 ij_java_layout_static_imports_separately = true
 ij_java_space_before_array_initializer_left_brace = true
