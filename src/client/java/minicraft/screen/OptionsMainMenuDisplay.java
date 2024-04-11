@@ -15,7 +15,6 @@ public class OptionsMainMenuDisplay extends Display {
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),
-			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.display.options_display.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		)
 			.setTitle("minicraft.displays.options_main_menu")

@@ -33,6 +33,7 @@ import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
@@ -168,21 +169,14 @@ public class Renderer extends Game {
 				count++;
 			}
 
-			try { // https://stackoverflow.com/a/4216635
-				int w = image.getWidth();
-				int h = image.getHeight();
-				BufferedImage before = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-				before.getRaster().setRect(image.getData());
-				int scale = (Integer) Settings.get("screenshot");
-				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
-				AffineTransform at = new AffineTransform();
-				at.scale(scale, scale); // Setting the scaling.
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-
-				// Use this solution without larger scales which use up a lot of memory.
-				// With scale 20, up to around 360MB overall RAM use.
-				BufferedImage after = scaleOp.filter(before, null);
-				ImageIO.write(after, "png", file);
+			try {
+				// A blank image as same as the canvas
+				BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+				Graphics2D g2d = img.createGraphics();
+				g2d.drawImage(image, xOffset, yOffset, ww, hh, null); // The same invoke as the one on canvas graphics
+				g2d.dispose();
+				ImageIO.write(img, "png", file);
+				Logging.PLAYER.info("Saved screenshot as {}.", file.getName());
 			} catch (IOException e) {
 				CrashHandler.errorHandle(e);
 			}
