@@ -56,6 +56,10 @@ project(":client") {
         implementation 'com.badlogicgames.gdx:gdx-box2d:1.11.0'
         implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
         implementation 'com.badlogicgames.jamepad:jamepad:2.0.20.0'
+
+        // test deps
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
     }
 
     application {
