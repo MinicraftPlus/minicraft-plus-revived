@@ -3,6 +3,48 @@ plugins {
     id 'maven-publish'
 }
 
+plugins {
+    id 'jacoco'
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+test {
+    // Enable JaCoCo agent for tests
+    jacoco {
+        enabled = true
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+dependencies {
+    // Existing dependencies
+
+    // JUnit
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+
+    // JaCoCo for code coverage
+    testImplementation 'org.jacoco:org.jacoco.core:0.8.7'
+
+    // Mockito for mocking
+    testImplementation "org.mockito:mockito-core:4.10.0"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+
 allprojects {
     apply plugin: "java"
 
