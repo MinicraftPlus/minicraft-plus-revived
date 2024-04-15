@@ -2,7 +2,7 @@ rootProject.name = "minicraft-plus"
 
 include "common"
 include "client"
-include "server" //I am here
+include "server"
 
 rootProject.children.each { project ->
     project.projectDir = new File(settingsDir, "src/${project.name}")
