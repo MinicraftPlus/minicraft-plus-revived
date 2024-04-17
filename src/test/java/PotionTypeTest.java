@@ -96,6 +96,49 @@ public class PotionTypeTest {
 		assertEquals(6000,light.duration);
 	}
 
+	@Test
+	public void testSwimVariables() {
+		int swimDispColor = 10;
+		PotionType swim;
+		try (MockedStatic<Color> utilities = mockStatic(Color.class)) {
+			utilities.when(() -> Color.get(1, 51, 51, 255))
+				.thenReturn(swimDispColor);
+			swim = PotionType.Swim;
+		}
+		assertEquals(swimDispColor,swim.dispColor);
+		assertEquals(4800,swim.duration);
+	}
+
+	@Test
+	public void testEnergyVariables() {
+		int energyDispColor = 10;
+		PotionType energy;
+		try (MockedStatic<Color> utilities = mockStatic(Color.class)) {
+			utilities.when(() -> Color.get(1, 237, 110, 78))
+				.thenReturn(energyDispColor);
+			energy = PotionType.Energy;
+		}
+		assertEquals(energyDispColor,energy.dispColor);
+		assertEquals(8400,energy.duration);
+	}
+
+	@Test
+	public void testRegenVariables() {
+		int regenDispColor = 10;
+		PotionType regen;
+		try (MockedStatic<Color> utilities = mockStatic(Color.class)) {
+			utilities.when(() -> Color.get(1, 219, 70, 189))
+				.thenReturn(regenDispColor);
+			regen = PotionType.Regen;
+		}
+		assertEquals(regenDispColor,regen.dispColor);
+		assertEquals(1800,regen.duration);
+	}
+
+
+
+
+
 
 
 
