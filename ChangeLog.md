@@ -65,6 +65,8 @@ but some sections are changed to compliant this project.
 * Updated `assets/books/game_guide.txt` and `assets/books/instructions.txt`
 * Sand footprints are now more accurately placed
 * Optimized rendering
+* Increased death chest despawn timer as follows:
+  Easy: 450 secs, Normal: 300 secs, Hard: 150 secs
 
 ### Removals
 
