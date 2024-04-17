@@ -31,6 +31,12 @@ public class ArmorItemTest {
 			}
 		}
 		mockArmorItem = armorItems.get(0);
+
+	}
+
+	@Test
+	public void testGetAllInstances() {
+		assertEquals(5,armorItems.size());
 	}
 
 	@Test
@@ -75,7 +81,5 @@ public class ArmorItemTest {
 		assertEquals(mockArmorItem.sprite,copiedArmorItem.sprite);
 		assertEquals(mockArmorItem.count,copiedArmorItem.count);
 		assertEquals(mockArmorItem.level,copiedArmorItem.level);
-
-
 	}
 }

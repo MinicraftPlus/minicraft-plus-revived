@@ -36,7 +36,12 @@ dependencies {
     testImplementation 'org.jacoco:org.jacoco.core:0.8.7'
 
     // Mockito for mocking
-    testImplementation "org.mockito:mockito-core:4.10.0"
+//    testImplementation "org.mockito:mockito-core:4.10.0"
+    testImplementation "org.mockito:mockito-inline:4.10.0"
+
+    //Power Mockito for mocking static methods may not be needed
+//    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+//    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
 }
 
 test {

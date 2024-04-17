@@ -119,7 +119,7 @@ public class Inventory {
 					for (int i = 0; i < c; i++) {
 						StackableItem adding = toTake.copy();
 						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
-						if (adding.count == 0) break;
+						if (adding.count == 0) break; //Will never enter this case
 						if (items.size() == maxItem) return total - toTake.count;
 						items.add(adding); // Add the item to the items list
 						toTake.count -= adding.count;
