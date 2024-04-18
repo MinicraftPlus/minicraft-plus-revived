@@ -1,7 +1,0 @@
-Integration testing:
-
-Process: We will use Big Bang approach
-    In big bang approach, modules are couples and tested together.
-
-    1. Identify the points of integration between modules. This is the points where modules use each other.
-    2. Write tests to target these points of integration for each integration.
