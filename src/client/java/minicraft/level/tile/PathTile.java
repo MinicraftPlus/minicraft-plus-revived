@@ -17,8 +17,12 @@ public class PathTile extends Tile {
 
 	public PathTile(String name) {
 		super(name, sprite);
-		connectsToGrass = true;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

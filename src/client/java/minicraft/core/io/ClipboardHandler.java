@@ -28,7 +28,6 @@ public final class ClipboardHandler implements ClipboardOwner {
 
 	/**
 	 * Get the string from the system clipboard data.
-	 *
 	 * @return A string with the contents.
 	 */
 	public String getClipboardContents() {

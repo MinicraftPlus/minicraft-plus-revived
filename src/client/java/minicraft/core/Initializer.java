@@ -199,9 +199,8 @@ public class Initializer extends Game {
 	/**
 	 * Provides a String representation of the provided Throwable's stack trace
 	 * that is extracted via PrintStream.
-	 *
 	 * @param throwable Throwable/Exception from which stack trace is to be
-	 *                  extracted.
+	 * 	extracted.
 	 * @return String with provided Throwable's stack trace.
 	 */
 	public static String getExceptionTrace(final Throwable throwable) {

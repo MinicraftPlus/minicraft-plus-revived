@@ -15,7 +15,7 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 
 public class DirtTile extends Tile {
-	private static SpriteAnimation[] levelSprite = new SpriteAnimation[]{
+	private static SpriteAnimation[] levelSprite = new SpriteAnimation[] {
 		new SpriteAnimation(SpriteType.Tile, "dirt"),
 		new SpriteAnimation(SpriteType.Tile, "gray_dirt"),
 		new SpriteAnimation(SpriteType.Tile, "purple_dirt")

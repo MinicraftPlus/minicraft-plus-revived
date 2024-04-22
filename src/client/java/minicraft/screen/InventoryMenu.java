@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 class InventoryMenu extends ItemListMenu {
 
+	private final RelPos entryPos; // Used for copy constructor
+	private final String title; // Used for copy constructor
 	private final Inventory inv;
 	private final Entity holder;
 	private final boolean creativeInv;
@@ -22,15 +24,19 @@ class InventoryMenu extends ItemListMenu {
 		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
+		this.title = title;
+		this.entryPos = entryPos;
 		this.creativeInv = creativeInv;
 		this.onStackUpdateListener = onStackUpdateListener;
 	}
 
 	InventoryMenu(InventoryMenu model) {
-		super(ItemListMenu.getBuilder(), ItemEntry.useItems(model.inv.getItems()), model.getTitle());
+		super(ItemListMenu.getBuilder(model.entryPos), ItemEntry.useItems(model.inv.getItems()), model.title);
 		this.inv = model.inv;
 		this.holder = model.holder;
 		this.creativeInv = model.creativeInv;
+		this.title = model.title;
+		this.entryPos = model.entryPos;
 		this.onStackUpdateListener = model.onStackUpdateListener;
 		setSelection(model.getSelection());
 	}
