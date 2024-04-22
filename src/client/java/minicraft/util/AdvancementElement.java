@@ -2,6 +2,7 @@ package minicraft.util;
 
 import minicraft.core.World;
 import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.RewardChest;
 import minicraft.item.BoundedInventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -351,16 +352,12 @@ public class AdvancementElement {
 	protected void sendRewards() {
 		if (rewards != null) {
 			ArrayList<Item> items = rewards.getItems();
-			if (items.size() > 0) {
-				Chest chest = new Chest("Rewards");
-				chest.x = World.player.x;
-				chest.y = World.player.y;
-				for (Item item : items) chest.getInventory().add(item);
-				World.levels[World.currentLevel].add(chest);
+			if (!items.isEmpty()) {
+				World.levels[World.currentLevel].add(new RewardChest(items), World.player.x, World.player.y);
 			}
 
 			ArrayList<Recipe> recipes = rewards.getRecipe();
-			if (recipes.size() > 0) {
+			if (!recipes.isEmpty()) {
 				recipes.forEach(CraftingDisplay::unlockRecipe);
 			}
 		}
