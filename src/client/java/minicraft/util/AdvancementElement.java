@@ -2,7 +2,7 @@ package minicraft.util;
 
 import minicraft.core.World;
 import minicraft.entity.furniture.Chest;
-import minicraft.item.Inventory;
+import minicraft.item.BoundedInventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
@@ -927,7 +927,7 @@ public class AdvancementElement {
 					private final ArrayList<Item> items = new ArrayList<>();
 					private final int maxSlots;
 
-					public InventoryChangedTriggerConditions(Inventory inventory) {
+					public InventoryChangedTriggerConditions(BoundedInventory inventory) {
 						items.addAll(inventory.getItems());
 						maxSlots = inventory.getMaxSlots();
 					}

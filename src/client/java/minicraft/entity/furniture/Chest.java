@@ -7,6 +7,7 @@ import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.BoundedInventory;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -19,14 +20,15 @@ import java.util.List;
 import java.util.Random;
 
 public class Chest extends Furniture implements ItemHolder {
-	private Inventory inventory; // Inventory of the chest
+	protected static final LinkedSprite defaultSprite = new LinkedSprite(SpriteType.Item, "chest");
+	protected final Inventory inventory; // Inventory of the chest
 
 	public Chest() {
 		this("Chest");
 	}
 
 	public Chest(String name) {
-		this(name, new LinkedSprite(SpriteType.Item, "chest"));
+		this(name, defaultSprite);
 	}
 
 	/**
@@ -34,9 +36,12 @@ public class Chest extends Furniture implements ItemHolder {
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
-		super(name, new LinkedSprite(SpriteType.Entity, "chest"), itemSprite, 3, 3); // Name of the chest
+		this(new BoundedInventory(), name, itemSprite); // Default with bounded inventory
+	}
 
-		inventory = new Inventory(); // Initialize the inventory.
+	protected Chest(Inventory inventory, String name, LinkedSprite itemSprite) {
+		super(name, new LinkedSprite(SpriteType.Entity, "chest"), itemSprite, 3, 3); // Name of the chest
+		this.inventory = inventory; // Initialize the inventory.
 	}
 
 	/**

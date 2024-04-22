@@ -26,6 +26,7 @@ import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.ArmorItem;
+import minicraft.item.BoundedInventory;
 import minicraft.item.FishingData;
 import minicraft.item.FishingRodItem;
 import minicraft.item.FurnitureItem;
@@ -146,7 +147,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		y = 24;
 		this.input = input;
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
-		inventory = new Inventory() { // Registering all triggers to InventoryChanged.
+		inventory = new BoundedInventory() { // Registering all triggers to InventoryChanged.
 			private void triggerTrigger() {
 				AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions(this)
@@ -176,12 +177,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			@Override
 			public void removeItems(Item given, int count) {
 				super.removeItems(given, count);
-				triggerTrigger();
-			}
-
-			@Override
-			public void updateInv(String items) {
-				super.updateInv(items);
 				triggerTrigger();
 			}
 		};
