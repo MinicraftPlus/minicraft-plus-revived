@@ -1124,6 +1124,7 @@ public class Load {
 			List<String> chestInfo = info.subList(2, info.size() - 1);
 
 			int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
+			ArrayList<Item> chestItems = new ArrayList<>();
 			for (int idx = 0; idx < endIdx; idx++) {
 				String itemData = subOldName(chestInfo.get(idx), worldVer);
 
@@ -1131,7 +1132,13 @@ public class Load {
 				if (itemData.contains("Totem of Wind")) continue;
 
 				Item item = Items.get(itemData);
-				chest.getInventory().add(item);
+				chestItems.add(item);
+			}
+
+			if (newEntity instanceof RewardChest) {
+				newEntity = new RewardChest(chestItems);
+			} else {
+				chestItems.forEach(chest.getInventory()::add);
 			}
 
 			if (isDeathChest) {
@@ -1141,8 +1148,6 @@ public class Load {
 				if (((DungeonChest) chest).isLocked())
 					World.levels[Integer.parseInt(info.get(info.size() - 1))].chestCount++;
 			}
-
-			newEntity = chest;
 		} else if (newEntity instanceof Spawner) {
 			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".") + 1), Integer.parseInt(info.get(3)));
 			if (mob != null)
@@ -1231,6 +1236,8 @@ public class Load {
 				return new DeathChest();
 			case "DungeonChest":
 				return new DungeonChest(null);
+			case "RewardChest":
+				return new RewardChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":
