@@ -166,9 +166,9 @@ public class AdvancementElement {
 	protected boolean unlocked = false;
 
 	public AdvancementElement(String key, String description, Map<String, ElementCriterion> criteria,
-							  @Nullable ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
-							  @NotNull Map<String, ElementCriterion> unlockingCriteria,
-							  @NotNull Set<HashSet<String>> unlockingRequirements) {
+	                          @Nullable ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
+	                          @NotNull Map<String, ElementCriterion> unlockingCriteria,
+	                          @NotNull Set<HashSet<String>> unlockingRequirements) {
 		this.key = key;
 		this.description = description;
 		this.criteria.putAll(criteria);
@@ -208,8 +208,7 @@ public class AdvancementElement {
 
 		/**
 		 * Marking the criterion as completed if it has not already been completed.
-		 *
-		 * @param inLoad         If this is {@code false}, triggers the status updater.
+		 * @param inLoad If this is {@code false}, triggers the status updater.
 		 * @param completionTime The completion time. Using the current datetime if this is {@code null}.
 		 */
 		public void markAsCompleted(boolean inLoad, @Nullable LocalDateTime completionTime) {
@@ -625,7 +624,7 @@ public class AdvancementElement {
 					private final @Nullable Rangeable<Double> y;
 
 					private LocationConditions(Set<String> tiles, @Nullable Integer level, @Nullable Integer data,
-											   @Nullable Rangeable<Double> x, @Nullable Rangeable<Double> y) {
+					                           @Nullable Rangeable<Double> x, @Nullable Rangeable<Double> y) {
 						this.tiles.addAll(tiles);
 						this.level = level;
 						this.data = data;
@@ -767,7 +766,7 @@ public class AdvancementElement {
 			 * Modified from {@link #test(List, List)}.
 			 */
 			private static boolean isConditionalMatched(ArrayList<Item> items,
-														HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
+			                                            HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
 				Set<HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String>> combinations = new HashSet<>();
 				List<List<String>> combinationsOutput = new ArrayList<>();
 				List<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> conditionsList = new ArrayList<>();
@@ -802,7 +801,7 @@ public class AdvancementElement {
 			 * Used by {@link #allMatch(Collection, Collection, HashMap)} for conditional check for each element.
 			 */
 			private static boolean isMatched(Item item, InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions itemConditions,
-											 @Nullable String selectedItem) {
+			                                 @Nullable String selectedItem) {
 				if (!itemConditions.matches(item))
 					return false;
 				return selectedItem == null || item.getName().equalsIgnoreCase(selectedItem);
@@ -812,7 +811,7 @@ public class AdvancementElement {
 			 * Modified from {@link #containsAll(List, List)}.
 			 */
 			private static boolean allMatch(Collection<Item> source, Collection<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> target,
-											HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> selectedItems) {
+			                                HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> selectedItems) {
 				for (Item e : source) {
 					target.removeIf(conditions1 -> isMatched(e, conditions1, selectedItems.get(conditions1)));
 					if (target.isEmpty()) {
@@ -941,7 +940,7 @@ public class AdvancementElement {
 					private final @Nullable Rangeable<Integer> slotsOccupied;
 
 					private InventoryChangedCriterionConditions(Set<ItemConditions> items, @Nullable Rangeable<Integer> slotsEmpty,
-																@Nullable Rangeable<Integer> slotsFull, @Nullable Rangeable<Integer> slotsOccupied) {
+					                                            @Nullable Rangeable<Integer> slotsFull, @Nullable Rangeable<Integer> slotsOccupied) {
 						this.items.addAll(items);
 						this.slotsEmpty = slotsEmpty;
 						this.slotsFull = slotsFull;
@@ -1026,7 +1025,7 @@ public class AdvancementElement {
 					private final @Nullable Integer data;
 
 					private PlacedTileCriterionConditions(@Nullable String tile, @Nullable ItemConditions item,
-														  @Nullable LocationConditions location, @Nullable Integer data) {
+					                                      @Nullable LocationConditions location, @Nullable Integer data) {
 						this.tile = tile;
 						this.item = item;
 						this.location = location;

@@ -72,6 +72,8 @@ public abstract class Tile {
 		return maySpawn;
 	}
 
+	public void onTileSet(Level level, int x, int y) {}
+
 	/**
 	 * Returns if the player can walk on it, overrides in sub-classes
 	 */
@@ -88,12 +90,11 @@ public abstract class Tile {
 
 	/**
 	 * Hurt the tile with a specified amount of damage.
-	 *
-	 * @param level     The level this happened on.
-	 * @param x         X pos of the tile.
-	 * @param y         Y pos of the tile.
-	 * @param source    The mob that damaged the tile.
-	 * @param dmg       Damage to taken.
+	 * @param level The level this happened on.
+	 * @param x X pos of the tile.
+	 * @param y Y pos of the tile.
+	 * @param source The mob that damaged the tile.
+	 * @param dmg Damage to taken.
 	 * @param attackDir The direction of the player hitting.
 	 * @return If the damage was applied.
 	 */
@@ -103,11 +104,10 @@ public abstract class Tile {
 
 	/**
 	 * Hurt the tile with a specified amount of damage.
-	 *
 	 * @param level The level this happened on.
-	 * @param x     X position of the tile.
-	 * @param y     Y position of the tile.
-	 * @param dmg   The damage taken.
+	 * @param x X position of the tile.
+	 * @param y Y position of the tile.
+	 * @param dmg The damage taken.
 	 */
 	public void hurt(Level level, int x, int y, int dmg) {
 	}
@@ -133,12 +133,11 @@ public abstract class Tile {
 
 	/**
 	 * Called when you hit an item on a tile (ex: Pickaxe on rock).
-	 *
-	 * @param level     The level the player is on.
-	 * @param xt        X position of the player in tile coordinates (32x per tile).
-	 * @param yt        Y position of the player in tile coordinates (32px per tile).
-	 * @param player    The player who called this method.
-	 * @param item      The item the player is currently holding.
+	 * @param level The level the player is on.
+	 * @param xt X position of the player in tile coordinates (32x per tile).
+	 * @param yt Y position of the player in tile coordinates (32px per tile).
+	 * @param player The player who called this method.
+	 * @param item The item the player is currently holding.
 	 * @param attackDir The direction of the player attacking.
 	 * @return Was the operation successful?
 	 */
@@ -149,10 +148,9 @@ public abstract class Tile {
 	/**
 	 * Executed when the tile is exploded.
 	 * The call for this method is done just before the tiles are changed to exploded tiles.
-	 *
 	 * @param level The level we are on.
-	 * @param xt    X position of the tile.
-	 * @param yt    Y position of the tile.
+	 * @param xt X position of the tile.
+	 * @param yt Y position of the tile.
 	 * @return true if successful.
 	 */
 	public boolean onExplode(Level level, int xt, int yt) {
@@ -170,7 +168,7 @@ public abstract class Tile {
 
 	/**
 	 * @deprecated This should be planned to be removed as this method is not ideally used.
-	 * The current only usage is in {@link Level#setTile(int, int, String)}.
+	 * 	The current only usage is in {@link Level#setTile(int, int, String)}.
 	 */
 	@Deprecated
 	public int getData(String data) {
@@ -183,7 +181,7 @@ public abstract class Tile {
 
 	/**
 	 * @deprecated Similar to {@link #getData(String)}. Also, param {@code thisData} is unused.
-	 * The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
+	 * 	The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
 	 */
 	@Deprecated
 	public boolean matches(int thisData, String tileInfo) {

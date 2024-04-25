@@ -99,6 +99,7 @@ public final class Tiles {
 		tiles.put((short) 55, new FenceTile(Tile.Material.Stone));
 		tiles.put((short) 56, new FenceTile(Tile.Material.Obsidian));
 		tiles.put((short) 57, new TorchTile());
+		tiles.put((short) 58, new SignTile());
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());

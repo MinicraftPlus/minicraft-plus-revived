@@ -13,6 +13,7 @@ import minicraft.level.tile.FlowerTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +36,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Natural Rock", new LinkedSprite(SpriteType.Item, "stone"), new TileModel("rock"), "hole", "dirt", "sand", "grass", "path", "water", "lava"));
 
 		String[] solidTiles = { "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "Red Wool", "Blue Wool",
-			"Green Wool", "Yellow Wool", "Black Wool", "grass", "sand", "path", "ornate stone", "ornate obsidian" };
+			"Green Wool", "Yellow Wool", "Black Wool", "grass", "sand", "path", "ornate stone", "ornate obsidian", "Raw Obsidian", "Stone" };
 		TileModel.TileDataGetter placeOverWithID = (model1, target, level, xt, yt, player, attackDir) -> target.id;
 
 		items.add(new TileItem("Plank", new LinkedSprite(SpriteType.Item, "plank"), new TileModel("Wood Planks"), "hole", "water", "cloud"));
@@ -72,6 +73,10 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), new TileModel("grass"), "dirt"));
 
 		items.add(new TileItem("Torch", new LinkedSprite(SpriteType.Item, "torch"), new TileModel("Torch", placeOverWithID), solidTiles));
+		items.add(new TileItem("Sign", new LinkedSprite(SpriteType.Item, "sign"), new TileModel("Sign", (model1, target, level, xt, yt, player, attackDir) -> {
+			Game.setDisplay(new SignDisplay(level, xt, yt));
+			return placeOverWithID.getTileData(model1, target, level, xt, yt, player, attackDir);
+		}), solidTiles));
 
 		Function<FlowerTile.FlowerVariant, TileModel.TileDataGetter> flowerModelGenerator = variant -> (model1, target, level, xt, yt, player, attackDir) -> variant.ordinal();
 		items.add(new TileItem("Rose", new LinkedSprite(SpriteType.Item, "rose"), new TileModel("rose", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ROSE)), "grass"));

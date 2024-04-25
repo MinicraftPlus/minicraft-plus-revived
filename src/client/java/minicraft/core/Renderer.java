@@ -29,16 +29,18 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
 import javax.imageio.ImageIO;
 
 import java.awt.Canvas;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
@@ -68,10 +70,11 @@ public class Renderer extends Game {
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
 
-	private static Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
+
+	public static SignDisplayMenu signDisplayMenu = null;
 
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
@@ -83,12 +86,12 @@ public class Renderer extends Game {
 		MinicraftImage skinsSheet;
 		try {
 			// These set the sprites to be used.
-			skinsSheet = new MinicraftImage(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
+			skinsSheet = MinicraftImage.createDefaultCompatible(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
 			return null;
-		} catch (IOException | IllegalArgumentException e) {
+		} catch (IOException | IllegalArgumentException | MinicraftImage.MinicraftImageDimensionIncompatibleException e) {
 			// If there is an error reading the file.
 			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
@@ -98,11 +101,10 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {
-		screen = new Screen();
-		lightScreen = new Screen();
-
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		screen = new Screen(image);
+		//lightScreen = new Screen();
+
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
@@ -114,6 +116,8 @@ public class Renderer extends Game {
 	 */
 	public static void render() {
 		if (screen == null) return; // No point in this if there's no gui... :P
+
+		screen.clear(0);
 
 		if (readyToRenderGameplay) {
 			renderLevel();
@@ -128,8 +132,13 @@ public class Renderer extends Game {
 
 
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
-		Graphics g = bs.getDrawGraphics(); // Gets the graphics in which java draws the picture
-		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Draws a rect to fill the whole window (to cover last?)
+		Graphics2D g = (Graphics2D) bs.getDrawGraphics(); // Gets the graphics in which java draws the picture
+		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Draws a rect to fill the whole window (to cover last?)
+
+
+
+		// Flushes the screen to the renderer.
+		screen.flush();
 
 		// Scale the pixels.
 		int ww = getWindowSize().width;
@@ -160,21 +169,14 @@ public class Renderer extends Game {
 				count++;
 			}
 
-			try { // https://stackoverflow.com/a/4216635
-				int w = image.getWidth();
-				int h = image.getHeight();
-				BufferedImage before = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-				before.getRaster().setRect(image.getData());
-				int scale = (Integer) Settings.get("screenshot");
-				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
-				AffineTransform at = new AffineTransform();
-				at.scale(scale, scale); // Setting the scaling.
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-
-				// Use this solution without larger scales which use up a lot of memory.
-				// With scale 20, up to around 360MB overall RAM use.
-				BufferedImage after = scaleOp.filter(before, null);
-				ImageIO.write(after, "png", file);
+			try {
+				// A blank image as same as the canvas
+				BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+				Graphics2D g2d = img.createGraphics();
+				g2d.drawImage(image, xOffset, yOffset, ww, hh, null); // The same invoke as the one on canvas graphics
+				g2d.dispose();
+				ImageIO.write(img, "png", file);
+				Logging.PLAYER.info("Saved screenshot as {}.", file.getName());
 			} catch (IOException e) {
 				CrashHandler.errorHandle(e);
 			}
@@ -210,10 +212,9 @@ public class Renderer extends Game {
 
 		// This creates the darkness in the caves
 		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength / 4 || Updater.tickCount > Updater.dayLength / 2) && !isMode("minicraft.settings.mode.creative")) {
-			lightScreen.clear(0); // This doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // Brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
-			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
-			screen.overlay(lightScreen, currentLevel, xScroll, yScroll); // Overlays the light screen over the main screen.
+			level.renderLight(screen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
+			screen.overlay(currentLevel, xScroll, yScroll); // Overlays the light screen over the main screen.
 		}
 	}
 
@@ -421,6 +422,7 @@ public class Renderer extends Game {
 
 		TutorialDisplayHandler.render(screen);
 		renderQuestsDisplay();
+		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
 	}
 

@@ -39,6 +39,7 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Point;
 import minicraft.item.ArmorItem;
 import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
@@ -49,9 +50,7 @@ import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.TorchTile;
 import minicraft.network.Network;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
@@ -60,6 +59,7 @@ import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
@@ -80,14 +80,18 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Load {
 
@@ -685,6 +689,13 @@ public class Load {
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 
+			// Tile initialization
+			for (int x = 0; x < curLevel.w; ++x) {
+				for (int y = 0; y < curLevel.h; ++y) {
+					Tiles.get(curLevel.tiles[x + y * curLevel.w]).onTileSet(curLevel, x, y);
+				}
+			}
+
 			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
 			if (parent == null) continue;
@@ -735,6 +746,35 @@ public class Load {
 			TutorialDisplayHandler.reset(false);
 			AdvancementElement.resetRecipeUnlockingElements();
 			QuestsDisplay.resetGameQuests();
+		}
+
+		boolean signsLoadSucceeded = false;
+		if (new File(location+"signs.json").exists()) {
+			try {
+				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
+				@SuppressWarnings("unused")
+				Version dataVersion = new Version(fileObj.getString("Version"));
+				JSONArray dataObj = fileObj.getJSONArray("signs");
+				HashMap<Map.Entry<Integer, Point>, List<String>> signTexts = new HashMap<>();
+				for (int i = 0; i < dataObj.length(); i++) {
+					JSONObject signObj = dataObj.getJSONObject(i);
+					signTexts.put(
+						new AbstractMap.SimpleImmutableEntry<>(signObj.getInt("level"), new Point(signObj.getInt("x"), signObj.getInt("y"))),
+						signObj.getJSONArray("lines").toList().stream().map(e -> (String) e).collect(Collectors.toList())
+					);
+				}
+
+				SignDisplay.loadSignTexts(signTexts);
+				signsLoadSucceeded = true;
+			} catch (IOException e) {
+				Logging.SAVELOAD.error(e, "Unable to load signs.json, reset sign data instead.");
+			}
+		} else {
+			Logging.SAVELOAD.debug("signs.json not found, reset sign data instead.");
+		}
+
+		if (!signsLoadSucceeded) {
+			SignDisplay.resetSignTexts();
 		}
 	}
 
