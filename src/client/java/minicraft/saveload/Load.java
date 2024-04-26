@@ -678,7 +678,7 @@ public class Load {
 						}
 					}
 
-					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
+					loadTile(worldVer, tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -780,14 +780,18 @@ public class Load {
 
 	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
 
-	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+	public static void loadTile(Version worldVer, short[] tiles, short[] data, int idx, String tileName, String tileData) {
 		Matcher matcher;
 		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
 			tiles[idx] = 57; // ID of TORCH tile
 			data[idx] = Tiles.get(matcher.group(1)).id;
 		} else {
 			tiles[idx] = Tiles.get(tileName).id;
-			data[idx] = Short.parseShort(tileData);
+			if (worldVer.compareTo(new Version("2.2.0")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
+				data[idx] = 0;
+			} else {
+				data[idx] = Short.parseShort(tileData);
+			}
 		}
 	}
 
