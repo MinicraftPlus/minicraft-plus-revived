@@ -7,10 +7,6 @@ plugins {
     id 'jacoco'
 }
 
-jacoco {
-    toolVersion = "0.8.7"
-}
-
 test {
     // Enable JaCoCo agent for tests
     jacoco {
@@ -36,10 +32,9 @@ dependencies {
     testImplementation 'org.jacoco:org.jacoco.core:0.8.7'
 
     // Mockito for mocking
+//    testImplementation "org.mockito:mockito-core:4.10.0"
     testImplementation "org.mockito:mockito-inline:4.10.0"
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
 }
 
 test {
@@ -148,16 +143,16 @@ jar {
 }
 
 publishing {
-	repositories {
-		maven {
-			name = "GitHubPackages"
-			url = "https://maven.pkg.github.com/MinicraftPlus/minicraft-plus-revived"
-			credentials {
-				username = System.getenv("GITHUB_ACTOR")
-				password = System.getenv("GITHUB_TOKEN")
-			}
-		}
-	}
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/MinicraftPlus/minicraft-plus-revived"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 // Don't override if we're building a tar package.
