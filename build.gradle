@@ -6,7 +6,7 @@ plugins {
 allprojects {
     apply plugin: "java"
 
-    version = "2.2.0-dev7"
+    version = "2.2.0"
 
     sourceCompatibility = 8
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
