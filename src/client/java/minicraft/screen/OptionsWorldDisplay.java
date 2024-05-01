@@ -1,6 +1,8 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.FileHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 public class OptionsWorldDisplay extends Display {
+	private final boolean prevHwaValue = (boolean) Settings.get("hwa");
+
 	public OptionsWorldDisplay() {
 		super(true);
 
@@ -57,12 +61,30 @@ public class OptionsWorldDisplay extends Display {
 		};
 	}
 
+	@Override
+	public void tick(InputHandler input) {
+		if (!prevHwaValue && (boolean) Settings.get("hwa") && FileHandler.OS.contains("windows") && input.inputPressed("EXIT")) {
+			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+			callbacks.add(new PopupDisplay.PopupActionCallback("SELECT", m -> {
+				Game.exitDisplay(2);
+				return true;
+			}));
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
+				"minicraft.display.options_display.popup.hwa_warning.title", callbacks, 2),
+				"minicraft.display.options_display.popup.hwa_warning.content",
+				"minicraft.display.popup.escape_cancel", "minicraft.display.popup.enter_confirm"));
+			return;
+		}
+
+		super.tick(input);
+	}
+
 	private List<ListEntry> getEntries() {
 		return new ArrayList<>(Arrays.asList(Settings.getEntry("diff"),
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
-			Settings.getEntry("hardwareacc"),
+			Settings.getEntry("hwa"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			new SelectEntry("minicraft.displays.controls", () -> Game.setDisplay(new ControlsDisplay())),
 			new SelectEntry("minicraft.display.options_display.language", () -> Game.setDisplay(new LanguageSettingsDisplay())),

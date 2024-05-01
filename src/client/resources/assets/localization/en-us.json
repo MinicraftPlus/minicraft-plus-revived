@@ -219,6 +219,8 @@
   "minicraft.display.options_display": "Options",
   "minicraft.display.options_display.change_key_bindings": "Change Key Bindings",
   "minicraft.display.options_display.language": "Language",
+  "minicraft.display.options_display.popup.hwa_warning.content": "Possible visual problem might occur if OpenGL Hardware Acceleration is enabled. Please confirm if proceed.",
+  "minicraft.display.options_display.popup.hwa_warning.title": "Warning",
   "minicraft.display.options_display.resource_packs": "Resource packs",
   "minicraft.display.popup.enter_confirm": "Enter to confirm",
   "minicraft.display.popup.escape_cancel": "Escape to cancel",
