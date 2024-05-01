@@ -48,7 +48,7 @@ public class DecorTile extends Tile {
 							throw new IllegalStateException("Unexpected value: " + type);
 					}
 					Sound.play("monsterhurt");
-					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);
+					level.dropItem((xt << 4) + 8, (yt << 4) + 8, drop);
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));
