@@ -100,6 +100,11 @@ public class Game {
 
 		Analytics.GameStartup.ping();
 
+		new Load(true, true); // This loads basic saved preferences.
+		// Reference: https://stackoverflow.com/a/13832805
+		if ((boolean) Settings.get("hwa")) System.setProperty("sun.java2d.opengl", "true");
+		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
+
 		input = new InputHandler(Renderer.canvas);
 
 		ResourcePackDisplay.initPacks();
@@ -116,8 +121,7 @@ public class Game {
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
-		new Load(true); // This loads any saved preferences.
-		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
+		new Load(true, false); // This loads any saved preferences.
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {

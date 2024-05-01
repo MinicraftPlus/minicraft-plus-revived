@@ -206,6 +206,7 @@ public class Save {
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
 		json.put("resourcePacks", new JSONArray(ResourcePackDisplay.getLoadedPacks()));
 		json.put("showquests", String.valueOf(Settings.get("showquests")));
+		json.put("hwa", String.valueOf(Settings.get("hwa")));
 
 		// Save json
 		try {
