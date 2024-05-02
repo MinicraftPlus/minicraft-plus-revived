@@ -14,10 +14,20 @@ import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Game {
 	protected Game() {
@@ -25,7 +35,7 @@ public class Game {
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
-	public static final Version VERSION = new Version("2.2.0");
+	public static final GameVersion VERSION;
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -91,10 +101,29 @@ public class Game {
 		running = false;
 	}
 
-
-	public static void main(String[] args) {
+	static {
 		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
 
+		InputStream is = Game.class.getResourceAsStream("/profile.meta.json");
+		if (is == null)
+			throw new IllegalStateException("Malformed application setup");
+
+		JSONObject meta = new JSONObject(new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n")));
+		JSONObject packVersion = meta.getJSONObject("pack_version");
+
+		VERSION = new GameVersion(meta.getString("id"), meta.getInt("world_version"),
+			packVersion.getInt("resource"), packVersion.getInt("data"), meta.getBoolean("stable"),
+			meta.getBoolean("use_editor"), meta.getString("series_id"),
+			LocalDateTime.parse(meta.getString("build_time"), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
+		try {
+			is.close();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	public static void main(String[] args) {
 		Initializer.parseArgs(args); // Parses the command line arguments
 		// Applying Game#debug first.
 
