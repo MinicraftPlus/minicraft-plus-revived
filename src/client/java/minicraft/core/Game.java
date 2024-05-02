@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class Game {
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
-	public static final Version VERSION;
+	public static final GameVersion VERSION;
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -107,8 +109,12 @@ public class Game {
 			throw new IllegalStateException("Malformed application setup");
 
 		JSONObject meta = new JSONObject(new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n")));
+		JSONObject packVersion = meta.getJSONObject("pack_version");
 
-		VERSION = new Version(meta.getString("version"));
+		VERSION = new GameVersion(meta.getString("id"), meta.getInt("world_version"),
+			packVersion.getInt("resource"), packVersion.getInt("data"), meta.getBoolean("stable"),
+			meta.getBoolean("use_editor"), meta.getString("series_id"),
+			LocalDateTime.parse(meta.getString("build_time"), DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
 		try {
 			is.close();

@@ -1,4 +1,8 @@
 import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 plugins {
     id 'application'
@@ -10,7 +14,12 @@ allprojects {
     Properties profile = new Properties()
     profile.load(new FileInputStream(new File(rootDir, "game_profile.conf")))
 
-    version = profile.getProperty("version")
+    ext.id = profile.getProperty("id")
+    ext.stable = Boolean.parseBoolean(profile.getProperty("stable"))
+    ext.branch = profile.getProperty("branch")
+    ext.packVersionResource = Integer.parseInt(profile.getProperty("pack_version_resource"))
+    ext.packVersionData = Integer.parseInt(profile.getProperty("pack_version_data"))
+    ext.worldVersion = Integer.parseInt(profile.getProperty("world_version"))
 
     sourceCompatibility = 8
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -49,9 +58,13 @@ project(":client") {
     File genDir = new File(project.buildDir, "tmp/generatedResources/")
     genDir.mkdirs()
     JsonBuilder json = new JsonBuilder()
-    json {
-        version version
-    }
+    json id: ext.id,
+            use_editor: false,
+            build_time: LocalDateTime.now().withNano(0).atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+            stable: ext.stable,
+            branch: ext.branch,
+            world_version: ext.worldVersion,
+            pack_version: [ resource: ext.packVersionResource, data: ext.packVersionData ]
     File metaFile = new File(genDir.toString(), "profile.meta.json")
     metaFile.text = json.toString()
     processResources {
@@ -122,4 +135,13 @@ tasks.withType(Tar) {
 }
 tasks.withType(Zip) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+// Please configure this in editor run configuration manually for this to work.
+// This should run before build
+project(":client").tasks.register('configEditor') {
+    File metaFile = new File(project.buildDir, "tmp/generatedResources/profile.meta.json")
+    def obj = new JsonSlurper().parse(new File(project.buildDir, "tmp/generatedResources/profile.meta.json"))
+    obj.use_editor = true
+    metaFile.text = new JsonBuilder(obj).toString()
 }
