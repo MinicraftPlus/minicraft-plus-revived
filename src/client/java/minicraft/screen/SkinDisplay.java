@@ -22,14 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.imageio.ImageIO;
 import javax.security.auth.DestroyFailedException;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -197,7 +194,10 @@ public class SkinDisplay extends Display {
 			String skinPath = file.getName();
 			String name = skinPath.substring(0, skinPath.length() - 4);
 			if (file.exists()) try {
-				MinicraftImage sheet = new MinicraftImage(ImageIO.read(new FileInputStream(file)), 64, 32);
+				BufferedImage img = ImageIO.read(Files.newInputStream(file.toPath()));
+				MinicraftImage.validateImageDimension(img);
+				MinicraftImage.validateImageDimension(img, 64, 32);
+				MinicraftImage sheet = new MinicraftImage(img, 64, 32);
 				Renderer.spriteLinker.setSkin("skin." + name, sheet);
 				skins.put(name, Mob.compileMobSpriteAnimations(0, 0, "skin." + name));
 			} catch (IOException e) {
@@ -205,7 +205,14 @@ public class SkinDisplay extends Display {
 			} catch (SecurityException e) {
 				Logging.RESOURCEHANDLER_SKIN.error("Access to file located at {} was denied. Check if game is given permission.", skinPath);
 			}
-			else {
+			catch (MinicraftImage.MinicraftImageRequestOutOfBoundsException e) {
+				Logging.RESOURCEHANDLER_SKIN.warn("Potentially incompatible image at {}:\n" +
+					"Source: width {}; height {}\nRequested: width {}; height {}", skinPath,
+					e.getSourceWidth(), e.getSourceHeight(), e.getRequestedWidth(), e.getRequestedHeight());
+			} catch (MinicraftImage.MinicraftImageDimensionIncompatibleException e) {
+				Logging.RESOURCEHANDLER_SKIN.warn("Potentially incompatible image at {}:\n" +
+					"Source: width {}; height {}", skinPath, e.getWidth(), e.getHeight());
+			} else {
 				Renderer.spriteLinker.setSkin("skin." + name, null);
 				if (skins.containsKey(name)) for (LinkedSprite[] a : skins.remove(name)) {
 					for (LinkedSprite b : a) {

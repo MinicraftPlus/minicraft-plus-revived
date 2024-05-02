@@ -24,7 +24,7 @@ import minicraft.util.AdvancementElement;
 
 public class RockTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
-		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class)
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof RockTile)
 		.setSingletonWithConnective(true);
 
 	private boolean dropCoal = false;

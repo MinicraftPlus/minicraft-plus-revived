@@ -39,7 +39,7 @@ public class PauseDisplay extends Display {
 			new SelectEntry("minicraft.displays.pause.menu", () -> {
 				ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines("minicraft.displays.pause.display.exit_popup.0")));
 
-				items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, Localization.getLocalized("minicraft.displays.pause.display.exit_popup.1"))));
+				items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, "minicraft.displays.pause.display.exit_popup.1")));
 				items.add(new BlankEntry());
 				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.cancel", Game::exitDisplay));
 				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.quit", () -> {
@@ -52,11 +52,11 @@ public class PauseDisplay extends Display {
 
 			new BlankEntry(),
 
-			new StringEntry(upString, Color.GRAY),
-			new StringEntry(selectString, Color.GRAY)
+			new StringEntry(upString, Color.GRAY, false),
+			new StringEntry(selectString, Color.GRAY, false)
 		));
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle("minicraft.displays.pause", Color.YELLOW)
 				.createMenu()
