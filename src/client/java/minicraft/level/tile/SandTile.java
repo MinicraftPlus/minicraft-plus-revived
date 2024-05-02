@@ -18,13 +18,17 @@ import minicraft.util.AdvancementElement;
 
 public class SandTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sand")
-		.setConnectChecker((tile, side) -> !side || tile.connectsToSand)
+		.setConnectionChecker((level, x, y, tile, side) -> !side || tile.connectsToSand(level, x, y))
 		.setSingletonWithConnective(true);
 
 	protected SandTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {

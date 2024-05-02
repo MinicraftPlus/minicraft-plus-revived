@@ -58,7 +58,7 @@ public class EndGameDisplay extends Display {
 
 		entries.add(new SelectEntry("minicraft.displays.end_game.exit", () -> Game.setDisplay(new TitleDisplay())));
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(true, 0, RelPos.LEFT, entries).createMenu()
 		};
 	}

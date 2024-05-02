@@ -55,7 +55,6 @@ public class WoolTile extends Tile {
 
 		/**
 		 * Create a type of wool.
-		 *
 		 * @param sprite The sprite for the type of wool.
 		 */
 		WoolType(String name, SpriteAnimation sprite) {
