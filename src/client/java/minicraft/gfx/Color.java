@@ -64,7 +64,7 @@ public class Color {
 	}
 
 	public static String toStringCode(int color) {
-		return new String(new char[]{
+		return new String(new char[] {
 			Color.COLOR_CHAR,
 			(char) ((color >> 24) & 0xFF), // Alpha
 			(char) ((color >> 16) & 0xFF), // Red
@@ -143,7 +143,7 @@ public class Color {
 			d = unGet(d);
 		} // Else, they are rgbByte
 
-		return new int[]{a, b, c, d};
+		return new int[] { a, b, c, d };
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class Color {
 		int r = (rgbByte / 36) % 6;
 		int g = (rgbByte / 6) % 6;
 		int b = rgbByte % 6;
-		return new int[]{r, g, b};
+		return new int[] { r, g, b };
 	}
 
 	public static int unGet(int rgbByte) { // rgbByte -> rgbReadable
@@ -183,7 +183,20 @@ public class Color {
 		int g = (rgbInt & 0x00_FF_00) >> 8;
 		int b = (rgbInt & 0x00_00_FF);
 
-		return new int[]{r, g, b};
+		return new int[] { r, g, b };
+	}
+
+	/**
+	 * Gets the lightness of the given 24-bit RGB color value.
+	 * This is strictly calculated by L from RGB to HSL conversion.
+	 * For other formula and method reference: https://stackoverflow.com/a/56678483.
+	 * @return lightness, from 0 to 1 floating point number
+	 */
+	public static float getLightnessFromRGB(int color) {
+		int r = (color >> 16) & 0xFF;
+		int g = (color >> 8) & 0xFF;
+		int b = color & 0xFF;
+		return (Math.max(Math.max(r, g), b) + Math.min(Math.min(r, g), b)) / 510f;
 	}
 
 	/// This is for color testing.

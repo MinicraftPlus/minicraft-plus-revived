@@ -1,6 +1,5 @@
 package minicraft.item;
 
-import minicraft.entity.furniture.Furniture;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +19,6 @@ public class Inventory {
 
 	/**
 	 * Returns all the items which are in this inventory.
-	 *
 	 * @return ArrayList containing all the items in the inventory.
 	 */
 	public List<Item> getItems() {
@@ -37,7 +35,6 @@ public class Inventory {
 
 	/**
 	 * Get one item in this inventory.
-	 *
 	 * @param idx The index of the item in the inventory's item array.
 	 * @return The specified item.
 	 */
@@ -47,7 +44,6 @@ public class Inventory {
 
 	/**
 	 * Remove an item in this inventory.
-	 *
 	 * @param idx The index of the item in the inventory's item array.
 	 * @return The removed item.
 	 */
@@ -66,9 +62,8 @@ public class Inventory {
 
 	/**
 	 * Adds several copies of the same item to the end of the inventory.
-	 *
 	 * @param item Item to be added.
-	 * @param num  Amount of items to add.
+	 * @param num Amount of items to add.
 	 */
 	public int add(Item item, int num) {
 		int total = 0;
@@ -79,7 +74,6 @@ public class Inventory {
 
 	/**
 	 * Adds an item to a specific spot in the inventory.
-	 *
 	 * @param slot Index to place item at.
 	 * @param item Item to be added.
 	 * @return The number of items added.
@@ -196,7 +190,6 @@ public class Inventory {
 
 	/**
 	 * Removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack.
-	 *
 	 * @param given Item to remove.
 	 * @param count Max amount of the item to remove.
 	 */
@@ -240,7 +233,6 @@ public class Inventory {
 	/**
 	 * Generates a string representation of all the items in the inventory which can be sent
 	 * over the network.
-	 *
 	 * @return String representation of all the items in the inventory.
 	 */
 	public String getItemData() {
@@ -256,7 +248,6 @@ public class Inventory {
 
 	/**
 	 * Replaces all the items in the inventory with the items in the string.
-	 *
 	 * @param items String representation of an inventory.
 	 */
 	public void updateInv(String items) {
@@ -270,13 +261,12 @@ public class Inventory {
 
 	/**
 	 * Tries to add an item to the inventory.
-	 *
 	 * @param random The {@code Random} number generator.
-	 * @param chance       Chance for the item to be added.
-	 * @param item         Item to be added.
-	 * @param num          How many of the item.
+	 * @param chance Chance for the item to be added.
+	 * @param item Item to be added.
+	 * @param num How many of the item.
 	 * @param allOrNothing if true, either all items will be added or none, if false its possible to add
-	 *                     between 0-num items.
+	 * 	between 0-num items.
 	 */
 	public void tryAdd(Random random, int chance, Item item, int num, boolean allOrNothing) {
 		if (!allOrNothing || random.nextInt(chance) == 0)

@@ -51,7 +51,7 @@ import java.util.function.ToIntFunction;
 public class Level {
 	private final Random random;
 
-	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
+	private static final String[] levelNames = { "Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon" };
 
 	public static String getLevelName(int depth) {
 		return levelNames[-1 * depth + 1];
@@ -559,11 +559,13 @@ public class Level {
 
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
-		int id = tiles[x + y * w];
-		if (id < 0) id += 256;
-		return Tiles.get(id);
+		return Tiles.get(tiles[x + y * w]);
 	}
 
+	/**
+	 * @deprecated Currently unused, but this should be prevented being used.
+	 */
+	@Deprecated
 	public void setTile(int x, int y, String tilewithdata) {
 		if (!tilewithdata.contains("_")) {
 			setTile(x, y, Tiles.get(tilewithdata));
@@ -583,6 +585,7 @@ public class Level {
 
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (short) dataVal;
+		t.onTileSet(this, x, y);
 	}
 
 	public int getData(int x, int y) {
@@ -714,7 +717,6 @@ public class Level {
 
 	/**
 	 * Get entities in a certain area on the level.
-	 *
 	 * @param xt0 Left
 	 * @param yt0 Top
 	 * @param xt1 Right
@@ -726,12 +728,11 @@ public class Level {
 
 	/**
 	 * Get entities in a certain area on the level, and filter them by class.
-	 *
-	 * @param xt0           Left
-	 * @param yt0           Top
-	 * @param xt1           Right
-	 * @param yt1           Bottom
-	 * @param includeGiven  If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
+	 * @param xt0 Left
+	 * @param yt0 Top
+	 * @param xt1 Right
+	 * @param yt1 Bottom
+	 * @param includeGiven If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
 	 * @param entityClasses Entities to accept.
 	 * @return A list of entities in the area.
 	 */
@@ -763,7 +764,6 @@ public class Level {
 
 	/**
 	 * Check if there is an entity on the specified tile.
-	 *
 	 * @param x The x position of the tile.
 	 * @param y The y position of the tile
 	 * @return True if there is an entity on the tile.
@@ -837,18 +837,17 @@ public class Level {
 
 	/**
 	 * Calculates maximum position can be reached by an entity with the front boundary of hit box by tile hit box.
-	 *
-	 * @param sgn                    One-dimensional direction of displacement
-	 * @param d                      Displacement vector
-	 * @param hitBoxLeft             The left boundary of hit box
-	 * @param hitBoxRight            The right boundary of hit box
-	 * @param hitBoxFront            The front boundary of hit box
+	 * @param sgn One-dimensional direction of displacement
+	 * @param d Displacement vector
+	 * @param hitBoxLeft The left boundary of hit box
+	 * @param hitBoxRight The right boundary of hit box
+	 * @param hitBoxFront The front boundary of hit box
 	 * @param frontTilePassableCheck The check of whether the front boundary of hit box hits the tile hit box;
-	 *                               the first parameter takes the front tile position and second one takes the horizontal position
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return The maximum front position can be reached by tile hit box check
 	 */
 	public static int calculateMaxFrontClosestTile(int sgn, int d, int hitBoxLeft, int hitBoxRight, int hitBoxFront,
-												   BiPredicate<Integer, Integer> frontTilePassableCheck) {
+	                                               BiPredicate<Integer, Integer> frontTilePassableCheck) {
 		int hitBoxFront1 = hitBoxFront + d; // After maximum movement
 		int hitBoxLeftTile = hitBoxLeft >> 4;
 		int hitBoxRightTile = hitBoxRight >> 4;

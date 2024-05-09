@@ -39,6 +39,7 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Point;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -57,6 +58,7 @@ import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
@@ -77,12 +79,18 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Load {
 
@@ -665,8 +673,7 @@ public class Load {
 						}
 					}
 
-					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -676,6 +683,13 @@ public class Load {
 			Level curLevel = World.levels[lvlidx];
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
+
+			// Tile initialization
+			for (int x = 0; x < curLevel.w; ++x) {
+				for (int y = 0; y < curLevel.h; ++y) {
+					Tiles.get(curLevel.tiles[x + y * curLevel.w]).onTileSet(curLevel, x, y);
+				}
+			}
 
 			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
@@ -727,6 +741,48 @@ public class Load {
 			TutorialDisplayHandler.reset(false);
 			AdvancementElement.resetRecipeUnlockingElements();
 			QuestsDisplay.resetGameQuests();
+		}
+
+		boolean signsLoadSucceeded = false;
+		if (new File(location+"signs.json").exists()) {
+			try {
+				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
+				@SuppressWarnings("unused")
+				Version dataVersion = new Version(fileObj.getString("Version"));
+				JSONArray dataObj = fileObj.getJSONArray("signs");
+				HashMap<Map.Entry<Integer, Point>, List<String>> signTexts = new HashMap<>();
+				for (int i = 0; i < dataObj.length(); i++) {
+					JSONObject signObj = dataObj.getJSONObject(i);
+					signTexts.put(
+						new AbstractMap.SimpleImmutableEntry<>(signObj.getInt("level"), new Point(signObj.getInt("x"), signObj.getInt("y"))),
+						signObj.getJSONArray("lines").toList().stream().map(e -> (String) e).collect(Collectors.toList())
+					);
+				}
+
+				SignDisplay.loadSignTexts(signTexts);
+				signsLoadSucceeded = true;
+			} catch (IOException e) {
+				Logging.SAVELOAD.error(e, "Unable to load signs.json, reset sign data instead.");
+			}
+		} else {
+			Logging.SAVELOAD.debug("signs.json not found, reset sign data instead.");
+		}
+
+		if (!signsLoadSucceeded) {
+			SignDisplay.resetSignTexts();
+		}
+	}
+
+	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
+
+	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+		Matcher matcher;
+		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
+			tiles[idx] = 57; // ID of TORCH tile
+			data[idx] = Tiles.get(matcher.group(1)).id;
+		} else {
+			tiles[idx] = Tiles.get(tileName).id;
+			data[idx] = Short.parseShort(tileData);
 		}
 	}
 
