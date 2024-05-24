@@ -343,8 +343,8 @@ public class Level {
 						}
 					}
 					if (d.x == 0 && d.y == 0) {
-						d.x = x2 * 16 - 8;
-						d.y = y2 * 16 - 8;
+						d.x = (x2 << 4) - 8;
+						d.y = (y2 << 4) - 8;
 					}
 
 					add(d);
@@ -541,7 +541,7 @@ public class Level {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
 
 				int lr = getTile(x, y).getLightRadius(this, x, y);
-				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * brightness);
+				if (lr > 0) screen.renderLight((x << 4) + 8, (y << 4) + 8, lr * brightness);
 			}
 		}
 		screen.setOffset(0, 0);
@@ -610,8 +610,8 @@ public class Level {
 	public void add(Entity entity, int x, int y, boolean tileCoords) {
 		if (entity == null) return;
 		if (tileCoords) {
-			x = x * 16 + 8;
-			y = y * 16 + 8;
+			x = (x << 4) + 8;
+			y = (y << 4) + 8;
 		}
 		entity.setLevel(this, x, y);
 
@@ -983,8 +983,8 @@ public class Level {
 					if (xaxis2) {
 						for (int s2 = x3; s2 < w - s2; s2++) {
 							if (getTile(s2, y3) == Tiles.get("rock")) {
-								sp.x = s2 * 16 - 24;
-								sp.y = y3 * 16 - 24;
+								sp.x = (s2 << 4) - 24;
+								sp.y = (y3 << 4) - 24;
 							}
 						}
 					} else {
@@ -1001,23 +1001,23 @@ public class Level {
 						sp.y = y3 * 16 - 8;
 					}
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("rock")) {
+						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
 					}
 
-					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+					Structure.mobDungeonCenter.draw(this, sp.x >> 4, sp.y >> 4);
 
-					if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+					if (getTile(sp.x >> 4, (sp.y >> 4) - 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonNorth.draw(this, sp.x >> 4, (sp.y >> 4) - 5);
 					}
-					if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+					if (getTile(sp.x >> 4, (sp.y >> 4) + 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonSouth.draw(this, sp.x >> 4, (sp.y >> 4) + 5);
 					}
-					if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+					if (getTile((sp.x >> 4) + 4, sp.y >> 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonEast.draw(this, (sp.x >> 4) + 5, sp.y >> 4);
 					}
-					if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
+					if (getTile((sp.x >> 4) - 4, sp.y >> 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonWest.draw(this, (sp.x >> 4) - 5, sp.y >> 4);
 					}
 
 					add(sp);
@@ -1072,11 +1072,11 @@ public class Level {
 						sp.y = y3 * 16 - 8;
 					}
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("Obsidian Wall")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("Obsidian Wall")) {
+						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
 					}
 
-					Structure.dungeonSpawner.draw(this, sp.x / 16, sp.y / 16);
+					Structure.dungeonSpawner.draw(this, sp.x >> 4, sp.y >> 4);
 
 					add(sp);
 					for (int rpt = 0; rpt < 2; rpt++) {
