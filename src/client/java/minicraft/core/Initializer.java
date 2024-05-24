@@ -63,13 +63,9 @@ public class Initializer extends Game {
 				Localization.isDebugLocaleEnabled = true;
 			} else if (args[i].equalsIgnoreCase("--debug-unloc-tracing")) {
 				Localization.unlocalizedStringTracing = true;
-			} else if (args[i].equalsIgnoreCase("--no-hardware-acceleration")) {
-				enableHardwareAcceleration = false;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
-		// Reference: https://stackoverflow.com/a/13832805
-		if (enableHardwareAcceleration) System.setProperty("sun.java2d.opengl", "true");
 
 		FileHandler.determineGameDir(saveDir);
 	}
