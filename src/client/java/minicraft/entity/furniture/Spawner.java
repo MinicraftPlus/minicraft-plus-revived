@@ -38,7 +38,7 @@ public class Spawner extends Furniture {
 
 	private final Random rnd = new Random();
 
-	private static final int ACTIVE_RADIUS = 8 * 16;
+	private static final int ACTIVE_RADIUS = 8 << 4;
 	private static final int minSpawnInterval = 200, maxSpawnInterval = 500;
 	private static final int minMobSpawnChance = 10; // 1 in minMobSpawnChance chance of calling trySpawn every interval.
 
