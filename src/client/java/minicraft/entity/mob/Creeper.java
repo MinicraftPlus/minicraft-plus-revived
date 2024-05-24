@@ -18,10 +18,10 @@ import java.util.List;
 
 public class Creeper extends EnemyMob {
 	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
-		new LinkedSprite[][] {Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "creeper")},
-		new LinkedSprite[][] {Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "creeper")},
-		new LinkedSprite[][] {Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "creeper")},
-		new LinkedSprite[][] {Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "creeper")}
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "creeper") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "creeper") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "creeper") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "creeper") }
 	};
 
 	private static final int MAX_FUSE_TIME = 60;
@@ -47,7 +47,8 @@ public class Creeper extends EnemyMob {
 	public void tick() {
 		super.tick();
 
-		if (Game.isMode("minicraft.settings.mode.creative")) return; // Creeper should not explode if player is in creative mode
+		if (Game.isMode("minicraft.settings.mode.creative"))
+			return; // Creeper should not explode if player is in creative mode
 
 		if (fuseTime > 0) {
 			fuseTime--; // Fuse getting shorter...

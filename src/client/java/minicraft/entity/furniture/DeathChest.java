@@ -22,7 +22,9 @@ public class DeathChest extends Chest {
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // What direction the red shade (redtick) is changing.
-	private Inventory inventory = new Inventory() {{ unlimited = true; }}; // Implement the inventory locally instead.
+	private Inventory inventory = new Inventory() {{
+		unlimited = true;
+	}}; // Implement the inventory locally instead.
 
 	/**
 	 * Creates a custom chest with the name Death Chest
@@ -33,11 +35,11 @@ public class DeathChest extends Chest {
 
 		/// Set the expiration time based on the world difficulty.
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
-			time = 300*Updater.normSpeed;
+			time = 450 * Updater.normSpeed;
 		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
-			time = 120*Updater.normSpeed;
+			time = 300 * Updater.normSpeed;
 		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
-			time = 30*Updater.normSpeed;
+			time = 150 * Updater.normSpeed;
 		}
 	}
 
@@ -86,20 +88,23 @@ public class DeathChest extends Chest {
 	public void render(Screen screen) {
 		super.render(screen);
 		String timeString = (time / Updater.normSpeed) + "S";
-		Font.draw(timeString, screen, x - Font.textWidth(timeString)/2, y - Font.textHeight() - getBounds().getHeight()/2, Color.WHITE);
+		Font.draw(timeString, screen, x - Font.textWidth(timeString) / 2, y - Font.textHeight() - getBounds().getHeight() / 2, Color.WHITE);
 	}
 
-	public boolean use(Player player) { return false; } // can't open it, just walk into it.
+	public boolean use(Player player) {
+		return false;
+	} // can't open it, just walk into it.
 
-	public void take(Player player) {} // can't grab a death chest.
+	public void take(Player player) {
+	} // can't grab a death chest.
 
 	@Override
 	public void touchedBy(Entity other) {
-		if(other instanceof Player) {
-			Inventory playerInv = ((Player)other).getInventory();
+		if (other instanceof Player) {
+			Inventory playerInv = ((Player) other).getInventory();
 			for (Item i : inventory.getItems()) {
 				int total = 1;
-				if (i instanceof StackableItem) total = ((StackableItem)i).count;
+				if (i instanceof StackableItem) total = ((StackableItem) i).count;
 
 				int returned = playerInv.add(i);
 				if (returned < total) {

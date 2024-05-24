@@ -12,6 +12,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
+import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -51,21 +52,21 @@ public class Tnt extends Furniture {
 				// Blow up
 				List<Entity> entitiesInRange = level.getEntitiesInRect(new Rectangle(x, y, BLAST_RADIUS * 2, BLAST_RADIUS * 2, Rectangle.CENTER_DIMS));
 
-				for (Entity e: entitiesInRange) {
-					 float dist = (float) Math.hypot(e.x - x, e.y - y);
-					 int dmg = (int) (BLAST_DAMAGE * (1 - (dist / BLAST_RADIUS))) + 1;
-					 if (e instanceof Mob && dmg > 0)
-						((Mob)e).onExploded(this, dmg);
+				for (Entity e : entitiesInRange) {
+					float dist = (float) Math.hypot(e.x - x, e.y - y);
+					int dmg = (int) (BLAST_DAMAGE * (1 - (dist / BLAST_RADIUS))) + 1;
+					if (e instanceof Mob && dmg > 0)
+						((Mob) e).onExploded(this, dmg);
 
-					 // Ignite other bombs in range.
-					 if (e instanceof Tnt) {
-						 Tnt tnt = (Tnt) e;
-						 if (!tnt.fuseLit) {
-							 tnt.fuseLit = true;
-							 Sound.play("fuse");
-							 tnt.ftik = FUSE_TIME * 2 / 3;
-						 }
-					 }
+					// Ignite other bombs in range.
+					if (e instanceof Tnt) {
+						Tnt tnt = (Tnt) e;
+						if (!tnt.fuseLit) {
+							tnt.fuseLit = true;
+							Sound.play("fuse");
+							tnt.ftik = FUSE_TIME * 2 / 3;
+						}
+					}
 				}
 
 				int xt = x >> 4;
@@ -91,7 +92,7 @@ public class Tnt extends Furniture {
 	@Override
 	public void render(Screen screen) {
 		if (fuseLit) {
-			int colFctr = 100 * ((ftik%15)/5) + 200;
+			int colFctr = 100 * ((ftik % 15) / 5) + 200;
 			col = Color.get(-1, colFctr, colFctr + 100, 555);
 		}
 		super.render(screen);
@@ -99,10 +100,16 @@ public class Tnt extends Furniture {
 
 	@Override
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
-		if (!fuseLit) {
-			fuseLit = true;
-			Sound.play("fuse");
-			return true;
+		if (heldItem instanceof PowerGloveItem) {
+			if (!fuseLit) {
+				return super.interact(player, heldItem, attackDir);
+			}
+		} else {
+			if (!fuseLit) {
+				fuseLit = true;
+				Sound.play("fuse");
+				return true;
+			}
 		}
 
 		return false;

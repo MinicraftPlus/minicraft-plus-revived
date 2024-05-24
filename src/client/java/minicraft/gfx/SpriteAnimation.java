@@ -15,9 +15,10 @@ import javax.security.auth.Destroyable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.BiFunction;
 
-/** This is not applicable for mob sprite animations. Only for generic sprite animations. */
+/**
+ * This is not applicable for mob sprite animations. Only for generic sprite animations.
+ */
 public class SpriteAnimation implements Destroyable {
 	private static final ArrayList<SpriteAnimation> spriteAnimations = new ArrayList<>();
 	private static final HashMap<String, SpriteMeta> metas = new HashMap<>();
@@ -34,7 +35,9 @@ public class SpriteAnimation implements Destroyable {
 		return metas.get(key);
 	}
 
-	/** Refreshing all currently registered animations. */
+	/**
+	 * Refreshing all currently registered animations.
+	 */
 	public static void refreshAnimations() {
 		spriteAnimations.forEach(a -> a.refreshAnimation(metas.get(a.key)));
 	}
@@ -50,7 +53,7 @@ public class SpriteAnimation implements Destroyable {
 	// Border settings.
 	private LinkedSprite border = null;
 	private LinkedSprite corner = null;
-	private BiFunction<Tile, Boolean, Boolean> connectChecker;
+	private TileConnectionChecker connectionChecker;
 	private boolean singletonWithConnective = false;
 
 	// Refreshing only data.
@@ -62,7 +65,10 @@ public class SpriteAnimation implements Destroyable {
 	 * @param type The sprite category.
 	 * @param key The sprite resource key.
 	 */
-	public SpriteAnimation(SpriteType type, String key) { this(metas.get(key), type, key); }
+	public SpriteAnimation(SpriteType type, String key) {
+		this(metas.get(key), type, key);
+	}
+
 	/**
 	 * Constructing animations with the provided metadata and key. It should already be validated.
 	 * @param meta The metadata of the sprite sheet.
@@ -77,13 +83,18 @@ public class SpriteAnimation implements Destroyable {
 		spriteAnimations.add(this);
 	}
 
+	@FunctionalInterface
+	public interface TileConnectionChecker {
+		boolean check(Level level, int x, int y, Tile tile, boolean side);
+	}
+
 	/**
 	 * Setting the tile class of this animation used for tile connector rendering.
-	 * @param connectChecker The tile connection checker.
+	 * @param connectionChecker The tile connection checker.
 	 * @return The instance itself.
 	 */
-	public SpriteAnimation setConnectChecker(BiFunction<Tile, Boolean, Boolean> connectChecker) {
-		this.connectChecker = connectChecker;
+	public SpriteAnimation setConnectionChecker(TileConnectionChecker connectionChecker) {
+		this.connectionChecker = connectionChecker;
 		return this;
 	}
 
@@ -187,16 +198,16 @@ public class SpriteAnimation implements Destroyable {
 	 */
 	public void render(Screen screen, Level level, int x, int y) {
 		// If border and the tile class is set.
-		if (connectChecker != null && (border != null || corner != null)) {
-			boolean u = connectChecker.apply(level.getTile(x, y - 1), true);
-			boolean d = connectChecker.apply(level.getTile(x, y + 1), true);
-			boolean l = connectChecker.apply(level.getTile(x - 1, y), true);
-			boolean r = connectChecker.apply(level.getTile(x + 1, y), true);
+		if (connectionChecker != null && (border != null || corner != null)) {
+			boolean u = connectionChecker.check(level, x, y - 1, level.getTile(x, y - 1), true);
+			boolean d = connectionChecker.check(level, x, y + 1, level.getTile(x, y + 1), true);
+			boolean l = connectionChecker.check(level, x - 1, y, level.getTile(x - 1, y), true);
+			boolean r = connectionChecker.check(level, x + 1, y, level.getTile(x + 1, y), true);
 
-			boolean ul = connectChecker.apply(level.getTile(x - 1, y - 1), false);
-			boolean dl = connectChecker.apply(level.getTile(x - 1, y + 1), false);
-			boolean ur = connectChecker.apply(level.getTile(x + 1, y - 1), false);
-			boolean dr = connectChecker.apply(level.getTile(x + 1, y + 1), false);
+			boolean ul = connectionChecker.check(level, x - 1, y - 1, level.getTile(x - 1, y - 1), false);
+			boolean dl = connectionChecker.check(level, x - 1, y + 1, level.getTile(x - 1, y + 1), false);
+			boolean ur = connectionChecker.check(level, x + 1, y - 1, level.getTile(x + 1, y - 1), false);
+			boolean dr = connectionChecker.check(level, x + 1, y + 1, level.getTile(x + 1, y + 1), false);
 
 			x = x << 4;
 			y = y << 4;
@@ -266,14 +277,16 @@ public class SpriteAnimation implements Destroyable {
 		}
 	}
 
-	/** Refreshing the animation data for this instance. */
+	/**
+	 * Refreshing the animation data for this instance.
+	 */
 	public void refreshAnimation(SpriteMeta metadata) {
 		frame = 0;
 		frametick = 0;
 		this.metadata = metadata;
 		MinicraftImage sheet = Renderer.spriteLinker.getSheet(type, key);
 		if (sheet == null) {
-			animations = new LinkedSprite[] {SpriteLinker.missingTexture(type)};
+			animations = new LinkedSprite[] { SpriteLinker.missingTexture(type) };
 			border = null;
 			corner = null;
 			return;
@@ -301,7 +314,7 @@ public class SpriteAnimation implements Destroyable {
 			if (metadata.border != null) border = new LinkedSprite(type, metadata.border);
 			if (metadata.corner != null) corner = new LinkedSprite(type, metadata.corner);
 		} else {
-			animations = new LinkedSprite[] {new LinkedSprite(type, key).setSpriteSize(width, width)};
+			animations = new LinkedSprite[] { new LinkedSprite(type, key).setSpriteSize(width, width) };
 			border = null;
 			corner = null;
 		}

@@ -16,7 +16,8 @@ import org.json.JSONObject;
 import java.util.Random;
 
 public class Network extends Game {
-	private Network() {}
+	private Network() {
+	}
 
 	private static final Random random = new Random();
 
@@ -24,7 +25,9 @@ public class Network extends Game {
 
 
 	@Nullable
-	public static VersionInfo getLatestVersion() { return latestVersion; }
+	public static VersionInfo getLatestVersion() {
+		return latestVersion;
+	}
 
 	public static void findLatestVersion(Action callback) {
 		new Thread(() -> {
@@ -49,9 +52,9 @@ public class Network extends Game {
 
 	@Nullable
 	public static Entity getEntity(int eid) {
-		for (Level level: levels) {
+		for (Level level : levels) {
 			if (level == null) continue;
-			for (Entity e: level.getEntityArray())
+			for (Entity e : level.getEntityArray())
 				if (e.eid == eid)
 					return e;
 		}
@@ -77,9 +80,9 @@ public class Network extends Game {
 		if (eid == 0) return false; // This is reserved for the main player... kind of...
 		if (eid < 0) return false; // ID's must be positive numbers.
 
-		for (Level level: levels) {
+		for (Level level : levels) {
 			if (level == null) continue;
-			for (Entity e: level.getEntityArray()) {
+			for (Entity e : level.getEntityArray()) {
 				if (e.eid == eid)
 					return false;
 			}

@@ -50,12 +50,14 @@ public class Spark extends Entity {
 		y = (int) yy;
 
 		Player player = getClosestPlayer();
-		if (player.isWithin(0,this)) {
-			player.hurt(owner,1);
+		if (player != null && player.isWithin(0, this)) {
+			player.hurt(owner, 1);
 		}
 	}
 
-	/** Can this entity block you? Nope. */
+	/**
+	 * Can this entity block you? Nope.
+	 */
 	public boolean isSolid() {
 		return false;
 	}
@@ -70,7 +72,6 @@ public class Spark extends Entity {
 			if (time >= lifeTime - 6 * 20) {
 				if (time / 6 % 2 == 0) return; // If time is divisible by 12, then skip the rest of the code.
 			}
-
 
 
 			randmirror = random.nextInt(4);
