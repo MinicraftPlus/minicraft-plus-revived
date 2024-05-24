@@ -908,10 +908,10 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, TileCheck condition) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
-				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
+				if (condition.check(getTile(x, y), x, y))
 					setTile(x, y, tile, data);
 			}
 		}
