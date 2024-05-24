@@ -40,6 +40,7 @@ public class TileItem extends StackableItem {
 		TileModel.TileDataGetter placeOverWithID = (model1, target, level, xt, yt, player, attackDir) -> target.id;
 
 		items.add(new TileItem("Plank", new LinkedSprite(SpriteType.Item, "plank"), new TileModel("Wood Planks"), "hole", "water", "cloud"));
+		items.add(new TileItem("Ornate Wood", new LinkedSprite(SpriteType.Item, "plank"), new TileModel("Ornate Wood"), "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", new LinkedSprite(SpriteType.Item, "plank_wall"), new TileModel("Wood Wall"), "Wood Planks"));
 		items.add(new TileItem("Wood Door", new LinkedSprite(SpriteType.Item, "wood_door"), new TileModel("Wood Door"), "Wood Planks"));
 		items.add(new TileItem("Wood Fence", new LinkedSprite(SpriteType.Item, "wood_fence"), new TileModel("Wood Fence", placeOverWithID), solidTiles));
