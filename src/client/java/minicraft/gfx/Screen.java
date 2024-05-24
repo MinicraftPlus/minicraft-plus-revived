@@ -5,6 +5,7 @@ import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -16,6 +17,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 public class Screen {
 
@@ -455,9 +459,9 @@ public class Screen {
 		} else if (currentLevel >= 5)
 			darkFactor = MAXDARK;
 
-	    // The Integer array of pixels to overlay the screen with.
+		// The Integer array of pixels to overlay the screen with.
 		queue(new OverlayRendering(currentLevel, xa, ya, darkFactor));
-    }
+	}
 
 	public void renderLight(int x, int y, int r) {
 		// Applies offsets:
@@ -478,16 +482,7 @@ public class Screen {
 		public final byte[] bufPixels;
 		public final BufferedImage overlay = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		public final int[] olPixels;
-		public final ArrayDeque<LightRadius> lights = new ArrayDeque<>();
-
-		private static class LightRadius {
-			public final int x, y, r;
-			public LightRadius(int x, int y, int r) {
-				this.x = x;
-				this.y = y;
-				this.r = r;
-			}
-		}
+		public final HashMap<@NotNull Point, @NotNull Integer> lights = new HashMap<>();
 
 		public LightOverlay() {
 			bufPixels = ((DataBufferByte) buffer.getRaster().getDataBuffer()).getData();
@@ -523,20 +518,40 @@ public class Screen {
 		}
 
 		public void renderLight(int x, int y, int r) {
-			lights.add(new LightRadius(x, y, r));
+			lights.put(new Point(x, y), r);
 		}
 
 		public BufferedImage render(int xa, int ya) {
 			Graphics2D g2d = buffer.createGraphics();
 			g2d.setBackground(java.awt.Color.BLACK);
 			g2d.clearRect(0, 0, w, h);
-			LightRadius lightRadius;
-			while ((lightRadius = lights.poll()) != null) {
-				int x = lightRadius.x, y = lightRadius.y, r = lightRadius.r;
-				g2d.setPaint(new RadialGradientPaint(x, y, r, graFractions, graColors));
-				g2d.fillOval(x - r, y - r, r * 2, r * 2);
+			for (Map.Entry<Point, Integer> e : lights.entrySet()) {
+				int x = e.getKey().x, y = e.getKey().y, r = e.getValue();
+				boolean[] surrounds = new boolean[8];
+				for (int xx = -16; xx < 17; ++xx) {
+					for (int yy = -16; yy < 17; ++yy) {
+						if (xx != 0 || yy != 0) {
+							Point pp = new Point(x + xx, y + yy);
+							if (lights.containsKey(pp) && r <= lights.get(pp)) {
+								double theta = Math.atan2(yy, xx);
+								if (theta < 0) theta += 2 * Math.PI; // Ensures it is positive.
+								surrounds[(int) (theta * 4 / Math.PI)] = true;
+							}
+						}
+					}
+				}
+
+				// Reduce lighting circles on screen
+				if (IntStream.range(0, surrounds.length).allMatch(i -> surrounds[i])) {
+					g2d.setColor(java.awt.Color.WHITE);
+					g2d.fillRect(x - 8, y - 8, 16, 16);
+				} else {
+					g2d.setPaint(new RadialGradientPaint(x, y, r, graFractions, graColors));
+					g2d.fillOval(x - r, y - r, r * 2, r * 2);
+				}
 			}
 			g2d.dispose();
+			lights.clear();
 
 			for (int x = 0; x < w; ++x) {
 				for (int y = 0; y < h; ++y) {

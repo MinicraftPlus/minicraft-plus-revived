@@ -60,7 +60,7 @@ but some sections are changed to compliant this project.
 * Reduced food stamina cost
 * Made some strings lower-cased
 * Updated spawning and despawning conditions
-* Iron and goal now require 3 ores instead of 4 for crafting
+* Iron and gold now require 3 ores instead of 4 for crafting
 * Renamed `assets/books/story_guide.txt` to `assets/books/game_guide.txt`
 * Updated `assets/books/game_guide.txt` and `assets/books/instructions.txt`
 * Sand footprints are now more accurately placed
