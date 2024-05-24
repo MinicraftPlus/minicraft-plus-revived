@@ -71,8 +71,8 @@ public final class Tiles {
 		tiles.put((short) 42, new PotatoTile("Potato"));
 		tiles.put((short) 43, new MaterialTile(Tile.Material.Stone));
 		tiles.put((short) 44, new MaterialTile(Tile.Material.Obsidian));
-		tiles.put((short) 45, new DecorTile(Tile.Material.Stone));
-		tiles.put((short) 46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short) 45, new DecorTile(DecorTile.decorType.ORNATE_STONE));
+		tiles.put((short) 46, new DecorTile(DecorTile.decorType.ORNATE_OBSIDIAN));
 		tiles.put((short) 47, new BossWallTile());
 		tiles.put((short) 48, new BossFloorTile());
 		tiles.put((short) 49, new BossDoorTile());
@@ -85,6 +85,7 @@ public final class Tiles {
 		tiles.put((short) 56, new FenceTile(Tile.Material.Obsidian));
 		tiles.put((short) 57, new TorchTile());
 		tiles.put((short) 58, new SignTile());
+		tiles.put((short) 59, new DecorTile(DecorTile.decorType.ORNATE_WOOD));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());
