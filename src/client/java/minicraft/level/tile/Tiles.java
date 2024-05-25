@@ -70,16 +70,16 @@ public final class Tiles {
 		tiles.put((short) 39, new WoolTile(DyeItem.DyeColor.GREEN));
 		tiles.put((short) 40, new WoolTile(DyeItem.DyeColor.YELLOW));
 		tiles.put((short) 41, new WoolTile(DyeItem.DyeColor.BLACK));
-		tiles.put((short) 54, new WoolTile(DyeItem.DyeColor.BROWN));
-		tiles.put((short) 55, new WoolTile(DyeItem.DyeColor.PURPLE));
-		tiles.put((short) 56, new WoolTile(DyeItem.DyeColor.CYAN));
-		tiles.put((short) 57, new WoolTile(DyeItem.DyeColor.LIGHT_GRAY));
-		tiles.put((short) 58, new WoolTile(DyeItem.DyeColor.GRAY));
-		tiles.put((short) 59, new WoolTile(DyeItem.DyeColor.PINK));
-		tiles.put((short) 60, new WoolTile(DyeItem.DyeColor.LIME));
-		tiles.put((short) 61, new WoolTile(DyeItem.DyeColor.LIGHT_BLUE));
-		tiles.put((short) 62, new WoolTile(DyeItem.DyeColor.MAGENTA));
-		tiles.put((short) 63, new WoolTile(DyeItem.DyeColor.ORANGE));
+		tiles.put((short) 60, new WoolTile(DyeItem.DyeColor.BROWN));
+		tiles.put((short) 61, new WoolTile(DyeItem.DyeColor.PURPLE));
+		tiles.put((short) 62, new WoolTile(DyeItem.DyeColor.CYAN));
+		tiles.put((short) 63, new WoolTile(DyeItem.DyeColor.LIGHT_GRAY));
+		tiles.put((short) 64, new WoolTile(DyeItem.DyeColor.GRAY));
+		tiles.put((short) 65, new WoolTile(DyeItem.DyeColor.PINK));
+		tiles.put((short) 66, new WoolTile(DyeItem.DyeColor.LIME));
+		tiles.put((short) 67, new WoolTile(DyeItem.DyeColor.LIGHT_BLUE));
+		tiles.put((short) 68, new WoolTile(DyeItem.DyeColor.MAGENTA));
+		tiles.put((short) 69, new WoolTile(DyeItem.DyeColor.ORANGE));
 
 		tiles.put((short) 36, new PathTile("Path"));
 
