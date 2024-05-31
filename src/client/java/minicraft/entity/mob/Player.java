@@ -876,7 +876,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Renders swimming
 		if (isSwimming() && onFallDelay <= 0) {
 			yo += 4; // y offset is moved up by 4
-			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
+			if (level.getTile(x >> 4, y >> 4) == Tiles.get("water")) {
 
 				// animation effect
 				if (tickTime / 8 % 2 == 0) {
@@ -887,7 +887,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					screen.render(xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
 				}
 
-			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
+			} else if (level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) {
 
 				if (tickTime / 8 % 2 == 0) {
 					screen.render(xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
