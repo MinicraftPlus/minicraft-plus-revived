@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Minicraft+ Developers and Contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+
 package minicraft.core;
 
 import minicraft.core.io.Localization;
@@ -227,7 +232,7 @@ public class Updater extends Game {
 					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
 						Game.setDisplay(new LevelTransitionDisplay(1));
 					}
-					
+
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
