@@ -8,6 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -191,6 +192,12 @@ public class PlayerInvDisplay extends Display {
 		}
 
 		super.render(screen);
+
+		String counterLeft = Localization.getLocalized("minicraft.display.menus.inventory.counter",
+			player.getInventory().invSize(), player.getInventory().getMaxSlots());
+		Rectangle boundsLeft = menus[0].getBounds();
+		Font.drawBackground(counterLeft, screen, boundsLeft.getRight() - counterLeft.length() * 8,
+			boundsLeft.getTop() - 8, Color.GRAY);
 
 		// Searcher help text
 		String text = Localization.getLocalized("minicraft.displays.player_inv.display.help", Game.input.getMapping("SEARCHER-BAR"));

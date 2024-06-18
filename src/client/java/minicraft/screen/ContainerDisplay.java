@@ -3,9 +3,13 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -68,6 +72,17 @@ public class ContainerDisplay extends Display {
 		if (onScreenKeyboardMenu != null) {
 			onScreenKeyboardMenu.render(screen);
 		}
+
+		String counterLeft = Localization.getLocalized("minicraft.display.menus.inventory.counter",
+			player.getInventory().invSize(), player.getInventory().getMaxSlots());
+		Rectangle boundsLeft = menus[0].getBounds();
+		Font.drawBackground(counterLeft, screen, boundsLeft.getRight() - counterLeft.length() * 8,
+			boundsLeft.getTop() - 8, Color.GRAY);
+
+		String counterRight = Localization.getLocalized("minicraft.display.menus.inventory.counter",
+			chest.getInventory().invSize(), chest.getInventory().getMaxSlots());
+		Rectangle boundsRight = menus[1].getBounds();
+		Font.drawBackground(counterRight, screen, boundsRight.getLeft(), boundsRight.getTop() - 8, Color.GRAY);
 	}
 
 	@Override
