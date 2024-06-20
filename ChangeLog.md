@@ -7,6 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but some sections are changed to compliant this project.
 
+## [2.2.1]
+
+### Additions
+
+* Added ornate wood tiles
+
+### Changes
+
+* Disabled hardware acceleration by default
+* Hardware acceleration is now a toggle in settings
+* Screenshots will now be the size of the rendered view within the window
+* Updated localization
+
+### Removals
+
+* Removed argument flag `--no-hardware-acceleration`
+* Removed screenshot size setting
+
+### Fixes
+
+* Optimized light source rendering
+* Optimized calculations
+* Fixed the texture on stone hoe
+
 ## [2.2.0]
 
 ### Additions

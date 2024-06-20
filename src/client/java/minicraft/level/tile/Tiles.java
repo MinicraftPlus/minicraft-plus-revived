@@ -11,7 +11,11 @@ import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -20,6 +24,10 @@ public final class Tiles {
 	public static ArrayList<String> oldids = new ArrayList<>();
 
 	private static HashMap<Short, Tile> tiles = new HashMap<>();
+
+	// Standard tile explosion blacklist
+	// Tiles (as IDs) included cannot be damaged by explosions such as by TNTs and creepers.
+	public static final Set<Short> explosionBlacklist;
 
 	public static void initTileList() {
 		Logging.TILES.debug("Initializing tile list...");
@@ -71,8 +79,8 @@ public final class Tiles {
 		tiles.put((short) 42, new PotatoTile("Potato"));
 		tiles.put((short) 43, new MaterialTile(Tile.Material.Stone));
 		tiles.put((short) 44, new MaterialTile(Tile.Material.Obsidian));
-		tiles.put((short) 45, new DecorTile(Tile.Material.Stone));
-		tiles.put((short) 46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short) 45, new DecorTile(DecorTile.decorType.ORNATE_STONE));
+		tiles.put((short) 46, new DecorTile(DecorTile.decorType.ORNATE_OBSIDIAN));
 		tiles.put((short) 47, new BossWallTile());
 		tiles.put((short) 48, new BossFloorTile());
 		tiles.put((short) 49, new BossDoorTile());
@@ -85,6 +93,7 @@ public final class Tiles {
 		tiles.put((short) 56, new FenceTile(Tile.Material.Obsidian));
 		tiles.put((short) 57, new TorchTile());
 		tiles.put((short) 58, new SignTile());
+		tiles.put((short) 59, new DecorTile(DecorTile.decorType.ORNATE_WOOD));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());
@@ -192,6 +201,20 @@ public final class Tiles {
 		oldids.set(53, "torch green wool");
 		oldids.set(54, "torch yellow wool");
 		oldids.set(55, "torch black wool");
+
+		explosionBlacklist = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			(short) 4, // Stairs Up
+			(short) 5, // Stairs Down
+			(short) 22, // Hard Rock
+			(short) 28, // Obsidian Door
+			(short) 31, // Obsidian
+			(short) 34, // Obsidian Wall
+			(short) 44, // Raw Obsidian
+			(short) 46, // Ornate Obsidian
+			(short) 47, // Boss Wall
+			(short) 48, // Boss Floor
+			(short) 49 // Boss Door
+		)));
 	}
 
 	private static int overflowCheck = 0;
