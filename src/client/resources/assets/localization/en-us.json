@@ -216,7 +216,6 @@
   "minicraft.display.gui.score.current_score": "Current score: %s",
   "minicraft.display.gui.score.time_left": "Time left %s%sm %ss",
   "minicraft.display.menus.inventory": "Inventory",
-  "minicraft.display.menus.inventory.counter": "%s/%s",
   "minicraft.display.options_display": "Options",
   "minicraft.display.options_display.change_key_bindings": "Change Key Bindings",
   "minicraft.display.options_display.language": "Language",
