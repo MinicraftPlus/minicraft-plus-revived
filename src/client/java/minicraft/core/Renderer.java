@@ -196,8 +196,8 @@ public class Renderer extends Game {
 		// Stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...Left border.
 		if (yScroll < 0) yScroll = 0; // ...Top border.
-		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...Right border.
-		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...Bottom border.
+		if (xScroll > (level.w << 4) - Screen.w) xScroll = (level.w << 4) - Screen.w; // ...Right border.
+		if (yScroll > (level.h << 4) - Screen.h) yScroll = (level.h << 4) - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
 			MinicraftImage cloud = spriteLinker.getSheet(SpriteType.Tile, "cloud_background");
 			for (int y = 0; y < 28; y++)
@@ -504,8 +504,8 @@ public class Renderer extends Game {
 			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
 
 			info.add("walk spd: " + player.moveSpeed);
-			info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
-			info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
+			info.add("X: " + (player.x >> 4) + "-" + (player.x % 16));
+			info.add("Y: " + (player.y >> 4) + "-" + (player.y % 16));
 			if (levels[currentLevel] != null)
 				info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
 			if (isMode("minicraft.settings.mode.score")) info.add("Score: " + player.getScore());
