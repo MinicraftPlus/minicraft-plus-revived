@@ -206,24 +206,24 @@ public class PlayerInvDisplay extends Display {
 			// Expanded counter
 			if (sizeLeft < 10) { // At the moment at most just 2 digits and always 2 digits for capacity (no worry yet)
 				// Background
-				screen.render(boundsLeft.getRight() + 2 - (23 - 5), boundsLeft.getTop() - 2,
+				screen.render(boundsLeft.getRight() + 2 - (23 - 5), boundsLeft.getTop() - 3,
 					12, 12, 3, 13, counterSheet);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsLeft.getRight() + 2 - 15, boundsLeft.getTop() - 2,
+				screen.render(boundsLeft.getRight() + 2 - 15, boundsLeft.getTop() - 3,
 					20, 12, 15, 13, counterSheet);
 
 				// Digits
-				renderCounterNumber(screen, boundsLeft.getRight() + 2 - 16, boundsLeft.getTop(),
+				renderCounterNumber(screen, boundsLeft.getRight() + 2 - 16, boundsLeft.getTop() - 1,
 					5, 5, 7, sizeLeft, colorByHeaviness(calculateHeaviness(sizeLeft, capLeft), true));
 				renderCounterNumber(screen, boundsLeft.getRight() + 2 - 10, boundsLeft.getTop() + 3,
 					0, 4, 5, capLeft, Color.GRAY);
 			} else {
 				// Background
-				screen.render(boundsLeft.getRight() + 2 - 23, boundsLeft.getTop() - 2,
+				screen.render(boundsLeft.getRight() + 2 - 23, boundsLeft.getTop() - 3,
 					12, 12, 23, 13, counterSheet);
 
 				// Digits
-				renderCounterNumber(screen, boundsLeft.getRight() + 2 - 21, boundsLeft.getTop(),
+				renderCounterNumber(screen, boundsLeft.getRight() + 2 - 21, boundsLeft.getTop() - 1,
 					5, 5, 7, sizeLeft, colorByHeaviness(calculateHeaviness(sizeLeft, capLeft), true));
 				renderCounterNumber(screen, boundsLeft.getRight() + 2 - 10, boundsLeft.getTop() + 3,
 					0, 4, 5, capLeft, Color.GRAY);
@@ -251,7 +251,7 @@ public class PlayerInvDisplay extends Display {
 					0, 12, 12, 9, counterSheet);
 
 				// Digits
-				renderCounterNumber(screen, boundsLeft.getRight() - 4 - 11, boundsLeft.getTop() + 1,
+				renderCounterNumber(screen, boundsLeft.getRight() - 4 - 10, boundsLeft.getTop() + 1,
 					0, 4, 5, sizeLeft, fadeColor(colorByHeaviness(calculateHeaviness(sizeLeft, capLeft), false)));
 			}
 		}
