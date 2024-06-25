@@ -1,6 +1,5 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
@@ -11,7 +10,6 @@ public class SandParticle extends Particle {
 
 	/**
 	 * Creating a sand particle.
-	 *
 	 * @param x X map position
 	 * @param y Y map position
 	 */

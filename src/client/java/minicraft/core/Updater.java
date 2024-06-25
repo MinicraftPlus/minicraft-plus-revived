@@ -2,6 +2,7 @@ package minicraft.core;
 
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
@@ -93,14 +94,6 @@ public class Updater extends Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-
-		// Quick Level change: move the player for -1, or 1 levels
-		if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-S").isClicked()) {
-			Game.setDisplay(new LevelTransitionDisplay(-1));
-
-		} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
-			Game.setDisplay(new LevelTransitionDisplay(1));
-		}
 
 		if (input.getMappedKey("FULLSCREEN").isClicked()) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
@@ -194,6 +187,8 @@ public class Updater extends Game {
 			if (refresh) appToast.tick();
 		}
 
+		Sound.tick();
+
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!Renderer.canvas.hasFocus()) {
 			input.releaseAll();
@@ -250,6 +245,14 @@ public class Updater extends Game {
 
 				// For debugging only
 				{
+					// Quick Level change: move the player for -1, or 1 levels
+					if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-S").isClicked()) {
+						Game.setDisplay(new LevelTransitionDisplay(-1));
+
+					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
+						Game.setDisplay(new LevelTransitionDisplay(1));
+					}
+					
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
