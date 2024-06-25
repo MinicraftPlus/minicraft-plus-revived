@@ -18,7 +18,7 @@ public class BookDisplay extends Display {
 	private static final String defaultBook = "This book has no text.";
 
 	private static final int spacing = 3;
-	private static final int minX = 15, maxX = 15 + 8 * 32, minY = 8 * 5, maxY = 8 * 5 + 8 * 16;
+	private static final int minX = 15, maxX = 15 + 8 * 32, minY = 8 * 5, maxY = 8 * 5 + (8 << 4);
 
 	// First array is page and second is line.
 	private String[][] lines;
