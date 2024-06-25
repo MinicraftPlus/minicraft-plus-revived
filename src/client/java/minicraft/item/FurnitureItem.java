@@ -92,8 +92,8 @@ public class FurnitureItem extends Item {
 			Sound.play("craft");
 
 			// Placed furniture's X and Y positions
-			furniture.x = xt * 16 + 8;
-			furniture.y = yt * 16 + 8;
+			furniture.x = (xt << 4) + 8;
+			furniture.y = (yt << 4) + 8;
 
 			level.add(furniture); // Adds the furniture to the world
 			if (Game.isMode("minicraft.settings.mode.creative"))

@@ -83,27 +83,27 @@ public class TreeTile extends Tile {
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
 		if (isUpTileSame && isUpLeftTileSame && isLeftTileSame) {
-			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
+			screen.render((x << 4) + 0, (y << 4) + 0, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
+			screen.render((x << 4) + 0, (y << 4) + 0, sprite.spritePixels[0][0]);
 		}
 
 		if (isUpTileSame && isUpRightTileSame && isRightTileSame) {
-			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
+			screen.render((x << 4) + 8, (y << 4) + 0, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
+			screen.render((x << 4) + 8, (y << 4) + 0, sprite.spritePixels[0][1]);
 		}
 
 		if (isDownTileSame && isDownLeftTileSame && isLeftTileSame) {
-			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
+			screen.render((x << 4) + 0, (y << 4) + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
+			screen.render((x << 4) + 0, (y << 4) + 8, sprite.spritePixels[1][0]);
 		}
 
 		if (isDownTileSame && isDownRightTileSame && isRightTileSame) {
-			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
+			screen.render((x << 4) + 8, (y << 4) + 8, spriteFull.spritePixels[1][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
+			screen.render((x << 4) + 8, (y << 4) + 8, sprite.spritePixels[1][1]);
 		}
 	}
 
