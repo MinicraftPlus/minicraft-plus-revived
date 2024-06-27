@@ -1,21 +1,15 @@
 package minicraft.item;
 
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Inventory {
-	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
-
-	protected int maxItem = 27;
-	protected boolean unlimited = false;
-
-	public int getMaxSlots() {
-		return maxItem;
-	}
+public abstract class Inventory {
+	protected final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 
 	/**
 	 * Returns all the items which are in this inventory.
@@ -52,105 +46,31 @@ public class Inventory {
 	}
 
 	/**
-	 * Adds an item to the inventory
-	 */
-	public int add(@Nullable Item item) {
-		if (item != null)
-			return add(items.size(), item);  // Adds the item to the end of the inventory list
-		return 0;
-	}
-
-	/**
 	 * Adds several copies of the same item to the end of the inventory.
 	 * @param item Item to be added.
 	 * @param num Amount of items to add.
+	 * @return the remaining item not being added; empty if whole stack of items has been added successfully
 	 */
-	public int add(Item item, int num) {
-		int total = 0;
-		for (int i = 0; i < num; i++)
-			total += add(item.copy());
-		return total;
+	public List<Item> add(@NotNull Item item, int num) {
+		ArrayList<Item> remaining = new ArrayList<>();
+		for (int i = 0; i < num; i++) {
+			Item remain = add(item.copy());
+			if (remain != null) remaining.add(remain);
+		}
+		return remaining;
 	}
 
 	/**
-	 * Adds an item to a specific spot in the inventory.
-	 * @param slot Index to place item at.
+	 * Adds an item at the end of the inventory.
 	 * @param item Item to be added.
-	 * @return The number of items added.
+	 * @return the remaining item not being added; {@code null} if whole stack of items has been added successfully
 	 */
-	public int add(int slot, Item item) {
-
-		// Do not add to inventory if it is a PowerGlove
-		if (item instanceof PowerGloveItem) {
-			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
-			return 0;
-		}
-
-		if (item instanceof StackableItem) { // If the item is a item...
-			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-			int total = toTake.count;
-
-			for (Item value : items) {
-				if (toTake.stacksWith(value)) {
-					StackableItem stack = (StackableItem) value;
-
-					if (!unlimited) {
-						if (stack.count < stack.maxCount) {
-							int r = stack.maxCount - stack.count;
-							if (r >= toTake.count) {
-								// Matching implies that the other item is stackable, too.
-								stack.count += toTake.count;
-								return total;
-							} else {
-								toTake.count -= r;
-								stack.count += r;
-							}
-						}
-					} else {
-						stack.count += toTake.count;
-						return total;
-					}
-				}
-			}
-
-			if (!unlimited) {
-				if (items.size() < maxItem) {
-					int c = (int) Math.ceil(toTake.count / 100.0);
-					for (int i = 0; i < c; i++) {
-						StackableItem adding = toTake.copy();
-						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
-						if (adding.count == 0) break;
-						if (items.size() == maxItem) return total - toTake.count;
-						items.add(adding); // Add the item to the items list
-						toTake.count -= adding.count;
-					}
-					return total;
-				} else {
-					return total - toTake.count;
-				}
-			} else {
-				items.add(slot, toTake);
-				return total;
-			}
-		}
-
-		if (!unlimited) {
-			if (items.size() < maxItem) {
-				items.add(slot, item); // Add the item to the items list
-				return 1;
-			} else {
-				return 0;
-			}
-		} else {
-			items.add(slot, item);
-			return 1;
-		}
-	}
+	public abstract @Nullable Item add(@Nullable Item item);
 
 	/**
 	 * Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed.
 	 */
-	private int removeFromStack(StackableItem given, int count) {
+	protected int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // To keep track of amount removed.
 		for (int i = 0; i < items.size(); i++) {
 			if (!(items.get(i) instanceof StackableItem)) continue;
@@ -212,7 +132,7 @@ public class Inventory {
 	}
 
 	/**
-	 * Returns the how many of an item you have in the inventory.
+	 * Returns how many of an item you have in the inventory.
 	 */
 	public int count(Item given) {
 		if (given == null) return 0; // null requests get no items. :)
@@ -244,19 +164,6 @@ public class Inventory {
 			itemdata = new StringBuilder(itemdata.substring(0, itemdata.length() - 1)); // Remove extra ",".
 
 		return itemdata.toString();
-	}
-
-	/**
-	 * Replaces all the items in the inventory with the items in the string.
-	 * @param items String representation of an inventory.
-	 */
-	public void updateInv(String items) {
-		clearInv();
-
-		if (items.length() == 0) return; // There are no items to add.
-
-		for (String item : items.split(":")) // This still generates a 1-item array when "items" is blank... [""].
-			add(Items.get(item));
 	}
 
 	/**
