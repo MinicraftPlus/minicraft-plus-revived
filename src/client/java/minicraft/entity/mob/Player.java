@@ -167,8 +167,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			@Override
-			public int add(int slot, Item item) {
-				int res = super.add(slot, item);
+			public @Nullable Item add(Item item) {
+				Item res = super.add(item);
 				triggerTrigger();
 				return res;
 			}
@@ -492,16 +492,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
 				Item drop = activeItem.copy();
 
-				if (input.inputPressed("drop-one") && drop instanceof StackableItem && ((StackableItem) drop).count > 1) {
-					// Drop one from stack
-					((StackableItem) activeItem).count--;
-					((StackableItem) drop).count = 1;
-				} else {
+				if (!input.inputPressed("drop-stack") || !(drop instanceof StackableItem) || ((StackableItem) drop).count <= 1) {
 					activeItem = null; // Remove it from the "inventory"
 					if (isFishing) {
 						isFishing = false;
 						fishingTicks = maxFishingTicks;
 					}
+				} else {
+					// Drop one from stack
+					((StackableItem) activeItem).count--;
+					((StackableItem) drop).count = 1;
 				}
 
 				level.dropItem(x, y, drop);
@@ -515,15 +515,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if ((input.inputPressed("menu") || input.inputPressed("craft")) && activeItem != null) {
-				int returned = inventory.add(0, activeItem);
-				if (activeItem instanceof StackableItem) {
-					StackableItem stackable = (StackableItem) activeItem;
-					if (stackable.count > 0) {
-						getLevel().dropItem(x, y, stackable.copy());
-					}
-				} else if (returned <= 0) {
-					getLevel().dropItem(x, y, activeItem);
-				}
+				tryAddToInvOrDrop(activeItem);
 
 				activeItem = null;
 				if (isFishing) {
@@ -587,14 +579,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
 			if (prevItem != null) { // and you had a previous item that we should care about...
-				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
-				if (prevItem instanceof StackableItem) {
-					if (((StackableItem) prevItem).count > 0) {
-						getLevel().dropItem(x, y, prevItem.copy());
-					}
-				} else if (returned == 0) {
-					getLevel().dropItem(x, y, prevItem);
-				}
+				tryAddToInvOrDrop(prevItem); // Then add that previous item to your inventory so it isn't lost.
 			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
@@ -999,24 +984,41 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 	}
 
-	/**
-	 * What happens when the player interacts with a itemEntity
-	 */
+	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {
-		int picked = 0;
-		int total = 1;
+		boolean successful = false; // If there is any item successfully added to the player
+		boolean remove = false; // Whether to remove the item entity (when empty)
 		if (itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
-			((StackableItem) activeItem).count += ((StackableItem) itemEntity.item).count;
-			picked = ((StackableItem) itemEntity.item).count;
-		} else {
-			if (itemEntity.item instanceof StackableItem) total = ((StackableItem) itemEntity.item).count;
-			picked = inventory.add(itemEntity.item); // Add item to inventory
+			int toAdd = Math.min(((StackableItem) activeItem).count + ((StackableItem) itemEntity.item).count, ((StackableItem) activeItem).maxCount)
+				- ((StackableItem) activeItem).count;
+			if (toAdd > 0) {
+				((StackableItem) activeItem).count += toAdd;
+				((StackableItem) itemEntity.item).count -= toAdd;
+				successful = true;
+			}
+			if (((StackableItem) itemEntity.item).count == 0) { // Empty
+				remove = true; // Remove the item entity
+			}
 		}
 
-		if (picked == total) {
-			Sound.play("pickup");
+		if (!(itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).count == 0)) {
+			// Add item to inventory
+			Item remaining;
+			if (itemEntity.item instanceof StackableItem) {
+				int orig = ((StackableItem) itemEntity.item).count;
+				remaining = inventory.add(itemEntity.item);
+				if (remaining != null && ((StackableItem) remaining).count != orig) {
+					successful = true;
+				}
+			} else remaining = inventory.add(itemEntity.item);
+			if (remaining == null) {
+				successful = remove = true;
+			}
+		}
 
-			itemEntity.remove();
+		if (remove) itemEntity.remove();
+		if (successful) {
+			Sound.play("pickup");
 			addScore(1);
 		}
 	}
@@ -1243,17 +1245,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	/**
-	 * Trying to add item(s) to the player inventory.
-	 * If no more item(s) can be added to the inventory, drop the item(s) near the player.
+	 * Trying to add a stack of item(s) to the top of player inventory.
+	 * If there is/are no more item(s) can be added to the inventory, drop the item(s) near the player.
 	 */
 	public void tryAddToInvOrDrop(@Nullable Item item) {
 		if (item != null) {
-			int returned = inventory.add(0, item);
-			if (item instanceof StackableItem) {
-				if (((StackableItem) item).count > 0) {
-					getLevel().dropItem(x, y, item);
-				}
-			} else if (returned == 0) {
+			if (inventory.add(item) != null) {
 				getLevel().dropItem(x, y, item);
 			}
 		}
