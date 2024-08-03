@@ -90,7 +90,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static LinkedSprite[][] sprites;
 	public static LinkedSprite[][] carrySprites;
 
-	private final Inventory inventory;
+	private final BoundedInventory inventory;
 
 	public Item activeItem;
 	Item attackItem; // attackItem is useful again b/c of the power glove.
@@ -1231,7 +1231,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Override
-	public Inventory getInventory() {
+	public BoundedInventory getInventory() {
 		return inventory;
 	}
 
