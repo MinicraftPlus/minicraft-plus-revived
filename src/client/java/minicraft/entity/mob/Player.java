@@ -55,6 +55,7 @@ import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
+import minicraft.util.MyUtils;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
 
@@ -760,7 +761,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// For secret messages :=)
-						Game.notifications.add(itemData.substring(1));
+						Game.inGameNotifications.add(itemData.substring(1));
 					} else {
 						if (Items.get(itemData).equals(Items.get("Raw Fish"))) {
 							AchievementsDisplay.setAchievement("minicraft.achievement.fish", true);
@@ -1170,10 +1171,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
 			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
-		int healthDam = 0, armorDam = 0;
+		int healthDam = 0, armorDam = 0, suffered = 0;
 		if (this == Game.player) {
 			if (curArmor == null) { // No armor
-				healthDam = damage; // Subtract that amount
+				suffered = healthDam = damage; // Subtract that amount
 			} else { // Has armor
 				armorDamageBuffer += damage;
 				armorDam += damage;
@@ -1204,6 +1205,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
+		suffered = MyUtils.clamp(suffered, 1, 5);
+		Game.input.controllerVibration(suffered * .1F, suffered * .1F, playerHurtTime * 1000 / 60);
 	}
 
 	/**

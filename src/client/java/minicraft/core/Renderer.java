@@ -27,8 +27,10 @@ import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
+import minicraft.screen.AppToast;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.Toast;
 import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
@@ -36,6 +38,8 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
+import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 
@@ -55,6 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 public class Renderer extends Game {
 	private Renderer() {
@@ -108,6 +113,7 @@ public class Renderer extends Game {
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
+		appStatusBar.initialize();
 	}
 
 
@@ -126,6 +132,13 @@ public class Renderer extends Game {
 
 		if (currentDisplay != null) // Renders menu, if present.
 			currentDisplay.render(screen);
+
+		appStatusBar.render();
+
+		AppToast toast;
+		if ((toast = inAppToasts.peek()) != null) {
+			toast.render(screen);
+		}
 
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
@@ -182,6 +195,259 @@ public class Renderer extends Game {
 			}
 
 			Updater.screenshot--;
+		}
+	}
+
+	public static final AppStatusBar appStatusBar = new AppStatusBar();
+
+	public static class AppStatusBar {
+		private static final int DURATION_ON_UPDATE = 90; // 1.5s
+
+		public final AppStatusElement HARDWARE_ACCELERATION_STATUS = new HardwareAccelerationElementStatus();
+		public final AppStatusElement CONTROLLER_STATUS = new ControllerElementStatus();
+		public final AppStatusElement INPUT_METHOD_STATUS = new InputMethodElementStatus();
+
+		private AppStatusBar() {}
+
+		private int duration = 120; // Shows for 2 seconds initially.
+
+		private void render() {
+			if (duration == 0) return;
+			MinicraftImage sheet = spriteLinker.getSheet(SpriteType.Gui, "app_status_bar"); // Obtains sheet.
+
+			// Background
+			for (int x = 0; x < 12; ++x) {
+				for (int y = 0; y < 2; ++y) {
+					screen.render(Screen.w - 16 * 8 + x * 8, y * 8, x, y, 0, sheet);
+				}
+			}
+
+			// Hardware Acceleration Status (width = 16)
+			HARDWARE_ACCELERATION_STATUS.render(Screen.w - 16 * 8 + 5, 2, sheet);
+			// Controller Status (width = 14)
+			CONTROLLER_STATUS.render(Screen.w - 16 * 8 + 21 - 1, 2, sheet);
+			// Input Method Status (width = 14)
+			INPUT_METHOD_STATUS.render(Screen.w - 16 * 8 + 35 - 1, 2, sheet);
+		}
+
+		void tick() {
+			if (duration > 0)
+				duration--;
+			HARDWARE_ACCELERATION_STATUS.tick();
+			CONTROLLER_STATUS.tick();
+			INPUT_METHOD_STATUS.tick();
+		}
+
+		void show(int duration) {
+			this.duration = Math.max(this.duration, duration);
+		}
+
+		private void onStatusUpdate() {
+			show(DURATION_ON_UPDATE);
+		}
+
+		private void initialize() {
+			HARDWARE_ACCELERATION_STATUS.initialize();
+		}
+
+		public abstract class AppStatusElement {
+			// width == 16 - size * 2
+			protected final int size; // 0: largest, 1: smaller, etc. (gradually)
+
+			private AppStatusElement(int size) {
+				this.size = size;
+			}
+
+			private static final int BLINK_PERIOD = 10; // 6 Hz
+
+			private int durationUpdated = 0;
+			private boolean blinking = false;
+			private int blinkTick = 0;
+
+			protected void render(int x, int y, MinicraftImage sheet) {
+				if (durationUpdated > 0) {
+					if (blinking) {
+						for (int xx = 0; xx < 2; ++xx)
+							screen.render(x + xx * 8, y, 10 + xx, 3 + size, 0, sheet);
+					}
+				}
+			}
+
+			protected void tick() {
+				if (durationUpdated > 0) {
+					durationUpdated--;
+					if (blinkTick == 0) {
+						blinkTick = BLINK_PERIOD;
+						blinking = !blinking;
+					} else blinkTick--;
+				}
+			}
+
+			protected void updateStatus() {
+				durationUpdated = DURATION_ON_UPDATE;
+				blinking = false;
+				blinkTick = 0;
+				onStatusUpdate();
+			}
+
+			public abstract void updateStatus(int status);
+
+			public void notifyStatusIf(UnaryOperator<@NotNull Integer> operator) {}
+
+			protected void initialize() {}
+		}
+
+		public class HardwareAccelerationElementStatus extends AppStatusElement {
+			public static final int ACCELERATION_ON = 0;
+			public static final int ACCELERATION_OFF = 1;
+
+			@MagicConstant(intValues = {ACCELERATION_ON, ACCELERATION_OFF})
+			private int status;
+
+			private HardwareAccelerationElementStatus() {
+				super(0);
+			}
+
+			@Override
+			protected void initialize() {
+				status = Boolean.parseBoolean(System.getProperty("sun.java2d.opengl")) ?
+					ACCELERATION_ON : ACCELERATION_OFF;
+			}
+
+			@Override
+			protected void render(int x, int y, MinicraftImage sheet) {
+				super.render(x, y, sheet);
+				if (status == ACCELERATION_ON) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, xx, 4, 0, sheet);
+				} else if (status == ACCELERATION_OFF) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 2 + xx, 4, 0, sheet);
+				}
+			}
+
+			@Override
+			public void updateStatus(int status) {
+				super.updateStatus();
+				this.status = status;
+			}
+		}
+
+		public class ControllerElementStatus extends AppStatusElement {
+			public static final int CONTROLLER_CONNECTED = 0; // Normal state, usable controller
+			public static final int CONTROLLER_UNAVAILABLE = 1; // Current controller becoming unusable
+			public static final int CONTROLLER_DISCONNECTED = 2; // System normal, no controller connected
+			public static final int CONTROLLER_PENDING = 3; // Temporary unusable or controller hanging/delaying
+			public static final int CONTROLLER_UNKNOWN = 4; // Unknown state or unknown controller (unsupported)
+			// TODO #614 tacking and referring this state
+			public static final int CONTROLLER_FUNCTION_UNAVAILABLE = 5; // System not available/malfunctioning
+//			public static final int CONTROLLER_UNDER_CONFIGURATION = 6; // Alternating 0 and 3 // Reserved
+
+			@MagicConstant(intValues = {CONTROLLER_CONNECTED, CONTROLLER_UNAVAILABLE, CONTROLLER_DISCONNECTED,
+				CONTROLLER_PENDING, CONTROLLER_UNKNOWN, CONTROLLER_FUNCTION_UNAVAILABLE})
+			private int status;
+
+			private ControllerElementStatus() {
+				super(1);
+				status = CONTROLLER_DISCONNECTED; // Default state
+			}
+
+			@Override
+			protected void render(int x, int y, MinicraftImage sheet) {
+				super.render(x, y, sheet);
+				if (status == CONTROLLER_CONNECTED) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_UNAVAILABLE) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 2 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_DISCONNECTED) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 4 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_PENDING) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 6 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_UNKNOWN) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 8 + xx, 2, 0, sheet);
+				} else if (status == CONTROLLER_FUNCTION_UNAVAILABLE) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 10 + xx, 2, 0, sheet);
+				}
+			}
+
+			@Override
+			protected void tick() {
+				super.tick();
+				// Reserved
+			}
+
+			@Override
+			public void updateStatus(int status) {
+				super.updateStatus();
+				this.status = status;
+			}
+
+			@Override
+			public void notifyStatusIf(UnaryOperator<@NotNull Integer> operator) {
+				int status = this.status;
+				//noinspection MagicConstant
+				if ((status = operator.apply(status)) != this.status)
+					updateStatus(status);
+			}
+		}
+
+		public class InputMethodElementStatus extends AppStatusElement { // Only 2 methods: keyboard and controller
+			public static final int INPUT_KEYBOARD_ONLY = 0; // Only keyboard is accepted
+			public static final int INPUT_CONTROLLER_PRIOR = 1; // Both accepted, but controller is used priorly
+			public static final int INPUT_KEYBOARD_PRIOR = 2; // Both accepted, but keyboard is used priorly
+			// Controller is enabled, but only keyboard can be used as controller is currently unusable.
+			public static final int INPUT_CONTROLLER_UNUSABLE = 3;
+
+			@MagicConstant(intValues = {INPUT_KEYBOARD_ONLY, INPUT_CONTROLLER_PRIOR,
+				INPUT_KEYBOARD_PRIOR, INPUT_CONTROLLER_UNUSABLE})
+			private int status;
+
+			private InputMethodElementStatus() {
+				super(1);
+				status = INPUT_KEYBOARD_ONLY;
+			}
+
+			@Override
+			protected void render(int x, int y, MinicraftImage sheet) {
+				super.render(x, y, sheet);
+				if (status == INPUT_KEYBOARD_ONLY) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, xx, 5, 0, sheet);
+				} else if (status == INPUT_CONTROLLER_PRIOR) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 2 + xx, 5, 0, sheet);
+				} else if (status == INPUT_KEYBOARD_PRIOR) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 4 + xx, 5, 0, sheet);
+				} else if (status == INPUT_CONTROLLER_UNUSABLE) {
+					for (int xx = 0; xx < 2; ++xx)
+						screen.render(x + xx * 8, y, 6 + xx, 5, 0, sheet);
+				}
+			}
+
+			@Override
+			protected void tick() {
+				super.tick();
+				if (status == INPUT_CONTROLLER_PRIOR || status == INPUT_KEYBOARD_PRIOR) {
+					if (!input.isControllerInUse())
+						updateStatus(INPUT_CONTROLLER_UNUSABLE);
+				} else if (status == INPUT_CONTROLLER_UNUSABLE) {
+					if (input.isControllerInUse())
+						updateStatus(INPUT_CONTROLLER_PRIOR); // As controller was enabled.
+				}
+			}
+
+			@Override
+			public void updateStatus(int status) {
+				super.updateStatus();
+				this.status = status;
+			}
 		}
 	}
 
@@ -269,18 +535,18 @@ public class Renderer extends Game {
 		// NOTIFICATIONS
 
 		Updater.updateNoteTick = false;
-		if (permStatus.size() == 0 && notifications.size() > 0) {
+		if (permStatus.size() == 0 && inGameNotifications.size() > 0) {
 			Updater.updateNoteTick = true;
-			if (notifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
-				notifications = notifications.subList(notifications.size() - 3, notifications.size());
+			if (inGameNotifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
+				inGameNotifications = inGameNotifications.subList(inGameNotifications.size() - 3, inGameNotifications.size());
 			}
 
 			if (Updater.notetick > 180) { // Display time per notification.
-				notifications.remove(0);
+				inGameNotifications.remove(0);
 				Updater.notetick = 0;
 			}
 			List<String> print = new ArrayList<>();
-			for (String n : notifications) {
+			for (String n : inGameNotifications) {
 				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
 					print.add(l);
 			}
@@ -424,6 +690,11 @@ public class Renderer extends Game {
 		renderQuestsDisplay();
 		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
+
+		Toast toast;
+		if ((toast = inGameToasts.peek()) != null) {
+			toast.render(screen);
+		}
 	}
 
 	public static void renderBossbar(int length, String title) {
