@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.FileHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
@@ -40,7 +41,11 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Ellipsis;
+import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -54,10 +59,12 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
+import minicraft.screen.Display;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.QuestsDisplay;
+import minicraft.screen.RelPos;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
@@ -67,10 +74,14 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.swing.Timer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -98,6 +109,8 @@ public class Load {
 
 	private String location = Game.gameDir;
 
+	private static @Nullable AutoDataFixer dataFixer = null;
+
 	private static final String extension = Save.extension;
 
 	private ArrayList<String> data;
@@ -113,7 +126,7 @@ public class Load {
 	}
 
 	public Load(String worldname)
-		throws BackupCreationFailedException, WorldLoadingFailedException, DungeonRegenerationCancelledException {
+		throws BackupCreationFailedException, WorldLoadingFailedException, UserPromptCancelledException {
 		this(worldname, true);
 	}
 
@@ -123,20 +136,20 @@ public class Load {
 			super(cause);
 		}
 	}
-	public static class DungeonRegenerationCancelledException extends WorldLoadingInterruptedException {}
+	public static class UserPromptCancelledException extends WorldLoadingInterruptedException {}
 	public static class BackupCreationFailedException extends WorldLoadingInterruptedException {
-		public BackupCreationFailedException(@Nullable Exception cause) {
+		public BackupCreationFailedException(@NotNull Exception cause) {
 			super(cause);
 		}
 	}
 	public static class WorldLoadingFailedException extends WorldLoadingInterruptedException {
-		public WorldLoadingFailedException(Exception cause) {
+		public WorldLoadingFailedException(@NotNull Exception cause) {
 			super(cause);
 		}
 	}
 
 	public Load(String worldname, boolean loadGame)
-		throws DungeonRegenerationCancelledException, WorldLoadingFailedException, BackupCreationFailedException {
+		throws UserPromptCancelledException, WorldLoadingFailedException, BackupCreationFailedException {
 		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
 
@@ -214,7 +227,7 @@ public class Load {
 						Logging.SAVELOAD.debug("World loading continues...");
 					} else {
 						Logging.SAVELOAD.info("User cancelled world loading, loading aborted.");
-						throw new BackupCreationFailedException(null);
+						throw new UserPromptCancelledException();
 					}
 
 					break;
@@ -231,6 +244,7 @@ public class Load {
 			try {
 				HistoricLoad.loadSave(worldname);
 			} catch (LoadingSessionFailedException e) {
+				Logging.SAVELOAD.error(e, "Failed to load world \"{}\"", worldname);
 				throw new WorldLoadingFailedException(e);
 			}
 		} else if (worldVer.compareTo(new Version("1.9.2")) < 0) {
@@ -300,7 +314,7 @@ public class Load {
 							World.levels[lvlidx] = new Level(oriLevel.w, oriLevel.h, oriLevel.getSeed(), -4, World.levels[World.lvlIdx(-3)], true);
 							if (reAdd) World.levels[lvlidx].add(Game.player);
 						} else {
-							throw new DungeonRegenerationCancelledException();
+							throw new UserPromptCancelledException();
 						}
 
 						break;
@@ -1065,8 +1079,8 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
-			if (name.startsWith("Potion"))
-				name = name.replace("Potion", "Awkward Potion");
+			if (name.equals("Potion"))
+				name = "Awkward Potion";
 		}
 
 		return name;
@@ -1395,6 +1409,114 @@ public class Load {
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: {}", string);
 				return null;
+		}
+	}
+
+	public static void setDataFixer(@Nullable AutoDataFixer dataFixer) {
+		Load.dataFixer = dataFixer;
+	}
+
+	public static @Nullable AutoDataFixer getDataFixer() {
+		return dataFixer;
+	}
+
+	public static abstract class AutoDataFixer {
+		protected abstract void performFix(String worldName);
+
+		protected final void setMessagePerforming() {
+			display.msg = "minicraft.displays.load.data_fixer.message.performing";
+		}
+
+		protected final void setMessageValidating() {
+			display.msg = "minicraft.displays.load.data_fixer.message.validating";
+		}
+
+		protected final void finish(boolean successful) {
+			display.finished = successful;
+		}
+
+		private DataFixerDisplay display = null;
+
+		private class DataFixerDisplay extends Display {
+			private volatile String msg = "minicraft.displays.load.data_fixer.message.starting";
+			private volatile @Nullable Boolean finished = null; // true -> successful; false -> failed
+
+			private final Timer t;
+			private final Ellipsis ellipsis = new Ellipsis.SmoothEllipsis(new Ellipsis.DotUpdater.TimeUpdater());
+			private final String worldName;
+
+			private DataFixerDisplay(String worldName) {
+				super(true, false);
+				this.worldName = worldName;
+				t = new Timer(200, e -> new Thread(() -> performFix(worldName),
+					"World Save Corruption Data Recovery Thread").start());
+				t.setRepeats(false);
+			}
+
+			@Override
+			public void init(Display parent) {
+				if (parent != null && parent.getParent() == this) return; // Undefined behaviour
+				super.init(parent);
+				t.start();
+			}
+
+			@Override
+			public void tick(InputHandler input) {
+				super.tick(input);
+				if (finished != null) {
+					if (input.getMappedKey("EXIT").isClicked()) {
+						Game.exitDisplay(); // Returns to world selection menu.
+					} else if (input.getMappedKey("SELECT").isClicked()) {
+						Game.exitDisplay(); // Exits this display first.
+						Game.setDisplay(new LoadingDisplay()); // Loads the same world again.
+					}
+				} else {
+					if (input.getMappedKey("EXIT|SELECT").isClicked()) {
+						Game.exitDisplay(); // Returns to world selection menu.
+					}
+				}
+			}
+
+			@Override
+			public void render(Screen screen) {
+				super.render(screen);
+				Font.drawCentered(Localization.getLocalized("minicraft.displays.load.data_fixer.title"),
+					screen, 40, Color.WHITE);
+				if (finished != null) {
+					if (Boolean.TRUE.equals(finished)) {
+						Font.drawCentered(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.completed.display"), screen, 64, Color.GREEN);
+						Font.drawParagraph(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.completed.message", worldName),
+							screen, Screen.w - 8 * 6, Screen.h, new FontStyle()
+							.setAnchor(Screen.w / 2, 80).setRelTextPos(RelPos.BOTTOM, true), 2);
+						Font.drawCentered(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.completed.return",
+							Game.input.getMapping("EXIT")), screen, Screen.h - 40, Color.WHITE);
+						Font.drawCentered(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.completed.continue",
+							Game.input.getMapping("SELECT")), screen, Screen.h - 30, Color.WHITE);
+					} else {
+						Font.drawCentered(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.failed.display"), screen, 64, Color.RED);
+						Font.drawParagraph(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.failed.message", worldName),
+							screen, Screen.w - 8 * 6, Screen.h, new FontStyle()
+							.setAnchor(Screen.w / 2, 80).setRelTextPos(RelPos.BOTTOM, true), 2);
+						Font.drawParagraph(Localization.getLocalized(
+							"minicraft.displays.load.data_fixer.failed.return",
+								Game.input.getMapping("EXIT"), Game.input.getMapping("SELECT")),
+							screen, Screen.w - 8 * 8, Screen.h, new FontStyle()
+							.setAnchor(Screen.w / 2, 40).setRelTextPos(RelPos.BOTTOM, true), 0);
+					}
+				} else
+					Font.drawCentered(Localization.getLocalized("minicraft.displays.load.data_fixer.message",
+						Localization.getLocalized(msg), ellipsis.updateAndGet()), screen, 70, Color.WHITE);
+			}
+		}
+
+		public void startFixer(String worldName) {
+			Game.setDisplay(display = new DataFixerDisplay(worldName));
 		}
 	}
 

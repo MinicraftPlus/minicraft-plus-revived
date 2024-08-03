@@ -27,6 +27,9 @@ import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
 import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
+import minicraft.entity.particle.FireParticle;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
@@ -40,6 +43,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -48,6 +52,7 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -72,6 +77,8 @@ public class HistoricLoad {
 	 *   - Although in some time periods, max armor is saved instead of armor point, it is still loaded as armor point.
 	 *   - Skin-On is an abandoned feature. It controls whether to render the player skin suits,
 	 *     which has already been removed now.
+	 *   - Note that conical class name is saved and "com.mojang.ld22.entity." is trimmed when entity is saved,
+	 *     unintended "particle." exists as entity name.
 	 *
 	 * Commit History
 	 * (1.9.1) 1930f326 Apr 12, 2017 (23:30) # 1.9.1 has been released on the next day (01:53)
@@ -122,6 +129,39 @@ public class HistoricLoad {
 	 *   - Dungeon locking feature is disabled and forcedly set to "unlocked".
 	 * 473bbe5b Feb 26, 2017 (06:21)
 	 * - Save/Load system added
+	 * - Potion system is disabled.
+	 * (1.8; May 2013)
+	 * - Mostly the same as the initial commit except that potion exists. Therefore, it is the same as Mar 19, 2017
+	 *   for Player save file format.
+	 * - FireParticle exists.
+	 *
+	 * Known Bugs with Old Versions (at least existed before 1.9.1)
+	 * - Level saves using WorldGenMenu#sized to save level size
+	 *   - Existed since Save/Load system was added (also for 1.8), remained unfixed even after 1.9.1
+	 *   - Steps to reproduce in old versions:
+	 *     - Let the world size setting in World Creation menu be the desired value.
+	 *     - Load another world with a world size different from the value set in the menu.
+	 *     - Save the loaded world.
+	 *     - The resultant world save would use the set value from the menu, instead of Level#h and Level#w.
+	 *     - The world save is then corrupted.
+	 *   - If the world save is then tried being loaded in the old version, it crashes with IndexOutOfBoundsException.
+	 *   - This bug is regarded as a possible case and handled with an on-demand data fixer.
+	 * - Entities save using entity class (binary) name to save entity keys
+	 *   - Existed since Save/Load system was added (also for 1.8), remained unfixed even after 1.9.1
+	 *   - Reasons for exception to occur in old versions:
+	 *     - When an entity is saved, its class name is obtained with "com.mojang.ld22.entity." trimmed, but not fully
+	 *       applicable to all entities.
+	 *     - If the entity class is not barely just belongs to the entity package, but a subpackage underneath it,
+	 *       a tailing package subpackage path is append to the entity key.
+	 *     - In the old versions, there existed only (2 to 3) particle types that belong to a subpackage under entity.
+	 *     - However, since the lifespans of the particles are short, the chance to get them to be saved is low,
+	 *       and any entity in the world is saved in old versions.
+	 *   - Results in old versions:
+	 *     - In 1.8, unknown entity is loaded as an empty Entity instance, and existed in the world forever.
+	 *     - Starting from the first commit adding Save/Load system, an error log is printed instead, without it loaded.
+	 *   - This exception has been included here with 3 particle cases.
+	 * - (Unknown) For 1.8, player's position is sometimes saved in obviously different values.
+	 *   - It can be out of the level for a 128-sized world.
 	 *
 	 * Initial Save Structure (473bbe5b+0fbeae59)
 	 *   - Game.miniplussave
@@ -139,40 +179,27 @@ public class HistoricLoad {
 
 	static void loadSave(String worldName) throws Load.LoadingSessionFailedException {
 		String location = Game.gameDir + "/saves/" + worldName + "/";
-		String filePath;
-
 		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.historic"));
 		try {
 			Game.player.getInventory().clearInv(); // Prepare for loading.
-			createBackup(filePath = location + "Game" + Save.extension);
-			loadGame(filePath);
+			loadGame(location + "Game" + Save.extension);
 			LoadingDisplay.progress(10);
-			// KeyPrefs are now saved in global preferences, but not world-wide.
-			createBackup(filePath = location + "KeyPrefs" + Save.extension);
-			if (new File(filePath).delete()) // World-wide KeyPrefs are ignored.
-				Logging.SAVELOAD.debug("\"{}\" is deleted.", filePath);
-
+			// KeyPrefs is handled later.
 			try {
 				for (int i = 0; i < 6; ++i) {
-					String dataPath = location + "Level" + i + "data" + Save.extension;
-					createBackup(filePath = location + "Level" + i + Save.extension);
-					createBackup(dataPath);
-					loadLevel(filePath, dataPath, i);
+					loadLevel(location + "Level" + i + Save.extension, location + "Level" + i + "data" + Save.extension, i);
 					LoadingDisplay.progress(10);
 				}
 			} catch (Load.MalformedSaveDataException e) {
 				throw new Load.MalformedSaveException("World", e);
 			}
 
-			createBackup(filePath = location + "Player" + Save.extension);
-			loadPlayer(filePath);
+			loadPlayer(location + "Player" + Save.extension);
 			LoadingDisplay.progress(10);
-			createBackup(filePath = location + "Inventory" + Save.extension);
-			loadInventory(filePath);
+			loadInventory(location + "Inventory" + Save.extension);
 			LoadingDisplay.progress(10);
 			// loadEntities is not checked by me, but I assume that it is implemented correctly.
-			createBackup(filePath = location + "Entities" + Save.extension);
-			loadEntities(filePath); // Most parts of the code are not modified.
+			loadEntities(location + "Entities" + Save.extension); // Most parts of the code are not modified.
 			LoadingDisplay.progress(10);
 		} catch (Load.MalformedSaveException e) {
 			throw new Load.LoadingSessionFailedException(String.format("Failed to load world \"%s\"", worldName), e);
@@ -188,16 +215,29 @@ public class HistoricLoad {
 			 */
 			throw new AssertionError(e);
 		}
+
+		// Do backups for all files, when the whole world is successfully loaded.
+		File keyPrefsFile = new File(location + "KeyPrefs" + Save.extension);
+		if (keyPrefsFile.exists()) {
+			createBackup(location + "KeyPrefs" + Save.extension);
+			// KeyPrefs are now saved in global preferences, but not world-wide.
+			if (new File(location + "KeyPrefs" + Save.extension).delete()) // World-wide KeyPrefs are ignored.
+				Logging.SAVELOAD.debug("\"{}\" is deleted.", location + "KeyPrefs" + Save.extension);
+		}
+		createBackup(location + "Game" + Save.extension);
+		for (int i = 0; i < 6; ++i) {
+			createBackup(location + "Level" + i + Save.extension);
+			createBackup(location + "Level" + i + "data" + Save.extension);
+		}
+		createBackup(location + "Player" + Save.extension);
+		createBackup(location + "Inventory" + Save.extension);
+		createBackup(location + "Entities" + Save.extension);
 	}
 
 	private static List<String> loadFile(String path) throws Load.FileLoadingException {
 		try {
-			List<String> data = Arrays.asList(Load.loadFromFile(path, true).split(","));
-			if (!data.get(data.size() - 1).isEmpty())
-				throw new Load.MalformedSaveDataFormatException("The last character is expected to be a comma (\",\")");
-			data.remove(data.size() - 1); // Removes the empty value as the last character is a comma.
-			return data;
-		} catch (IOException | Load.MalformedSaveDataFormatException e) {
+			return Arrays.asList(Load.loadFromFile(path, true).split(","));
+		} catch (IOException e) {
 			throw new Load.FileLoadingException(String.format("Failed to load \"%s\"", path), e);
 		}
 	}
@@ -215,7 +255,7 @@ public class HistoricLoad {
 				Logging.SAVELOAD.trace("Backup \"{}\" is successfully created for \"{}\".",
 					bakFile.getPath(), file.getPath());
 			} else {
-				Logging.SAVELOAD.warn("Backup \"{}\" created for \"{}\" is unexpectedly disappeared",
+				Logging.SAVELOAD.warn("Backup \"{}\" created for \"{}\" has unexpectedly disappeared",
 					bakFile.getPath(), file.getPath());
 			}
 		} catch (FileAlreadyExistsException e) { // This should not be thrown as REPLACE_EXISTING is set.
@@ -237,10 +277,26 @@ public class HistoricLoad {
 	}
 
 	/** Validates for integral data when it is not loaded but a validation is required. */
-	private static void validateIntegralSaveData(String data, String msg)
-		throws Load.MalformedSaveDataValueException {
+	private static void validateIntegralSaveData(String data, String msg) throws Load.MalformedSaveDataValueException {
 		try {
 			validateIntegralData(Integer.parseInt(data), null);
+		} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
+			throw new Load.MalformedSaveDataValueException(msg, e);
+		}
+	}
+
+	private static final Predicate<Float> POSITIVE_FLOAT_CHECK = v -> v > 0;
+	private static final Predicate<Float> NON_NEGATIVE_FLOAT_CHECK = v -> v >= 0;
+
+	private static void validateFloatData(float data, @Nullable Predicate<Float> condition)
+		throws Load.IllegalSaveDataValueException {
+		if (!(condition == null ? POSITIVE_FLOAT_CHECK : condition).test(data))
+			throw new Load.IllegalSaveDataValueException("Input: " + data);
+	}
+
+	private static void validateFloatSaveData(String data, String msg) throws Load.MalformedSaveDataValueException {
+		try {
+			validateFloatData(Float.parseFloat(data), null);
 		} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
 			throw new Load.MalformedSaveDataValueException(msg, e);
 		}
@@ -277,7 +333,7 @@ public class HistoricLoad {
 			validateIntegralSaveData(data.get(1), "Index 1 (Auto-save time interval)");
 
 			// Index 2 (Game speed) -> Updater#gamespeed is now no longer saved in saves; data validation only.
-			validateIntegralSaveData(data.get(2), "Index 2 (Game speed)");
+			validateFloatSaveData(data.get(2), "Index 2 (Game speed)");
 
 			if (data.size() == 4) { // before Mar 11, 2017
 				try {
@@ -324,6 +380,8 @@ public class HistoricLoad {
 		}
 	}
 
+	private static final int[] legalWorldSizes = new int[] { 128, 256, 512 };
+
 	private static void loadLevel(String pathA, String pathB, int index) throws Load.MalformedSaveDataException {
 		try {
 			List<String> dataA = loadFile(pathA);
@@ -333,6 +391,7 @@ public class HistoricLoad {
 					String.format("Corrupted .miniplussave (Level data count: %d)", dataA.size()));
 
 			int w, h, depth;
+			//noinspection DuplicatedCode
 			try {
 				w = Integer.parseInt(dataA.get(0));
 				validateIntegralData(w, null);
@@ -349,7 +408,7 @@ public class HistoricLoad {
 
 			try {
 				depth = Integer.parseInt(dataA.get(2));
-				validateIntegralData(depth, v -> v >= 0 && v <= 4);
+				validateIntegralData(depth, v -> v >= -4 && v <= 1);
 			} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
 				throw new Load.MalformedSaveDataValueException("Index 2 (Level depth)", e);
 			}
@@ -359,6 +418,125 @@ public class HistoricLoad {
 				Logging.SAVELOAD.error("Non-squared ({}, {}) level size is not supported.", w, h);
 				throw new Load.MalformedSaveDataValueException("Level width (Index 0) & height (Index 1)",
 					new Load.IllegalSaveDataValueException(String.format("width: %d; height: %d", w, h)));
+			}
+
+			// Recovery attempt for a known bug about corrupted world size; details above
+			if (dataA.size() != 3 + w * h && dataA.size() - 3 == dataB.size()) {
+				// If both data sets match the case, an auto fix is available.
+				// Otherwise, an exception will still be thrown, if it is still illegal.
+				// Additional modifications to the world save causing case mismatch are not allowed.
+				for (int a : legalWorldSizes) {
+					for (int b : legalWorldSizes) {
+						if (a != b && dataA.size() == 3 + a * a && b == w) {
+							Load.setDataFixer(new Load.AutoDataFixer() {
+								@Override
+								protected void performFix(String worldName) {
+									// Corruption Validation
+									setMessageValidating();
+									String location = Game.gameDir + "/saves/" + worldName + "/";
+									int[] levelWidths = new int[6];
+									int[] levelHeights = new int[6];
+									int[] levelSizes = new int[6];
+									ArrayList<List<String>> dataAs = new ArrayList<>(6);
+									for (int i = 0; i < 6; ++i) {
+										try {
+											List<String> dataA = loadFile(location + "Level" + i + Save.extension);
+											List<String> dataB = loadFile(location + "Level" + i +
+												"data" + Save.extension);
+											int w, h;
+											//noinspection DuplicatedCode
+											try {
+												w = Integer.parseInt(dataA.get(0));
+												validateIntegralData(w, null);
+											} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
+												throw new Load.MalformedSaveDataValueException("Index 0 (Level width)", e);
+											}
+
+											try {
+												h = Integer.parseInt(dataA.get(1));
+												validateIntegralData(h, null);
+											} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
+												throw new Load.MalformedSaveDataValueException("Index 1 (Level height)", e);
+											}
+
+											if (w != h || Arrays.stream(legalWorldSizes).noneMatch(v -> v == w) ||
+												dataA.size() - 3 != dataB.size() ||
+												Arrays.stream(legalWorldSizes).noneMatch(v -> v * v == dataB.size())) {
+												Logging.SAVELOAD.error("Unexpected value set detected: w: {}; h: {}; " +
+													"Level{} data count: {}; Level{}data data count: {}", w, h,
+													i, dataA.size(), i, dataB.size());
+												Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+													worldName);
+												finish(false);
+												return; // Cancelled
+											}
+
+											levelWidths[i] = w;
+											levelHeights[i] = h;
+											levelSizes[i] = dataB.size();
+											dataAs.add(dataA);
+										} catch (Load.FileLoadingException e) {
+											Logging.SAVELOAD.error(e, "Unable to load Level {} save data", i);
+											Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+												worldName);
+											finish(false);
+											return; // Cancelled
+										} catch (Load.MalformedSaveDataValueException e) {
+											Logging.SAVELOAD.error(e, "Malformed Level {} save data", i);
+											Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+												worldName);
+											finish(false);
+											return; // Cancelled
+										}
+									}
+
+									for (int i = 1; i < 6; ++i) {
+										if (levelWidths[i] != levelWidths[0] || levelHeights[i] != levelHeights[0] ||
+											levelSizes[i] != levelSizes[0]) {
+											Logging.SAVELOAD.error("Inconsistent level sizes detected (found level {}: " +
+												"(w: {}; h: {}; data count: {}); expected (level 0): (w: {}; h: {}; " +
+												"data count: {})), but disallowed in this save recovery.", i,
+												levelWidths[i], levelHeights[i], levelSizes[i],
+												levelWidths[0], levelHeights[0], levelSizes[0]);
+											Logging.SAVELOAD.warn("World save recovery for world \"{}\" failed.",
+												worldName);
+											finish(false);
+											return; // Cancelled
+										}
+									}
+
+									// Validation Completed; Perform Recovery
+									setMessagePerforming();
+									for (int v : legalWorldSizes) {
+										if (v * v == levelSizes[0]) {
+											// v is now the desired world size.
+											for (int i = 0; i < 6; ++i) {
+												List<String> dataA = dataAs.get(i);
+												// Replacing the original size values with the desired value.
+												dataA.set(0, String.valueOf(v));
+												dataA.set(1, String.valueOf(v));
+												// Resaving the recovered data.
+												try {
+													Save.writeToFile(location + "Level" + i + Save.extension,
+														dataA.toArray(new String[0]), true);
+												} catch (IOException e) {
+													Logging.SAVELOAD.error(e, "Unable to save recovered data");
+													Logging.SAVELOAD.warn(
+														"World save recovery for world \"{}\" failed.", worldName);
+													finish(false);
+													return; // Cancelled
+												}
+											}
+										}
+									}
+
+									// Recovery successfully completed.
+									finish(true);
+								}
+							});
+						}
+					}
+				}
 			}
 
 			if (dataA.size() < 3 + w * h)
@@ -762,7 +940,7 @@ public class HistoricLoad {
 		}
 	}
 
-	private static final Pattern ITEM_REGEX = Pattern.compile("([\\w ]+)(?:;(\\d+))?");
+	private static final Pattern ITEM_REGEX = Pattern.compile("([\\w .]+)(?:;(\\d+))?");
 
 	private static void loadInventory(String path) throws Load.MalformedSaveException {
 		DeathChest deathChest = new DeathChest();
@@ -774,7 +952,7 @@ public class HistoricLoad {
 				for (int i = 0; i < data.size(); i++) {
 					try {
 						loadToInventory(data.get(i), inv, deathChest);
-					} catch (Load.MalformedSaveDataValueException | Load.IllegalSaveDataValueException e) {
+					} catch (Load.IllegalSaveDataValueException | Load.MalformedDataValueException e) {
 						throw new Load.MalformedSaveDataValueException(String.format("Index %d", i), e);
 					}
 				}
@@ -792,17 +970,14 @@ public class HistoricLoad {
 	}
 
 	private static void loadToInventory(String data, Inventory inv, @Nullable DeathChest deathChest)
-		throws Load.IllegalSaveDataValueException, Load.MalformedSaveDataValueException {
+		throws Load.IllegalSaveDataValueException, Load.MalformedDataValueException {
 		Matcher matcher = ITEM_REGEX.matcher(data);
 		if (matcher.matches()) {
 			String itemName = matcher.group(1);
-			Item item = Items.get(Load.subOldName(itemName
-				.replace("P.", "Potion")
-				.replace("Fish Rod", "Fishing Rod")
-				.replace("bed", "Bed"), new Version("0.0.0")));
+			Item item = Items.get(resolveItemName(itemName));
 			if (item instanceof UnknownItem)
-				throw new Load.MalformedSaveDataValueException("Item name",
-					new Load.IllegalSaveDataValueException("Input: " + data));
+				throw new Load.MalformedDataValueException("Item name",
+					new Load.IllegalDataValueException("Input: " + data));
 			int count = 1;
 			String countStr = matcher.group(2);
 			if (countStr != null) { // When ";<amount>" exists.
@@ -811,7 +986,7 @@ public class HistoricLoad {
 					if (count == 0) count = 1; // I am not sure about this.
 					validateIntegralData(count, POSITIVE_INTEGER_CHECK);
 				} catch (NumberFormatException | Load.IllegalSaveDataValueException e) {
-					throw new Load.MalformedSaveDataValueException(
+					throw new Load.MalformedDataValueException(
 						"Item count", e);
 				}
 			}
@@ -819,19 +994,105 @@ public class HistoricLoad {
 			item = item.copy();
 			if (item instanceof StackableItem) {
 				((StackableItem) item).count = count;
-				int added = inv.add(item);
-				if (deathChest != null && added < count) {
+				if (deathChest != null && inv.add(item) != null) {
 					deathChest.getInventory().add(item);
 				}
 			} else {
-				int added = inv.add(item, count);
-				if (deathChest != null && added < count) {
-					deathChest.getInventory().add(item, count - added);
+				int remained;
+				if (deathChest != null && (remained = inv.add(item, count).size()) != 0) {
+					deathChest.getInventory().add(item, remained);
 				}
 			}
 		} else {
 			throw new Load.IllegalSaveDataValueException(String.format("Input: %s", data));
 		}
+	}
+
+	private static String resolveItemName(String itemName) {
+		/*
+		 * Item Name Change History (UTC)
+		 *
+		 * Notes:
+		 * - "St.BrickWall" Stone Wall -> unknown version change to be resolved, so resolved here.
+		 * - Note that "Cooked Pork" and "Pork Chop" were 2 separated items, but resolved later?
+		 *
+		 * Commit History
+		 *
+		 * c3f2e0ea Apr 02, 2017 (23:01)
+		 * - Item "Fish Rod" is removed.
+		 * - Tool type "Rod" is added, and "Wood Rod" is added with "Wood" level.
+		 * 3e572c1e Mar 31, 2017 (19:38)
+		 * - Items added: "Ob.BrickWall", "Obsidian Door"
+		 * 9c1abfe2 Mar 29, 2017 (06:01)
+		 * - " P." is trimmed out from potions' names except for item "Potion".
+		 * - "P." is instead changed to "Potion".
+		 * f95343bf Mar 24, 2017 (04:48)
+		 * - List of spawners changed.
+		 * - New list of spawners: "Cow Spawner", "Pig Spawner", "Sheep Spawner", "Slime Spawner", "Zombie Spawner",
+		 *   "Creeper Spawner", "Skeleton Spawner", "Snake Spawner", "Knight Spawner", "AirWizard Spawner",
+		 *   "AirWizardII Spawner"
+		 * 01d8e558 Mar 21, 2017 (23:26)
+		 * - Spawners are implemented.
+		 * - Items added: "Zombie Spawner", "Slime Spawner", "Knight Spawner", "Snake Spawner", "Skeleton Spawner",
+		 *   "Creeper Spawner", "AirWizard Spawner", "AirWizard Spawner" (duplicated), "Pig Spawner", "Sheep Spawner"
+		 * 13507725 Mar 20, 2017 (10:18)
+		 * - Item "Key" added
+		 * aa565e20 Mar 20, 2017 (01:09)
+		 * - Colored wools and clothes implemented.
+		 * - 5 "Wool" variations are renamed to the corresponding colors.
+		 * - Items added: "Red Clothes", "Blue Clothes", "Green Clothes", "Yellow Clothes", "Black Clothes",
+		 *   "Orange Clothes", "Purple Clothes", "Cyan Clothes", "Reg Clothes"
+		 * - "Wool" items renamed: "Red Wool", "Blue Wool", "Green Wool", "Yellow Wool", "Black Wool"
+		 * - One "Wool" is kept.
+		 * d97784ce Mar 19, 2017 (11:48)
+		 * - Potions added: "Potion", "Speed P.", "Light P.", "Swim P.", "Energy P.", "Regen P.", "Time P.",
+		 *   "Lava P.", "Shield P.", "Haste P."
+		 * 3fb901de Mar 11, 2017 (07:34)
+		 * - Renamed class "bed" to "Bed", but no effect to the entity name and item name.
+		 * 0fbeae59 Feb 26, 2017 (06:22)
+		 * - Dungeon Chest "D.Chest" -> "Dungeon Chest"
+		 * - "Cooked Pork" is added as a food, but at the same time, "Pork Chop" exists.
+		 * 11c3260d Feb 25, 2017 (22:52) First commit
+		 * - Save/Load is not added yet, but items exist.
+		 * - 6 "Wool" variations existed, but with the same name
+		 * - "bed" existed as class name but not as item name even furniture name.
+		 *
+		 * Several items that have doubt to be saved, and not included in the check and mappings:
+		 * - "D.Chest" Dungeon Chest -> cannot be picked up # Since the initial
+		 * - "God Lantern" -> not included in ListItems; no longer existed # Since the initial
+		 * - "God Workbench" -> not included in ListItems; no longer existed # Since the initial
+		 */
+
+		switch (itemName) {
+			// Since the initial
+				// It was not set that can be picked up, but still checked here.
+			case "D.Chest": // Until Feb 26, 2017
+				itemName = "Dungeon Chest"; break;
+			case "St.BrickWall": // Until 1.9.4-dev4?
+				itemName = "Stone Wall"; break;
+			case "Fish Rod": // ?
+				itemName = "Fishing Rod"; break;
+			case "Speed P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Speed Potion"; break;
+			case "Light P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Light Potion"; break;
+			case "Swim P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Swim Potion"; break;
+			case "Energy P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Energy Potion"; break;
+			case "Regen P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Regen Potion"; break;
+			case "Time P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Time Potion"; break;
+			case "Lava P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Lava Potion"; break;
+			case "Shield P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Shield Potion"; break;
+			case "Haste P.": // Until Mar 29, 2017 (06:01)
+				itemName = "Haste Potion"; break;
+		}
+
+		return Load.subOldName(itemName, new Version("0.0.0"));
 	}
 
 	private static void loadEntities(String path) throws Load.MalformedSaveException {
@@ -852,9 +1113,14 @@ public class HistoricLoad {
 							mobLvl = Integer.parseInt(info.get(info.size() - 2));
 					} catch (ClassNotFoundException ignored) { }
 
-					Entity newEntity = getEntity(entityName, Game.player, mobLvl);
+					Entity newEntity;
+					try {
+						newEntity = getEntity(entityName, Game.player, mobLvl);
+					} catch (Load.IllegalDataValueException e) {
+						throw new Load.IllegalSaveDataValueException("Entity", e);
+					}
 
-					if (newEntity != null && newEntity != Game.player) { // the method never returns null, but...
+					if (newEntity != Game.player) { // the method never returns null, but...
 						int currentlevel;
 						if (newEntity instanceof Mob) {
 							Mob mob = (Mob) newEntity;
@@ -873,7 +1139,7 @@ public class HistoricLoad {
 								if (itemData.isEmpty()) continue; // this skips any null items
 								try {
 									loadToInventory(itemData, chest.getInventory(), null);
-								} catch (Load.IllegalSaveDataValueException | Load.MalformedSaveDataValueException e) {
+								} catch (Load.IllegalSaveDataValueException | Load.MalformedDataValueException e) {
 									throw new Load.IllegalSaveDataValueException(String.format("Data Index %d", idx), e);
 								}
 							}
@@ -887,10 +1153,13 @@ public class HistoricLoad {
 							currentlevel = Integer.parseInt(info.get(info.size() - 1));
 							World.levels[currentlevel].add(chest instanceof DeathChest ? chest : chest instanceof DungeonChest ? (DungeonChest) chest : chest, x, y);
 						} else if (newEntity instanceof Spawner) {
-							MobAi mob = (MobAi) getEntity(info.get(2), Game.player, Integer.parseInt(info.get(3)));
-							currentlevel = Integer.parseInt(info.get(info.size() - 1));
-							if (mob != null)
+							try {
+								MobAi mob = (MobAi) getEntity(info.get(2), Game.player, Integer.parseInt(info.get(3)));
+								currentlevel = Integer.parseInt(info.get(info.size() - 1));
 								World.levels[currentlevel].add(new Spawner(mob), x, y);
+							} catch (Load.IllegalDataValueException e) {
+								throw new Load.IllegalSaveDataValueException("Spawner entity", e);
+							}
 						} else {
 							currentlevel = Integer.parseInt(info.get(2));
 							World.levels[currentlevel].add(newEntity, x, y);
@@ -906,7 +1175,9 @@ public class HistoricLoad {
 		}
 	}
 
-	private static Entity getEntity(String string, Player player, int mobLevel) {
+	@NotNull
+	private static Entity getEntity(String string, Player player, int mobLevel)
+			throws Load.IllegalDataValueException {
 		switch (string) {
 			case "Player":
 				return player;
@@ -929,7 +1200,7 @@ public class HistoricLoad {
 			case "Snake":
 				return new Snake(mobLevel);
 			case "AirWizard":
-				if (mobLevel > 1) return null;
+				if (mobLevel > 1) throw new Load.IllegalDataValueException("Mob level: " + mobLevel);
 				return new AirWizard();
 			case "Spawner":
 				return new Spawner(new Zombie(1));
@@ -940,7 +1211,7 @@ public class HistoricLoad {
 			case "DeathChest":
 				return new DeathChest();
 			case "DungeonChest":
-				return new DungeonChest(false);
+				return new DungeonChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":
@@ -961,9 +1232,15 @@ public class HistoricLoad {
 				return new Lantern(Lantern.Type.IRON);
 			case "GoldLantern":
 				return new Lantern(Lantern.Type.GOLD);
+			case "particle.SmashParticle":
+				return new SmashParticle(0, 0);
+			case "particle.TextParticle":
+				return new TextParticle("UNKNOWN", 0, 0, 0);
+			case "particle.FireParticle": // Added since Mar 18, 2017 (04:44) c15adeb8
+				return new FireParticle(0, 0);
 			default:
-				Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: {}", string);
-				return null;
+				Logger.tag("SaveLoad/HistoricLoad").error("Unknown entity requested: {}", string);
+				throw new Load.IllegalDataValueException("Input: " + string);
 		}
 	}
 }
