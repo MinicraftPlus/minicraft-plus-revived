@@ -21,11 +21,6 @@ import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 public class TreeTile extends Tile {
 	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
 	private static final LinkedSprite oakSpriteFull = new LinkedSprite(SpriteType.Tile, "oak_full");
@@ -62,7 +57,11 @@ public class TreeTile extends Tile {
 
 	protected TreeTile(String name) {
 		super(name, null);
-		connectsToGrass = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	@SuppressWarnings("PointlessArithmeticExpression")
@@ -71,40 +70,40 @@ public class TreeTile extends Tile {
 
 		TreeType thisType = level.treeTypes[x + y * level.w];
 		// Checking whether the target direction has targeted the same TreeTile
-		boolean up = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
-		boolean left = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
-		boolean right = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
-		boolean down = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
-		boolean upLeft = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
-		boolean upRight = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
-		boolean downLeft = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
-		boolean downRight = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
+		boolean isUpTileSame = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
+		boolean isLeftTileSame = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
+		boolean isRightTileSame = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
+		boolean isDownTileSame = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
+		boolean isUpLeftTileSame = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
+		boolean isUpRightTileSame = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
+		boolean isDownLeftTileSame = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
+		boolean isDownRightTileSame = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
 
 		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
 		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
 
-		if (up && upLeft && left) {
-			screen.render(x * 16 + 0, y * 16, spriteFull.spritePixels[0][1]);
+		if (isUpTileSame && isUpLeftTileSame && isLeftTileSame) {
+			screen.render((x << 4) + 0, (y << 4) + 0, spriteFull.spritePixels[0][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16, sprite.spritePixels[0][0]);
+			screen.render((x << 4) + 0, (y << 4) + 0, sprite.spritePixels[0][0]);
 		}
 
-		if (up && upRight && right) {
-			screen.render(x * 16 + 8, y * 16, spriteFull.spritePixels[0][0]);
+		if (isUpTileSame && isUpRightTileSame && isRightTileSame) {
+			screen.render((x << 4) + 8, (y << 4) + 0, spriteFull.spritePixels[0][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16, sprite.spritePixels[0][1]);
+			screen.render((x << 4) + 8, (y << 4) + 0, sprite.spritePixels[0][1]);
 		}
 
-		if (down && downLeft && left) {
-			screen.render(x * 16 + 0, y * 16 + 8, spriteFull.spritePixels[1][1]);
+		if (isDownTileSame && isDownLeftTileSame && isLeftTileSame) {
+			screen.render((x << 4) + 0, (y << 4) + 8, spriteFull.spritePixels[1][1]);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, sprite.spritePixels[1][0]);
+			screen.render((x << 4) + 0, (y << 4) + 8, sprite.spritePixels[1][0]);
 		}
 
-		if (down && downRight && right) {
-			screen.render(x * 16 + 8, y * 16 + 8, spriteFull.spritePixels[1][0]);
+		if (isDownTileSame && isDownRightTileSame && isRightTileSame) {
+			screen.render((x << 4) + 8, (y << 4) + 8, spriteFull.spritePixels[1][0]);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, sprite.spritePixels[1][1]);
+			screen.render((x << 4) + 8, (y << 4) + 8, sprite.spritePixels[1][1]);
 		}
 	}
 
@@ -129,7 +128,7 @@ public class TreeTile extends Tile {
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -155,13 +154,13 @@ public class TreeTile extends Tile {
 		int treeHealth = 20;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
 
-		level.add(new SmashParticle(x*16, y*16));
+		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
-			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
 		} else {

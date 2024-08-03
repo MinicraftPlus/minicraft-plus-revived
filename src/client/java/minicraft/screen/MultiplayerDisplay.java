@@ -18,12 +18,14 @@ import minicraft.gfx.Screen;
 import minicraft.network.Analytics;
 import minicraft.util.Logging;
 
-/** @deprecated As multiplayer mode removed. This class is not localized. */
+/**
+ * @deprecated As multiplayer mode removed. This class is not localized.
+ */
 @Deprecated
 public class MultiplayerDisplay extends Display {
 
 	private static final String domain = "https://playminicraft.com";
-	private static final String apiDomain = domain+"/api";
+	private static final String apiDomain = domain + "/api";
 
 	public static String savedIP = "";
 	public static String savedUUID = "";
@@ -48,15 +50,19 @@ public class MultiplayerDisplay extends Display {
 
 	private State curState;
 
-	public MultiplayerDisplay() { this(true); }
+	public MultiplayerDisplay() {
+		this(true);
+	}
+
 	public MultiplayerDisplay(boolean pingSite) {
 
-		if(savedUUID == null) savedUUID = "";
-		if(email == null) email = "";
-		if(savedUsername == null) savedUsername = "";
+		if (savedUUID == null) savedUUID = "";
+		if (email == null) email = "";
+		if (savedUsername == null) savedUsername = "";
 
-		if(pingSite)
-			contactAccountServer(() -> {});
+		if (pingSite)
+			contactAccountServer(() -> {
+			});
 	}
 
 	private void contactAccountServer(Action sitePingCallback) {
@@ -65,23 +71,23 @@ public class MultiplayerDisplay extends Display {
 		Unirest.get(domain).asEmptyAsync(new Callback<Empty>() {
 			@Override
 			public void completed(HttpResponse<Empty> response) {
-				if(response.getStatus() == 200)
+				if (response.getStatus() == 200)
 					online = true;
 				else
 					System.err.println("Warning: Minicraft site ping returned status code " + response.getStatus());
 
-				if(savedUUID.length() > 0) {
+				if (savedUUID.length() > 0) {
 					setWaitMessage("attempting log in");
 					fetchName(savedUUID);
 				}
 
-				if(curState == State.ERROR)
+				if (curState == State.ERROR)
 					return;
 
 				// at this point, the game is online, and either the player could log in automatically, or has to enter their
 				// email and password.
 
-				if(savedUsername.length() == 0 || savedUUID.length() == 0)
+				if (savedUsername.length() == 0 || savedUUID.length() == 0)
 					curState = State.LOGIN; // the player must log in manually.
 				else {
 					typing = savedIP;
@@ -93,8 +99,8 @@ public class MultiplayerDisplay extends Display {
 
 			@Override
 			public void failed(UnirestException e) {
-				System.err.println("Website ping failed: "+e.getMessage());
-				if(!e.getMessage().equalsIgnoreCase("connection reset by peer"))
+				System.err.println("Website ping failed: " + e.getMessage());
+				if (!e.getMessage().equalsIgnoreCase("connection reset by peer"))
 					e.printStackTrace();
 				cancelled();
 			}
@@ -102,7 +108,7 @@ public class MultiplayerDisplay extends Display {
 			@Override
 			public void cancelled() {
 				System.err.println("Website ping cancelled.");
-				if(savedUsername.length() == 0 || savedUUID.length() == 0) {
+				if (savedUsername.length() == 0 || savedUUID.length() == 0) {
 					// couldn't validate username, and can't enter offline mode b/c there is no username
 					setError("could not connect to playminicraft account server, but no login data saved; cannot enter offline mode.", false);
 					return;
@@ -117,7 +123,8 @@ public class MultiplayerDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {}
+	public void tick(InputHandler input) {
+	}
 
 	private void fetchName(String uuid) {
 		Analytics.LoginAttempt.ping();
@@ -125,16 +132,16 @@ public class MultiplayerDisplay extends Display {
 		HttpResponse<JsonNode> response = null;
 
 		try {
-			response = Unirest.post(apiDomain+"/fetch-name")
-					.field("uuid", savedUUID)
-					.asJson();
+			response = Unirest.post(apiDomain + "/fetch-name")
+				.field("uuid", savedUUID)
+				.asJson();
 		} catch (UnirestException e) {
 			e.printStackTrace();
 		}
 
-		if(response != null) {
+		if (response != null) {
 			kong.unirest.json.JSONObject json = response.getBody().getObject();
-			switch(json.getString("status")) {
+			switch (json.getString("status")) {
 				case "error":
 					setError("problem with saved login data; please exit and login again.", false);
 					savedUUID = "";
@@ -161,9 +168,12 @@ public class MultiplayerDisplay extends Display {
 		loadingMessage = msg;
 	}
 
-	public void setError(String msg) { setError(msg, true); }
+	public void setError(String msg) {
+		setError(msg, true);
+	}
+
 	private void setError(String msg, boolean overrideMenu) {
-		if(curState == State.ERROR) return; // keep original message
+		if (curState == State.ERROR) return; // keep original message
 		this.curState = State.ERROR;
 		errorMessage = msg;
 	}
@@ -172,31 +182,31 @@ public class MultiplayerDisplay extends Display {
 	public void render(Screen screen) {
 		screen.clear(0);
 
-		switch(curState) {
+		switch (curState) {
 			case ENTERIP:
 				Font.drawCentered("Logged in as: " + savedUsername, screen, 6, Color.get(1, 102, 255, 102));
 
-				if(!online)
-					Font.drawCentered("Offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(1, 153, 153, 255));
+				if (!online)
+					Font.drawCentered("Offline mode: local servers only", screen, Screen.h / 2 - Font.textHeight() * 6, Color.get(1, 153, 153, 255));
 
-				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()*2-2, Color.get(1, 255));
-				Font.drawCentered(typing, screen, Screen.h/2-Font.textHeight(), Color.get(1, 255, 255, 102));
+				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h / 2 - Font.textHeight() * 2 - 2, Color.get(1, 255));
+				Font.drawCentered(typing, screen, Screen.h / 2 - Font.textHeight(), Color.get(1, 255, 255, 102));
 
-				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get(1, 204));
+				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h - Font.textHeight() * 7, Color.get(1, 204));
 				break;
 
 			case LOGIN:
 				String msg = "Enter email:";
-				if(!typingEmail)
+				if (!typingEmail)
 					msg = "Enter password:";
 				Font.drawCentered(msg, screen, Screen.h / 2 - 6, Color.WHITE);
 
 				msg = typing;
-				if(!typingEmail)
+				if (!typingEmail)
 					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
 				Font.drawCentered(msg, screen, Screen.h / 2 + 6, (inputIsValid ? Color.get(1, 204) : Color.RED));
-				if(!inputIsValid) {
+				if (!inputIsValid) {
 					Font.drawCentered("field is blank", screen, Screen.h / 2 + 20, Color.RED);
 				}
 
@@ -206,7 +216,7 @@ public class MultiplayerDisplay extends Display {
 				break;
 
 			case WAITING:
-				Font.drawCentered(waitingMessage+ ellipsis.updateAndGet(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered(waitingMessage + ellipsis.updateAndGet(), screen, Screen.h / 2, Color.WHITE);
 				break;
 
 			case LOADING:
@@ -216,15 +226,15 @@ public class MultiplayerDisplay extends Display {
 
 			case ERROR:
 				//if(Updater.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
-				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
-				FontStyle style = new FontStyle(Color.get(1, 255, 51, 51)).setYPos(Screen.h/2+6);
+				Font.drawCentered("Could not connect to server:", screen, Screen.h / 2 - 6, Color.RED);
+				FontStyle style = new FontStyle(Color.get(1, 255, 51, 51)).setYPos(Screen.h / 2 + 6);
 				Font.drawParagraph(errorMessage, screen, style, 1);
 				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(1, 255, 51, 51));
 				break;
 		}
 
-		if(curState == State.ENTERIP || curState == State.ERROR) {
-			Font.drawCentered("Press "+Game.input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.GRAY);
+		if (curState == State.ENTERIP || curState == State.ERROR) {
+			Font.drawCentered("Press " + Game.input.getMapping("exit") + " to return", screen, Screen.h - Font.textHeight() * 2, Color.GRAY);
 		}
 	}
 }

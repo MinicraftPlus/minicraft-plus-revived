@@ -41,9 +41,6 @@ public abstract class Tile {
 
 	public short id;
 
-	public boolean connectsToGrass = false;
-	public boolean connectsToSand = false;
-	public boolean connectsToFluid = false;
 	public int light = 1;
 	protected boolean maySpawn = false;
 
@@ -55,26 +52,38 @@ public abstract class Tile {
 	}
 
 
-	/** This method is used by tiles to specify the default "data" they have in a level's data array.
-		Used for starting health, color/type of tile, etc. */
+	/**
+	 * This method is used by tiles to specify the default "data" they have in a level's data array.
+	 * Used for starting health, color/type of tile, etc.
+	 */
 	// At least, that was the idea at first...
 	public int getDefaultData() {
 		return 0;
 	}
 
-	/** Render method, used in sub-classes */
+	/**
+	 * Render method, used in sub-classes
+	 */
 	public void render(Screen screen, Level level, int x, int y) {
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean maySpawn() { return maySpawn; }
+	public boolean maySpawn() {
+		return maySpawn;
+	}
 
-	/** Returns if the player can walk on it, overrides in sub-classes  */
+	public void onTileSet(Level level, int x, int y) {}
+
+	/**
+	 * Returns if the player can walk on it, overrides in sub-classes
+	 */
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}
 
-	/** Gets the light radius of a tile, Bigger number = bigger circle */
+	/**
+	 * Gets the light radius of a tile, Bigger number = bigger circle
+	 */
 	public int getLightRadius(Level level, int x, int y) {
 		return 0;
 	}
@@ -89,7 +98,9 @@ public abstract class Tile {
 	 * @param attackDir The direction of the player hitting.
 	 * @return If the damage was applied.
 	 */
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) { return false; }
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+		return false;
+	}
 
 	/**
 	 * Hurt the tile with a specified amount of damage.
@@ -98,16 +109,27 @@ public abstract class Tile {
 	 * @param y Y position of the tile.
 	 * @param dmg The damage taken.
 	 */
-	public void hurt(Level level, int x, int y, int dmg) {}
+	public void hurt(Level level, int x, int y, int dmg) {
+	}
 
-	/** What happens when you run into the tile (ex: run into a cactus) */
-	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
+	/**
+	 * What happens when you run into the tile (ex: run into a cactus)
+	 */
+	public void bumpedInto(Level level, int xt, int yt, Entity entity) {
+	}
 
-	/** Update method */
-	public boolean tick(Level level, int xt, int yt) { return false; }
+	/**
+	 * Update method
+	 */
+	public boolean tick(Level level, int xt, int yt) {
+		return false;
+	}
 
-	/** What happens when you are inside the tile (ex: lava) */
-	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
+	/**
+	 * What happens when you are inside the tile (ex: lava)
+	 */
+	public void steppedOn(Level level, int xt, int yt, Entity entity) {
+	}
 
 	/**
 	 * Called when you hit an item on a tile (ex: Pickaxe on rock).
@@ -135,9 +157,20 @@ public abstract class Tile {
 		return false;
 	}
 
-	/** Sees if the tile connects to a fluid. */
-	public boolean connectsToLiquid() { return connectsToFluid; }
+	/** Whether the tile connects to grass tile in appearance. */
+	public boolean connectsToGrass(Level level, int x, int y) { return false; }
 
+	/** Whether the tile connects to sand tile in appearance. */
+	public boolean connectsToSand(Level level, int x, int y) { return false; }
+
+	/** Whether the tile connects to fluid tile in appearance. */
+	public boolean connectsToFluid(Level level, int x, int y) { return false; }
+
+	/**
+	 * @deprecated This should be planned to be removed as this method is not ideally used.
+	 * 	The current only usage is in {@link Level#setTile(int, int, String)}.
+	 */
+	@Deprecated
 	public int getData(String data) {
 		try {
 			return Integer.parseInt(data);
@@ -146,6 +179,11 @@ public abstract class Tile {
 		}
 	}
 
+	/**
+	 * @deprecated Similar to {@link #getData(String)}. Also, param {@code thisData} is unused.
+	 * 	The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
+	 */
+	@Deprecated
 	public boolean matches(int thisData, String tileInfo) {
 		return name.equals(tileInfo.split("_")[0]);
 	}
@@ -164,7 +202,7 @@ public abstract class Tile {
 			int tiledata = curLevel.data[pos];
 
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
-		} catch(NullPointerException | IndexOutOfBoundsException ignored) {
+		} catch (NullPointerException | IndexOutOfBoundsException ignored) {
 		}
 
 		return "";
@@ -178,5 +216,7 @@ public abstract class Tile {
 	}
 
 	@Override
-	public int hashCode() { return name.hashCode(); }
+	public int hashCode() {
+		return name.hashCode();
+	}
 }

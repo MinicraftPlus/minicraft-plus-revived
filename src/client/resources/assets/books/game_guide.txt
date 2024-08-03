@@ -1,0 +1,23 @@
+The first major milestone is getting your first tools and finding a set of stairs. Stairs down go underground, into the caves. There are 3 levels of cave systems, each with a different ore. The first level has iron, the second has gold (and water), and the third has gems (and lava). Mobs become more powerful the deeper you go. Lapis is also dispersed throughout the second and third floors.
+
+On each level, you'll have to find stairs leading down to the next. This is made difficult, however, by the fact that your vision is severely limited underground, to the point where you can only see about 1 tile in any direction. You may use torches and lanterns to light your way, as well as light potions.
+
+You may also notice, on the surface level, stairs leading up, into the sky, surrounded by strange hard rock. To break this rock, you need a gem pickaxe. So, in order to reach the sky, you must first get all the way down to the third underground level, where gems and lava reside, and make it back up.
+
+If you manage to accomplish that, and craft a gem pickaxe, then you can break the hard rock surrounding the stairs to the sky. There, you'll find the air wizard boss waiting for you. The air wizard has 1 attack pattern: spark spiral.
+
+When the air wizard is defeated, a message appears on screen, saying the dungeon is opened. That refers to a certain staircase on the third underground level going down, surrounded by purple obsidian bricks and walls. Only after defeating the air wizard can you destroy the obsidian and go down the stairs. The dungeon level you'll find is entirely composed of various obsidian tiles, with occasional small pockets of lava scattered about. There are no ores.
+
+The enemies there are mostly of two types: snakes, and knights. Snakes drop scales, which can be used to craft green snake armor, and knights drop shards, which are needed to craft claymores, upgraded powerful swords. Additionally, there are a variety of rooms through the dungeon: spawner rooms, dungeon gardens, fancy lava pools, and rooms filled with grayed-out chests. These chests are dungeon chests and require keys to open and said keys drop from the enemies of the floor. Within these chests are fancy powerful items to help fight the next boss.
+
+There are a certain amount of dungeon chests that you will have to open if you want to survive from the next boss. The amount is dependent on the map size and some random chance. If you press F3 while on the dungeon level, it will display how many locked chests remain. Upon unlocking the final chest out of all the chest on the map, you will receive 5 golden apples.
+
+You will eventually come across a room with a strange curious statue. This is the boss room, if you tap the statue inside three times, the obsidian knight will spawn. Soon you will notice the room's doors are locked solid and unbreakable until either the boss is defeated or the player dies. This boss has 3 attack patterns and 2 phases: fire spray and normal walk for phase 1 and additionally dash for phase 2.
+
+If you came prepared and/or was lucky and manage to defeat the obsidian knight, it will drop a big amount of shards and a new curious item. This item, the obsidian heart, when used will increase your max health by 5 per use, with a maximum of 30 in total (4 obsidian hearts are needed). The boss only drops one, so for maximum hp you will need to respawn the boss with an obsidian poppet, which is craftable in the enchanter.
+
+@@@
+
+Back in the sky world are white ores called cloud ore, which you can mine. You can craft a Totem of Air from such ores, which will respawn the air wizard when used. There is also a house which belonged to the Air Wizard. It contains a free enchanter to craft potions and boss respawn items.
+
+And of course, you may continue to play your world as usual afterwards.

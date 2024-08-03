@@ -52,21 +52,25 @@ public class Recipes {
 		craftRecipes.add(new Recipe("plank_2", "Wood_1"));
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		craftRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
 
 		workbenchRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("plank_2", "Wood_1"));
 		workbenchRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		workbenchRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
 		workbenchRecipes.add(new Recipe("Stone Brick_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Ornate Stone_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
+		workbenchRecipes.add(new Recipe("Stone Fence_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Brick_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Ornate Obsidian_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Obsidian Wall_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Door_1", "Obsidian Brick_5"));
+		workbenchRecipes.add(new Recipe("Obsidian Fence_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
 		workbenchRecipes.add(new Recipe("Furnace_1", "Stone_20"));
 		workbenchRecipes.add(new Recipe("Enchanter_1", "Wood_5", "String_2", "Lapis_10"));
@@ -96,12 +100,28 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		workbenchRecipes.add(new Recipe("Snake Armor_1", "scale_15"));
 
-		workbenchRecipes.add(new Recipe("white dye_1", "Bone Meal_1"));
+		workbenchRecipes.add(new Recipe("white dye_1", "White Lily_1"));
+		workbenchRecipes.add(new Recipe("light gray dye_1", "Oxeye Daisy_1"));
+		workbenchRecipes.add(new Recipe("light gray dye_1", "Hydrangea_1"));
+		workbenchRecipes.add(new Recipe("light gray dye_1", "White Tulip_1"));
 		workbenchRecipes.add(new Recipe("blue dye_1", "Lapis_1"));
+		workbenchRecipes.add(new Recipe("blue dye_1", "Cornflower_1"));
+		workbenchRecipes.add(new Recipe("blue dye_1", "Iris_1"));
 		workbenchRecipes.add(new Recipe("green dye_1", "Cactus_1"));
-		workbenchRecipes.add(new Recipe("yellow dye_1", "Flower_1"));
+		workbenchRecipes.add(new Recipe("yellow dye_1", "Sunflower_1"));
+		workbenchRecipes.add(new Recipe("yellow dye_1", "Dandelion_1"));
+		workbenchRecipes.add(new Recipe("light blue dye_1", "Blue Orchid_1"));
+		workbenchRecipes.add(new Recipe("light blue dye_1", "Periwinkle_1"));
 		workbenchRecipes.add(new Recipe("black dye_1", "Coal_1"));
 		workbenchRecipes.add(new Recipe("red dye_1", "Rose_1"));
+		workbenchRecipes.add(new Recipe("red dye_1", "Red Tulip_1"));
+		workbenchRecipes.add(new Recipe("red dye_1", "Poppy_1"));
+		workbenchRecipes.add(new Recipe("magenta dye_1", "Allium_1"));
+		workbenchRecipes.add(new Recipe("orange dye_1", "Orange Tulip_1"));
+		workbenchRecipes.add(new Recipe("pink dye_1", "Pink Tulip_1"));
+		workbenchRecipes.add(new Recipe("pink dye_1", "Peony_1"));
+		workbenchRecipes.add(new Recipe("pink dye_1", "Pink Lily_1"));
+		workbenchRecipes.add(new Recipe("purple dye_1", "Violet_1"));
 		workbenchRecipes.add(new Recipe("orange dye_2", "red dye_1", "yellow dye_1"));
 		workbenchRecipes.add(new Recipe("purple dye_2", "blue dye_1", "red dye_1"));
 		workbenchRecipes.add(new Recipe("cyan dye_2", "blue dye_1", "green dye_1"));
@@ -201,8 +221,8 @@ public class Recipes {
 		anvilRecipes.add(new Recipe("Shears_1", "Iron_4"));
 		anvilRecipes.add(new Recipe("Watering Can_1", "Iron_3"));
 
-		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
-		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));
+		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_3", "coal_1"));
+		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_3", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass_1", "sand_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass bottle_1", "glass_3"));
 
@@ -221,13 +241,17 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("lava potion_1", "awkward potion_1", "Lava Bucket_1"));
 		enchantRecipes.add(new Recipe("energy potion_1", "awkward potion_1", "gem_25"));
 		enchantRecipes.add(new Recipe("regen potion_1", "awkward potion_1", "Gold Apple_1"));
-		enchantRecipes.add(new Recipe("Health Potion_1", "awkward potion_1", "GunPowder_2", "Leather Armor_1"));
-		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "GunPowder_3", "Lapis_7"));
+		enchantRecipes.add(new Recipe("Health Potion_1", "awkward potion_1", "Gunpowder_2", "Leather Armor_1"));
+		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "Gunpowder_3", "Lapis_7"));
 		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5", "Cloud Ore_5"));
 		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5", "Shard_15"));
 		enchantRecipes.add(new Recipe("Arcane Fertilizer_3", "Lapis_6", "Bone_2"));
 	}
 
+	/**
+	 * This regenerates the recipes.json at once by the recipes above.
+	 * Remind that it is recommended to use String Manipulation plugin to resort (JSON Sort) the file if using IntelliJ IDEA.
+	 */
 	public static void main(String[] args) {
 		HashSet<Recipe> recipes = new HashSet<>();
 		recipes.addAll(anvilRecipes);
@@ -248,12 +272,12 @@ public class Recipes {
 		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurs.
 			Item item = recipe.getProduct();
 			String name = itemNameFixer.apply(item);
-			if (item instanceof DyeItem) {
+			/*if (item instanceof DyeItem) { TODO
 				Map<String, Integer> costs = recipe.getCosts();
 				if (costs.size() == 2 && costs.containsKey("WHITE DYE"))
 					return name + "_from_white_dye";
 				return name;
-			} else if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
+			} else*/ if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
 				if (recipe.getCosts().containsKey("WHITE BED"))
 					return name + "_from_white_bed";
 				return name;
@@ -411,7 +435,7 @@ public class Recipes {
 		}
 
 		try {
-			Save.writeJSONToFile(new File(System.getProperty("user.dir"), "src/main/resources/resources/recipes.json").toString(),
+			Save.writeJSONToFile(new File(System.getProperty("user.dir"), "src/client/resources/resources/recipes.json").toString(),
 				json.toString(2));
 		} catch (IOException e) {
 			throw new RuntimeException(e);

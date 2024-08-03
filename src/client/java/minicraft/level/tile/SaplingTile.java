@@ -8,7 +8,7 @@ import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
-public class SaplingTile extends Tile implements BoostablePlant {
+public class SaplingTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
 
 	private Tile onType;
@@ -18,10 +18,22 @@ public class SaplingTile extends Tile implements BoostablePlant {
 		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
-		connectsToSand = onType.connectsToSand;
-		connectsToGrass = onType.connectsToGrass;
-		connectsToFluid = onType.connectsToFluid;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return onType.connectsToGrass(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return onType.connectsToFluid(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return onType.connectsToSand(level, x, y);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
@@ -46,15 +58,5 @@ public class SaplingTile extends Tile implements BoostablePlant {
 		level.setTile(x, y, onType);
 		Sound.play("monsterhurt");
 		return true;
-	}
-
-	@Override
-	public boolean isValidBoostablePlantTarget(Level level, int x, int y) {
-		return true;
-	}
-
-	@Override
-	public void performPlantBoost(Level level, int x, int y) {
-		level.setData(x, y, Math.min(level.getData(x, y) + random.nextInt(30), 110));
 	}
 }

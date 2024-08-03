@@ -3,9 +3,8 @@ package minicraft.level;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
-import minicraft.level.tile.TallGrassTile;
+import minicraft.level.tile.FlowerTile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.TreeTile;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -15,9 +14,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.Random;
-import java.util.function.BiFunction;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -26,7 +23,9 @@ public class LevelGen {
 	private final int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
 
-	/** This creates noise to create random values for level generation */
+	/**
+	 * This creates noise to create random values for level generation
+	 */
 	public LevelGen(int w, int h, int featureSize) {
 		this.w = w;
 		this.h = h;
@@ -248,7 +247,7 @@ public class LevelGen {
 				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val += 1 - dist*20;
+				val += 1 - dist * 20;
 
 				switch ((String) Settings.get("Type")) {
 					case "minicraft.settings.type.island":
@@ -421,29 +420,17 @@ public class LevelGen {
 			}
 		}
 
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				int xx = x + random.nextInt(3) - random.nextInt(3);
-				int yy = y + random.nextInt(3) - random.nextInt(3);
-				if (xx >= 0 && yy >= 0 && xx < w && yy < h && random.nextInt(5) < 3) {
-					if (map[xx + yy * w] == Tiles.get("grass").id) {
-						map[xx + yy * w] = TallGrassTile.grassIDs.get(random.nextInt(TallGrassTile.grassIDs.size()));
-					}
-				}
-			}
-		}
-
 		for (int i = 0; i < w * h / 400; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
-			int col = random.nextInt(4);
+			int col = random.nextInt(4) * random.nextInt(4);
 			for (int j = 0; j < 30; j++) {
 				int xx = x + random.nextInt(5) - random.nextInt(5);
 				int yy = y + random.nextInt(5) - random.nextInt(5);
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w] = (short) (col + random.nextInt(4) * 16); // Data determines which way the flower faces
+						data[xx + yy * w] = (short) (col + random.nextInt(3)); // Data determines what the flower is
 					}
 				}
 			}
@@ -491,7 +478,7 @@ public class LevelGen {
 		//average /= w*h;
 		//System.out.println(average);
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 	private static short[][] createDungeon(int w, int h) {
@@ -518,7 +505,8 @@ public class LevelGen {
 
 				if (val < -0.05) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-				}else if(val>=-0.05 && val<-0.03){map[i] = Tiles.get("Lava").id;
+				} else if (val >= -0.05 && val < -0.03) {
+					map[i] = Tiles.get("Lava").id;
 				} else {
 					if (random.nextInt(2) == 1) {
 						if (random.nextInt(2) == 1) {
@@ -526,8 +514,7 @@ public class LevelGen {
 						} else {
 							map[i] = Tiles.get("Raw Obsidian").id;
 						}
-					}
-					else {
+					} else {
 						map[i] = Tiles.get("dirt").id;
 					}
 				}
@@ -554,7 +541,7 @@ public class LevelGen {
 			}
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 
@@ -645,10 +632,10 @@ public class LevelGen {
 
 		if (depth > 2) { // The level above dungeon.
 			int r = 1;
-			int xm = w/2;
-			int ym = h/2;
+			int xm = w / 2;
+			int ym = h / 2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
-			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			int edgeMargin = w / 20; // The distance between the world enge and the lock sides.
 			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
 			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
 			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
@@ -690,7 +677,7 @@ public class LevelGen {
 			}
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 	private static short[][] createSkyMap(int w, int h) {
@@ -760,7 +747,7 @@ public class LevelGen {
 			if (count >= w / 64) break;
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 	public static void main(String[] args) {
@@ -836,8 +823,8 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed "+worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] {"Next", "0x100", "0xAAFF20"}, "Next");
+			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed " + worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] { "Next", "0x100", "0xAAFF20" }, "Next");
 			if (op == 1) LevelGen.worldSeed = 0x100;
 			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
 			else LevelGen.worldSeed++;

@@ -16,15 +16,15 @@ public class PotatoTile extends CropTile {
 		new LinkedSprite(SpriteType.Tile, "potato_stage5")
 	};
 
-    public PotatoTile(String name) {
-        super(name, null);
-    }
+	public PotatoTile(String name) {
+		super(name, null);
+	}
 
-    @Override
-    public void render(Screen screen, Level level, int x, int y) {
-        int age = (level.getData(x, y) >> 3) & maxAge;
-        Tiles.get("Farmland").render(screen, level, x, y);
-		int stage = age / (maxAge / 5);
-		screen.render(x * 16, y * 16, spritStages[stage]);
-    }
+	@Override
+	public void render(Screen screen, Level level, int x, int y) {
+		int age = (level.getData(x, y) >> 3) & maxAge;
+		Tiles.get("Farmland").render(screen, level, x, y);
+		int stage = (int) ((float) age / maxAge * 5);
+		screen.render(x << 4, y << 4, spritStages[stage]);
+	}
 }

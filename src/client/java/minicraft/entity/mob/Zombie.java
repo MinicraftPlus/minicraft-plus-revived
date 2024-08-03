@@ -33,9 +33,9 @@ public class Zombie extends EnemyMob {
 			int rand = random.nextInt(3);
 			if (rand == 0) {
 				level.dropItem(x, y, Items.get("green clothes"));
-			} else if(rand == 1) {
+			} else if (rand == 1) {
 				level.dropItem(x, y, Items.get("red clothes"));
-			} else if(rand == 2) {
+			} else if (rand == 2) {
 				level.dropItem(x, y, Items.get("blue clothes"));
 			}
 		}

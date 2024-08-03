@@ -44,7 +44,9 @@ public class ClothingItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull ClothingItem copy() {
 		return new ClothingItem(getName(), color);

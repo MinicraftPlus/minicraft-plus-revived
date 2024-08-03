@@ -22,8 +22,8 @@ public class EnemyMob extends MobAi {
 		if (level.depth == 0 && Updater.tickCount >= Updater.dayLength / 4 && Updater.tickCount <= Updater.dayLength / 2)
 			if (isWithinLight()) // If it is now morning and on the surface, the mob despawns when it is within light.
 				super.handleDespawn();
-		else if (!isWithinLight()) // Otherwise, it despawns when it is not within light.
-			super.handleDespawn();
+			else if (!isWithinLight()) // Otherwise, it despawns when it is not within light.
+				super.handleDespawn();
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class EnemyMob extends MobAi {
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	public EnemyMob(int lvl, LinkedSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
-		super(lvlSprites[0], isFactor ? (lvl == 0 ? 1 : lvl * lvl) * health * ((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
+		super(lvlSprites[0], isFactor ? (lvl == 0 ? 1 : lvl * lvl) * health * ((Double) (Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlSprites = java.util.Arrays.copyOf(lvlSprites, lvlSprites.length);
 		this.detectDist = detectDist;
@@ -66,7 +66,6 @@ public class EnemyMob extends MobAi {
 	 * isFactor=true,
 	 * rwTime=60,
 	 * rwChance=200.
-	 *
 	 * @param lvl The mob's level.
 	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
 	 * @param health How much health the mob has.
@@ -95,7 +94,7 @@ public class EnemyMob extends MobAi {
 				if (yd > sig0) this.ymov = +1;
 			} else {
 				// If the enemy was following the player, but has now lost it, it stops moving.
-					// *That would be nice, but I'll just make it move randomly instead.
+				// *That would be nice, but I'll just make it move randomly instead.
 				randomizeWalkDir(false);
 			}
 		}
@@ -111,8 +110,8 @@ public class EnemyMob extends MobAi {
 	protected void touchedBy(Entity entity) { // If an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
 		// Hurts the player, damage is based on lvl.
-		if(entity instanceof Player) {
-			((Player)entity).hurt(this, lvl * (Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 2 : 1));
+		if (entity instanceof Player) {
+			((Player) entity).hurt(this, lvl * (Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 2 : 1));
 		}
 	}
 
@@ -130,7 +129,7 @@ public class EnemyMob extends MobAi {
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob
 		int r = (level.depth == -4 ? (Game.isMode("minicraft.settings.mode.score") ? 22 : 15) : 13);
 
-		if(!MobAi.checkStartPos(level, x, y, 60, r))
+		if (!MobAi.checkStartPos(level, x, y, 60, r))
 			return false;
 
 		x = x >> 4;
