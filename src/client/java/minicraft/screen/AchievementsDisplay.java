@@ -1,14 +1,12 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
 import minicraft.gfx.Insets;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
@@ -30,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -144,8 +141,7 @@ public class AchievementsDisplay extends Display {
 
 	/**
 	 * Use this to lock or unlock an achievement.
-	 *
-	 * @param id       Achievement ID.
+	 * @param id Achievement ID.
 	 * @param unlocked Whether this achievement should be locked or unlocked.
 	 * @return True if setting the achievement was successful.
 	 */
@@ -187,7 +183,7 @@ public class AchievementsDisplay extends Display {
 		return true;
 	}
 
-	private static class AchievementUnlockToast extends GameToast {
+	private static class AchievementUnlockToast extends Toast {
 		private static final int ICON_PADDING = 16; // 16 pixels wide space is reserved.
 
 		private static final AchievementUnlockToastFrame FRAME = new AchievementUnlockToastFrame();
@@ -238,7 +234,6 @@ public class AchievementsDisplay extends Display {
 
 	/**
 	 * Gets an array of all the unlocked achievements.
-	 *
 	 * @return A string array with each unlocked achievement's id in it.
 	 */
 	public static String[] getUnlockedAchievements() {
@@ -277,7 +272,6 @@ public class AchievementsDisplay extends Display {
 
 	/**
 	 * Unlocks a list of achievements.
-	 *
 	 * @param unlockedAchievements An array of all the achievements we want to load, ids.
 	 */
 	public static void unlockAchievements(JSONArray unlockedAchievements) {

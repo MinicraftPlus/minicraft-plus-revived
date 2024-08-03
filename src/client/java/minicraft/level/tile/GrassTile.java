@@ -15,13 +15,17 @@ import minicraft.util.AdvancementElement;
 
 public class GrassTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "grass")
-		.setConnectChecker((tile, side) -> !side || tile.connectsToGrass)
+		.setConnectionChecker((level, x, y, tile, side) -> !side || tile.connectsToGrass(level, x, y))
 		.setSingletonWithConnective(true);
 
 	protected GrassTile(String name) {
 		super(name, sprite);
-		connectsToGrass = true;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
@@ -55,7 +59,7 @@ public class GrassTile extends Tile {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) == 0) { // 20% chance to drop Grass seeds
-						level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, Items.get("Grass Seeds"));
+						level.dropItem((xt << 4) + 8, (yt << 4) + 8, 1, Items.get("Grass Seeds"));
 					}
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
@@ -69,7 +73,7 @@ public class GrassTile extends Tile {
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
-						level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Wheat Seeds"));
+						level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Wheat Seeds"));
 					}
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(

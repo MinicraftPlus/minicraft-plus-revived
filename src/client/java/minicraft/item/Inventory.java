@@ -1,7 +1,7 @@
 package minicraft.item;
 
-import minicraft.entity.furniture.Furniture;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Inventory {
-	private final Random random = new Random();
 	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 
 	protected int maxItem = 27;
@@ -21,7 +20,6 @@ public class Inventory {
 
 	/**
 	 * Returns all the items which are in this inventory.
-	 *
 	 * @return ArrayList containing all the items in the inventory.
 	 */
 	public List<Item> getItems() {
@@ -38,7 +36,6 @@ public class Inventory {
 
 	/**
 	 * Get one item in this inventory.
-	 *
 	 * @param idx The index of the item in the inventory's item array.
 	 * @return The specified item.
 	 */
@@ -48,7 +45,6 @@ public class Inventory {
 
 	/**
 	 * Remove an item in this inventory.
-	 *
 	 * @param idx The index of the item in the inventory's item array.
 	 * @return The removed item.
 	 */
@@ -57,57 +53,45 @@ public class Inventory {
 	}
 
 	/**
-	 * Adds an item to the inventory
-	 */
-	public int add(@Nullable Item item) {
-		if (item != null)
-			return add(items.size(), item);  // Adds the item to the end of the inventory list
-		return 0;
-	}
-
-	/**
 	 * Adds several copies of the same item to the end of the inventory.
-	 *
 	 * @param item Item to be added.
-	 * @param num  Amount of items to add.
+	 * @param num Amount of items to add.
+	 * @return the remaining item not being added; empty if whole stack of items has been added successfully
 	 */
-	public int add(Item item, int num) {
-		int total = 0;
-		for (int i = 0; i < num; i++)
-			total += add(item.copy());
-		return total;
+	public List<Item> add(@NotNull Item item, int num) {
+		ArrayList<Item> remaining = new ArrayList<>();
+		for (int i = 0; i < num; i++) {
+			Item remain = add(item.copy());
+			if (remain != null) remaining.add(remain);
+		}
+		return remaining;
 	}
 
 	/**
-	 * Adds an item to a specific spot in the inventory.
-	 *
-	 * @param slot Index to place item at.
+	 * Adds an item at the end of the inventory.
 	 * @param item Item to be added.
-	 * @return The number of items added.
+	 * @return the remaining item not being added; {@code null} if whole stack of items has been added successfully
 	 */
-	public int add(int slot, Item item) {
-
+	public @Nullable Item add(@Nullable Item item) {
+		if (item == null) return null;
 		// Do not add to inventory if it is a PowerGlove
 		if (item instanceof PowerGloveItem) {
 			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
-			return 0;
+			return null;
 		}
 
 		if (item instanceof StackableItem) { // If the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-			int total = toTake.count;
-
 			for (Item value : items) {
 				if (toTake.stacksWith(value)) {
 					StackableItem stack = (StackableItem) value;
-
 					if (!unlimited) {
 						if (stack.count < stack.maxCount) {
 							int r = stack.maxCount - stack.count;
 							if (r >= toTake.count) {
 								// Matching implies that the other item is stackable, too.
 								stack.count += toTake.count;
-								return total;
+								return null;
 							} else {
 								toTake.count -= r;
 								stack.count += r;
@@ -115,42 +99,40 @@ public class Inventory {
 						}
 					} else {
 						stack.count += toTake.count;
-						return total;
+						return null;
 					}
 				}
 			}
 
 			if (!unlimited) {
 				if (items.size() < maxItem) {
-					int c = (int) Math.ceil(toTake.count / 100.0);
-					for (int i = 0; i < c; i++) {
+					while (toTake.count > 0) {
+						if (items.size() == maxItem) return toTake;
 						StackableItem adding = toTake.copy();
-						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
-						if (adding.count == 0) break;
-						if (items.size() == maxItem) return total - toTake.count;
+						adding.count = Math.min(toTake.count, toTake.maxCount);
 						items.add(adding); // Add the item to the items list
 						toTake.count -= adding.count;
 					}
-					return total;
+					return null;
 				} else {
-					return total - toTake.count;
+					return toTake;
 				}
 			} else {
-				items.add(slot, toTake);
-				return total;
+				items.add(toTake);
+				return null;
 			}
 		}
 
 		if (!unlimited) {
 			if (items.size() < maxItem) {
-				items.add(slot, item); // Add the item to the items list
-				return 1;
+				items.add(item); // Add the item to the items list
+				return null;
 			} else {
-				return 0;
+				return item;
 			}
 		} else {
-			items.add(slot, item);
-			return 1;
+			items.add(item);
+			return null;
 		}
 	}
 
@@ -197,7 +179,6 @@ public class Inventory {
 
 	/**
 	 * Removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack.
-	 *
 	 * @param given Item to remove.
 	 * @param count Max amount of the item to remove.
 	 */
@@ -241,7 +222,6 @@ public class Inventory {
 	/**
 	 * Generates a string representation of all the items in the inventory which can be sent
 	 * over the network.
-	 *
 	 * @return String representation of all the items in the inventory.
 	 */
 	public String getItemData() {
@@ -257,7 +237,6 @@ public class Inventory {
 
 	/**
 	 * Replaces all the items in the inventory with the items in the string.
-	 *
 	 * @param items String representation of an inventory.
 	 */
 	public void updateInv(String items) {
@@ -271,44 +250,26 @@ public class Inventory {
 
 	/**
 	 * Tries to add an item to the inventory.
-	 *
-	 * @param chance       Chance for the item to be added.
-	 * @param item         Item to be added.
-	 * @param num          How many of the item.
+	 * @param random The {@code Random} number generator.
+	 * @param chance Chance for the item to be added.
+	 * @param item Item to be added.
+	 * @param num How many of the item.
 	 * @param allOrNothing if true, either all items will be added or none, if false its possible to add
-	 *                     between 0-num items.
+	 * 	between 0-num items.
 	 */
-	public void tryAdd(int chance, Item item, int num, boolean allOrNothing) {
+	public void tryAdd(Random random, int chance, Item item, int num, boolean allOrNothing) {
 		if (!allOrNothing || random.nextInt(chance) == 0)
 			for (int i = 0; i < num; i++)
 				if (allOrNothing || random.nextInt(chance) == 0)
 					add(item.copy());
 	}
 
-	public void tryAdd(int chance, @Nullable Item item, int num) {
+	public void tryAdd(Random random, int chance, @Nullable Item item, int num) {
 		if (item == null) return;
 		if (item instanceof StackableItem) {
 			((StackableItem) item).count *= num;
-			tryAdd(chance, item, 1, true);
+			tryAdd(random, chance, item, 1, true);
 		} else
-			tryAdd(chance, item, num, false);
-	}
-
-	public void tryAdd(int chance, @Nullable Item item) {
-		tryAdd(chance, item, 1);
-	}
-
-	public void tryAdd(int chance, ToolType type, int lvl) {
-		tryAdd(chance, new ToolItem(type, lvl));
-	}
-
-	/**
-	 * Tries to add an Furniture to the inventory.
-	 *
-	 * @param chance Chance for the item to be added.
-	 * @param type   Type of furniture to add.
-	 */
-	public void tryAdd(int chance, Furniture type) {
-		tryAdd(chance, new FurnitureItem(type));
+			tryAdd(random, chance, item, num, false);
 	}
 }

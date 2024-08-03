@@ -11,9 +11,9 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.AppToast;
-import minicraft.screen.GameToast;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
+import minicraft.screen.Toast;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,14 +27,14 @@ public class Game {
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
-	public static final Version VERSION = new Version("2.2.0-dev5");
+	public static final Version VERSION = new Version("2.2.1-dev1");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
 
 	public static List<String> inGameNotifications = new ArrayList<>();
 	public static ArrayDeque<AppToast> inAppToasts = new ArrayDeque<>();
-	public static ArrayDeque<GameToast> inGameToasts = new ArrayDeque<>(); // Canvas size is limited, so handled one by one
+	public static ArrayDeque<Toast> inGameToasts = new ArrayDeque<>(); // Canvas size is limited, so handled one by one
 
 	public static int MAX_FPS;
 
@@ -104,6 +104,11 @@ public class Game {
 
 		Analytics.GameStartup.ping();
 
+		new Load(true, true); // This loads basic saved preferences.
+		// Reference: https://stackoverflow.com/a/13832805
+		if ((boolean) Settings.get("hwa")) System.setProperty("sun.java2d.opengl", "true");
+		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
+
 		input = new InputHandler(Renderer.canvas);
 
 		ResourcePackDisplay.initPacks();
@@ -120,8 +125,7 @@ public class Game {
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
-		new Load(true); // This loads any saved preferences.
-		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
+		new Load(true, false); // This loads any saved preferences.
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {

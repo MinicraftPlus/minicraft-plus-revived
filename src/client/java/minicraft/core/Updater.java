@@ -2,6 +2,7 @@ package minicraft.core;
 
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
@@ -10,10 +11,10 @@ import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
-import minicraft.screen.GameToast;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.AppToast;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.Toast;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
@@ -94,14 +95,6 @@ public class Updater extends Game {
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
 
-		// Quick Level change: move the player for -1, or 1 levels
-		if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-S").isClicked()) {
-			Game.setDisplay(new LevelTransitionDisplay(-1));
-
-		} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
-			Game.setDisplay(new LevelTransitionDisplay(1));
-		}
-
 		if (input.getMappedKey("FULLSCREEN").isClicked()) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
@@ -180,7 +173,7 @@ public class Updater extends Game {
 		}
 
 		Renderer.appStatusBar.tick();
-		if (input.getMappedKey("9").isDown())
+		if (input.getMappedKey("BACK_QUOTE").isDown())
 			Renderer.appStatusBar.show(1);
 		if (updateNoteTick) notetick++;
 		AppToast appToast;
@@ -193,6 +186,8 @@ public class Updater extends Game {
 
 			if (refresh) appToast.tick();
 		}
+
+		Sound.tick();
 
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!Renderer.canvas.hasFocus()) {
@@ -228,7 +223,7 @@ public class Updater extends Game {
 				}
 
 				player.tick(); // Ticks the player when there's no menu.
-				GameToast gameToast;
+				Toast gameToast;
 				if ((gameToast = inGameToasts.peek()) != null) {
 					boolean refresh = true;
 					if (gameToast.isExpired()) {
@@ -250,6 +245,14 @@ public class Updater extends Game {
 
 				// For debugging only
 				{
+					// Quick Level change: move the player for -1, or 1 levels
+					if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-S").isClicked()) {
+						Game.setDisplay(new LevelTransitionDisplay(-1));
+
+					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
+						Game.setDisplay(new LevelTransitionDisplay(1));
+					}
+					
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
