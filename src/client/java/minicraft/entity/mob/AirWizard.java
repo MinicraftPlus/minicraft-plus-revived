@@ -16,13 +16,13 @@ import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
 public class AirWizard extends EnemyMob {
-	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][]{
+	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "air_wizard"),
 		Mob.compileMobSpriteAnimations(0, 2, "air_wizard")
 	};
 
 	public static boolean beaten = false;
-	public static boolean active = true;
+	public static boolean active = false;
 	public static AirWizard entity = null;
 
 	private int attackDelay = 0;

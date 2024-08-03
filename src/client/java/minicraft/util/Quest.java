@@ -14,8 +14,8 @@ public class Quest extends AdvancementElement {
 	private final @Nullable String parent;
 
 	public Quest(String key, String description, Map<String, ElementCriterion> criteria, @Nullable AdvancementElement.ElementRewards rewards,
-				 @NotNull Set<HashSet<String>> requirements, @Nullable String parent,
-				 @NotNull HashMap<String, ElementCriterion> unlockingCriteria, @NotNull Set<HashSet<String>> unlockingRequirements) {
+	             @NotNull Set<HashSet<String>> requirements, @Nullable String parent,
+	             @NotNull HashMap<String, ElementCriterion> unlockingCriteria, @NotNull Set<HashSet<String>> unlockingRequirements) {
 		super(key, description, criteria, rewards, requirements, unlockingCriteria, unlockingRequirements);
 		this.parent = parent;
 	}
@@ -56,9 +56,9 @@ public class Quest extends AdvancementElement {
 		private final HashMap<String, Quest> quests = new HashMap<>();
 
 		public QuestSeries(String key, String description, Map<String, AdvancementElement.ElementCriterion> criteria,
-						   @Nullable AdvancementElement.ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
-						   @NotNull Map<String, Quest> quests, @NotNull HashMap<String, ElementCriterion> unlockingCriteria,
-						   @NotNull Set<HashSet<String>> unlockingRequirements) {
+		                   @Nullable AdvancementElement.ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
+		                   @NotNull Map<String, Quest> quests, @NotNull HashMap<String, ElementCriterion> unlockingCriteria,
+		                   @NotNull Set<HashSet<String>> unlockingRequirements) {
 			super(key, description, criteria, rewards, requirements, unlockingCriteria, unlockingRequirements);
 			this.quests.putAll(quests);
 			quests.values().forEach(q -> q.series = this);

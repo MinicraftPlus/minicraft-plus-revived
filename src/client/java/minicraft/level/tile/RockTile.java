@@ -24,7 +24,7 @@ import minicraft.util.AdvancementElement;
 
 public class RockTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
-		.setConnectChecker((tile, side) -> tile.getClass() == RockTile.class)
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof RockTile)
 		.setSingletonWithConnective(true);
 
 	private boolean dropCoal = false;
@@ -76,10 +76,10 @@ public class RockTile extends Tile {
 			dropCoal = true;
 		}
 
-		level.add(new SmashParticle(x * 16, y * 16));
+		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (damage >= maxHealth) {
 			int stone = 1;
 			if (dropCoal) {
@@ -90,10 +90,10 @@ public class RockTile extends Tile {
 					coal += 1;
 				}
 
-				level.dropItem(x * 16 + 8, y * 16 + 8, 0, coal, Items.get("Coal"));
+				level.dropItem((x << 4) + 8, (y << 4) + 8, 0, coal, Items.get("Coal"));
 			}
 
-			level.dropItem(x * 16 + 8, y * 16 + 8, stone, Items.get("Stone"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, stone, Items.get("Stone"));
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
 			level.setData(x, y, damage);

@@ -20,10 +20,9 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	/**
 	 * Creates an item entity of the item item at position (x,y) with size 2*2.
-	 *
 	 * @param item Item to add as item entity
-	 * @param x    position on map
-	 * @param y    position on map
+	 * @param x position on map
+	 * @param y position on map
 	 */
 	public ItemEntity(Item item, int x, int y) {
 		super(2, 2);
@@ -46,16 +45,15 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	/**
 	 * Creates an item entity of the item item at position (x,y) with size 2*2.
-	 *
-	 * @param item     Item to add as item entity.
-	 * @param x        position on map
-	 * @param y        position on map
-	 * @param zz       z position?
+	 * @param item Item to add as item entity.
+	 * @param x position on map
+	 * @param y position on map
+	 * @param zz z position?
 	 * @param lifetime lifetime (in ticks) of the entity.
-	 * @param time     starting time (in ticks) of the entity.
-	 * @param xa       x velocity
-	 * @param ya       y velocity
-	 * @param za       z velocity?
+	 * @param time starting time (in ticks) of the entity.
+	 * @param xa x velocity
+	 * @param ya y velocity
+	 * @param za z velocity?
 	 */
 	public ItemEntity(Item item, int x, int y, double zz, int lifetime, int time, double xa, double ya, double za) {
 		this(item, x, y);
@@ -69,11 +67,10 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	/**
 	 * Returns a string representation of the itementity
-	 *
 	 * @return string representation of this entity
 	 */
 	public String getData() {
-		return String.join(":", (new String[]{item.getData(), zz + "", lifeTime + "", time + "", xa + "", ya + "", za + ""}));
+		return String.join(":", (new String[] { item.getData(), zz + "", lifeTime + "", time + "", xa + "", ya + "", za + "" }));
 	}
 
 	@Override

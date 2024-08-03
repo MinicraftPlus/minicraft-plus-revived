@@ -17,7 +17,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Ticks the entry. Used to handle input from the InputHandler
-	 *
 	 * @param input InputHandler used to get player input.
 	 */
 	@Override
@@ -50,10 +49,9 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 	/**
 	 * Renders the entry to the given screen.
 	 * Coordinate origin is in the top left corner of the entry space.
-	 *
-	 * @param screen     Screen to render the entry to
-	 * @param x          X coordinate
-	 * @param y          Y coordinate
+	 * @param screen Screen to render the entry to
+	 * @param x X coordinate
+	 * @param y Y coordinate
 	 * @param isSelected true if the entry is selected, false otherwise
 	 * @param bounds X rendering bounds
 	 */
@@ -70,7 +68,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Returns the current color depending on if the entry is selected.
-	 *
 	 * @param isSelected true if the entry is selected, false otherwise
 	 * @return the current entry color
 	 */
@@ -80,7 +77,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Calculates the width of the entry.
-	 *
 	 * @return the entry's width
 	 */
 	@Override
@@ -90,7 +86,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Calculates the height of the entry.
-	 *
 	 * @return the entry's height
 	 */
 	public static int getHeight() {
@@ -99,7 +94,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Determines if this entry can be selected.
-	 *
 	 * @return true if it is visible and can be selected, false otherwise.
 	 */
 	public final boolean isSelectable() {
@@ -108,7 +102,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Returns whether the entry is visible or not.
-	 *
 	 * @return true if the entry is visible, false otherwise
 	 */
 	public final boolean isVisible() {
@@ -117,7 +110,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Changes if the entry can be selected or not.
-	 *
 	 * @param selectable true if the entry can be selected, false if not
 	 */
 	public final void setSelectable(boolean selectable) {
@@ -126,7 +118,6 @@ public abstract class ListEntry implements Screen.ScreenEntry {
 
 	/**
 	 * Changes if the entry is visible or not.
-	 *
 	 * @param visible true if the entry should be visible, false if not
 	 */
 	public final void setVisible(boolean visible) {

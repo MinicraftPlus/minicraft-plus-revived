@@ -8,7 +8,7 @@
 Minicraft+ is an overhaul mod of Minicraft, a game made by Markus "Notch" Persson in the Ludum Dare 22 contest. To learn
 more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), talk to the community at
 our [Discord](https://discord.me/minicraft), or check out
-our [Fandom Wiki](https://minicraft.fandom.com/wiki/Minicraft_Wiki).
+our [wiki.gg Wiki](https://minicraft.wiki.gg/wiki/).
 
 Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest
 version, or older versions.
@@ -39,6 +39,12 @@ version, or older versions.
 * Support for several languages
 * and many, many more!
 
+## System Prerequisites
+
+Our game only supports Windows, MacOS and Linux. Furthermore, newer platform versions are required for controllers.
+
+For Java, you may check out [system requirements for Java](https://www.java.com/en/download/help/sysreq.html).
+
 ## Current goals and ideas
 
 Take a look at the [ideas](ideas/) folder or
@@ -65,7 +71,7 @@ Because this project uses a build tool called gradle it is very easy to build or
 2. Extract the contents of the folder.
 3. Open command prompt and enter `cd <folder_location>`, this will open the folder in the command prompt.
 4. Type `gradlew run` or `gradlew build` to run or build the program. This might take some time. If on unix, add "./" to
-   the front.
+   the front. If on Windows using an IDE or Windows Powershell, add ".\" to the front.
     1. If you built the project, the jar file is found in `build/libs`
     2. If you get an error screaming that you're missing java. You need
        to [set up](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) your
