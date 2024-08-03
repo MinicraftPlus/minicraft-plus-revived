@@ -1,11 +1,11 @@
 package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Items;
 
 public class Knight extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+	private static SpriteLink[][][] sprites = new SpriteLink[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "knight"),
 		Mob.compileMobSpriteAnimations(0, 2, "knight"),
 		Mob.compileMobSpriteAnimations(0, 4, "knight"),

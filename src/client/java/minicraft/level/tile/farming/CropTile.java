@@ -6,7 +6,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.Particle;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
@@ -99,7 +99,8 @@ public class CropTile extends FarmTile {
 		return successful;
 	}
 
-	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
+	private static final SpriteManager.SpriteLink particleSprite =
+		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "glint").createSpriteLink();
 
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

@@ -2,8 +2,8 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
@@ -299,7 +299,7 @@ public class Screen {
 		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
 	}
 
-	public void render(int xp, int yp, LinkedSprite sprite) {
+	public void render(int xp, int yp, SpriteLink sprite) {
 		render(xp, yp, sprite.getSprite());
 	}
 
@@ -314,7 +314,6 @@ public class Screen {
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
 		render(xp, yp, sprite, mirror, fullbright, 0);
 	}
-
 	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		boolean mirrorX = (mirror & BIT_MIRROR_X) > 0; // Horizontally.
 		boolean mirrorY = (mirror & BIT_MIRROR_Y) > 0; // Vertically.
@@ -376,7 +375,7 @@ public class Screen {
 
 		// Validation check
 		if (xt + tw > sheet.width && yt + th > sheet.height) {
-			render(xp, yp, 0, 0, mirrors, Renderer.spriteLinker.missingSheet(SpriteType.Item));
+			render(xp, yp, 0, 0, mirrors, Renderer.spriteManager.missingSheet(SpriteType.Item));
 			return;
 		}
 

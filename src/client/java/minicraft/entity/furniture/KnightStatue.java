@@ -5,7 +5,7 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,8 @@ public class KnightStatue extends Furniture {
 	private final int bossHealth;
 
 	public KnightStatue(int health) {
-		super("KnightStatue", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "knight_statue"), new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "knight_statue"), 3, 2);
+		super("KnightStatue", new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "knight_statue").createSpriteLink(),
+			new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Item, "knight_statue").createSpriteLink(), 3, 2);
 		bossHealth = health;
 	}
 

@@ -11,8 +11,8 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -22,20 +22,20 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
 
 public class TreeTile extends Tile {
-	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
-	private static final LinkedSprite oakSpriteFull = new LinkedSprite(SpriteType.Tile, "oak_full");
-	private static final LinkedSprite spruceSprite = new LinkedSprite(SpriteType.Tile, "spruce");
-	private static final LinkedSprite spruceSpriteFull = new LinkedSprite(SpriteType.Tile, "spruce_full");
-	private static final LinkedSprite birchSprite = new LinkedSprite(SpriteType.Tile, "birch");
-	private static final LinkedSprite birchSpriteFull = new LinkedSprite(SpriteType.Tile, "birch_full");
-	private static final LinkedSprite ashSprite = new LinkedSprite(SpriteType.Tile, "ash");
-	private static final LinkedSprite ashSpriteFull = new LinkedSprite(SpriteType.Tile, "ash_full");
-	private static final LinkedSprite aspenSprite = new LinkedSprite(SpriteType.Tile, "aspen");
-	private static final LinkedSprite aspenSpriteFull = new LinkedSprite(SpriteType.Tile, "aspen_full");
-	private static final LinkedSprite firSprite = new LinkedSprite(SpriteType.Tile, "fir");
-	private static final LinkedSprite firSpriteFull = new LinkedSprite(SpriteType.Tile, "fir_full");
-	private static final LinkedSprite willowSprite = new LinkedSprite(SpriteType.Tile, "willow");
-	private static final LinkedSprite willowSpriteFull = new LinkedSprite(SpriteType.Tile, "willow_full");
+	private static final SpriteLink oakSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "oak").createSpriteLink();
+	private static final SpriteLink oakSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "oak_full").createSpriteLink();
+	private static final SpriteLink spruceSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "spruce").createSpriteLink();
+	private static final SpriteLink spruceSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "spruce_full").createSpriteLink();
+	private static final SpriteLink birchSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "birch").createSpriteLink();
+	private static final SpriteLink birchSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "birch_full").createSpriteLink();
+	private static final SpriteLink ashSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "ash").createSpriteLink();
+	private static final SpriteLink ashSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "ash_full").createSpriteLink();
+	private static final SpriteLink aspenSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "aspen").createSpriteLink();
+	private static final SpriteLink aspenSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "aspen_full").createSpriteLink();
+	private static final SpriteLink firSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "fir").createSpriteLink();
+	private static final SpriteLink firSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "fir_full").createSpriteLink();
+	private static final SpriteLink willowSprite = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "willow").createSpriteLink();
+	private static final SpriteLink willowSpriteFull = new SpriteLink.SpriteLinkBuilder(SpriteType.Tile, "willow_full").createSpriteLink();
 
 	public enum TreeType {
 		OAK(oakSprite, oakSpriteFull),
@@ -46,10 +46,10 @@ public class TreeTile extends Tile {
 		FIR(firSprite, firSpriteFull),
 		WILLOW(willowSprite, willowSpriteFull);
 
-		private final LinkedSprite treeSprite;
-		private final LinkedSprite treeSpriteFull;
+		private final SpriteLink treeSprite;
+		private final SpriteLink treeSpriteFull;
 
-		TreeType(LinkedSprite treeSprite, LinkedSprite treeSpriteFull) {
+		TreeType(SpriteLink treeSprite, SpriteLink treeSpriteFull) {
 			this.treeSprite = treeSprite;
 			this.treeSpriteFull = treeSpriteFull;
 		}
