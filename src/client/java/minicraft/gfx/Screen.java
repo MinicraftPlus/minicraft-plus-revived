@@ -4,14 +4,28 @@ import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RadialGradientPaint;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 public class Screen {
 
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
-	public static final Point center = new Point(w/2, h/2);
+	public static final Point center = new Point(w / 2, h / 2);
 
 	private static final int MAXDARK = 128;
 
@@ -23,106 +37,108 @@ public class Screen {
 	private static final int BIT_MIRROR_X = 0x01; // Written in hexadecimal; binary: 01
 	private static final int BIT_MIRROR_Y = 0x02; // Binary: 10
 
-	public int[] pixels; // Pixels on the screen
+	private final BufferedImage image;
+	private final int[] pixels;
+
+	private final ArrayDeque<Rendering> renderings = new ArrayDeque<>();
+	private final LightOverlay lightOverlay;
+	private ClearRendering lastClearRendering = null;
 
 	// Outdated Information:
 	// Since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
 	// So 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// And 3072 the start of the gui sheet
 
-	public Screen() {
-		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
-		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
+	public Screen(BufferedImage image) {
+		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.buffer = new BufferedImage(Screen.w, Screen.h);
+		this.image = image;
+		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		lightOverlay = new LightOverlay();
 	}
 
-	/** Clears all the colors on the screen */
-	public void clear(int color) {
-		// Turns each pixel into a single color (clearing the screen!)
-		Arrays.fill(pixels, color);
+	private interface Rendering {
+		/** Invoked by {@link Renderer#render()}. */
+		void render(Graphics2D graphics);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
-	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
-    }
+	private void queue(Rendering rendering) {
+		renderings.add(rendering);
+	}
 
-	public void render(int xp, int yp, LinkedSprite sprite) { render(xp, yp, sprite.getSprite()); }
-	public void render(int xp, int yp, Sprite sprite) { render(xp, yp, sprite, false); }
-	public void render(int xp, int yp, Sprite sprite, boolean fullbright) { render(xp, yp, sprite, 0, fullbright, 0); }
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) { render(xp, yp, sprite, mirror, fullbright, 0); }
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
-		for (int r = 0; r < sprite.spritePixels.length; r++) {
-			for (int c = 0; c < sprite.spritePixels[r].length; c++) {
-				Sprite.Px px = sprite.spritePixels[r][c];
-				render(xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
-			}
+	private static abstract class ClearRendering implements Rendering {}
+
+	private static class SolidClearRendering extends ClearRendering {
+		private final int color;
+
+		public SolidClearRendering(int color) {
+			this.color = color;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+
+			graphics.setColor(new java.awt.Color(color));
+			graphics.fillRect(0, 0, Screen.w, Screen.h);
 		}
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel) { render(xp, yp, pixel, -1); }
-	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) { render(xp, yp, pixel, 0, whiteTint); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) { render(xp, yp, pixel, mirror, whiteTint, false); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) { render(xp, yp, pixel, mirror, whiteTint, fullbright, 0); }
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
-		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
+	private static class PlainClearRendering extends ClearRendering {
+		@Override
+		public void render(Graphics2D graphics) {
+			graphics.clearRect(0, 0, Screen.w, Screen.h);
+		}
 	}
 
-    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
-		if (sheet == null) return; // Verifying that sheet is not null.
+	private class SpriteRendering implements Rendering {
+		private final int xp, yp, xt, yt, tw, th, mirrors, whiteTint, color;
+		private final boolean fullBright;
+		private final MinicraftImage sheet;
 
-		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
-		xp -= xOffset; //account for screen offset
-		yp -= yOffset;
-
-		// Determines if the image should be mirrored...
-		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // Horizontally.
-		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
-
-		// Validation check
-		if (sheet == null || xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
-			sheet = Renderer.spriteLinker.missingSheet(SpriteType.Item);
-			xt = 0;
-			yt = 0;
+		public SpriteRendering(int xp, int yp, int xt, int yt, int tw, int th,
+		                       int mirrors, int whiteTint, boolean fullBright, int color, MinicraftImage sheet) {
+			this.xp = xp;
+			this.yp = yp;
+			this.xt = xt;
+			this.yt = yt;
+			this.tw = tw;
+			this.th = th;
+			this.mirrors = mirrors;
+			this.whiteTint = whiteTint;
+			this.fullBright = fullBright;
+			this.color = color;
+			this.sheet = sheet;
 		}
 
-		int xTile = xt; // Gets x position of the spritesheet "tile"
-		int yTile = yt; // Gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
-
-		// THIS LOOPS FOR EVERY PIXEL
-		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
-			int ys = y; // Current y pixel
-			if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
-			if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
-			for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
-				if (x + xp < 0 || x + xp >= w) continue; // Skip rest if out of bounds.
-
-				int xs = x; // Current x pixel
-				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
-
-				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
-
-				boolean isTransparent = (col >> 24 == 0);
-
-				if (!isTransparent) {
-					int index = (x + xp) + (y + yp) * w;
-
-					if (whiteTint != -1 && col == 0x1FFFFFF) {
-						// If this is white, write the whiteTint over it
-						pixels[index] = Color.upgrade(whiteTint);
-					} else {
-						// Inserts the colors into the image
-						if (fullbright) {
-							pixels[index] = Color.WHITE;
+		@Override
+		public void render(Graphics2D graphics) {
+			int toffs = xt + yt * sheet.width;
+			// Determines if the image should be mirrored...
+			boolean mirrorX = (mirrors & BIT_MIRROR_X) > 0; // Horizontally.
+			boolean mirrorY = (mirrors & BIT_MIRROR_Y) > 0; // Vertically.
+			for (int y = 0; y < th; ++y) { // Relative
+				if (y + yp < 0) continue; // If the pixel is out of bounds, then skip the rest of the loop.
+				if (y + yp >= h) break;
+				int sy = mirrorY ? th - 1 - y : y; // Source relative; reverse if necessary
+				for (int x = 0; x < tw; ++x) { // Relative
+					if (x + xp < 0) continue; // Skip rest if out of bounds.
+					if (x + xp >= w) break;
+					int sx = mirrorX ? tw - 1 - x : x; // Source relative; reverse if necessary
+					int col = sheet.pixels[toffs + sx + sy * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+					if (col >> 24 != 0) { // if not transparent
+						int index = (xp + x) + (yp + y) * w;
+						if (whiteTint != -1 && col == 0x1FFFFFF) {
+							// If this is white, write the whiteTint over it
+							pixels[index] = Color.upgrade(whiteTint);
 						} else {
-							if (color != 0) {
-
-								pixels[index] = color;
+							// Inserts the colors into the image
+							if (fullBright) {
+								pixels[index] = Color.WHITE;
 							} else {
-								pixels[index] = Color.upgrade(col);
+								if (color != 0) {
+									pixels[index] = color;
+								} else {
+									pixels[index] = Color.upgrade(col);
+								}
 							}
 						}
 					}
@@ -131,7 +147,274 @@ public class Screen {
 		}
 	}
 
-	/** Sets the offset of the screen */
+	private static class FillRectRendering implements Rendering {
+		private final int xp, yp, w, h, color;
+
+		public FillRectRendering(int xp, int yp, int w, int h, int color) {
+			this.xp = xp;
+			this.yp = yp;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+			graphics.setColor(new java.awt.Color(color));
+			graphics.fillRect(xp, yp, w, h);
+		}
+	}
+
+	private static class DrawRectRendering implements Rendering {
+		private final int xp, yp, w, h, color;
+
+		public DrawRectRendering(int xp, int yp, int w, int h, int color) {
+			this.xp = xp;
+			this.yp = yp;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+			graphics.setColor(new java.awt.Color(color));
+			graphics.drawRect(xp, yp, w, h);
+		}
+	}
+
+	private static class DrawLineRendering implements Rendering {
+		private final int x0, y0, x1, y1, color;
+
+		public DrawLineRendering(int x0, int y0, int x1, int y1, int color) {
+			this.x0 = x0;
+			this.y0 = y0;
+			this.x1 = x1;
+			this.y1 = y1;
+			this.color = color;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+			graphics.setColor(new java.awt.Color(color));
+			graphics.drawLine(x0, y0, x1, y1);
+		}
+	}
+
+	/** Placeholder way, for Sign cursor rendering */
+	private class DrawLineSpecialRendering implements Rendering {
+		private final int x0, y0, l;
+		private final @MagicConstant(intValues = {0, 1}) int axis; // 0: x-axis; 1: Y-axis
+
+		public DrawLineSpecialRendering(int x0, int y0, int l, int axis) {
+			this.x0 = x0;
+			this.y0 = y0;
+			this.l = l;
+			this.axis = axis;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+			switch (axis) {
+				case 0:
+					for (int i = 0; i < l; i++) { // 1 pixel high and 8 pixel wide
+						int idx = x0 + i + y0 * Screen.w;
+						pixels[idx] = Color.getLightnessFromRGB(pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+					}
+					break;
+				case 1:
+					for (int i = 0; i < l; i++) { // 8 pixel high and 1 pixel wide
+						int idx = x0 + (y0 + i) * Screen.w;
+						pixels[idx] = Color.getLightnessFromRGB(pixels[idx]) >= .5 ? Color.BLACK : Color.WHITE;
+					}
+					break;
+			}
+		}
+	}
+
+	private class OverlayRendering implements Rendering {
+		private final int currentLevel, xa, ya;
+		private final double darkFactor;
+
+		private OverlayRendering(int currentLevel, int xa, int ya, double darkFactor) {
+			this.currentLevel = currentLevel;
+			this.xa = xa;
+			this.ya = ya;
+			this.darkFactor = darkFactor;
+		}
+
+		@Override
+		public void render(Graphics2D graphics) {
+			double alpha = lightOverlay.getOverlayOpacity(currentLevel, darkFactor);
+			BufferedImage overlay = lightOverlay.render(xa, ya);
+			graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .02f)); // Lightening
+			graphics.setColor(java.awt.Color.WHITE);
+			graphics.fillRect(0, 0, w, h);
+			graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha)); // Shaders
+			graphics.drawImage(overlay, null, 0, 0);
+		}
+	}
+
+	/**
+	 * Clears all the colors on the screen
+	 */
+	public void clear(int color) {
+		// Turns each pixel into a single color (clearing the screen!)
+		if (color == 0) {
+			queueClearRendering(new PlainClearRendering());
+		} else {
+			queueClearRendering(new SolidClearRendering(color));
+		}
+	}
+
+	private void queueClearRendering(ClearRendering clearRendering) {
+		lastClearRendering = clearRendering;
+		queue(clearRendering);
+	}
+
+	public void flush() {
+		Graphics2D g2d = image.createGraphics();
+		Rendering rendering;
+		do { // Skips until the latest clear rendering is obtained.
+			rendering = renderings.poll(); // This can prevent redundant renderings operated.
+			if (rendering == null) return;
+		} while (rendering != lastClearRendering);
+		do { // Renders all renderings until all are operated.
+			rendering.render(g2d);
+		} while ((rendering = renderings.poll()) != null);
+	}
+
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) {
+		render(xp, yp, xt, yt, bits, sheet, -1);
+	}
+
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, false);
+	}
+
+	/**
+	 * This method takes care of assigning the correct spritesheet to assign to the sheet variable
+	 **/
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, LinkedSprite sprite) {
+		render(xp, yp, sprite.getSprite());
+	}
+
+	public void render(int xp, int yp, Sprite sprite) {
+		render(xp, yp, sprite, false);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, boolean fullbright) {
+		render(xp, yp, sprite, 0, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
+		render(xp, yp, sprite, mirror, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
+		boolean mirrorX = (mirror & BIT_MIRROR_X) > 0; // Horizontally.
+		boolean mirrorY = (mirror & BIT_MIRROR_Y) > 0; // Vertically.
+		for (int r = 0; r < sprite.spritePixels.length; r++) {
+			int lr = mirrorY ? sprite.spritePixels.length - 1 - r : r;
+			for (int c = 0; c < sprite.spritePixels[lr].length; c++) {
+				Sprite.Px px = sprite.spritePixels[lr][mirrorX ? sprite.spritePixels[lr].length - 1 - c : c];
+				render(xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
+			}
+		}
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel) {
+		render(xp, yp, pixel, -1);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) {
+		render(xp, yp, pixel, 0, whiteTint);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) {
+		render(xp, yp, pixel, mirror, whiteTint, false);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) {
+		render(xp, yp, pixel, mirror, whiteTint, fullbright, 0);
+	}
+
+	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
+		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
+	}
+
+	/**
+	 * Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel.
+	 */
+	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+		if (sheet == null) return; // Verifying that sheet is not null.
+
+		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
+		// xOffset and yOffset account for screen offset
+		render(xp - xOffset, yp - yOffset, xt * 8, yt * 8, 8, 8, sheet, bits, whiteTint, fullbright, color);
+	}
+
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
+		render(xp, yp, xt, yt ,tw, th, sheet, 0);
+	}
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors) {
+		render(xp, yp, xt, yt ,tw, th, sheet, mirrors, -1);
+	}
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint) {
+		render(xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, false);
+	}
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullbright) {
+		render(xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, fullbright, 0);
+	}
+	// Any single pixel from the image can be rendered using this method.
+	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullBright, int color) {
+		if (sheet == null) return; // Verifying that sheet is not null.
+
+		// Validation check
+		if (xt + tw > sheet.width && yt + th > sheet.height) {
+			render(xp, yp, 0, 0, mirrors, Renderer.spriteLinker.missingSheet(SpriteType.Item));
+			return;
+		}
+
+		queue(new SpriteRendering(xp, yp, xt, yt, tw, th, mirrors, whiteTint, fullBright, color, sheet));
+	}
+
+	public void fillRect(int xp, int yp, int w, int h, int color) {
+		queue(new FillRectRendering(xp, yp, w, h, color));
+	}
+
+	public void drawRect(int xp, int yp, int w, int h, int color) {
+		queue(new DrawRectRendering(xp, yp, w, h, color));
+	}
+
+	/**
+	 * Draw a straight line along an axis.
+	 * @param axis The axis to draw along: {@code 0} for x-axis; {@code 1} for y-axis
+	 * @param l The length of the line
+	 */
+	public void drawAxisLine(int xp, int yp, @MagicConstant(intValues = {0, 1}) int axis, int l, int color) {
+		switch (axis) {
+			case 0: queue(new DrawLineRendering(xp, yp, xp + l, yp, color)); break;
+			case 1: queue(new DrawLineRendering(xp, yp, xp, yp + l, color)); break;
+		}
+	}
+
+	public void drawLine(int x0, int y0, int x1, int y1, int color) {
+		queue(new DrawLineRendering(x0, y0, x1, y1, color));
+	}
+
+	/** Placeholder line drawing method specialized for sign cursor drawing */
+	public void drawLineSpecial(int x0, int y0, @MagicConstant(intValues = {0, 1}) int axis, int l) {
+		queue(new DrawLineSpecialRendering(x0, y0, l, axis));
+	}
+
+	/**
+	 * Sets the offset of the screen
+	 */
 	public void setOffset(int xOffset, int yOffset) {
 		// This is called in few places, one of which is level.renderBackground, right before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
 		// In other words, the offset is a conversion factor from level coordinates to screen coordinates. It makes a certain coord in the level the upper left corner of the screen, when subtracted from the tile coord.
@@ -147,86 +430,143 @@ public class Screen {
 		In the end, "every other every row", will need, for example in column 1, 15 light to be lit, then 0 light to be lit, then 12 light to be lit, then 3 light to be lit. So, the pixels of lower light levels will generally be lit every other pixel, while the brighter ones appear more often. The reason for the variance in values is to provide EVERY number between 0 and 15, so that all possible light levels (below 16) are represented fittingly with their own pattern of lit and not lit.
 		16 is the minimum pixel lighness required to ensure that the pixel will always remain lit.
 	*/
-	private static final int[] dither = new int[] {
-		0, 8, 2, 10,
-		12, 4, 14, 6,
-		3, 11, 1, 9,
-		15, 7, 13, 5
-	};
 
-	/** Overlays the screen with pixels */
-    public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
-		double tintFactor = 0;
+	/**
+	 * Overlays the screen with pixels
+	 */
+	public void overlay(int currentLevel, int xa, int ya) {
+		double darkFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
 			double relTime = (Updater.tickCount % transTime) * 1.0 / transTime;
 
 			switch (Updater.getTime()) {
-				case Morning: tintFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
-				case Day: tintFactor = 0; break;
-				case Evening: tintFactor = relTime * MAXDARK; break;
-				case Night: tintFactor = MAXDARK; break;
+				case Morning:
+					darkFactor = Updater.pastDay1 ? (1 - relTime) * MAXDARK : 0;
+					break;
+				case Day:
+					darkFactor = 0;
+					break;
+				case Evening:
+					darkFactor = relTime * MAXDARK;
+					break;
+				case Night:
+					darkFactor = MAXDARK;
+					break;
 			}
 
-			if (currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
-			tintFactor *= -1; // All previous operations were assuming this was a darkening factor.
-		}
-		else if(currentLevel >= 5)
-			tintFactor = -MAXDARK;
+			if (currentLevel > 3) darkFactor -= (darkFactor < 10 ? darkFactor : 10);
+		} else if (currentLevel >= 5)
+			darkFactor = MAXDARK;
 
-		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
-		int i = 0; // Current pixel on the screen
-		for (int y = 0; y < h; y++) { // loop through height of screen
-            for (int x = 0; x < w; x++) { // loop through width of screen
-				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
-
-                    /// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
-					if (currentLevel < 3) { // if in caves...
-                        /// in the caves, not being lit means being pitch black.
-						pixels[i] = 0;
-                    } else {
-						/// Outside the caves, not being lit simply means being darker.
-						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
-                    }
-                }
-
-				// Increase the tinting of all colors by 20.
-				pixels[i] = Color.tintColor(pixels[i], 20);
-                i++; // Moves to the next pixel.
-            }
-        }
-    }
+		// The Integer array of pixels to overlay the screen with.
+		queue(new OverlayRendering(currentLevel, xa, ya, darkFactor));
+	}
 
 	public void renderLight(int x, int y, int r) {
 		// Applies offsets:
-		x -= xOffset;
-		y -= yOffset;
-		// Starting, ending, x, y, positions of the circle (of light)
-		int x0 = x - r;
-		int x1 = x + r;
-		int y0 = y - r;
-		int y1 = y + r;
+		lightOverlay.renderLight(x - xOffset, y - yOffset, r);
+	}
 
-		// Prevent light from rendering off the screen:
-		if (x0 < 0) x0 = 0;
-		if (y0 < 0) y0 = 0;
-		if (x1 > w) x1 = w;
-		if (y1 > h) y1 = h;
+	private static class LightOverlay {
+		private static final int[] dither = new int[] {
+			0, 8, 2, 10,
+			12, 4, 14, 6,
+			3, 11, 1, 9,
+			15, 7, 13, 5
+		};
 
-		for (int yy = y0; yy < y1; yy++) { // Loop through each y position
-			int yd = yy - y; // Get distance to the previous y position.
-			yd = yd * yd; // Square that distance
-			for (int xx = x0; xx < x1; xx++) { // Loop though each x pos
-				int xd = xx - x; // Get x delta
-				int dist = xd * xd + yd; // Square x delta, then add the y delta, to get total distance.
+		public final float[] graFractions;
+		public final java.awt.Color[] graColors;
+		public final BufferedImage buffer = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+		public final byte[] bufPixels;
+		public final BufferedImage overlay = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		public final int[] olPixels;
+		public final HashMap<@NotNull Point, @NotNull Integer> lights = new HashMap<>();
 
-				if (dist <= r * r) {
-					// If the distance from the center (x,y) is less or equal to the radius...
-					int br = 255 - dist * 255 / (r * r); // area where light will be rendered. // r*r is becuase dist is still x*x+y*y, of pythag theorem.
-					// br = brightness... literally. from 0 to 255.
-					if (pixels[xx + yy * w] < br) pixels[xx + yy * w] = br; // Pixel cannot be smaller than br; in other words, the pixel color (brightness) cannot be less than br.
+		public LightOverlay() {
+			bufPixels = ((DataBufferByte) buffer.getRaster().getDataBuffer()).getData();
+			olPixels = ((DataBufferInt) overlay.getRaster().getDataBuffer()).getData();
+			ArrayList<Float> graFractions = new ArrayList<>();
+			ArrayList<java.awt.Color> graColors = new ArrayList<>();
+			BigDecimal oneFiftieth = BigDecimal.ONE.divide(BigDecimal.valueOf(50), MathContext.UNLIMITED);
+			BigDecimal twoFiveFive = BigDecimal.valueOf(255);
+			for (BigDecimal i = BigDecimal.ZERO; i.compareTo(BigDecimal.ONE) <= 0; i = i.add(oneFiftieth)) {
+				graFractions.add(i.floatValue());
+				graColors.add(new java.awt.Color(255, 255, 255, 255 - i.pow(4).multiply(twoFiveFive).intValue()));
+			}
+			this.graFractions = new float[graFractions.size()];
+			for (int i = 0; i < graFractions.size(); ++i) this.graFractions[i] = graFractions.get(i);
+			this.graColors = graColors.toArray(new java.awt.Color[0]);
+		}
+
+		/**
+		 * Gets the overlay light darkness opacity instantly.
+		 * @param currentLevel the current level index of the target
+		 * @param darkFactor the tint factor to darken, from {@code 1} to {@code 128}
+		 * @return opacity of darkness from {@code 0} to {@code 1}
+		 */
+		public double getOverlayOpacity(int currentLevel, double darkFactor) {
+			// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
+			if (currentLevel < 3) { // if in caves...
+				// in the caves, not being lit means being pitch black.
+				return 1;
+			} else {
+				// Outside the caves, not being lit simply means being darker.
+				return darkFactor / 128; // darkens the color one shade.
+			}
+		}
+
+		public void renderLight(int x, int y, int r) {
+			lights.put(new Point(x, y), r);
+		}
+
+		public BufferedImage render(int xa, int ya) {
+			Graphics2D g2d = buffer.createGraphics();
+			g2d.setBackground(java.awt.Color.BLACK);
+			g2d.clearRect(0, 0, w, h);
+			for (Map.Entry<Point, Integer> e : lights.entrySet()) {
+				int x = e.getKey().x, y = e.getKey().y, r = e.getValue();
+				boolean[] surrounds = new boolean[8];
+				for (int xx = -16; xx < 17; ++xx) {
+					for (int yy = -16; yy < 17; ++yy) {
+						if (xx != 0 || yy != 0) {
+							Point pp = new Point(x + xx, y + yy);
+							if (lights.containsKey(pp) && r <= lights.get(pp)) {
+								double theta = Math.atan2(yy, xx);
+								if (theta < 0) theta += 2 * Math.PI; // Ensures it is positive.
+								surrounds[(int) (theta * 4 / Math.PI)] = true;
+							}
+						}
+					}
+				}
+
+				// Reduce lighting circles on screen
+				if (IntStream.range(0, surrounds.length).allMatch(i -> surrounds[i])) {
+					g2d.setColor(java.awt.Color.WHITE);
+					g2d.fillRect(x - 8, y - 8, 16, 16);
+				} else {
+					g2d.setPaint(new RadialGradientPaint(x, y, r, graFractions, graColors));
+					g2d.fillOval(x - r, y - r, r * 2, r * 2);
 				}
 			}
+			g2d.dispose();
+			lights.clear();
+
+			for (int x = 0; x < w; ++x) {
+				for (int y = 0; y < h; ++y) {
+					int i = x + y * w;
+					// Grade of lightness
+					int grade = bufPixels[i] & 0xFF;
+					// (a + b) & 3 acts like (a + b) % 4
+					if (grade / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
+						olPixels[i] = (255 - grade) << 24;
+					} else {
+						olPixels[i] = 0;
+					}
+				}
+			}
+			return overlay;
 		}
 	}
 }

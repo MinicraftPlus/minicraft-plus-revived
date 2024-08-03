@@ -12,7 +12,9 @@ import minicraft.item.PowerGloveItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Many furniture classes are very similar; they might not even need to be there at all... */
+/**
+ * Many furniture classes are very similar; they might not even need to be there at all...
+ */
 
 public class Furniture extends Entity {
 
@@ -67,11 +69,19 @@ public class Furniture extends Entity {
 		else multiPushTime = 0;
 	}
 
-	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { screen.render(x-8, y-8, sprite); }
+	/**
+	 * Draws the furniture on the screen.
+	 */
+	public void render(Screen screen) {
+		screen.render(x - 8, y - 8, sprite);
+	}
 
-	/** Called when the player presses the MENU key in front of this. */
-	public boolean use(Player player) { return false; }
+	/**
+	 * Called when the player presses the MENU key in front of this.
+	 */
+	public boolean use(Player player) {
+		return false;
+	}
 
 	@Override
 	public boolean blocks(Entity e) {
@@ -92,11 +102,11 @@ public class Furniture extends Entity {
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
 			Sound.play("monsterhurt");
-				remove();
-				if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
-					player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory
-				player.activeItem = new FurnitureItem(this); // Make this the player's current item.
-				return true;
+			remove();
+			if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
+				player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory
+			player.activeItem = new FurnitureItem(this); // Make this the player's current item.
+			return true;
 		}
 		return false;
 	}
@@ -113,5 +123,7 @@ public class Furniture extends Entity {
 	}
 
 	@Override
-	public boolean canWool() { return true; }
+	public boolean canWool() {
+		return true;
+	}
 }

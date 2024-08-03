@@ -50,8 +50,8 @@ public class Skeleton extends EnemyMob {
 	}
 
 	public void die() {
-		int[] diffrands = {20, 20, 30};
-		int[] diffvals = {13, 18, 28};
+		int[] diffrands = { 20, 20, 30 };
+		int[] diffvals = { 13, 18, 28 };
 		int diff = Settings.getIdx("diff");
 
 		int count = random.nextInt(3 - diff) + 1;

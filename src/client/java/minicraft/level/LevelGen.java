@@ -37,7 +37,9 @@ public class LevelGen {
 	private final int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
 
-	/** This creates noise to create random values for level generation */
+	/**
+	 * This creates noise to create random values for level generation
+	 */
 	public LevelGen(int w, int h, int featureSize) {
 		this.w = w;
 		this.h = h;
@@ -169,7 +171,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[] @Nullable [] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
 			short[][] result = createUndergroundMap(w, h, depth);
@@ -210,7 +212,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static short[][] createAndValidateSkyMap(int w, int h) {
+	private static short[] @Nullable [] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 
 		do {
@@ -517,7 +519,7 @@ public class LevelGen {
 			if (count >= w / 21) break;
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 	private static short[][] createDungeon(int w, int h) {
@@ -581,7 +583,7 @@ public class LevelGen {
 			}
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 
@@ -670,10 +672,10 @@ public class LevelGen {
 		}
 
 		if (depth > 2) { // The level above dungeon.
-			int xm = w/2;
-			int ym = h/2;
+			int xm = w / 2;
+			int ym = h / 2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
-			int edgeMargin = w/20; // The distance between the world enge and the lock sides.
+			int edgeMargin = w / 20; // The distance between the world enge and the lock sides.
 			Rectangle edgeRect = new Rectangle(edgeMargin, edgeMargin, w - edgeMargin, h - edgeMargin, Rectangle.CORNERS);
 			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
 			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
@@ -712,7 +714,7 @@ public class LevelGen {
 			}
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 	private static short[][] createSkyMap(int w, int h) {
@@ -780,7 +782,7 @@ public class LevelGen {
 			if (count >= w / 64) break;
 		}
 
-		return new short[][]{map, data};
+		return new short[][] { map, data };
 	}
 
 	public static void main(String[] args) {

@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -17,7 +18,7 @@ public class BookItem extends Item {
 
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", new LinkedSprite(SpriteType.Item, "book"), null));
+		items.add(new BookItem("Book", new LinkedSprite(SpriteType.Item, "book"), () -> Localization.getLocalized("minicraft.displays.book.default_book")));
 		items.add(new BookItem("Antidious", new LinkedSprite(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook.collect(), true));
 		return items;
 	}
@@ -30,7 +31,10 @@ public class BookItem extends Item {
 	protected BookContent book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
 
-	private BookItem(String title, LinkedSprite sprite, BookContent book) { this(title, sprite, book, false); }
+	private BookItem(String title, LinkedSprite sprite, BookContent book) {
+		this(title, sprite, book, false);
+	}
+
 	private BookItem(String title, LinkedSprite sprite, BookContent book, boolean hasTitlePage) {
 		super(title, sprite);
 		this.book = book;
@@ -43,7 +47,9 @@ public class BookItem extends Item {
 	}
 
 	@Override
-	public boolean interactsWithWorld() { return false; }
+	public boolean interactsWithWorld() {
+		return false;
+	}
 
 	public @NotNull BookItem copy() {
 		return new BookItem(getName(), sprite, book, hasTitlePage);
