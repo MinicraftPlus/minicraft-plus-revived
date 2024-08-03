@@ -4,7 +4,8 @@ import org.jetbrains.annotations.Range;
 
 public final class MyUtils {
 
-	private MyUtils() {}
+	private MyUtils() {
+	}
 
 	public static int clamp(int val, int min, int max) {
 		if (val > max) return max;
@@ -12,7 +13,10 @@ public final class MyUtils {
 		return val;
 	}
 
-	public static int randInt(int max) { return randInt(0, max); }
+	public static int randInt(int max) {
+		return randInt(0, max);
+	}
+
 	public static int randInt(int min, int max) {
 		return (int) (Math.random() * (max - min + 1)) + min;
 	}
@@ -25,7 +29,7 @@ public final class MyUtils {
 	public static void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
-		} catch(InterruptedException ignored) {
+		} catch (InterruptedException ignored) {
 		}
 	}
 

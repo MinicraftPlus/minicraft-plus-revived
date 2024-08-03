@@ -31,6 +31,7 @@ public class Particle extends Entity implements ClientTickable {
 		this.sprite = sprite;
 		time = 0;
 	}
+
 	public Particle(int x, int y, int lifetime, LinkedSprite sprite) {
 		this(x, y, 1, lifetime, sprite);
 	}
@@ -49,8 +50,12 @@ public class Particle extends Entity implements ClientTickable {
 	}
 
 	@Override
-	public void render(Screen screen) { screen.render(x, y, sprite); }
+	public void render(Screen screen) {
+		screen.render(x, y, sprite);
+	}
 
 	@Override
-	public boolean isSolid() { return false; }
+	public boolean isSolid() {
+		return false;
+	}
 }

@@ -32,7 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/** World-wide. */
+/**
+ * World-wide.
+ */
 public class AdvancementElement {
 	private static final HashSet<AdvancementElement> recipeUnlockingElements;
 
@@ -100,7 +102,7 @@ public class AdvancementElement {
 
 		ElementRewards rewards = loadRewards(json.optJSONObject("rewards"));
 		elements.add(new AdvancementElement(criterionName,
-			displayable ? json.getString("description"): null, criteria,
+			displayable ? json.getString("description") : null, criteria,
 			rewards, requirements, unlockingCriteria, unlockingRequirements));
 	}
 
@@ -144,7 +146,9 @@ public class AdvancementElement {
 		}
 	}
 
-	/** Saving and writing all data into the given JSONObject. */
+	/**
+	 * Saving and writing all data into the given JSONObject.
+	 */
 	public static void saveRecipeUnlockingElements(JSONObject json) {
 		recipeUnlockingElements.forEach(element -> element.save(json));
 	}
@@ -162,9 +166,9 @@ public class AdvancementElement {
 	protected boolean unlocked = false;
 
 	public AdvancementElement(String key, String description, Map<String, ElementCriterion> criteria,
-							  @Nullable ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
-							  @NotNull Map<String, ElementCriterion> unlockingCriteria,
-							  @NotNull Set<HashSet<String>> unlockingRequirements) {
+	                          @Nullable ElementRewards rewards, @NotNull Set<HashSet<String>> requirements,
+	                          @NotNull Map<String, ElementCriterion> unlockingCriteria,
+	                          @NotNull Set<HashSet<String>> unlockingRequirements) {
 		this.key = key;
 		this.description = description;
 		this.criteria.putAll(criteria);
@@ -230,8 +234,13 @@ public class AdvancementElement {
 			this.recipes = recipes;
 		}
 
-		public ArrayList<Item> getItems() { return new ArrayList<>(items); }
-		public ArrayList<Recipe> getRecipe() { return new ArrayList<>(recipes); }
+		public ArrayList<Item> getItems() {
+			return new ArrayList<>(items);
+		}
+
+		public ArrayList<Recipe> getRecipe() {
+			return new ArrayList<>(recipes);
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -266,8 +275,10 @@ public class AdvancementElement {
 		});
 	}
 
-	/** Warning: This method should be used carefully as this could impact
-	 * the gaming experience deeply on the progress. */
+	/**
+	 * Warning: This method should be used carefully as this could impact
+	 * the gaming experience deeply on the progress.
+	 */
 	public void deregisterCriteria() {
 		criteria.values().forEach(criterion -> {
 			criterion.trigger.registeredCriteria.remove(criterion);
@@ -282,7 +293,9 @@ public class AdvancementElement {
 		return unlocked;
 	}
 
-	/** Is unlocked but not completed. */
+	/**
+	 * Is unlocked but not completed.
+	 */
 	public boolean isDisplayableAtStatus() {
 		return unlocked && !completed;
 	}
@@ -290,9 +303,11 @@ public class AdvancementElement {
 	public int getNumCriteriaCompleted() {
 		return (int) criteria.values().stream().filter(ElementCriterion::isCompleted).count();
 	}
+
 	public int getTotalNumCriteria() {
 		return criteria.size();
 	}
+
 	public boolean shouldAllCriteriaBeCompleted() {
 		return requirements.isEmpty();
 	}
@@ -314,7 +329,9 @@ public class AdvancementElement {
 			}));
 	}
 
-	/** Updating and refreshing by the data in this element. */
+	/**
+	 * Updating and refreshing by the data in this element.
+	 */
 	public void update() {
 		registerUnlockingCriteria();
 
@@ -349,7 +366,10 @@ public class AdvancementElement {
 		}
 	}
 
-	public void reset() { reset(true); }
+	public void reset() {
+		reset(true);
+	}
+
 	protected void reset(boolean update) {
 		completed = false;
 		unlocked = false;
@@ -357,7 +377,9 @@ public class AdvancementElement {
 		if (update) update();
 	}
 
-	/** Loading from a JSONObject of an element. */
+	/**
+	 * Loading from a JSONObject of an element.
+	 */
 	public void load(JSONObject json) {
 		reset(false);
 		completed = json.optBoolean("done");
@@ -385,7 +407,9 @@ public class AdvancementElement {
 		update();
 	}
 
-	/** Saving and writing data to the root JSONObject */
+	/**
+	 * Saving and writing data to the root JSONObject
+	 */
 	public void save(JSONObject json) {
 		JSONObject elementJson = new JSONObject();
 		JSONObject criteriaJson = new JSONObject();
@@ -417,7 +441,7 @@ public class AdvancementElement {
 		private static final Set<ElementCriterion> pendingCompletedCriteria = ConcurrentHashMap.newKeySet();
 
 		public static void tick() {
-			for (Iterator<ElementCriterion> it = pendingCompletedCriteria.iterator(); it.hasNext();) {
+			for (Iterator<ElementCriterion> it = pendingCompletedCriteria.iterator(); it.hasNext(); ) {
 				ElementCriterion criterion = it.next();
 				criterion.markAsCompleted(false, null);
 				it.remove(); // Action done.
@@ -453,18 +477,24 @@ public class AdvancementElement {
 			registeredCriteria.add(criterion);
 		}
 
-		/** This should be called by another thread if method {@link #singleThreadNeeded()} is not
+		/**
+		 * This should be called by another thread if method {@link #singleThreadNeeded()} is not
 		 * implemented to return true. If false, this should use {@link #pendingCompletedCriteria}
 		 * to mark completed criteria instead of calling it directly as this method should be called
-		 * by the global game tick updater to ensure the synchronization. */
+		 * by the global game tick updater to ensure the synchronization.
+		 */
 		protected abstract void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions);
 
-		/** @return {@code true} if this trigger implementation requires single thread as the global game tick updater. */
+		/**
+		 * @return {@code true} if this trigger implementation requires single thread as the global game tick updater.
+		 */
 		protected boolean singleThreadNeeded() {
 			return true;
 		}
 
-		/** Triggering and checking passes by another thread. */
+		/**
+		 * Triggering and checking passes by another thread.
+		 */
 		public void trigger(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
 			if (!singleThreadNeeded()) executorService.submit(() -> trigger0(conditions));
 			else trigger0(conditions);
@@ -477,20 +507,26 @@ public class AdvancementElement {
 		}
 
 		public abstract static class AdvancementTriggerConditionHandler {
-			protected AdvancementTriggerConditionHandler() {}
+			protected AdvancementTriggerConditionHandler() {
+			}
 
 			@NotNull
 			public abstract AdvancementCriterionConditions createCriterionConditions(JSONObject json) throws JSONException;
 
-			/** A condition carrier for the corresponding trigger. */
-			public abstract static class AdvancementTriggerConditions {}
+			/**
+			 * A condition carrier for the corresponding trigger.
+			 */
+			public abstract static class AdvancementTriggerConditions {
+			}
 
 			public abstract static class AdvancementCriterionConditions {
-				protected AdvancementCriterionConditions() {}
+				protected AdvancementCriterionConditions() {
+				}
 
 				public static class Rangeable<T extends Number & Comparable<T>> {
 					public final @Nullable T min;
 					public final @Nullable T max;
+
 					public Rangeable(@Nullable T min, @Nullable T max) {
 						this.min = min;
 						this.max = max;
@@ -514,8 +550,8 @@ public class AdvancementElement {
 					public String toString() {
 						return isAbsent(this) ? "<unspecified range>" :
 							min == null ? "max: " + max :
-							max == null ? "min: " + min :
-							String.format("min: %s;max: %s", min, max);
+								max == null ? "min: " + min :
+									String.format("min: %s;max: %s", min, max);
 					}
 				}
 
@@ -523,6 +559,7 @@ public class AdvancementElement {
 					private final HashSet<String> items = new HashSet<>();
 					private final @Nullable Rangeable<Integer> count;
 					private final @Nullable Rangeable<Integer> durability;
+
 					private ItemConditions(Set<String> items, @Nullable Rangeable<Integer> count, @Nullable Rangeable<Integer> durability) {
 						this.items.addAll(items);
 						this.count = count;
@@ -576,7 +613,9 @@ public class AdvancementElement {
 					}
 				}
 
-				/** Tile location. */
+				/**
+				 * Tile location.
+				 */
 				public static class LocationConditions {
 					private final HashSet<String> tiles = new HashSet<>();
 					private final @Nullable Integer level;
@@ -585,7 +624,7 @@ public class AdvancementElement {
 					private final @Nullable Rangeable<Double> y;
 
 					private LocationConditions(Set<String> tiles, @Nullable Integer level, @Nullable Integer data,
-											   @Nullable Rangeable<Double> x, @Nullable Rangeable<Double> y) {
+					                           @Nullable Rangeable<Double> x, @Nullable Rangeable<Double> y) {
 						this.tiles.addAll(tiles);
 						this.level = level;
 						this.data = data;
@@ -609,12 +648,14 @@ public class AdvancementElement {
 
 							try {
 								data = tileJson.getInt("data");
-							} catch (JSONException ignored) {}
+							} catch (JSONException ignored) {
+							}
 						}
 
 						try {
 							level = json.getInt("level");
-						} catch (JSONException ignored) {}
+						} catch (JSONException ignored) {
+						}
 
 						JSONObject positionJson = json.optJSONObject("position");
 						if (json.has("x")) try {
@@ -664,16 +705,19 @@ public class AdvancementElement {
 			}
 
 			@Override
-			public void register(ElementCriterion criterion) {} // No action.
+			public void register(ElementCriterion criterion) {
+			} // No action.
 
 			@Override
-			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {} // No action.
+			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
+			} // No action.
 
 			public static class ImpossibleTriggerConditionHandler extends AdvancementTriggerConditionHandler {
 
 				@Override
 				public @NotNull AdvancementElement.AdvancementTrigger.AdvancementTriggerConditionHandler.AdvancementCriterionConditions createCriterionConditions(JSONObject json) {
-					return new AdvancementCriterionConditions() {}; // Empty.
+					return new AdvancementCriterionConditions() {
+					}; // Empty.
 				}
 			}
 		}
@@ -718,9 +762,11 @@ public class AdvancementElement {
 				}
 			}
 
-			/** Modified from {@link #test(List, List)}. */
+			/**
+			 * Modified from {@link #test(List, List)}.
+			 */
 			private static boolean isConditionalMatched(ArrayList<Item> items,
-														HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
+			                                            HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
 				Set<HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String>> combinations = new HashSet<>();
 				List<List<String>> combinationsOutput = new ArrayList<>();
 				List<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> conditionsList = new ArrayList<>();
@@ -751,17 +797,21 @@ public class AdvancementElement {
 				}
 			}
 
-			/** Used by {@link #allMatch(Collection, Collection, HashMap)} for conditional check for each element. */
+			/**
+			 * Used by {@link #allMatch(Collection, Collection, HashMap)} for conditional check for each element.
+			 */
 			private static boolean isMatched(Item item, InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions itemConditions,
-											 @Nullable String selectedItem) {
+			                                 @Nullable String selectedItem) {
 				if (!itemConditions.matches(item))
 					return false;
 				return selectedItem == null || item.getName().equalsIgnoreCase(selectedItem);
 			}
 
-			/** Modified from {@link #containsAll(List, List)}. */
+			/**
+			 * Modified from {@link #containsAll(List, List)}.
+			 */
 			private static boolean allMatch(Collection<Item> source, Collection<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> target,
-											HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> selectedItems) {
+			                                HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> selectedItems) {
 				for (Item e : source) {
 					target.removeIf(conditions1 -> isMatched(e, conditions1, selectedItems.get(conditions1)));
 					if (target.isEmpty()) {
@@ -772,7 +822,9 @@ public class AdvancementElement {
 				return target.size() == 0;
 			}
 
-			/** Original archive of array elements matching. */
+			/**
+			 * Original archive of array elements matching.
+			 */
 			@SuppressWarnings("unused") // Keeping for future reference.
 			private static <T> boolean test(List<T> list, List<List<T>> matcher) {
 				List<List<T>> combinations = new ArrayList<>();
@@ -784,7 +836,9 @@ public class AdvancementElement {
 				return false;
 			}
 
-			/** Original archive of array elements matching. */
+			/**
+			 * Original archive of array elements matching.
+			 */
 			private static <T> boolean containsAll(List<T> source, List<T> target) {
 				for (T e : source) {
 					target.remove(e);
@@ -884,8 +938,9 @@ public class AdvancementElement {
 					private final @Nullable Rangeable<Integer> slotsEmpty;
 					private final @Nullable Rangeable<Integer> slotsFull;
 					private final @Nullable Rangeable<Integer> slotsOccupied;
+
 					private InventoryChangedCriterionConditions(Set<ItemConditions> items, @Nullable Rangeable<Integer> slotsEmpty,
-																@Nullable Rangeable<Integer> slotsFull, @Nullable Rangeable<Integer> slotsOccupied) {
+					                                            @Nullable Rangeable<Integer> slotsFull, @Nullable Rangeable<Integer> slotsOccupied) {
 						this.items.addAll(items);
 						this.slotsEmpty = slotsEmpty;
 						this.slotsFull = slotsFull;
@@ -940,7 +995,8 @@ public class AdvancementElement {
 					Integer data = null;
 					try {
 						data = json.getInt("data");
-					} catch (JSONException ignored) {}
+					} catch (JSONException ignored) {
+					}
 					return new PlacedTileCriterionConditions(tile, item, location, data);
 				}
 
@@ -969,7 +1025,7 @@ public class AdvancementElement {
 					private final @Nullable Integer data;
 
 					private PlacedTileCriterionConditions(@Nullable String tile, @Nullable ItemConditions item,
-														  @Nullable LocationConditions location, @Nullable Integer data) {
+					                                      @Nullable LocationConditions location, @Nullable Integer data) {
 						this.tile = tile;
 						this.item = item;
 						this.location = location;

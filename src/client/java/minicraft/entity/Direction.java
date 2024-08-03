@@ -13,11 +13,17 @@ public enum Direction {
 
 	public static final Direction[] values = Direction.values();
 
-	public int getX() { return x; }
-	public int getY() { return y; }
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
 
 	public static Direction getDirection(int xd, int yd) {
-		if (xd == 0 && yd == 0) return Direction.NONE; // The attack was from the same entity, probably; or at least the exact same space.
+		if (xd == 0 && yd == 0)
+			return Direction.NONE; // The attack was from the same entity, probably; or at least the exact same space.
 
 		if (Math.abs(xd) > Math.abs(yd)) {
 			// The x distance is more prominent than the y distance
@@ -34,7 +40,10 @@ public enum Direction {
 	}
 
 	public static Direction getDirection(int dir) {
-		return values[dir+1];
+		return values[dir + 1];
 	}
-	public int getDir() { return ordinal()-1; }
+
+	public int getDir() {
+		return ordinal() - 1;
+	}
 }
