@@ -7,7 +7,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class PotatoTile extends CropTile {
-	private final LinkedSprite[] spritStages = new LinkedSprite[]{
+	private final LinkedSprite[] spritStages = new LinkedSprite[] {
 		new LinkedSprite(SpriteType.Tile, "potato_stage0"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage1"),
 		new LinkedSprite(SpriteType.Tile, "potato_stage2"),
@@ -25,6 +25,6 @@ public class PotatoTile extends CropTile {
 		int age = (level.getData(x, y) >> 3) & maxAge;
 		Tiles.get("Farmland").render(screen, level, x, y);
 		int stage = (int) ((float) age / maxAge * 5);
-		screen.render(x * 16, y * 16, spritStages[stage]);
+		screen.render(x << 4, y << 4, spritStages[stage]);
 	}
 }

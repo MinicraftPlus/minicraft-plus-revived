@@ -18,13 +18,17 @@ import minicraft.util.AdvancementElement;
 
 public class SandTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sand")
-		.setConnectChecker((tile, side) -> !side || tile.connectsToSand)
+		.setConnectionChecker((level, x, y, tile, side) -> !side || tile.connectsToSand(level, x, y))
 		.setSingletonWithConnective(true);
 
 	protected SandTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
@@ -65,7 +69,7 @@ public class SandTile extends Tile {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.play("monsterhurt");
-					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Sand"));
+					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Sand"));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));

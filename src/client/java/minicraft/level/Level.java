@@ -51,7 +51,7 @@ import java.util.function.ToIntFunction;
 public class Level {
 	private final Random random;
 
-	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
+	private static final String[] levelNames = { "Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon" };
 
 	public static String getLevelName(int depth) {
 		return levelNames[-1 * depth + 1];
@@ -321,7 +321,7 @@ public class Level {
 
 		/// Make DungeonChests!
 		for (int i = numChests; i < 10 * (w / 128); i++) {
-			DungeonChest d = new DungeonChest(true);
+			DungeonChest d = new DungeonChest(random);
 			boolean addedchest = false;
 			while (!addedchest) { // Keep running until we successfully add a DungeonChest
 
@@ -346,8 +346,8 @@ public class Level {
 						}
 					}
 					if (d.x == 0 && d.y == 0) {
-						d.x = x2 * 16 - 8;
-						d.y = y2 * 16 - 8;
+						d.x = (x2 << 4) - 8;
+						d.y = (y2 << 4) - 8;
 					}
 
 					add(d);
@@ -544,7 +544,7 @@ public class Level {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
 
 				int lr = getTile(x, y).getLightRadius(this, x, y);
-				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * brightness);
+				if (lr > 0) screen.renderLight((x << 4) + 8, (y << 4) + 8, lr * brightness);
 			}
 		}
 		screen.setOffset(0, 0);
@@ -562,11 +562,13 @@ public class Level {
 
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
-		int id = tiles[x + y * w];
-		if (id < 0) id += 256;
-		return Tiles.get(id);
+		return Tiles.get(tiles[x + y * w]);
 	}
 
+	/**
+	 * @deprecated Currently unused, but this should be prevented being used.
+	 */
+	@Deprecated
 	public void setTile(int x, int y, String tilewithdata) {
 		if (!tilewithdata.contains("_")) {
 			setTile(x, y, Tiles.get(tilewithdata));
@@ -586,6 +588,7 @@ public class Level {
 
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (short) dataVal;
+		t.onTileSet(this, x, y);
 	}
 
 	public int getData(int x, int y) {
@@ -610,8 +613,8 @@ public class Level {
 	public void add(Entity entity, int x, int y, boolean tileCoords) {
 		if (entity == null) return;
 		if (tileCoords) {
-			x = x * 16 + 8;
-			y = y * 16 + 8;
+			x = (x << 4) + 8;
+			y = (y << 4) + 8;
 		}
 		entity.setLevel(this, x, y);
 
@@ -717,7 +720,6 @@ public class Level {
 
 	/**
 	 * Get entities in a certain area on the level.
-	 *
 	 * @param xt0 Left
 	 * @param yt0 Top
 	 * @param xt1 Right
@@ -729,12 +731,11 @@ public class Level {
 
 	/**
 	 * Get entities in a certain area on the level, and filter them by class.
-	 *
-	 * @param xt0           Left
-	 * @param yt0           Top
-	 * @param xt1           Right
-	 * @param yt1           Bottom
-	 * @param includeGiven  If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
+	 * @param xt0 Left
+	 * @param yt0 Top
+	 * @param xt1 Right
+	 * @param yt1 Bottom
+	 * @param includeGiven If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
 	 * @param entityClasses Entities to accept.
 	 * @return A list of entities in the area.
 	 */
@@ -766,7 +767,6 @@ public class Level {
 
 	/**
 	 * Check if there is an entity on the specified tile.
-	 *
 	 * @param x The x position of the tile.
 	 * @param y The y position of the tile
 	 * @return True if there is an entity on the tile.
@@ -840,18 +840,17 @@ public class Level {
 
 	/**
 	 * Calculates maximum position can be reached by an entity with the front boundary of hit box by tile hit box.
-	 *
-	 * @param sgn                    One-dimensional direction of displacement
-	 * @param d                      Displacement vector
-	 * @param hitBoxLeft             The left boundary of hit box
-	 * @param hitBoxRight            The right boundary of hit box
-	 * @param hitBoxFront            The front boundary of hit box
+	 * @param sgn One-dimensional direction of displacement
+	 * @param d Displacement vector
+	 * @param hitBoxLeft The left boundary of hit box
+	 * @param hitBoxRight The right boundary of hit box
+	 * @param hitBoxFront The front boundary of hit box
 	 * @param frontTilePassableCheck The check of whether the front boundary of hit box hits the tile hit box;
-	 *                               the first parameter takes the front tile position and second one takes the horizontal position
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return The maximum front position can be reached by tile hit box check
 	 */
 	public static int calculateMaxFrontClosestTile(int sgn, int d, int hitBoxLeft, int hitBoxRight, int hitBoxFront,
-												   BiPredicate<Integer, Integer> frontTilePassableCheck) {
+	                                               BiPredicate<Integer, Integer> frontTilePassableCheck) {
 		int hitBoxFront1 = hitBoxFront + d; // After maximum movement
 		int hitBoxLeftTile = hitBoxLeft >> 4;
 		int hitBoxRightTile = hitBoxRight >> 4;
@@ -912,10 +911,10 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, TileCheck condition) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
-				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
+				if (condition.check(getTile(x, y), x, y))
 					setTile(x, y, tile, data);
 			}
 		}
@@ -987,8 +986,8 @@ public class Level {
 					if (xaxis2) {
 						for (int s2 = x3; s2 < w - s2; s2++) {
 							if (getTile(s2, y3) == Tiles.get("rock")) {
-								sp.x = s2 * 16 - 24;
-								sp.y = y3 * 16 - 24;
+								sp.x = (s2 << 4) - 24;
+								sp.y = (y3 << 4) - 24;
 							}
 						}
 					} else {
@@ -1005,23 +1004,23 @@ public class Level {
 						sp.y = y3 * 16 - 8;
 					}
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("rock")) {
+						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
 					}
 
-					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+					Structure.mobDungeonCenter.draw(this, sp.x >> 4, sp.y >> 4);
 
-					if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+					if (getTile(sp.x >> 4, (sp.y >> 4) - 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonNorth.draw(this, sp.x >> 4, (sp.y >> 4) - 5);
 					}
-					if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+					if (getTile(sp.x >> 4, (sp.y >> 4) + 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonSouth.draw(this, sp.x >> 4, (sp.y >> 4) + 5);
 					}
-					if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+					if (getTile((sp.x >> 4) + 4, sp.y >> 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonEast.draw(this, (sp.x >> 4) + 5, sp.y >> 4);
 					}
-					if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
+					if (getTile((sp.x >> 4) - 4, sp.y >> 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonWest.draw(this, (sp.x >> 4) - 5, sp.y >> 4);
 					}
 
 					add(sp);
@@ -1030,7 +1029,7 @@ public class Level {
 						Chest c = new Chest();
 						int chance = -depth;
 
-						c.populateInvRandom("minidungeon", chance);
+						c.populateInvRandom(random, "minidungeon", chance);
 
 						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
 					}
@@ -1076,16 +1075,16 @@ public class Level {
 						sp.y = y3 * 16 - 8;
 					}
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("Obsidian Wall")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("Obsidian Wall")) {
+						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
 					}
 
-					Structure.dungeonSpawner.draw(this, sp.x / 16, sp.y / 16);
+					Structure.dungeonSpawner.draw(this, sp.x >> 4, sp.y >> 4);
 
 					add(sp);
 					for (int rpt = 0; rpt < 2; rpt++) {
 						if (random.nextInt(2) != 0) continue;
-						DungeonChest c = new DungeonChest(true);
+						DungeonChest c = new DungeonChest(random);
 						chestCount++;
 
 						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
@@ -1145,7 +1144,7 @@ public class Level {
 						// Add a chest to some of the houses
 						if (hasChest) {
 							Chest c = new Chest();
-							c.populateInvRandom("villagehouse", 1);
+							c.populateInvRandom(random, "villagehouse", 1);
 							add(c, (x + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
 						}
 					}
@@ -1166,7 +1165,10 @@ public class Level {
 					if (random.nextInt(2) == 1) {
 						Structure.dungeonGarden.draw(this, x, y);
 					} else {
-						Structure.dungeonChest.draw(this, x, y);
+						Structure.dungeonChest.draw(this, x, y, furniture -> {
+							if (furniture instanceof DungeonChest)
+								((DungeonChest) furniture).populateInv(random);
+						});
 					}
 				}
 			}

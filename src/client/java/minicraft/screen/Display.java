@@ -76,9 +76,9 @@ public class Display {
 		if (menus.length > 1 && menus[selection].isSelectable()) { // If menu set is unselectable, it must have been intentional, so prevent the user from setting it back.
 			int prevSel = selection;
 
-			String shift = menus[selection].getCurEntry() instanceof ArrayEntry ? "shift-" : "";
-			if (input.getMappedKey(shift + "left").isClicked() || input.leftTriggerPressed()) selection--;
-			if (input.getMappedKey(shift + "right").isClicked() || input.rightTriggerPressed()) selection++;
+			String shift = menus[selection].getCurEntry() instanceof ArrayEntry ? "shift+" : "";
+			if (input.getMappedKey(shift + "cursor-left").isClicked() || input.leftTriggerPressed()) selection--;
+			if (input.getMappedKey(shift + "cursor-right").isClicked() || input.rightTriggerPressed()) selection++;
 
 			if (prevSel != selection) {
 				Sound.play("select");

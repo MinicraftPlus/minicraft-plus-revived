@@ -35,7 +35,6 @@ public class Items {
 	static {
 		add(new PowerGloveItem());
 		addAll(FurnitureItem.getAllInstances());
-		addAll(TorchItem.getAllInstances());
 		addAll(BucketItem.getAllInstances());
 		addAll(BookItem.getAllInstances());
 		addAll(TileItem.getAllInstances());

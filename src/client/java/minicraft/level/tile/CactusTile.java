@@ -20,7 +20,11 @@ public class CactusTile extends Tile {
 
 	protected CactusTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return true;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -31,14 +35,14 @@ public class CactusTile extends Tile {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = cHealth;
-		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new SmashParticle(x << 4, y << 4));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
 
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
 			level.setTile(x, y, Tiles.get("sand"));
 			Sound.play("monsterhurt");
-			level.dropItem(x * 16 + 8, y * 16 + 8, 2, 4, Items.get("Cactus"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 2, 4, Items.get("Cactus"));
 		} else {
 			level.setData(x, y, damage);
 		}
