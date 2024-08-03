@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.CrashHandler;
+import minicraft.item.DyeItem;
 import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.HeavenlyBerriesTile;
@@ -52,6 +53,7 @@ public final class Tiles {
 		tiles.put((short) 14, new OreTile(OreTile.OreType.Gold));
 		tiles.put((short) 15, new OreTile(OreTile.OreType.Gem));
 		tiles.put((short) 16, new OreTile(OreTile.OreType.Lapis));
+
 		tiles.put((short) 18, new LavaBrickTile("Lava Brick"));
 		tiles.put((short) 19, new ExplodedTile("Explode"));
 		tiles.put((short) 20, new FarmTile("Farmland"));
@@ -69,13 +71,26 @@ public final class Tiles {
 		tiles.put((short) 32, new WallTile(Tile.Material.Wood));
 		tiles.put((short) 33, new WallTile(Tile.Material.Stone));
 		tiles.put((short) 34, new WallTile(Tile.Material.Obsidian));
-		tiles.put((short) 35, new WoolTile(WoolTile.WoolType.NORMAL));
+		tiles.put((short) 35, new WoolTile(DyeItem.DyeColor.WHITE));
+		// These are out of order because of the changes on wool and color system.
+		tiles.put((short) 37, new WoolTile(DyeItem.DyeColor.RED));
+		tiles.put((short) 38, new WoolTile(DyeItem.DyeColor.BLUE));
+		tiles.put((short) 39, new WoolTile(DyeItem.DyeColor.GREEN));
+		tiles.put((short) 40, new WoolTile(DyeItem.DyeColor.YELLOW));
+		tiles.put((short) 41, new WoolTile(DyeItem.DyeColor.BLACK));
+		tiles.put((short) 60, new WoolTile(DyeItem.DyeColor.BROWN));
+		tiles.put((short) 61, new WoolTile(DyeItem.DyeColor.PURPLE));
+		tiles.put((short) 62, new WoolTile(DyeItem.DyeColor.CYAN));
+		tiles.put((short) 63, new WoolTile(DyeItem.DyeColor.LIGHT_GRAY));
+		tiles.put((short) 64, new WoolTile(DyeItem.DyeColor.GRAY));
+		tiles.put((short) 65, new WoolTile(DyeItem.DyeColor.PINK));
+		tiles.put((short) 66, new WoolTile(DyeItem.DyeColor.LIME));
+		tiles.put((short) 67, new WoolTile(DyeItem.DyeColor.LIGHT_BLUE));
+		tiles.put((short) 68, new WoolTile(DyeItem.DyeColor.MAGENTA));
+		tiles.put((short) 69, new WoolTile(DyeItem.DyeColor.ORANGE));
+
 		tiles.put((short) 36, new PathTile("Path"));
-		tiles.put((short) 37, new WoolTile(WoolTile.WoolType.RED));
-		tiles.put((short) 38, new WoolTile(WoolTile.WoolType.BLUE));
-		tiles.put((short) 39, new WoolTile(WoolTile.WoolType.GREEN));
-		tiles.put((short) 40, new WoolTile(WoolTile.WoolType.YELLOW));
-		tiles.put((short) 41, new WoolTile(WoolTile.WoolType.BLACK));
+
 		tiles.put((short) 42, new PotatoTile("Potato"));
 		tiles.put((short) 43, new MaterialTile(Tile.Material.Stone));
 		tiles.put((short) 44, new MaterialTile(Tile.Material.Obsidian));
@@ -121,7 +136,7 @@ public final class Tiles {
 		oldids.set(3, "flower");
 		oldids.set(4, "tree");
 		oldids.set(5, "dirt");
-		oldids.set(41, "wool");
+		oldids.set(41, "white wool");
 		oldids.set(42, "red wool");
 		oldids.set(43, "blue wool");
 		oldids.set(45, "green wool");
@@ -179,7 +194,7 @@ public final class Tiles {
 		oldids.set(116, "Obsidian door");
 		oldids.set(117, "Obsidian door");
 		oldids.set(119, "hole");
-		oldids.set(57, "wool");
+		oldids.set(57, "white wool");
 		oldids.set(58, "red wool");
 		oldids.set(59, "blue wool");
 		oldids.set(60, "green wool");
