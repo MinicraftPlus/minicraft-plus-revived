@@ -2,10 +2,15 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.screen.RelPos;
+import minicraft.screen.entry.SelectableStringEntry;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -93,9 +98,12 @@ public class Screen {
 		private final int xp, yp, xt, yt, tw, th, mirrors, whiteTint, color;
 		private final boolean fullBright;
 		private final MinicraftImage sheet;
+		private final @Nullable RenderingLimitingModel limitingModel;
 
-		public SpriteRendering(int xp, int yp, int xt, int yt, int tw, int th,
-		                       int mirrors, int whiteTint, boolean fullBright, int color, MinicraftImage sheet) {
+		public SpriteRendering(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt,
+		                       int tw, int th, int mirrors, int whiteTint, boolean fullBright, int color,
+		                       MinicraftImage sheet) {
+			this.limitingModel = limitingModel;
 			this.xp = xp;
 			this.yp = yp;
 			this.xt = xt;
@@ -121,6 +129,7 @@ public class Screen {
 				int sy = mirrorY ? th - 1 - y : y; // Source relative; reverse if necessary
 				for (int x = 0; x < tw; ++x) { // Relative
 					if (x + xp < 0) continue; // Skip rest if out of bounds.
+					if (limitingModel != null && !limitingModel.contains(x + xp, y + yp)) continue;
 					if (x + xp >= w) break;
 					int sx = mirrorX ? tw - 1 - x : x; // Source relative; reverse if necessary
 					int col = sheet.pixels[toffs + sx + sy * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
@@ -284,103 +293,414 @@ public class Screen {
 		} while ((rendering = renderings.poll()) != null);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) {
-		render(xp, yp, xt, yt, bits, sheet, -1);
+	/** Inclusive bounds for rendering */
+	public static abstract class RenderingLimitingModel {
+		public abstract int getLeftBound();
+		public abstract int getRightBound();
+		public abstract int getTopBound();
+		public abstract int getBottomBound();
+
+		public boolean contains(int x, int y) { // inclusive
+			return getLeftBound() <= x && x <= getRightBound() && getTopBound() <= y && y <= getBottomBound();
+		}
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) {
-		render(xp, yp, xt, yt, bits, sheet, whiteTint, false);
+	/** The basic class of a GUI entry. */
+	public interface ScreenEntry {
+		int getWidth();
+		void tick(InputHandler input);
+		void tickScrollingTicker(SelectableStringEntry.EntryXAccessor accessor);
+		boolean isScrollingTickerSet();
+		void render(Screen screen, @Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected);
+		void render(Screen screen, @Nullable RenderingLimitingModel limitingModel, int x, int y, boolean selected,
+		            String contain, int containColor);
+
+		/** All values here should be in the same relative coordinate system. */
+		interface EntryXAccessor {
+			int getWidth();
+			int getX(RelPos anchor);
+			void setX(RelPos anchor, int x);
+			void translateX(int displacement);
+			void setAnchors(RelPos anchor); // This is recommended to be invoked first.
+			int getLeftBound(RelPos anchor);
+			int getRightBound(RelPos anchor);
+		}
+
+		abstract class EntryScrollingTicker {
+			protected static final int DEFAULT_CYCLING_PERIOD = 90; // in ticks
+
+			protected int tick = 0;
+
+			public abstract void tick(@NotNull EntryXAccessor accessor);
+		}
+
+		class ExceedingHorizontallyAlternatingScrollingTicker extends EntryScrollingTicker {
+			@Range(from = -1, to = 1)
+			private int direction = 0; // Number line direction; text movement
+
+			@Override
+			public void tick(@NotNull EntryXAccessor accessor) {
+				RelPos refAnchor = RelPos.getPos(1 - direction, 0);
+				accessor.setAnchors(refAnchor);
+				int x = accessor.getX(refAnchor);
+				// Proceeds when the entry is out of bounds.
+				if (x < accessor.getLeftBound(refAnchor) || x > accessor.getRightBound(refAnchor)) {
+					if (direction != 0) {
+						if (tick++ == 5) {
+							x += direction * MinicraftImage.boxWidth;
+							if ((direction == 1 ? x - accessor.getLeftBound(refAnchor) :
+								accessor.getRightBound(refAnchor) - x) >= 0) {
+								// Alignment correction
+								x = direction == 1 ? accessor.getLeftBound(refAnchor) : accessor.getRightBound(refAnchor);
+								direction = 0; // Stops when destination is reached.
+							}
+
+							accessor.setX(refAnchor, x);
+							tick = 0;
+						}
+					} else if (tick++ == DEFAULT_CYCLING_PERIOD) {
+						if (x <= accessor.getRightBound(refAnchor))
+							direction = 1; // Right
+						else
+							direction = -1; // Left
+						tick = 0;
+					}
+				} else tick = 0;
+			}
+		}
+
+		class HorizontalScrollerScrollingTicker extends EntryScrollingTicker {
+			@MagicConstant(intValues = {-1, 1})
+			private final int direction;
+
+			public HorizontalScrollerScrollingTicker(@MagicConstant int direction) {
+				switch (direction) {
+					case -1: case 1:
+						this.direction = direction; break;
+					default:
+						throw new IllegalArgumentException("direction; input: " + direction);
+				}
+			}
+
+			private boolean moving = false;
+
+			@Override
+			public void tick(@NotNull EntryXAccessor accessor) {
+				RelPos refAnchor = direction == 1 ? RelPos.LEFT : RelPos.RIGHT;
+				accessor.setAnchors(refAnchor);
+				int x = accessor.getX(refAnchor);
+				int width = accessor.getWidth();
+				int lw = direction == -1 ? -width : 0;
+				int rw = direction == 1 ? width : 0;
+				// Proceeds when the entry is out of bounds.
+				if (x < accessor.getLeftBound(refAnchor) || x > accessor.getRightBound(refAnchor)) {
+					if (moving) {
+						if (tick++ == 5) {
+							if (direction == 1 && x >= accessor.getRightBound(refAnchor) + rw) { // Left side reaches right bound
+								x += accessor.getLeftBound(refAnchor) - x - width;
+							} else if (direction == -1 && x <= accessor.getLeftBound(refAnchor) + lw) {
+								x += accessor.getRightBound(refAnchor) - x + width;
+							} else {
+								x += direction * MinicraftImage.boxWidth;
+							}
+
+							int diff = direction == 1 ? accessor.getRightBound(refAnchor) - x :
+								x - accessor.getLeftBound(refAnchor);
+							if (diff >= 0 && diff < MinicraftImage.boxWidth) { // Moves back to the original point
+								moving = false; // Pauses the scrolling
+								// Alignment correction
+								x = direction == 1 ? accessor.getRightBound(refAnchor) : accessor.getLeftBound(refAnchor);
+							}
+
+							accessor.setX(refAnchor, x);
+							tick = 0;
+						}
+					} else if (tick++ == DEFAULT_CYCLING_PERIOD) {
+						moving = true;
+						tick = 0;
+					}
+				} else tick = 0;
+			}
+		}
+	}
+
+	public static abstract class EntryRenderingUnit {
+		protected abstract class EntryLimitingModel extends RenderingLimitingModel {
+			@Override
+			public int getLeftBound() {
+				return getEntryBounds().getLeft();
+			}
+
+			@Override
+			public int getRightBound() {
+				return getEntryBounds().getRight() - 1; // As this model is inclusive.
+			}
+
+			@Override
+			public int getTopBound() {
+				return getEntryBounds().getTop();
+			}
+
+			@Override
+			public int getBottomBound() {
+				return getEntryBounds().getBottom() - 1; // As this model is inclusive.
+			}
+		}
+
+		protected abstract class EntryXAccessor implements SelectableStringEntry.EntryXAccessor {
+			/* Most of the methods here can be obtained by algebra. */
+
+			@Override
+			public int getWidth() {
+				return getDelegate().getWidth();
+			}
+
+			@Override
+			public int getX(RelPos anchor) {
+				return xPos + (containerAnchor.xIndex - anchor.xIndex) * getEntryBounds().getWidth() / 2 +
+					(anchor.xIndex - entryAnchor.xIndex) * getDelegate().getWidth() / 2;
+			}
+
+			@Override
+			public void setX(RelPos anchor, int x) {
+				xPos = x + (anchor.xIndex - containerAnchor.xIndex) * getEntryBounds().getWidth() / 2 +
+					(entryAnchor.xIndex - anchor.xIndex) * getDelegate().getWidth() / 2;
+			}
+
+			@Override
+			public void translateX(int displacement) {
+				xPos += displacement;
+			}
+
+			@Override
+			public void setAnchors(RelPos anchor) {
+				changeRelativeEntryAnchor(anchor);
+				changeRelativeContainerAnchor(anchor);
+			}
+
+			@Override
+			public int getLeftBound(RelPos anchor) {
+				return anchor.xIndex * (getDelegate().getWidth() - getEntryBounds().getWidth()) / 2;
+			}
+
+			@Override
+			public int getRightBound(RelPos anchor) {
+				return (2 - anchor.xIndex) * (getEntryBounds().getWidth() - getDelegate().getWidth()) / 2;
+			}
+		}
+
+		protected abstract EntryLimitingModel getLimitingModel();
+		protected abstract EntryXAccessor getXAccessor();
+
+		/**
+		 * A reference anchor, which is the relative position of its container <br>
+		 * Also, it is the relative position of the entry. <br>
+		 * Acceptable values: {@code LEFT}, {@code CENTER}, {@code RIGHT}
+		 */
+		protected @NotNull RelPos containerAnchor;
+		/**
+		 * A reference anchor of the entry <br>
+		 * This is usually the same as {@link #containerAnchor}.
+		 * Acceptable values: {@code LEFT}, {@code CENTER}, {@code RIGHT}
+		 */
+		protected @NotNull RelPos entryAnchor;
+		/** The x-position of the entry at its anchor {@link #entryAnchor} relative to the container anchor {@link #containerAnchor} */
+		protected int xPos = 0;
+
+		/** This is used to prevent further exceptions to {@link RelPos}.
+		 * Here, we only use the x indices for positioning, so we can just simply shrink the acceptable value range
+		 * to an extent that we use the best. */
+		private static RelPos getRelPos(@NotNull RelPos anchor) {
+			return RelPos.getPos(anchor.xIndex, 1); // Confirms that this meets the requirement.
+		}
+
+		protected EntryRenderingUnit(@NotNull RelPos anchor) {
+			anchor = getRelPos(anchor);
+			this.containerAnchor = anchor;
+			this.entryAnchor = anchor;
+		}
+		protected EntryRenderingUnit(@NotNull RelPos containerAnchor, @NotNull RelPos entryAnchor) {
+			this.containerAnchor = getRelPos(containerAnchor);
+			this.entryAnchor = getRelPos(entryAnchor);
+		}
+
+		protected abstract Rectangle getEntryBounds(); // Global coordinate system
+		protected abstract ScreenEntry getDelegate();
+
+		public void resetRelativeAnchorsSynced(RelPos newAnchor) {
+			entryAnchor = containerAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void moveRelativeContainerAnchor(RelPos newAnchor) {
+			containerAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void moveRelativeEntryAnchor(RelPos newAnchor) {
+			entryAnchor = newAnchor;
+			xPos = 0;
+		}
+		public void changeRelativeContainerAnchor(RelPos newAnchor) {
+			xPos += (containerAnchor.xIndex - newAnchor.xIndex) * getEntryBounds().getWidth() / 2;
+			containerAnchor = newAnchor;
+		}
+		public void changeRelativeEntryAnchor(RelPos newAnchor) {
+			xPos += (newAnchor.xIndex - entryAnchor.xIndex) * getDelegate().getWidth() / 2;
+			entryAnchor = newAnchor;
+		}
+
+		public void tick(InputHandler input) {
+			getDelegate().tickScrollingTicker(getXAccessor());
+			getDelegate().tick(input);
+		}
+
+		protected void renderExtra(Screen screen, int x, int y, int entryWidth, boolean selected) {}
+
+		protected boolean renderOutOfFrame() {
+			return false;
+		}
+
+		public void render(Screen screen, int y, boolean selected) {
+			int w = getDelegate().getWidth(); // Reduce calculation
+			int x = getRenderX(w); // Reduce calculation
+			getDelegate().render(screen, renderOutOfFrame() ? null : getLimitingModel(), x, y, selected);
+			renderExtra(screen, x, y, w, selected);
+		}
+
+		public void render(Screen screen, int y, boolean selected, String contain, int containColor) {
+			int w = getDelegate().getWidth(); // Reduce calculation
+			int x = getRenderX(w); // Reduce calculation
+			getDelegate().render(screen, renderOutOfFrame() ? null : getLimitingModel(), x, y, selected, contain, containColor);
+			renderExtra(screen, x, y, w, selected);
+		}
+
+		protected int getRenderX(int entryWidth) {
+			return getEntryBounds().getLeft() + xPos - entryAnchor.xIndex * entryWidth / 2 +
+				containerAnchor.xIndex * getEntryBounds().getWidth() / 2;
+		}
+	}
+
+	// Just use a menu for it.
+	public static final class ScreenLimitingModel extends RenderingLimitingModel {
+		public static final ScreenLimitingModel INSTANCE = new ScreenLimitingModel();
+
+		@Override
+		public int getLeftBound() {
+			return 0;
+		}
+
+		@Override
+		public int getRightBound() {
+			return Screen.w - 1;
+		}
+
+		@Override
+		public int getTopBound() {
+			return 0;
+		}
+
+		@Override
+		public int getBottomBound() {
+			return Screen.h - 1;
+		}
+	}
+
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet) {
+		render(limitingModel, xp, yp, xt, yt, bits, sheet, -1);
+	}
+
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint) {
+		render(limitingModel, xp, yp, xt, yt, bits, sheet, whiteTint, false);
 	}
 
 	/**
 	 * This method takes care of assigning the correct spritesheet to assign to the sheet variable
 	 **/
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright) {
+		render(limitingModel, xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
 	}
 
-	public void render(int xp, int yp, LinkedSprite sprite) {
-		render(xp, yp, sprite.getSprite());
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, LinkedSprite sprite) {
+		render(limitingModel, xp, yp, sprite.getSprite());
 	}
 
-	public void render(int xp, int yp, Sprite sprite) {
-		render(xp, yp, sprite, false);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite) {
+		render(limitingModel, xp, yp, sprite, false);
 	}
 
-	public void render(int xp, int yp, Sprite sprite, boolean fullbright) {
-		render(xp, yp, sprite, 0, fullbright, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite, boolean fullbright) {
+		render(limitingModel, xp, yp, sprite, 0, fullbright, 0);
 	}
 
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
-		render(xp, yp, sprite, mirror, fullbright, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite, int mirror, boolean fullbright) {
+		render(limitingModel, xp, yp, sprite, mirror, fullbright, 0);
 	}
 
-	public void render(int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite sprite, int mirror, boolean fullbright, int color) {
 		boolean mirrorX = (mirror & BIT_MIRROR_X) > 0; // Horizontally.
 		boolean mirrorY = (mirror & BIT_MIRROR_Y) > 0; // Vertically.
 		for (int r = 0; r < sprite.spritePixels.length; r++) {
 			int lr = mirrorY ? sprite.spritePixels.length - 1 - r : r;
 			for (int c = 0; c < sprite.spritePixels[lr].length; c++) {
 				Sprite.Px px = sprite.spritePixels[lr][mirrorX ? sprite.spritePixels[lr].length - 1 - c : c];
-				render(xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
+				render(limitingModel, xp + c * 8, yp + r * 8, px, mirror, sprite.color, fullbright, color);
 			}
 		}
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel) {
-		render(xp, yp, pixel, -1);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel) {
+		render(limitingModel, xp, yp, pixel, -1);
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel, int whiteTint) {
-		render(xp, yp, pixel, 0, whiteTint);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int whiteTint) {
+		render(limitingModel, xp, yp, pixel, 0, whiteTint);
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) {
-		render(xp, yp, pixel, mirror, whiteTint, false);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint) {
+		render(limitingModel, xp, yp, pixel, mirror, whiteTint, false);
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) {
-		render(xp, yp, pixel, mirror, whiteTint, fullbright, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright) {
+		render(limitingModel, xp, yp, pixel, mirror, whiteTint, fullbright, 0);
 	}
 
-	public void render(int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
-		render(xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, Sprite.Px pixel, int mirror, int whiteTint, boolean fullbright, int color) {
+		render(limitingModel, xp, yp, pixel.x, pixel.y, pixel.mirror ^ mirror, pixel.sheet, whiteTint, fullbright, color);
 	}
 
 	/**
 	 * Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel.
 	 */
-	public void render(int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		// xOffset and yOffset account for screen offset
-		render(xp - xOffset, yp - yOffset, xt * 8, yt * 8, 8, 8, sheet, bits, whiteTint, fullbright, color);
+		render(limitingModel, xp - xOffset, yp - yOffset, xt * 8, yt * 8, 8, 8, sheet, bits, whiteTint, fullbright, color);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
-		render(xp, yp, xt, yt ,tw, th, sheet, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
+		render(limitingModel, xp, yp, xt, yt ,tw, th, sheet, 0);
 	}
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors) {
-		render(xp, yp, xt, yt ,tw, th, sheet, mirrors, -1);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors) {
+		render(limitingModel, xp, yp, xt, yt ,tw, th, sheet, mirrors, -1);
 	}
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint) {
-		render(xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, false);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint) {
+		render(limitingModel, xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, false);
 	}
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, fullbright, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullbright) {
+		render(limitingModel, xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, fullbright, 0);
 	}
 	// Any single pixel from the image can be rendered using this method.
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullBright, int color) {
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullBright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// Validation check
 		if (xt + tw > sheet.width && yt + th > sheet.height) {
-			render(xp, yp, 0, 0, mirrors, Renderer.spriteLinker.missingSheet(SpriteType.Item));
+			render(null, xp, yp, 0, 0, mirrors, Renderer.spriteLinker.missingSheet(SpriteType.Item));
 			return;
 		}
 
-		queue(new SpriteRendering(xp, yp, xt, yt, tw, th, mirrors, whiteTint, fullBright, color, sheet));
+		queue(new SpriteRendering(limitingModel, xp, yp, xt, yt, tw, th, mirrors, whiteTint, fullBright, color, sheet));
 	}
 
 	public void fillRect(int xp, int yp, int w, int h, int color) {

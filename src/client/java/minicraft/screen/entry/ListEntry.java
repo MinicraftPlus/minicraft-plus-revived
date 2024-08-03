@@ -1,11 +1,14 @@
 package minicraft.screen.entry;
 
+import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class ListEntry {
+public abstract class ListEntry implements Screen.ScreenEntry {
 
 	public static final int COL_UNSLCT = Color.GRAY;
 	public static final int COL_SLCT = Color.WHITE;
@@ -16,21 +19,31 @@ public abstract class ListEntry {
 	 * Ticks the entry. Used to handle input from the InputHandler
 	 * @param input InputHandler used to get player input.
 	 */
+	@Override
 	public abstract void tick(InputHandler input);
 
-	public void render(Screen screen, int x, int y, boolean isSelected, String contain, int containColor) {
+	@Override
+	public void tickScrollingTicker(@NotNull SelectableStringEntry.EntryXAccessor accessor) {}
+
+	@Override
+	public boolean isScrollingTickerSet() { return false; }
+
+	public void hook(@NotNull Action callback) {}
+
+	@Override
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel bounds, int x, int y, boolean isSelected, String contain, int containColor) {
 		if (!visible) {
 			return;
 		}
 
-		render(screen, x, y, isSelected);
+		render(screen, bounds, x, y, isSelected);
 		if (contain == null || contain.isEmpty()) {
 			return;
 		}
 
 		String string = toString();
 
-		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
+		Font.drawColor(bounds, string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
 	}
 
 	/**
@@ -40,14 +53,16 @@ public abstract class ListEntry {
 	 * @param x X coordinate
 	 * @param y Y coordinate
 	 * @param isSelected true if the entry is selected, false otherwise
+	 * @param bounds X rendering bounds
 	 */
-	public void render(Screen screen, int x, int y, boolean isSelected) {
+	@Override
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel bounds, int x, int y, boolean isSelected) {
 		if (visible) {
 			String text = toString().replace(Color.WHITE_CODE + Color.GRAY_CODE, Color.toStringCode(getColor(isSelected)));
 			if (text.contains(String.valueOf(Color.COLOR_CHAR)))
-				Font.drawColor(Color.toStringCode(getColor(isSelected)) + text, screen, x, y);
+				Font.drawColor(bounds, Color.toStringCode(getColor(isSelected)) + text, screen, x, y);
 			else
-				Font.draw(text, screen, x, y, getColor(isSelected));
+				Font.draw(bounds, text, screen, x, y, getColor(isSelected));
 		}
 	}
 
@@ -64,6 +79,7 @@ public abstract class ListEntry {
 	 * Calculates the width of the entry.
 	 * @return the entry's width
 	 */
+	@Override
 	public int getWidth() {
 		return Font.textWidth(toString());
 	}

@@ -5,13 +5,13 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
-import minicraft.screen.entry.StringEntry;
+import minicraft.screen.entry.SelectableStringEntry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ControlsDisplay extends Display {
 	private ListEntry[] keyControls;
@@ -20,10 +20,11 @@ public class ControlsDisplay extends Display {
 	private int displaying; // 0 for keyboard; 1 for controller.
 
 	public ControlsDisplay() {
-		super(true, true, new Menu.Builder(false, 0, RelPos.CENTER)
+		super(true, true, new Menu.Builder(false, 0, RelPos.LEFT)
 			.setSelectable(true)
-			.setPositioning(new Point(Screen.w / 2, 20), RelPos.BOTTOM)
+			.setPositioning(new Point(0, 20), RelPos.BOTTOM_RIGHT)
 			.setDisplayLength(17)
+			.setSize(Screen.w, 17 * 8)
 			.createMenu()
 		);
 
@@ -36,17 +37,21 @@ public class ControlsDisplay extends Display {
 
 	private void initKeyControls() {
 		ArrayList<ListEntry> entries = new ArrayList<>(23);
-		for (int i = 0; i < 23; i++)
-			entries.addAll(Arrays.asList(StringEntry.useLines(String.format("minicraft.displays.controls.display.keyboard.%02d", i))));
-		entries.forEach(e -> e.setSelectable(true));
+		for (int i = 0; i < 23; i++) {
+			SelectableStringEntry entry = new SelectableStringEntry(String.format("minicraft.displays.controls.display.keyboard.%02d", i));
+			entry.setScrollerScrollingTicker();
+			entries.add(entry);
+		}
 		keyControls = entries.toArray(new ListEntry[0]);
 	}
 
 	private void initControllerControls() {
 		ArrayList<ListEntry> entries = new ArrayList<>(16);
-		for (int i = 0; i < 16; i++)
-			entries.addAll(Arrays.asList(StringEntry.useLines(String.format("minicraft.displays.controls.display.controller.%02d", i))));
-		entries.forEach(e -> e.setSelectable(true));
+		for (int i = 0; i < 16; i++) {
+			SelectableStringEntry entry = new SelectableStringEntry(String.format("minicraft.displays.controls.display.controller.%02d", i));
+			entry.setScrollerScrollingTicker();
+			entries.add(entry);
+		}
 		controllerControls = entries.toArray(new ListEntry[0]);
 	}
 
