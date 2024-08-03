@@ -59,7 +59,8 @@ public class FireSpark extends Entity {
 			yy += ya;
 			boolean stopped = true;
 			//noinspection RedundantIfStatement
-			if (moveX(((int) xx) - x0)) stopped = false; // This kind of difference is handled due to errors by flooring.
+			if (moveX(((int) xx) - x0))
+				stopped = false; // This kind of difference is handled due to errors by flooring.
 			if (moveY(((int) yy) - y0)) stopped = false;
 			if (stopped) {
 				this.stopped = true;
@@ -74,7 +75,9 @@ public class FireSpark extends Entity {
 		}
 	}
 
-	/** Can this entity block you? Nope. */
+	/**
+	 * Can this entity block you? Nope.
+	 */
 	public boolean isSolid() {
 		return false;
 	}

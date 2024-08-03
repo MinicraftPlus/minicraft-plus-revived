@@ -28,18 +28,25 @@ public class DirtTile extends Tile {
 
 	protected static int dCol(int depth) {
 		switch (depth) {
-			case 1: return Color.get(1, 194, 194, 194); // Sky.
-			case 0: return Color.get(1, 129, 105, 83); // Surface.
-			case -4: return Color.get(1, 76, 30, 100); // Dungeons.
-			default: return Color.get(1, 102); // Caves.
+			case 1:
+				return Color.get(1, 194, 194, 194); // Sky.
+			case 0:
+				return Color.get(1, 129, 105, 83); // Surface.
+			case -4:
+				return Color.get(1, 76, 30, 100); // Dungeons.
+			default:
+				return Color.get(1, 102); // Caves.
 		}
 	}
 
 	protected static int dIdx(int depth) {
 		switch (depth) {
-			case 0: return 0; // Surface
-			case -4: return 2; // Dungeons
-			default: return 1; // Caves
+			case 0:
+				return 0; // Surface
+			case -4:
+				return 2; // Dungeons
+			default:
+				return 1; // Caves
 		}
 	}
 
@@ -55,7 +62,7 @@ public class DirtTile extends Tile {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.play("monsterhurt");
-					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Dirt"));
+					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Dirt"));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));

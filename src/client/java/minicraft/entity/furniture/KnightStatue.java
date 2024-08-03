@@ -43,13 +43,16 @@ public class KnightStatue extends Furniture {
 	}
 
 	@Override
-	public void tryPush(Player player) {} // Nothing happens.
+	public void tryPush(Player player) {
+	} // Nothing happens.
 
 	@Override
-	public @NotNull Furniture copy(){
+	public @NotNull Furniture copy() {
 		return new KnightStatue(bossHealth);
 	}
 
-	public int getBossHealth() { return bossHealth; }
+	public int getBossHealth() {
+		return bossHealth;
+	}
 }
 

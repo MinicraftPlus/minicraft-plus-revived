@@ -45,12 +45,9 @@ public class Sheep extends PassiveMob {
 	public void tick() {
 		super.tick();
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		// If tall grasses are present, these are consumed and then turn into grass tiles.
-		if (tile instanceof GrassTile) {
-			if (random.nextInt(1000) == 0) { // Grazing
-				level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
-				cut = false;
-			}
+		if (tile instanceof GrassTile && random.nextInt(1000) == 0) { // Grazing
+			level.setTile(x >> 4, y >> 4, Tiles.get("dirt"));
+			cut = false;
 		}
 	}
 
@@ -70,9 +67,18 @@ public class Sheep extends PassiveMob {
 
 	public void die() {
 		int min = 0, max = 0;
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {min = 1; max = 3;}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {min = 1; max = 2;}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {min = 0; max = 2;}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
+			min = 1;
+			max = 3;
+		}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+			min = 1;
+			max = 2;
+		}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+			min = 0;
+			max = 2;
+		}
 
 		if (!cut) dropItem(min, max, Items.get("wool"));
 		dropItem(min, max, Items.get("Raw Beef"));

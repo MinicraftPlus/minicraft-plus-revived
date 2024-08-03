@@ -19,7 +19,10 @@ public class DoorTile extends Tile {
 	private SpriteAnimation closedSprite;
 	private SpriteAnimation openSprite;
 
-	protected DoorTile(Material type) { this(type, null); }
+	protected DoorTile(Material type) {
+		this(type, null);
+	}
+
 	protected DoorTile(Material type, String name) {
 		super(type.name() + " " + (name == null ? "Door" : name), null);
 		this.type = type;
@@ -52,9 +55,9 @@ public class DoorTile extends Tile {
 			if (tool.type == type.getRequiredTool()) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					int data = level.getData(xt, yt);
-					level.setTile(xt, yt, Tiles.get(id + 3)); // Will get the corresponding floor tile.
+					level.setTile(xt, yt, Tiles.get((short) (id + 3))); // Will get the corresponding floor tile.
 					Sound.play("monsterhurt");
-					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(type.name() + " Door"));
+					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get(type.name() + " Door"));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));

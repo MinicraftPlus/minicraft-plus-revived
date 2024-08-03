@@ -5,8 +5,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
-import java.util.Locale;
-
 public abstract class ListEntry {
 
 	public static final int COL_UNSLCT = Color.GRAY;
@@ -30,8 +28,7 @@ public abstract class ListEntry {
 			return;
 		}
 
-		String string = toString().toLowerCase(Locale.ENGLISH);
-		contain = contain.toLowerCase(Locale.ENGLISH);
+		String string = toString();
 
 		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
 	}
@@ -59,7 +56,9 @@ public abstract class ListEntry {
 	 * @param isSelected true if the entry is selected, false otherwise
 	 * @return the current entry color
 	 */
-	public int getColor(boolean isSelected) { return isSelected ? COL_SLCT : COL_UNSLCT; }
+	public int getColor(boolean isSelected) {
+		return isSelected ? COL_SLCT : COL_UNSLCT;
+	}
 
 	/**
 	 * Calculates the width of the entry.
@@ -81,25 +80,33 @@ public abstract class ListEntry {
 	 * Determines if this entry can be selected.
 	 * @return true if it is visible and can be selected, false otherwise.
 	 */
-	public final boolean isSelectable() { return selectable && visible; }
+	public final boolean isSelectable() {
+		return selectable && visible;
+	}
 
 	/**
 	 * Returns whether the entry is visible or not.
 	 * @return true if the entry is visible, false otherwise
 	 */
-	public final boolean isVisible() { return visible; }
+	public final boolean isVisible() {
+		return visible;
+	}
 
 	/**
 	 * Changes if the entry can be selected or not.
 	 * @param selectable true if the entry can be selected, false if not
 	 */
-	public final void setSelectable(boolean selectable) { this.selectable = selectable; }
+	public final void setSelectable(boolean selectable) {
+		this.selectable = selectable;
+	}
 
 	/**
 	 * Changes if the entry is visible or not.
 	 * @param visible true if the entry should be visible, false if not
 	 */
-	public final void setVisible(boolean visible) { this.visible = visible; }
+	public final void setVisible(boolean visible) {
+		this.visible = visible;
+	}
 
 	@Override
 	public abstract String toString();

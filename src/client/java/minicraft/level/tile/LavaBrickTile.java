@@ -37,9 +37,11 @@ public class LavaBrickTile extends Tile {
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if(entity instanceof Mob)
-			((Mob)entity).hurt(this, x, y, 3);
+		if (entity instanceof Mob)
+			((Mob) entity).hurt(this, x, y, 3);
 	}
 
-	public boolean mayPass(Level level, int x, int y, Entity e) { return e.canWool(); }
+	public boolean mayPass(Level level, int x, int y, Entity e) {
+		return e.canWool();
+	}
 }

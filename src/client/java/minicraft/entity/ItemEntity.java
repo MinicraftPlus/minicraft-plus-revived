@@ -70,7 +70,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 	 * @return string representation of this entity
 	 */
 	public String getData() {
-		return String.join(":", (new String[] {item.getData(), zz + "", lifeTime+"", time + "", xa + "", ya + "", za + ""}));
+		return String.join(":", (new String[] { item.getData(), zz + "", lifeTime + "", time + "", xa + "", ya + "", za + "" }));
 	}
 
 	@Override
@@ -128,18 +128,18 @@ public class ItemEntity extends Entity implements ClientTickable {
 			if (time / 6 % 2 == 0) return;
 		}
 
-		screen.render(x-4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
+		screen.render(x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
 		screen.render(x - 4, y - 4 - (int) zz, item.sprite); // Item
 	}
 
 	@Override
 	protected void touchedBy(Entity entity) {
-		if(!(entity instanceof Player)) return; // For the time being, we only care when a player touches an item.
+		if (!(entity instanceof Player)) return; // For the time being, we only care when a player touches an item.
 
 		if (time > 30) { // Conditional prevents this from being collected immediately.
 			if (!pickedUp) {// Don't register if we are online and a player touches it; the client will register that.
 				pickedUp = true;
-				((Player)entity).pickupItem(this);
+				((Player) entity).pickupItem(this);
 				pickedUp = isRemoved();
 			}
 		}
