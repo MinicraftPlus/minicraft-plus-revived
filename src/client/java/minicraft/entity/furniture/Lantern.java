@@ -24,7 +24,6 @@ public class Lantern extends Furniture {
 
 	/**
 	 * Creates a lantern of a given type.
-	 *
 	 * @param type Type of lantern.
 	 */
 	public Lantern(Lantern.Type type) {

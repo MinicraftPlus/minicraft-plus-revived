@@ -11,7 +11,11 @@ import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -20,6 +24,10 @@ public final class Tiles {
 	public static ArrayList<String> oldids = new ArrayList<>();
 
 	private static HashMap<Short, Tile> tiles = new HashMap<>();
+
+	// Standard tile explosion blacklist
+	// Tiles (as IDs) included cannot be damaged by explosions such as by TNTs and creepers.
+	public static final Set<Short> explosionBlacklist;
 
 	public static void initTileList() {
 		Logging.TILES.debug("Initializing tile list...");
@@ -71,8 +79,8 @@ public final class Tiles {
 		tiles.put((short) 42, new PotatoTile("Potato"));
 		tiles.put((short) 43, new MaterialTile(Tile.Material.Stone));
 		tiles.put((short) 44, new MaterialTile(Tile.Material.Obsidian));
-		tiles.put((short) 45, new DecorTile(Tile.Material.Stone));
-		tiles.put((short) 46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short) 45, new DecorTile(DecorTile.decorType.ORNATE_STONE));
+		tiles.put((short) 46, new DecorTile(DecorTile.decorType.ORNATE_OBSIDIAN));
 		tiles.put((short) 47, new BossWallTile());
 		tiles.put((short) 48, new BossFloorTile());
 		tiles.put((short) 49, new BossDoorTile());
@@ -80,6 +88,12 @@ public final class Tiles {
 		tiles.put((short) 51, new CarrotTile("Carrot"));
 		tiles.put((short) 52, new HeavenlyBerriesTile("Heavenly Berries"));
 		tiles.put((short) 53, new HellishBerriesTile("Hellish Berries"));
+		tiles.put((short) 54, new FenceTile(Tile.Material.Wood));
+		tiles.put((short) 55, new FenceTile(Tile.Material.Stone));
+		tiles.put((short) 56, new FenceTile(Tile.Material.Obsidian));
+		tiles.put((short) 57, new TorchTile());
+		tiles.put((short) 58, new SignTile());
+		tiles.put((short) 59, new DecorTile(DecorTile.decorType.ORNATE_WOOD));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());
@@ -187,6 +201,20 @@ public final class Tiles {
 		oldids.set(53, "torch green wool");
 		oldids.set(54, "torch yellow wool");
 		oldids.set(55, "torch black wool");
+
+		explosionBlacklist = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			(short) 4, // Stairs Up
+			(short) 5, // Stairs Down
+			(short) 22, // Hard Rock
+			(short) 28, // Obsidian Door
+			(short) 31, // Obsidian
+			(short) 34, // Obsidian Wall
+			(short) 44, // Raw Obsidian
+			(short) 46, // Ornate Obsidian
+			(short) 47, // Boss Wall
+			(short) 48, // Boss Floor
+			(short) 49 // Boss Door
+		)));
 	}
 
 	private static int overflowCheck = 0;
@@ -207,12 +235,6 @@ public final class Tiles {
 
 		Tile getting = null;
 
-		boolean isTorch = false;
-		if (name.startsWith("TORCH")) {
-			isTorch = true;
-			name = name.substring(6); // Cuts off torch prefix.
-		}
-
 		if (name.contains("_")) {
 			name = name.substring(0, name.indexOf("_"));
 		}
@@ -230,30 +252,18 @@ public final class Tiles {
 			getting = tiles.get((short) 0);
 		}
 
-		if (isTorch) {
-			getting = TorchTile.getTorchTile(getting);
-		}
-
 		overflowCheck = 0;
 		return getting;
 	}
 
-	public static Tile get(int id) {
+	public static Tile get(short id) {
 		//System.out.println("Requesting tile by id: " + id);
-		if (id < 0) id += 32768;
-
-		if (tiles.get((short) id) != null) {
-			return tiles.get((short) id);
-		} else if (id >= 32767) {
-			return TorchTile.getTorchTile(get(id - 32767));
+		if (tiles.get(id) != null) {
+			return tiles.get(id);
 		} else {
 			Logging.TILES.info("Unknown tile id requested: " + id);
 			return tiles.get((short) 0);
 		}
-	}
-
-	public static boolean containsTile(int id) {
-		return tiles.get((short) id) != null;
 	}
 
 	public static String getName(String descriptName) {

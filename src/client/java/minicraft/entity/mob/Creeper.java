@@ -5,6 +5,7 @@ import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.ExplosionTileTicker;
 import minicraft.entity.furniture.Spawner;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Creeper extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][]{
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "creeper")},
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "creeper")},
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "creeper")},
-		new LinkedSprite[][]{Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "creeper")}
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "creeper") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "creeper") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "creeper") },
+		new LinkedSprite[][] { Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "creeper") }
 	};
 
 	private static final int MAX_FUSE_TIME = 60;
@@ -29,8 +30,6 @@ public class Creeper extends EnemyMob {
 
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
-
-	private final String[] explosionBlacklist = new String[]{"hard rock", "obsidian wall", "raw obsidian"};
 
 	public Creeper(int lvl) {
 		super(lvl, sprites, 10, 50);
@@ -120,12 +119,7 @@ public class Creeper extends EnemyMob {
 						}
 					}
 					if (!hasSpawner) {
-						if (level.depth != 1) {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), 0, explosionBlacklist);
-						} else {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), 0, explosionBlacklist);
-						}
-
+						ExplosionTileTicker.addTicker(level, tilePosition.x, tilePosition.y, 0);
 					}
 				}
 
