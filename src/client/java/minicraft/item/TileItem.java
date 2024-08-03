@@ -38,22 +38,22 @@ public class TileItem extends StackableItem {
 		TileModel.TileDataGetter placeOverWithID = (model1, target, level, xt, yt, player, attackDir) -> target.id;
 
 		items.add(new TileItem("Plank", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "plank").createSpriteLink(), new TileModel("Wood Planks"), "hole", "water", "cloud"));
-		items.add(new TileItem("Ornate Wood", new LinkedSprite(SpriteType.Item, "plank"), new TileModel("Ornate Wood"), "hole", "water", "cloud"));
+		items.add(new TileItem("Ornate Wood", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "plank").createSpriteLink(), new TileModel("Ornate Wood"), "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "plank_wall").createSpriteLink(), new TileModel("Wood Wall"), "Wood Planks"));
 		items.add(new TileItem("Wood Door", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "wood_door").createSpriteLink(), new TileModel("Wood Door"), "Wood Planks"));
-		items.add(new TileItem("Wood Fence", new LinkedSprite(SpriteType.Item, "wood_fence"), new TileModel("Wood Fence", placeOverWithID), solidTiles));
+		items.add(new TileItem("Wood Fence", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "wood_fence").createSpriteLink(), new TileModel("Wood Fence", placeOverWithID), solidTiles));
 		items.add(new TileItem("Stone", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "stone").createSpriteLink(), new TileModel("Stone"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Brick", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "stone_brick").createSpriteLink(), new TileModel("Stone Bricks"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Ornate Stone", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "stone_brick").createSpriteLink(), new TileModel("Ornate Stone"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Wall", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "stone_wall").createSpriteLink(), new TileModel("Stone Wall"), "Stone Bricks"));
 		items.add(new TileItem("Stone Door", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "stone_door").createSpriteLink(), new TileModel("Stone Door"), "Stone Bricks"));
-		items.add(new TileItem("Stone Fence", new LinkedSprite(SpriteType.Item, "stone_fence"), new TileModel("Stone Fence", placeOverWithID), solidTiles));
+		items.add(new TileItem("Stone Fence", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "stone_fence").createSpriteLink(), new TileModel("Stone Fence", placeOverWithID), solidTiles));
 		items.add(new TileItem("Raw Obsidian", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "obsidian").createSpriteLink(), new TileModel("Raw Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Brick", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "obsidian_brick").createSpriteLink(), new TileModel("Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Ornate Obsidian", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "obsidian_brick").createSpriteLink(), new TileModel("Ornate Obsidian"), "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "obsidian_wall").createSpriteLink(), new TileModel("Obsidian Wall"), "Obsidian"));
 		items.add(new TileItem("Obsidian Door", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "obsidian_door").createSpriteLink(), new TileModel("Obsidian Door"), "Obsidian"));
-		items.add(new TileItem("Obsidian Fence", new LinkedSprite(SpriteType.Item, "obsidian_fence"), new TileModel("Obsidian Fence", placeOverWithID), solidTiles));
+		items.add(new TileItem("Obsidian Fence", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "obsidian_fence").createSpriteLink(), new TileModel("Obsidian Fence", placeOverWithID), solidTiles));
 
 		items.add(new TileItem("Wool", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "wool").createSpriteLink(), new TileModel("Wool"), "hole", "water"));
 		items.add(new TileItem("Red Wool", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "red_wool").createSpriteLink(), new TileModel("Red Wool"), "hole", "water"));
@@ -78,8 +78,8 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Hellish Berries", new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteType.Item, "hellish_berries").createSpriteLink(), new TileModel("hellish berries", TileModel.KEEP_DATA), "farmland"));
 		items.add(new TileItem("Grass Seeds", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "seed").createSpriteLink(), new TileModel("grass"), "dirt"));
 
-		items.add(new TileItem("Torch", new LinkedSprite(SpriteType.Item, "torch"), new TileModel("Torch", placeOverWithID), solidTiles));
-		items.add(new TileItem("Sign", new LinkedSprite(SpriteType.Item, "sign"), new TileModel("Sign", (model1, target, level, xt, yt, player, attackDir) -> {
+		items.add(new TileItem("Torch", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "torch").createSpriteLink(), new TileModel("Torch", placeOverWithID), solidTiles));
+		items.add(new TileItem("Sign", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "sign").createSpriteLink(), new TileModel("Sign", (model1, target, level, xt, yt, player, attackDir) -> {
 			Game.setDisplay(new SignDisplay(level, xt, yt));
 			return placeOverWithID.getTileData(model1, target, level, xt, yt, player, attackDir);
 		}), solidTiles));
