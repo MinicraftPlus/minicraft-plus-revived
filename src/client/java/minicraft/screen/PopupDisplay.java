@@ -3,6 +3,9 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
+import minicraft.gfx.MinicraftImage;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
@@ -19,6 +22,7 @@ public class PopupDisplay extends Display {
 	// Using Color codes for coloring in title and plain text messages.
 
 	private final ArrayList<PopupActionCallback> callbacks;
+	private final Menu.Builder builder;
 
 	public PopupDisplay(@Nullable PopupConfig config, String... messages) {
 		this(config, false, messages);
@@ -43,7 +47,7 @@ public class PopupDisplay extends Display {
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, ListEntry... entries) {
 		super(clearScreen, true);
 
-		Menu.Builder builder = new Menu.Builder(menuFrame, 0, RelPos.CENTER, entries);
+		builder = new Menu.Builder(menuFrame, config != null ? config.entrySpacing : 2, RelPos.CENTER, entries);
 
 		if (config != null) {
 			if (config.title != null)
@@ -60,6 +64,20 @@ public class PopupDisplay extends Display {
 			menus = new Menu[] { builder.createMenu() };
 		else
 			menus = new Menu[] { onScreenKeyboardMenu, builder.createMenu() };
+
+		Rectangle menuBounds = menus[onScreenKeyboardMenu == null ? 0 : 1].getBounds();
+		for (ListEntry entry : entries) {
+			if (entry instanceof InputEntry) {
+				((InputEntry) entry).addChangeListener(v -> update());
+			}
+		}
+	}
+
+	private void update() {
+		menus[onScreenKeyboardMenu == null ? 0 : 1].builder()
+			.setDisplayLength(0)
+			.setMenuSize(null)
+			.recalculateFrame();
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
@@ -156,11 +174,12 @@ public class PopupDisplay extends Display {
 	}
 
 	public static class PopupConfig {
-		public String title;
-		public ArrayList<PopupActionCallback> callbacks;
+		public @Nullable Localization.LocalizationString title;
+		public @Nullable ArrayList<PopupActionCallback> callbacks;
 		public int entrySpacing;
 
-		public PopupConfig(@Nullable String title, @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
+		public PopupConfig(@Nullable Localization.LocalizationString title,
+		                   @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
 			this.title = title;
 			this.callbacks = callbacks;
 			this.entrySpacing = entrySpacing;

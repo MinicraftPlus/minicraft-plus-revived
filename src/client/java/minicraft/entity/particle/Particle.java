@@ -51,7 +51,7 @@ public class Particle extends Entity implements ClientTickable {
 
 	@Override
 	public void render(Screen screen) {
-		screen.render(x, y, sprite);
+		screen.render(null, x, y, sprite);
 	}
 
 	@Override

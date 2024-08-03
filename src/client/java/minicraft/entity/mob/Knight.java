@@ -21,7 +21,7 @@ public class Knight extends EnemyMob {
 	}
 
 	public void die() {
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy"))
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.easy"))
 			dropItem(1, 3, Items.get("shard"));
 		else
 			dropItem(0, 2, Items.get("shard")

@@ -19,6 +19,6 @@ public class Dimension {
 	}
 
 	public String toString() {
-		return width + "x" + height;
+		return String.format("%dx%d", width, height);
 	}
 }

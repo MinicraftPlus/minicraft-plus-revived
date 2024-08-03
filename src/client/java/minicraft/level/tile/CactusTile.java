@@ -34,9 +34,9 @@ public class CactusTile extends Tile {
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = cHealth;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x << 4, y << 4));
-		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), (x << 4) + 8, (y << 4) + 8, Color.RED));
 
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
@@ -58,13 +58,13 @@ public class CactusTile extends Tile {
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.easy")) {
 			m.hurt(this, x, y, 1);
 		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.normal")) {
 			m.hurt(this, x, y, 1);
 		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+		if (Settings.get("diff").equals("minicraft.displays.world_create.options.difficulty.hard")) {
 			m.hurt(this, x, y, 2);
 		}
 	}

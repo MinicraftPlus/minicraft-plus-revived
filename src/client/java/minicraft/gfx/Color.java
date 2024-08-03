@@ -27,7 +27,9 @@ public class Color {
 
 	public static final int TRANSPARENT = Color.get(0, 0);
 	public static final int WHITE = Color.get(1, 255);
+	public static final int SILVER = Color.get(1, 210);
 	public static final int GRAY = Color.get(1, 153);
+	public static final int LIGHT_GRAY = Color.get(1, 172);
 	public static final int DARK_GRAY = Color.get(1, 51);
 	public static final int BLACK = Color.get(1, 0);
 	public static final int RED = Color.get(1, 198, 44, 44);
@@ -36,6 +38,18 @@ public class Color {
 	public static final int YELLOW = Color.get(1, 255, 255, 0);
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
 	public static final int CYAN = Color.get(1, 90, 204, 204);
+
+	// Darkened
+	public static final int DIMMED_SILVER = Color.tint(SILVER, -1, true);
+	public static final int DIMMED_GRAY = Color.tint(GRAY, -1, true);
+	public static final int DIMMED_LIGHT_GRAY = Color.tint(LIGHT_GRAY, -1, true);
+	public static final int DIMMED_DARK_GRAY = Color.tint(DARK_GRAY, -1, true);
+	public static final int DIMMED_RED = Color.tint(RED, -1, true);
+	public static final int DIMMED_GREEN = Color.tint(GREEN, -1, true);
+	public static final int DIMMED_BLUE = Color.tint(BLUE, -1, true);
+	public static final int DIMMED_YELLOW = Color.tint(YELLOW, -1, true);
+	public static final int DIMMED_MAGENTA = Color.tint(MAGENTA, -1, true);
+	public static final int DIMMED_CYAN = Color.tint(CYAN, -1, true);
 
 	public static final char COLOR_CHAR = '\u00A7';
 
@@ -50,6 +64,23 @@ public class Color {
 	public static final String YELLOW_CODE = Color.toStringCode(Color.YELLOW);
 	public static final String MAGENTA_CODE = Color.toStringCode(Color.MAGENTA);
 	public static final String CYAN_CODE = Color.toStringCode(Color.CYAN);
+
+	// Darkened
+	public static final String DIMMED_SILVER_CODE = Color.toStringCode(DIMMED_SILVER);
+	public static final String DIMMED_GRAY_CODE = Color.toStringCode(DIMMED_GRAY);
+	public static final String DIMMED_LIGHT_GRAY_CODE = Color.toStringCode(DIMMED_LIGHT_GRAY);
+	public static final String DIMMED_DARK_GRAY_CODE = Color.toStringCode(DIMMED_DARK_GRAY);
+	public static final String DIMMED_RED_CODE = Color.toStringCode(DIMMED_RED);
+	public static final String DIMMED_GREEN_CODE = Color.toStringCode(DIMMED_GREEN);
+	public static final String DIMMED_BLUE_CODE = Color.toStringCode(DIMMED_BLUE);
+	public static final String DIMMED_YELLOW_CODE = Color.toStringCode(DIMMED_YELLOW);
+	public static final String DIMMED_MAGENTA_CODE = Color.toStringCode(DIMMED_MAGENTA);
+	public static final String DIMMED_CYAN_CODE = Color.toStringCode(DIMMED_CYAN);
+
+	// Reset color to the original setting of the string.
+	public static final String RESET_CODE = COLOR_CHAR + "\u0002\u0000\u0000\u0000";
+	// Set the color before the last color code; if the last code is: RESET or unset: no operation; REDO: RESET.
+	public static final String REDO_CODE = COLOR_CHAR + "\u0003\u0000\u0000\u0000";
 
 	/**
 	 * This returns a minicraftrgb.

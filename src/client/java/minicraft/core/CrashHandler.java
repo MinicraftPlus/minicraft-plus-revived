@@ -58,7 +58,7 @@ public class CrashHandler {
 			return;
 		}
 
-		Logging.CRASHHANDLER.error("Crash: " + info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
+		Logging.CRASHHANDLER.error("Crash: {}: {}", info.type.name, info.title + (info.message != null ? ": " + info.message : ""));
 
 		JDialog dialog = new JDialog(Initializer.frame, "Crash: " + info.type.name, true); // Displays the error type.
 
@@ -140,9 +140,9 @@ public class CrashHandler {
 			return;
 		}
 
-		Logging.CRASHHANDLER.error(info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
+		Logging.CRASHHANDLER.error(String.format("%s: %s%s", info.type.name, info.title, info.message != null ? ": " + info.message : ""));
 
-		JDialog dialog = new JDialog(Initializer.frame, "Error: " + info.type.name, true); // Displays the error type.
+		JDialog dialog = new JDialog(Initializer.frame, String.format("Error: %s", info.type.name), true); // Displays the error type.
 
 		// Sets the icon depends on the error type.
 		JLabel icon = new JLabel(info.serious ? UIManager.getIcon("OptionPane.errorIcon") : info.type == ErrorType.REPORT ? UIManager.getIcon("OptionPane.informationIcon") : UIManager.getIcon("OptionPane.warningIcon"));
@@ -198,7 +198,7 @@ public class CrashHandler {
 
 		JButton copyButton = new JButton("Copy Error"); // Copies the information of the error.
 		ClipboardHandler clip = new ClipboardHandler();
-		copyButton.addActionListener(e -> clip.setClipboardContents(info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : "") + "\n" + stackTrace));
+		copyButton.addActionListener(e -> clip.setClipboardContents(String.format("%s: %s%s\n%s", info.type.name, info.title, info.message != null ? ": " + info.message : "", stackTrace)));
 		buttonPanel.add(copyButton);
 
 		JButton exitButton = new JButton("Exit Program"); // Closes the dialog to exit program.
@@ -221,7 +221,7 @@ public class CrashHandler {
 
 		JButton copyButton = new JButton("Copy Error"); // Copies the information of the error.
 		ClipboardHandler clip = new ClipboardHandler();
-		copyButton.addActionListener(e -> clip.setClipboardContents(info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : "") + "\n" + stackTrace));
+		copyButton.addActionListener(e -> clip.setClipboardContents(String.format("%s: %s%s\n%s", info.type.name, info.title, info.message != null ? ": " + info.message : "", stackTrace)));
 		buttonPanel.add(copyButton);
 
 		if (info.serious || info.type == ErrorType.REPORT) { // Ability to exit program when the error is serious or error report.

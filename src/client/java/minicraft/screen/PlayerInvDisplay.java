@@ -17,8 +17,12 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PlayerInvDisplay extends Display {
 
@@ -28,34 +32,32 @@ public class PlayerInvDisplay extends Display {
 	private final MinicraftImage counterSheet =
 		Renderer.spriteLinker.getSheet(SpriteLinker.SpriteType.Gui, "inventory_counter");
 
-	private String itemDescription = "";
-	private Menu.Builder descriptionMenuBuilder;
+	private @Nullable List<ListEntry> itemDescription = null;
 
 	private final boolean creativeMode;
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		menus = new Menu[] { new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.LEFT, this::update) };
+		menus = new Menu[] { new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
+			"minicraft.display.menus.inventory"), ItemListMenu.POS_LEFT, this::update) };
 		this.player = player;
-		descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
-		creativeMode = Game.isMode("minicraft.settings.mode.creative");
+		Menu.Builder descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
+		creativeMode = Game.isMode("minicraft.displays.world_create.options.game_mode.creative");
 		itemDescription = getDescription();
+		if (itemDescription != null) descriptionMenuBuilder.setEntries(itemDescription);
 		Menu descriptionMenu = descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT)
-			.setEntries(StringEntry.useLines(Color.WHITE, false, itemDescription.split("\n")))
 			.setSelectable(false)
 			.createMenu();
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				menus[0],
-				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items", RelPos.RIGHT, true),
+				new InventoryMenu(player, creativeInv, new Localization.LocalizationString(
+					"minicraft.displays.player_inv.container_title.items"), ItemListMenu.POS_RIGHT, true),
 				descriptionMenu
 			};
 
-			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
-			update();
-
-			if (menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
+			onSelectionChange(1, 0);
 		} else {
 			creativeInv = null;
 			menus = new Menu[] { menus[0], descriptionMenu };
@@ -66,12 +68,14 @@ public class PlayerInvDisplay extends Display {
 			onScreenKeyboardMenu.setVisible(false);
 	}
 
-	private String getDescription() {
+	@Nullable
+	private List<ListEntry> getDescription() {
 		if (selection == 0) {
 			Inventory inv = player.getInventory();
-			return inv.invSize() == 0 ? "" : inv.get(menus[0].getSelection()).getDescription();
+			return inv.invSize() == 0 ? null : inv.get(menus[0].getSelection()).getDescription().toEntries();
 		} else {
-			return creativeInv.invSize() == 0 ? "" : creativeInv.get(menus[1].getSelection()).getDescription();
+			return creativeInv.invSize() == 0 ? null :
+				creativeInv.get(menus[1].getSelection()).getDescription().toEntries();
 		}
 	}
 
@@ -83,6 +87,16 @@ public class PlayerInvDisplay extends Display {
 		boolean mainMethod = false;
 
 		itemDescription = getDescription();
+		if (itemDescription == null) menus[creativeMode ? 2 : 1].shouldRender = false;
+		else {
+			menus[creativeMode ? 2 : 1].shouldRender = true;
+			menus[creativeMode ? 2 : 1].setEntries(itemDescription);
+			menus[creativeMode ? 2 : 1].builder()
+				.setMenuSize(null)
+				.setDisplayLength(0)
+				.recalculateFrame(); // This resizes menu
+		}
+
 		Menu curMenu = menus[selection];
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
@@ -127,7 +141,7 @@ public class PlayerInvDisplay extends Display {
 
 				Inventory from, to;
 				if (selection == 0) {
-					if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+					if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 						player.activeItem = player.getInventory().remove(menus[0].getSelection());
 						Game.exitDisplay();
 						return;
@@ -152,7 +166,7 @@ public class PlayerInvDisplay extends Display {
 					}
 
 					update();
-
+					((InventoryMenu) curMenu).refresh();
 				} else {
 					from = creativeInv;
 					to = player.getInventory();
@@ -177,10 +191,11 @@ public class PlayerInvDisplay extends Display {
 						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);
 
 					update();
+					((InventoryMenu) menus[otherIdx]).refresh();
 				}
 
 			} else {
-				if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+				if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 					player.activeItem = player.getInventory().remove(menus[0].getSelection());
 					Game.exitDisplay();
 				}
@@ -190,12 +205,6 @@ public class PlayerInvDisplay extends Display {
 
 	@Override
 	public void render(Screen screen) {
-		if (itemDescription.isEmpty()) menus[creativeMode ? 2 : 1].shouldRender = false;
-		else {
-			menus[creativeMode ? 2 : 1] = descriptionMenuBuilder.setEntries(StringEntry.useLines(Color.WHITE, itemDescription.split("\n")))
-				.createMenu(); // This resizes menu
-		}
-
 		super.render(screen);
 
 		if (selection == 0) {
@@ -206,10 +215,10 @@ public class PlayerInvDisplay extends Display {
 			// Expanded counter
 			if (sizeLeft < 10) { // At the moment at most just 2 digits and always 2 digits for capacity (no worry yet)
 				// Background
-				screen.render(boundsLeft.getRight() + 2 - (23 - 5), boundsLeft.getTop() - 3,
+				screen.render(null, boundsLeft.getRight() + 2 - (23 - 5), boundsLeft.getTop() - 3,
 					12, 12, 3, 13, counterSheet);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsLeft.getRight() + 2 - 15, boundsLeft.getTop() - 3,
+				screen.render(null, boundsLeft.getRight() + 2 - 15, boundsLeft.getTop() - 3,
 					20, 12, 15, 13, counterSheet);
 
 				// Digits
@@ -219,7 +228,7 @@ public class PlayerInvDisplay extends Display {
 					0, 4, 5, capLeft, Color.GRAY);
 			} else {
 				// Background
-				screen.render(boundsLeft.getRight() + 2 - 23, boundsLeft.getTop() - 3,
+				screen.render(null, boundsLeft.getRight() + 2 - 23, boundsLeft.getTop() - 3,
 					12, 12, 23, 13, counterSheet);
 
 				// Digits
@@ -236,10 +245,10 @@ public class PlayerInvDisplay extends Display {
 			// Minimized counter
 			if (sizeLeft < 10) {
 				// Background
-				screen.render(boundsLeft.getRight() - 4 - 8, boundsLeft.getTop() - 1,
+				screen.render(null, boundsLeft.getRight() - 4 - 8, boundsLeft.getTop() - 1,
 					0, 12, 4, 9, counterSheet);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsLeft.getRight() - 4 - 4, boundsLeft.getTop() - 1,
+				screen.render(null, boundsLeft.getRight() - 4 - 4, boundsLeft.getTop() - 1,
 					8, 12, 4, 9, counterSheet);
 
 				// Digits
@@ -247,7 +256,7 @@ public class PlayerInvDisplay extends Display {
 					0, 4, 5, sizeLeft, fadeColor(colorByHeaviness(calculateHeaviness(sizeLeft, capLeft), false)));
 			} else {
 				// Background
-				screen.render(boundsLeft.getRight() - 4 - 12, boundsLeft.getTop() - 1,
+				screen.render(null, boundsLeft.getRight() - 4 - 12, boundsLeft.getTop() - 1,
 					0, 12, 12, 9, counterSheet);
 
 				// Digits
@@ -268,7 +277,7 @@ public class PlayerInvDisplay extends Display {
 	private void renderCounterNumber(Screen screen, int xp, int yp, int ys, int w, int h, int n, int color) {
 		String display = String.valueOf(n);
 		for (int i = 0; i < display.length(); ++i) {
-			screen.render(xp + i * w, yp, w * (display.charAt(i) - '0'), ys, w, h, counterSheet, 0, color);
+			screen.render(null, xp + i * w, yp, w * (display.charAt(i) - '0'), ys, w, h, counterSheet, 0, color);
 		}
 	}
 
@@ -340,26 +349,18 @@ public class PlayerInvDisplay extends Display {
 
 			if (oldSel == newSel)
 				return; // this also serves as a protection against access to menus[0] when such may not exist.
-			int shift = 0;
-			if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
-			if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-			menus[0].translate(shift, 0);
-			menus[1].translate(shift, 0);
 			if (newSel == 0)
-				descriptionMenuBuilder.setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
+				menus[2].builder().setPositioning(new Point(padding, menus[0].getBounds().getBottom() + 8), RelPos.BOTTOM_RIGHT);
 			if (newSel == 1)
-				descriptionMenuBuilder.setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
+				menus[2].builder().setPositioning(new Point(Screen.w - padding, menus[1].getBounds().getBottom() + 8), RelPos.BOTTOM_LEFT);
 		}
 	}
 
 	private int getOtherIdx() {
-		return (selection + 1) % 2;
+		return selection ^ 1;
 	}
 
 	private void update() {
-		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
-		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		onSelectionChange(0, selection);
 		itemDescription = getDescription();
 	}

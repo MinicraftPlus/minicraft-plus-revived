@@ -2,43 +2,41 @@ package minicraft.screen;
 
 import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
 
 class InventoryMenu extends ItemListMenu {
 
-	private final RelPos entryPos; // Used for copy constructor
-	private final String title; // Used for copy constructor
 	private final Inventory inv;
 	private final Entity holder;
 	private final boolean creativeInv;
 	private final @Nullable Action onStackUpdateListener; // The length of the entry shown may change when there is an update to the stack.
 
-	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, @Nullable Action onStackUpdateListener) { this(holder, inv, title, entryPos, false, onStackUpdateListener); }
-	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv) { this(holder, inv, title, entryPos, creativeInv, null); }
-	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv, @Nullable Action onStackUpdateListener) {
-		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
+	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot,
+	              @Nullable Action onStackUpdateListener) {
+		this(holder, inv, title, slot, false, onStackUpdateListener);
+	}
+	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot,
+	              boolean creativeInv) {
+		this(holder, inv, title, slot, creativeInv, null);
+	}
+	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot,
+	              boolean creativeInv, @Nullable Action onStackUpdateListener) {
+		super(ItemListMenu.getBuilder(slot), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
-		this.title = title;
-		this.entryPos = entryPos;
 		this.creativeInv = creativeInv;
 		this.onStackUpdateListener = onStackUpdateListener;
-	}
 
-	InventoryMenu(InventoryMenu model) {
-		super(ItemListMenu.getBuilder(model.entryPos), ItemEntry.useItems(model.inv.getItems()), model.title);
-		this.inv = model.inv;
-		this.holder = model.holder;
-		this.creativeInv = model.creativeInv;
-		this.title = model.title;
-		this.entryPos = model.entryPos;
-		this.onStackUpdateListener = model.onStackUpdateListener;
-		setSelection(model.getSelection());
 	}
 
 	@Override
@@ -72,6 +70,11 @@ class InventoryMenu extends ItemListMenu {
 				holder.getLevel().dropItem(holder.x, holder.y, drop);
 			}
 		}
+	}
+
+	public void refresh() {
+		setEntries(ItemEntry.useItems(inv.getItems()));
+		setSelection(getSelection());
 	}
 
 	@Override

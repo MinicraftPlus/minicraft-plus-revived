@@ -65,6 +65,6 @@ public class TextParticle extends Particle {
 	 * @return string representation of the particle
 	 */
 	public String getData() {
-		return msg + ":" + style.getColor();
+		return String.format("%s:%d", msg, style.getColor());
 	}
 }

@@ -57,7 +57,7 @@ public enum Analytics {
 
 	@Nullable
 	public Future<HttpResponse<Empty>> ping(int value) {
-		final String url = "https://pingdat.io?t=" + token + "&v=" + value;
+		final String url = String.format("https://pingdat.io?t=%s&v=%d", token, value);
 
 		return Unirest.get(url).asEmptyAsync(new Callback<Empty>() {
 			@Override

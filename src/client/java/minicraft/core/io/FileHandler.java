@@ -63,7 +63,7 @@ public class FileHandler extends Game {
 	public static void determineGameDir(@Nullable String saveDir) {
 		if (saveDir != null) {
 			gameDir = saveDir;
-			Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
+			Logging.GAMEHANDLER.debug("Determined gameDir: {}", gameDir);
 
 			File gameDirFile = new File(gameDir);
 			gameDirFile.mkdirs();
@@ -71,7 +71,7 @@ public class FileHandler extends Game {
 			saveDir = FileHandler.getSystemGameDir();
 
 			gameDir = saveDir + localGameDir;
-			Logging.GAMEHANDLER.debug("Determined gameDir: " + gameDir);
+			Logging.GAMEHANDLER.debug("Determined gameDir: {}", gameDir);
 
 			File testFile = new File(gameDir);
 			testFile.mkdirs();
@@ -121,7 +121,7 @@ public class FileHandler extends Game {
 
 	public static void copyFolderContents(Path origFolder, Path newFolder, int ifExisting, boolean deleteOriginal) throws IOException {
 		// I can determine the local folder structure with origFolder.relativize(file), then use newFolder.resolve(relative).
-		Logging.RESOURCEHANDLER.info("Copying contents of folder " + origFolder + " to new folder " + newFolder);
+		Logging.RESOURCEHANDLER.debug("Copying contents of folder \"{}\" to new folder \"{}\"", origFolder, newFolder);
 
 		Files.walkFileTree(origFolder, new FileVisitor<Path>() {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {

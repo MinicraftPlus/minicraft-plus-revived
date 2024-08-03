@@ -57,8 +57,9 @@ public class Level {
 		return levelNames[-1 * depth + 1];
 	}
 
-	public static String getDepthString(int depth) {
-		return Localization.getLocalized("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth);
+	public static Localization.LocalizationString getDepthString(int depth) {
+		return new Localization.LocalizationString("minicraft.display.level_name", depth < 0 ?
+			new Localization.LocalizationString("minicraft.display.level_name.underground", -depth) : depth);
 	}
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
@@ -84,6 +85,7 @@ public class Level {
 	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 
 	// Creates a sorter for all the entities to be rendered.
+	// Fixed since Java 9: https://bugs.openjdk.org/browse/JDK-8077667
 	//private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y); // Broken
 	@SuppressWarnings("Convert2Lambda")
 	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
@@ -131,7 +133,7 @@ public class Level {
 			}
 		}
 
-		Logging.WORLDNAMED.info("Found " + numfound + " entities in level of depth " + depth);
+		Logging.WORLDNAMED.info("Found {} entities in level of depth {}.", numfound, depth);
 	}
 
 	private void updateMobCap() {
@@ -191,7 +193,7 @@ public class Level {
 			return;
 		}
 
-		Logging.WORLD.debug("Making level " + level + "...");
+		Logging.WORLD.debug("Making level {}...", level);
 
 		maps = LevelGen.createAndValidateMap(w, h, level, seed);
 		if (maps == null) {
@@ -220,7 +222,7 @@ public class Level {
 							Structure.dungeonGate.draw(this, x, y); // Te gate should not intersect with the boss room.
 							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
 						} else if (level == 0) { // Surface
-							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
+							Logging.WORLD.trace("Setting tiles around ({},{}) to hard rock", x, y);
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						} else // Any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
@@ -313,7 +315,7 @@ public class Level {
 			for (Entity e : entities)
 				if (e instanceof DungeonChest)
 					numChests++;
-			Logging.WORLDNAMED.debug("Found " + numChests + " chests.");
+			Logging.WORLDNAMED.debug("Found {} chests.", numChests);
 		}
 
 		/// Make DungeonChests!
@@ -683,7 +685,7 @@ public class Level {
 	public void removeAllEnemies() {
 		for (Entity e : getEntityArray()) {
 			if (e instanceof EnemyMob)
-				if (!(e instanceof AirWizard) || Game.isMode("minicraft.settings.mode.creative")) // Don't remove the airwizard bosses! Unless in creative, since you can spawn more.
+				if (!(e instanceof AirWizard) || Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) // Don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
 		}
 	}
@@ -1187,6 +1189,6 @@ public class Level {
 	}
 
 	public String toString() {
-		return "Level(depth=" + depth + ")";
+		return String.format("Level(depth=%d)", depth);
 	}
 }

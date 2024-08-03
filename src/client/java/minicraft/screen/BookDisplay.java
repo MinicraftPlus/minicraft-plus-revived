@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
@@ -15,10 +16,12 @@ import java.util.Arrays;
 public class BookDisplay extends Display {
 
 	// null characters "\0" denote page breaks.
-	private static final String defaultBook = "This book has no text.";
+	private static final Localization.LocalizationString defaultBook =
+		new Localization.LocalizationString(false, "minicraft.displays.book.default_book");
 
-	private static final int spacing = 3;
-	private static final int minX = 15, maxX = 15 + 8 * 32, minY = 8 * 5, maxY = 8 * 5 + (8 << 4);
+	private static final int SPACING = 3;
+	private static final int WIDTH = 8 * 32;
+	private static final int HEIGHT = 8 * 16;
 
 	// First array is page and second is line.
 	private String[][] lines;
@@ -28,16 +31,12 @@ public class BookDisplay extends Display {
 	private final boolean showPageCount;
 	private final int pageOffset;
 
-	public BookDisplay(String book) {
-		this(book, false);
-	}
-
 	public BookDisplay(String book, boolean hasTitle) {// this(book, hasTitle, !hasTitle); }
 		//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
 		page = 0;
 
 		if (book == null) {
-			book = defaultBook;
+			book = defaultBook.toString();
 			hasTitle = false;
 		}
 
@@ -48,7 +47,7 @@ public class BookDisplay extends Display {
 		for (String content : splitContents) {
 			String[] remainder = { content };
 			while (remainder[remainder.length - 1].length() > 0) {
-				remainder = Font.getLines(remainder[remainder.length - 1], maxX - minX, maxY - minY, spacing, true);
+				remainder = Font.getLines(remainder[remainder.length - 1], WIDTH, HEIGHT, SPACING, true);
 				pages.add(Arrays.copyOf(remainder, remainder.length - 1)); // Removes the last element of remainder, which is the leftover.
 			}
 		}
@@ -58,17 +57,21 @@ public class BookDisplay extends Display {
 		showPageCount = hasTitle || lines.length != 1;
 		pageOffset = showPageCount ? 1 : 0;
 
-		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER);
+		Menu.Builder builder = new Menu.Builder(true, SPACING, RelPos.CENTER);
 
 		Menu pageCount = builder // The small rect for the title
 			.setPositioning(new Point(Screen.w / 2, 0), RelPos.BOTTOM)
-			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle ? "Title" : "1/" + lines.length))
-			.setSelection(1)
+			.setEntries(StringEntry.useLines(Color.BLACK, false,
+				Localization.getLocalized("minicraft.displays.book.page_counter"),
+				hasTitle ? Localization.getLocalized("minicraft.displays.book.page_counter.title") :
+					Localization.getLocalized("minicraft.displays.book.page_counter.value",
+						1, lines.length)))
+				.setSelection(1)
 			.createMenu();
 
 		builder
-			.setPositioning(new Point(Screen.w / 2, pageCount.getBounds().getBottom() + spacing), RelPos.BOTTOM)
-			.setSize(maxX - minX + MinicraftImage.boxWidth * 2, maxY - minY + MinicraftImage.boxWidth * 2)
+			.setPositioning(new Point(Screen.w / 2, pageCount.getBounds().getBottom() + SPACING), RelPos.BOTTOM)
+			.setSize(WIDTH + MinicraftImage.boxWidth * 2, HEIGHT + MinicraftImage.boxWidth * 2)
 			.setShouldRender(false);
 
 		menus = new Menu[lines.length + pageOffset];
@@ -85,7 +88,10 @@ public class BookDisplay extends Display {
 			menus[page + pageOffset].shouldRender = false;
 			page += dir;
 			if (showPageCount)
-				menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
+				menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ?
+					new Localization.LocalizationString(true, "minicraft.displays.book.page_counter.title") :
+					new Localization.LocalizationString(true, "minicraft.displays.book.page_counter.value",
+						page + 1, lines.length), Color.BLACK));
 			menus[page + pageOffset].shouldRender = true;
 		}
 	}

@@ -318,12 +318,12 @@ public abstract class Entity implements Tickable {
 	 */
 	public void remove() {
 		if (removed && !(this instanceof ItemEntity)) // Apparently this happens fairly often with item entities.
-			Logging.ENTITY.debug("Note: remove() called on removed entity: " + this);
+			Logging.ENTITY.debug("Note: remove() called on removed entity: {}", this);
 
 		removed = true;
 
 		if (level == null)
-			Logging.ENTITY.debug("Note: remove() called on entity with no level reference: " + getClass());
+			Logging.ENTITY.debug("Note: remove() called on entity with no level reference: {}", getClass());
 		else
 			level.remove(this);
 	}
@@ -333,7 +333,8 @@ public abstract class Entity implements Tickable {
 	 */
 	public void remove(Level level) {
 		if (level != this.level) {
-			Logging.ENTITY.debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
+			Logging.ENTITY.warn("Tried to remove entity {} from level it is not in: {}; in level {}",
+				this, level, this.level);
 		} else {
 			removed = true; // Should already be set.
 			this.level = null;
@@ -345,7 +346,7 @@ public abstract class Entity implements Tickable {
 	 */
 	public void setLevel(Level level, int x, int y) {
 		if (level == null) {
-			Logging.ENTITY.debug("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
+			Logging.ENTITY.warn("Tried to set level of entity {} to a null level; Should use remove(level)", this);
 			return;
 		}
 
