@@ -41,7 +41,8 @@ public class OptionsMainMenuDisplay extends Display {
 				return true;
 			}));
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-				"minicraft.display.options_display.popup.hwa_warning.title", callbacks, 2),
+				new Localization.LocalizationString(
+					"minicraft.display.options_display.popup.hwa_warning.title"), callbacks, 2),
 				"minicraft.display.options_display.popup.hwa_warning.content",
 				"minicraft.display.popup.escape_cancel", "minicraft.display.popup.enter_confirm"));
 			return;

@@ -31,9 +31,9 @@ public class ContainerDisplay extends Display {
 	public ContainerDisplay(Player player, Chest chest) {
 		menus = new Menu[] {
 			new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
-				"minicraft.display.menus.inventory"), RelPos.RIGHT, this::update),
+				"minicraft.display.menus.inventory"), ItemListMenu.POS_LEFT, null),
 			new InventoryMenu(chest, chest.getInventory(), new Localization.LocalizationString(chest.name),
-				RelPos.LEFT, this::update)
+				ItemListMenu.POS_RIGHT, null)
 		};
 		this.player = player;
 		this.chest = chest;

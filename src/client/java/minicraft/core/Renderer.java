@@ -392,14 +392,10 @@ public class Renderer extends Game {
 						d -= g;
 						--g;
 						int col = Color.get(1, 255 - 255 * g / 4, 255 * g / 4, 0);
-						for (int y = 0; y < 8; ++y) {
-							screen.pixels[NAME_X_CORNER + x + (Y_CORNER + y) * Screen.w] = col;
-						}
+						screen.drawAxisLine(NAME_X_CORNER + x, Y_CORNER, 1, 8, col);
 					}
 					int l = Math.round(v / 12.5f);
-					for (int i = 0; i < l; ++i) {
-						screen.pixels[SPRITE_X_CORNER + 8 + (Y_CORNER + 7 - i) * Screen.w] = color;
-					}
+					screen.drawAxisLine(SPRITE_X_CORNER + 8, Y_CORNER + 8 - l, 1, l, color);
 				}
 
 				@Override

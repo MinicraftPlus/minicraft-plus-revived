@@ -27,7 +27,7 @@ public final class Settings {
 		options.put("sound", new BooleanEntry(new Localization.LocalizationString("minicraft.settings.sound"), true));
 		options.put("autosave", new BooleanEntry(new Localization.LocalizationString("minicraft.settings.autosave"), true));
 		// For Windows, OpenGL hardware acceleration is disabled by default
-		options.put("hwa", new BooleanEntry("minicraft.settings.opengl_hwa", !FileHandler.OS.contains("windows")));
+		options.put("hwa", new BooleanEntry(new Localization.LocalizationString("minicraft.settings.opengl_hwa"), !FileHandler.OS.contains("windows")));
 
 		options.put("size", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.world_size"), 128, 256, 512));
 		options.put("theme", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.theme"), "minicraft.displays.world_create.options.theme.normal", "minicraft.displays.world_create.options.theme.forest", "minicraft.displays.world_create.options.theme.desert", "minicraft.displays.world_create.options.theme.plain", "minicraft.displays.world_create.options.theme.hell"));

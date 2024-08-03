@@ -69,6 +69,7 @@ import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
+import minicraft.screen.WorldCreateDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
@@ -1444,10 +1445,12 @@ public class Load {
 			private final Timer t;
 			private final Ellipsis ellipsis = new Ellipsis.SmoothEllipsis(new Ellipsis.DotUpdater.TimeUpdater());
 			private final String worldName;
+			private final WorldCreateDisplay.WorldSettings settings;
 
-			private DataFixerDisplay(String worldName) {
+			private DataFixerDisplay(String worldName, WorldCreateDisplay.WorldSettings settings) {
 				super(true, false);
 				this.worldName = worldName;
+				this.settings = settings;
 				t = new Timer(200, e -> new Thread(() -> performFix(worldName),
 					"World Save Corruption Data Recovery Thread").start());
 				t.setRepeats(false);
@@ -1468,7 +1471,7 @@ public class Load {
 						Game.exitDisplay(); // Returns to world selection menu.
 					} else if (input.getMappedKey("SELECT").isClicked()) {
 						Game.exitDisplay(); // Exits this display first.
-						Game.setDisplay(new LoadingDisplay()); // Loads the same world again.
+						Game.setDisplay(new LoadingDisplay(settings)); // Loads the same world again.
 					}
 				} else {
 					if (input.getMappedKey("EXIT|SELECT").isClicked()) {
@@ -1515,8 +1518,8 @@ public class Load {
 			}
 		}
 
-		public void startFixer(String worldName) {
-			Game.setDisplay(display = new DataFixerDisplay(worldName));
+		public void startFixer(String worldName, WorldCreateDisplay.WorldSettings settings) {
+			Game.setDisplay(display = new DataFixerDisplay(worldName, settings));
 		}
 	}
 

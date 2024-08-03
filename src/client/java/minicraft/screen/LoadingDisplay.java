@@ -74,16 +74,17 @@ public class LoadingDisplay extends Display {
 						Localization.getLocalized("minicraft.displays.loading.corrupted_world_fixer_available.select",
 							Game.input.getMapping("SELECT"))));
 					Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-						"minicraft.displays.loading.corrupted_world.title", callbacks, 2),
-						entries.toArray(new ListEntry[0])));
+						new Localization.LocalizationString("minicraft.displays.loading.corrupted_world.title"),
+						callbacks, 2), entries.toArray(new ListEntry[0])));
 
 					while (true) {
 						if (acted.get()) {
 							if (perform.get()) {
-								dataFixer.startFixer(WorldSelectDisplay.getWorldName());
+								dataFixer.startFixer(WorldSelectDisplay.getWorldName(), settings);
 							} else {
 								Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-									"minicraft.displays.loading.corrupted_world_fixing_cancelled.title",
+									new Localization.LocalizationString(
+										"minicraft.displays.loading.corrupted_world_fixing_cancelled.title"),
 									null, 2),
 									StringEntry.useLines(Color.WHITE, false, Localization.getLocalized(
 										"minicraft.displays.loading.corrupted_world_fixing_cancelled.display",
