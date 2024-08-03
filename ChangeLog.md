@@ -7,17 +7,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but some sections are changed to compliant this project.
 
+## [2.2.1]
+
+### Additions
+
+* Added ornate wood tiles
+
+### Changes
+
+* Disabled hardware acceleration by default
+* Hardware acceleration is now a toggle in settings
+* Screenshots will now be the size of the rendered view within the window
+* Updated localization
+
+### Removals
+
+* Removed argument flag `--no-hardware-acceleration`
+* Removed screenshot size setting
+
+### Fixes
+
+* Optimized light source rendering
+* Optimized calculations
+* Fixed the texture on stone hoe
+
 ## [2.2.0]
 
 ### Additions
 
-* Added a quest system
-* Added tutorial
-* Added obsidian knight as the second boss
+* Added quest system
+* Added tutorials
+* Added obsidian knight as the second boss (Air Wizard II replacement)
 * Added limitation to inventories
 * Added limitation to stackable items
-* Added seven new debug
-  arguments - `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`, `--debug-level`, `--debug-locale`, `--debug-unloc-tracing`
+* Added seven new debug arguments:
+   `--debug-log-time`, `--debug-log-thread`, `--debug-log-trace`, `--debug-filelog-full`, `--debug-level`, `--debug-locale`, `--debug-unloc-tracing`
 * Added a new argument for disabling hardware acceleration - `--no-hardware-acceleration`
 * Added a toggle for HUD display
 * Added a toggle for simplified effect display
@@ -27,19 +51,17 @@ but some sections are changed to compliant this project.
 * Added a crash handler and a better look of dialog.
 * Added a simple ability for screenshots
 * Added dynamic for sounds
-* Added sand particle for sand
+* ReAdded sand footprint particle for sand
 * Added characters to the font (`ÀÂÄÈÎÌÏÒÙÛÝ*«»£$&€§ªº`)
 * Added world-wide seed
 * Added controller support
 * Added on-screen keyboard
 * Added glass bottle and made potions return glass bottles when used
-* Added dyes (#445)
-* Added coloured sheep (#445)
-* Added ability to dye sheep and beds (#445)
-* Cow and sheep now graze on grasses
 * Added a trigger to auto-enable hardware acceleration
 * Added support for lower-cased letters
 * Added item description menu
+* Added fences
+* Added editable signs
 
 ### Changes
 
@@ -62,10 +84,17 @@ but some sections are changed to compliant this project.
 * Reduced food stamina cost
 * Made some strings lower-cased
 * Updated spawning and despawning conditions
+* Iron and gold now require 3 ores instead of 4 for crafting
+* Renamed `assets/books/story_guide.txt` to `assets/books/game_guide.txt`
+* Updated `assets/books/game_guide.txt` and `assets/books/instructions.txt`
+* Sand footprints are now more accurately placed
+* Optimized rendering
+* Increased death chest despawn timer as follows:
+  Easy: 450 secs, Normal: 300 secs, Hard: 150 secs
 
 ### Removals
 
-* Removed stepped sand texture
+* None (compared to 2.1.3)
 
 ### Fixes
 
@@ -73,7 +102,11 @@ but some sections are changed to compliant this project.
 * Fixed rendering positioning problem of color code styled texts
 * Fixed lights disappearing when out of screen
 * Fixed animals and items destroying plants
-* Fixed various old world loading crashes
+* Fixed various old world loading crashes, including migration to the new destination
+* Fixed possible crash when Air Wizard is not loaded
+* Fixed minor loading bugs to dungeon chests
+* Fixed performance issue in WaterTile ticking
+* Fixed majority of audio issues
 
 ## [2.1.3]
 

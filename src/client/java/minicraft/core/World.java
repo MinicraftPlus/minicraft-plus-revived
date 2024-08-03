@@ -11,6 +11,7 @@ import minicraft.screen.CraftingDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.QuestsDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldGenDisplay;
 import minicraft.screen.WorldSelectDisplay;
@@ -25,7 +26,7 @@ public class World extends Game {
 	private World() {
 	}
 
-	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, -4}; /// This is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
+	public static final int[] idxToDepth = { -3, -2, -1, 0, 1, -4 }; /// This is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
 	public static final int minLevelDepth, maxLevelDepth;
 
 	static int worldSize = 128; // The size of the world
@@ -143,7 +144,7 @@ public class World extends Game {
 
 				Logging.WORLD.trace("Generating level " + i + "...");
 
-				LoadingDisplay.setMessage(Level.getDepthString(i));
+				LoadingDisplay.setMessage(Level.getDepthString(i), false);
 				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], !WorldSelectDisplay.hasLoadedWorld());
 
 				LoadingDisplay.progress(loadingInc);
@@ -159,9 +160,12 @@ public class World extends Game {
 			CraftingDisplay.resetRecipeUnlocks();
 			TutorialDisplayHandler.reset(true);
 			AdvancementElement.resetRecipeUnlockingElements();
+			SignDisplay.resetSignTexts();
 		}
 
 		Renderer.readyToRenderGameplay = true;
+
+		Renderer.signDisplayMenu = null;
 
 		PlayerDeathDisplay.shouldRespawn = true;
 

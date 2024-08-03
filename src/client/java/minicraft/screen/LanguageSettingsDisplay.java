@@ -45,7 +45,7 @@ public class LanguageSettingsDisplay extends Display {
 	public LanguageSettingsDisplay() {
 		super(true);
 		Map.Entry<ArrayList<ListEntry>, Integer> entries = getEntries();
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(false, 2, RelPos.CENTER, entries.getKey())
 				.setTitle("minicraft.displays.language_settings.title")
 				.setSelectable(true)
