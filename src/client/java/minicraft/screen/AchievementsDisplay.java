@@ -136,8 +136,7 @@ public class AchievementsDisplay extends Display {
 
 	/**
 	 * Use this to lock or unlock an achievement.
-	 *
-	 * @param id       Achievement ID.
+	 * @param id Achievement ID.
 	 * @param unlocked Whether this achievement should be locked or unlocked.
 	 * @return True if setting the achievement was successful.
 	 */
@@ -181,7 +180,6 @@ public class AchievementsDisplay extends Display {
 
 	/**
 	 * Gets an array of all the unlocked achievements.
-	 *
 	 * @return A string array with each unlocked achievement's id in it.
 	 */
 	public static String[] getUnlockedAchievements() {
@@ -220,7 +218,6 @@ public class AchievementsDisplay extends Display {
 
 	/**
 	 * Unlocks a list of achievements.
-	 *
 	 * @param unlockedAchievements An array of all the achievements we want to load, ids.
 	 */
 	public static void unlockAchievements(JSONArray unlockedAchievements) {

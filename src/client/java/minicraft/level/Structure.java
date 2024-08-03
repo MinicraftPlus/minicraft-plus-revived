@@ -11,6 +11,7 @@ import minicraft.level.tile.Tiles;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 // this stores structures that can be drawn at any location.
 public class Structure {
@@ -36,12 +37,17 @@ public class Structure {
 		this.furniture.put(new Point(x, y), furniture);
 	}
 
-	public void draw(Level level, int xt, int yt) {
+	public void draw(Level level, int xt, int yt) { draw(level, xt, yt, f -> { }); }
+
+	public void draw(Level level, int xt, int yt, Consumer<Furniture> furnitureHandler) {
 		for (TilePoint p : tiles)
 			level.setTile(xt + p.x, yt + p.y, p.t);
 
-		for (Point p : furniture.keySet())
-			level.add(furniture.get(p).copy(), xt + p.x, yt + p.y, true);
+		for (Point p : furniture.keySet()) {
+			Furniture fur = furniture.get(p).copy();
+			furnitureHandler.accept(fur);
+			level.add(fur, xt + p.x, yt + p.y, true);
+		}
 	}
 
 	public void draw(short[] map, int xt, int yt, int mapWidth) {
@@ -206,7 +212,7 @@ public class Structure {
 				"WOOOOOW\n" +
 				"WWWDWWW"
 		);
-		dungeonChest.addFurniture(0, 0, new DungeonChest(true));
+		dungeonChest.addFurniture(0, 0, new DungeonChest(null));
 
 		mobDungeonCenter = new Structure();
 		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
