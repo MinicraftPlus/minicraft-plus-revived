@@ -38,7 +38,7 @@ public class RepairBenchDisplay extends Display {
 		.setTitle("Repair Bench");
 
 	public RepairBenchDisplay(RepairBench repairBench, Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT));
+		menus = new Menu[] { new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT, this::update) };
 		this.repairBench = repairBench;
 		this.player = player;
 		carrier = new RepairBenchCarrier();
@@ -78,7 +78,7 @@ public class RepairBenchDisplay extends Display {
 			Inventory inv = player.getInventory();
 			Item item = inv.get(sel);
 
-			boolean transferAll = input.getKey("SHIFT").down || !(item instanceof StackableItem) || ((StackableItem)item).count == 1;
+			boolean transferAll = input.getMappedKey("SHIFT").isDown() || !(item instanceof StackableItem) || ((StackableItem)item).count == 1;
 			Item toItem = item.copy();
 			if (item instanceof StackableItem) {
 				int move = 1;
@@ -112,7 +112,7 @@ public class RepairBenchDisplay extends Display {
 	private void onSlotTransfer(SlotEntry slot, InputHandler input) {
 		Item item = slot.getItem();
 		if (item == null) return;
-		boolean transferAll = input.getKey("SHIFT").down || !(item instanceof StackableItem) || ((StackableItem) item).count == 1;
+		boolean transferAll = input.getMappedKey("SHIFT").isDown() || !(item instanceof StackableItem) || ((StackableItem) item).count == 1;
 		if (item instanceof StackableItem) {
 			Item toItem = item.copy();
 			int move = 1;
@@ -122,20 +122,17 @@ public class RepairBenchDisplay extends Display {
 				move = ((StackableItem) item).count;
 			}
 
-			int moved = player.getInventory().add(toItem);
-			if (moved != 0) {
-				if (moved < move) {
-					((StackableItem) item).count -= moved;
-				} else if (!transferAll) {
-					((StackableItem) item).count--;
-				} else {
-					slot.setItem(null);
-				}
-				update();
+			if (player.getInventory().add(toItem) != null) {
+				((StackableItem) item).count -= move - ((StackableItem) toItem).count;
+			} else if (!transferAll) {
+				((StackableItem) item).count--;
+			} else {
+				slot.setItem(null);
 			}
+
+			update();
 		} else {
-			int moved = player.getInventory().add(item);
-			if (moved == 1) {
+			if (player.getInventory().add(item) == null) {
 				slot.setItem(null);
 				update();
 			}
