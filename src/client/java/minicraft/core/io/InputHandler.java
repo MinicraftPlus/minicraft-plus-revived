@@ -1,5 +1,6 @@
 package minicraft.core.io;
 
+import com.badlogic.gdx.utils.SharedLibraryLoadRuntimeException;
 import com.studiohartman.jamepad.ControllerAxis;
 import com.studiohartman.jamepad.ControllerButton;
 import com.studiohartman.jamepad.ControllerIndex;
@@ -51,7 +52,8 @@ public class InputHandler implements KeyListener {
 	private String keyChanged = null; // This is used when listening to change key bindings.
 	private boolean overwrite = false;
 
-	private ControllerManager controllerManager = new ControllerManager();
+	private final boolean controllersSupported;
+	private ControllerManager controllerManager;
 	private ControllerIndex controllerIndex; // Please prevent getting button states directly from this object.
 	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMapJust = new HashMap<>();
 	private HashMap<ControllerButton, Boolean> controllerButtonBooleanMap = new HashMap<>();
@@ -109,14 +111,22 @@ public class InputHandler implements KeyListener {
 		keyboard.put("CTRL", new PhysicalKey(true));
 		keyboard.put("ALT", new PhysicalKey(true));
 
-		controllerManager.initSDLGamepad();
-		controllerIndex = controllerManager.getControllerIndex(0);
-		controllerManager.update();
+		boolean controllerInit = false;
 		try {
-			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
-		} catch (ControllerUnpluggedException e) {
-			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
+			controllerManager = new ControllerManager();
+			controllerManager.initSDLGamepad();
+			controllerIndex = controllerManager.getControllerIndex(0);
+			controllerManager.update();
+			try {
+				Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
+			} catch (ControllerUnpluggedException e) {
+				Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
+			}
+			controllerInit = true;
+		} catch (IllegalStateException | SharedLibraryLoadRuntimeException | UnsatisfiedLinkError e) {
+			Logging.CONTROLLER.error(e, "Controllers are not support, being disabled.");
 		}
+		controllersSupported = controllerInit;
 	}
 
 	public InputHandler(Component inputSource) {
@@ -216,16 +226,18 @@ public class InputHandler implements KeyListener {
 		lastInputActivityListener.tick();
 
 		// Also update the controller button state.
-		for (ControllerButton btn : ControllerButton.values()) {
-			try {
-				controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
-			} catch (ControllerUnpluggedException e) {
-				controllerButtonBooleanMapJust.put(btn, false);
-			}
-			try {
-				controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
-			} catch (ControllerUnpluggedException e) {
-				controllerButtonBooleanMap.put(btn, false);
+		if (controllersSupported) {
+			for (ControllerButton btn : ControllerButton.values()) {
+				try {
+					controllerButtonBooleanMapJust.put(btn, controllerIndex.isButtonJustPressed(btn));
+				} catch (ControllerUnpluggedException e) {
+					controllerButtonBooleanMapJust.put(btn, false);
+				}
+				try {
+					controllerButtonBooleanMap.put(btn, controllerIndex.isButtonPressed(btn));
+				} catch (ControllerUnpluggedException e) {
+					controllerButtonBooleanMap.put(btn, false);
+				}
 			}
 		}
 
@@ -403,8 +415,7 @@ public class InputHandler implements KeyListener {
 
 	/**
 	 * Returning the corresponding mapping depends on the device last acted.
-	 *
-	 * @param keyMap    The keyboard mapping.
+	 * @param keyMap The keyboard mapping.
 	 * @param buttonMap The controller mapping
 	 * @return The selected mapping.
 	 */
@@ -417,7 +428,6 @@ public class InputHandler implements KeyListener {
 
 	/**
 	 * Getting the last input device type.
-	 *
 	 * @return The input device type: 0 for keyboard, 1 for controller.
 	 */
 	public int getLastInputType() {
@@ -642,45 +652,60 @@ public class InputHandler implements KeyListener {
 		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 
-	private static final String control = "\\p{Print}"; // Should match only printable characters.
-
+	private static final String control = "[\\p{Print}\n]+"; // Should match only printable characters.
 	public String addKeyTyped(String typing, @Nullable String pattern) {
+		return handleBackspaceChars(getKeysTyped(typing, pattern));
+	}
+
+	/** This returns a raw format of the keys typed, i.e. {@code \b} are not handled here. */
+	public String getKeysTyped(@Nullable String pattern) { return getKeysTyped(null, pattern, true); }
+	public String getKeysTyped(@Nullable String typing, @Nullable String pattern) { return getKeysTyped(typing, pattern, false); }
+	public String getKeysTyped(@Nullable String typing, @Nullable String pattern, boolean multiline) {
+		StringBuilder typed = typing == null ? new StringBuilder() : new StringBuilder(typing);
 		if (lastKeyTyped.length() > 0) {
-			String letter = lastKeyTyped;
+			for (char letter : lastKeyTyped.toCharArray()) {
+				String letterString = String.valueOf(letter);
+				if (letter == '\b' || letterString.matches(control) && (letter != '\n' || multiline) && (pattern == null || letterString.matches(pattern)))
+					typed.append(letter);
+			}
 			lastKeyTyped = "";
-			if (letter.matches(control) && (pattern == null || letter.matches(pattern)) || letter.equals("\b"))
-				typing += letter;
 		}
 
+		return typed.toString();
+	}
+
+	public static String handleBackspaceChars(String typing) { return handleBackspaceChars(typing, false); }
+	/**
+	 * This handles and erases backspace control characters {@code \b} from the given string.
+	 * Evaluation to backspace characters stops if no more characters are in front of them.
+	 * @param keepUnevaluated {@code true} if intending to keep the unhandled backspace characters in the returned string;
+	 *                        otherwise, those characters are removed even that they are not evaluated.
+	 */
+	public static String handleBackspaceChars(String typing, boolean keepUnevaluated) {
 		// Erasing characters by \b. Reference: https://stackoverflow.com/a/30174028
 		Stack<Character> stack = new Stack<>();
 
 		// for-each character in the string
 		for (int i = 0; i < typing.length(); i++) {
 			char c = typing.charAt(i);
-
-			// push if it's not a backspace
-			if (c != '\b') {
-				stack.push(c);
-				// else pop if possible
-			} else if (!stack.empty()) {
+			if (c == '\b' && !stack.empty() && stack.peek() != '\b') { // pop if the last char exists and is not \b
 				stack.pop();
+			} else if (c != '\b' || keepUnevaluated) {
+				stack.push(c);
 			}
 		}
 
 		// convert stack to string
 		StringBuilder builder = new StringBuilder(stack.size());
-
 		for (Character c : stack) {
 			builder.append(c);
 		}
 
-		typing = builder.toString();
-		return typing;
+		return builder.toString();
 	}
 
 	public boolean anyControllerConnected() {
-		return controllerManager.getNumControllers() > 0;
+		return controllersSupported && controllerManager.getNumControllers() > 0;
 	}
 
 	public boolean buttonPressed(ControllerButton button) {
@@ -716,44 +741,49 @@ public class InputHandler implements KeyListener {
 	 * This will return false if the controller doesn't support vibration or if SDL was unable to start
 	 * vibration (maybe the controller doesn't support left/right vibration, maybe it was unplugged in the
 	 * middle of trying, etc...)
-	 *
-	 * @param leftMagnitude  The speed for the left motor to vibrate (this should be between 0 and 1)
+	 * @param leftMagnitude The speed for the left motor to vibrate (this should be between 0 and 1)
 	 * @param rightMagnitude The speed for the right motor to vibrate (this should be between 0 and 1)
 	 * @return Whether or not the controller was able to be vibrated (i.e. if haptics are supported) or controller not connected.
 	 */
 	public boolean controllerVibration(float leftMagnitude, float rightMagnitude, int duration_ms) {
-		try {
-			return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
-		} catch (ControllerUnpluggedException ignored) {
-			return false;
-		}
+		if (controllersSupported) {
+			try {
+				return controllerIndex.doVibration(leftMagnitude, rightMagnitude, duration_ms);
+			} catch (ControllerUnpluggedException ignored) {
+				return false;
+			}
+		} else return false;
 	}
 
 	private int leftTriggerCooldown = 0;
 	private int rightTriggerCooldown = 0;
 
 	public boolean leftTriggerPressed() {
-		try {
-			if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
-				leftTriggerCooldown = 8;
-				return true;
-			} else
+		if (controllersSupported) {
+			try {
+				if (leftTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERLEFT) > 0.5) {
+					leftTriggerCooldown = 8;
+					return true;
+				} else
+					return false;
+			} catch (ControllerUnpluggedException e) {
 				return false;
-		} catch (ControllerUnpluggedException e) {
-			return false;
-		}
+			}
+		} else return false;
 	}
 
 	public boolean rightTriggerPressed() {
-		try {
-			if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
-				rightTriggerCooldown = 8;
-				return true;
-			} else
+		if (controllersSupported) {
+			try {
+				if (rightTriggerCooldown == 0 && controllerIndex.getAxisState(ControllerAxis.TRIGGERRIGHT) > 0.5) {
+					rightTriggerCooldown = 8;
+					return true;
+				} else
+					return false;
+			} catch (ControllerUnpluggedException e) {
 				return false;
-		} catch (ControllerUnpluggedException e) {
-			return false;
-		}
+			}
+		} else return false;
 	}
 
 	private class LastInputActivityListener {

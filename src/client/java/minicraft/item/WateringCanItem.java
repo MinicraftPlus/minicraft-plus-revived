@@ -32,7 +32,7 @@ public class WateringCanItem extends Item {
 	private static final SpriteManager.SpriteLink particleSprite = new SpriteManager.SpriteLink.SpriteLinkBuilder(
 		SpriteManager.SpriteType.Entity, "glint").createSpriteLink();
 
-	private static final SpriteManager.SpriteLink[] spriteSplash = new SpriteManager.SpriteLink[]{
+	private static final SpriteManager.SpriteLink[] spriteSplash = new SpriteManager.SpriteLink[] {
 		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "splash_0").createSpriteLink(),
 		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "splash_1").createSpriteLink(),
 		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Entity, "splash_2").createSpriteLink(),
@@ -88,7 +88,7 @@ public class WateringCanItem extends Item {
 						level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 					}
 					if (random.nextInt(60) == 0) { // Small chance for growing flowers
-						level.setTile(xt, yt, Tiles.get(2), random.nextInt(2));
+						level.setTile(xt, yt, Tiles.get((short) 2), random.nextInt(2));
 					}
 				}
 

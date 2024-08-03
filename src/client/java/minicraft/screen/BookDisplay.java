@@ -18,7 +18,7 @@ public class BookDisplay extends Display {
 	private static final String defaultBook = "This book has no text.";
 
 	private static final int spacing = 3;
-	private static final int minX = 15, maxX = 15 + 8 * 32, minY = 8 * 5, maxY = 8 * 5 + 8 * 16;
+	private static final int minX = 15, maxX = 15 + 8 * 32, minY = 8 * 5, maxY = 8 * 5 + (8 << 4);
 
 	// First array is page and second is line.
 	private String[][] lines;
@@ -46,7 +46,7 @@ public class BookDisplay extends Display {
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
 		for (String content : splitContents) {
-			String[] remainder = {content};
+			String[] remainder = { content };
 			while (remainder[remainder.length - 1].length() > 0) {
 				remainder = Font.getLines(remainder[remainder.length - 1], maxX - minX, maxY - minY, spacing, true);
 				pages.add(Arrays.copyOf(remainder, remainder.length - 1)); // Removes the last element of remainder, which is the leftover.

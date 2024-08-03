@@ -15,7 +15,6 @@ import javax.security.auth.Destroyable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.BiFunction;
 
 /**
  * This is not applicable for mob sprite animations. Only for generic sprite animations.
@@ -54,7 +53,7 @@ public class SpriteAnimation implements Destroyable {
 	// Border settings.
 	private SpriteLink border = null;
 	private SpriteLink corner = null;
-	private BiFunction<Tile, Boolean, Boolean> connectChecker;
+	private TileConnectionChecker connectionChecker;
 	private boolean singletonWithConnective = false;
 
 	// Refreshing only data.
@@ -63,9 +62,8 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Constructing animations with the provided key. The meta is given by default.
-	 *
 	 * @param type The sprite category.
-	 * @param key  The sprite resource key.
+	 * @param key The sprite resource key.
 	 */
 	public SpriteAnimation(SpriteType type, String key) {
 		this(metas.get(key), type, key);
@@ -73,10 +71,9 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Constructing animations with the provided metadata and key. It should already be validated.
-	 *
 	 * @param meta The metadata of the sprite sheet.
 	 * @param type The sprite category.
-	 * @param key  The sprite resource key.
+	 * @param key The sprite resource key.
 	 */
 	public SpriteAnimation(SpriteMeta meta, SpriteType type, String key) {
 		this.type = type;
@@ -86,20 +83,23 @@ public class SpriteAnimation implements Destroyable {
 		spriteAnimations.add(this);
 	}
 
+	@FunctionalInterface
+	public interface TileConnectionChecker {
+		boolean check(Level level, int x, int y, Tile tile, boolean side);
+	}
+
 	/**
 	 * Setting the tile class of this animation used for tile connector rendering.
-	 *
-	 * @param connectChecker The tile connection checker.
+	 * @param connectionChecker The tile connection checker.
 	 * @return The instance itself.
 	 */
-	public SpriteAnimation setConnectChecker(BiFunction<Tile, Boolean, Boolean> connectChecker) {
-		this.connectChecker = connectChecker;
+	public SpriteAnimation setConnectionChecker(TileConnectionChecker connectionChecker) {
+		this.connectionChecker = connectionChecker;
 		return this;
 	}
 
 	/**
 	 * Setting if the singleton sprite is used for other tile connective rendering.
-	 *
 	 * @param connective If used for connective rendering.
 	 * @return The instance itself.
 	 */
@@ -110,7 +110,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the color of all animation frames.
-	 *
 	 * @param color The color of sprite.
 	 * @return The instance itself.
 	 */
@@ -124,7 +123,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Setting the color of the specific animation frame.
-	 *
 	 * @param frame The specific frame.
 	 * @param color The color of sprite.
 	 * @return The instance itself.
@@ -139,7 +137,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Getting the current frame of animation.
-	 *
 	 * @return The current frame sprite.
 	 */
 	public SpriteLink getCurrentFrame() {
@@ -148,7 +145,6 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Getting the specific frame of animation.
-	 *
 	 * @param frame The specific frame.
 	 * @return The frame sprite.
 	 */
@@ -158,24 +154,23 @@ public class SpriteAnimation implements Destroyable {
 
 	/**
 	 * Rendering the animation on the screen.
-	 *
 	 * @param screen The screen instance.
-	 * @param level  The level for rendering.
-	 * @param x      The x coordinate level tile.
-	 * @param y      The y coordinate level tile.
+	 * @param level The level for rendering.
+	 * @param x The x coordinate level tile.
+	 * @param y The y coordinate level tile.
 	 */
 	public void render(Screen screen, Level level, int x, int y) {
 		// If border and the tile class is set.
-		if (connectChecker != null && (border != null || corner != null)) {
-			boolean u = connectChecker.apply(level.getTile(x, y - 1), true);
-			boolean d = connectChecker.apply(level.getTile(x, y + 1), true);
-			boolean l = connectChecker.apply(level.getTile(x - 1, y), true);
-			boolean r = connectChecker.apply(level.getTile(x + 1, y), true);
+		if (connectionChecker != null && (border != null || corner != null)) {
+			boolean u = connectionChecker.check(level, x, y - 1, level.getTile(x, y - 1), true);
+			boolean d = connectionChecker.check(level, x, y + 1, level.getTile(x, y + 1), true);
+			boolean l = connectionChecker.check(level, x - 1, y, level.getTile(x - 1, y), true);
+			boolean r = connectionChecker.check(level, x + 1, y, level.getTile(x + 1, y), true);
 
-			boolean ul = connectChecker.apply(level.getTile(x - 1, y - 1), false);
-			boolean dl = connectChecker.apply(level.getTile(x - 1, y + 1), false);
-			boolean ur = connectChecker.apply(level.getTile(x + 1, y - 1), false);
-			boolean dr = connectChecker.apply(level.getTile(x + 1, y + 1), false);
+			boolean ul = connectionChecker.check(level, x - 1, y - 1, level.getTile(x - 1, y - 1), false);
+			boolean dl = connectionChecker.check(level, x - 1, y + 1, level.getTile(x - 1, y + 1), false);
+			boolean ur = connectionChecker.check(level, x + 1, y - 1, level.getTile(x + 1, y - 1), false);
+			boolean dr = connectionChecker.check(level, x + 1, y + 1, level.getTile(x + 1, y + 1), false);
 
 			x = x << 4;
 			y = y << 4;
@@ -254,7 +249,7 @@ public class SpriteAnimation implements Destroyable {
 		this.metadata = metadata;
 		MinicraftImage sheet = Renderer.spriteManager.getSheet(type, key);
 		if (sheet == null) {
-			animations = new SpriteLink[] {SpriteManager.missingTexture(type)};
+			animations = new SpriteLink[] {SpriteManager.missingTexture(type) };
 			border = null;
 			corner = null;
 			return;
@@ -283,7 +278,7 @@ public class SpriteAnimation implements Destroyable {
 			if (metadata.border != null) border = new SpriteLink.SpriteLinkBuilder(type, metadata.border).createSpriteLink(false);
 			if (metadata.corner != null) corner = new SpriteLink.SpriteLinkBuilder(type, metadata.corner).createSpriteLink(false);
 		} else {
-			animations = new SpriteLink[]{new SpriteLink.SpriteLinkBuilder(type, key).setSpriteSize(width, width).createSpriteLink(false)};
+			animations = new SpriteLink[] { new SpriteLink.SpriteLinkBuilder(type, key).setSpriteSize(width, width) .createSpriteLink(false)};
 			border = null;
 			corner = null;
 		}

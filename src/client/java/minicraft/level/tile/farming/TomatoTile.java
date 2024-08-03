@@ -6,7 +6,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class TomatoTile extends CropTile {
-	private final SpriteManager.SpriteLink[] spritStages = new SpriteManager.SpriteLink[]{
+	private final SpriteManager.SpriteLink[] spritStages = new SpriteManager.SpriteLink[] {
 		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Tile, "tomato_stage0").createSpriteLink(),
 		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Tile, "tomato_stage1").createSpriteLink(),
 		new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Tile, "tomato_stage2").createSpriteLink(),

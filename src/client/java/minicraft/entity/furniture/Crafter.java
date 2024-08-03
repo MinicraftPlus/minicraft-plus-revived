@@ -48,7 +48,6 @@ public class Crafter extends Furniture {
 
 	/**
 	 * Creates a crafter of a given type.
-	 *
 	 * @param type What type of crafter this is.
 	 */
 	public Crafter(Crafter.Type type) {

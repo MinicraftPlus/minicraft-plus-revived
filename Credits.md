@@ -8,10 +8,11 @@ Original game by Markus "Notch" Persson.
 * Dillyg10
 * Chris J
 * afyber
+* Makkkkus
 
 ### Current maintainer
 
-* Makkkkus
+* Litorom1
 
 ### Code contributions from
 

@@ -8,13 +8,21 @@ import minicraft.level.Level;
 
 public class HoleTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "hole")
-		.setConnectChecker((tile, side) -> tile.connectsToLiquid())
+		.setConnectionChecker((level, x, y, tile, side) -> tile.connectsToFluid(level, x, y))
 		.setSingletonWithConnective(true);
 
 	protected HoleTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
-		connectsToFluid = true;
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return true;
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return true;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteManager.SpriteLink;
@@ -17,7 +18,7 @@ public class BookItem extends Item {
 
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "book").createSpriteLink(), null));
+		items.add(new BookItem("Book", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "book").createSpriteLink(), () -> Localization.getLocalized("minicraft.displays.book.default_book")));
 		items.add(new BookItem("Antidious", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "antidious_book")
 			.createSpriteLink(), () -> BookData.antVenomBook.collect(), true));
 		return items;
