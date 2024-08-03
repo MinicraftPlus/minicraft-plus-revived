@@ -47,6 +47,7 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
+import minicraft.screen.InfoDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerInvDisplay;
@@ -531,10 +532,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("craft") && !use()) { // obtain SHIFT modifier input with E
+				if (input.inputPressed("craft") && !interact(getInteractionBox(INTERACT_DIST))) { // obtain SHIFT modifier input with E
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 					return;
-				} else if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				} else if (input.inputPressed("menu") && !interact(getInteractionBox(INTERACT_DIST))) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
 					return;
 				} else if (input.inputPressed("pause")) {
@@ -688,7 +689,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (activeItem != null && !activeItem.interactsWithWorld()) {
-			if (activeItem.interactOn(Tiles.get(0), level, x >> 4, y >> 4, this, attackDir)) {
+			if (activeItem.interactOn(Tiles.get((short) 0), level, x >> 4, y >> 4, this, attackDir)) {
 				if (activeItem.isDepleted()) {
 					activeItem = null;
 					if (isFishing) {
