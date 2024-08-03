@@ -344,11 +344,7 @@ public class LegacyLoad {
 	}
 
 	private void loadItem(Inventory inventory, Item item) {
-		int total = 1;
-		if (item instanceof StackableItem) total = ((StackableItem) item).count;
-		int loaded = inventory.add(item);
-
-		if (loaded < total) {
+		if (inventory.add(item) != null) {
 			deathChest.getInventory().add(item.copy());
 		}
 	}
