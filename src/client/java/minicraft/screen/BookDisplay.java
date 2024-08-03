@@ -45,7 +45,7 @@ public class BookDisplay extends Display {
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
 		for (String content : splitContents) {
-			String[] remainder = {content};
+			String[] remainder = { content };
 			while (remainder[remainder.length - 1].length() > 0) {
 				remainder = Font.getLines(remainder[remainder.length - 1], WIDTH, HEIGHT, SPACING, true);
 				pages.add(Arrays.copyOf(remainder, remainder.length - 1)); // Removes the last element of remainder, which is the leftover.

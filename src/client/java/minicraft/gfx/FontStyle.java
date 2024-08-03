@@ -8,8 +8,8 @@ import java.util.Arrays;
 public class FontStyle {
 
 	/// this specifies the x and y offsets for each binary value in the "shadow location byte", and is what causes each value to progress in a circle.
-	private static int[] shadowPosMap = {0, 1, 1, 1, 0, -1, -1, -1,
-		-1, -1, 0, 1, 1, 1, 0, -1};
+	private static int[] shadowPosMap = { 0, 1, 1, 1, 0, -1, -1, -1,
+		-1, -1, 0, 1, 1, 1, 0, -1 };
 	/**
 	 * The shadowing technique uses binary strings to specify where to outline a string of text. It was going to be a straight byte, since there are 8 positions, but since it's going to be a string anyway, I decided to make it accept a string.
 	 * Each position is specified fairly simply: it goes clockwise, starting from the top. Then it goes top right, right, bottom right, bottom, etc. up to top left. It's kind of like a compass, with a position for N, NE, E, etc.

@@ -120,7 +120,6 @@ public class CrashHandler {
 	/**
 	 * This handles application crashing errors by giving notification to the user clearly.<br>
 	 * The user can ignore the error, continue handling the error or exit the program (only in serious errors or error reports).
-	 *
 	 * @param handling The handling function of the error.
 	 */
 	public static void errorHandle(Throwable throwable, ErrorInfo info, @Nullable Action handling) {

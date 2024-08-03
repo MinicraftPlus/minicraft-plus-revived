@@ -6,7 +6,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
 public class HellishBerriesTile extends CropTile {
-	private final SpriteLinker.LinkedSprite[] spritStages = new SpriteLinker.LinkedSprite[]{
+	private final SpriteLinker.LinkedSprite[] spritStages = new SpriteLinker.LinkedSprite[] {
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "hellish_berries_stage0"),
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "hellish_berries_stage1"),
 		new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Tile, "hellish_berries_stage2"),

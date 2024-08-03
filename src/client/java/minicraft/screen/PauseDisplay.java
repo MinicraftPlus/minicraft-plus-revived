@@ -60,7 +60,7 @@ public class PauseDisplay extends Display {
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(null, null, 4), items.toArray(new ListEntry[0])));
 		}));
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle(new Localization.LocalizationString("minicraft.displays.pause"), Color.YELLOW)
 				.createMenu()

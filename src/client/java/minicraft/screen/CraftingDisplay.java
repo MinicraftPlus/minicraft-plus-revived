@@ -144,7 +144,7 @@ public class CraftingDisplay extends Display {
 			try {
 				onScreenKeyboardMenu.tick(input);
 			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
-					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+			         OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
 				acted = true;
 			}
 

@@ -21,11 +21,11 @@ import minicraft.util.AdvancementElement;
 
 public class WallTile extends Tile {
 	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 	private static SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
-		.setConnectChecker((tile, side) -> tile.getClass() == WallTile.class);
+		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 
 	private static final Localization.LocalizationString obrickMsg = new Localization.LocalizationString(
 		"minicraft.notification.defeat_air_wizard_first");
@@ -94,10 +94,10 @@ public class WallTile extends Tile {
 		int sbwHealth = 100;
 		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = sbwHealth;
 
-		level.add(new SmashParticle(x * 16, y * 16));
+		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle(String.valueOf(dmg), x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";
 			switch (type) { // Get what tile to set and what item to drop
@@ -118,7 +118,7 @@ public class WallTile extends Tile {
 				}
 			}
 
-			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3 - type.ordinal(), Items.get(itemName));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3 - type.ordinal(), Items.get(itemName));
 			level.setTile(x, y, Tiles.get(tilename));
 		} else {
 			level.setData(x, y, damage);

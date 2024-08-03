@@ -19,10 +19,9 @@ public class Spark extends Entity {
 
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
-	 *
 	 * @param owner The AirWizard spawning the spark.
-	 * @param xa    X velocity.
-	 * @param ya    Y velocity.
+	 * @param xa X velocity.
+	 * @param ya Y velocity.
 	 */
 	public Spark(AirWizard owner, double xa, double ya) {
 		super(0, 0);
@@ -85,7 +84,6 @@ public class Spark extends Entity {
 
 	/**
 	 * Returns the owners id as a string.
-	 *
 	 * @return the owners id as a string.
 	 */
 	public String getData() {

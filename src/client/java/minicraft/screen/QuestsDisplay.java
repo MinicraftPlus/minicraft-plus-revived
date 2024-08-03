@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
@@ -25,7 +26,10 @@ import minicraft.util.Quest.QuestSeries;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -209,12 +213,12 @@ public class QuestsDisplay extends Display {
 			}
 		}
 
-		seriesEntries = new SelectEntry[][]{
+		seriesEntries = new SelectEntry[][] {
 			unlocked.toArray(new SelectEntry[0]),
 			completed.toArray(new SelectEntry[0])
 		};
 
-		entrySeries = new QuestSeries[][]{
+		entrySeries = new QuestSeries[][] {
 			unlockedSeries.toArray(new QuestSeries[0]),
 			completedSeries.toArray(new QuestSeries[0])
 		};
@@ -224,7 +228,7 @@ public class QuestsDisplay extends Display {
 		super(true, true);
 		reloadEntries();
 
-		menus = new Menu[]{
+		menus = new Menu[] {
 			new Menu.Builder(false, 1, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, 36), RelPos.CENTER)
 				.setDisplayLength(7)
@@ -278,7 +282,7 @@ public class QuestsDisplay extends Display {
 				"minicraft.displays.quests.quest_info.view_quests"),
 				() -> Game.setDisplay(new SeriesQuestViewerDisplay(series))));
 
-			menus = new Menu[]{
+			menus = new Menu[] {
 				new Menu.Builder(true, 0, RelPos.CENTER)
 					.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
 					.setEntries(new StringEntry(new Localization.LocalizationString(series.key)))
@@ -305,8 +309,9 @@ public class QuestsDisplay extends Display {
 			private final int rasterHeight;
 			private final int rasterX;
 			private final int rasterY;
+			private final MinicraftImage image;
 			private final int[] rasterPixels;
-			private final Screen simulatedRasterScreen = new Screen() {
+			private final Screen simulatedRasterScreen = new Screen(new BufferedImage(Screen.w, Screen.h, BufferedImage.TYPE_INT_RGB)) {
 				@Override
 				public void render(RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int bits, MinicraftImage sheet, int whiteTint, boolean fullbright, int color) {
 					if (sheet == null) return; // Verifying that sheet is not null.
@@ -357,7 +362,7 @@ public class QuestsDisplay extends Display {
 
 			public SeriesQuestViewerDisplay(QuestSeries series) {
 				super(false, true);
-				menus = new Menu[]{
+				menus = new Menu[] {
 					new Menu.Builder(true, 0, RelPos.CENTER, StringEntry.useLines("minicraft.displays.quests", series.key))
 						.setPositioning(new Point(Screen.w / 2, 6), RelPos.BOTTOM)
 						.createMenu(),
@@ -424,7 +429,8 @@ public class QuestsDisplay extends Display {
 				Rectangle menuBounds = menus[1].getBounds();
 				rasterWidth = menuBounds.getWidth() - MinicraftImage.boxWidth * 2;
 				rasterHeight = menuBounds.getHeight() - MinicraftImage.boxWidth * 2;
-				rasterPixels = new int[rasterWidth * rasterHeight];
+				image = new MinicraftImage(rasterWidth, rasterHeight);
+				rasterPixels = image.pixels;
 				rasterX = menuBounds.getLeft() + MinicraftImage.boxWidth;
 				rasterY = menuBounds.getTop() + MinicraftImage.boxWidth;
 			}
@@ -504,20 +510,9 @@ public class QuestsDisplay extends Display {
 					menu.render(screen);
 				Arrays.fill(rasterPixels, Color.BLACK);
 				renderRaster();
-				final int xPadding = rasterX - 1;
-				final int yPadding = rasterY - 1;
-				for (int i = 0; i < rasterWidth + 2; i++) {
-					for (int j = 0; j < rasterHeight + 2; j++) {
-						final int pos = xPadding + i + (yPadding + j) * Screen.w;
-						if (i == 0 || i == rasterWidth + 1 || j == 0 || j == rasterHeight + 1)
-							screen.pixels[pos] = Color.WHITE; // Raster border.
-						else {
-							final int x = i - 1; // Also < rasterWidth.
-							final int y = j - 1; // Also < rasterHeight.
-							screen.pixels[pos] = rasterPixels[x + y * rasterWidth];
-						}
-					}
-				}
+				// Border
+				screen.drawRect(rasterX - 1, rasterY - 1, rasterWidth + 2, rasterHeight + 2, Color.WHITE);
+				screen.render(null, rasterX, rasterY, 0, 0, rasterWidth, rasterHeight, image);
 			}
 
 			private void renderRaster() {
@@ -665,7 +660,7 @@ public class QuestsDisplay extends Display {
 						quest.isUnlocked() ? "minicraft.displays.quests.quest_info.display.status.unlocked" :
 							"minicraft.displays.quests.quest_info.display.status.locked";
 					int color = quest.isCompleted() ? Color.GREEN : quest.isUnlocked() ? Color.WHITE : Color.GRAY;
-					menus = new Menu[]{
+					menus = new Menu[] {
 						new Menu.Builder(true, 1, RelPos.CENTER)
 							.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
 							.setEntries(new StringEntry(new Localization.LocalizationString(quest.getSeries().key)),
