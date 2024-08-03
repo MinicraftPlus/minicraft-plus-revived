@@ -18,10 +18,22 @@ public class SaplingTile extends Tile {
 		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
-		connectsToSand = onType.connectsToSand;
-		connectsToGrass = onType.connectsToGrass;
-		connectsToFluid = onType.connectsToFluid;
 		maySpawn = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return onType.connectsToGrass(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToFluid(Level level, int x, int y) {
+		return onType.connectsToFluid(level, x, y);
+	}
+
+	@Override
+	public boolean connectsToSand(Level level, int x, int y) {
+		return onType.connectsToSand(level, x, y);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {

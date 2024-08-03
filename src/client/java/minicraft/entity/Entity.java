@@ -49,7 +49,6 @@ public abstract class Entity implements Tickable {
 	 * Assings null/none values to the instace variables.
 	 * The exception is removed which is set to true, and
 	 * lastUpdate which is set to System.nanoTime().
-	 *
 	 * @param xr X radius of entity.
 	 * @param yr Y radius of entity.
 	 */
@@ -71,7 +70,6 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Returns true if the entity is removed from the level, otherwise false.
-	 *
 	 * @return removed
 	 */
 	public boolean isRemoved() {
@@ -80,7 +78,6 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Returns the level which this entity belongs in.
-	 *
 	 * @return level
 	 */
 	public Level getLevel() {
@@ -146,9 +143,8 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Interacts with the entity this method is called on
-	 *
-	 * @param player    The player attacking
-	 * @param item      The item the player attacked with
+	 * @param player The player attacking
+	 * @param item The item the player attacked with
 	 * @param attackDir The direction to interact
 	 * @return If the interaction was successful
 	 */
@@ -166,14 +162,17 @@ public abstract class Entity implements Tickable {
 		//noinspection RedundantIfStatement
 		if (moveX(xd)) stopped = false; // Becomes false if horizontal movement was successful.
 		if (moveY(yd)) stopped = false; // Becomes false if vertical movement was successful.
-
+		if (!stopped) {
+			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
+			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
+			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+		}
 		return !stopped;
 	}
 
 	/**
 	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.
-	 *
 	 * @param d Displacement relative to the axis.
 	 * @return true if the move was successful, false if not.
 	 */
@@ -207,7 +206,6 @@ public abstract class Entity implements Tickable {
 	/**
 	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.
-	 *
 	 * @param d Displacement relative to the axis.
 	 * @return true if the move was successful, false if not.
 	 */
@@ -240,25 +238,24 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Moves the entity by checking entity hit boxes being interacted with the given possible length of straight path.
-	 *
-	 * @param sgn             One-dimensional direction of displacement
-	 * @param hitBoxFront     The front boundary of hit box
-	 * @param maxFront        Maximum position can be reached with front hit box (firstly checked by tile hot box)
-	 * @param xMove           The value of the willing x movement
-	 * @param yMove           The value of the willing y movement
-	 * @param incrementMove   The movement call when the movement is possible
-	 * @param hitBoxLeft      The left boundary of hit box
-	 * @param hitBoxRight     The right boundary of hit box
-	 * @param bumpingHandler  The consumer handling bumping into a new tile;
-	 *                        the first parameter takes the front tile position and second one takes the horizontal position
+	 * @param sgn One-dimensional direction of displacement
+	 * @param hitBoxFront The front boundary of hit box
+	 * @param maxFront Maximum position can be reached with front hit box (firstly checked by tile hot box)
+	 * @param xMove The value of the willing x movement
+	 * @param yMove The value of the willing y movement
+	 * @param incrementMove The movement call when the movement is possible
+	 * @param hitBoxLeft The left boundary of hit box
+	 * @param hitBoxRight The right boundary of hit box
+	 * @param bumpingHandler The consumer handling bumping into a new tile;
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @param steppingHandler The consumer handling stepping on a new tile;
-	 *                        the first parameter takes the front tile position and second one takes the horizontal position
+	 * 	the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return {@code true} if the movement is successful, {@code false} otherwise.
 	 * @see Level#calculateMaxFrontClosestTile(int, int, int, int, int, BiPredicate)
 	 */
 	protected boolean moveByEntityHitBoxChecks(int sgn, int hitBoxFront, int maxFront, IntSupplier xMove,
-											   IntSupplier yMove, Action incrementMove, int hitBoxLeft, int hitBoxRight,
-											   BiConsumer<Integer, Integer> bumpingHandler, BiConsumer<Integer, Integer> steppingHandler) {
+	                                           IntSupplier yMove, Action incrementMove, int hitBoxLeft, int hitBoxRight,
+	                                           BiConsumer<Integer, Integer> bumpingHandler, BiConsumer<Integer, Integer> steppingHandler) {
 		boolean successful = false;
 
 		// These lists are named as if the entity has already moved-- it hasn't, though.
@@ -270,7 +267,7 @@ public abstract class Entity implements Tickable {
 			if (newFrontTile != frontTile) { // New tile touched
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					bumpingHandler.accept(horTile, newFrontTile);
+					bumpingHandler.accept(newFrontTile, horTile);
 				}
 				frontTile = newFrontTile;
 				handleSteppedOn = true;
@@ -294,7 +291,7 @@ public abstract class Entity implements Tickable {
 			if (handleSteppedOn) { // When the movement to a new tile successes
 				int hitBoxRightTile = hitBoxRight >> 4;
 				for (int horTile = hitBoxLeft >> 4; horTile <= hitBoxRightTile; horTile++) {
-					steppingHandler.accept(horTile, frontTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+					steppingHandler.accept(frontTile, horTile); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 				}
 			}
 			successful = true;
@@ -373,7 +370,6 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Returns the closest player to this entity.
-	 *
 	 * @return the closest player.
 	 */
 	@Nullable
@@ -384,7 +380,6 @@ public abstract class Entity implements Tickable {
 	/**
 	 * Returns the closes player to this entity.
 	 * If this is called on a player it can return itself.
-	 *
 	 * @param returnSelf determines if the method can return itself.
 	 * @return The closest player to this entity.
 	 */

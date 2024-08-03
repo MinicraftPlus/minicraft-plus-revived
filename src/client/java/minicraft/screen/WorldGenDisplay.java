@@ -200,9 +200,9 @@ public class WorldGenDisplay extends Display {
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
 		if (onScreenKeyboardMenu == null)
-			menus = new Menu[]{mainMenu};
+			menus = new Menu[] { mainMenu };
 		else
-			menus = new Menu[]{onScreenKeyboardMenu, mainMenu};
+			menus = new Menu[] { onScreenKeyboardMenu, mainMenu };
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
