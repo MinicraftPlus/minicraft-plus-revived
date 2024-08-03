@@ -675,28 +675,28 @@ public class Screen {
 
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		// xOffset and yOffset account for screen offset
-		render(xp - xOffset, yp - yOffset, xt * 8, yt * 8, 8, 8, sheet, bits, whiteTint, fullbright, color);
+		render(limitingModel, xp - xOffset, yp - yOffset, xt * 8, yt * 8, 8, 8, sheet, bits, whiteTint, fullbright, color);
 	}
 
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
-		render(xp, yp, xt, yt ,tw, th, sheet, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet) {
+		render(limitingModel, xp, yp, xt, yt ,tw, th, sheet, 0);
 	}
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors) {
-		render(xp, yp, xt, yt ,tw, th, sheet, mirrors, -1);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors) {
+		render(limitingModel, xp, yp, xt, yt ,tw, th, sheet, mirrors, -1);
 	}
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint) {
-		render(xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, false);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint) {
+		render(limitingModel, xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, false);
 	}
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullbright) {
-		render(xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, fullbright, 0);
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullbright) {
+		render(limitingModel, xp, yp, xt, yt, tw, th, sheet, mirrors, whiteTint, fullbright, 0);
 	}
 	// Any single pixel from the image can be rendered using this method.
-	public void render(int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullBright, int color) {
+	public void render(@Nullable RenderingLimitingModel limitingModel, int xp, int yp, int xt, int yt, int tw, int th, MinicraftImage sheet, int mirrors, int whiteTint, boolean fullBright, int color) {
 		if (sheet == null) return; // Verifying that sheet is not null.
 
 		// Validation check
 		if (xt + tw > sheet.width && yt + th > sheet.height) {
-			render(xp, yp, 0, 0, mirrors, Renderer.spriteLinker.missingSheet(SpriteType.Item));
+			render(null, xp, yp, 0, 0, mirrors, Renderer.spriteLinker.missingSheet(SpriteType.Item));
 			return;
 		}
 

@@ -287,11 +287,11 @@ public class OnScreenKeyboardMenu extends Menu {
 				VirtualKey key = keys[r][c];
 				int color = keyPressed > 0 && r == this.y && c == this.x? 0x1EFEFF0: 0x1FDFDFD;
 				if (key == backspace) {
-					screen.render(x, y, 0, 0, keyWidth , keyHeight , sheet, color);
+					screen.render(null, x, y, 0, 0, keyWidth , keyHeight , sheet, color);
 				} else if (key == shiftKey) {
-					screen.render(x, y, keyWidth , 0, keyWidth , keyHeight , sheet, color);
+					screen.render(null, x, y, keyWidth , 0, keyWidth , keyHeight , sheet, color);
 				} else if (key == spaceBar) {
-					screen.render(x, y, 0, keyHeight, keyWidth , keyHeight , sheet, color);
+					screen.render(null, x, y, 0, keyHeight, keyWidth , keyHeight , sheet, color);
 				} else
 					Font.draw(String.valueOf(key.output), screen, x + keyWidth / 2 - 3, y + keyHeight / 2 - 3, color);
 

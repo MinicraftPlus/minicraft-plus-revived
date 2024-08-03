@@ -508,7 +508,7 @@ public class QuestsDisplay extends Display {
 				renderRaster();
 				// Border
 				screen.drawRect(rasterX - 1, rasterY - 1, rasterWidth + 2, rasterHeight + 2, Color.WHITE);
-				screen.render(rasterX, rasterY, 0, 0, rasterWidth, rasterHeight, image);
+				screen.render(null, rasterX, rasterY, 0, 0, rasterWidth, rasterHeight, image);
 			}
 
 			private void renderRaster() {
