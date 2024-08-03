@@ -986,14 +986,13 @@ public class HistoricLoad {
 			item = item.copy();
 			if (item instanceof StackableItem) {
 				((StackableItem) item).count = count;
-				int added = inv.add(item);
-				if (deathChest != null && added < count) {
+				if (deathChest != null && inv.add(item) != null) {
 					deathChest.getInventory().add(item);
 				}
 			} else {
-				int added = inv.add(item, count);
-				if (deathChest != null && added < count) {
-					deathChest.getInventory().add(item, count - added);
+				int remained;
+				if (deathChest != null && (remained = inv.add(item, count).size()) != 0) {
+					deathChest.getInventory().add(item, remained);
 				}
 			}
 		} else {
@@ -1204,7 +1203,7 @@ public class HistoricLoad {
 			case "DeathChest":
 				return new DeathChest();
 			case "DungeonChest":
-				return new DungeonChest(false);
+				return new DungeonChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":
