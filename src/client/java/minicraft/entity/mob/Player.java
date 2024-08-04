@@ -507,14 +507,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.inputPressed("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null) && (input.inputPressed("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.inputPressed("interact")) && stamina != 0 && onFallDelay <= 0) { // This only allows interactions when such action is possible.
+			if ((activeItem == null) && (input.inputPressed("USE")) && stamina != 0 && onFallDelay <= 0) { // This only allows interactions when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
@@ -532,10 +532,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("craft") && !interact(getInteractionBox(INTERACT_DIST))) { // obtain SHIFT modifier input with E
+				if (input.inputPressed("craft")) { // obtain SHIFT modifier input with E
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 					return;
-				} else if (input.inputPressed("menu") && !interact(getInteractionBox(INTERACT_DIST))) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				} else if (input.inputPressed("INVENTORY")) {
 					Game.setDisplay(new PlayerInvDisplay(this));
 					return;
 				} else if (input.inputPressed("pause")) {
@@ -546,7 +546,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					return;
 				}
 
-				if (input.inputDown("quicksave") && !Updater.saving) {
+				if (input.inputDown("QUICK-SAVE") && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
@@ -558,7 +558,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
+				if (input.inputPressed("pickup") && (activeItem == null)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						if (isFishing) {

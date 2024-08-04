@@ -151,7 +151,7 @@ public class InputHandler implements KeyListener {
 		keymap.put("QUICK-SAVE", "R"); // Saves the game while still playing
 
 		keymap.put("ATTACK", "C|SPACE"); // Attack/destroy action references "C" key
-		keymap.put("INTERACT", "X|ENTER"); // Interact action references "X" key (formerly "menu")
+		keymap.put("USE", "X|ENTER"); // Use action references "X" key (formerly "menu")
 		keymap.put("INVENTORY", "E"); // Open/close player inventory menu and exit action of some displays.
 		keymap.put("CRAFT", "Z|SHIFT-E"); // Open/close personal crafting window.
 		keymap.put("PICKUP", "V|P"); // Pickup torches / furniture; this replaces the power glove.
@@ -194,7 +194,7 @@ public class InputHandler implements KeyListener {
 		buttonMap.put("EXIT", ControllerButton.B);
 
 		buttonMap.put("ATTACK", ControllerButton.A);
-		buttonMap.put("INTERACT", ControllerButton.B);
+		buttonMap.put("USE", ControllerButton.B);
 		buttonMap.put("INVENTORY", ControllerButton.X);
 		buttonMap.put("CRAFT", ControllerButton.Y);
 		buttonMap.put("PICKUP", ControllerButton.LEFTSTICK);
