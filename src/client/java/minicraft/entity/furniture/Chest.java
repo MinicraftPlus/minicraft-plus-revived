@@ -40,9 +40,9 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	/**
-	 * This is what occurs when the player uses the "Menu" command near this
+	 * This is what occurs when the player uses the "Interact" command near this
 	 */
-	public boolean use(Player player) {
+	public boolean interact(Player player) {
 		Game.setDisplay(new ContainerDisplay(player, this));
 		return true;
 	}
@@ -70,9 +70,9 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
 		if (inventory.invSize() == 0)
-			return super.interact(player, item, attackDir);
+			return super.attack(player, item, attackDir);
 		return false;
 	}
 

@@ -99,10 +99,10 @@ public class Tnt extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, Item heldItem, Direction attackDir) {
+	public boolean attack(Player player, Item heldItem, Direction attackDir) {
 		if (heldItem instanceof PowerGloveItem) {
 			if (!fuseLit) {
-				return super.interact(player, heldItem, attackDir);
+				return super.attack(player, heldItem, attackDir);
 			}
 		} else {
 			if (!fuseLit) {

@@ -77,9 +77,9 @@ public class Furniture extends Entity {
 	}
 
 	/**
-	 * Called when the player presses the MENU key in front of this.
+	 * Called when the player presses the INTERACT key in front of this.
 	 */
-	public boolean use(Player player) {
+	public boolean interact(Player player) {
 		return false;
 	}
 
@@ -99,7 +99,7 @@ public class Furniture extends Entity {
 	 * @param player The player picking up the furniture.
 	 */
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
 			Sound.play("monsterhurt");
 			remove();

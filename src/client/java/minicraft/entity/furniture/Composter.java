@@ -22,7 +22,7 @@ public class Composter extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
 		if (compost == MAX_COMPOST) {
 			compost = 0;
 			StackableItem i = (StackableItem) Items.get("Fertilizer").copy();

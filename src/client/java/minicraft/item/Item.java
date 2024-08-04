@@ -19,7 +19,7 @@ public abstract class Item {
 	private final String name;
 	public LinkedSprite sprite;
 
-	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
+// 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 
 	protected Item(String name) {
 		sprite = SpriteLinker.missingTexture(SpriteType.Item);
@@ -40,9 +40,12 @@ public abstract class Item {
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 
-	/**
-	 * Determines what happens when the player interacts with a tile
-	 */
+	/** Determines what happens when the player attacks a tile */
+	public boolean attackOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+		return false;
+	}
+
+	/** Determines what happens when the player interacts with a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
 	}
@@ -51,13 +54,6 @@ public abstract class Item {
 	 * Returning true causes this item to be removed from the player's active item slot
 	 */
 	public boolean isDepleted() {
-		return false;
-	}
-
-	/**
-	 * Returns if the item can attack mobs or not
-	 */
-	public boolean canAttack() {
 		return false;
 	}
 
