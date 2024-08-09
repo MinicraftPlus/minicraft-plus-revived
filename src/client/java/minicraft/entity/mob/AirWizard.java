@@ -11,9 +11,11 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
+import org.jetbrains.annotations.Nullable;
 
 public class AirWizard extends EnemyMob {
 	private static final LinkedSprite[][][] sprites = new LinkedSprite[][][] {
@@ -117,11 +119,11 @@ public class AirWizard extends EnemyMob {
 	}
 
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
-		super.doHurt(damage, attackDir);
+	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
 		}
+		return super.attack(source, item, attackDir, damage);
 	}
 
 	@Override
@@ -151,7 +153,7 @@ public class AirWizard extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 1 damage points.
-			((Player) entity).hurt(this, 1);
+			entity.attack(this, null, getInteractionDir(this, entity), 1);
 		}
 	}
 

@@ -39,10 +39,8 @@ public class Chest extends Furniture implements ItemHolder {
 		inventory = new Inventory(); // Initialize the inventory.
 	}
 
-	/**
-	 * This is what occurs when the player uses the "Interact" command near this
-	 */
-	public boolean interact(Player player) {
+	@Override
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
 		Game.setDisplay(new ContainerDisplay(player, this));
 		return true;
 	}
@@ -70,10 +68,10 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	@Override
-	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
+	public @Nullable Item take(Player player) {
 		if (inventory.invSize() == 0)
-			return super.attack(player, item, attackDir);
-		return false;
+			return super.take(player);
+		return null; // TODO a state that the item cannot be put into inventory
 	}
 
 	@Override

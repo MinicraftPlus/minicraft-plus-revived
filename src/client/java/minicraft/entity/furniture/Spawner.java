@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Cow;
 import minicraft.entity.mob.Creeper;
 import minicraft.entity.mob.EnemyMob;
@@ -29,6 +30,7 @@ import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import java.util.ArrayList;
@@ -173,22 +175,20 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	public boolean attack(Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (source instanceof Player) {
 
 			Sound.play("monsterhurt");
 
-			int dmg;
+			int dmg = 1;
 			if (Game.isMode("minicraft.settings.mode.creative"))
 				dmg = health;
-			else {
+			else if (item instanceof ToolItem) {
+				ToolItem tool = (ToolItem) item;
 				dmg = tool.level + random.nextInt(2);
-
 				if (tool.type == ToolType.Pickaxe)
 					dmg += random.nextInt(5) + 2;
-
-				if (player.potioneffects.containsKey(PotionType.Haste))
+				if (((Player) source).potioneffects.containsKey(PotionType.Haste))
 					dmg *= 2;
 			}
 
@@ -197,27 +197,27 @@ public class Spawner extends Furniture {
 			if (health <= 0) {
 				level.remove(this);
 				Sound.play("death");
-				player.addScore(500);
+				((Player) source).addScore(500);
 			}
 
 			return true;
 		}
 
-		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
-			level.remove(this);
-			if (!(player.activeItem instanceof PowerGloveItem))
-				player.getLevel().dropItem(player.x, player.y, player.activeItem);
-			player.activeItem = new FurnitureItem(this);
-			return true;
-		}
-
-		if (item == null) return interact(player);
-
 		return false;
 	}
 
 	@Override
-	public boolean interact(Player player) {
+	public @Nullable Item take(Player player) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.remove(this);
+			return new FurnitureItem(this);
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if (lvl > maxMobLevel) lvl = 1;

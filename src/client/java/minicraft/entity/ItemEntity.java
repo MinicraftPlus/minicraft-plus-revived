@@ -4,6 +4,9 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -144,6 +147,24 @@ public class ItemEntity extends Entity implements ClientTickable {
 			}
 		}
 	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
+	@Override
+	protected void hurt(int damage, Direction attackDir) {}
 
 	@Override
 	protected List<String> getDataPrints() {

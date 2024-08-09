@@ -6,6 +6,10 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
+import minicraft.item.Item;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
+import org.jetbrains.annotations.Nullable;
 
 public class FireSpark extends Entity {
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "spark");
@@ -81,6 +85,24 @@ public class FireSpark extends Entity {
 	public boolean isSolid() {
 		return false;
 	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
+	@Override
+	protected void hurt(int damage, Direction attackDir) {}
 
 	@Override
 	public void render(Screen screen) {

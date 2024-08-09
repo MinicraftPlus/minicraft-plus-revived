@@ -3,13 +3,16 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.Nullable;
 
 public class EnemyMob extends MobAi {
 
@@ -111,8 +114,23 @@ public class EnemyMob extends MobAi {
 		super.touchedBy(entity);
 		// Hurts the player, damage is based on lvl.
 		if (entity instanceof Player) {
-			((Player) entity).hurt(this, lvl * (Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 2 : 1));
+			entity.attack(this, null, dir, lvl * (Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 2 : 1));
 		}
+	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
 	}
 
 	public void die() {

@@ -7,6 +7,7 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.network.Network;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
@@ -142,14 +143,93 @@ public abstract class Entity implements Tickable {
 	}
 
 	/**
+	 * The amount of damage to attack when the item has no damage attribute set.
+	 * @return amount of damage by fists
+	 */
+	protected int baseDamage() {
+		return 1;
+	}
+
+	/**
+	 * An indicator for which the entity is attackable by certain entity, even under certain conditions.
+	 * This is invoked each time an entity is being targetted regardless it is interacted.
+	 * Most probably used by Player.
+	 * @return {@code false} if not attackable and {@link #attack(Entity, Item, Direction, int)} would not be invoked
+	 * when triggered.
+	 */
+	public abstract boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir);
+
+	/**
+	 * An indicator for which the entity is attackable by certain entity, even under certain conditions.
+	 * This is invoked each time an entity is being targetted regardless it is interacted.
+	 * Most probably used by Player.
+	 * Though the usefulness of this is doubtable.
+	 * @return {@code false} if not attackable and {@link #attack(Tile, Level, int, int, Direction, int)} would not be
+	 * invoked when triggered.
+	 */
+	public abstract boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir);
+
+	/**
+	 * An indicator for which the entity is attackable by certain entity, even under certain conditions.
+	 * This is invoked each time an entity is being targetted regardless it is interacted.
+	 * Most probably used by Player.
+	 * @return {@code false} if not attackable and {@link #attack(Entity, Item, Direction, int)} would not be invoked
+	 * when triggered.
+	 */
+	public abstract boolean isUsable();
+
+	// TODO Here, attackDir may be changed to use an angle instead of axis to perform more accurate actions.
+
+	/**
 	 * Attacks the entity this method is called on
-	 * @param player The player attacking
+	 * @param source The entity attacking
 	 * @param item The item the player attacked with
 	 * @param attackDir The direction to interact
+	 * @param damage The amount of damage intended to emit this time
 	 * @return If the interaction was successful
 	 */
-	public boolean attack(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		return false;
+	}
+
+	/**
+	 * Attacks the entity this method is called on (coordinates in tile coordinates)
+	 * @param source The entity attacking
+	 * @param attackDir The direction to interact
+	 * @param damage The amount of damage intended to emit this time
+	 * @return If the interaction was successful
+	 */
+	public boolean attack(Tile source, Level level, int x, int y, Direction attackDir, int damage) {
+		return false;
+	}
+
+	/**
+	 * Hurt the entity directly, based on only damage and a direction
+	 * Usually this is invoked by {@link #attack(Entity, Item, Direction, int)} and
+	 * {@link #attack(Tile, Level, int, int, Direction, int)}
+	 * @param damage The amount of damage to hurt the entity with
+	 * @param attackDir The direction this entity was attacked from
+	 */
+	protected abstract void hurt(int damage, Direction attackDir); // TODO damage type
+
+	public static Direction getInteractionDir(Entity attacker, Entity hurt) {
+		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
+	}
+
+	/**
+	 * Called when the player presses the USE key in front of this.
+	 */
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
+		return false;
+	}
+
+	/**
+	 * Picks up this entity
+	 * @param player The player interacting
+	 * @return the item picked up; {@code null} if picking up failed
+	 */
+	public @Nullable Item take(Player player) {
+		return null;
 	}
 
 	/**
@@ -309,7 +389,7 @@ public abstract class Entity implements Tickable {
 	/**
 	 * This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items.
 	 */
-	public void die() {
+	public void die() { // TODO damage type
 		remove();
 	}
 

@@ -6,7 +6,6 @@ import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.Arrow;
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -39,7 +38,6 @@ import minicraft.item.Recipes;
 import minicraft.item.StackableItem;
 import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -826,7 +824,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private boolean interact(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area); // Gets the entities within the 4 points
 		for (Entity e : entities) {
-			if (e instanceof Furniture && ((Furniture) e).interact(this))
+			if (e instanceof Furniture && e.use(this, activeItem, dir))
 				return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
 		return false;
@@ -838,7 +836,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private boolean attack(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
 		for (Entity e : entities) {
-			if (e != this && e.attack(this, activeItem, attackDir))
+			if (e != this && e.attack(this, activeItem, attackDir, getAttackDamage(e)))
 				return true; // This is the ONLY place that the Entity.interact method is actually called.
 		}
 		return false;
@@ -851,13 +849,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		List<Entity> entities = level.getEntitiesInRect(area);
 		int maxDmg = 0;
 		for (Entity e : entities) {
-			if (e != this && e instanceof Mob) {
+			if (e != this && e.isAttackable(this, activeItem, attackDir)) {
 				int dmg = getAttackDamage(e);
 				maxDmg = Math.max(dmg, maxDmg);
-				((Mob) e).hurt(this, dmg, attackDir);
+				e.attack(this, activeItem, attackDir, getAttackDamage(e));
 			}
-			if (e instanceof Furniture)
-				e.attack(this, null, attackDir);
 		}
 		return maxDmg > 0;
 	}
@@ -1161,6 +1157,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return r; // Return light radius
 	}
 
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
 	/**
 	 * What happens when the player dies
 	 */
@@ -1191,17 +1202,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		payStamina(dmg * 2);
 	}
 
-	/**
-	 * Hurt the player.
-	 * @param damage How much damage to do to player.
-	 * @param attackDir What direction to attack.
-	 */
-	public void hurt(int damage, Direction attackDir) {
-		doHurt(damage, attackDir);
-	}
-
 	@Override
-	protected void doHurt(int damage, Direction attackDir) {
+	protected void hurt(int damage, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
 			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
@@ -1234,7 +1236,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (healthDam > 0 || this != Game.player) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+			if (this == Game.player) super.hurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
 		Sound.play("playerhurt");
@@ -1255,9 +1257,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			healthDam = damage; // Subtract that amount
 		}
 
-		if (healthDam > 0 || this != Game.player) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+		if (healthDam > 0) {
+			super.hurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
 		Sound.play("playerhurt");

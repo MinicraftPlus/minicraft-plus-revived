@@ -17,6 +17,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Timer;
 
@@ -99,17 +100,18 @@ public class Tnt extends Furniture {
 	}
 
 	@Override
-	public boolean attack(Player player, Item heldItem, Direction attackDir) {
-		if (heldItem instanceof PowerGloveItem) {
-			if (!fuseLit) {
-				return super.attack(player, heldItem, attackDir);
-			}
-		} else {
-			if (!fuseLit) {
-				fuseLit = true;
-				Sound.play("fuse");
-				return true;
-			}
+	public @Nullable Item take(Player player) {
+		if (!fuseLit)
+			return super.take(player);
+		return null;
+	}
+
+	@Override
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
+		if (!fuseLit) {
+			fuseLit = true;
+			Sound.play("fuse");
+			return true;
 		}
 
 		return false;

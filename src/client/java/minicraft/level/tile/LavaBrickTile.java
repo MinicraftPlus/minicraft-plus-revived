@@ -38,7 +38,7 @@ public class LavaBrickTile extends Tile {
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob)
-			((Mob) entity).hurt(this, x, y, 3);
+			entity.attack(this, level, x, y, ((Mob) entity).dir.getOpposite(), 3);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

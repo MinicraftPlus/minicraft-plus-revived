@@ -14,8 +14,12 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
+import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.screen.AchievementsDisplay;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 public class ObsidianKnight extends EnemyMob {
@@ -199,11 +203,16 @@ public class ObsidianKnight extends EnemyMob {
 	}
 
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
-		super.doHurt(damage, attackDir);
+	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
 		}
+
+		if (source instanceof Arrow && phase == 0) {
+			source.remove();
+		}
+
+		return super.attack(source, item, attackDir, damage);
 	}
 
 	@Override
@@ -233,7 +242,7 @@ public class ObsidianKnight extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 2 damage points.
-			((Player) entity).hurt(this, 2);
+			entity.attack(this, null, getInteractionDir(this, entity), 1);
 			if (attackPhase == AttackPhase.Dashing) {
 				dashTime = Math.max(dashTime - 10, 0);
 			}
@@ -272,15 +281,5 @@ public class ObsidianKnight extends EnemyMob {
 		entity = null;
 
 		super.die(); // Calls the die() method in EnemyMob.java
-	}
-
-	@Override
-	public int calculateEntityDamage(Entity attacker, int damage) {
-		if (attacker instanceof Arrow && phase == 0) {
-			attacker.remove();
-			return 0;
-		}
-
-		return super.calculateEntityDamage(attacker, damage);
 	}
 }

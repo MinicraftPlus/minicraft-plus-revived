@@ -97,7 +97,8 @@ public class Creeper extends EnemyMob {
 						int distx = Math.abs(mob.x - x);
 						int disty = Math.abs(mob.y - y);
 						float distDiag = (float) Math.sqrt(distx * distx + disty * disty);
-						mob.hurt(this, (int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
+						mob.attack(this, null, getInteractionDir(this, mob),
+							(int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
 					} else if (entity instanceof Spawner) {
 						spawners.add(entity);
 					}
@@ -155,7 +156,7 @@ public class Creeper extends EnemyMob {
 				fuseTime = MAX_FUSE_TIME;
 				fuseLit = true;
 			}
-			((Player) entity).hurt(this, 1);
+			entity.attack(this, null, getInteractionDir(this, entity), 1);
 		}
 	}
 

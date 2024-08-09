@@ -2,9 +2,14 @@ package minicraft.level.tile.entity;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
+import minicraft.item.Item;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.screen.SignDisplayMenu;
+import org.jetbrains.annotations.Nullable;
 
 public class SignTileEntity extends Entity {
 	public SignTileEntity() {
@@ -18,6 +23,24 @@ public class SignTileEntity extends Entity {
 	public boolean isSolid() {
 		return false;
 	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
+	@Override
+	protected void hurt(int damage, Direction attackDir) {}
 
 	@Override
 	public void tick() {

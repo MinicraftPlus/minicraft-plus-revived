@@ -59,13 +59,11 @@ public class CactusTile extends Tile {
 		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
-			m.hurt(this, x, y, 1);
-		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
-			m.hurt(this, x, y, 1);
-		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
-			m.hurt(this, x, y, 2);
+			m.attack(this, level, x, y, m.dir.getOpposite(), 1);
+		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+			m.attack(this, level, x, y, m.dir.getOpposite(), 1);
+		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+			m.attack(this, level, x, y, m.dir.getOpposite(), 2);
 		}
 	}
 

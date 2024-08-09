@@ -3,10 +3,13 @@ package minicraft.entity.furniture;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
+import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -25,7 +28,7 @@ public class Bed extends Furniture {
 	/**
 	 * Called when the player attempts to get in bed.
 	 */
-	public boolean interact(Player player) {
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
 		if (checkCanSleep(player)) { // If it is late enough in the day to sleep...
 
 			// Set the player spawn coord. to their current position, in tile coords (hence " >> 4")
