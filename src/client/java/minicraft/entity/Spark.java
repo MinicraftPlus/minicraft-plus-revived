@@ -10,6 +10,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.Nullable;
 
 public class Spark extends Entity {
@@ -55,7 +56,8 @@ public class Spark extends Entity {
 
 		Player player = getClosestPlayer();
 		if (player != null && player.isWithin(0, this)) {
-			player.attack(owner, null, getInteractionDir(this, player), 1);
+			player.hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.SPARK, owner),
+				getInteractionDir(this, player), 1);
 		}
 	}
 
@@ -82,7 +84,12 @@ public class Spark extends Entity {
 	}
 
 	@Override
-	protected void hurt(int damage, Direction attackDir) {}
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		return false;
+	}
 
 	@Override
 	public void render(Screen screen) {

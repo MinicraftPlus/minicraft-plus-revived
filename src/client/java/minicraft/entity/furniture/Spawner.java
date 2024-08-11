@@ -29,6 +29,7 @@ import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -175,29 +176,21 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
-		if (source instanceof Player) {
-
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		if (source instanceof DamageSource.EntityDamageSource &&
+			((DamageSource.EntityDamageSource) source).getEntity() instanceof Player) {
+			Item item = ((DamageSource.EntityDamageSource) source).getItem();
 			Sound.play("monsterhurt");
-
-			int dmg = 1;
+			int dmg = item instanceof ToolItem ? ((ToolItem) item).getAttackDamageBonus(this) : 1;
 			if (Game.isMode("minicraft.settings.mode.creative"))
 				dmg = health;
-			else if (item instanceof ToolItem) {
-				ToolItem tool = (ToolItem) item;
-				dmg = tool.level + random.nextInt(2);
-				if (tool.type == ToolType.Pickaxe)
-					dmg += random.nextInt(5) + 2;
-				if (((Player) source).potioneffects.containsKey(PotionType.Haste))
-					dmg *= 2;
-			}
 
 			health -= dmg;
 			level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
 			if (health <= 0) {
 				level.remove(this);
 				Sound.play("death");
-				((Player) source).addScore(500);
+				((Player) ((DamageSource.EntityDamageSource) source).getEntity()).addScore(500);
 			}
 
 			return true;

@@ -5,6 +5,7 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.furniture.Spawner;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -129,6 +130,11 @@ public class ToolItem extends Item {
 			} else if (type == ToolType.Pickaxe)
 				return (level + 1) + random.nextInt(2); // Wood: 3-6 damage; gem: 15-66 damage.
 			return 1;
+		} else if (e instanceof Spawner) {
+			if (type == ToolType.Pickaxe) {
+				return 3 + level + random.nextInt(7);
+			} else
+				return 1 + level + random.nextInt(2);
 		}
 
 		return 0;

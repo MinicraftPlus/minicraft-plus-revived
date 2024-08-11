@@ -52,6 +52,7 @@ import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DamageSource;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
@@ -431,7 +432,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (hunger == 0 && health > minStarveHealth[diffIdx]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					directHurt(1, Direction.NONE); // Do 1 damage to the player
+					hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.STARVE, level, x, y),
+						Direction.NONE, 1); // Do 1 damage to the player
 				}
 			}
 		}
@@ -484,7 +486,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // If drowning... :P
 				if (stamina > 0) payStamina(1); // Take away stamina
-				else directHurt(1, Direction.NONE); // If no stamina, take damage.
+				else
+					hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.DRONE, level, x, y),
+						Direction.NONE, 1); // If no stamina, take damage.
 			}
 
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
@@ -641,7 +645,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						done = true;
 
 						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.attack(level, t.x, t.y, this, activeItem, attackDir)) {
+					} else if (tile.attack(level, t.x, t.y, this, activeItem, attackDir, 1)) {
 						done = true;
 					}
 				}
@@ -661,7 +665,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem == null) { // If there is no active item, OR if the item can be used to attack...
 			attackTime = 5;
 			// Attacks the enemy in the appropriate direction.
-			boolean used = hurt(getInteractionBox(ATTACK_DIST));
+			boolean used = attack(getInteractionBox(ATTACK_DIST));
 
 			// Attempts to hurt the tile in the appropriate direction.
 			Point t = getInteractionTile();
@@ -669,7 +673,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Check if tile is in bounds of the map.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
-				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
+				used = tile.attack(level, t.x, t.y, this, null, attackDir, random.nextInt(3) + 1) || used;
 			}
 
 			if (used && activeItem instanceof ToolItem)
@@ -700,7 +704,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// If the interaction between you and an entity is successful, then return.
-		if (interact(getInteractionBox(INTERACT_DIST))) return;
+		if (use(getInteractionBox(INTERACT_DIST))) return;
 
 		// If we are holding an item.
 		if (activeItem != null) {
@@ -724,7 +728,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						done = true;
 
 						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)){
+					} else if (tile.use(level, t.x, t.y, this, activeItem, attackDir)){
 						done = true;
 					}
 				}
@@ -821,7 +825,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
-	private boolean interact(Rectangle area) {
+	private boolean use(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area); // Gets the entities within the 4 points
 		for (Entity e : entities) {
 			if (e instanceof Furniture && e.use(this, activeItem, dir))
@@ -830,45 +834,26 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return false;
 	}
 
-	/**
-	 * same, but for attack.
-	 */
+	/** called by other attack method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean attack(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
+		boolean sucessful = false;
 		for (Entity e : entities) {
-			if (e != this && e.attack(this, activeItem, attackDir, getAttackDamage(e)))
-				return true; // This is the ONLY place that the Entity.interact method is actually called.
-		}
-		return false;
-	}
-
-	/**
-	 * same, but for attacking.
-	 */
-	private boolean hurt(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area);
-		int maxDmg = 0;
-		for (Entity e : entities) {
-			if (e != this && e.isAttackable(this, activeItem, attackDir)) {
-				int dmg = getAttackDamage(e);
-				maxDmg = Math.max(dmg, maxDmg);
-				e.attack(this, activeItem, attackDir, getAttackDamage(e));
+			if (e != this && e.isAttackable(this, activeItem, attackDir) &&
+				!e.isInvulnerableTo(new DamageSource.EntityDamageSource(this, activeItem))) {
+				sucessful |= attack(e);
 			}
 		}
-		return maxDmg > 0;
+		return sucessful;
 	}
 
-	/**
-	 * Calculates how much damage the player will do.
-	 * @param e Entity being attacked.
-	 * @return How much damage the player does.
-	 */
-	private int getAttackDamage(Entity e) {
-		int dmg = random.nextInt(2) + 1;
+	@Override
+	public boolean attack(Entity entity) {
+		int dmg = random.nextInt(2) + baseDamage();
 		if (activeItem != null && activeItem instanceof ToolItem) {
-			dmg += ((ToolItem) activeItem).getAttackDamageBonus(e); // Sword/Axe are more effective at dealing damage.
+			dmg += ((ToolItem) activeItem).getAttackDamageBonus(entity); // Sword/Axe are more effective at dealing damage.
 		}
-		return dmg;
+		return entity.hurt(new DamageSource.EntityDamageSource(this, activeItem), attackDir, dmg);
 	}
 
 	/**
@@ -1203,9 +1188,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Override
-	protected void hurt(int damage, Direction attackDir) {
+	public boolean isFireImmune() {
+		return potioneffects.containsKey(PotionType.Lava);
+	}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
 		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
-			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+			return false; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0, armorDam = 0;
 		if (this == Game.player) {
@@ -1236,33 +1226,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (healthDam > 0 || this != Game.player) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if (this == Game.player) super.hurt(healthDam, attackDir); // Sets knockback, and takes away health.
+			if (this == Game.player) handleDamage(source, attackDir, healthDam); // Sets knockback, and takes away health.
 		}
 
 		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
-	}
-
-	/**
-	 * Hurt the player directly. Don't use the armor as a shield.
-	 * @param damage Amount of damage to do to player
-	 * @param attackDir The direction of attack.
-	 */
-	private void directHurt(int damage, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
-			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
-
-		int healthDam = 0;
-		if (this == Game.player) {
-			healthDam = damage; // Subtract that amount
-		}
-
-		if (healthDam > 0) {
-			super.hurt(healthDam, attackDir); // Sets knockback, and takes away health.
-		}
-
-		Sound.play("playerhurt");
-		hurtTime = playerHurtTime;
+		return true;
 	}
 
 	@Override

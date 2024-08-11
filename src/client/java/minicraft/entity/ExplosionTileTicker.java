@@ -6,6 +6,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.ExplodedTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.Nullable;
 
 // This is a kind of tile entity. Maybe this should be savable.
@@ -72,5 +73,10 @@ public class ExplosionTileTicker extends Entity {
 	}
 
 	@Override
-	protected void hurt(int damage, Direction attackDir) {}
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		return false;
+	}
 }

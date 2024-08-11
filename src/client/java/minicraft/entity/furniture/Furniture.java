@@ -10,6 +10,7 @@ import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,7 +105,12 @@ public class Furniture extends Entity {
 	}
 
 	@Override
-	protected void hurt(int damage, Direction attackDir) {}
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		return false;
+	}
 
 	/**
 	 * Lets the user pick up furniture.

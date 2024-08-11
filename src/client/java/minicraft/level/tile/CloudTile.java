@@ -12,6 +12,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class CloudTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cloud")
@@ -26,18 +27,19 @@ public class CloudTile extends Tile {
 		return true;
 	}
 
-	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	@Override
+	public boolean attack(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		// We don't want the tile to break when attacked with just anything, even in creative mode
-		if (item instanceof ToolItem) {
+		if (source instanceof Player && item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Shovel && player.payStamina(5)) {
-				int data = level.getData(xt, yt);
-				level.setTile(xt, yt, Tiles.get("Infinite Fall")); // Would allow you to shovel cloud, I think.
+			if (tool.type == ToolType.Shovel && ((Player) source).payStamina(5)) {
+				int data = level.getData(x, y);
+				level.setTile(x, y, Tiles.get("Infinite Fall")); // Would allow you to shovel cloud, I think.
 				Sound.play("monsterhurt");
-				level.dropItem((xt << 4) + 8, (yt << 4) + 8, 1, 3, Items.get("Cloud"));
+				level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3, Items.get("Cloud"));
 				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-						item, this, data, xt, yt, level.depth));
+						item, this, data, x, y, level.depth));
 				return true;
 			}
 		}

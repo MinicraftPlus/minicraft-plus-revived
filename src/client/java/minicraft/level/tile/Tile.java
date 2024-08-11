@@ -3,13 +3,13 @@ package minicraft.level.tile;
 import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -89,28 +89,14 @@ public abstract class Tile {
 	}
 
 	/**
-	 * Hurt the tile with a specified amount of damage.
-	 * @param level The level this happened on.
-	 * @param x X pos of the tile.
-	 * @param y Y pos of the tile.
-	 * @param source The mob that damaged the tile.
-	 * @param dmg Damage to taken.
-	 * @param attackDir The direction of the player hitting.
-	 * @return If the damage was applied.
-	 */
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		return false;
-	}
-
-	/**
-	 * Hurt the tile with a specified amount of damage.
+	 * Hurt the tile with a specified amount of damage directly. This is supposed to be used internally.
+	 * Using {@link #attack(Level, int, int, Entity, Item, Direction, int)} is more recommended.
 	 * @param level The level this happened on.
 	 * @param x X position of the tile.
 	 * @param y Y position of the tile.
 	 * @param dmg The damage taken.
 	 */
-	public void hurt(Level level, int x, int y, int dmg) {
-	}
+	public void hurt(Level level, int x, int y, int dmg) {}
 
 	/**
 	 * What happens when you run into the tile (ex: run into a cactus)
@@ -134,19 +120,20 @@ public abstract class Tile {
 	/**
 	 * Called when you hit an item on a tile (ex: Pickaxe on rock).
 	 * @param level The level the player is on.
-	 * @param xt X position of the player in tile coordinates (32x per tile).
-	 * @param yt Y position of the player in tile coordinates (32px per tile).
-	 * @param player The player who called this method.
+	 * @param x X position of the player in tile coordinates (32x per tile).
+	 * @param y Y position of the player in tile coordinates (32px per tile).
+	 * @param source The entity attacking.
 	 * @param item The item the player is currently holding.
 	 * @param attackDir The direction of the player attacking.
+	 * @param damage The amount of damage intended to emit this time
 	 * @return Was the operation successful?
 	 */
-	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean attack(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		return false;
 	}
 
 	/**
-	 * Called when you interact an item on a tile (ex: Pickaxe on rock).
+	 * Called when you use an item on a tile (ex: Pickaxe on rock).
 	 * @param level The level the player is on.
 	 * @param xt X position of the player in tile coordinates (32x per tile).
 	 * @param yt Y position of the player in tile coordinates (32px per tile).
@@ -155,8 +142,17 @@ public abstract class Tile {
 	 * @param attackDir The direction of the player attacking.
 	 * @return Was the operation successful?
 	 */
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean use(Level level, int xt, int yt, Player player, @Nullable Item item, Direction attackDir) {
 		return false;
+	}
+
+	/**
+	 * Picks up this tile
+	 * @param player The player interacting
+	 * @return the item picked up; {@code null} if picking up failed
+	 */
+	public @Nullable Item take(Player player) {
+		return null;
 	}
 
 	/**

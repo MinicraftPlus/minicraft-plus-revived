@@ -12,6 +12,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DamageSource;
 
 public class LavaBrickTile extends Tile {
 	protected LavaBrickTile(String name) {
@@ -38,7 +39,8 @@ public class LavaBrickTile extends Tile {
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob)
-			entity.attack(this, level, x, y, ((Mob) entity).dir.getOpposite(), 3);
+			entity.hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.LAVA_BRICK, level, entity.x, entity.y),
+				Direction.NONE, 3);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

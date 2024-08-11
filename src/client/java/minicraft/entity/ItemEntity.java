@@ -6,6 +6,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -164,7 +165,12 @@ public class ItemEntity extends Entity implements ClientTickable {
 	}
 
 	@Override
-	protected void hurt(int damage, Direction attackDir) {}
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		return false;
+	}
 
 	@Override
 	protected List<String> getDataPrints() {

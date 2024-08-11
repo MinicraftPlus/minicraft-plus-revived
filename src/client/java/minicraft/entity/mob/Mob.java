@@ -1,6 +1,5 @@
 package minicraft.entity.mob;
 
-import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -16,6 +15,7 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Mob extends Entity {
@@ -59,7 +59,8 @@ public abstract class Mob extends Entity {
 
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			// Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
-			attack(Tiles.get("lava"), level, x >> 4, y >> 4, Direction.NONE, 4);
+			hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.LAVA, level, x >> 4, y >> 4),
+				Direction.NONE, 4);
 
 		if (canBurn()) {
 			if (this.burningDuration > 0) {
@@ -68,13 +69,8 @@ public abstract class Mob extends Entity {
 					level.add(new BurnParticle(x - 8 + (random.nextInt(8) - 4), y - 8 + (random.nextInt(8) - 4)));
 				this.burningDuration--;
 				// TODO different damage?
-				if (this instanceof Player) {
-					if (this.burningDuration % 70 == 0 && !Renderer.player.potioneffects.containsKey(PotionType.Lava))
-						hurt( 1, Direction.NONE); //burning damage
-				} else {
-					if (this.burningDuration % 70 == 0)
-						hurt( 2, Direction.NONE); //burning damage
-				}
+				hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.ON_FIRE, level, x, y),
+					Direction.NONE, this instanceof Player ? 1 : 2); //burning damage
 			}
 		}
 
@@ -224,24 +220,13 @@ public abstract class Mob extends Entity {
 		return tile == Tiles.get("water") || tile == Tiles.get("lava"); // Check if the tile is liquid, and return true if so
 	}
 
-	@Override
-	public boolean attack(Tile source, Level level, int x, int y, Direction attackDir, int damage) {
-		if (source == Tiles.get("lava")) {
-			// TODO Generalize potion effects to all mobs
-			if (!(this instanceof Player && ((Player) this).potioneffects.containsKey(PotionType.Lava))) {
-				hurt(damage, attackDir);
-			}
-		} else {
-			hurt(damage, attackDir);
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
-		hurt(damage, attackDir);
-		return true;
+	/**
+	 * Attacks an entity
+	 * @param entity The entity to attack
+	 * @return If the interaction was successful
+	 */
+	public boolean attack(Entity entity) {
+		return false;
 	}
 
 	/**
@@ -257,10 +242,18 @@ public abstract class Mob extends Entity {
 	 * @param dmg The amount of damage the explosion does.
 	 */
 	public void onExploded(Tnt tnt, int dmg) {
-		hurt(dmg, getInteractionDir(tnt, this));
+		hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.EXPLOSION, level, x, y),
+			getInteractionDir(tnt, this), dmg);
 	}
 
-	protected void hurt(int damage, Direction attackDir) {
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		handleDamage(source, attackDir, damage);
+		return true;
+	}
+
+	@Override
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {
 		if (isRemoved() || hurtTime > 0)
 			return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 

@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -15,6 +16,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.Nullable;
 
 public class AirWizard extends EnemyMob {
@@ -119,11 +121,11 @@ public class AirWizard extends EnemyMob {
 	}
 
 	@Override
-	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
 		}
-		return super.attack(source, item, attackDir, damage);
+		return super.hurt(source, attackDir, damage);
 	}
 
 	@Override
@@ -153,7 +155,7 @@ public class AirWizard extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 1 damage points.
-			entity.attack(this, null, getInteractionDir(this, entity), 1);
+			attack(entity);
 		}
 	}
 

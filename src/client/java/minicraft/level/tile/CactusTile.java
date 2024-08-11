@@ -12,8 +12,10 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class CactusTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cactus");
@@ -31,7 +33,14 @@ public class CactusTile extends Tile {
 		return false;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	@Override
+	public boolean attack(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		hurt(level, x, y, damage);
+		return true;
+	}
+
+	@Override
+	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = cHealth;
@@ -46,7 +55,6 @@ public class CactusTile extends Tile {
 		} else {
 			level.setData(x, y, damage);
 		}
-		return true;
 	}
 
 	@Override
@@ -59,11 +67,11 @@ public class CactusTile extends Tile {
 		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
-			m.attack(this, level, x, y, m.dir.getOpposite(), 1);
+			m.attack(this, level, x, y, null, m.dir.getOpposite(), 1);
 		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
-			m.attack(this, level, x, y, m.dir.getOpposite(), 1);
+			m.attack(this, level, x, y, null, m.dir.getOpposite(), 1);
 		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
-			m.attack(this, level, x, y, m.dir.getOpposite(), 2);
+			m.attack(this, level, x, y, null, m.dir.getOpposite(), 2);
 		}
 	}
 

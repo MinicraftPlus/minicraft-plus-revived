@@ -8,6 +8,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.util.DamageSource;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,5 +81,10 @@ public class Particle extends Entity implements ClientTickable {
 	}
 
 	@Override
-	protected void hurt(int damage, Direction attackDir) {}
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		return false;
+	}
 }

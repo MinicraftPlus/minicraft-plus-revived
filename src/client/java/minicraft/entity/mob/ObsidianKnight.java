@@ -19,6 +19,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.AchievementsDisplay;
+import minicraft.util.DamageSource;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
@@ -203,16 +204,18 @@ public class ObsidianKnight extends EnemyMob {
 	}
 
 	@Override
-	public boolean attack(Entity source, @Nullable Item item, Direction attackDir, int damage) {
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
 		}
 
-		if (source instanceof Arrow && phase == 0) {
-			source.remove();
+		if (source instanceof DamageSource.EntityDamageSource &&
+			((DamageSource.EntityDamageSource) source).getEntity() instanceof Arrow && phase == 0) {
+			((DamageSource.EntityDamageSource) source).getEntity().remove();
+			return false;
 		}
 
-		return super.attack(source, item, attackDir, damage);
+		return super.hurt(source, attackDir, damage);
 	}
 
 	@Override
@@ -242,7 +245,7 @@ public class ObsidianKnight extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 2 damage points.
-			entity.attack(this, null, getInteractionDir(this, entity), 1);
+			attack(entity);
 			if (attackPhase == AttackPhase.Dashing) {
 				dashTime = Math.max(dashTime - 10, 0);
 			}
