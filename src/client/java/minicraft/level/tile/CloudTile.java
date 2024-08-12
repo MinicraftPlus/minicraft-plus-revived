@@ -28,7 +28,10 @@ public class CloudTile extends Tile {
 	}
 
 	@Override
-	public boolean attack(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		// We don't want the tile to break when attacked with just anything, even in creative mode
 		if (source instanceof Player && item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

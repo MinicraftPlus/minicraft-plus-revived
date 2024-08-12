@@ -177,9 +177,8 @@ public class Spawner extends Furniture {
 
 	@Override
 	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
-		if (source instanceof DamageSource.EntityDamageSource &&
-			((DamageSource.EntityDamageSource) source).getEntity() instanceof Player) {
-			Item item = ((DamageSource.EntityDamageSource) source).getItem();
+		if (source.getCausingEntity() instanceof Player) {
+			Item item = source.getItem();
 			Sound.play("monsterhurt");
 			int dmg = item instanceof ToolItem ? ((ToolItem) item).getAttackDamageBonus(this) : 1;
 			if (Game.isMode("minicraft.settings.mode.creative"))
@@ -190,7 +189,7 @@ public class Spawner extends Furniture {
 			if (health <= 0) {
 				level.remove(this);
 				Sound.play("death");
-				((Player) ((DamageSource.EntityDamageSource) source).getEntity()).addScore(500);
+				((Player) source.getCausingEntity()).addScore(500);
 			}
 
 			return true;

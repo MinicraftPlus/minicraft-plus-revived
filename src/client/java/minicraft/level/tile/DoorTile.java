@@ -13,6 +13,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class DoorTile extends Tile {
 	protected Material type;
@@ -49,18 +50,22 @@ public class DoorTile extends Tile {
 		curSprite.render(screen, level, x, y);
 	}
 
-	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
-					level.setTile(xt, yt, Tiles.get((short) (id + 3))); // Will get the corresponding floor tile.
+				if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
+					level.setTile(x, y, Tiles.get((short) (id + 3))); // Will get the corresponding floor tile.
 					Sound.play("monsterhurt");
-					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get(type.name() + " Door"));
+					level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get(type.name() + " Door"));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}
@@ -68,7 +73,8 @@ public class DoorTile extends Tile {
 		return false;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	@Override
+	public boolean use(Level level, int xt, int yt, Player player, @Nullable Item item, Direction attackDir) {
 		boolean closed = level.getData(xt, yt) == 0;
 		level.setData(xt, yt, closed ? 1 : 0);
 		return true;

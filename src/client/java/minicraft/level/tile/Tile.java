@@ -90,13 +90,15 @@ public abstract class Tile {
 
 	/**
 	 * Hurt the tile with a specified amount of damage directly. This is supposed to be used internally.
-	 * Using {@link #attack(Level, int, int, Entity, Item, Direction, int)} is more recommended.
+	 * Using {@link #hurt(Level, int, int, Entity, Item, Direction, int)} is more recommended.
 	 * @param level The level this happened on.
 	 * @param x X position of the tile.
 	 * @param y Y position of the tile.
+	 * @param source The entity performed the interaction.
+	 * @param item The item the entity is holding.
 	 * @param dmg The damage taken.
 	 */
-	public void hurt(Level level, int x, int y, int dmg) {}
+	protected abstract void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg);
 
 	/**
 	 * What happens when you run into the tile (ex: run into a cactus)
@@ -128,7 +130,7 @@ public abstract class Tile {
 	 * @param damage The amount of damage intended to emit this time
 	 * @return Was the operation successful?
 	 */
-	public boolean attack(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		return false;
 	}
 

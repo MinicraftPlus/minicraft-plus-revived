@@ -19,6 +19,7 @@ import minicraft.level.tile.entity.SignTileEntity;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SignDisplayMenu;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public class SignTile extends Tile {
@@ -46,31 +47,26 @@ public class SignTile extends Tile {
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item != null) {
-			if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
-				int data = level.getData(xt, yt);
-				level.setTile(xt, yt, Tiles.get((short) data));
-				SignDisplay.removeSign(level.depth, xt, yt);
-				Sound.play("monsterhurt");
-				level.dropItem(xt*16+8, yt*16+8, Items.get("Sign"));
-				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-						item, this, data, xt, yt, level.depth));
-				return true;
-			}
-		} else { // TODO Add a way to lock signs
-			Game.setDisplay(new SignDisplay(level, xt, yt));
-			return true;
-		}
-
-		return false;
+	@Override
+	public boolean use(Level level, int xt, int yt, Player player, @Nullable Item item, Direction attackDir) {
+		Game.setDisplay(new SignDisplay(level, xt, yt));
+		return true; // TODO Add a way to lock signs
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (source instanceof Player) {
-			Game.setDisplay(new SignDisplay(level, x, y));
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
+			int data = level.getData(x, y);
+			level.setTile(x, y, Tiles.get((short) data));
+			SignDisplay.removeSign(level.depth, x, y);
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Sign"));
+			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+					item, this, data, x, y, level.depth));
 			return true;
 		}
 

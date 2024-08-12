@@ -15,6 +15,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class SandTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sand")
@@ -61,18 +62,22 @@ public class SandTile extends Tile {
 		}
 	}
 
-	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
-					level.setTile(xt, yt, Tiles.get("Hole"));
+				if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
+					level.setTile(x, y, Tiles.get("Hole"));
 					Sound.play("monsterhurt");
-					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Sand"));
+					level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Sand"));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}

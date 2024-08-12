@@ -12,6 +12,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class WoolTile extends Tile {
 
@@ -19,23 +20,29 @@ public class WoolTile extends Tile {
 		super(woolType.name, woolType.sprite);
 	}
 
-	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shears) {
-				if (player.payStamina(3 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
-					level.setTile(xt, yt, Tiles.get("Hole"));
+				if (((Player) source).payStamina(3 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
+					level.setTile(x, y, Tiles.get("Hole"));
 					Sound.play("monsterhurt");
-					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get(name));
+					level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get(name));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
+
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

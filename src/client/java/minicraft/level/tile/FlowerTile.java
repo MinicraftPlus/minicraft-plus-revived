@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
@@ -13,6 +14,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class FlowerTile extends Tile {
 	private static final SpriteAnimation flowerSprite0 = new SpriteAnimation(SpriteType.Tile, "flower_shape0");
@@ -51,11 +53,15 @@ public class FlowerTile extends Tile {
 		(shape == 0 ? flowerSprite0 : flowerSprite1).render(screen, level, x, y);
 	}
 
-	public boolean attack(Level level, int x, int y, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
+				if (((Player) source).payStamina(2 - tool.level) && tool.payDurability()) {
 					int data = level.getData(x, y);
 					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.play("monsterhurt");

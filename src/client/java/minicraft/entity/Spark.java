@@ -56,7 +56,7 @@ public class Spark extends Entity {
 
 		Player player = getClosestPlayer();
 		if (player != null && player.isWithin(0, this)) {
-			player.hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.SPARK, owner),
+			player.hurt(new DamageSource(DamageSource.DamageType.SPARK, owner, this, null),
 				getInteractionDir(this, player), 1);
 		}
 	}

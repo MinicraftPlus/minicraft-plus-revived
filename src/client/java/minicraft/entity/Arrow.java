@@ -76,7 +76,7 @@ public class Arrow extends Entity implements ClientTickable {
 			if (hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
 				damage += (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1); // Extra damage bonus.
-				mob.hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.ARROW, owner),
+				mob.hurt(new DamageSource(DamageSource.DamageType.ARROW, owner, this, null),
 					dir, damage); // normal hurting to other mobs
 			}
 

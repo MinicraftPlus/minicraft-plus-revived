@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
@@ -13,6 +14,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class DirtTile extends Tile {
 	private static SpriteAnimation[] levelSprite = new SpriteAnimation[] {
@@ -53,6 +55,9 @@ public class DirtTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		levelSprite[dIdx(level.depth)].render(screen, level, x, y);
 	}
+
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
 
 	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {

@@ -432,7 +432,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (hunger == 0 && health > minStarveHealth[diffIdx]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.STARVE, level, x, y),
+					hurt(new DamageSource(DamageSource.DamageType.STARVE),
 						Direction.NONE, 1); // Do 1 damage to the player
 				}
 			}
@@ -487,7 +487,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // If drowning... :P
 				if (stamina > 0) payStamina(1); // Take away stamina
 				else
-					hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.DRONE, level, x, y),
+					hurt(new DamageSource(DamageSource.DamageType.DROWN),
 						Direction.NONE, 1); // If no stamina, take damage.
 			}
 
@@ -645,7 +645,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						done = true;
 
 						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.attack(level, t.x, t.y, this, activeItem, attackDir, 1)) {
+					} else if (tile.hurt(level, t.x, t.y, this, activeItem, attackDir, 1)) {
 						done = true;
 					}
 				}
@@ -673,7 +673,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Check if tile is in bounds of the map.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
-				used = tile.attack(level, t.x, t.y, this, null, attackDir, random.nextInt(3) + 1) || used;
+				used = tile.hurt(level, t.x, t.y, this, null, attackDir, random.nextInt(3) + 1) || used;
 			}
 
 			if (used && activeItem instanceof ToolItem)
@@ -840,7 +840,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		boolean sucessful = false;
 		for (Entity e : entities) {
 			if (e != this && e.isAttackable(this, activeItem, attackDir) &&
-				!e.isInvulnerableTo(new DamageSource.EntityDamageSource(this, activeItem))) {
+				!e.isInvulnerableTo(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem))) {
 				sucessful |= attack(e);
 			}
 		}
@@ -853,7 +853,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem != null && activeItem instanceof ToolItem) {
 			dmg += ((ToolItem) activeItem).getAttackDamageBonus(entity); // Sword/Axe are more effective at dealing damage.
 		}
-		return entity.hurt(new DamageSource.EntityDamageSource(this, activeItem), attackDir, dmg);
+		return entity.hurt(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem), attackDir, dmg);
 	}
 
 	/**

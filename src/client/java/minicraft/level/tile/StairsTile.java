@@ -13,6 +13,7 @@ import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class StairsTile extends Tile {
 	private static SpriteAnimation down = new SpriteAnimation(SpriteType.Tile, "stairs_down");
@@ -37,17 +38,18 @@ public class StairsTile extends Tile {
 	}
 
 	@Override
-	public boolean attack(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		super.attack(level, xt, yt, player, item, attackDir);
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
 
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		// Makes it so you can remove the stairs if you are in creative and debug mode.
 		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
-			int data = level.getData(xt, yt);
-			level.setTile(xt, yt, Tiles.get("Grass"));
+			int data = level.getData(x, y);
+			level.setTile(x, y, Tiles.get("Grass"));
 			Sound.play("monsterhurt");
 			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-					item, this, data, xt, yt, level.depth));
+					item, this, data, x, y, level.depth));
 			return true;
 		} else {
 			return false;

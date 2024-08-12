@@ -98,7 +98,7 @@ public class Creeper extends EnemyMob {
 						int distx = Math.abs(mob.x - x);
 						int disty = Math.abs(mob.y - y);
 						float distDiag = (float) Math.sqrt(distx * distx + disty * disty);
-						entity.hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.EXPLOSION, level, x, y),
+						entity.hurt(new DamageSource(DamageSource.DamageType.EXPLOSION, this, null),
 							getInteractionDir(this, mob),
 							(int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
 					} else if (entity instanceof Spawner) {

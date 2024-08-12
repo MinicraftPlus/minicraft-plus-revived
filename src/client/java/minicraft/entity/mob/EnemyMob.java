@@ -120,7 +120,7 @@ public class EnemyMob extends MobAi {
 
 	@Override
 	public boolean attack(Entity entity) {
-		return hurt(new DamageSource.EntityDamageSource(this, null), dir,
+		return hurt(new DamageSource(DamageSource.DamageType.GENERIC, this, null), dir,
 			lvl * (Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 2 : 1));
 	}
 

@@ -209,9 +209,8 @@ public class ObsidianKnight extends EnemyMob {
 			attackDelay = 60 * 2;
 		}
 
-		if (source instanceof DamageSource.EntityDamageSource &&
-			((DamageSource.EntityDamageSource) source).getEntity() instanceof Arrow && phase == 0) {
-			((DamageSource.EntityDamageSource) source).getEntity().remove();
+		if (source.getDirectEntity() instanceof Arrow && phase == 0) {
+			source.getDirectEntity().remove();
 			return false;
 		}
 

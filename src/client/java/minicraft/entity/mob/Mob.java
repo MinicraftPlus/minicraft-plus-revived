@@ -59,8 +59,7 @@ public abstract class Mob extends Entity {
 
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			// Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
-			hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.LAVA, level, x >> 4, y >> 4),
-				Direction.NONE, 4);
+			hurt(new DamageSource(DamageSource.DamageType.LAVA, level, x, y, Tiles.get("lava")), Direction.NONE, 4);
 
 		if (canBurn()) {
 			if (this.burningDuration > 0) {
@@ -69,7 +68,7 @@ public abstract class Mob extends Entity {
 					level.add(new BurnParticle(x - 8 + (random.nextInt(8) - 4), y - 8 + (random.nextInt(8) - 4)));
 				this.burningDuration--;
 				// TODO different damage?
-				hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.ON_FIRE, level, x, y),
+				hurt(new DamageSource(DamageSource.DamageType.ON_FIRE, level, x, y, null), // TODO last attacker
 					Direction.NONE, this instanceof Player ? 1 : 2); //burning damage
 			}
 		}
@@ -242,7 +241,7 @@ public abstract class Mob extends Entity {
 	 * @param dmg The amount of damage the explosion does.
 	 */
 	public void onExploded(Tnt tnt, int dmg) {
-		hurt(new DamageSource.OtherDamageSource(DamageSource.OtherDamageSource.DamageType.EXPLOSION, level, x, y),
+		hurt(new DamageSource(DamageSource.DamageType.EXPLOSION, tnt, null),
 			getInteractionDir(tnt, this), dmg);
 	}
 

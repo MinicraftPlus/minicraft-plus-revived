@@ -4,7 +4,9 @@ import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class WaterTile extends Tile {
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "water")
@@ -30,6 +32,9 @@ public class WaterTile extends Tile {
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}
+
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
 
 	@Override
 	public boolean tick(Level level, int xt, int yt) {

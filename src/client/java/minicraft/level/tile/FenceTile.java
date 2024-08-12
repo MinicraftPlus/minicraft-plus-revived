@@ -15,6 +15,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class FenceTile extends Tile {
 
@@ -101,26 +102,23 @@ public class FenceTile extends Tile {
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		hurt(level, x, y, dmg);
-		return true;
-	}
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
 
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
+				if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
 					Sound.play("monsterhurt");
-					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(name));
-					level.setTile(xt, yt, Tiles.get((short) level.getData(xt, yt)));
+					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get(name));
+					level.setTile(x, y, Tiles.get((short) level.getData(x, y)));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}
