@@ -1,11 +1,13 @@
 package minicraft.screen;
 
+import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import org.jetbrains.annotations.Nullable;
 
 class InventoryMenu extends ItemListMenu {
 
@@ -13,14 +15,19 @@ class InventoryMenu extends ItemListMenu {
 	private final String title; // Used for copy constructor
 	private final Inventory inv;
 	private final Entity holder;
-	protected boolean creativeInv = false;
+	private final boolean creativeInv;
+	private final @Nullable Action onStackUpdateListener; // The length of the entry shown may change when there is an update to the stack.
 
-	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos) {
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, @Nullable Action onStackUpdateListener) { this(holder, inv, title, entryPos, false, onStackUpdateListener); }
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv) { this(holder, inv, title, entryPos, creativeInv, null); }
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv, @Nullable Action onStackUpdateListener) {
 		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
 		this.title = title;
 		this.entryPos = entryPos;
+		this.creativeInv = creativeInv;
+		this.onStackUpdateListener = onStackUpdateListener;
 	}
 
 	InventoryMenu(InventoryMenu model) {
@@ -30,6 +37,7 @@ class InventoryMenu extends ItemListMenu {
 		this.creativeInv = model.creativeInv;
 		this.title = model.title;
 		this.entryPos = model.entryPos;
+		this.onStackUpdateListener = model.onStackUpdateListener;
 		setSelection(model.getSelection());
 	}
 
@@ -46,13 +54,17 @@ class InventoryMenu extends ItemListMenu {
 			Item drop = invItem.copy();
 
 			if (!creativeInv) {
-				if (dropOne && drop instanceof StackableItem && ((StackableItem) drop).count > 1) {
+				if (!dropOne || !(drop instanceof StackableItem) || ((StackableItem) drop).count <= 1) {
+					// drop the whole item.
+					removeSelectedEntry();
+				} else {
 					// just drop one from the stack
 					((StackableItem) drop).count = 1;
 					((StackableItem) invItem).count--;
-				} else {
-					// drop the whole item.
-					removeSelectedEntry();
+				}
+
+				if (onStackUpdateListener != null) {
+					onStackUpdateListener.act();
 				}
 			}
 
