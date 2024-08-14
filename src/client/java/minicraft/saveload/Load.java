@@ -668,7 +668,7 @@ public class Load {
 								default:
 									tilename = "White Wool";
 							}
-						} else if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
+						} else if (worldVer.compareTo(new Version("2.2.1-dev1")) < 0) {
 							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
@@ -796,7 +796,7 @@ public class Load {
 			data[idx] = Tiles.get(matcher.group(1)).id;
 		} else {
 			tiles[idx] = Tiles.get(tileName).id;
-			if (worldVer.compareTo(new Version("2.2.0")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
+			if (worldVer.compareTo(new Version("2.2.1-dev1")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
 				data[idx] = 0;
 			} else {
 				data[idx] = Short.parseShort(tileData);
@@ -955,10 +955,13 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.0-dev4")) < 0) {
-			if (name.startsWith("Wool"))
-				name = name.replace("Wool", "White Wool");
 			if (name.startsWith("Potion"))
 				name = name.replace("Potion", "Awkward Potion");
+		}
+
+		if (worldVer.compareTo(new Version("2.2.1-dev1")) < 0) {
+			if (name.startsWith("Wool"))
+				name = name.replace("Wool", "White Wool");
 		}
 
 		return name;
