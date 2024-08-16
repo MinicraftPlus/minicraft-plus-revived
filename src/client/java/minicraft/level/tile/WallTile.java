@@ -81,11 +81,10 @@ public class WallTile extends Tile {
 					handleDamage(level, x, y, source, item, 0);
 				}
 			}
-		} else {
-			handleDamage(level, x, y, source, item, 0);
 		}
 
-		return false;
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
 	@Override

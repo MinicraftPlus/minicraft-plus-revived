@@ -150,10 +150,13 @@ public abstract class Tile {
 
 	/**
 	 * Picks up this tile
+	 * @param level
+	 * @param x
+	 * @param y
 	 * @param player The player interacting
 	 * @return the item picked up; {@code null} if picking up failed
 	 */
-	public @Nullable Item take(Player player) {
+	public @Nullable Item take(Level level, int x, int y, Player player) {
 		return null;
 	}
 

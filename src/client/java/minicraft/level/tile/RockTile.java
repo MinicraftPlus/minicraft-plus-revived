@@ -68,7 +68,8 @@ public class RockTile extends Tile {
 			}
 		}
 
-		return false;
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
 	@Override

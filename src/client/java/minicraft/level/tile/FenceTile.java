@@ -7,6 +7,8 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
@@ -102,13 +104,20 @@ public class FenceTile extends Tile {
 	}
 
 	@Override
-	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
+		level.add(new SmashParticle(x << 4, y << 4));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+	}
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
-			return false; // Go directly to hurt method
-		if (item instanceof ToolItem && source instanceof Player) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.add(new SmashParticle(x * 16, y * 16));
+			Sound.play("monsterhurt");
+			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get(name));
+			level.setTile(x, y, Tiles.get((short) level.getData(x, y)));
+			return true;
+		} else if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
 				if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
@@ -123,15 +132,8 @@ public class FenceTile extends Tile {
 				}
 			}
 		}
-		return false;
-	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
-		if (Game.isMode("minicraft.settings.mode.creative")) {
-			level.add(new SmashParticle(x * 16, y * 16));
-			Sound.play("monsterhurt");
-			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get(name));
-			level.setTile(x, y, Tiles.get((short) level.getData(x, y)));
-		}
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 }

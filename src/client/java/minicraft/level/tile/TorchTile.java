@@ -4,14 +4,15 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
-import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
-import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.Nullable;
 
 public class TorchTile extends Tile {
@@ -44,21 +45,22 @@ public class TorchTile extends Tile {
 	}
 
 	@Override
-	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
+		level.add(new SmashParticle(x << 4, y << 4));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+	}
+
+	@Override
+	public @Nullable Item take(Level level, int x, int y, Player player) {
+		int data = level.getData(x, y);
+		level.setTile(x, y, Tiles.get((short) data));
+		Sound.play("monsterhurt");
+		return Items.get("Torch");
+	}
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
-		if (item instanceof PowerGloveItem) {
-			int data = level.getData(x, y);
-			level.setTile(x, y, Tiles.get((short) data));
-			Sound.play("monsterhurt");
-			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Torch"));
-			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-					item, this, data, x, y, level.depth));
-			return true;
-		} else {
-			return false;
-		}
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 }

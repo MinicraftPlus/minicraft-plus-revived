@@ -82,7 +82,9 @@ public class OreTile extends Tile {
 				}
 			}
 		}
-		return false;
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
 	public Item getOre() {

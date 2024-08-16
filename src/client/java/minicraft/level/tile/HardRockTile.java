@@ -60,7 +60,9 @@ public class HardRockTile extends Tile {
 				Game.notifications.add("minicraft.notification.gem_pickaxe_required");
 			}
 		}
-		return false;
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
 	@Override
