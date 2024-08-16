@@ -46,7 +46,7 @@ public abstract class Item {
 	}
 
 	/** Determines what happens when the player interacts with a tile */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
 	}
 
@@ -101,9 +101,5 @@ public abstract class Item {
 	// Returns the String that should be used to display this item in a menu or list.
 	public String getDisplayName() {
 		return " " + Localization.getLocalized(getName());
-	}
-
-	public boolean interactsWithWorld() {
-		return true;
 	}
 }

@@ -50,7 +50,7 @@ public class FarmTile extends Tile {
 			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Dirt"));
 			return true;
 		}
-		
+
 		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {

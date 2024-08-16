@@ -91,11 +91,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private final Inventory inventory;
 
 	public Item activeItem;
-	Item attackItem; // attackItem is useful again b/c of the power glove.
-	private Item prevItem; // Holds the item held before using the POW glove.
 
 	int attackTime;
-	public Direction attackDir;
 
 	private int onStairDelay; // The delay before changing levels.
 	private int onFallDelay; // The delay before falling b/c we're on an InfiniteFallTile
@@ -194,7 +191,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		regentick = 0;
 		questExpanding = 0;
 
-		attackDir = dir;
 		armor = 0;
 		curArmor = null;
 		armorDamageBuffer = 0;
@@ -509,28 +505,29 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null) && (input.inputPressed("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if (input.inputPressed("attack") && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if ((activeItem == null) && (input.inputPressed("USE")) && stamina != 0 && onFallDelay <= 0) { // This only allows interactions when such action is possible.
+			if (input.inputPressed("USE") && stamina != 0 && onFallDelay <= 0) { // This only allows interactions when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
-				interact();
+				use();
+			}
+
+			if (input.inputPressed("pickup") && (activeItem == null) && stamina != 0 && onFallDelay <= 0) {
+				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
+				staminaRecharge = 0;
+
+				pickup();
 			}
 
 			if ((input.inputPressed("INVENTORY") || input.inputPressed("craft")) && activeItem != null) {
-				tryAddToInvOrDrop(activeItem);
-
-				activeItem = null;
-				if (isFishing) {
-					isFishing = false;
-					fishingTicks = maxFishingTicks;
-				}
+				resolveHoldingItem();
 			}
 
 			if (Game.getDisplay() == null) {
@@ -559,44 +556,24 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						PotionItem.applyPotion(this, potionType, false);
 					}
 				}
-
-				if (input.inputPressed("pickup") && (activeItem == null)) {
-					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
-						prevItem = activeItem; // Then save the current item...
-						if (isFishing) {
-							isFishing = false;
-							fishingTicks = maxFishingTicks;
-						}
-						activeItem = new PowerGloveItem(); // and replace it with a power glove.
-					}
-					attack(); // Attack (with the power glove)
-					resolveHeldItem();
-				}
 			}
 
 			if (attackTime > 0) {
 				attackTime--;
-				if (attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 			}
 		}
 	}
 
 	/**
-	 * Removes an held item and places it back into the inventory.
-	 * Looks complicated to so it can handle the powerglove.
+	 * Removes a holding item and places it back into the inventory.
 	 */
-	public void resolveHeldItem() {
-		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
-			if (prevItem != null) { // and you had a previous item that we should care about...
-				tryAddToInvOrDrop(prevItem); // Then add that previous item to your inventory so it isn't lost.
-			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
-		} else
-			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
-
-		prevItem = null; // This is no longer of use.
-
-		if (activeItem instanceof PowerGloveItem) // If, for some odd reason, you are still holding a power glove at this point, then null it because it's useless and shouldn't remain in hand.
-			activeItem = null;
+	public void resolveHoldingItem() {
+		tryAddToInvOrDrop(activeItem);
+		activeItem = null; // Removed
+		if (isFishing) {
+			isFishing = false;
+			fishingTicks = maxFishingTicks;
+		}
 	}
 
 	/**
@@ -606,10 +583,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
 
-		attackDir = dir; // Make the attack direction equal the current direction
-		attackItem = activeItem; // Make attackItem equal activeItem
-
-		attackTime = 10;
+		attackTime = activeItem == null ? 5 : 10;
 
 		// If the interaction between you and an entity is successful, then return.
 		if (attack(getInteractionBox(INTERACT_DIST))) {
@@ -621,67 +595,34 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 			}
 			return;
-		}
+		} // Then there is no entity hitbox blocking the player hitting the tile.
 
-		// If we are holding an item.
-		if (activeItem != null) {
-			boolean done = false;
+		// Attempt to interact with the tile.
+		Point t = getInteractionTile();
 
-			// Attempt to interact with the tile.
-			Point t = getInteractionTile();
+		// If the target coordinates are a valid tile.
+		if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			Tile tile = level.getTile(t.x, t.y);
+			boolean successful = false;
+			if (activeItem != null && activeItem.attackOn(tile, level, t.x, t.y, this, dir))
+				successful = true;
+			if (tile.hurt(level, t.x, t.y, this, activeItem, dir, random.nextInt(baseDamage() + 1)))
+				successful = true;
+			if (successful)
+				Logging.PLAYER.info("Attacked tile {} at ({}, {}, {}) with {}", tile, level.depth, t.x, t.y, activeItem);
 
-			// If the target coordinates are a valid tile.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
-
-				// Get any entities (except dropped items and particles) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
-
-				// If there are no other entities than us on the tile.
-				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
-					Tile tile = level.getTile(t.x, t.y);
-
-					// If the item successfully interacts with the target tile.
-					if (activeItem.attackOn(tile, level, t.x, t.y, this, attackDir)) {
-						done = true;
-
-						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.hurt(level, t.x, t.y, this, activeItem, attackDir, 1)) {
-						done = true;
-					}
-				}
-
-				if (activeItem.isDepleted()) {
-					// If the activeItem has 0 items left, then "destroy" it.
-					activeItem = null;
-					if (isFishing) {
-						isFishing = false;
-						fishingTicks = maxFishingTicks;
-					}
+			if (successful && activeItem.isDepleted()) {
+				// If the activeItem has 0 items left, then "destroy" it.
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
 				}
 			}
-			if (done) return; // Skip the rest if interaction was handled
-		}
-
-		if (activeItem == null) { // If there is no active item, OR if the item can be used to attack...
-			attackTime = 5;
-			// Attacks the enemy in the appropriate direction.
-			boolean used = attack(getInteractionBox(ATTACK_DIST));
-
-			// Attempts to hurt the tile in the appropriate direction.
-			Point t = getInteractionTile();
-
-			// Check if tile is in bounds of the map.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
-				Tile tile = level.getTile(t.x, t.y);
-				used = tile.hurt(level, t.x, t.y, this, null, attackDir, random.nextInt(3) + 1) || used;
-			}
-
-			if (used && activeItem instanceof ToolItem)
-				((ToolItem) activeItem).payDurability();
 		}
 	}
 
-	protected void interact() {
+	protected void use() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
 
@@ -690,57 +631,52 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			fishingTicks = maxFishingTicks;
 		}
 
-		if (activeItem != null && !activeItem.interactsWithWorld()) {
-			if (activeItem.interactOn(Tiles.get((short) 0), level, x >> 4, y >> 4, this, attackDir)) {
-				if (activeItem.isDepleted()) {
-					activeItem = null;
-					if (isFishing) {
-						isFishing = false;
-						fishingTicks = maxFishingTicks;
-					}
-				}
-				return;
-			}
-		}
-
 		// If the interaction between you and an entity is successful, then return.
 		if (use(getInteractionBox(INTERACT_DIST))) return;
 
-		// If we are holding an item.
-		if (activeItem != null) {
-			boolean done = false;
+		// Attempt to interact with the tile.
+		Point t = getInteractionTile();
 
+		// If the target coordinates are a valid tile.
+		if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			Tile tile = level.getTile(t.x, t.y);
+			boolean successful = false;
+			if (activeItem.useOn(tile, level, t.x, t.y, this, dir))
+				successful = true;
+			if (tile.use(level, t.x, t.y, this, activeItem, dir))
+				successful = true;
+			if (successful)
+				Logging.PLAYER.info("Used item {} on tile ({}, {}, {}).", activeItem, level.depth, t.x, t.y);
+
+			if (successful && activeItem.isDepleted()) {
+				// If the activeItem has 0 items left, then "destroy" it.
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
+				}
+			}
+		}
+	}
+
+	protected void pickup() {
+		List<Entity> entities = level.getEntitiesInRect(getInteractionBox(INTERACT_DIST)); // Gets the entities within the 4 points
+		boolean blocked = false;
+		for (Entity e : entities)
+			if (e != this) {
+				blocked |= !(e instanceof ItemEntity || e instanceof Particle);
+				if ((activeItem = e.take(this)) != null)
+					return;
+			}
+
+		if (!blocked) {
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
 
 			// If the target coordinates are a valid tile.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
-
-				// Get any entities (except dropped items and particles) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
-
-				// If there are no other entities than us on the tile.
-				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
-					Tile tile = level.getTile(t.x, t.y);
-
-					// If the item successfully interacts with the target tile.
-					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
-						done = true;
-
-						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.use(level, t.x, t.y, this, activeItem, attackDir)){
-						done = true;
-					}
-				}
-
-				if (done && activeItem.isDepleted()) {
-					// If the activeItem has 0 items left, then "destroy" it.
-					activeItem = null;
-					if (isFishing) {
-						isFishing = false;
-						fishingTicks = maxFishingTicks;
-					}
-				}
+				Tile tile = level.getTile(t.x, t.y);
+				activeItem = tile.take(level, t.x, t.y, this);
 			}
 		}
 	}
@@ -828,8 +764,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private boolean use(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area); // Gets the entities within the 4 points
 		for (Entity e : entities) {
-			if (e instanceof Furniture && e.use(this, activeItem, dir))
-				return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			if (e != this && e.use(this, activeItem, dir))
+				return true; // If the entity is not the player, then call it's use method, and return the result.
 		}
 		return false;
 	}
@@ -837,14 +773,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** called by other attack method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean attack(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
-		boolean sucessful = false;
+		boolean blocked = false;
 		for (Entity e : entities) {
-			if (e != this && e.isAttackable(this, activeItem, attackDir) &&
+			if (e != this && e.isAttackable(this, activeItem, dir) &&
 				!e.isInvulnerableTo(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem))) {
-				sucessful |= attack(e);
+				blocked |= !(e instanceof ItemEntity || e instanceof Particle);
+				if (attack(e)) {
+					Logging.PLAYER.info("Attacked {} with {}.", e, activeItem);
+				}
 			}
 		}
-		return sucessful;
+		// Returns whether there is any entity hitbox blocking interaction on target tile
+		return blocked;
 	}
 
 	@Override
@@ -853,7 +793,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem != null && activeItem instanceof ToolItem) {
 			dmg += ((ToolItem) activeItem).getAttackDamageBonus(entity); // Sword/Axe are more effective at dealing damage.
 		}
-		return entity.hurt(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem), attackDir, dmg);
+		return entity.hurt(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem), dir, dmg);
 	}
 
 	/**
@@ -937,33 +877,33 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders slashes:
 		if (attackTime > 0) {
-			switch (attackDir) {
+			switch (dir) {
 				case UP:  // If currently attacking upwards...
 					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
 					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						screen.render(xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
+					if (activeItem != null) { // If the player had an item when they last attacked...
+						screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
 					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
 					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
+					if (activeItem != null) {
+						screen.render(xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
 					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
 					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
+					if (activeItem != null) {
+						screen.render(xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
 					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
 					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
+					if (activeItem != null) {
+						screen.render(xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
 					}
 					break;
 				case NONE:

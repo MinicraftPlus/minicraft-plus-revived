@@ -196,7 +196,7 @@ public abstract class Tile {
 
 	/**
 	 * @deprecated Similar to {@link #getData(String)}. Also, param {@code thisData} is unused.
-	 * 	The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
+	 * 	The current only usage is in {@link minicraft.item.TileItem#useOn(Tile, Level, int, int, Player, Direction)}.
 	 */
 	@Deprecated
 	public boolean matches(int thisData, String tileInfo) {

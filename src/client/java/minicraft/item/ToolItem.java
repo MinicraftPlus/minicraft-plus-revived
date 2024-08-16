@@ -84,12 +84,7 @@ public class ToolItem extends Item {
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
-		return type != ToolType.Bow;
-	}
-
-	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Inventory inventory = player.getInventory();
 		// Fire a bow if the player has the stamina and an arrow.
 		if (type == ToolType.Bow && player.payStamina(1) && inventory.count(Items.arrowItem) > 0) {
@@ -100,7 +95,7 @@ public class ToolItem extends Item {
 			return true;
 		}
 
-		return super.interactOn(tile, level, xt, yt, player, attackDir);
+		return super.useOn(tile, level, xt, yt, player, attackDir);
 	}
 
 	public boolean payDurability() {
