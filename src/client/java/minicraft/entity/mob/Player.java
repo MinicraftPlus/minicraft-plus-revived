@@ -90,7 +90,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	private final Inventory inventory;
 
-	public Item activeItem;
+	public @Nullable Item activeItem;
 
 	int attackTime;
 
@@ -568,11 +568,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Removes a holding item and places it back into the inventory.
 	 */
 	public void resolveHoldingItem() {
-		tryAddToInvOrDrop(activeItem);
-		activeItem = null; // Removed
-		if (isFishing) {
-			isFishing = false;
-			fishingTicks = maxFishingTicks;
+		if (activeItem != null) {
+			tryAddToInvOrDrop(activeItem);
+			activeItem = null; // Removed
+			if (isFishing) {
+				isFishing = false;
+				fishingTicks = maxFishingTicks;
+			}
 		}
 	}
 
@@ -582,12 +584,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
-
 		attackTime = activeItem == null ? 5 : 10;
 
 		// If the interaction between you and an entity is successful, then return.
 		if (attack(getInteractionBox(INTERACT_DIST))) {
-			if (activeItem.isDepleted()) {
+			if (activeItem != null && activeItem.isDepleted()) {
 				activeItem = null;
 				if (isFishing) {
 					isFishing = false;
@@ -611,7 +612,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (successful)
 				Logging.PLAYER.info("Attacked tile {} at ({}, {}, {}) with {}", tile, level.depth, t.x, t.y, activeItem);
 
-			if (successful && activeItem.isDepleted()) {
+			if (successful && activeItem != null && activeItem.isDepleted()) {
 				// If the activeItem has 0 items left, then "destroy" it.
 				activeItem = null;
 				if (isFishing) {
@@ -625,6 +626,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void use() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
+		attackTime = activeItem == null ? 5 : 10;
 
 		if (isFishing) {
 			isFishing = false;
@@ -641,14 +643,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 			Tile tile = level.getTile(t.x, t.y);
 			boolean successful = false;
-			if (activeItem.useOn(tile, level, t.x, t.y, this, dir))
+			if (activeItem != null && activeItem.useOn(tile, level, t.x, t.y, this, dir))
 				successful = true;
 			if (tile.use(level, t.x, t.y, this, activeItem, dir))
 				successful = true;
 			if (successful)
 				Logging.PLAYER.info("Used item {} on tile ({}, {}, {}).", activeItem, level.depth, t.x, t.y);
 
-			if (successful && activeItem.isDepleted()) {
+			if (successful && activeItem != null && activeItem.isDepleted()) {
 				// If the activeItem has 0 items left, then "destroy" it.
 				activeItem = null;
 				if (isFishing) {
@@ -912,7 +914,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Renders the fishing rods when fishing
-		if (isFishing) {
+		if (isFishing && activeItem != null) {
 			switch (dir) {
 				case UP:
 					screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
@@ -945,6 +947,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		boolean successful = false; // If there is any item successfully added to the player
 		boolean remove = false; // Whether to remove the item entity (when empty)
 		if (itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
+			assert activeItem != null;
 			int toAdd = Math.min(((StackableItem) activeItem).count + ((StackableItem) itemEntity.item).count, ((StackableItem) activeItem).maxCount)
 				- ((StackableItem) activeItem).count;
 			if (toAdd > 0) {
