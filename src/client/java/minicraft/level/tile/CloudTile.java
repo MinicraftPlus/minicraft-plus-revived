@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -38,7 +39,14 @@ public class CloudTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
-		// We don't want the tile to break when attacked with just anything, even in creative mode
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.setTile(x, y, Tiles.get("Infinite Fall")); // Would allow you to shovel cloud, I think.
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3, Items.get("Cloud"));
+			return true;
+		}
+
+		// We don't want the tile to break when attacked with just anything
 		if (source instanceof Player && item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel && ((Player) source).payStamina(5)) {

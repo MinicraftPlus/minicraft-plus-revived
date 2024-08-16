@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -61,6 +62,13 @@ public class DoorTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.setTile(x, y, Tiles.get((short) (id + 3))); // Will get the corresponding floor tile.
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get(type.name() + " Door"));
+			return true;
+		}
+
 		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {

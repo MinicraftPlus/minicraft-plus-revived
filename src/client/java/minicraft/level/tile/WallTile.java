@@ -78,7 +78,6 @@ public class WallTile extends Tile {
 					}
 				} else {
 					Game.notifications.add(obrickMsg);
-					handleDamage(level, x, y, source, item, 0);
 				}
 			}
 		}

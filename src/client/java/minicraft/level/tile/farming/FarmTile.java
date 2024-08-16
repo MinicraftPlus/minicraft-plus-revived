@@ -1,5 +1,6 @@
 package minicraft.level.tile.farming;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -11,6 +12,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -42,6 +44,13 @@ public class FarmTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.setTile(x, y, Tiles.get("Hole"));
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Dirt"));
+			return true;
+		}
+		
 		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {

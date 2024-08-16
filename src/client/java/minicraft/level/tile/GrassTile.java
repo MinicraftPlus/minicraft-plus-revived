@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -63,6 +64,15 @@ public class GrassTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.setTile(x, y, Tiles.get("Dirt"));
+			Sound.play("monsterhurt");
+			if (random.nextInt(5) == 0) { // 20% chance to drop Grass seeds
+				level.dropItem((x << 4) + 8, (y << 4) + 8, 1, Items.get("Grass Seeds"));
+			}
+			return true;
+		}
+
 		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {

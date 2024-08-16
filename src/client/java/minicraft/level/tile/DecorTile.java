@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -67,6 +68,31 @@ public class DecorTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			if (level.depth == 1) {
+				level.setTile(x, y, Tiles.get("Cloud"));
+			} else {
+				level.setTile(x, y, Tiles.get("Hole"));
+			}
+			Item drop;
+			switch (thisType) {
+				case ORNATE_STONE:
+					drop = Items.get("Ornate Stone");
+					break;
+				case ORNATE_OBSIDIAN:
+					drop = Items.get("Ornate Obsidian");
+					break;
+				case ORNATE_WOOD:
+					drop = Items.get("Ornate Wood");
+					break;
+				default:
+					throw new IllegalStateException("Unexpected value: " + thisType);
+			}
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, drop);
+			return true;
+		}
+
 		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == mType.getRequiredTool()) {

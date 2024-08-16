@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -42,6 +43,26 @@ public class FloorTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			if (level.depth == 1) {
+				level.setTile(x, y, Tiles.get("Cloud"));
+			} else {
+				level.setTile(x, y, Tiles.get("Hole"));
+			}
+			Item drop;
+			switch (type) {
+				case Wood:
+					drop = Items.get("Plank");
+					break;
+				default:
+					drop = Items.get(type.name() + " Brick");
+					break;
+			}
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, drop);
+			return true;
+		}
+
 		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {

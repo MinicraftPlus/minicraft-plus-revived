@@ -64,6 +64,15 @@ public class SignTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			int data = level.getData(x, y);
+			level.setTile(x, y, Tiles.get((short) data));
+			SignDisplay.removeSign(level.depth, x, y);
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Sign"));
+			return true;
+		}
+
 		if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
 			int data = level.getData(x, y);
 			level.setTile(x, y, Tiles.get((short) data));
