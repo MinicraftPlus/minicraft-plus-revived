@@ -10,6 +10,7 @@ import minicraft.level.tile.Tile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class EntitySummonItem extends StackableItem {
@@ -19,16 +20,16 @@ public class EntitySummonItem extends StackableItem {
 		return items;
 	}
 
-	private final @NotNull Supplier<Entity> entitySupplier;
+	private final @NotNull Function<Direction, Entity> entitySupplier;
 
-	protected EntitySummonItem(String name, SpriteLinker.LinkedSprite sprite, @NotNull Supplier<Entity> entitySupplier) {
+	protected EntitySummonItem(String name, SpriteLinker.LinkedSprite sprite, @NotNull Function<Direction, Entity> entitySupplier) {
 		super(name, sprite);
 		this.entitySupplier = entitySupplier;
 	}
 
 	@Override
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		level.add(entitySupplier.get(), player.x + 8 * attackDir.getX(), player.y + 8 * attackDir.getY());
+		level.add(entitySupplier.apply(attackDir), player.x + 8 * attackDir.getX(), player.y + 8 * attackDir.getY());
 		return true;
 	}
 

@@ -13,6 +13,7 @@ import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import minicraft.util.Vector2;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Boat extends Entity implements PlayerRideable {
@@ -20,10 +21,11 @@ public class Boat extends Entity implements PlayerRideable {
 
 	private @Nullable Entity passenger;
 
-	private Direction dir = Direction.UP;
+	private @NotNull Direction dir;
 
-	public Boat() {
+	public Boat(@NotNull Direction dir) {
 		super(5, 5);
+		this.dir = dir;
 	}
 
 	@Override
