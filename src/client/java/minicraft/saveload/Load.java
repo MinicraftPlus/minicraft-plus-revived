@@ -838,7 +838,7 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));
 			if (worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount);
+				player.getInventory().add(Items.get("arrow"), arrowCount).forEach(deathChest.getInventory()::add);
 		}
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
@@ -1009,11 +1009,7 @@ public class Load {
 	}
 
 	private void loadItem(Inventory inventory, Item item) {
-		int total = 1;
-		if (item instanceof StackableItem) total = ((StackableItem) item).count;
-		int loaded = inventory.add(item);
-
-		if (loaded < total) {
+		if (inventory.add(item) != null) {
 			deathChest.getInventory().add(item.copy());
 		}
 	}
