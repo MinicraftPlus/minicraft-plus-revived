@@ -20,14 +20,18 @@ public class TallGrassTile extends Tile {
 	private static final int NUM_VARIANTS = 2;
 	private static final SpriteAnimation[] SPRITES = new SpriteAnimation[] {
 		new SpriteAnimation(SpriteLinker.SpriteType.Tile, "tall_grass_variant0")
-			.setConnectChecker((tile, side) -> tile instanceof TallGrassTile),
+			.setConnectionChecker((level, x, y, tile, side) -> tile instanceof TallGrassTile),
 		new SpriteAnimation(SpriteLinker.SpriteType.Tile, "tall_grass_variant1")
-			.setConnectChecker((tile, side) -> tile instanceof TallGrassTile)
+			.setConnectionChecker((level, x, t, tile, side) -> tile instanceof TallGrassTile)
 	};
 
 	protected TallGrassTile() {
 		super("Tall Grass", null);
-		connectsToGrass = true;
+	}
+
+	@Override
+	public boolean connectsToGrass(Level level, int x, int y) {
+		return true;
 	}
 
 	public static short getRandomData(Random random) {
