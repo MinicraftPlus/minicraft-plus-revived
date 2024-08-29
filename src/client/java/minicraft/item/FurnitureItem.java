@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Cauldron;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Composter;
 import minicraft.entity.furniture.Crafter;
@@ -64,6 +65,7 @@ public class FurnitureItem extends Item {
 
 		items.add(new FurnitureItem(new Tnt()));
 		items.add(new FurnitureItem(new Composter()));
+		items.add(new FurnitureItem(new Cauldron()));
 
 		return items;
 	}
