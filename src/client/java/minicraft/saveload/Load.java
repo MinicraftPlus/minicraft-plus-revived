@@ -965,8 +965,8 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
-			if (name.startsWith("FLOWER"))
-				name = name.replace("FLOWER", "Oxeye Daisy");
+			if (name.startsWith("Flower"))
+				name = name.replace("Flower", "Oxeye Daisy");
 		}
 
 		return name;
