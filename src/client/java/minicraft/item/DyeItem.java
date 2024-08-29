@@ -1,6 +1,6 @@
 package minicraft.item;
 
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.util.MyUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +12,9 @@ public class DyeItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		for (DyeColor color : DyeColor.values()) {
-			items.add(new DyeItem(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Dye", new SpriteLinker.LinkedSprite(
-				SpriteLinker.SpriteType.Item, color.toString().toLowerCase() + "_dye"), color));
+			items.add(new DyeItem(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Dye",
+				new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Item, color.toString().toLowerCase() + "_dye")
+					.createSpriteLink(), color));
 		}
 
 		return items;
@@ -21,7 +22,7 @@ public class DyeItem extends StackableItem {
 
 	public final DyeColor color;
 
-	protected DyeItem(String name, SpriteLinker.LinkedSprite sprite, DyeColor color) {
+	protected DyeItem(String name, SpriteManager.SpriteLink sprite, DyeColor color) {
 		super(name, sprite);
 		this.color = color;
 	}

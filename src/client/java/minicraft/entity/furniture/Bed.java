@@ -16,8 +16,8 @@ import java.util.HashMap;
 
 public class Bed extends Furniture {
 
-	private static final HashMap<DyeItem.DyeColor, LinkedSprite> sprites = new HashMap<>();
-	private static final HashMap<DyeItem.DyeColor, LinkedSprite> itemSprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, SpriteLink> sprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, SpriteLink> itemSprites = new HashMap<>();
 
 	@Override
 	public @NotNull Furniture copy() {

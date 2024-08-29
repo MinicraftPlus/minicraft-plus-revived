@@ -80,25 +80,25 @@ public class TileItem extends StackableItem {
 		}), solidTiles));
 
 		Function<FlowerTile.FlowerVariant, TileModel.TileDataGetter> flowerModelGenerator = variant -> (model1, target, level, xt, yt, player, attackDir) -> variant.ordinal();
-		items.add(new TileItem("Rose", new LinkedSprite(SpriteType.Item, "rose"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ROSE)), "grass"));
-		items.add(new TileItem("Oxeye Daisy", new LinkedSprite(SpriteType.Item, "oxeye_daisy"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.OXEYE_DAISY)), "grass"));
-		items.add(new TileItem("Sunflower", new LinkedSprite(SpriteType.Item, "sunflower"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.SUNFLOWER)), "grass"));
-		items.add(new TileItem("Allium", new LinkedSprite(SpriteType.Item, "allium"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ALLIUM)), "grass"));
-		items.add(new TileItem("Blue Orchid", new LinkedSprite(SpriteType.Item, "blue_orchid"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.BLUE_ORCHID)), "grass"));
-		items.add(new TileItem("Cornflower", new LinkedSprite(SpriteType.Item, "cornflower"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.CORNFLOWER)), "grass"));
-		items.add(new TileItem("Dandelion", new LinkedSprite(SpriteType.Item, "dandelion"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.DANDELION)), "grass"));
-		items.add(new TileItem("Hydrangea", new LinkedSprite(SpriteType.Item, "hydrangea"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.HYDRANGEA)), "grass"));
-		items.add(new TileItem("Iris", new LinkedSprite(SpriteType.Item, "iris"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.IRIS)), "grass"));
-		items.add(new TileItem("Orange Tulip", new LinkedSprite(SpriteType.Item, "orange_tulip"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ORANGE_TULIP)), "grass"));
-		items.add(new TileItem("Pink Tulip", new LinkedSprite(SpriteType.Item, "pink_tulip"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PINK_TULIP)), "grass"));
-		items.add(new TileItem("Red Tulip", new LinkedSprite(SpriteType.Item, "red_tulip"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.RED_TULIP)), "grass"));
-		items.add(new TileItem("White Tulip", new LinkedSprite(SpriteType.Item, "white_tulip"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.WHITE_TULIP)), "grass"));
-		items.add(new TileItem("Peony", new LinkedSprite(SpriteType.Item, "peony"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PEONY)), "grass"));
-		items.add(new TileItem("Periwinkle", new LinkedSprite(SpriteType.Item, "periwinkle"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PERIWINKLE)), "grass"));
-		items.add(new TileItem("Pink Lily", new LinkedSprite(SpriteType.Item, "pink_lily"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PINK_LILY)), "grass"));
-		items.add(new TileItem("White Lily", new LinkedSprite(SpriteType.Item, "white_lily"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.WHITE_LILY)), "grass"));
-		items.add(new TileItem("Poppy", new LinkedSprite(SpriteType.Item, "poppy"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.POPPY)), "grass"));
-		items.add(new TileItem("Violet", new LinkedSprite(SpriteType.Item, "violet"), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.VIOLET)), "grass"));
+		items.add(new TileItem("Rose", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "rose").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ROSE)), "grass"));
+		items.add(new TileItem("Oxeye Daisy", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "oxeye_daisy").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.OXEYE_DAISY)), "grass"));
+		items.add(new TileItem("Sunflower", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "sunflower").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.SUNFLOWER)), "grass"));
+		items.add(new TileItem("Allium", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "allium").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ALLIUM)), "grass"));
+		items.add(new TileItem("Blue Orchid", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "blue_orchid").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.BLUE_ORCHID)), "grass"));
+		items.add(new TileItem("Cornflower", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "cornflower").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.CORNFLOWER)), "grass"));
+		items.add(new TileItem("Dandelion", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "dandelion").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.DANDELION)), "grass"));
+		items.add(new TileItem("Hydrangea", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "hydrangea").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.HYDRANGEA)), "grass"));
+		items.add(new TileItem("Iris", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "iris").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.IRIS)), "grass"));
+		items.add(new TileItem("Orange Tulip", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "orange_tulip").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.ORANGE_TULIP)), "grass"));
+		items.add(new TileItem("Pink Tulip", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "pink_tulip").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PINK_TULIP)), "grass"));
+		items.add(new TileItem("Red Tulip", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "red_tulip").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.RED_TULIP)), "grass"));
+		items.add(new TileItem("White Tulip", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "white_tulip").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.WHITE_TULIP)), "grass"));
+		items.add(new TileItem("Peony", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "peony").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PEONY)), "grass"));
+		items.add(new TileItem("Periwinkle", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "periwinkle").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PERIWINKLE)), "grass"));
+		items.add(new TileItem("Pink Lily", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "pink_lily").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.PINK_LILY)), "grass"));
+		items.add(new TileItem("White Lily", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "white_lily").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.WHITE_LILY)), "grass"));
+		items.add(new TileItem("Poppy", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "poppy").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.POPPY)), "grass"));
+		items.add(new TileItem("Violet", new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "violet").createSpriteLink(), new TileModel("flower", flowerModelGenerator.apply(FlowerTile.FlowerVariant.VIOLET)), "grass"));
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", SpriteManager.missingTexture(SpriteType.Item), new TileModel("farmland"), "dirt", "grass", "hole"));
