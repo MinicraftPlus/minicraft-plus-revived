@@ -959,9 +959,14 @@ public class Load {
 				name = name.replace("Potion", "Awkward Potion");
 		}
 
-		if (worldVer.compareTo(new Version("2.2.1-dev1")) < 0) {
+		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
 			if (name.startsWith("Wool"))
 				name = name.replace("Wool", "White Wool");
+		}
+
+		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+			if (name.equalsIgnoreCase("FLOWER"))
+				name = "Oxeye Daisy";
 		}
 
 		return name;
