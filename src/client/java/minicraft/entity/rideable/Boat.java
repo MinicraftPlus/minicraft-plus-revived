@@ -132,7 +132,7 @@ public class Boat extends RideableEntity {
     public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		//Put whatever item the player is holding into their inventory
 		if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem)) {
-			player.getInventory().add(0, player.activeItem);
+			player.getInventory().add(player.activeItem);
 		}
 
 		if (item instanceof ToolItem && playerInBoat == null) {
