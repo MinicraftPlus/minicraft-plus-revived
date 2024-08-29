@@ -755,7 +755,7 @@ public class Load {
 								default:
 									tilename = "White Wool";
 							}
-						} else if (worldVer.compareTo(new Version("2.2.1-dev1")) < 0) {
+						} else if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
 							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
