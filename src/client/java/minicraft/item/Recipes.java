@@ -187,13 +187,13 @@ public class Recipes {
 		loomRecipes.add(new Recipe("magenta Bed_1", "White Bed_1", "magenta dye_1"));
 		loomRecipes.add(new Recipe("orange Bed_1", "White Bed_1", "orange dye_1"));
 
-		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "Lapis_1"));
-		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "Cactus_1"));
-		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "Flower_1"));
-		loomRecipes.add(new Recipe("black clothes_1", "cloth_5", "coal_1"));
-		loomRecipes.add(new Recipe("orange clothes_1", "cloth_5", "rose_1", "Flower_1"));
-		loomRecipes.add(new Recipe("purple clothes_1", "cloth_5", "Lapis_1", "rose_1"));
-		loomRecipes.add(new Recipe("cyan clothes_1", "cloth_5", "Lapis_1", "Cactus_1"));
+		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "blue dye_1"));
+		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "green dye_1"));
+		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "yellow dye_1"));
+		loomRecipes.add(new Recipe("black clothes_1", "cloth_5", "black dye_1"));
+		loomRecipes.add(new Recipe("orange clothes_1", "cloth_5", "orange dye_1"));
+		loomRecipes.add(new Recipe("purple clothes_1", "cloth_5", "purple dye_1"));
+		loomRecipes.add(new Recipe("cyan clothes_1", "cloth_5", "cyan dye_1"));
 		loomRecipes.add(new Recipe("reg clothes_1", "cloth_5"));
 
 		loomRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
@@ -279,12 +279,12 @@ public class Recipes {
 		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurs.
 			Item item = recipe.getProduct();
 			String name = itemNameFixer.apply(item);
-			/*if (item instanceof DyeItem) { TODO
+			if (item instanceof DyeItem) {
 				Map<String, Integer> costs = recipe.getCosts();
 				if (costs.size() == 2 && costs.containsKey("WHITE DYE"))
 					return name + "_from_white_dye";
 				return name;
-			} else*/ if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
+			} else if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
 				if (recipe.getCosts().containsKey("WHITE BED"))
 					return name + "_from_white_bed";
 				return name;
