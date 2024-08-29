@@ -758,7 +758,7 @@ public class Load {
 		}
 
 		boolean signsLoadSucceeded = false;
-		if (new File(location+"signs.json").exists()) {
+		if (new File(location + "signs.json").exists()) {
 			try {
 				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
 				@SuppressWarnings("unused")
@@ -965,8 +965,8 @@ public class Load {
 		}
 
 		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
-			if (name.equalsIgnoreCase("FLOWER"))
-				name = "Oxeye Daisy";
+			if (name.startsWith("FLOWER"))
+				name = name.replace("FLOWER", "Oxeye Daisy");
 		}
 
 		return name;
@@ -1233,15 +1233,24 @@ public class Load {
 			case "Player":
 			case "RemotePlayer":
 				return null;
-			case "Cow": return new Cow();
-			case "Sheep": return new Sheep();
-			case "Pig": return new Pig();
-			case "Zombie": return new Zombie(mobLevel);
-			case "Slime": return new Slime(mobLevel);
-			case "Creeper": return new Creeper(mobLevel);
-			case "Skeleton": return new Skeleton(mobLevel);
-			case "Knight": return new Knight(mobLevel);
-			case "Snake": return new Snake(mobLevel);
+			case "Cow":
+				return new Cow();
+			case "Sheep":
+				return new Sheep();
+			case "Pig":
+				return new Pig();
+			case "Zombie":
+				return new Zombie(mobLevel);
+			case "Slime":
+				return new Slime(mobLevel);
+			case "Creeper":
+				return new Creeper(mobLevel);
+			case "Skeleton":
+				return new Skeleton(mobLevel);
+			case "Knight":
+				return new Knight(mobLevel);
+			case "Snake":
+				return new Snake(mobLevel);
 			case "AirWizard":
 				if (mobLevel > 1) return null;
 				return new AirWizard();
