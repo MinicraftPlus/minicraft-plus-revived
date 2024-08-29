@@ -39,7 +39,7 @@ public class Bed extends Furniture {
 	/**
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
-	public Bed() { this(DyeItem.DyeColor.WHITE); }
+	public Bed() { this(DyeItem.DyeColor.RED); }
 	public Bed(DyeItem.DyeColor color) {
 		super(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Bed", sprites.get(color), itemSprites.get(color), 3, 2);
 		this.color = color;
