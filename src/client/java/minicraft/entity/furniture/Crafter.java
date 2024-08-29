@@ -25,7 +25,9 @@ public class Crafter extends Furniture {
 		Enchanter(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "enchanter").createSpriteLink(),
 			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "enchanter").createSpriteLink(), 7, 2, Recipes.enchantRecipes),
 		Loom(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "loom").createSpriteLink(),
-			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "loom").createSpriteLink(), 7, 2, Recipes.loomRecipes);
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "loom").createSpriteLink(), 7, 2, Recipes.loomRecipes),
+		DyeVat(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "dyevat").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "dyevat").createSpriteLink(), 0, 0, Recipes.dyeVatRecipes);
 
 		public ArrayList<Recipe> recipes;
 		protected SpriteLink sprite;
@@ -51,12 +53,12 @@ public class Crafter extends Furniture {
 	 * @param type What type of crafter this is.
 	 */
 	public Crafter(Crafter.Type type) {
-		super(type.name(), type.sprite, type.itemSprite, type.xr, type.yr);
+		super((type.name().equalsIgnoreCase("DyeVat") ? "Dye Vat" : type.name()), type.sprite, type.itemSprite, type.xr, type.yr);
 		this.type = type;
 	}
 
 	public boolean use(Player player) {
-		Game.setDisplay(new CraftingDisplay(type.recipes, type.name(), player));
+		Game.setDisplay(new CraftingDisplay(type.recipes, (type.name().equalsIgnoreCase("DyeVat") ? "Dye Vat" : type.name()), player));
 		return true;
 	}
 
@@ -67,6 +69,6 @@ public class Crafter extends Furniture {
 
 	@Override
 	public String toString() {
-		return type.name() + getDataPrints();
+		return (type.name().equalsIgnoreCase("DyeVat") ? "Dye Vat" : type.name()) + getDataPrints();
 	}
 }
