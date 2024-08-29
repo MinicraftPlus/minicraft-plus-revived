@@ -63,13 +63,9 @@ public class Initializer extends Game {
 				Localization.isDebugLocaleEnabled = true;
 			} else if (args[i].equalsIgnoreCase("--debug-unloc-tracing")) {
 				Localization.unlocalizedStringTracing = true;
-			} else if (args[i].equalsIgnoreCase("--no-hardware-acceleration")) {
-				enableHardwareAcceleration = false;
 			}
 		}
 		((TinylogLoggingProvider) ProviderRegistry.getLoggingProvider()).init();
-		// Reference: https://stackoverflow.com/a/13832805
-		if (enableHardwareAcceleration) System.setProperty("sun.java2d.opengl", "true");
 
 		FileHandler.determineGameDir(saveDir);
 	}
@@ -199,9 +195,8 @@ public class Initializer extends Game {
 	/**
 	 * Provides a String representation of the provided Throwable's stack trace
 	 * that is extracted via PrintStream.
-	 *
 	 * @param throwable Throwable/Exception from which stack trace is to be
-	 *                  extracted.
+	 * 	extracted.
 	 * @return String with provided Throwable's stack trace.
 	 */
 	public static String getExceptionTrace(final Throwable throwable) {

@@ -3,6 +3,7 @@ package minicraft.saveload;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
@@ -40,6 +41,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.entity.rideable.Boat;
 import minicraft.gfx.Color;
+import minicraft.gfx.Point;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -58,6 +60,7 @@ import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
@@ -78,12 +81,18 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Load {
 
@@ -200,11 +209,11 @@ public class Load {
 	}
 
 	public Load(Version worldVersion) {
-		this(false);
+		this(false, false);
 		worldVer = worldVersion;
 	}
 
-	public Load(boolean loadConfig) {
+	public Load(boolean loadConfig, boolean partialLoad) {
 		if (!loadConfig) return;
 		boolean resave = false;
 
@@ -213,11 +222,11 @@ public class Load {
 
 		// Check if Preferences.json exists. (new version)
 		if (new File(location + "Preferences.json").exists()) {
-			loadPrefs("Preferences");
+			loadPrefs("Preferences", partialLoad);
 
 			// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
-			loadPrefsOld("Preferences");
+			loadPrefsOld("Preferences", partialLoad);
 			Logging.SAVELOAD.info("Upgrading preferences to JSON.");
 			resave = true;
 
@@ -226,6 +235,8 @@ public class Load {
 			Logging.SAVELOAD.warn("No preferences found, creating new file.");
 			resave = true;
 		}
+
+		if (partialLoad) return; // Partial loading only loads partial preferences
 
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
@@ -440,7 +451,7 @@ public class Load {
 		Settings.setIdx("mode", mode);
 	}
 
-	private void loadPrefsOld(String filename) {
+	private void loadPrefsOld(String filename, boolean partialLoad) {
 		loadFromFile(location + filename + extension);
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
 
@@ -453,8 +464,11 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
 
-		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
+		if (partialLoad) return; // Partial loading only loads basic settings.
+
+		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0) {
 			data.remove(0); // Numeral skin indices are replaced.
+		}
 
 		List<String> subdata;
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
@@ -518,7 +532,7 @@ public class Load {
 		}
 	}
 
-	private void loadPrefs(String filename) {
+	private void loadPrefs(String filename, boolean partialLoad) {
 		JSONObject json;
 		try {
 			json = new JSONObject(loadFromFile(location + filename + ".json", false));
@@ -535,6 +549,9 @@ public class Load {
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("fps", json.getInt("fps"));
 		Settings.set("showquests", json.optBoolean("showquests", true));
+		if (json.has("hwa")) Settings.set("hwa", json.getBoolean("hwa")); // Default should have been configured
+
+		if (partialLoad) return; // Partial loading only loads basic settings.
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
@@ -601,7 +618,7 @@ public class Load {
 
 	private void loadWorld(String filename) {
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
-			LoadingDisplay.setMessage(Level.getDepthString(l));
+			LoadingDisplay.setMessage(Level.getDepthString(l), false);
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 
@@ -666,8 +683,7 @@ public class Load {
 						}
 					}
 
-					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -677,6 +693,13 @@ public class Load {
 			Level curLevel = World.levels[lvlidx];
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
+
+			// Tile initialization
+			for (int x = 0; x < curLevel.w; ++x) {
+				for (int y = 0; y < curLevel.h; ++y) {
+					Tiles.get(curLevel.tiles[x + y * curLevel.w]).onTileSet(curLevel, x, y);
+				}
+			}
 
 			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
@@ -729,6 +752,48 @@ public class Load {
 			AdvancementElement.resetRecipeUnlockingElements();
 			QuestsDisplay.resetGameQuests();
 		}
+
+		boolean signsLoadSucceeded = false;
+		if (new File(location+"signs.json").exists()) {
+			try {
+				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
+				@SuppressWarnings("unused")
+				Version dataVersion = new Version(fileObj.getString("Version"));
+				JSONArray dataObj = fileObj.getJSONArray("signs");
+				HashMap<Map.Entry<Integer, Point>, List<String>> signTexts = new HashMap<>();
+				for (int i = 0; i < dataObj.length(); i++) {
+					JSONObject signObj = dataObj.getJSONObject(i);
+					signTexts.put(
+						new AbstractMap.SimpleImmutableEntry<>(signObj.getInt("level"), new Point(signObj.getInt("x"), signObj.getInt("y"))),
+						signObj.getJSONArray("lines").toList().stream().map(e -> (String) e).collect(Collectors.toList())
+					);
+				}
+
+				SignDisplay.loadSignTexts(signTexts);
+				signsLoadSucceeded = true;
+			} catch (IOException e) {
+				Logging.SAVELOAD.error(e, "Unable to load signs.json, reset sign data instead.");
+			}
+		} else {
+			Logging.SAVELOAD.debug("signs.json not found, reset sign data instead.");
+		}
+
+		if (!signsLoadSucceeded) {
+			SignDisplay.resetSignTexts();
+		}
+	}
+
+	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
+
+	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+		Matcher matcher;
+		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
+			tiles[idx] = 57; // ID of TORCH tile
+			data[idx] = Tiles.get(matcher.group(1)).id;
+		} else {
+			tiles[idx] = Tiles.get(tileName).id;
+			data[idx] = Short.parseShort(tileData);
+		}
 	}
 
 	public void loadPlayer(String filename, Player player) {
@@ -765,7 +830,7 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));
 			if (worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount);
+				player.getInventory().add(Items.get("arrow"), arrowCount).forEach(deathChest.getInventory()::add);
 		}
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
@@ -931,11 +996,7 @@ public class Load {
 	}
 
 	private void loadItem(Inventory inventory, Item item) {
-		int total = 1;
-		if (item instanceof StackableItem) total = ((StackableItem) item).count;
-		int loaded = inventory.add(item);
-
-		if (loaded < total) {
+		if (inventory.add(item) != null) {
 			deathChest.getInventory().add(item.copy());
 		}
 	}
@@ -1177,7 +1238,7 @@ public class Load {
 			case "DeathChest":
 				return new DeathChest();
 			case "DungeonChest":
-				return new DungeonChest(false);
+				return new DungeonChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":

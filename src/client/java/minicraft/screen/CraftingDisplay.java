@@ -65,7 +65,7 @@ public class CraftingDisplay extends Display {
 		itemCountMenu.setPositioning(new Point(recipeMenu.getBounds().getRight() + MinicraftImage.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 		costsMenu.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 
-		menus = new Menu[]{recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
+		menus = new Menu[] { recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu() };
 		refreshData();
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();
@@ -130,7 +130,7 @@ public class CraftingDisplay extends Display {
 			try {
 				onScreenKeyboardMenu.tick(input);
 			} catch (OnScreenKeyboardMenu.OnScreenKeyboardMenuTickActionCompleted |
-					 OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
+			         OnScreenKeyboardMenu.OnScreenKeyboardMenuBackspaceButtonActed e) {
 				acted = true;
 			}
 

@@ -47,7 +47,6 @@ public class Arrow extends Entity implements ClientTickable {
 
 	/**
 	 * Generates information about the arrow.
-	 *
 	 * @return string representation of owner, xdir, ydir and damage.
 	 */
 	public String getData() {
@@ -76,9 +75,9 @@ public class Arrow extends Entity implements ClientTickable {
 				mob.hurt(owner, damage, dir); //normal hurting to other mobs
 			}
 
-			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-				&& !level.getTile(x / 16, y / 16).connectsToFluid(level, x / 16, y / 16)
-				&& level.getTile(x / 16, y / 16).id != 16) {
+			if (!level.getTile(x >> 4, y >> 4).mayPass(level, x >> 4, y >> 4, this)
+				&& !level.getTile(x >> 4, y >> 4).connectsToFluid(level, x >> 4, y >> 4)
+				&& level.getTile(x >> 4, y >> 4).id != 16) {
 				this.remove();
 				try {
 					sprite.destroy();
