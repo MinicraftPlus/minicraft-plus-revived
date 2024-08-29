@@ -11,6 +11,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.FireSpark;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Spark;
+import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.DeathChest;
@@ -420,9 +421,7 @@ public class Save {
 				extradata.append(":").append(((EnemyMob) m).lvl);
 			else if (e instanceof Sheep)
 				extradata.append(":").append(((Sheep) m).cut); // Saves if the sheep is cut. If not, we could reload the save and the wool would regenerate.
-		}
-
-		if (e instanceof Chest) {
+		} else if (e instanceof Chest) {
 			Chest chest = (Chest) e;
 
 			for (int ii = 0; ii < chest.getInventory().invSize(); ii++) {
@@ -432,25 +431,19 @@ public class Save {
 
 			if (chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
 			if (chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked());
-		}
-
-		if (e instanceof Spawner) {
+		} else if (e instanceof Spawner) {
 			Spawner egg = (Spawner) e;
 			String mobname = egg.mob.getClass().getName();
 			mobname = mobname.substring(mobname.lastIndexOf(".") + 1);
 			extradata.append(":").append(mobname).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
-		}
-
-		if (e instanceof Lantern) {
+		} else if (e instanceof Lantern) {
 			extradata.append(":").append(((Lantern) e).type.ordinal());
-		}
-
-		if (e instanceof Crafter) {
+		} else if (e instanceof Crafter) {
 			name = ((Crafter) e).type.name();
-		}
-
-		if (e instanceof KnightStatue) {
+		} else if (e instanceof KnightStatue) {
 			extradata.append(":").append(((KnightStatue) e).getBossHealth());
+		} else if (e instanceof Bed) {
+			name = ((Bed) e).name;
 		}
 
 		if (!isLocalSave) {

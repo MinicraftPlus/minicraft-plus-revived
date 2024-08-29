@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
+import minicraft.entity.furniture.Cauldron;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import org.intellij.lang.annotations.MagicConstant;
@@ -126,9 +127,10 @@ public class Screen {
 					int col = sheet.pixels[toffs + sx + sy * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 					if (col >> 24 != 0) { // if not transparent
 						int index = (xp + x) + (yp + y) * w;
-						if (whiteTint != -1 && col == 0x1FFFFFF) {
+						boolean whiteTintAva = (col >> 24) == 1 && ((col >> 16) & 0xFF) == ((col >> 8) & 0xFF) && ((col >> 8) & 0xFF) == (col & 0xFF);
+						if (whiteTint != -1 && whiteTintAva) {
 							// If this is white, write the whiteTint over it
-							pixels[index] = Color.upgrade(whiteTint);
+							pixels[index] = Cauldron.combineTransparentColor((col & 0xFF) / 255D, whiteTint, 0);
 						} else {
 							// Inserts the colors into the image
 							if (fullBright) {

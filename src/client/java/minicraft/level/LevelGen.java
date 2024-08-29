@@ -3,6 +3,7 @@ package minicraft.level;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
+import minicraft.level.tile.FlowerTile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
@@ -422,14 +423,14 @@ public class LevelGen {
 		for (int i = 0; i < w * h / 400; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
-			int col = random.nextInt(4);
+			int col = random.nextInt(4) * random.nextInt(4);
 			for (int j = 0; j < 30; j++) {
 				int xx = x + random.nextInt(5) - random.nextInt(5);
 				int yy = y + random.nextInt(5) - random.nextInt(5);
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w] = (short) (col + random.nextInt(4) * 16); // Data determines which way the flower faces
+						data[xx + yy * w] = (short) (col + random.nextInt(3)); // Data determines what the flower is
 					}
 				}
 			}
