@@ -60,6 +60,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("plank_2", "Wood_1"));
+		workbenchRecipes.add(new Recipe("Ornate Wood_1", "Wood_1"));
 		workbenchRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Wood Door_1", "plank_5"));
 		workbenchRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
