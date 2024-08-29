@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.entity.furniture.Bed;
+import minicraft.level.tile.FlowerTile;
 import minicraft.saveload.Save;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +31,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -269,6 +271,7 @@ public class Recipes {
 		recipes.addAll(enchantRecipes);
 		recipes.addAll(craftRecipes);
 		recipes.addAll(loomRecipes);
+		recipes.addAll(dyeVatRecipes);
 		HashMap<String, Recipe> recipeMap = new HashMap<>();
 		HashMap<String, HashSet<Recipe>> duplicatedRecipes = new HashMap<>();
 		Function<Item, String> itemNameFixer = item -> {
@@ -277,14 +280,29 @@ public class Recipes {
 				item instanceof ToolItem ? name.replaceAll("(?i)wood", "wooden").replaceAll("(?i)rock", "stone") : name)
 				.toLowerCase().replace(' ', '_');
 		};
+		String[] flowerNames = Arrays.stream(FlowerTile.FlowerVariant.values()).map(FlowerTile.FlowerVariant::getName).toArray(String[]::new);
+		HashMap<Recipe, String> resolvedRecipes = new HashMap<>(); // Directly hardcoded
+		resolvedRecipes.put(new Recipe("light gray dye_2", "white dye_1", "gray dye_1"), "light_gray_dye_from_gray_white_dye");
+		resolvedRecipes.put(new Recipe("light gray dye_2", "white dye_1", "black dye_1"), "light_gray_dye_from_black_white_dye");
+		resolvedRecipes.put(new Recipe("magenta dye_2", "purple dye_1", "pink dye_1"), "magenta_dye_from_purple_and_pink");
+		resolvedRecipes.put(new Recipe("magenta dye_4", "red dye_2", "white dye_1", "blue dye_1"), "magenta_dye_from_blue_red_white_dye");
+		resolvedRecipes.put(new Recipe("magenta dye_4", "pink dye_1", "red dye_1", "blue dye_1"), "magenta_dye_from_blue_red_pink");
 		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurs.
 			Item item = recipe.getProduct();
 			String name = itemNameFixer.apply(item);
+			String resolved;
+			if ((resolved = resolvedRecipes.get(recipe)) != null) return resolved;
 			if (item instanceof DyeItem) {
 				Map<String, Integer> costs = recipe.getCosts();
-				if (costs.size() == 2 && costs.containsKey("WHITE DYE"))
+				if (costs.size() == 2 && costs.containsKey("WHITE DYE") &&
+					costs.keySet().stream().filter(c -> c.endsWith("DYE")).count() == 1)
 					return name + "_from_white_dye";
-				return name;
+				if (costs.size() == 1) {
+					String cost = costs.keySet().iterator().next();
+					if (Arrays.stream(flowerNames).anyMatch(n -> n.equalsIgnoreCase(cost))) {
+						return name + "_from_" + cost.toLowerCase().replace(' ', '_');
+					}
+				}
 			} else if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
 				if (recipe.getCosts().containsKey("WHITE BED"))
 					return name + "_from_white_bed";

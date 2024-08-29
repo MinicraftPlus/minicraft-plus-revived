@@ -188,7 +188,7 @@
           "items": [
             {
               "items": [
-                "BLACK Wool"
+                "Black Wool"
               ]
             }
           ]
@@ -216,9 +216,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BLACK Bed_1": [
+        "Black Bed_1": [
           "Wood_5",
-          "BLACK Wool_3"
+          "Black Wool_3"
         ]
       }
     }
@@ -230,7 +230,7 @@
           "items": [
             {
               "items": [
-                "BLACK Dye"
+                "Black Dye"
               ]
             }
           ]
@@ -242,7 +242,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -258,9 +258,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BLACK Bed_1": [
-          "WHITE Bed_1",
-          "BLACK Dye_1"
+        "Black Bed_1": [
+          "White Bed_1",
+          "Black Dye_1"
         ]
       }
     }
@@ -272,7 +272,7 @@
           "items": [
             {
               "items": [
-                "BLACK Dye"
+                "Black Dye"
               ]
             }
           ]
@@ -302,7 +302,7 @@
       "recipes": {
         "Black Clothes_1": [
           "Cloth_5",
-          "BLACK Dye_1"
+          "Black Dye_1"
         ]
       }
     }
@@ -329,7 +329,7 @@
     ],
     "rewards": {
       "recipes": {
-        "BLACK Dye_1": [
+        "Black Dye_1": [
           "Coal_1"
         ]
       }
@@ -342,7 +342,7 @@
           "items": [
             {
               "items": [
-                "BLACK Dye"
+                "Black Dye"
               ]
             }
           ]
@@ -354,7 +354,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -370,9 +370,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BLACK Wool_1": [
-          "BLACK Dye_1",
-          "WHITE Wool_1"
+        "Black Wool_1": [
+          "Black Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -384,7 +384,7 @@
           "items": [
             {
               "items": [
-                "BLUE Wool"
+                "Blue Wool"
               ]
             }
           ]
@@ -412,9 +412,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BLUE Bed_1": [
+        "Blue Bed_1": [
           "Wood_5",
-          "BLUE Wool_3"
+          "Blue Wool_3"
         ]
       }
     }
@@ -426,7 +426,7 @@
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -438,7 +438,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -454,9 +454,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BLUE Bed_1": [
-          "BLUE Dye_1",
-          "WHITE Bed_1"
+        "Blue Bed_1": [
+          "Blue Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -468,7 +468,7 @@
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -497,8 +497,36 @@
     "rewards": {
       "recipes": {
         "Blue Clothes_1": [
-          "BLUE Dye_1",
+          "Blue Dye_1",
           "Cloth_5"
+        ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.blue_dye": {
+    "criteria": {
+      "has_lapis": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Lapis"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      }
+    },
+    "requirements": [
+      [
+        "has_lapis"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Blue Dye_1": [
+          "Lapis_1"
         ]
       }
     }
@@ -525,7 +553,7 @@
     ],
     "rewards": {
       "recipes": {
-        "BLUE Dye_1": [
+        "Blue Dye_1": [
           "Cornflower_1"
         ]
       }
@@ -553,36 +581,8 @@
     ],
     "rewards": {
       "recipes": {
-        "BLUE Dye_1": [
+        "Blue Dye_1": [
           "Iris_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.blue_dye_from_lapis": {
-    "criteria": {
-      "has_lapis": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "Lapis"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      }
-    },
-    "requirements": [
-      [
-        "has_lapis"
-      ]
-    ],
-    "rewards": {
-      "recipes": {
-        "BLUE Dye_1": [
-          "Lapis_1"
         ]
       }
     }
@@ -594,7 +594,7 @@
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -606,7 +606,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -622,9 +622,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BLUE Wool_1": [
-          "BLUE Dye_1",
-          "WHITE Wool_1"
+        "Blue Wool_1": [
+          "Blue Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -664,7 +664,7 @@
           "items": [
             {
               "items": [
-                "BROWN Wool"
+                "Brown Wool"
               ]
             }
           ]
@@ -692,8 +692,8 @@
     ],
     "rewards": {
       "recipes": {
-        "BROWN Bed_1": [
-          "BROWN Wool_3",
+        "Brown Bed_1": [
+          "Brown Wool_3",
           "Wood_5"
         ]
       }
@@ -706,7 +706,7 @@
           "items": [
             {
               "items": [
-                "BROWN Dye"
+                "Brown Dye"
               ]
             }
           ]
@@ -718,7 +718,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -734,9 +734,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BROWN Bed_1": [
-          "WHITE Bed_1",
-          "BROWN Dye_1"
+        "Brown Bed_1": [
+          "White Bed_1",
+          "Brown Dye_1"
         ]
       }
     }
@@ -748,7 +748,7 @@
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "Green Dye"
               ]
             }
           ]
@@ -760,7 +760,7 @@
           "items": [
             {
               "items": [
-                "RED Dye"
+                "Red Dye"
               ]
             }
           ]
@@ -776,9 +776,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BROWN Dye_2": [
-          "GREEN Dye_1",
-          "RED Dye_1"
+        "Brown Dye_2": [
+          "Green Dye_1",
+          "Red Dye_1"
         ]
       }
     }
@@ -790,7 +790,7 @@
           "items": [
             {
               "items": [
-                "BROWN Dye"
+                "Brown Dye"
               ]
             }
           ]
@@ -802,7 +802,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -818,9 +818,9 @@
     ],
     "rewards": {
       "recipes": {
-        "BROWN Wool_1": [
-          "BROWN Dye_1",
-          "WHITE Wool_1"
+        "Brown Wool_1": [
+          "Brown Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -944,7 +944,7 @@
           "items": [
             {
               "items": [
-                "CYAN Wool"
+                "Cyan Wool"
               ]
             }
           ]
@@ -972,9 +972,9 @@
     ],
     "rewards": {
       "recipes": {
-        "CYAN Bed_1": [
+        "Cyan Bed_1": [
           "Wood_5",
-          "CYAN Wool_3"
+          "Cyan Wool_3"
         ]
       }
     }
@@ -986,7 +986,7 @@
           "items": [
             {
               "items": [
-                "CYAN Dye"
+                "Cyan Dye"
               ]
             }
           ]
@@ -998,7 +998,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -1014,9 +1014,9 @@
     ],
     "rewards": {
       "recipes": {
-        "CYAN Bed_1": [
-          "CYAN Dye_1",
-          "WHITE Bed_1"
+        "Cyan Bed_1": [
+          "Cyan Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -1040,7 +1040,7 @@
           "items": [
             {
               "items": [
-                "CYAN Dye"
+                "Cyan Dye"
               ]
             }
           ]
@@ -1057,7 +1057,7 @@
     "rewards": {
       "recipes": {
         "Cyan Clothes_1": [
-          "CYAN Dye_1",
+          "Cyan Dye_1",
           "Cloth_5"
         ]
       }
@@ -1070,7 +1070,7 @@
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -1082,7 +1082,7 @@
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "Green Dye"
               ]
             }
           ]
@@ -1098,9 +1098,9 @@
     ],
     "rewards": {
       "recipes": {
-        "CYAN Dye_2": [
-          "BLUE Dye_1",
-          "GREEN Dye_1"
+        "Cyan Dye_2": [
+          "Blue Dye_1",
+          "Green Dye_1"
         ]
       }
     }
@@ -1112,7 +1112,7 @@
           "items": [
             {
               "items": [
-                "CYAN Dye"
+                "Cyan Dye"
               ]
             }
           ]
@@ -1124,7 +1124,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -1140,9 +1140,9 @@
     ],
     "rewards": {
       "recipes": {
-        "CYAN Wool_1": [
-          "CYAN Dye_1",
-          "WHITE Wool_1"
+        "Cyan Wool_1": [
+          "Cyan Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -2330,7 +2330,7 @@
           "items": [
             {
               "items": [
-                "GRAY Wool"
+                "Gray Wool"
               ]
             }
           ]
@@ -2358,8 +2358,8 @@
     ],
     "rewards": {
       "recipes": {
-        "GRAY Bed_1": [
-          "GRAY Wool_3",
+        "Gray Bed_1": [
+          "Gray Wool_3",
           "Wood_5"
         ]
       }
@@ -2372,7 +2372,7 @@
           "items": [
             {
               "items": [
-                "GRAY Dye"
+                "Gray Dye"
               ]
             }
           ]
@@ -2384,7 +2384,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -2400,9 +2400,9 @@
     ],
     "rewards": {
       "recipes": {
-        "GRAY Bed_1": [
-          "GRAY Dye_1",
-          "WHITE Bed_1"
+        "Gray Bed_1": [
+          "Gray Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -2414,7 +2414,7 @@
           "items": [
             {
               "items": [
-                "BLACK Dye"
+                "Black Dye"
               ]
             }
           ]
@@ -2426,7 +2426,7 @@
           "items": [
             {
               "items": [
-                "WHITE Dye"
+                "White Dye"
               ]
             }
           ]
@@ -2442,9 +2442,9 @@
     ],
     "rewards": {
       "recipes": {
-        "GRAY Dye_2": [
-          "WHITE Dye_1",
-          "BLACK Dye_1"
+        "Gray Dye_2": [
+          "White Dye_1",
+          "Black Dye_1"
         ]
       }
     }
@@ -2456,7 +2456,7 @@
           "items": [
             {
               "items": [
-                "GRAY Dye"
+                "Gray Dye"
               ]
             }
           ]
@@ -2468,7 +2468,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -2484,9 +2484,9 @@
     ],
     "rewards": {
       "recipes": {
-        "GRAY Wool_1": [
-          "GRAY Dye_1",
-          "WHITE Wool_1"
+        "Gray Wool_1": [
+          "Gray Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -2498,7 +2498,7 @@
           "items": [
             {
               "items": [
-                "GREEN Wool"
+                "Green Wool"
               ]
             }
           ]
@@ -2526,8 +2526,8 @@
     ],
     "rewards": {
       "recipes": {
-        "GREEN Bed_1": [
-          "GREEN Wool_3",
+        "Green Bed_1": [
+          "Green Wool_3",
           "Wood_5"
         ]
       }
@@ -2540,7 +2540,7 @@
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "Green Dye"
               ]
             }
           ]
@@ -2552,7 +2552,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -2568,9 +2568,9 @@
     ],
     "rewards": {
       "recipes": {
-        "GREEN Bed_1": [
-          "GREEN Dye_1",
-          "WHITE Bed_1"
+        "Green Bed_1": [
+          "Green Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -2594,7 +2594,7 @@
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "Green Dye"
               ]
             }
           ]
@@ -2612,7 +2612,7 @@
       "recipes": {
         "Green Clothes_1": [
           "Cloth_5",
-          "GREEN Dye_1"
+          "Green Dye_1"
         ]
       }
     }
@@ -2639,7 +2639,7 @@
     ],
     "rewards": {
       "recipes": {
-        "GREEN Dye_1": [
+        "Green Dye_1": [
           "Cactus_1"
         ]
       }
@@ -2652,7 +2652,7 @@
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "Green Dye"
               ]
             }
           ]
@@ -2664,7 +2664,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -2680,9 +2680,9 @@
     ],
     "rewards": {
       "recipes": {
-        "GREEN Wool_1": [
-          "GREEN Dye_1",
-          "WHITE Wool_1"
+        "Green Wool_1": [
+          "Green Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -3408,7 +3408,7 @@
           "items": [
             {
               "items": [
-                "LIGHT BLUE Wool"
+                "Light Blue Wool"
               ]
             }
           ]
@@ -3436,8 +3436,8 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT BLUE Bed_1": [
-          "LIGHT BLUE Wool_3",
+        "Light Blue Bed_1": [
+          "Light Blue Wool_3",
           "Wood_5"
         ]
       }
@@ -3450,7 +3450,7 @@
           "items": [
             {
               "items": [
-                "LIGHT BLUE Dye"
+                "Light Blue Dye"
               ]
             }
           ]
@@ -3462,7 +3462,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -3478,9 +3478,51 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT BLUE Bed_1": [
-          "LIGHT BLUE Dye_1",
-          "WHITE Bed_1"
+        "Light Blue Bed_1": [
+          "Light Blue Dye_1",
+          "White Bed_1"
+        ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.light_blue_dye": {
+    "criteria": {
+      "has_blue_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Blue Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      },
+      "has_white_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "White Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_blue_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Light Blue Dye_2": [
+          "Blue Dye_1",
+          "White Dye_1"
         ]
       }
     }
@@ -3507,7 +3549,7 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT BLUE Dye_1": [
+        "Light Blue Dye_1": [
           "Blue Orchid_1"
         ]
       }
@@ -3535,50 +3577,8 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT BLUE Dye_1": [
+        "Light Blue Dye_1": [
           "Periwinkle_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_blue_dye_from_white_dye": {
-    "criteria": {
-      "has_blue_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLUE Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      },
-      "has_white_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      }
-    },
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_blue_dye"
-      ]
-    ],
-    "rewards": {
-      "recipes": {
-        "LIGHT BLUE Dye_2": [
-          "BLUE Dye_1",
-          "WHITE Dye_1"
         ]
       }
     }
@@ -3590,7 +3590,7 @@
           "items": [
             {
               "items": [
-                "LIGHT BLUE Dye"
+                "Light Blue Dye"
               ]
             }
           ]
@@ -3602,7 +3602,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -3618,9 +3618,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT BLUE Wool_1": [
-          "LIGHT BLUE Dye_1",
-          "WHITE Wool_1"
+        "Light Blue Wool_1": [
+          "Light Blue Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -3632,7 +3632,7 @@
           "items": [
             {
               "items": [
-                "LIGHT GRAY Wool"
+                "Light Gray Wool"
               ]
             }
           ]
@@ -3660,9 +3660,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Bed_1": [
+        "Light Gray Bed_1": [
           "Wood_5",
-          "LIGHT GRAY Wool_3"
+          "Light Gray Wool_3"
         ]
       }
     }
@@ -3674,7 +3674,7 @@
           "items": [
             {
               "items": [
-                "LIGHT GRAY Dye"
+                "Light Gray Dye"
               ]
             }
           ]
@@ -3686,7 +3686,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -3702,21 +3702,21 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Bed_1": [
-          "WHITE Bed_1",
-          "LIGHT GRAY Dye_1"
+        "Light Gray Bed_1": [
+          "White Bed_1",
+          "Light Gray Dye_1"
         ]
       }
     }
   },
-  "minicraft.advancements.recipes.light_gray_dye_from_gray_dye": {
+  "minicraft.advancements.recipes.light_gray_dye": {
     "criteria": {
-      "has_gray_dye": {
+      "has_black_dye": {
         "conditions": {
           "items": [
             {
               "items": [
-                "GRAY Dye"
+                "Black Dye"
               ]
             }
           ]
@@ -3728,7 +3728,49 @@
           "items": [
             {
               "items": [
-                "WHITE Dye"
+                "White Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_black_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Light Gray Dye_3": [
+          "White Dye_2",
+          "Black Dye_1"
+        ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.light_gray_dye_from_gray_white_dye": {
+    "criteria": {
+      "has_gray_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Gray Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      },
+      "has_white_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "White Dye"
               ]
             }
           ]
@@ -3744,9 +3786,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Dye_2": [
-          "GRAY Dye_1",
-          "WHITE Dye_1"
+        "Light Gray Dye_2": [
+          "Gray Dye_1",
+          "White Dye_1"
         ]
       }
     }
@@ -3773,7 +3815,7 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Dye_1": [
+        "Light Gray Dye_1": [
           "Hydrangea_1"
         ]
       }
@@ -3801,50 +3843,8 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Dye_1": [
+        "Light Gray Dye_1": [
           "Oxeye Daisy_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.light_gray_dye_from_white_dye": {
-    "criteria": {
-      "has_black_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "BLACK Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      },
-      "has_white_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      }
-    },
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_black_dye"
-      ]
-    ],
-    "rewards": {
-      "recipes": {
-        "LIGHT GRAY Dye_3": [
-          "WHITE Dye_2",
-          "BLACK Dye_1"
         ]
       }
     }
@@ -3871,7 +3871,7 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Dye_1": [
+        "Light Gray Dye_1": [
           "White Tulip_1"
         ]
       }
@@ -3884,7 +3884,7 @@
           "items": [
             {
               "items": [
-                "LIGHT GRAY Dye"
+                "Light Gray Dye"
               ]
             }
           ]
@@ -3896,7 +3896,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -3912,9 +3912,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIGHT GRAY Wool_1": [
-          "LIGHT GRAY Dye_1",
-          "WHITE Wool_1"
+        "Light Gray Wool_1": [
+          "Light Gray Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -3968,7 +3968,7 @@
           "items": [
             {
               "items": [
-                "LIME Wool"
+                "Lime Wool"
               ]
             }
           ]
@@ -3996,8 +3996,8 @@
     ],
     "rewards": {
       "recipes": {
-        "LIME Bed_1": [
-          "LIME Wool_3",
+        "Lime Bed_1": [
+          "Lime Wool_3",
           "Wood_5"
         ]
       }
@@ -4010,7 +4010,7 @@
           "items": [
             {
               "items": [
-                "LIME Dye"
+                "Lime Dye"
               ]
             }
           ]
@@ -4022,7 +4022,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -4038,9 +4038,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIME Bed_1": [
-          "LIME Dye_1",
-          "WHITE Bed_1"
+        "Lime Bed_1": [
+          "Lime Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -4052,7 +4052,7 @@
           "items": [
             {
               "items": [
-                "GREEN Dye"
+                "Green Dye"
               ]
             }
           ]
@@ -4064,7 +4064,7 @@
           "items": [
             {
               "items": [
-                "WHITE Dye"
+                "White Dye"
               ]
             }
           ]
@@ -4080,9 +4080,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIME Dye_2": [
-          "GREEN Dye_1",
-          "WHITE Dye_1"
+        "Lime Dye_2": [
+          "Green Dye_1",
+          "White Dye_1"
         ]
       }
     }
@@ -4094,7 +4094,7 @@
           "items": [
             {
               "items": [
-                "LIME Dye"
+                "Lime Dye"
               ]
             }
           ]
@@ -4106,7 +4106,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -4122,9 +4122,9 @@
     ],
     "rewards": {
       "recipes": {
-        "LIME Wool_1": [
-          "LIME Dye_1",
-          "WHITE Wool_1"
+        "Lime Wool_1": [
+          "Lime Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -4136,7 +4136,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -4166,7 +4166,7 @@
       "recipes": {
         "Loom_1": [
           "Wood_10",
-          "WHITE Wool_5"
+          "White Wool_5"
         ]
       }
     }
@@ -4178,7 +4178,7 @@
           "items": [
             {
               "items": [
-                "MAGENTA Wool"
+                "Magenta Wool"
               ]
             }
           ]
@@ -4206,9 +4206,9 @@
     ],
     "rewards": {
       "recipes": {
-        "MAGENTA Bed_1": [
+        "Magenta Bed_1": [
           "Wood_5",
-          "MAGENTA Wool_3"
+          "Magenta Wool_3"
         ]
       }
     }
@@ -4220,7 +4220,7 @@
           "items": [
             {
               "items": [
-                "MAGENTA Dye"
+                "Magenta Dye"
               ]
             }
           ]
@@ -4232,7 +4232,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -4248,9 +4248,9 @@
     ],
     "rewards": {
       "recipes": {
-        "MAGENTA Bed_1": [
-          "MAGENTA Dye_1",
-          "WHITE Bed_1"
+        "Magenta Bed_1": [
+          "Magenta Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -4277,20 +4277,20 @@
     ],
     "rewards": {
       "recipes": {
-        "MAGENTA Dye_1": [
+        "Magenta Dye_1": [
           "Allium_1"
         ]
       }
     }
   },
-  "minicraft.advancements.recipes.magenta_dye_from_pink_dye": {
+  "minicraft.advancements.recipes.magenta_dye_from_blue_red_pink": {
     "criteria": {
       "has_blue_dye": {
         "conditions": {
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -4302,7 +4302,7 @@
           "items": [
             {
               "items": [
-                "PINK Dye"
+                "Pink Dye"
               ]
             }
           ]
@@ -4314,7 +4314,7 @@
           "items": [
             {
               "items": [
-                "RED Dye"
+                "Red Dye"
               ]
             }
           ]
@@ -4331,64 +4331,22 @@
     ],
     "rewards": {
       "recipes": {
-        "MAGENTA Dye_4": [
-          "PINK Dye_1",
-          "RED Dye_1",
-          "BLUE Dye_1"
+        "Magenta Dye_4": [
+          "Pink Dye_1",
+          "Red Dye_1",
+          "Blue Dye_1"
         ]
       }
     }
   },
-  "minicraft.advancements.recipes.magenta_dye_from_purple_dye": {
-    "criteria": {
-      "has_pink_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PINK Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      },
-      "has_purple_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "PURPLE Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      }
-    },
-    "requirements": [
-      [
-        "has_pink_dye",
-        "has_purple_dye"
-      ]
-    ],
-    "rewards": {
-      "recipes": {
-        "MAGENTA Dye_2": [
-          "PINK Dye_1",
-          "PURPLE Dye_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.magenta_dye_from_white_dye": {
+  "minicraft.advancements.recipes.magenta_dye_from_blue_red_white_dye": {
     "criteria": {
       "has_blue_dye": {
         "conditions": {
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -4400,7 +4358,7 @@
           "items": [
             {
               "items": [
-                "RED Dye"
+                "Red Dye"
               ]
             }
           ]
@@ -4412,7 +4370,7 @@
           "items": [
             {
               "items": [
-                "WHITE Dye"
+                "White Dye"
               ]
             }
           ]
@@ -4429,10 +4387,52 @@
     ],
     "rewards": {
       "recipes": {
-        "MAGENTA Dye_4": [
-          "WHITE Dye_1",
-          "RED Dye_2",
-          "BLUE Dye_1"
+        "Magenta Dye_4": [
+          "White Dye_1",
+          "Red Dye_2",
+          "Blue Dye_1"
+        ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.magenta_dye_from_purple_and_pink": {
+    "criteria": {
+      "has_pink_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Pink Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      },
+      "has_purple_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Purple Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      }
+    },
+    "requirements": [
+      [
+        "has_pink_dye",
+        "has_purple_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Magenta Dye_2": [
+          "Pink Dye_1",
+          "Purple Dye_1"
         ]
       }
     }
@@ -4444,7 +4444,7 @@
           "items": [
             {
               "items": [
-                "MAGENTA Dye"
+                "Magenta Dye"
               ]
             }
           ]
@@ -4456,7 +4456,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -4472,9 +4472,9 @@
     ],
     "rewards": {
       "recipes": {
-        "MAGENTA Wool_1": [
-          "MAGENTA Dye_1",
-          "WHITE Wool_1"
+        "Magenta Wool_1": [
+          "Magenta Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -4668,7 +4668,7 @@
           "items": [
             {
               "items": [
-                "ORANGE Wool"
+                "Orange Wool"
               ]
             }
           ]
@@ -4696,9 +4696,9 @@
     ],
     "rewards": {
       "recipes": {
-        "ORANGE Bed_1": [
+        "Orange Bed_1": [
           "Wood_5",
-          "ORANGE Wool_3"
+          "Orange Wool_3"
         ]
       }
     }
@@ -4710,7 +4710,7 @@
           "items": [
             {
               "items": [
-                "ORANGE Dye"
+                "Orange Dye"
               ]
             }
           ]
@@ -4722,7 +4722,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -4738,9 +4738,9 @@
     ],
     "rewards": {
       "recipes": {
-        "ORANGE Bed_1": [
-          "ORANGE Dye_1",
-          "WHITE Bed_1"
+        "Orange Bed_1": [
+          "Orange Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -4764,7 +4764,7 @@
           "items": [
             {
               "items": [
-                "ORANGE Dye"
+                "Orange Dye"
               ]
             }
           ]
@@ -4782,7 +4782,49 @@
       "recipes": {
         "Orange Clothes_1": [
           "Cloth_5",
-          "ORANGE Dye_1"
+          "Orange Dye_1"
+        ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.orange_dye": {
+    "criteria": {
+      "has_red_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Red Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      },
+      "has_yellow_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Yellow Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      }
+    },
+    "requirements": [
+      [
+        "has_red_dye",
+        "has_yellow_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Orange Dye_2": [
+          "Yellow Dye_1",
+          "Red Dye_1"
         ]
       }
     }
@@ -4809,50 +4851,8 @@
     ],
     "rewards": {
       "recipes": {
-        "ORANGE Dye_1": [
+        "Orange Dye_1": [
           "Orange Tulip_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.orange_dye_from_yellow_dye": {
-    "criteria": {
-      "has_red_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      },
-      "has_yellow_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "YELLOW Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      }
-    },
-    "requirements": [
-      [
-        "has_red_dye",
-        "has_yellow_dye"
-      ]
-    ],
-    "rewards": {
-      "recipes": {
-        "ORANGE Dye_2": [
-          "YELLOW Dye_1",
-          "RED Dye_1"
         ]
       }
     }
@@ -4864,7 +4864,7 @@
           "items": [
             {
               "items": [
-                "ORANGE Dye"
+                "Orange Dye"
               ]
             }
           ]
@@ -4876,7 +4876,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -4892,9 +4892,9 @@
     ],
     "rewards": {
       "recipes": {
-        "ORANGE Wool_1": [
-          "ORANGE Dye_1",
-          "WHITE Wool_1"
+        "Orange Wool_1": [
+          "Orange Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -4990,7 +4990,7 @@
           "items": [
             {
               "items": [
-                "PINK Wool"
+                "Pink Wool"
               ]
             }
           ]
@@ -5018,9 +5018,9 @@
     ],
     "rewards": {
       "recipes": {
-        "PINK Bed_1": [
+        "Pink Bed_1": [
           "Wood_5",
-          "PINK Wool_3"
+          "Pink Wool_3"
         ]
       }
     }
@@ -5032,7 +5032,7 @@
           "items": [
             {
               "items": [
-                "PINK Dye"
+                "Pink Dye"
               ]
             }
           ]
@@ -5044,7 +5044,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -5060,9 +5060,51 @@
     ],
     "rewards": {
       "recipes": {
-        "PINK Bed_1": [
-          "PINK Dye_1",
-          "WHITE Bed_1"
+        "Pink Bed_1": [
+          "Pink Dye_1",
+          "White Bed_1"
+        ]
+      }
+    }
+  },
+  "minicraft.advancements.recipes.pink_dye": {
+    "criteria": {
+      "has_red_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "Red Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      },
+      "has_white_dye": {
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "White Dye"
+              ]
+            }
+          ]
+        },
+        "trigger": "inventory_changed"
+      }
+    },
+    "requirements": [
+      [
+        "has_white_dye",
+        "has_red_dye"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Pink Dye_2": [
+          "White Dye_1",
+          "Red Dye_1"
         ]
       }
     }
@@ -5089,7 +5131,7 @@
     ],
     "rewards": {
       "recipes": {
-        "PINK Dye_1": [
+        "Pink Dye_1": [
           "Peony_1"
         ]
       }
@@ -5117,7 +5159,7 @@
     ],
     "rewards": {
       "recipes": {
-        "PINK Dye_1": [
+        "Pink Dye_1": [
           "Pink Lily_1"
         ]
       }
@@ -5145,50 +5187,8 @@
     ],
     "rewards": {
       "recipes": {
-        "PINK Dye_1": [
+        "Pink Dye_1": [
           "Pink Tulip_1"
-        ]
-      }
-    }
-  },
-  "minicraft.advancements.recipes.pink_dye_from_white_dye": {
-    "criteria": {
-      "has_red_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "RED Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      },
-      "has_white_dye": {
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "WHITE Dye"
-              ]
-            }
-          ]
-        },
-        "trigger": "inventory_changed"
-      }
-    },
-    "requirements": [
-      [
-        "has_white_dye",
-        "has_red_dye"
-      ]
-    ],
-    "rewards": {
-      "recipes": {
-        "PINK Dye_2": [
-          "WHITE Dye_1",
-          "RED Dye_1"
         ]
       }
     }
@@ -5200,7 +5200,7 @@
           "items": [
             {
               "items": [
-                "PINK Dye"
+                "Pink Dye"
               ]
             }
           ]
@@ -5212,7 +5212,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -5228,9 +5228,9 @@
     ],
     "rewards": {
       "recipes": {
-        "PINK Wool_1": [
-          "PINK Dye_1",
-          "WHITE Wool_1"
+        "Pink Wool_1": [
+          "Pink Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -5298,7 +5298,7 @@
           "items": [
             {
               "items": [
-                "PURPLE Wool"
+                "Purple Wool"
               ]
             }
           ]
@@ -5326,9 +5326,9 @@
     ],
     "rewards": {
       "recipes": {
-        "PURPLE Bed_1": [
+        "Purple Bed_1": [
           "Wood_5",
-          "PURPLE Wool_3"
+          "Purple Wool_3"
         ]
       }
     }
@@ -5340,7 +5340,7 @@
           "items": [
             {
               "items": [
-                "PURPLE Dye"
+                "Purple Dye"
               ]
             }
           ]
@@ -5352,7 +5352,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -5368,9 +5368,9 @@
     ],
     "rewards": {
       "recipes": {
-        "PURPLE Bed_1": [
-          "WHITE Bed_1",
-          "PURPLE Dye_1"
+        "Purple Bed_1": [
+          "White Bed_1",
+          "Purple Dye_1"
         ]
       }
     }
@@ -5394,7 +5394,7 @@
           "items": [
             {
               "items": [
-                "PURPLE Dye"
+                "Purple Dye"
               ]
             }
           ]
@@ -5412,19 +5412,19 @@
       "recipes": {
         "Purple Clothes_1": [
           "Cloth_5",
-          "PURPLE Dye_1"
+          "Purple Dye_1"
         ]
       }
     }
   },
-  "minicraft.advancements.recipes.purple_dye_from_dye": {
+  "minicraft.advancements.recipes.purple_dye": {
     "criteria": {
       "has_blue_dye": {
         "conditions": {
           "items": [
             {
               "items": [
-                "BLUE Dye"
+                "Blue Dye"
               ]
             }
           ]
@@ -5436,7 +5436,7 @@
           "items": [
             {
               "items": [
-                "RED Dye"
+                "Red Dye"
               ]
             }
           ]
@@ -5452,9 +5452,9 @@
     ],
     "rewards": {
       "recipes": {
-        "PURPLE Dye_2": [
-          "BLUE Dye_1",
-          "RED Dye_1"
+        "Purple Dye_2": [
+          "Blue Dye_1",
+          "Red Dye_1"
         ]
       }
     }
@@ -5481,7 +5481,7 @@
     ],
     "rewards": {
       "recipes": {
-        "PURPLE Dye_1": [
+        "Purple Dye_1": [
           "Violet_1"
         ]
       }
@@ -5494,7 +5494,7 @@
           "items": [
             {
               "items": [
-                "PURPLE Dye"
+                "Purple Dye"
               ]
             }
           ]
@@ -5506,7 +5506,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -5522,9 +5522,9 @@
     ],
     "rewards": {
       "recipes": {
-        "PURPLE Wool_1": [
-          "PURPLE Dye_1",
-          "WHITE Wool_1"
+        "Purple Wool_1": [
+          "Purple Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -5536,7 +5536,7 @@
           "items": [
             {
               "items": [
-                "RED Wool"
+                "Red Wool"
               ]
             }
           ]
@@ -5564,9 +5564,9 @@
     ],
     "rewards": {
       "recipes": {
-        "RED Bed_1": [
+        "Red Bed_1": [
           "Wood_5",
-          "RED Wool_3"
+          "Red Wool_3"
         ]
       }
     }
@@ -5578,7 +5578,7 @@
           "items": [
             {
               "items": [
-                "RED Dye"
+                "Red Dye"
               ]
             }
           ]
@@ -5590,7 +5590,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -5606,9 +5606,9 @@
     ],
     "rewards": {
       "recipes": {
-        "RED Bed_1": [
-          "RED Dye_1",
-          "WHITE Bed_1"
+        "Red Bed_1": [
+          "Red Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -5635,7 +5635,7 @@
     ],
     "rewards": {
       "recipes": {
-        "RED Dye_1": [
+        "Red Dye_1": [
           "Poppy_1"
         ]
       }
@@ -5663,7 +5663,7 @@
     ],
     "rewards": {
       "recipes": {
-        "RED Dye_1": [
+        "Red Dye_1": [
           "Red Tulip_1"
         ]
       }
@@ -5691,7 +5691,7 @@
     ],
     "rewards": {
       "recipes": {
-        "RED Dye_1": [
+        "Red Dye_1": [
           "Rose_1"
         ]
       }
@@ -5704,7 +5704,7 @@
           "items": [
             {
               "items": [
-                "RED Dye"
+                "Red Dye"
               ]
             }
           ]
@@ -5716,7 +5716,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -5732,9 +5732,9 @@
     ],
     "rewards": {
       "recipes": {
-        "RED Wool_1": [
-          "RED Dye_1",
-          "WHITE Wool_1"
+        "Red Wool_1": [
+          "Red Dye_1",
+          "White Wool_1"
         ]
       }
     }
@@ -6334,7 +6334,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -6350,7 +6350,7 @@
     "rewards": {
       "recipes": {
         "String_2": [
-          "WHITE Wool_1"
+          "White Wool_1"
         ]
       }
     }
@@ -6586,7 +6586,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -6614,9 +6614,9 @@
     ],
     "rewards": {
       "recipes": {
-        "WHITE Bed_1": [
+        "White Bed_1": [
           "Wood_5",
-          "WHITE Wool_3"
+          "White Wool_3"
         ]
       }
     }
@@ -6643,7 +6643,7 @@
     ],
     "rewards": {
       "recipes": {
-        "WHITE Dye_1": [
+        "White Dye_1": [
           "White Lily_1"
         ]
       }
@@ -6671,7 +6671,7 @@
     ],
     "rewards": {
       "recipes": {
-        "WHITE Wool_1": [
+        "White Wool_1": [
           "String_3"
         ]
       }
@@ -7004,7 +7004,7 @@
           "items": [
             {
               "items": [
-                "YELLOW Wool"
+                "Yellow Wool"
               ]
             }
           ]
@@ -7020,8 +7020,8 @@
     ],
     "rewards": {
       "recipes": {
-        "YELLOW Bed_1": [
-          "YELLOW Wool_3",
+        "Yellow Bed_1": [
+          "Yellow Wool_3",
           "Wood_5"
         ]
       }
@@ -7034,7 +7034,7 @@
           "items": [
             {
               "items": [
-                "WHITE Bed"
+                "White Bed"
               ]
             }
           ]
@@ -7046,7 +7046,7 @@
           "items": [
             {
               "items": [
-                "YELLOW Dye"
+                "Yellow Dye"
               ]
             }
           ]
@@ -7062,9 +7062,9 @@
     ],
     "rewards": {
       "recipes": {
-        "YELLOW Bed_1": [
-          "YELLOW Dye_1",
-          "WHITE Bed_1"
+        "Yellow Bed_1": [
+          "Yellow Dye_1",
+          "White Bed_1"
         ]
       }
     }
@@ -7088,7 +7088,7 @@
           "items": [
             {
               "items": [
-                "YELLOW Dye"
+                "Yellow Dye"
               ]
             }
           ]
@@ -7106,7 +7106,7 @@
       "recipes": {
         "Yellow Clothes_1": [
           "Cloth_5",
-          "YELLOW Dye_1"
+          "Yellow Dye_1"
         ]
       }
     }
@@ -7133,7 +7133,7 @@
     ],
     "rewards": {
       "recipes": {
-        "YELLOW Dye_1": [
+        "Yellow Dye_1": [
           "Dandelion_1"
         ]
       }
@@ -7161,7 +7161,7 @@
     ],
     "rewards": {
       "recipes": {
-        "YELLOW Dye_1": [
+        "Yellow Dye_1": [
           "Sunflower_1"
         ]
       }
@@ -7174,7 +7174,7 @@
           "items": [
             {
               "items": [
-                "WHITE Wool"
+                "White Wool"
               ]
             }
           ]
@@ -7186,7 +7186,7 @@
           "items": [
             {
               "items": [
-                "YELLOW Dye"
+                "Yellow Dye"
               ]
             }
           ]
@@ -7202,9 +7202,9 @@
     ],
     "rewards": {
       "recipes": {
-        "YELLOW Wool_1": [
-          "YELLOW Dye_1",
-          "WHITE Wool_1"
+        "Yellow Wool_1": [
+          "Yellow Dye_1",
+          "White Wool_1"
         ]
       }
     }

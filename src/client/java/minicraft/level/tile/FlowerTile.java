@@ -43,6 +43,10 @@ public class FlowerTile extends Tile {
 			this.name = name;
 			this.sprite = sprite;
 		}
+
+		public String getName() {
+			return name;
+		}
 	}
 
 	protected FlowerTile(String name) {
