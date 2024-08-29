@@ -536,21 +536,21 @@
   "minicraft.advancements.recipes.dye_vat": {
     "requirements": [[
       "has_stone",
-      "has_water_bucket"
+      "has_iron"
     ]],
     "criteria": {
       "has_stone": {
         "trigger": "inventory_changed",
         "conditions": {"items": [{"items": ["Stone"]}]}
       },
-      "has_water_bucket": {
+      "has_iron": {
         "trigger": "inventory_changed",
-        "conditions": {"items": [{"items": ["Water Bucket"]}]}
+        "conditions": {"items": [{"items": ["Iron"]}]}
       }
     },
     "rewards": {"recipes": {"Dye Vat_1": [
       "Stone_10",
-      "Water Bucket_1"
+      "Iron_5"
     ]}}
   },
   "minicraft.advancements.recipes.wooden_axe": {
