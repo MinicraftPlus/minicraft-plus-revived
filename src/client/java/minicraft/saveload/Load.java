@@ -1294,6 +1294,8 @@ public class Load {
 				return new KnightStatue(0);
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
+			case "DyeVat":
+				return new Crafter(Crafter.Type.DyeVat);
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
