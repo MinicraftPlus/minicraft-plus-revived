@@ -8,15 +8,15 @@ import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.BurnParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public abstract class Mob extends Entity {
 
-	protected LinkedSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
+	protected SpriteLink[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
 	public int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
 
 	public Direction dir = Direction.DOWN; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
@@ -35,7 +35,7 @@ public abstract class Mob extends Entity {
 	 * @param sprites All of this mob's sprites.
 	 * @param health The mob's max health.
 	 */
-	public Mob(LinkedSprite[][] sprites, int health) {
+	public Mob(SpriteLink[][] sprites, int health) {
 		super(4, 3);
 		this.sprites = sprites;
 		this.health = this.maxHealth = health;
@@ -154,25 +154,25 @@ public abstract class Mob extends Entity {
 	/**
 	 * This is an easy way to make a list of sprites that are all part of the same "Sprite", so they have similar parameters, but they're just at different locations on the spreadsheet.
 	 */
-	public static LinkedSprite[] compileSpriteList(int sheetX, int sheetY, int width, int height, int mirror, int number, String key) {
-		LinkedSprite[] sprites = new LinkedSprite[number];
+	public static SpriteLink[] compileSpriteList(int sheetX, int sheetY, int width, int height, int mirror, int number, String key) {
+		SpriteLink[] sprites = new SpriteLink[number];
 		for (int i = 0; i < sprites.length; i++)
-			sprites[i] = new LinkedSprite(SpriteType.Entity, key).setSpriteDim(sheetX + width * i, sheetY, width, height)
-				.setMirror(mirror).setFlip(mirror);
+			sprites[i] = new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, key).setSpriteDim(sheetX + width * i, sheetY, width, height)
+				.setMirror(mirror).setFlip(mirror).createSpriteLink();
 
 		return sprites;
 	}
 
-	public static LinkedSprite[][] compileMobSpriteAnimations(int sheetX, int sheetY, String key) {
-		LinkedSprite[][] sprites = new LinkedSprite[4][2];
+	public static SpriteLink[][] compileMobSpriteAnimations(int sheetX, int sheetY, String key) {
+		SpriteLink[][] sprites = new SpriteLink[4][2];
 		// dir numbers: 0=down, 1=up, 2=left, 3=right.
 		/// On the spritesheet, most mobs have 4 sprites there, first facing down, then up, then right 1, then right 2. The first two get flipped to animate them, but the last two get flipped to change direction.
 
 		// Contents: down 1, up 1, right 1, right 2
-		LinkedSprite[] set1 = compileSpriteList(sheetX, sheetY, 2, 2, 0, 4, key);
+		SpriteLink[] set1 = compileSpriteList(sheetX, sheetY, 2, 2, 0, 4, key);
 
 		// Contents: down 2, up 2, left 1, left 2
-		LinkedSprite[] set2 = compileSpriteList(sheetX, sheetY, 2, 2, 1, 4, key);
+		SpriteLink[] set2 = compileSpriteList(sheetX, sheetY, 2, 2, 1, 4, key);
 
 		// Down
 		sprites[0][0] = set1[0];

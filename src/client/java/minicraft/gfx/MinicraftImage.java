@@ -1,6 +1,6 @@
 package minicraft.gfx;
 
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -53,7 +53,7 @@ public class MinicraftImage {
 	 * @param width  the requested width for this image, must be a non-zero natural number
 	 * @param height the requested height for this image, must be a non-zero natural number
 	 * @throws IllegalArgumentException if either {@code width} or {@code height} is zero or negative
-	 * @see LinkedSprite
+	 * @see SpriteLink
 	 */
 	public MinicraftImage(@NotNull BufferedImage image, int width, int height) {
 		Objects.requireNonNull(image, "image");

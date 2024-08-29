@@ -1,6 +1,6 @@
 package minicraft.item;
 
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.util.MyUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +11,9 @@ public class WoolItem extends TileItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
-			items.add(new WoolItem(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Wool", new SpriteLinker.LinkedSprite(
-				SpriteLinker.SpriteType.Item, color.toString().toLowerCase() + "_wool"), color));
+			items.add(new WoolItem(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Wool",
+				new SpriteManager.SpriteLink.SpriteLinkBuilder(SpriteManager.SpriteType.Item, color.toString().toLowerCase() + "_wool")
+					.createSpriteLink(), color));
 		}
 
 		return items;
@@ -20,7 +21,7 @@ public class WoolItem extends TileItem {
 
 	public final DyeItem.DyeColor color;
 
-	protected WoolItem(String name, SpriteLinker.LinkedSprite sprite, DyeItem.DyeColor color) {
+	protected WoolItem(String name, SpriteManager.SpriteLink sprite, DyeItem.DyeColor color) {
 		super(name, sprite, new TileModel(name), "hole", "water");
 		this.color = color;
 	}

@@ -1,7 +1,7 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 public class FireParticle extends Particle {
 	/// This is used for Spawners, when they spawn an entity.
@@ -13,6 +13,7 @@ public class FireParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public FireParticle(int x, int y) {
-		super(x, y, 30, new LinkedSprite(SpriteType.Gui, "hud").setSpriteDim(4, 2, 1, 1));
+		super(x, y, 30, new SpriteLink.SpriteLinkBuilder(SpriteType.Gui, "hud")
+			.setSpriteDim(4, 2, 1, 1).createSpriteLink());
 	}
 }

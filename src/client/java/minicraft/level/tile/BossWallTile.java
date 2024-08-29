@@ -7,13 +7,13 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
 public class BossWallTile extends WallTile {
-	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
+	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteManager.SpriteType.Tile, "obsidian_wall")
 		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 
 	private static final String wallMsg = "minicraft.notification.defeat_obsidian_knight_first";

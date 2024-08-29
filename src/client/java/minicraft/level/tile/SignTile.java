@@ -1,15 +1,13 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
-import minicraft.core.Renderer;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -17,13 +15,11 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.entity.SignTileEntity;
 import minicraft.screen.SignDisplay;
-import minicraft.screen.SignDisplayMenu;
 import minicraft.util.AdvancementElement;
-import org.tinylog.Logger;
 
 public class SignTile extends Tile {
 	protected SignTile() {
-		super("Sign", new SpriteAnimation(SpriteLinker.SpriteType.Tile, "sign"));
+		super("Sign", new SpriteAnimation(SpriteManager.SpriteType.Tile, "sign"));
 	}
 
 	@Override

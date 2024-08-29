@@ -9,8 +9,8 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
@@ -36,7 +36,8 @@ public class Tnt extends Furniture {
 	 * Creates a new tnt furniture.
 	 */
 	public Tnt() {
-		super("Tnt", new LinkedSprite(SpriteType.Entity, "tnt"), new LinkedSprite(SpriteType.Item, "tnt"), 3, 2);
+		super("Tnt", new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "tnt").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "tnt").createSpriteLink(), 3, 2);
 		fuseLit = false;
 		ftik = 0;
 	}

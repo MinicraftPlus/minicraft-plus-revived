@@ -5,8 +5,8 @@ import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -26,15 +26,14 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	public Chest(String name) {
-		this(name, new LinkedSprite(SpriteType.Item, "chest"));
+		this(name, new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "chest").createSpriteLink());
 	}
-
 	/**
 	 * Creates a chest with a custom name.
 	 * @param name Name of chest.
 	 */
-	public Chest(String name, LinkedSprite itemSprite) {
-		super(name, new LinkedSprite(SpriteType.Entity, "chest"), itemSprite, 3, 3); // Name of the chest
+	public Chest(String name, SpriteLink itemSprite) {
+		super(name, new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "chest").createSpriteLink(), itemSprite, 3, 3); // Name of the chest
 
 		inventory = new Inventory(); // Initialize the inventory.
 	}

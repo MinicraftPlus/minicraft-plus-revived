@@ -13,7 +13,7 @@ import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 import minicraft.saveload.Load;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
@@ -314,7 +314,7 @@ public class QuestsDisplay extends Display {
 					// Ignoring mirror.
 					// Validation check
 					if (xt * 8 + yt * 8 * sheet.width + 7 + 7 * sheet.width >= sheet.pixels.length) {
-						sheet = Renderer.spriteLinker.missingSheet(SpriteLinker.SpriteType.Item);
+						sheet = Renderer.spriteManager.missingSheet(SpriteManager.SpriteType.Item);
 						xt = 0;
 						yt = 0;
 					}

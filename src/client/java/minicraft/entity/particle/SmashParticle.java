@@ -1,7 +1,7 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 public class SmashParticle extends Particle {
 	/**
@@ -11,6 +11,6 @@ public class SmashParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public SmashParticle(int x, int y) {
-		super(x, y, 10, new LinkedSprite(SpriteType.Entity, "smash"));
+		super(x, y, 10, new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "smash").createSpriteLink());
 	}
 }

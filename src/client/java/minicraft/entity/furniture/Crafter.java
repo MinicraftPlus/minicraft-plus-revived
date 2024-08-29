@@ -2,8 +2,8 @@ package minicraft.entity.furniture;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
 import minicraft.screen.CraftingDisplay;
@@ -14,20 +14,27 @@ import java.util.ArrayList;
 public class Crafter extends Furniture {
 
 	public enum Type {
-		Workbench(new LinkedSprite(SpriteType.Entity, "workbench"), new LinkedSprite(SpriteType.Item, "workbench"), 3, 2, Recipes.workbenchRecipes),
-		Oven(new LinkedSprite(SpriteType.Entity, "oven"), new LinkedSprite(SpriteType.Item, "oven"), 3, 2, Recipes.ovenRecipes),
-		Furnace(new LinkedSprite(SpriteType.Entity, "furnace"), new LinkedSprite(SpriteType.Item, "furnace"), 3, 2, Recipes.furnaceRecipes),
-		Anvil(new LinkedSprite(SpriteType.Entity, "anvil"), new LinkedSprite(SpriteType.Item, "anvil"), 3, 2, Recipes.anvilRecipes),
-		Enchanter(new LinkedSprite(SpriteType.Entity, "enchanter"), new LinkedSprite(SpriteType.Item, "enchanter"), 7, 2, Recipes.enchantRecipes),
-		Loom(new LinkedSprite(SpriteType.Entity, "loom"), new LinkedSprite(SpriteType.Item, "loom"), 7, 2, Recipes.loomRecipes),
-		DyeVat(new LinkedSprite(SpriteType.Entity, "dyevat"), new LinkedSprite(SpriteType.Item, "dyevat"), 0, 0, Recipes.dyeVatRecipes);
+		Workbench(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "workbench").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "workbench").createSpriteLink(), 3, 2, Recipes.workbenchRecipes),
+		Oven(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "oven").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "oven").createSpriteLink(), 3, 2, Recipes.ovenRecipes),
+		Furnace(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "furnace").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "furnace").createSpriteLink(), 3, 2, Recipes.furnaceRecipes),
+		Anvil(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "anvil").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "anvil").createSpriteLink(), 3, 2, Recipes.anvilRecipes),
+		Enchanter(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "enchanter").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "enchanter").createSpriteLink(), 7, 2, Recipes.enchantRecipes),
+		Loom(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "loom").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "loom").createSpriteLink(), 7, 2, Recipes.loomRecipes),
+		DyeVat(new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "dyevat").createSpriteLink(),
+			new SpriteLink.SpriteLinkBuilder(SpriteType.Item, "dyevat").createSpriteLink(), 0, 0, Recipes.dyeVatRecipes);
 
 		public ArrayList<Recipe> recipes;
-		protected LinkedSprite sprite;
-		protected LinkedSprite itemSprite;
+		protected SpriteLink sprite;
+		protected SpriteLink itemSprite;
 		protected int xr, yr;
 
-		Type(LinkedSprite sprite, LinkedSprite itemSprite, int xr, int yr, ArrayList<Recipe> list) {
+		Type(SpriteLink sprite, SpriteLink itemSprite, int xr, int yr, ArrayList<Recipe> list) {
 			this.sprite = sprite;
 			this.itemSprite = itemSprite;
 			this.xr = xr;

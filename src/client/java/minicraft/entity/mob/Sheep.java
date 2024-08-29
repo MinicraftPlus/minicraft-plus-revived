@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -18,21 +18,21 @@ import minicraft.level.tile.Tiles;
 import java.util.HashMap;
 
 public class Sheep extends PassiveMob {
-	private static final HashMap<DyeItem.DyeColor, LinkedSprite[][]> sprites = new HashMap<>();
-	private static final HashMap<DyeItem.DyeColor, LinkedSprite[][]> cutSprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, SpriteLink[][]> sprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, SpriteLink[][]> cutSprites = new HashMap<>();
 
 	static {
 		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
-			LinkedSprite[][] mobSprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
-			for (LinkedSprite[] mobSprite : mobSprites) {
-				for (LinkedSprite linkedSprite : mobSprite) {
+			SpriteLink[][] mobSprites = Mob.compileMobSpriteAnimations(0, 0, "sheep");
+			for (SpriteLink[] mobSprite : mobSprites) {
+				for (SpriteLink linkedSprite : mobSprite) {
 					linkedSprite.setColor(color.color);
 				}
 			}
 			sprites.put(color, mobSprites);
 			mobSprites = Mob.compileMobSpriteAnimations(0, 2, "sheep");
-			for (LinkedSprite[] mobSprite : mobSprites) {
-				for (LinkedSprite linkedSprite : mobSprite) {
+			for (SpriteLink[] mobSprite : mobSprites) {
+				for (SpriteLink linkedSprite : mobSprite) {
 					linkedSprite.setColor(color.color);
 				}
 			}
@@ -57,9 +57,9 @@ public class Sheep extends PassiveMob {
 		int xo = x - 8;
 		int yo = y - 11;
 
-		LinkedSprite[][] curAnim = cut ? cutSprites.get(color) : sprites.get(color);
+		SpriteLink[][] curAnim = cut ? cutSprites.get(color) : sprites.get(color);
 
-		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
+		SpriteLink curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
 			screen.render(xo, yo, curSprite.getSprite(), true);
 		} else {

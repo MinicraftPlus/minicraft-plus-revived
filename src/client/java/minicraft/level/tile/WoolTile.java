@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.item.Items;

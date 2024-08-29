@@ -1,6 +1,6 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker;
+import minicraft.gfx.SpriteManager;
 
 public class WaterParticle extends Particle {
 	private final int destX;
@@ -8,7 +8,7 @@ public class WaterParticle extends Particle {
 	private int count;
 	private boolean stopped;
 
-	public WaterParticle(int x, int y, int lifetime, SpriteLinker.LinkedSprite sprite, int destX, int destY) {
+	public WaterParticle(int x, int y, int lifetime, SpriteManager.SpriteLink sprite, int destX, int destY) {
 		super(x, y, lifetime, sprite);
 		this.destX = destX;
 		this.destY = destY;

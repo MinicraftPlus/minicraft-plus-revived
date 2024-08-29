@@ -3,7 +3,7 @@ package minicraft.level.tile;
 
 import minicraft.entity.Entity;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.level.Level;
 
 // TODO Remove this.

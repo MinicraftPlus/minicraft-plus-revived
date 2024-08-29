@@ -4,15 +4,15 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.gfx.SpriteManager.SpriteLink;
 import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
-		new LinkedSprite[][] { Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "slime") },
-		new LinkedSprite[][] { Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "slime") },
-		new LinkedSprite[][] { Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "slime") },
-		new LinkedSprite[][] { Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "slime") }
+	private static SpriteLink[][][] sprites = new SpriteLink[][][] {
+		new SpriteLink[][] { Mob.compileSpriteList(0, 0, 2, 2, 0, 2, "slime") },
+		new SpriteLink[][] { Mob.compileSpriteList(0, 2, 2, 2, 0, 2, "slime") },
+		new SpriteLink[][] { Mob.compileSpriteList(0, 4, 2, 2, 0, 2, "slime") },
+		new SpriteLink[][] { Mob.compileSpriteList(0, 6, 2, 2, 0, 2, "slime") }
 	};
 
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump

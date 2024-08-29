@@ -5,20 +5,30 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.util.Logging;
-
-import javax.security.auth.DestroyFailedException;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 
 import java.util.List;
 
 public class Arrow extends Entity implements ClientTickable {
+	private static final SpriteLink spriteRight;
+	private static final SpriteLink spriteLeft;
+	private static final SpriteLink spriteUp;
+	private static final SpriteLink spriteDown;
+
+	static {
+		SpriteLink.SpriteLinkBuilder builder = new SpriteLink.SpriteLinkBuilder(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
+		spriteRight = builder.setSpritePos(0, 0).createSpriteLink();
+		spriteLeft = builder.setSpritePos(1, 0).createSpriteLink();
+		spriteUp = builder.setSpritePos(2, 0).createSpriteLink();
+		spriteDown = builder.setSpritePos(3, 0).createSpriteLink();
+	}
+
 	private Direction dir;
 	private int damage;
 	public Mob owner;
 	private int speed;
-	private LinkedSprite sprite = new LinkedSprite(SpriteType.Entity, "arrow").setSpriteSize(1, 1);
+	private final SpriteLink sprite;
 
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);
@@ -34,11 +44,12 @@ public class Arrow extends Entity implements ClientTickable {
 		damage = dmg;
 		col = Color.get(-1, 111, 222, 430);
 
-		int xt = 0;
-		if (dir == Direction.LEFT) xt = 1;
-		if (dir == Direction.UP) xt = 2;
-		if (dir == Direction.DOWN) xt = 3;
-		sprite.setSpritePos(xt, 0);
+		switch (dir) {
+			case UP: sprite = spriteUp; break;
+			case DOWN: sprite = spriteDown; break;
+			case LEFT: sprite = spriteLeft; break;
+			case RIGHT: default: sprite = spriteRight; break;
+		}
 
 		if (damage > 3) speed = 8;
 		else if (damage >= 0) speed = 7;
@@ -79,11 +90,6 @@ public class Arrow extends Entity implements ClientTickable {
 				&& !level.getTile(x >> 4, y >> 4).connectsToFluid(level, x >> 4, y >> 4)
 				&& level.getTile(x >> 4, y >> 4).id != 16) {
 				this.remove();
-				try {
-					sprite.destroy();
-				} catch (DestroyFailedException e) {
-					Logging.SPRITE.trace(e);
-				}
 			}
 		}
 	}

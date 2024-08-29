@@ -5,8 +5,8 @@ import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteAnimation;
-import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.SpriteManager.SpriteLink;
+import minicraft.gfx.SpriteManager.SpriteType;
 import minicraft.item.DyeItem;
 import minicraft.level.Level;
 import minicraft.util.MyUtils;
@@ -16,8 +16,8 @@ import java.util.HashMap;
 
 public class Bed extends Furniture {
 
-	private static final HashMap<DyeItem.DyeColor, LinkedSprite> sprites = new HashMap<>();
-	private static final HashMap<DyeItem.DyeColor, LinkedSprite> itemSprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, SpriteLink> sprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, SpriteLink> itemSprites = new HashMap<>();
 
 	@Override
 	public @NotNull Furniture copy() {
@@ -26,8 +26,10 @@ public class Bed extends Furniture {
 
 	static {
 		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
-			sprites.put(color, new LinkedSprite(SpriteType.Entity, color.toString().toLowerCase() + "_bed"));
-			itemSprites.put(color, new LinkedSprite(SpriteType.Item, color.toString().toLowerCase() + "_bed"));
+			sprites.put(color, new SpriteLink.SpriteLinkBuilder(SpriteType.Entity,
+				color.toString().toLowerCase() + "_bed").createSpriteLink());
+			itemSprites.put(color, new SpriteLink.SpriteLinkBuilder(SpriteType.Item,
+				color.toString().toLowerCase() + "_bed").createSpriteLink());
 		}
 	}
 
