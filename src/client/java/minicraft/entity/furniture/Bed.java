@@ -9,6 +9,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.DyeItem;
 import minicraft.level.Level;
+import minicraft.util.MyUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class Bed extends Furniture {
 	 */
 	public Bed() { this(DyeItem.DyeColor.WHITE); }
 	public Bed(DyeItem.DyeColor color) {
-		super(color.toString().replace('_', ' ') + " Bed", sprites.get(color), itemSprites.get(color), 3, 2);
+		super(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Bed", sprites.get(color), itemSprites.get(color), 3, 2);
 		this.color = color;
 	}
 
