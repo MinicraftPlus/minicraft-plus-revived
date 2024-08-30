@@ -231,7 +231,7 @@ public class LegacyLoad {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					Load.loadTile(tiles, tdata, tileArrIdx, Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))),
+					Load.loadTile(worldVer, tiles, tdata, tileArrIdx, Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))),
 						extradata.get(tileidx));
 				}
 			}
@@ -344,11 +344,7 @@ public class LegacyLoad {
 	}
 
 	private void loadItem(Inventory inventory, Item item) {
-		int total = 1;
-		if (item instanceof StackableItem) total = ((StackableItem) item).count;
-		int loaded = inventory.add(item);
-
-		if (loaded < total) {
+		if (inventory.add(item) != null) {
 			deathChest.getInventory().add(item.copy());
 		}
 	}
