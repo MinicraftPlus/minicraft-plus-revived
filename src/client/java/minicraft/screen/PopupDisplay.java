@@ -3,6 +3,8 @@ package minicraft.screen;
 import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.gfx.MinicraftImage;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
@@ -19,6 +21,7 @@ public class PopupDisplay extends Display {
 	// Using Color codes for coloring in title and plain text messages.
 
 	private final ArrayList<PopupActionCallback> callbacks;
+	private final Menu.Builder builder;
 
 	public PopupDisplay(@Nullable PopupConfig config, String... messages) {
 		this(config, false, messages);
@@ -43,7 +46,7 @@ public class PopupDisplay extends Display {
 	public PopupDisplay(@Nullable PopupConfig config, boolean clearScreen, boolean menuFrame, ListEntry... entries) {
 		super(clearScreen, true);
 
-		Menu.Builder builder = new Menu.Builder(menuFrame, 0, RelPos.CENTER, entries);
+		builder = new Menu.Builder(menuFrame, 0, RelPos.CENTER, entries);
 
 		if (config != null) {
 			if (config.title != null)
@@ -60,6 +63,17 @@ public class PopupDisplay extends Display {
 			menus = new Menu[] { builder.createMenu() };
 		else
 			menus = new Menu[] { onScreenKeyboardMenu, builder.createMenu() };
+
+		Rectangle menuBounds = menus[onScreenKeyboardMenu == null ? 0 : 1].getBounds();
+		for (ListEntry entry : entries) {
+			if (entry instanceof InputEntry) {
+				((InputEntry) entry).setChangeListener(v -> update());
+			}
+		}
+	}
+
+	private void update() {
+		menus[onScreenKeyboardMenu == null ? 0 : 1] = builder.createMenu();
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;

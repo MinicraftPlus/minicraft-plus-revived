@@ -7,11 +7,16 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
+import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
+import minicraft.gfx.MinicraftImage;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -128,12 +133,12 @@ public class WorldGenDisplay extends Display {
 				return super.getUserInput().toLowerCase(Localization.getSelectedLocale());
 			}
 
-			@Override
-			public void render(Screen screen, int x, int y, boolean isSelected) {
-				super.render(screen, isGen ?
-					(getUserInput().length() > 11 ? x - (getUserInput().length() - 11) * 8 : x) :
-					x, y, isSelected);
-			}
+//			@Override
+//			public void render(Screen screen, int x, int y, boolean isSelected, @Nullable IntRange bounds) {
+//				super.render(screen, isGen ?
+//					(getUserInput().length() > 11 ? x - (getUserInput().length() - 11) * 8 : x) :
+//					x, y, isSelected, bounds);
+//			}
 		};
 	}
 
@@ -181,8 +186,8 @@ public class WorldGenDisplay extends Display {
 					Game.setDisplay(new LoadingDisplay());
 				}) {
 					@Override
-					public void render(Screen screen, int x, int y, boolean isSelected) {
-						Font.draw(toString(), screen, x, y, Color.CYAN);
+					public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
+						Font.draw(limitingModel, toString(), screen, x, y, Color.CYAN);
 					}
 				},
 

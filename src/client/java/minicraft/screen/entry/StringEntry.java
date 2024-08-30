@@ -10,13 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 // an unselectable line.
-public class StringEntry extends ListEntry {
+public class StringEntry extends SelectableStringEntry {
 
 	private static final int DEFAULT_COLOR = Color.WHITE;
-
-	private String text;
-	private int color;
-	private boolean localize;
 
 	/**
 	 *
@@ -54,27 +50,7 @@ public class StringEntry extends ListEntry {
 	} // This should be always true with the new localization IDs.
 
 	public StringEntry(String text, int color, boolean localize) {
+		super(text, color, localize);
 		setSelectable(false);
-		this.text = text;
-		this.localize = localize;
-		this.color = color;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	@Override
-	public void tick(InputHandler input) {
-	}
-
-	@Override
-	public int getColor(boolean isSelected) {
-		return color;
-	}
-
-	@Override
-	public String toString() {
-		return localize ? Localization.getLocalized(text) : text;
 	}
 }

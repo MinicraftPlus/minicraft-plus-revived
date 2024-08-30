@@ -23,6 +23,6 @@ public class CarrotTile extends CropTile {
 		int age = (level.getData(x, y) >> 3) & maxAge;
 		Tiles.get("Farmland").render(screen, level, x, y);
 		int stage = (int) ((float) age / maxAge * 3);
-		screen.render(x * 16, y * 16, spritStages[stage]);
+		screen.render(null, x * 16, y * 16, spritStages[stage]);
 	}
 }

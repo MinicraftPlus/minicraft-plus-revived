@@ -3,6 +3,7 @@ package minicraft.screen.entry;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Screen;
+import org.jetbrains.annotations.Nullable;
 
 public class BlankEntry extends ListEntry {
 
@@ -15,7 +16,7 @@ public class BlankEntry extends ListEntry {
 	}
 
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected) {
+	public void render(Screen screen, @Nullable Screen.RenderingLimitingModel limitingModel, int x, int y, boolean isSelected) {
 	}
 
 	@Override

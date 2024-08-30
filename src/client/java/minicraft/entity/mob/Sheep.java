@@ -61,9 +61,9 @@ public class Sheep extends PassiveMob {
 
 		LinkedSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
-			screen.render(xo, yo, curSprite.getSprite(), true);
+			screen.render(null, xo, yo, curSprite.getSprite(), true);
 		} else {
-			screen.render(xo, yo, curSprite);
+			screen.render(null, xo, yo, curSprite);
 		}
 	}
 
