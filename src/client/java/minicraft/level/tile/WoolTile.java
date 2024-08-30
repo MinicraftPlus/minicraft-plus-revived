@@ -10,6 +10,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -18,10 +19,19 @@ import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
 import org.jetbrains.annotations.Nullable;
 
-public class WoolTile extends Tile {
+import java.util.HashMap;
 
-	public WoolTile(WoolType woolType) {
-		super(woolType.name, woolType.sprite);
+public class WoolTile extends Tile {
+	private static final HashMap<DyeItem.DyeColor, SpriteAnimation> sprites = new HashMap<>();
+
+	static {
+		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
+			sprites.put(color, new SpriteAnimation(SpriteType.Tile, color.toString().toLowerCase() + "_wool"));
+		}
+	}
+
+	public WoolTile(DyeItem.DyeColor color) {
+		super(color.toString().replace('_', ' ') + " Wool", sprites.get(color));
 	}
 
 	@Override
@@ -61,26 +71,5 @@ public class WoolTile extends Tile {
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canWool();
-	}
-
-	public enum WoolType {
-		BLACK("Black Wool", new SpriteAnimation(SpriteType.Tile, "black_wool")),
-		BLUE("Blue Wool", new SpriteAnimation(SpriteType.Tile, "blue_wool")),
-		GREEN("Green Wool", new SpriteAnimation(SpriteType.Tile, "green_wool")),
-		NORMAL("Wool", new SpriteAnimation(SpriteType.Tile, "white_wool")),
-		RED("Red Wool", new SpriteAnimation(SpriteType.Tile, "red_wool")),
-		YELLOW("Yellow Wool", new SpriteAnimation(SpriteType.Tile, "yellow_wool"));
-
-		public final SpriteAnimation sprite;
-		public final String name;
-
-		/**
-		 * Create a type of wool.
-		 * @param sprite The sprite for the type of wool.
-		 */
-		WoolType(String name, SpriteAnimation sprite) {
-			this.sprite = sprite;
-			this.name = name;
-		}
 	}
 }

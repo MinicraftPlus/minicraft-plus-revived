@@ -8,6 +8,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.DirtTile;
+import minicraft.level.tile.FlowerTile;
 import minicraft.level.tile.GrassTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -85,7 +86,8 @@ public class WateringCanItem extends Item {
 						level.add(new Particle((int) x, (int) y, 120 + random.nextInt(21) - 40, particleSprite));
 					}
 					if (random.nextInt(60) == 0) { // Small chance for growing flowers
-						level.setTile(xt, yt, Tiles.get((short) 2), random.nextInt(2));
+						level.setTile(xt, yt, Tiles.get((short) 2),
+							random.nextInt(FlowerTile.FlowerVariant.values().length));
 					}
 				}
 
