@@ -2,8 +2,10 @@ package minicraft.core.io;
 
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.tinylog.Logger;
+import org.tinylog.Supplier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,98 @@ public class Localization {
 	private static Locale selectedLocale = DEFAULT_LOCALE;
 	private static final HashMap<Locale, ArrayList<String>> unloadedLocalization = new HashMap<>();
 	private static final HashMap<Locale, LocaleInformation> localeInfo = new HashMap<>();
+
+	public static class LocalizationString { // Dedicated #localize fields are no longer required.
+		private static final Object[] NO_ARG = new Object[0];
+
+		private final String key;
+		private final boolean localize;
+		private final Object[] args;
+		private final boolean buffered;
+		private @Nullable String buffer = null;
+
+		/* Localized String Buffering
+		 *
+		 * When the string is not localized at all, there does not exist such problem as the key is saved and
+		 * no further process is made when converted to string. It does not affect if it is buffered or not.
+		 *
+		 * However, several scenarios may happen when the string is localized. If the LocalizationString is rendered
+		 * consistently, even if it is not parameterized, the localization source may be updated, so it is important to
+		 * keep such updated, and thus it should not be buffered. If the output is preferred to use buffer, but it
+		 * is not buffered at all, there is no point to involve buffers. Buffered is outputted if and only if the
+		 * output prefers to use buffer, and it is buffered. The output may refresh the buffer in case of any changes.
+		 *
+		 * Note that buffering plays the vital role as in some cases this may be used very frequently and localized,
+		 * or complexly localized. Besides, if getLocalized is used head-to-tail, it is similar to not using buffering,
+		 * but if it is buffered from the beginning, synchronization bugs or inconsistencies could be obvious.
+		 * In many cases, it is safe to buffer.
+		 *
+		 * If instant localization is the case (e.g. rendering or #toString()), getLocalize is still preferred
+		 * unless instantaneousness is not the case.
+		 */
+
+		public LocalizationString(String key) { this(true, key); }
+		public LocalizationString(String key, Object... args) { this(true, key, args); }
+		public LocalizationString(boolean localize, String key) { this(localize, true, key); }
+		public LocalizationString(boolean localize, boolean buffered, String key) {
+			this.localize = localize;
+			this.key = key;
+			this.args = NO_ARG;
+			this.buffered = buffered;
+			if (!localize && buffered) buffer = this.key; // The string is constant if it is not localized.
+		}
+		public LocalizationString(boolean buffered, String key, Object... args) {
+			this.key = key;
+			this.args = args; // Arguments can be applied only in localization.
+			this.localize = true;
+			this.buffered = buffered;
+		}
+
+		private String toString0() {
+			String s = localize ? getLocalized(key, args) : key;
+			if (buffered) buffer = s;
+			return s;
+		}
+
+		/** It is pointless to use this method if it is not buffered. */
+		public void refreshBuffer() { // Useful only if it is buffered.
+			if (buffered) buffer = localize ? getLocalized(key, args) : key;
+			else
+				Logging.RESOURCEHANDLER_LOCALIZATION.trace(unlocalizedStringTracing ? new Throwable("Tracing") : null,
+					"{} is not buffered but a refresh is requested.", key);
+		}
+
+		@Override
+		public String toString() { // buffer is outputted by default if and only if it is set as buffered.
+			return buffered && buffer != null ? buffer : toString0();
+		}
+
+		public LocalizationString copy() { return copy(buffered); }
+		public LocalizationString copy(boolean buffered) {
+			return localize ? new LocalizationString(buffered, key, args) :
+				new LocalizationString(false, buffered, key);
+		}
+
+		public LocalizationString copyAndBuffer() {
+			LocalizationString s = copy(true);
+			s.refreshBuffer();
+			return s;
+		}
+
+		/** A simple wrapper class in case of on-demand refresh update. */
+		public static class OnRequestString {
+			private final Supplier<String> supplier;
+
+			public OnRequestString(Supplier<String> supplier) {
+				this.supplier = supplier;
+			}
+
+			@Override
+			public String toString() {
+				return supplier.get();
+			}
+		}
+	}
 
 	/**
 	 * Get the provided key's localization for the currently selected language.

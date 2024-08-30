@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
@@ -18,6 +19,7 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
@@ -108,8 +110,6 @@ public class ResourcePackDisplay extends Display {
 	private WatcherThread fileWatcher;
 	private ArrayList<ListEntry> entries0 = new ArrayList<>();
 	private ArrayList<ListEntry> entries1 = new ArrayList<>();
-	private Menu.Builder builder0;
-	private Menu.Builder builder1;
 	private boolean changed = false;
 
 	static { // Initializing the default pack and logo.
@@ -173,22 +173,18 @@ public class ResourcePackDisplay extends Display {
 		super(true, true);
 		initPacks();
 
-		// Left Hand Side
-		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
-			.setDisplayLength(8)
-			.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT);
-
-		// Right Hand Side
-		builder1 = new Menu.Builder(false, 2, RelPos.RIGHT)
-			.setDisplayLength(8)
-			.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT);
-
 		reloadEntries();
 
 		menus = new Menu[] {
-			builder0.setEntries(entries0)
+			new Menu.Builder(false, 2, RelPos.LEFT)
+				.setDisplayLength(8)
+				.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT)
+				.setEntries(entries0)
 				.createMenu(),
-			builder1.setEntries(entries1)
+			new Menu.Builder(false, 2, RelPos.RIGHT)
+				.setDisplayLength(8)
+				.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT)
+				.setEntries(entries1)
 				.createMenu()
 		};
 
@@ -220,7 +216,8 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+			entries0.add(new SelectEntry(new Localization.LocalizationString(false, pack.name),
+				() -> Game.setDisplay(new MessageDisplay(pack.name, pack.description))) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 1) return SelectEntry.COL_UNSLCT;
@@ -231,7 +228,8 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+			entries1.add(new SelectEntry(new Localization.LocalizationString(false, pack.name),
+				() -> Game.setDisplay(new MessageDisplay(pack.name, pack.description))) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 0) return SelectEntry.COL_UNSLCT;
@@ -246,18 +244,18 @@ public class ResourcePackDisplay extends Display {
 	 */
 	private void refreshEntries() {
 		reloadEntries();
-		Menu[] newMenus = new Menu[] {
-			builder0.setEntries(entries0)
-				.createMenu(),
-			builder1.setEntries(entries1)
-				.createMenu()
-		};
+		menus[0].setEntries(entries0);
+		menus[0].builder()
+			.setMenuSize(null)
+			.recalculateFrame();
+		menus[1].setEntries(entries1);
+		menus[1].builder()
+			.setMenuSize(null)
+			.recalculateFrame();
 
 		// Reapplying selections.
-		newMenus[0].setSelection(menus[0].getSelection());
-		newMenus[1].setSelection(menus[1].getSelection());
-
-		menus = newMenus;
+		menus[0].setSelection(menus[0].getSelection());
+		menus[1].setSelection(menus[1].getSelection());
 
 		// Translate position.
 		onSelectionChange(selection ^ 1, selection);
@@ -336,8 +334,9 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getMappedKey("shift+cursor-right").isClicked()) { // Move the selected pack to the second list.
-			if (selection == 0 && resourcePacks.size() > 0) {
+		if (input.getMappedKey("CURSOR-RIGHT").isClicked() && // Move the selected pack to the second list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
+			if (selection == 0 && !resourcePacks.isEmpty()) {
 				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
 				refreshEntries();
@@ -345,7 +344,8 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-left").isClicked()) { // Move the selected pack to the first list.
+		} else if (input.getMappedKey("CURSOR-LEFT").isClicked() && // Move the selected pack to the first list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
 			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
 				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
@@ -354,7 +354,8 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-up").isClicked()) { // Move up the selected pack in the second list.
+		} else if (input.getMappedKey("CURSOR-UP").isClicked() && // Higher the selected pack in the second list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
 			if (selection == 1 && menus[1].getSelection() > 0) {
 				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
@@ -364,7 +365,8 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-down").isClicked()) { // Move down the selected pack in the second list.
+		} else if (input.getMappedKey("CURSOR-DOWN").isClicked() && // Lower the selected pack in the second list.
+			(input.buttonDown(ControllerButton.LEFTBUMPER) || input.getMappedKey("SHIFT").isDown())) {
 			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
 				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
@@ -398,14 +400,22 @@ public class ResourcePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.SILVER);
 
 		// Info text at the bottom.
-		if (Game.input.anyControllerConnected())
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
+		if (selection == 0) {
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move_right", Game.input.selectMapping("SHIFT", "LEFTBUMPER"), Game.input.getMapping("CURSOR-RIGHT")), screen, Screen.h - 26, resourcePacks.isEmpty() ? Color.DIMMED_GRAY : Color.GRAY);
+		} else if (selection == 1) {
+			boolean canUp = menus[1].getSelection() > 0;
+			boolean canDown = menus[1].getSelection() < loadedPacks.size() - 1;
+			boolean moveable = loadedPacks.get(menus[1].getSelection()) != defaultPack;
+			Font.drawColorCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move_priority", Game.input.selectMapping("SHIFT", "LEFTBUMPER"),
+				canUp ? Game.input.getMapping("CURSOR-UP") : Color.DIMMED_GRAY_CODE + Game.input.getMapping("CURSOR-UP") + Color.RESET_CODE,
+				canDown ? Game.input.getMapping("CURSOR-DOWN") : Color.DIMMED_GRAY_CODE + Game.input.getMapping("CURSOR-DOWN") + Color.RESET_CODE), screen, Screen.h - 34, moveable ? Color.GRAY : Color.DIMMED_GRAY);
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move_left", Game.input.selectMapping("SHIFT", "LEFTBUMPER"), Game.input.getMapping("CURSOR-LEFT")), screen, Screen.h - 26, moveable ? Color.GRAY : Color.DIMMED_GRAY);
+		}
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 18, Color.GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.browse", Game.input.selectMapping("CURSOR", "DPAD")), screen, Screen.h - 10, Color.GRAY);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (packs.size() > 0) { // If there is any pack that can be selected.
@@ -419,7 +429,7 @@ public class ResourcePackDisplay extends Display {
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++) {
 					// Resource pack logo
-					screen.render(xo + x * 8, yo + y * 8, x, y, 0, logo);
+					screen.render(null, xo + x * 8, yo + y * 8, x, y, 0, logo);
 				}
 			}
 		}
@@ -974,9 +984,6 @@ public class ResourcePackDisplay extends Display {
 						break;
 					case "assets/books/credits.txt":
 						BookData.credits = () -> book;
-						break;
-					case "assets/books/instructions.txt":
-						BookData.instructions = () -> book;
 						break;
 					case "assets/books/antidous.txt":
 						BookData.antVenomBook = () -> book;

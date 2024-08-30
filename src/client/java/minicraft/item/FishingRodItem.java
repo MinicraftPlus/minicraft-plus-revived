@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
@@ -77,7 +78,7 @@ public class FishingRodItem extends Item {
 	@Override
 	public boolean isDepleted() {
 		if (random.nextInt(100) > 120 - uses + level * 6) { // Breaking is random, the lower the level, and the more times you use it, the higher the chance
-			Game.notifications.add("Your Fishing rod broke.");
+			Game.notifications.add(new Localization.LocalizationString("minicraft.notification.fishing_rod_broken"));
 			return true;
 		}
 		return false;

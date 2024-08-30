@@ -67,7 +67,7 @@ public class OreTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -92,12 +92,12 @@ public class OreTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int oreH = random.nextInt(10) * 4 + 20;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = oreH;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = oreH;
 
 		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (dmg > 0) {
 			int count = random.nextInt(2);
 			if (damage >= oreH) {

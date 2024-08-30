@@ -3,6 +3,7 @@ package minicraft.saveload;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
@@ -37,6 +38,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import java.io.BufferedReader;
@@ -58,17 +60,10 @@ public class LegacyLoad {
 	ArrayList<String> extradata;
 
 	public boolean hasloadedbigworldalready;
-	Version currentVer, worldVer;
-	boolean oldSave = false;
-
-	Game game = null;
-
+	@Nullable Version worldVer = null;
 	private DeathChest deathChest;
 
 	{
-		currentVer = Game.VERSION;
-		worldVer = null;
-
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
 		hasloadedbigworldalready = false;
@@ -77,22 +72,21 @@ public class LegacyLoad {
 	public LegacyLoad(String worldname) {
 		location += "/saves/" + worldname + "/";
 
-		File testFile = new File(location + "KeyPrefs" + extension);
-		if (!testFile.exists()) {
-			worldVer = new Version("1.8");
-			oldSave = true;
-		} else
-			testFile.delete(); // We don't care about it anymore anyway.
-
 		// This is used in loadInventory().
 
 		loadGame("Game"); // More of the version will be determined here
+		// 10%
 		loadWorld("Level");
+		// 70%
 		loadPlayer("Player", Game.player);
+		// 80%
 		loadInventory("Inventory", Game.player.getInventory());
+		// 90%
 		loadEntities("Entities", Game.player);
-		LoadingDisplay.setPercentage(0); // reset
+		// 100%
 
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			new Localization.LocalizationString("minicraft.displays.loading.message.type.completing")));
 		if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 			Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 			Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
@@ -180,43 +174,32 @@ public class LegacyLoad {
 	private int playerac = 0; // This is a temp storage var for use to restore player arrow count.
 
 	public void loadGame(String filename) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			new Localization.LocalizationString("minicraft.displays.loading.message.type.game")));
 		loadFromFile(location + filename + extension);
-		boolean hasVersion = data.get(0).contains(".");
-		if (hasVersion) {
-			worldVer = new Version(data.get(0)); // Gets the world version
-			Updater.setTime(Integer.parseInt(data.get(1)));
-			Updater.gameTime = 65000; // Prevents time cheating.
+		worldVer = new Version(data.get(0)); // Gets the world version
+		Updater.setTime(Integer.parseInt(data.get(1)));
+		Updater.gameTime = 65000; // Prevents time cheating.
 
-			if (worldVer.compareTo(new Version("1.9.2")) < 0) {
-				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
-				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
-				if (worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
-					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
-			} else { // This is 1.9.2 official or after
-				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
-				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
-			}
-		} else {
-			if (data.size() == 5) {
-				worldVer = new Version("1.9");
-				Updater.setTime(Integer.parseInt(data.get(0)));
-				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
-				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
-			} else { // version == 1.8?
-				if (!oldSave) {
-					Logging.SAVELOAD.warn("UNEXPECTED WORLD VERSION");
-					worldVer = new Version("1.8.1");
-				}
-				// For backwards compatibility
-				Updater.tickCount = Integer.parseInt(data.get(0));
-				playerac = Integer.parseInt(data.get(3));
-				Settings.set("autosave", false);
-			}
+		if (worldVer.compareTo(new Version("1.9.2")) < 0) {
+			Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
+			Settings.set("sound", Boolean.parseBoolean(data.get(4)));
+			if (worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
+				AirWizard.beaten = Boolean.parseBoolean(data.get(5));
+		} else { // This is 1.9.2 official or after
+			Settings.setIdx("diff", Integer.parseInt(data.get(3)));
+			AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 		}
+
+		LoadingDisplay.progress(10);
 	}
 
 	public void loadWorld(String filename) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			new Localization.LocalizationString("minicraft.displays.loading.message.type.levels")));
 		for (int l = 0; l < World.levels.length; l++) {
+			LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+				Level.getDepthString((l - 1) * -1)));
 			loadFromFile(location + filename + l + extension);
 
 			int lvlw = Integer.parseInt(data.get(0));
@@ -239,10 +222,14 @@ public class LegacyLoad {
 			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
 			World.levels[l].tiles = tiles;
 			World.levels[l].data = tdata;
+
+			LoadingDisplay.progress(60f / World.levels.length);
 		}
 	}
 
 	public void loadPlayer(String filename, Player player) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			new Localization.LocalizationString("minicraft.displays.loading.message.type.player")));
 		loadFromFile(location + filename + extension);
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
@@ -252,21 +239,14 @@ public class LegacyLoad {
 		player.armor = Integer.parseInt(data.get(5));
 
 		String modedata;
-		if (!oldSave) {
-			if (data.size() >= 14) {
-				if (worldVer == null) worldVer = new Version("1.9.1-pre1");
-				player.armorDamageBuffer = Integer.parseInt(data.get(13));
-				player.curArmor = (ArmorItem) Items.get(data.get(14));
-			} else player.armor = 0;
+		if (data.size() >= 14) {
+			if (worldVer == null) worldVer = new Version("1.9.1-pre1");
+			player.armorDamageBuffer = Integer.parseInt(data.get(13));
+			player.curArmor = (ArmorItem) Items.get(data.get(14));
+		} else player.armor = 0;
 
-			Game.currentLevel = Integer.parseInt(data.get(8));
-			modedata = data.get(9);
-
-		} else {
-			// Old, 1.8 save.
-			Game.currentLevel = Integer.parseInt(data.get(7));
-			modedata = data.get(8);
-		}
+		Game.currentLevel = Integer.parseInt(data.get(8));
+		modedata = data.get(9);
 
 		player.setScore(Integer.parseInt(data.get(6)));
 		World.levels[Game.currentLevel].add(player);
@@ -284,37 +264,32 @@ public class LegacyLoad {
 		Settings.setIdx("mode", mode);
 
 		boolean hasEffects;
-		int potionIdx = 10;
-		if (oldSave) {
-			hasEffects = data.size() > 10 && data.get(data.size() - 2).contains("PotionEffects[");
-			potionIdx = data.size() - 2;
-		} else
-			hasEffects = !data.get(10).equals("PotionEffects[]"); // Newer save
+		hasEffects = !data.get(10).equals("PotionEffects[]"); // Newer save
 
 		if (hasEffects) {
-			String[] effects = data.get(potionIdx).replace("PotionEffects[", "").replace("]", "").split(":");
-
-			for (int i = 0; i < effects.length; i++) {
-				String[] effect = effects[i].split(";");
+			String[] effects = data.get(10).replace("PotionEffects[", "").replace("]", "").split(":");
+			for (String s : effects) {
+				String[] effect = s.split(";");
 				String pName = effect[0];
-				if (oldSave) pName = pName.replace("P.", "Potion");
 				PotionItem.applyPotion(player, Enum.valueOf(PotionType.class, pName), Integer.parseInt(effect[1]));
 			}
 		}
 
-		String colors = data.get(oldSave ? data.size() - 1 : 11).replace("[", "").replace("]", "");
+		String colors = data.get(11).replace("[", "").replace("]", "");
 		String[] color = colors.split(";");
 		player.shirtColor = Integer.parseInt(color[0] + color[1] + color[2]);
+
+		LoadingDisplay.progress(10);
 	}
 
 	public void loadInventory(String filename, Inventory inventory) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			new Localization.LocalizationString("minicraft.displays.loading.message.type.inventory")));
 		deathChest = new DeathChest();
 		loadFromFile(location + filename + extension);
 		inventory.clearInv();
 
-		for (int i = 0; i < data.size(); i++) {
-			String item = data.get(i);
-			if (i == 0 && oldSave && item.contains(";")) item = item.replace(";0", ";1");
+		for (String item : data) {
 			loadItemToInventory(item, inventory);
 		}
 
@@ -323,13 +298,14 @@ public class LegacyLoad {
 				loadItem(inventory, Items.get("arrow"));
 			playerac = 0;
 		}
+
+		LoadingDisplay.progress(10);
 	}
 
 	public void loadItemToInventory(String item, Inventory inventory) {
 		if (item.contains(";")) {
 			String[] curData = item.split(";");
 			String itemName = curData[0];
-			if (oldSave) itemName = subOldName(itemName);
 
 			//System.out.println("Item to fetch: " + itemName + "; count=" + curData[1]);
 			Item newItem = Items.get(itemName);
@@ -337,7 +313,6 @@ public class LegacyLoad {
 			for (int i = 0; i < count; i++)
 				loadItem(inventory, newItem);
 		} else {
-			if (oldSave) item = subOldName(item);
 			Item toAdd = Items.get(item);
 			loadItem(inventory, toAdd);
 		}
@@ -349,15 +324,9 @@ public class LegacyLoad {
 		}
 	}
 
-	private String subOldName(String oldName) {
-		//System.out.println("Old name: " + oldName);
-		String newName = oldName.replace("P.", "Potion").replace("Fish Rod", "Fishing Rod").replace("bed", "Bed");
-		newName = Load.subOldName(newName, worldVer);
-		//System.out.println("New name: " + newName);
-		return newName;
-	}
-
 	public void loadEntities(String filename, Player player) {
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			new Localization.LocalizationString("minicraft.displays.loading.message.type.entities")));
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {
@@ -420,6 +389,8 @@ public class LegacyLoad {
 				}
 			} // End of entity not null conditional
 		}
+
+		LoadingDisplay.progress(10);
 	}
 
 	public Entity getEntity(String string, Player player, int mobLevel) {
@@ -478,7 +449,7 @@ public class LegacyLoad {
 			case "GoldLantern":
 				return new Lantern(Lantern.Type.GOLD);
 			default:
-				Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: " + string);
+				Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: {}", string);
 				return null;
 		}
 	}

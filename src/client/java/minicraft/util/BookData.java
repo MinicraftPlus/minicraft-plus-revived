@@ -6,14 +6,12 @@ public class BookData {
 
 	public static BookItem.BookContent about;
 	public static BookItem.BookContent credits;
-	public static BookItem.BookContent instructions;
 	public static BookItem.BookContent antVenomBook;
 	public static BookItem.BookContent storylineGuide;
 
 	public static void resetBooks() {
 		about = null;
 		credits = null;
-		instructions = null;
 		antVenomBook = null;
 		storylineGuide = null;
 	}

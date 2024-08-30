@@ -131,7 +131,7 @@ public class WateringCanItem extends Item {
 
 	@Override
 	public String getData() {
-		return super.getData() + "_" + content;
+		return String.format(DATA_FORMAT, super.getData(), content);
 	}
 
 	@Override

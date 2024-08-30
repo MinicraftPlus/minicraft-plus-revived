@@ -34,7 +34,7 @@ public class Version implements Comparable<Version> {
 				dev = 0;
 			}
 		} catch (NumberFormatException ex) {
-			if (printError) Logger.tag("Version").error("INVALID version number: \"" + version + "\"");
+			if (printError) Logger.tag("Version").error("INVALID version number: \"{}\"", version);
 			valid = false;
 		} catch (Exception ex) {
 			if (printError) ex.printStackTrace();
@@ -86,7 +86,7 @@ public class Version implements Comparable<Version> {
 
 	@Override
 	public String toString() {
-		return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev);
+		return String.format("%d.%d.%d%s", make, major, minor, dev == 0 ? "" : "-dev" + dev);
 	}
 
 	public int[] toArray() {

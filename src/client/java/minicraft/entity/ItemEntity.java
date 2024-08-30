@@ -70,7 +70,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 	 * @return string representation of this entity
 	 */
 	public String getData() {
-		return String.join(":", (new String[] { item.getData(), zz + "", lifeTime + "", time + "", xa + "", ya + "", za + "" }));
+		return String.join(":", (new String[] { item.getData(), String.valueOf(zz), String.valueOf(lifeTime),
+			String.valueOf(time), String.valueOf(xa), String.valueOf(ya), String.valueOf(za) }));
 	}
 
 	@Override
@@ -128,8 +129,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 			if (time / 6 % 2 == 0) return;
 		}
 
-		screen.render(x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
-		screen.render(x - 4, y - 4 - (int) zz, item.sprite); // Item
+		screen.render(null, x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
+		screen.render(null, x - 4, y - 4 - (int) zz, item.sprite); // Item
 	}
 
 	@Override

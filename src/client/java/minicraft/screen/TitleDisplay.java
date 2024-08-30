@@ -6,6 +6,7 @@ import minicraft.core.VersionInfo;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MinicraftImage;
@@ -16,12 +17,14 @@ import minicraft.level.Level;
 import minicraft.network.Network;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.LinkEntry;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TitleDisplay extends Display {
@@ -32,31 +35,36 @@ public class TitleDisplay extends Display {
 	private boolean reverse = false;
 
 	public TitleDisplay() {
-
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-				new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
-				new BlankEntry(),
-				new SelectEntry("minicraft.displays.title.play", () -> {
-					if (WorldSelectDisplay.getWorldNames().size() > 0)
-						Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-							new SelectEntry("minicraft.displays.title.play.load_world", () -> Game.setDisplay(new WorldSelectDisplay())),
-							new SelectEntry("minicraft.displays.title.play.new_world", () -> Game.setDisplay(new WorldGenDisplay()))
-						).createMenu()));
-					else Game.setDisplay(new WorldGenDisplay());
-				}),
-				new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
-				new SelectEntry("minicraft.displays.skin", () -> Game.setDisplay(new SkinDisplay())),
-				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
-				new SelectEntry("minicraft.displays.title.help", () ->
-					Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-						new BlankEntry(),
-						new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions.collect()))),
-						new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide.collect()))),
-						new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about.collect()))),
-						new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits.collect())))
-					).setTitle("minicraft.displays.title.help").createMenu()))
-				),
-				new SelectEntry("minicraft.displays.title.quit", Game::quit)
+				new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.play"),
+					() -> Game.setDisplay(
+						WorldSelectDisplay.anyWorld() ? new WorldSelectDisplay() : new WorldCreateDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display"),
+				() -> Game.setDisplay(new OptionsMainMenuDisplay())),
+            new SelectEntry(new Localization.LocalizationString("minicraft.displays.skin"),
+	            () -> Game.setDisplay(new SkinDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.achievements"),
+				() -> Game.setDisplay(new AchievementsDisplay())),
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.help"), () ->
+				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+					new BlankEntry(),
+					new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play"),
+						() -> Game.setDisplay(new HowToPlayDisplay())),
+						new SelectEntry(new Localization.LocalizationString(
+							"minicraft.displays.title.help.storyline_guide"), () -> Game.setDisplay(new PagedDisplay(
+							new Localization.LocalizationString("minicraft.displays.title.help.storyline_guide"),
+							BookData.storylineGuide.collect()))),
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.title.help.about"), () -> Game.setDisplay(new PagedDisplay(
+							new Localization.LocalizationString(
+								"minicraft.displays.title.help.about"), BookData.about.collect()))),
+					new SelectEntry(new Localization.LocalizationString(
+						"minicraft.displays.title.help.credits"), () -> Game.setDisplay(new PagedDisplay(
+							new Localization.LocalizationString("minicraft.displays.title.help.credits"),
+						BookData.credits.collect())))
+				).setTitle(new Localization.LocalizationString("minicraft.displays.title.help")).createMenu()))
+			),
+			new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.quit"), Game::quit)
 			)
 				.setPositioning(new Point(Screen.w / 2, Screen.h * 3 / 5), RelPos.CENTER)
 				.createMenu()
@@ -70,7 +78,7 @@ public class TitleDisplay extends Display {
 		Renderer.readyToRenderGameplay = false;
 
 		// Check version
-		checkVersion();
+		Game.updateHandler.checkForUpdate();
 
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
@@ -84,22 +92,8 @@ public class TitleDisplay extends Display {
 		if (Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
-	}
 
-	private void checkVersion() {
-		VersionInfo latestVersion = Network.getLatestVersion();
-		if (latestVersion == null) {
-			Network.findLatestVersion(this::checkVersion);
-		} else {
-			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
-				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("minicraft.displays.title.display.new_version", latestVersion.releaseName), Color.GREEN));
-				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, Localization.getLocalized("minicraft.displays.title.select_to_download"), latestVersion.releaseUrl, Localization.getLocalized("minicraft.displays.title.link_to_version", latestVersion.releaseUrl)));
-			} else if (latestVersion.releaseName.length() > 0) {
-				menus[0].updateEntry(0, new StringEntry("minicraft.displays.title.display.latest_already", Color.DARK_GRAY, true));
-			} else {
-				menus[0].updateEntry(0, new StringEntry("minicraft.displays.title.display.cannot_check", Color.RED, true));
-			}
-		}
+		WorldSelectDisplay.updateWorlds();
 	}
 
 	@Override
@@ -107,6 +101,25 @@ public class TitleDisplay extends Display {
 		if (input.getMappedKey("F3-r").isClicked()) rand = random.nextInt(splashes.length - 3) + 3;
 
 		super.tick(input);
+
+		VersionInfo latestVersion = Game.updateHandler.getLatestVersion();
+		if (latestVersion != null && input.getMappedKey("U").isClicked()) {
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.add(new StringEntry(new Localization.LocalizationString(latestVersion.version.isDev() ?
+				"minicraft.displays.title.update_checker.popup.display.new_pre_available" :
+				"minicraft.displays.title.update_checker.popup.display.new_available")));
+			entries.add(new StringEntry(new Localization.LocalizationString(false, latestVersion.version.toString())));
+			entries.add(new LinkEntry(Color.WHITE, new Localization.LocalizationString(
+				"minicraft.displays.title.update_checker.popup.display.action"), latestVersion.releaseUrl) {
+				@Override
+				public void tick(InputHandler input) {
+					if (input.inputPressed("SELECT"))
+						Game.exitDisplay(); // Exits popup first.
+					super.tick(input);
+				}
+			});
+			Game.setDisplay(new PopupDisplay(null, entries.toArray(new ListEntry[0])));
+		}
 	}
 
 	@Override
@@ -121,7 +134,7 @@ public class TitleDisplay extends Display {
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x, y, 0, sheet);
+				screen.render(null, xo + x * 8, yo + y * 8, x, y, 0, sheet);
 			}
 		}
 
@@ -145,14 +158,10 @@ public class TitleDisplay extends Display {
 
 		Font.draw(Localization.getLocalized("minicraft.displays.title.display.version", Game.VERSION), screen, 1, 1, Color.get(1, 51));
 
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.title.display.help"), screen, Screen.h - 20, Color.DARK_GRAY);
 
-		String upString = Localization.getLocalized("minicraft.displays.title.display.help.0", Game.input.getMapping("cursor-up"), Game.input.getMapping("cursor-down"));
-		String selectString = Localization.getLocalized("minicraft.displays.title.display.help.1", Game.input.getMapping("select"));
-		String exitString = Localization.getLocalized("minicraft.displays.title.display.help.2", Game.input.getMapping("exit"));
-
-		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
-		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);
-		Font.drawCentered(exitString, screen, Screen.h - 10, Color.DARK_GRAY);
+		if (Game.updateHandler.anyCheckDid() && !Settings.get("updatecheck").equals("minicraft.settings.update_check.disabled"))
+			Font.draw(Game.updateHandler.getStatusMessage(), screen, 0, Screen.h - 8, Game.updateHandler.getStatusMessageColor());
 	}
 
 	private static final String[] splashes = {

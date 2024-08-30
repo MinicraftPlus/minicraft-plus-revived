@@ -161,7 +161,7 @@ public class Updater extends Game {
 
 		// SCORE MODE ONLY
 
-		if (isMode("minicraft.settings.mode.score") && (!paused && !gameOver)) {
+		if (isMode("minicraft.displays.world_create.options.game_mode.score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setDisplay(new EndGameDisplay());
@@ -184,6 +184,7 @@ public class Updater extends Game {
 			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			TutorialDisplayHandler.tick(input);
 			AdvancementElement.AdvancementTrigger.tick();
+			Renderer.tickHotBar();
 
 			if (currentDisplay != null) {
 				// A menu is active.
@@ -227,7 +228,7 @@ public class Updater extends Game {
 					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
 						Game.setDisplay(new LevelTransitionDisplay(1));
 					}
-					
+
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");
@@ -245,19 +246,19 @@ public class Updater extends Game {
 
 					String prevMode = (String) Settings.get("mode");
 					if (input.getMappedKey("F3-F4-2").isClicked()) {
-						Settings.set("mode", "minicraft.settings.mode.creative");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.creative");
+						Settings.set("mode", "minicraft.displays.world_create.options.game_mode.creative");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.displays.world_create.options.game_mode.creative");
 					}
 					if (input.getMappedKey("F3-F4-1").isClicked()) {
-						Settings.set("mode", "minicraft.settings.mode.survival");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.survival");
+						Settings.set("mode", "minicraft.displays.world_create.options.game_mode.survival");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.displays.world_create.options.game_mode.survival");
 					}
 					if (input.getMappedKey("F3-F4-3").isClicked()) {
-						Settings.set("mode", "minicraft.settings.mode.score");
-						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.settings.mode.score");
+						Settings.set("mode", "minicraft.displays.world_create.options.game_mode.score");
+						Logging.WORLDNAMED.trace("Game mode changed from {} into {}.", prevMode, "minicraft.displays.world_create.options.game_mode.score");
 					}
 
-					if (isMode("minicraft.settings.mode.score") && input.getMappedKey("F3-SHIFT-T").isClicked()) {
+					if (isMode("minicraft.displays.world_create.options.game_mode.score") && input.getMappedKey("F3-SHIFT-T").isClicked()) {
 						scoreTime = normSpeed * 5; // 5 seconds
 					}
 
@@ -323,7 +324,7 @@ public class Updater extends Game {
 		if (t > 0 && t < times.length)
 			changeTimeOfDay(times[t]); // It just references the other one.
 		else
-			Logging.WORLD.info("Time " + t + " does not exist.");
+			Logging.WORLD.info("Time {} does not exist.", t);
 	}
 
 	public static Time getTime() {
@@ -334,12 +335,11 @@ public class Updater extends Game {
 	/**
 	 * This adds a notification to all player games.
 	 */
-	public static void notifyAll(String msg) {
+	public static void notifyAll(Localization.LocalizationString msg) {
 		notifyAll(msg, 0);
 	}
 
-	public static void notifyAll(String msg, int notetick) {
-		msg = Localization.getLocalized(msg);
+	public static void notifyAll(Localization.LocalizationString msg, int notetick) {
 		notifications.add(msg);
 		Updater.notetick = notetick;
 	}

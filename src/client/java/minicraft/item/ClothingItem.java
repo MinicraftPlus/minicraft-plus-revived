@@ -46,7 +46,7 @@ public class ClothingItem extends StackableItem {
 		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
-			if (!Game.isMode("minicraft.settings.mode.creative")) {
+			if (!Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) {
 				ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
 					.findAny().orElse(null);
 				if (lastClothing == null)

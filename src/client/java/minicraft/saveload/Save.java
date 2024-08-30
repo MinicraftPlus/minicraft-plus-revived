@@ -32,6 +32,7 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
+import minicraft.item.StackableItem;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
 import minicraft.screen.LoadingDisplay;
@@ -79,14 +80,14 @@ public class Save {
 		if (worldFolder.getParent().equals("saves")) {
 			String worldName = worldFolder.getName();
 			if (!worldName.toLowerCase().equals(worldName)) {
-				Logging.SAVELOAD.debug("Renaming world in " + worldFolder + " to lowercase");
+				Logging.SAVELOAD.debug("Renaming world in \"{}\" to lowercase", worldFolder);
 				String path = worldFolder.toString();
 				path = path.substring(0, path.lastIndexOf(worldName));
 				File newFolder = new File(path + worldName.toLowerCase());
 				if (worldFolder.renameTo(newFolder))
 					worldFolder = newFolder;
 				else
-					Logging.SAVELOAD.error("Failed to rename world folder " + worldFolder + " to " + newFolder);
+					Logging.SAVELOAD.error("Failed to rename world folder \"{}\" to \"{}\"", worldFolder, newFolder);
 			}
 		}
 
@@ -111,7 +112,7 @@ public class Save {
 
 		WorldSelectDisplay.updateWorlds();
 
-		Updater.notifyAll("minicraft.notification.world_saved");
+		Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.world_saved"));
 		Updater.asTick = 0;
 		Updater.saving = false;
 	}
@@ -212,7 +213,9 @@ public class Save {
 	private void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(World.getWorldSeed()));
-		data.add(Settings.getIdx("mode") + (Game.isMode("minicraft.settings.mode.score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
+		data.add(String.format("%d%s", Settings.getIdx("mode"),
+			Game.isMode("minicraft.displays.world_create.options.game_mode.score") ?
+				String.format(";%d;%s", Updater.scoreTime, Settings.get("scoretime")) : ""));
 		data.add(String.valueOf(Updater.tickCount));
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
@@ -239,6 +242,7 @@ public class Save {
 		json.put("resourcePacks", new JSONArray(ResourcePackDisplay.getLoadedPacks()));
 		json.put("showquests", String.valueOf(Settings.get("showquests")));
 		json.put("hwa", String.valueOf(Settings.get("hwa")));
+		json.put("updateChecking", String.valueOf(Settings.get("updatecheck")));
 
 		// Save json
 		try {
@@ -268,7 +272,7 @@ public class Save {
 	}
 
 	private void writeWorld(String filename) {
-		LoadingDisplay.setMessage("minicraft.displays.loading.message.levels");
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.levels"));
 		for (int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
@@ -329,7 +333,7 @@ public class Save {
 	}
 
 	private void writePlayer(String filename, Player player) {
-		LoadingDisplay.setMessage("Player");
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.player"));
 		writePlayer(player, data);
 		writeToFile(location + filename + extension, data);
 	}
@@ -355,8 +359,8 @@ public class Save {
 			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 
 		if (player.potioneffects.size() > 0)
-			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // Cuts off extra ":" and appends "]"
-		else subdata.append("]");
+			subdata.setLength(subdata.length() - 1); // Cuts off extra ":"; info: https://stackoverflow.com/a/3395329
+		subdata.append("]");
 		data.add(subdata.toString());
 
 		data.add(String.valueOf(player.shirtColor));
@@ -364,8 +368,9 @@ public class Save {
 		JSONObject unlockedRecipes = new JSONObject();
 		for (Recipe recipe : CraftingDisplay.getUnlockedRecipes()) {
 			JSONArray costs = new JSONArray();
-			recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
-			unlockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+			recipe.getCosts().forEach((c, i) -> costs.put(String.format(StackableItem.STACK_DISPLAY_NAME_FORMAT, c, i)));
+			unlockedRecipes.put(String.format(StackableItem.STACK_DISPLAY_NAME_FORMAT,
+				recipe.getProduct().getName(), recipe.getAmount()), costs);
 		}
 		data.add(unlockedRecipes.toString());
 	}
@@ -389,7 +394,7 @@ public class Save {
 	}
 
 	private void writeEntities(String filename) {
-		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
+		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.entities"));
 		for (int l = 0; l < World.levels.length; l++) {
 			for (Entity e : World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);
@@ -456,12 +461,12 @@ public class Save {
 
 		int depth = 0;
 		if (e.getLevel() == null)
-			Logging.SAVELOAD.warn("Saving entity with no level reference: " + e + "; setting level to surface");
+			Logging.SAVELOAD.warn("Saving entity with no level reference: {}; setting level to surface", e);
 		else
 			depth = e.getLevel().depth;
 
 		extradata.append(":").append(World.lvlIdx(depth));
 
-		return name + "[" + e.x + ":" + e.y + extradata + "]";
+		return String.format("%s[%d:%d%s]", name, e.x, e.y, extradata);
 	}
 }

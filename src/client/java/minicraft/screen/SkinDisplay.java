@@ -110,7 +110,13 @@ public class SkinDisplay extends Display {
 	private void refreshEntries() {
 		List<ListEntry> l = new ArrayList<>();
 		for (String s : skins.keySet()) {
-			l.add(new SelectEntry(s, this::confirmExit));
+			l.add(new SelectEntry(new Localization.LocalizationString(s.startsWith("minicraft.skin"), s), this::confirmExit) {
+				@Override
+				public int getColor(boolean isSelected) {
+					if (s.equals(selectedSkin)) return isSelected ? Color.GREEN : Color.DIMMED_GREEN;
+					return super.getColor(isSelected);
+				}
+			});
 		}
 
 		menus[0].setEntries(l);
@@ -263,7 +269,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin"), screen, 16, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin"), screen, 16, Color.SILVER);
 
 		int xOffset = Screen.w / 2 - 8; // Put this in the center of the screen
 		int yOffset = 40; // Player sprite Y position
@@ -272,11 +278,10 @@ public class SkinDisplay extends Display {
 
 		// Render preview of skin.
 		LinkedSprite sprite = new ArrayList<>(skins.values()).get(menus[0].getSelection())[spriteIndex / 2][spriteIndex % 2];
-		screen.render(xOffset, yOffset, sprite);
+		screen.render(null, xOffset, yOffset, sprite);
 
 		// Help text.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.GRAY);
 	}
 
 	public static String getSelectedSkin() {

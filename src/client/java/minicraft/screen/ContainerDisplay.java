@@ -30,8 +30,10 @@ public class ContainerDisplay extends Display {
 
 	public ContainerDisplay(Player player, Chest chest) {
 		menus = new Menu[] {
-			new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT, this::update),
-			new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.LEFT, this::update)
+			new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
+				"minicraft.display.menus.inventory"), ItemListMenu.POS_LEFT, null),
+			new InventoryMenu(chest, chest.getInventory(), new Localization.LocalizationString(chest.name),
+				ItemListMenu.POS_RIGHT, null)
 		};
 		this.player = player;
 		this.chest = chest;
@@ -40,30 +42,9 @@ public class ContainerDisplay extends Display {
 		if (onScreenKeyboardMenu != null) {
 			onScreenKeyboardMenu.setVisible(false);
 		}
-
-		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
-
-		if (menus[1].getNumOptions() == 0) onSelectionChange(1, 0);
 	}
 
 	OnScreenKeyboardMenu onScreenKeyboardMenu;
-
-	@Override
-	protected void onSelectionChange(int oldSel, int newSel) {
-		super.onSelectionChange(oldSel, newSel);
-
-		if (oldSel == newSel)
-			return; // this also serves as a protection against access to menus[0] when such may not exist.
-
-		int shift = 0;
-
-		if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();
-		if (newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-
-		for (Menu m : menus) {
-			m.translate(shift, 0);
-		}
-	}
 
 	private int getOtherIdx() {
 		return selection ^ 1;
@@ -85,10 +66,10 @@ public class ContainerDisplay extends Display {
 			// Expanded counter
 			if (sizeLeft < 10) { // At the moment at most just 2 digits and always 2 digits for capacity (no worry yet)
 				// Background
-				screen.render(boundsLeft.getRight() + 2 - (23 - 5), boundsLeft.getTop() - 3,
+				screen.render(null, boundsLeft.getRight() + 2 - (23 - 5), boundsLeft.getTop() - 3,
 					12, 12, 3, 13, counterSheet);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsLeft.getRight() + 2 - 15, boundsLeft.getTop() - 3,
+				screen.render(null, boundsLeft.getRight() + 2 - 15, boundsLeft.getTop() - 3,
 					20, 12, 15, 13, counterSheet);
 
 				// Digits
@@ -98,7 +79,7 @@ public class ContainerDisplay extends Display {
 					0, 4, 5, capLeft, Color.GRAY);
 			} else {
 				// Background
-				screen.render(boundsLeft.getRight() + 2 - 23, boundsLeft.getTop() - 3,
+				screen.render(null, boundsLeft.getRight() + 2 - 23, boundsLeft.getTop() - 3,
 					12, 12, 23, 13, counterSheet);
 
 				// Digits
@@ -115,10 +96,10 @@ public class ContainerDisplay extends Display {
 			// Minimized counter
 			if (sizeRight < 10) { // no worry yet, really
 				// Background
-				screen.render(boundsRight.getLeft() + 4, boundsRight.getTop() - 1,
+				screen.render(null, boundsRight.getLeft() + 4, boundsRight.getTop() - 1,
 					0, 12, 4, 9, counterSheet);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsRight.getLeft() + 8, boundsRight.getTop() - 1,
+				screen.render(null, boundsRight.getLeft() + 8, boundsRight.getTop() - 1,
 					8, 12, 4, 9, counterSheet);
 
 				// Digits
@@ -126,7 +107,7 @@ public class ContainerDisplay extends Display {
 					0, 4, 5, sizeRight, fadeColor(colorByHeaviness(calculateHeaviness(sizeRight, capRight), false)));
 			} else {
 				// Background
-				screen.render(boundsRight.getLeft() + 4, boundsRight.getTop() - 1,
+				screen.render(null, boundsRight.getLeft() + 4, boundsRight.getTop() - 1,
 					0, 12, 12, 9, counterSheet);
 
 				// Digits
@@ -141,10 +122,10 @@ public class ContainerDisplay extends Display {
 			// Minimized counter
 			if (sizeLeft < 10) {
 				// Background
-				screen.render(boundsLeft.getRight() - 4 - 8, boundsLeft.getTop() - 1,
+				screen.render(null, boundsLeft.getRight() - 4 - 8, boundsLeft.getTop() - 1,
 					0, 12, 4, 9, counterSheet);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsLeft.getRight() - 4 - 4, boundsLeft.getTop() - 1,
+				screen.render(null, boundsLeft.getRight() - 4 - 4, boundsLeft.getTop() - 1,
 					8, 12, 4, 9, counterSheet);
 
 				// Digits
@@ -152,7 +133,7 @@ public class ContainerDisplay extends Display {
 					0, 4, 5, sizeLeft, fadeColor(colorByHeaviness(calculateHeaviness(sizeLeft, capLeft), false)));
 			} else {
 				// Background
-				screen.render(boundsLeft.getRight() - 4 - 12, boundsLeft.getTop() - 1,
+				screen.render(null, boundsLeft.getRight() - 4 - 12, boundsLeft.getTop() - 1,
 					0, 12, 12, 9, counterSheet);
 
 				// Digits
@@ -167,10 +148,10 @@ public class ContainerDisplay extends Display {
 			// Expanded counter (background horizontally mirrored)
 			if (sizeRight < 10) {
 				// Background
-				screen.render(boundsRight.getLeft() - 2 + (20 - 5), boundsRight.getTop() - 3,
+				screen.render(null, boundsRight.getLeft() - 2 + (20 - 5), boundsRight.getTop() - 3,
 					12, 12, 3, 13, counterSheet, 1);
 				// Skips the middle part as that is for more digits
-				screen.render(boundsRight.getLeft() - 2, boundsRight.getTop() - 3,
+				screen.render(null, boundsRight.getLeft() - 2, boundsRight.getTop() - 3,
 					20, 12, 15, 13, counterSheet, 1);
 
 				// Digits
@@ -180,7 +161,7 @@ public class ContainerDisplay extends Display {
 					0, 4, 5, capRight, Color.GRAY);
 			} else {
 				// Background
-				screen.render(boundsRight.getLeft() - 2, boundsRight.getTop() - 3,
+				screen.render(null, boundsRight.getLeft() - 2, boundsRight.getTop() - 3,
 					12, 12, 23, 13, counterSheet, 1);
 
 				// Digits
@@ -196,7 +177,7 @@ public class ContainerDisplay extends Display {
 	private void renderCounterNumber(Screen screen, int xp, int yp, int ys, int w, int h, int n, int color) {
 		String display = String.valueOf(n);
 		for (int i = 0; i < display.length(); ++i) {
-			screen.render(xp + i * w, yp, w * (display.charAt(i) - '0'), ys, w, h, counterSheet, 0, color);
+			screen.render(null, xp + i * w, yp, w * (display.charAt(i) - '0'), ys, w, h, counterSheet, 0, color);
 		}
 	}
 
@@ -301,7 +282,7 @@ public class ContainerDisplay extends Display {
 		}
 
 		if (mainMethod || !onScreenKeyboardMenu.isVisible())
-			if (input.inputPressed("attack")) {
+			if (input.inputPressed("SELECT")) {
 				if (curMenu.getEntries().length == 0) return;
 
 				// switch inventories
@@ -338,29 +319,13 @@ public class ContainerDisplay extends Display {
 					} else {
 						from.remove(fromSel);
 					}
-					update();
 				} else {
 					if (to.add(toItem) == null) {
 						from.remove(fromSel);
-						update();
 					}
 				}
+				((InventoryMenu) menus[0]).refresh();
+				((InventoryMenu) menus[1]).refresh();
 			}
-	}
-
-	/** @deprecated This method is no longer in use by the removal of multiplayer system.
-	 * Also, the game is paused when the display is shown, so it is not possible for the player to pickup items during this period. */
-	@Deprecated
-	public void onInvUpdate(ItemHolder holder) {
-		if (holder == player || holder == chest) {
-			update();
-		}
-	}
-
-	private void update() {
-		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
-		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
-		onSelectionChange(0, selection);
 	}
 }

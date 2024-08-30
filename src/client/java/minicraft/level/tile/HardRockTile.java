@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -39,7 +40,7 @@ public class HardRockTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -55,7 +56,7 @@ public class HardRockTile extends Tile {
 					return true;
 				}
 			} else {
-				Game.notifications.add("minicraft.notification.gem_pickaxe_required");
+				Game.notifications.add(new Localization.LocalizationString("minicraft.notification.gem_pickaxe_required"));
 			}
 		}
 		return false;
@@ -64,11 +65,11 @@ public class HardRockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int hrHealth = 200;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = hrHealth;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (damage >= hrHealth) {
 			level.setTile(x, y, Tiles.get("dirt"));
 			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3, Items.get("Stone"));

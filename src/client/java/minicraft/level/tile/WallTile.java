@@ -27,7 +27,8 @@ public class WallTile extends Tile {
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
 		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 
-	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
+	private static final Localization.LocalizationString obrickMsg = new Localization.LocalizationString(
+		"minicraft.notification.defeat_air_wizard_first");
 	protected Material type;
 
 	protected WallTile(Material type) {
@@ -35,7 +36,7 @@ public class WallTile extends Tile {
 	}
 
 	protected WallTile(Material type, String name) {
-		super(type.name() + " " + (name == null ? "Wall" : name), null);
+		super(String.format("%s %s", type.name(), name == null ? "Wall" : name), null);
 		this.type = type;
 		switch (type) {
 			case Wood:
@@ -56,17 +57,17 @@ public class WallTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 			hurt(level, x, y, 0);
 			return true;
 		} else {
-			Game.notifications.add(Localization.getLocalized(obrickMsg));
+			Game.notifications.add(obrickMsg);
 			return false;
 		}
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -91,12 +92,12 @@ public class WallTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth = 100;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = sbwHealth;
+		if (Game.isMode("minicraft.displays.world_create.options.game_mode.creative")) dmg = damage = sbwHealth;
 
 		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+		level.add(new TextParticle(String.valueOf(dmg), (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";
 			switch (type) { // Get what tile to set and what item to drop

@@ -122,7 +122,7 @@ public final class Tiles {
 
 	static void add(int id, Tile tile) {
 		tiles.put((short) id, tile);
-		Logging.TILES.debug("Adding " + tile.name + " to tile list with id " + id);
+		Logging.TILES.debug("Adding {} to tile list with id {}.", tile.name, id);
 		tile.id = (short) id;
 	}
 
@@ -242,8 +242,8 @@ public final class Tiles {
 		overflowCheck++;
 
 		if (overflowCheck > 50) {
-			CrashHandler.crashHandle(new StackOverflowError("Tiles#get: " + name), new CrashHandler.ErrorInfo("Tile fetching Stacking",
-				CrashHandler.ErrorInfo.ErrorType.SERIOUS, "STACKOVERFLOW prevented in Tiles.get(), on: " + name));
+			CrashHandler.crashHandle(new StackOverflowError(String.format("Tiles#get: %s", name)), new CrashHandler.ErrorInfo("Tile fetching Stacking",
+				CrashHandler.ErrorInfo.ErrorType.SERIOUS, String.format("STACKOVERFLOW prevented in Tiles.get(), on: %s", name)));
 		}
 
 		//System.out.println("Fetching tile " + name);
@@ -263,7 +263,7 @@ public final class Tiles {
 		}
 
 		if (getting == null) {
-			Logging.TILES.info("Invalid tile requested: " + name);
+			Logging.TILES.info("Invalid tile requested: {}", name);
 			getting = tiles.get((short) 0);
 		}
 
@@ -276,7 +276,7 @@ public final class Tiles {
 		if (tiles.get(id) != null) {
 			return tiles.get(id);
 		} else {
-			Logging.TILES.info("Unknown tile id requested: " + id);
+			Logging.TILES.info("Unknown tile id requested: {}", id);
 			return tiles.get((short) 0);
 		}
 	}
