@@ -47,6 +47,7 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.ArmorItem;
+import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -160,7 +161,7 @@ public class Load {
 		if (!loadGame) return;
 
 		// Is dev build or newer version
-		if (worldVer != null && (Game.VERSION.getDev() != 0 || worldVer.compareTo(Game.VERSION) < 0)) {
+		if (worldVer != null && (Game.VERSION.isDev() || worldVer.compareTo(Game.VERSION) < 0)) {
 			Logging.SAVELOAD.info("World of unexpected version detected, backup prompting...");
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
@@ -774,25 +775,29 @@ public class Load {
 						}
 					}
 
-					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
+					if (tilename.equalsIgnoreCase("Wool")) {
+						if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+							switch (Integer.parseInt(extradata.get(tileidx))) {
+								case 1:
+									tilename = "Red Wool";
+									break;
+								case 2:
+									tilename = "Yellow Wool";
+									break;
+								case 3:
+									tilename = "Green Wool";
+									break;
+								case 4:
+									tilename = "Blue Wool";
+									break;
+								case 5:
+									tilename = "Black Wool";
+									break;
+								default:
+									tilename = "White Wool";
+							}
+						} else if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if (Math.random() < 0.8) // don't replace *all* the lapis
@@ -810,7 +815,7 @@ public class Load {
 						}
 					}
 
-					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
+					loadTile(worldVer, tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -883,7 +888,7 @@ public class Load {
 		}
 
 		boolean signsLoadSucceeded = false;
-		if (new File(location+"signs.json").exists()) {
+		if (new File(location + "signs.json").exists()) {
 			try {
 				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
 				@SuppressWarnings("unused")
@@ -916,14 +921,18 @@ public class Load {
 
 	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
 
-	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+	public static void loadTile(Version worldVer, short[] tiles, short[] data, int idx, String tileName, String tileData) {
 		Matcher matcher;
 		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
 			tiles[idx] = 57; // ID of TORCH tile
 			data[idx] = Tiles.get(matcher.group(1)).id;
 		} else {
 			tiles[idx] = Tiles.get(tileName).id;
-			data[idx] = Short.parseShort(tileData);
+			if (worldVer.compareTo(new Version("2.2.1-dev1")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
+				data[idx] = 0;
+			} else {
+				data[idx] = Short.parseShort(tileData);
+			}
 		}
 	}
 
@@ -1084,6 +1093,16 @@ public class Load {
 				name = "Awkward Potion";
 		}
 
+		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+			if (name.startsWith("Wool"))
+				name = name.replace("Wool", "White Wool");
+		}
+
+		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+			if (name.startsWith("Flower"))
+				name = name.replace("Flower", "Oxeye Daisy");
+		}
+
 		return name;
 	}
 
@@ -1194,6 +1213,14 @@ public class Load {
 				newEntity = new Spark((AirWizard) sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
+				return null;
+			}
+		} else if (entityName.contains(" Bed")) { // with a space, meaning that the bed has a color name in the front
+			String colorName = entityName.substring(0, entityName.length() - 4).toUpperCase().replace(' ', '_');
+			try {
+				newEntity = new Bed(DyeItem.DyeColor.valueOf(colorName));
+			} catch (IllegalArgumentException e) {
+				Logging.SAVELOAD.error("Invalid bed variant: `{}`, skipping.", entityName);
 				return null;
 			}
 		} else {
@@ -1343,7 +1370,6 @@ public class Load {
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
 			case "Player":
-				return null;
 			case "RemotePlayer":
 				return null;
 			case "Cow":
@@ -1407,6 +1433,8 @@ public class Load {
 				return new KnightStatue(0);
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
+			case "DyeVat":
+				return new Crafter(Crafter.Type.DyeVat);
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: {}", string);
 				return null;
