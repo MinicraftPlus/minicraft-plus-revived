@@ -513,7 +513,7 @@ public class Screen {
 				return 1;
 			} else {
 				// Outside the caves, not being lit simply means being darker.
-				return darkFactor / 128; // darkens the color one shade.
+				return darkFactor / 160; // darkens the color one shade.
 			}
 		}
 
