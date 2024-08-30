@@ -105,7 +105,7 @@ public class TitleDisplay extends Display {
 		VersionInfo latestVersion = Game.updateHandler.getLatestVersion();
 		if (latestVersion != null && input.getMappedKey("U").isClicked()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry(new Localization.LocalizationString(latestVersion.version.getDev() > 0 ?
+			entries.add(new StringEntry(new Localization.LocalizationString(latestVersion.version.isDev() ?
 				"minicraft.displays.title.update_checker.popup.display.new_pre_available" :
 				"minicraft.displays.title.update_checker.popup.display.new_available")));
 			entries.add(new StringEntry(new Localization.LocalizationString(false, latestVersion.version.toString())));

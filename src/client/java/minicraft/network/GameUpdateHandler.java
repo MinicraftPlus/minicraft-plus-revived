@@ -57,7 +57,7 @@ public class GameUpdateHandler {
 
 		public UpdateMeta(VersionInfo versionInfo) {
 			this.versionInfo = versionInfo;
-			inDev = versionInfo.version.getDev() > 0;
+			inDev = versionInfo.version.isDev();
 			if (versionInfo.version.compareTo(Game.VERSION) <= 0) {
 				message = new Localization.LocalizationString(true, false,
 					"minicraft.displays.title.update_checker.display.status.latest");
@@ -110,7 +110,7 @@ public class GameUpdateHandler {
 						do {
 							versionInfo = new VersionInfo(
 								new JSONObject(response.getBody().getArray().getJSONObject(idx++).toString()));
-						} while (fullOnly && versionInfo.version.getDev() > 0);
+						} while (fullOnly && versionInfo.version.isDev());
 						latestUpdate = new UpdateMeta(versionInfo);
 					} else {
 						Logging.NETWORK.error("Version request returned status code {}: {}",
