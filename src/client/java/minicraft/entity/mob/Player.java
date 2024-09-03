@@ -29,6 +29,7 @@ import minicraft.item.ArmorItem;
 import minicraft.item.BoundedInventory;
 import minicraft.item.FishingData;
 import minicraft.item.FishingRodItem;
+import minicraft.item.FixedInventory;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -147,7 +148,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		y = 24;
 		this.input = input;
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
-		inventory = new BoundedInventory() { // Registering all triggers to InventoryChanged.
+		inventory = new FixedInventory() { // Registering all triggers to InventoryChanged.
 			private void triggerTrigger() {
 				AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.InventoryChangedTrigger.InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions(this)

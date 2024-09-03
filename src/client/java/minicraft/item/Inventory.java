@@ -5,18 +5,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * An item storage space for general purposes, based on the maximum number of item stacks,
+ * and the default item maximum count for stackable items.
+ * <p>
+ *     For special conditional storage space for items, like custom maximum count of items and
+ *     storage space that is variable to other conditions, slots or a custom implementation
+ *     is recommended instead.
+ * </p>
+ */
 public abstract class Inventory {
 	protected final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 
 	/**
 	 * Returns all the items which are in this inventory.
-	 * @return ArrayList containing all the items in the inventory.
+	 * @return a read-only view of the internal list containing all the items in the inventory.
 	 */
-	public List<Item> getItems() {
-		return new ArrayList<>(items);
+	public List<Item> getItemsView() {
+		return Collections.unmodifiableList(items);
 	}
 
 	public void clearInv() {

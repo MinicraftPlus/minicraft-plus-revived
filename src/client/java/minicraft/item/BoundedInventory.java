@@ -3,19 +3,14 @@ package minicraft.item;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
-public class BoundedInventory extends Inventory {
-	public static final int DEFAULT_SIZE = 27;
-
-	protected final int maxItem;
-
-	public BoundedInventory() { this(DEFAULT_SIZE); }
-	public BoundedInventory(int maxItem) {
-		this.maxItem = maxItem;
-	}
-
-	public int getMaxSlots() {
-		return maxItem;
-	}
+public abstract class BoundedInventory extends Inventory {
+	/**
+	 * Gets the current maximum capacity of inventory.
+	 * This value is capable to inventory expanding (e.g. upgrades), but not changing by other
+	 * conditions such as the contents.
+	 * @return current value of maximum capacity of general slots
+	 */
+	public abstract int getMaxSlots();
 
 	@Override
 	public @Nullable Item add(@Nullable Item item) {
@@ -26,6 +21,7 @@ public class BoundedInventory extends Inventory {
 			return null;
 		}
 
+		int maxItem = getMaxSlots();
 		if (item instanceof StackableItem) { // If the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
 			for (Item value : items) {

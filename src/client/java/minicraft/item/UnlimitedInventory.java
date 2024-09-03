@@ -3,6 +3,9 @@ package minicraft.item;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A general inventory implementation basically without size limit (maximum number of slots).
+ */
 public class UnlimitedInventory extends Inventory {
 	@Override
 	public @Nullable Item add(@Nullable Item item) {

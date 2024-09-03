@@ -1,7 +1,6 @@
 package minicraft.util;
 
 import minicraft.core.World;
-import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.RewardChest;
 import minicraft.item.BoundedInventory;
 import minicraft.item.Item;
@@ -925,7 +924,7 @@ public class AdvancementElement {
 					private final int maxSlots;
 
 					public InventoryChangedTriggerConditions(BoundedInventory inventory) {
-						items.addAll(inventory.getItems());
+						items.addAll(inventory.getItemsView());
 						maxSlots = inventory.getMaxSlots();
 					}
 				}

@@ -8,6 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.BoundedInventory;
+import minicraft.item.FixedInventory;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -36,7 +37,7 @@ public class Chest extends Furniture implements ItemHolder {
 	 * @param name Name of chest.
 	 */
 	public Chest(String name, LinkedSprite itemSprite) {
-		this(new BoundedInventory(), name, itemSprite); // Default with bounded inventory
+		this(new FixedInventory(), name, itemSprite); // Default with bounded inventory
 	}
 
 	protected Chest(Inventory inventory, String name, LinkedSprite itemSprite) {
@@ -89,7 +90,7 @@ public class Chest extends Furniture implements ItemHolder {
 	@Override
 	public void die() {
 		if (level != null) {
-			List<Item> items = inventory.getItems();
+			List<Item> items = inventory.getItemsView();
 			level.dropItem(x, y, items.toArray(new Item[0]));
 		}
 		super.die();

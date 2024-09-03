@@ -11,10 +11,8 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.BoundedInventory;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
 import minicraft.item.UnlimitedInventory;
 
 public class DeathChest extends Chest {
@@ -46,7 +44,7 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		for (Item i : player.getInventory().getItems()) {
+		for (Item i : player.getInventory().getItemsView()) {
 			inventory.add(i.copy());
 		}
 	}
@@ -98,7 +96,7 @@ public class DeathChest extends Chest {
 	public void touchedBy(Entity other) {
 		if (other instanceof Player) {
 			Inventory playerInv = ((Player) other).getInventory();
-			for (Item i : inventory.getItems()) {
+			for (Item i : inventory.getItemsView()) {
 				if (playerInv.add(i) != null) {
 					Game.notifications.add("Your inventory is full!");
 					return;
