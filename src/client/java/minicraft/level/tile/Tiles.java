@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.CrashHandler;
+import minicraft.item.DyeItem;
 import minicraft.level.tile.farming.CarrotTile;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.HeavenlyBerriesTile;
@@ -11,7 +12,11 @@ import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -20,6 +25,10 @@ public final class Tiles {
 	public static ArrayList<String> oldids = new ArrayList<>();
 
 	private static HashMap<Short, Tile> tiles = new HashMap<>();
+
+	// Standard tile explosion blacklist
+	// Tiles (as IDs) included cannot be damaged by explosions such as by TNTs and creepers.
+	public static final Set<Short> explosionBlacklist;
 
 	public static void initTileList() {
 		Logging.TILES.debug("Initializing tile list...");
@@ -44,6 +53,7 @@ public final class Tiles {
 		tiles.put((short) 14, new OreTile(OreTile.OreType.Gold));
 		tiles.put((short) 15, new OreTile(OreTile.OreType.Gem));
 		tiles.put((short) 16, new OreTile(OreTile.OreType.Lapis));
+
 		tiles.put((short) 18, new LavaBrickTile("Lava Brick"));
 		tiles.put((short) 19, new ExplodedTile("Explode"));
 		tiles.put((short) 20, new FarmTile("Farmland"));
@@ -61,18 +71,31 @@ public final class Tiles {
 		tiles.put((short) 32, new WallTile(Tile.Material.Wood));
 		tiles.put((short) 33, new WallTile(Tile.Material.Stone));
 		tiles.put((short) 34, new WallTile(Tile.Material.Obsidian));
-		tiles.put((short) 35, new WoolTile(WoolTile.WoolType.NORMAL));
+		tiles.put((short) 35, new WoolTile(DyeItem.DyeColor.WHITE));
+		// These are out of order because of the changes on wool and color system.
+		tiles.put((short) 37, new WoolTile(DyeItem.DyeColor.RED));
+		tiles.put((short) 38, new WoolTile(DyeItem.DyeColor.BLUE));
+		tiles.put((short) 39, new WoolTile(DyeItem.DyeColor.GREEN));
+		tiles.put((short) 40, new WoolTile(DyeItem.DyeColor.YELLOW));
+		tiles.put((short) 41, new WoolTile(DyeItem.DyeColor.BLACK));
+		tiles.put((short) 60, new WoolTile(DyeItem.DyeColor.BROWN));
+		tiles.put((short) 61, new WoolTile(DyeItem.DyeColor.PURPLE));
+		tiles.put((short) 62, new WoolTile(DyeItem.DyeColor.CYAN));
+		tiles.put((short) 63, new WoolTile(DyeItem.DyeColor.LIGHT_GRAY));
+		tiles.put((short) 64, new WoolTile(DyeItem.DyeColor.GRAY));
+		tiles.put((short) 65, new WoolTile(DyeItem.DyeColor.PINK));
+		tiles.put((short) 66, new WoolTile(DyeItem.DyeColor.LIME));
+		tiles.put((short) 67, new WoolTile(DyeItem.DyeColor.LIGHT_BLUE));
+		tiles.put((short) 68, new WoolTile(DyeItem.DyeColor.MAGENTA));
+		tiles.put((short) 69, new WoolTile(DyeItem.DyeColor.ORANGE));
+
 		tiles.put((short) 36, new PathTile("Path"));
-		tiles.put((short) 37, new WoolTile(WoolTile.WoolType.RED));
-		tiles.put((short) 38, new WoolTile(WoolTile.WoolType.BLUE));
-		tiles.put((short) 39, new WoolTile(WoolTile.WoolType.GREEN));
-		tiles.put((short) 40, new WoolTile(WoolTile.WoolType.YELLOW));
-		tiles.put((short) 41, new WoolTile(WoolTile.WoolType.BLACK));
+
 		tiles.put((short) 42, new PotatoTile("Potato"));
 		tiles.put((short) 43, new MaterialTile(Tile.Material.Stone));
 		tiles.put((short) 44, new MaterialTile(Tile.Material.Obsidian));
-		tiles.put((short) 45, new DecorTile(Tile.Material.Stone));
-		tiles.put((short) 46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short) 45, new DecorTile(DecorTile.decorType.ORNATE_STONE));
+		tiles.put((short) 46, new DecorTile(DecorTile.decorType.ORNATE_OBSIDIAN));
 		tiles.put((short) 47, new BossWallTile());
 		tiles.put((short) 48, new BossFloorTile());
 		tiles.put((short) 49, new BossDoorTile());
@@ -85,6 +108,7 @@ public final class Tiles {
 		tiles.put((short) 56, new FenceTile(Tile.Material.Obsidian));
 		tiles.put((short) 57, new TorchTile());
 		tiles.put((short) 58, new SignTile());
+		tiles.put((short) 59, new DecorTile(DecorTile.decorType.ORNATE_WOOD));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());
@@ -112,7 +136,7 @@ public final class Tiles {
 		oldids.set(3, "flower");
 		oldids.set(4, "tree");
 		oldids.set(5, "dirt");
-		oldids.set(41, "wool");
+		oldids.set(41, "white wool");
 		oldids.set(42, "red wool");
 		oldids.set(43, "blue wool");
 		oldids.set(45, "green wool");
@@ -170,7 +194,7 @@ public final class Tiles {
 		oldids.set(116, "Obsidian door");
 		oldids.set(117, "Obsidian door");
 		oldids.set(119, "hole");
-		oldids.set(57, "wool");
+		oldids.set(57, "white wool");
 		oldids.set(58, "red wool");
 		oldids.set(59, "blue wool");
 		oldids.set(60, "green wool");
@@ -192,6 +216,20 @@ public final class Tiles {
 		oldids.set(53, "torch green wool");
 		oldids.set(54, "torch yellow wool");
 		oldids.set(55, "torch black wool");
+
+		explosionBlacklist = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			(short) 4, // Stairs Up
+			(short) 5, // Stairs Down
+			(short) 22, // Hard Rock
+			(short) 28, // Obsidian Door
+			(short) 31, // Obsidian
+			(short) 34, // Obsidian Wall
+			(short) 44, // Raw Obsidian
+			(short) 46, // Ornate Obsidian
+			(short) 47, // Boss Wall
+			(short) 48, // Boss Floor
+			(short) 49 // Boss Door
+		)));
 	}
 
 	private static int overflowCheck = 0;

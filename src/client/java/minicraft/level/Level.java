@@ -28,6 +28,7 @@ import minicraft.entity.mob.Zombie;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -343,8 +344,8 @@ public class Level {
 						}
 					}
 					if (d.x == 0 && d.y == 0) {
-						d.x = x2 * 16 - 8;
-						d.y = y2 * 16 - 8;
+						d.x = (x2 << 4) - 8;
+						d.y = (y2 << 4) - 8;
 					}
 
 					add(d);
@@ -541,7 +542,7 @@ public class Level {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
 
 				int lr = getTile(x, y).getLightRadius(this, x, y);
-				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * brightness);
+				if (lr > 0) screen.renderLight((x << 4) + 8, (y << 4) + 8, lr * brightness);
 			}
 		}
 		screen.setOffset(0, 0);
@@ -610,8 +611,8 @@ public class Level {
 	public void add(Entity entity, int x, int y, boolean tileCoords) {
 		if (entity == null) return;
 		if (tileCoords) {
-			x = x * 16 + 8;
-			y = y * 16 + 8;
+			x = (x << 4) + 8;
+			y = (y << 4) + 8;
 		}
 		entity.setLevel(this, x, y);
 
@@ -672,7 +673,22 @@ public class Level {
 					// Spawns the friendly mobs.
 					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 					else if (rnd >= 68) add((new Pig()), nx, ny);
-					else add((new Sheep()), nx, ny);
+					else { // Sheep spawning
+					double colorRnd = random.nextDouble();
+					if (colorRnd < 0.8) { // 80% for default color, i.e. white
+						add((new Sheep()), nx, ny);
+					} else if (colorRnd < 0.85) { // 5% for black
+						add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
+					} else if (colorRnd < 0.9) { // 5% for gray
+						add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
+					} else if (colorRnd < 0.95) { // 5% for light gray
+						add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
+					} else if (colorRnd < 0.98) { // 3% for brown
+						add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
+					} else { // 2% for pink
+						add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+					}
+				}
 
 					spawned = true;
 				}
@@ -908,10 +924,10 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, TileCheck condition) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
-				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
+				if (condition.check(getTile(x, y), x, y))
 					setTile(x, y, tile, data);
 			}
 		}
@@ -983,8 +999,8 @@ public class Level {
 					if (xaxis2) {
 						for (int s2 = x3; s2 < w - s2; s2++) {
 							if (getTile(s2, y3) == Tiles.get("rock")) {
-								sp.x = s2 * 16 - 24;
-								sp.y = y3 * 16 - 24;
+								sp.x = (s2 << 4) - 24;
+								sp.y = (y3 << 4) - 24;
 							}
 						}
 					} else {
@@ -1001,23 +1017,23 @@ public class Level {
 						sp.y = y3 * 16 - 8;
 					}
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("rock")) {
+						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
 					}
 
-					Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+					Structure.mobDungeonCenter.draw(this, sp.x >> 4, sp.y >> 4);
 
-					if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+					if (getTile(sp.x >> 4, (sp.y >> 4) - 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonNorth.draw(this, sp.x >> 4, (sp.y >> 4) - 5);
 					}
-					if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+					if (getTile(sp.x >> 4, (sp.y >> 4) + 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonSouth.draw(this, sp.x >> 4, (sp.y >> 4) + 5);
 					}
-					if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+					if (getTile((sp.x >> 4) + 4, sp.y >> 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonEast.draw(this, (sp.x >> 4) + 5, sp.y >> 4);
 					}
-					if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
-						Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
+					if (getTile((sp.x >> 4) - 4, sp.y >> 4) == Tiles.get("dirt")) {
+						Structure.mobDungeonWest.draw(this, (sp.x >> 4) - 5, sp.y >> 4);
 					}
 
 					add(sp);
@@ -1072,11 +1088,11 @@ public class Level {
 						sp.y = y3 * 16 - 8;
 					}
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("Obsidian Wall")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("Obsidian Wall")) {
+						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
 					}
 
-					Structure.dungeonSpawner.draw(this, sp.x / 16, sp.y / 16);
+					Structure.dungeonSpawner.draw(this, sp.x >> 4, sp.y >> 4);
 
 					add(sp);
 					for (int rpt = 0; rpt < 2; rpt++) {

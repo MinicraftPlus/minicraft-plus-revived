@@ -15,7 +15,6 @@ public final class Settings {
 
 	static {
 		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
-		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20)); // The magnification of screenshot. I would want to see ultimate sized.
 		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("minicraft.settings.mode", "minicraft.settings.mode.survival", "minicraft.settings.mode.creative", "minicraft.settings.mode.hardcore", "minicraft.settings.mode.score"));
@@ -26,6 +25,8 @@ public final class Settings {
 
 		options.put("sound", new BooleanEntry("minicraft.settings.sound", true));
 		options.put("autosave", new BooleanEntry("minicraft.settings.autosave", true));
+		// For Windows, OpenGL hardware acceleration is disabled by default
+		options.put("hwa", new BooleanEntry("minicraft.settings.opengl_hwa", !FileHandler.OS.contains("windows")));
 
 		options.put("size", new ArrayEntry<>("minicraft.settings.size", 128, 256, 512));
 		options.put("theme", new ArrayEntry<>("minicraft.settings.theme", "minicraft.settings.theme.normal", "minicraft.settings.theme.forest", "minicraft.settings.theme.desert", "minicraft.settings.theme.plain", "minicraft.settings.theme.hell"));

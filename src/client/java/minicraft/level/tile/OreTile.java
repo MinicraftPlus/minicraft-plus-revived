@@ -94,10 +94,10 @@ public class OreTile extends Tile {
 		int oreH = random.nextInt(10) * 4 + 20;
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = oreH;
 
-		level.add(new SmashParticle(x * 16, y * 16));
+		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (dmg > 0) {
 			int count = random.nextInt(2);
 			if (damage >= oreH) {
@@ -113,7 +113,7 @@ public class OreTile extends Tile {
 			if (type.drop.equals(Items.get("gem"))) {
 				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);
 			}
-			level.dropItem(x * 16 + 8, y * 16 + 8, count, type.getOre());
+			level.dropItem((x << 4) + 8, (y << 4) + 8, count, type.getOre());
 		}
 	}
 

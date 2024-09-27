@@ -4,22 +4,45 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.DyeItem;
 import minicraft.level.Level;
+import minicraft.util.MyUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class Bed extends Furniture {
 
+	private static final HashMap<DyeItem.DyeColor, LinkedSprite> sprites = new HashMap<>();
+	private static final HashMap<DyeItem.DyeColor, LinkedSprite> itemSprites = new HashMap<>();
+
+	@Override
+	public @NotNull Furniture copy() {
+		return new Bed(color);
+	}
+
+	static {
+		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
+			sprites.put(color, new LinkedSprite(SpriteType.Entity, color.toString().toLowerCase() + "_bed"));
+			itemSprites.put(color, new LinkedSprite(SpriteType.Item, color.toString().toLowerCase() + "_bed"));
+		}
+	}
+
 	private static int playersAwake = 1;
 	private static final HashMap<Player, Bed> sleepingPlayers = new HashMap<>();
+
+	public final DyeItem.DyeColor color;
 
 	/**
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
-	public Bed() {
-		super("Bed", new LinkedSprite(SpriteType.Entity, "bed"), new LinkedSprite(SpriteType.Item, "bed"), 3, 2);
+	public Bed() { this(DyeItem.DyeColor.RED); }
+	public Bed(DyeItem.DyeColor color) {
+		super(MyUtils.capitalizeFully(color.toString().replace('_', ' ')) + " Bed", sprites.get(color), itemSprites.get(color), 3, 2);
+		this.color = color;
 	}
 
 	/**

@@ -51,13 +51,18 @@ public class FurnitureItem extends Item {
 		for (Crafter.Type type : Crafter.Type.values()) {
 			items.add(new FurnitureItem(new Crafter(type)));
 		}
+
 		// Add the various lanterns
 		for (Lantern.Type type : Lantern.Type.values()) {
 			items.add(new FurnitureItem(new Lantern(type)));
 		}
 
+		// Add the various colors of bed
+		for (DyeItem.DyeColor color : DyeItem.DyeColor.values()) {
+			items.add(new FurnitureItem(new Bed(color)));
+		}
+
 		items.add(new FurnitureItem(new Tnt()));
-		items.add(new FurnitureItem(new Bed()));
 		items.add(new FurnitureItem(new Composter()));
 
 		return items;
@@ -87,8 +92,8 @@ public class FurnitureItem extends Item {
 			Sound.play("craft");
 
 			// Placed furniture's X and Y positions
-			furniture.x = xt * 16 + 8;
-			furniture.y = yt * 16 + 8;
+			furniture.x = (xt << 4) + 8;
+			furniture.y = (yt << 4) + 8;
 
 			level.add(furniture); // Adds the furniture to the world
 			if (Game.isMode("minicraft.settings.mode.creative"))
