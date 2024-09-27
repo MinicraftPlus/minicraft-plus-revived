@@ -12,10 +12,8 @@ public class Rectangle {
 
 	public Rectangle() {
 	} // 0 all.
-
 	public Rectangle(int x, int y, int x1, int y1, int type) {
 		if (type < 0 || type > 2) type = 0;
-
 		if (type != CENTER_DIMS) { // x and y are the coords of the top left corner.
 			this.x = x;
 			this.y = y;
@@ -36,7 +34,6 @@ public class Rectangle {
 	public Rectangle(Point p, Dimension d) {
 		this(false, p, d);
 	}
-
 	public Rectangle(boolean isCenter, Point p, Dimension d) {
 		this(p.x, p.y, d.width, d.height, isCenter ? CENTER_DIMS : CORNER_DIMS);
 	}
@@ -48,12 +45,8 @@ public class Rectangle {
 		h = model.h;
 	}
 
-	public int getLeft() {
-		return x;
-	}
-
-	public int getRight() {
-		return x + w;
+	public int getLeft() { return x; }
+	public int getRight() { return x + w;
 	}
 
 	public int getTop() {
@@ -62,24 +55,18 @@ public class Rectangle {
 
 	public int getBottom() {
 		return y + h;
-	}
+}
 
 	public int getWidth() {
 		return w;
-	}
+	}public int getHeight() { return h; }
 
-	public int getHeight() {
-		return h;
-	}
-
-	public Point getCenter() {
-		return new Point(x + w / 2, y + h / 2);
+	public Point getCenter() { return new Point(x + w/2, y + h/2);
 	}
 
 	public Dimension getSize() {
 		return new Dimension(w, h);
-	}
-
+}
 	public Point getPosition(RelPos relPos) {
 		Point p = new Point(x, y);
 		p.x += relPos.xIndex * w / 2;
@@ -95,10 +82,14 @@ public class Rectangle {
 		);
 	}
 
-	public void setPosition(Point p, RelPos relPos) {
-		setPosition(p.x, p.y, relPos);
+	public boolean isWithin(Rectangle other) {
+		return getTop() >= other.getTop() // Top is below the other top
+			&& getBottom() <= other.getBottom() // Bottom is above the other bottom
+			&& getLeft() >= other.getLeft() // Left is on the right of the other left
+			&& getRight() <= other.getRight(); // Right is on the left of the other right
 	}
 
+	public void setPosition(Point p, RelPos relPos) { setPosition(p.x, p.y, relPos); }
 	public void setPosition(int x, int y, RelPos relPos) {
 		this.x = x - relPos.xIndex * w / 2;
 		this.y = y - relPos.yIndex * h / 2;
@@ -112,7 +103,6 @@ public class Rectangle {
 	public void setSize(Dimension d, RelPos anchor) {
 		setSize(d.width, d.height, anchor);
 	}
-
 	public void setSize(int width, int height, RelPos anchor) {
 		Point p = getPosition(anchor);
 		this.w = width;
