@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
 import minicraft.level.tile.FlowerTile;
+import minicraft.level.tile.TallGrassTile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
 import org.jetbrains.annotations.Nullable;
@@ -423,14 +424,24 @@ public class LevelGen {
 		for (int i = 0; i < w * h / 400; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
-			int col = random.nextInt(4) * random.nextInt(4);
-			for (int j = 0; j < 30; j++) {
-				int xx = x + random.nextInt(5) - random.nextInt(5);
-				int yy = y + random.nextInt(5) - random.nextInt(5);
+			int col0 = random.nextInt(4);
+			int col1 = random.nextInt(4);
+			int col2 = random.nextInt(4) * random.nextInt(4);
+			int r = 25 + random.nextInt(5) * 5;
+			for (int j = 0; j < r; j++) {
+				int xx = x + random.nextInt(6) - random.nextInt(6);
+				int yy = y + random.nextInt(6) - random.nextInt(6);
+				int colRandom = random.nextInt(8);
+				int rCol = (colRandom & 0b100) != 0 ? col2 : (colRandom & 0b10) != 0 ? col1 : col0; // chances different
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
-						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w] = (short) (col + random.nextInt(3)); // Data determines what the flower is
+						if (random.nextInt(4) == 0) { // Smaller chances for flowers
+							map[xx + yy * w] = Tiles.get("flower").id;
+							data[xx + yy * w] = (short) (col2 + random.nextInt(3)); // Data determines what the flower is
+						} else {
+							map[xx + yy * w] = Tiles.get("Tall Grass").id;
+							data[xx + yy * w] = TallGrassTile.getRandomData(random);
+						}
 					}
 				}
 			}
