@@ -10,6 +10,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 import minicraft.util.MyUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +26,7 @@ public class PagedDisplay extends Display {
 	private final StringEntry[][] lines;
 	private int page = 0;
 
-	public PagedDisplay(Localization.LocalizationString title, String content) {
+	public PagedDisplay(DisplayString title, String content) {
 		ArrayList<StringEntry[]> pages = new ArrayList<>();
 		String[] blocks = content.split("\0");
 		for (String block: blocks) {
@@ -34,7 +35,7 @@ public class PagedDisplay extends Display {
 				remainder = Font.getLines(remainder[remainder.length-1], WIDTH, HEIGHT, SPACING, true);
 				// Removes the last element of remainder, which is the leftover.
 				pages.add(Arrays.stream(Arrays.copyOf(remainder, remainder.length-1))
-					.map(l -> new StringEntry(new Localization.LocalizationString(false, l)))
+					.map(l -> new StringEntry(new DisplayString.StaticString(l)))
 					.toArray(StringEntry[]::new));
 			}
 		}
@@ -55,8 +56,8 @@ public class PagedDisplay extends Display {
 		menus[1].setEntries(lines[page]);
 	}
 
-	private Localization.LocalizationString getPageCounter() {
-		return new Localization.LocalizationString("minicraft.displays.paged.page_counter",
+	private DisplayString getPageCounter() {
+		return Localization.getStaticDisplay("minicraft.displays.paged.page_counter",
 			page + 1, lines.length);
 	}
 

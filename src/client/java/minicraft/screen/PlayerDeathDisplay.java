@@ -22,33 +22,33 @@ public class PlayerDeathDisplay extends Display {
 		super(false, false);
 
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
-			new StringEntry(new Localization.LocalizationString("minicraft.displays.player_death.display.time",
+			new StringEntry(Localization.getStaticDisplay("minicraft.displays.player_death.display.time",
 				InfoDisplay.getTimeString())),
-			new StringEntry(new Localization.LocalizationString("minicraft.displays.player_death.display.score",
+			new StringEntry(Localization.getStaticDisplay("minicraft.displays.player_death.display.score",
 				Game.player.getScore())),
 			new BlankEntry()
 		));
 
 		if (!Game.isMode("minicraft.displays.world_create.options.game_mode.hardcore")) {
-			entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.player_death.respawn"),
+			entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.player_death.respawn"),
 				() -> {
 				World.resetGame();
 				Game.setDisplay(null);
 			}));
 		}
 
-		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.player_death.save_quit"),
+		entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.player_death.save_quit"),
 			() -> {
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.setDisplay(new TitleDisplay());
 		}));
-		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.player_death.quit"),
+		entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.player_death.quit"),
 			() -> Game.setDisplay(new TitleDisplay())));
 
 		menus = new Menu[] {
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
 				.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth * 3), RelPos.BOTTOM_RIGHT)
-				.setTitle(new Localization.LocalizationString("minicraft.displays.player_death.title"))
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.player_death.title"))
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()
 		};

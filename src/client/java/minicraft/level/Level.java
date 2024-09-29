@@ -34,6 +34,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.level.tile.TreeTile;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import minicraft.util.MyUtils;
 
@@ -58,9 +59,9 @@ public class Level {
 		return levelNames[-1 * depth + 1];
 	}
 
-	public static Localization.LocalizationString getDepthString(int depth) {
-		return new Localization.LocalizationString("minicraft.display.level_name", depth < 0 ?
-			new Localization.LocalizationString("minicraft.display.level_name.underground", -depth) : depth);
+	public static DisplayString getDepthString(int depth) {
+		return Localization.getStaticDisplay("minicraft.display.level_name", depth < 0 ?
+			Localization.getStaticDisplay("minicraft.display.level_name.underground", -depth) : depth);
 	}
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...

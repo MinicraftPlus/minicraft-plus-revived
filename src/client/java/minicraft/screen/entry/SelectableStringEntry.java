@@ -3,6 +3,7 @@ package minicraft.screen.entry;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
+import minicraft.util.DisplayString;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,15 +11,15 @@ public class SelectableStringEntry extends ListEntry {
 
 	private static final int DEFAULT_COLOR = Color.WHITE;
 
-	private Localization.LocalizationString text;
+	private DisplayString text;
 	private final int color;
 
 	private EntryScrollingTicker ticker;
 
-	public SelectableStringEntry(Localization.LocalizationString text) {
+	public SelectableStringEntry(DisplayString text) {
 		this(text, DEFAULT_COLOR);
 	}
-	public SelectableStringEntry(Localization.LocalizationString text, int color) {
+	public SelectableStringEntry(DisplayString text, int color) {
 		this.text = text;
 		this.color = color;
 	}
@@ -32,7 +33,7 @@ public class SelectableStringEntry extends ListEntry {
 		ticker = new HorizontalScrollerScrollingTicker(direction);
 	}
 
-	public void setText(Localization.LocalizationString text) {
+	public void setText(DisplayString text) {
 		this.text = text;
 	}
 

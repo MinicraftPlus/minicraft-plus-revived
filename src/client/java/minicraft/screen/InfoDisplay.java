@@ -20,7 +20,7 @@ public class InfoDisplay extends Display {
 				"----------------------------",
 				Localization.getLocalized("minicraft.displays.info.display.exit_help", Game.input.getMapping("select"), Game.input.getMapping("exit"))
 			))
-				.setTitle(new Localization.LocalizationString("minicraft.displays.info.title"))
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.info.title"))
 				.setTitlePos(RelPos.TOP_LEFT)
 				.setPositioning(new Point(MinicraftImage.boxWidth, MinicraftImage.boxWidth), RelPos.BOTTOM_RIGHT)
 				.createMenu()

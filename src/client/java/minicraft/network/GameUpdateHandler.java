@@ -9,6 +9,7 @@ import minicraft.core.VersionInfo;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -52,18 +53,18 @@ public class GameUpdateHandler {
 	private static class UpdateMeta {
 		public final VersionInfo versionInfo;
 		public final boolean inDev;
-		public final Localization.LocalizationString message;
+		public final DisplayString message;
 		public final int color;
 
 		public UpdateMeta(VersionInfo versionInfo) {
 			this.versionInfo = versionInfo;
 			inDev = versionInfo.version.isDev();
 			if (versionInfo.version.compareTo(Game.VERSION) <= 0) {
-				message = new Localization.LocalizationString(true, false,
+				message = new Localization.HookedLocalizedBufArgString(
 					"minicraft.displays.title.update_checker.display.status.latest");
 				color = Color.DARK_GRAY;
 			} else { // > Game.VERSION
-				message = new Localization.LocalizationString(false,
+				message = new Localization.HookedLocalizedBufArgString(
 					"minicraft.displays.title.update_checker.display.status.new_available", versionInfo.version,
 					Game.input.getMapping("U"));
 				color = inDev ? Color.DIMMED_BLUE : Color.DIMMED_GREEN;

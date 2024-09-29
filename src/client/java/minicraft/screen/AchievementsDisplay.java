@@ -78,7 +78,7 @@ public class AchievementsDisplay extends Display {
 		for (String id : achievements.keySet()) {
 			achievementList.add(id);
 			// Add entry to list.
-			entries.add(new SelectEntry(new Localization.LocalizationString(id), null) {
+			entries.add(new SelectEntry(Localization.getStaticDisplay(id), null) {
 				/**
 				 * Change the color of the selection.
 				 */
@@ -190,7 +190,7 @@ public class AchievementsDisplay extends Display {
 			achievementScore += a.score;
 
 			// Tells the player that they got an achievement.
-			Game.notifications.add(new Localization.LocalizationString(
+			Game.notifications.add(Localization.getStaticDisplay(
 				"minicraft.notification.achievement_unlocked", id));
 		} else
 			achievementScore -= a.score;

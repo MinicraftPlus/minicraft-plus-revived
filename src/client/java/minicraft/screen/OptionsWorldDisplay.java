@@ -26,13 +26,13 @@ public class OptionsWorldDisplay extends Display {
 		List<ListEntry> entries = getEntries();
 
 		if (TutorialDisplayHandler.inTutorial()) {
-			entries.add(new SelectEntry(new Localization.LocalizationString(
+			entries.add(new SelectEntry(Localization.getStaticDisplay(
 				"minicraft.displays.options_world.skip_current_tutorial"), () -> {
 				TutorialDisplayHandler.skipCurrent();
 				Game.exitDisplay();
 			}));
 			entries.add(new BlankEntry());
-			entries.add(new SelectEntry(new Localization.LocalizationString(
+			entries.add(new SelectEntry(Localization.getStaticDisplay(
 				"minicraft.displays.options_world.turn_off_tutorials"), () -> {
 				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 				callbacks.add(new PopupDisplay.PopupActionCallback("select", popup -> {
@@ -48,7 +48,7 @@ public class OptionsWorldDisplay extends Display {
 					return true;
 				}));
 
-				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(new Localization.LocalizationString(
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(Localization.getStaticDisplay(
 					"minicraft.display.popup.title_confirm"), callbacks, 4), StringEntry.useLines(Color.RED,
 					"minicraft.displays.options_world.off_tutorials_confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel")));
 			}));
@@ -60,7 +60,7 @@ public class OptionsWorldDisplay extends Display {
 
 		menus = new Menu[] {
 			new Menu.Builder(false, 6, RelPos.CENTER, entries)
-				.setTitle(new Localization.LocalizationString("minicraft.displays.options_world"))
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.options_world"))
 				.createMenu()
 		};
 	}
@@ -74,7 +74,7 @@ public class OptionsWorldDisplay extends Display {
 				return true;
 			}));
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-				new Localization.LocalizationString("minicraft.display.options_display.popup.hwa_warning.title"),
+				Localization.getStaticDisplay("minicraft.display.options_display.popup.hwa_warning.title"),
 				callbacks, 2), "minicraft.display.options_display.popup.hwa_warning.content",
 				"minicraft.display.popup.escape_cancel", "minicraft.display.popup.enter_confirm"));
 			return;
@@ -89,11 +89,11 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
 			Settings.getEntry("hwa"),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.change_key_bindings"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display.change_key_bindings"),
 				() -> Game.setDisplay(new ControlsSettingsDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.language"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display.language"),
 				() -> Game.setDisplay(new LanguageSettingsDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.resource_packs"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display.resource_packs"),
 				() -> Game.setDisplay(new ResourcePackDisplay()))
 		));
 	}

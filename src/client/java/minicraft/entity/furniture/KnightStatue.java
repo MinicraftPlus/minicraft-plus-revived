@@ -22,10 +22,10 @@ public class KnightStatue extends Furniture {
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
 		if (!ObsidianKnight.active) {
 			if (touches == 0) { // Touched the first time.
-				Game.notifications.add(new Localization.LocalizationString("minicraft.notifications.statue_tapped"));
+				Game.notifications.add(Localization.getStaticDisplay("minicraft.notifications.statue_tapped"));
 				touches++;
 			} else if (touches == 1) { // Touched the second time.
-				Game.notifications.add(new Localization.LocalizationString("minicraft.notifications.statue_touched"));
+				Game.notifications.add(Localization.getStaticDisplay("minicraft.notifications.statue_touched"));
 				touches++;
 			} else { // Touched the third time.
 				// Awoken notifications is in Boss class
@@ -37,7 +37,7 @@ public class KnightStatue extends Furniture {
 
 			return true;
 		} else { // The boss is active.
-			Game.notifications.add(new Localization.LocalizationString("minicraft.notification.boss_limit"));
+			Game.notifications.add(Localization.getStaticDisplay("minicraft.notification.boss_limit"));
 			return false;
 		}
 	}

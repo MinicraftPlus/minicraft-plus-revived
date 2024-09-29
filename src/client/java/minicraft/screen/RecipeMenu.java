@@ -4,6 +4,7 @@ import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
 import minicraft.item.Recipe;
 import minicraft.screen.entry.RecipeEntry;
+import minicraft.util.DisplayString;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ class RecipeMenu extends ItemListMenu {
 		return RecipeEntry.useRecipes(recipes);
 	}
 
-	protected RecipeMenu(List<Recipe> recipes, Localization.LocalizationString title, Player player) {
+	protected RecipeMenu(List<Recipe> recipes, DisplayString title, Player player) {
 		super(getAndSortRecipes(recipes, player), title);
 	}
 }

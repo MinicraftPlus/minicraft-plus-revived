@@ -21,6 +21,7 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
+import minicraft.util.DisplayString;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -36,35 +37,35 @@ public class TitleDisplay extends Display {
 
 	public TitleDisplay() {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-				new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.play"),
+				new SelectEntry(Localization.getStaticDisplay("minicraft.displays.title.play"),
 					() -> Game.setDisplay(
 						WorldSelectDisplay.anyWorld() ? new WorldSelectDisplay() : new WorldCreateDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display"),
 				() -> Game.setDisplay(new OptionsMainMenuDisplay())),
-            new SelectEntry(new Localization.LocalizationString("minicraft.displays.skin"),
+            new SelectEntry(Localization.getStaticDisplay("minicraft.displays.skin"),
 	            () -> Game.setDisplay(new SkinDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.displays.achievements"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.displays.achievements"),
 				() -> Game.setDisplay(new AchievementsDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.help"), () ->
+			new SelectEntry(Localization.getStaticDisplay("minicraft.displays.title.help"), () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 					new BlankEntry(),
-					new SelectEntry(new Localization.LocalizationString("minicraft.displays.how_to_play"),
+					new SelectEntry(Localization.getStaticDisplay("minicraft.displays.how_to_play"),
 						() -> Game.setDisplay(new HowToPlayDisplay())),
-						new SelectEntry(new Localization.LocalizationString(
+						new SelectEntry(Localization.getStaticDisplay(
 							"minicraft.displays.title.help.storyline_guide"), () -> Game.setDisplay(new PagedDisplay(
-							new Localization.LocalizationString("minicraft.displays.title.help.storyline_guide"),
+							Localization.getStaticDisplay("minicraft.displays.title.help.storyline_guide"),
 							BookData.storylineGuide.collect()))),
-					new SelectEntry(new Localization.LocalizationString(
+					new SelectEntry(Localization.getStaticDisplay(
 						"minicraft.displays.title.help.about"), () -> Game.setDisplay(new PagedDisplay(
-							new Localization.LocalizationString(
+							Localization.getStaticDisplay(
 								"minicraft.displays.title.help.about"), BookData.about.collect()))),
-					new SelectEntry(new Localization.LocalizationString(
+					new SelectEntry(Localization.getStaticDisplay(
 						"minicraft.displays.title.help.credits"), () -> Game.setDisplay(new PagedDisplay(
-							new Localization.LocalizationString("minicraft.displays.title.help.credits"),
+							Localization.getStaticDisplay("minicraft.displays.title.help.credits"),
 						BookData.credits.collect())))
-				).setTitle(new Localization.LocalizationString("minicraft.displays.title.help")).createMenu()))
+				).setTitle(Localization.getStaticDisplay("minicraft.displays.title.help")).createMenu()))
 			),
-			new SelectEntry(new Localization.LocalizationString("minicraft.displays.title.quit"), Game::quit)
+			new SelectEntry(Localization.getStaticDisplay("minicraft.displays.title.quit"), Game::quit)
 			)
 				.setPositioning(new Point(Screen.w / 2, Screen.h * 3 / 5), RelPos.CENTER)
 				.createMenu()
@@ -105,11 +106,11 @@ public class TitleDisplay extends Display {
 		VersionInfo latestVersion = Game.updateHandler.getLatestVersion();
 		if (latestVersion != null && input.getMappedKey("U").isClicked()) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry(new Localization.LocalizationString(latestVersion.version.isDev() ?
+			entries.add(new StringEntry(Localization.getStaticDisplay(latestVersion.version.isDev() ?
 				"minicraft.displays.title.update_checker.popup.display.new_pre_available" :
 				"minicraft.displays.title.update_checker.popup.display.new_available")));
-			entries.add(new StringEntry(new Localization.LocalizationString(false, latestVersion.version.toString())));
-			entries.add(new LinkEntry(Color.WHITE, new Localization.LocalizationString(
+			entries.add(new StringEntry(new DisplayString.StaticString(latestVersion.version.toString())));
+			entries.add(new LinkEntry(Color.WHITE, Localization.getStaticDisplay(
 				"minicraft.displays.title.update_checker.popup.display.action"), latestVersion.releaseUrl) {
 				@Override
 				public void tick(InputHandler input) {

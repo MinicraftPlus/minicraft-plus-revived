@@ -9,6 +9,7 @@ import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +17,8 @@ import java.util.Arrays;
 public class BookDisplay extends Display {
 
 	// null characters "\0" denote page breaks.
-	private static final Localization.LocalizationString defaultBook =
-		new Localization.LocalizationString(false, "minicraft.displays.book.default_book");
+	private static final DisplayString defaultBook =
+		Localization.getStaticDisplay("minicraft.displays.book.default_book");
 
 	private static final int SPACING = 3;
 	private static final int WIDTH = 8 * 32;
@@ -89,8 +90,8 @@ public class BookDisplay extends Display {
 			page += dir;
 			if (showPageCount)
 				menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ?
-					new Localization.LocalizationString(true, "minicraft.displays.book.page_counter.title") :
-					new Localization.LocalizationString(true, "minicraft.displays.book.page_counter.value",
+					Localization.getStaticDisplay("minicraft.displays.book.page_counter.title") :
+					Localization.getStaticDisplay("minicraft.displays.book.page_counter.value",
 						page + 1, lines.length), Color.BLACK));
 			menus[page + pageOffset].shouldRender = true;
 		}

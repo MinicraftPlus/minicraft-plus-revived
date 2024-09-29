@@ -13,6 +13,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,13 +146,13 @@ public abstract class Item {
 		public List<ListEntry> toEntries() { return toEntries(null); }
 		public List<ListEntry> toEntries(@Nullable List<String> lore) {
 			ArrayList<ListEntry> entries = new ArrayList<>();
-			entries.add(new StringEntry(new Localization.LocalizationString(displayName)));
+			entries.add(new StringEntry(Localization.getStaticDisplay(displayName)));
 			for (String l : description)
-				entries.add(new StringEntry(new Localization.LocalizationString(false, l), Color.LIGHT_GRAY));
+				entries.add(new StringEntry(new DisplayString.StaticString(l), Color.LIGHT_GRAY));
 			if (lore != null) for (String l : lore)
-				entries.add(new StringEntry(new Localization.LocalizationString(false, l), Color.GRAY));
+				entries.add(new StringEntry(new DisplayString.StaticString(l), Color.GRAY));
 			for (String l : attributes)
-				entries.add(new StringEntry(new Localization.LocalizationString(l), Color.WHITE));
+				entries.add(new StringEntry(Localization.getStaticDisplay(l), Color.WHITE));
 			return entries;
 		}
 	}

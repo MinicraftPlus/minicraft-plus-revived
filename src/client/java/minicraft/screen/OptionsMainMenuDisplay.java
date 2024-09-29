@@ -20,15 +20,15 @@ public class OptionsMainMenuDisplay extends Display {
 			Settings.getEntry("sound"),
 			Settings.getEntry("showquests"),
 			Settings.getEntry("hwa"),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.change_key_bindings"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display.change_key_bindings"),
 				() -> Game.setDisplay(new ControlsSettingsDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.language"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display.language"),
 				() -> Game.setDisplay(new LanguageSettingsDisplay())),
 			Settings.getEntry("updatecheck"),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display.resource_packs"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display.resource_packs"),
 				() -> Game.setDisplay(new ResourcePackDisplay()))
 		)
-			.setTitle(new Localization.LocalizationString("minicraft.displays.options_main_menu"))
+			.setTitle(Localization.getStaticDisplay("minicraft.displays.options_main_menu"))
 			.createMenu());
 	}
 
@@ -41,7 +41,7 @@ public class OptionsMainMenuDisplay extends Display {
 				return true;
 			}));
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-				new Localization.LocalizationString(
+				Localization.getStaticDisplay(
 					"minicraft.display.options_display.popup.hwa_warning.title"), callbacks, 2),
 				"minicraft.display.options_display.popup.hwa_warning.content",
 				"minicraft.display.popup.escape_cancel", "minicraft.display.popup.enter_confirm"));

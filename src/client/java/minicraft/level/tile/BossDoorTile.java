@@ -10,9 +10,10 @@ import minicraft.entity.mob.Player;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraft.util.DisplayString;
 
 public class BossDoorTile extends DoorTile {
-	private static final Localization.LocalizationString doorMsg = new Localization.LocalizationString(
+	private static final DisplayString doorMsg = Localization.getStaticDisplay(
 		"minicraft.notification.defeat_obsidian_knight_first");
 
 	protected BossDoorTile() {

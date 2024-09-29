@@ -14,6 +14,7 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public class Game {
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
 
-	public static List<Localization.LocalizationString> notifications = new ArrayList<>();
+	public static List<DisplayString> notifications = new ArrayList<>();
 
 	public static GameUpdateHandler updateHandler;
 

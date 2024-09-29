@@ -4,12 +4,13 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Font;
+import minicraft.util.DisplayString;
 
 import java.util.Arrays;
 
 public class ArrayEntry<T> extends ListEntry {
 
-	private final Localization.LocalizationString label;
+	private final DisplayString label;
 	private T[] options;
 	private boolean[] optionVis;
 
@@ -19,12 +20,12 @@ public class ArrayEntry<T> extends ListEntry {
 	private ChangeListener changeAction;
 
 	@SafeVarargs
-	public ArrayEntry(Localization.LocalizationString label, T... options) {
+	public ArrayEntry(DisplayString label, T... options) {
 		this(label, true, options);
 	}
 
 	@SafeVarargs
-	public ArrayEntry(Localization.LocalizationString label, boolean wrap, T... options) {
+	public ArrayEntry(DisplayString label, boolean wrap, T... options) {
 		this.label = label;
 		this.options = options;
 		this.wrap = wrap;

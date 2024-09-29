@@ -8,6 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.screen.RelPos;
+import minicraft.util.DisplayString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 
 public class InputEntry extends ListEntry {
 
-	private final @Nullable Localization.LocalizationString prompt;
+	private final @Nullable DisplayString prompt;
 	private final String regex;
 	private final int maxLength;
 	private RelPos entryPos;
@@ -26,15 +27,15 @@ public class InputEntry extends ListEntry {
 
 	private final ClipboardHandler clipboardHandler = new ClipboardHandler();
 
-	public InputEntry(@Nullable Localization.LocalizationString prompt) {
+	public InputEntry(@Nullable DisplayString prompt) {
 		this(prompt, null, 0);
 	}
 
-	public InputEntry(@Nullable Localization.LocalizationString prompt, String regex, int maxLen) {
+	public InputEntry(@Nullable DisplayString prompt, String regex, int maxLen) {
 		this(prompt, regex, maxLen, "");
 	}
 
-	public InputEntry(@Nullable Localization.LocalizationString prompt, String regex, int maxLen, String initValue) {
+	public InputEntry(@Nullable DisplayString prompt, String regex, int maxLen, String initValue) {
 		this.prompt = prompt;
 		this.regex = regex;
 		this.maxLength = maxLen;

@@ -56,7 +56,7 @@ public class HardRockTile extends Tile {
 					return true;
 				}
 			} else {
-				Game.notifications.add(new Localization.LocalizationString("minicraft.notification.gem_pickaxe_required"));
+				Game.notifications.add(Localization.getStaticDisplay("minicraft.notification.gem_pickaxe_required"));
 			}
 		}
 		return false;

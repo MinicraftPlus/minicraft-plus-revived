@@ -16,6 +16,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,7 +111,8 @@ public class SkinDisplay extends Display {
 	private void refreshEntries() {
 		List<ListEntry> l = new ArrayList<>();
 		for (String s : skins.keySet()) {
-			l.add(new SelectEntry(new Localization.LocalizationString(s.startsWith("minicraft.skin"), s), this::confirmExit) {
+			l.add(new SelectEntry(s.startsWith("minicraft.skin") ? Localization.getStaticDisplay(s) :
+				new DisplayString.StaticString(s), this::confirmExit) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (s.equals(selectedSkin)) return isSelected ? Color.GREEN : Color.DIMMED_GREEN;

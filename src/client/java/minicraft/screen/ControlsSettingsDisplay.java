@@ -80,7 +80,7 @@ public class ControlsSettingsDisplay extends Display {
 
 	public ControlsSettingsDisplay() {
 		super(true, new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
-			.setTitle(new Localization.LocalizationString("minicraft.displays.controls_settings.title"))
+			.setTitle(Localization.getStaticDisplay("minicraft.displays.controls_settings.title"))
 			.setPositioning(new Point(Screen.w / 2, Screen.h - Font.textHeight() * 5), RelPos.TOP)
 			.createMenu());
 	}
@@ -108,8 +108,8 @@ public class ControlsSettingsDisplay extends Display {
 				Collections.addAll(entries, StringEntry.useLines(Color.WHITE, false, String.join(", ", troubles)));
 				Collections.addAll(entries, StringEntry.useLines("minicraft.displays.controls_settings.troublesome_input.confirm.msg.conclusion"));
 				entries.add(new BlankEntry());
-				entries.add(new StringEntry(new Localization.LocalizationString("minicraft.display.popup.enter_confirm")));
-				entries.add(new StringEntry(new Localization.LocalizationString("minicraft.display.popup.escape_cancel")));
+				entries.add(new StringEntry(Localization.getStaticDisplay("minicraft.display.popup.enter_confirm")));
+				entries.add(new StringEntry(Localization.getStaticDisplay("minicraft.display.popup.escape_cancel")));
 
 				ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 				callbacks.add(new PopupDisplay.PopupActionCallback("ENTER", m -> {
@@ -118,7 +118,7 @@ public class ControlsSettingsDisplay extends Display {
 				}));
 
 				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-					new Localization.LocalizationString("minicraft.displays.controls_settings.troublesome_input.confirm.title"),
+					Localization.getStaticDisplay("minicraft.displays.controls_settings.troublesome_input.confirm.title"),
 					callbacks, 2),
 					entries.toArray(new ListEntry[0])));
 				return;
@@ -142,9 +142,9 @@ public class ControlsSettingsDisplay extends Display {
 						ArrayList<ListEntry> entries = new ArrayList<>();
 						Collections.addAll(entries, StringEntry.useLines("minicraft.displays.controls_settings.troublesome_input.warning.msg"));
 						entries.add(new BlankEntry());
-						entries.add(new StringEntry(new Localization.LocalizationString(
+						entries.add(new StringEntry(Localization.getStaticDisplay(
 							"minicraft.displays.controls_settings.troublesome_input.warning.remove", "ENTER")));
-						entries.add(new StringEntry(new Localization.LocalizationString(
+						entries.add(new StringEntry(Localization.getStaticDisplay(
 							"minicraft.displays.controls_settings.troublesome_input.warning.return", "ESCAPE")));
 
 						ArrayList<PopupDisplay.PopupActionCallback> callbacks1 = new ArrayList<>();
@@ -162,7 +162,7 @@ public class ControlsSettingsDisplay extends Display {
 						}));
 
 						Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-							new Localization.LocalizationString(
+							Localization.getStaticDisplay(
 								"minicraft.displays.controls_settings.troublesome_input.warning.title"),
 							callbacks1, 2),
 							entries.toArray(new ListEntry[0])));
@@ -187,7 +187,7 @@ public class ControlsSettingsDisplay extends Display {
 				return true;
 			}));
 
-			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(new Localization.LocalizationString(
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(Localization.getStaticDisplay(
 				"minicraft.display.popup.title_confirm"), callbacks, 4), StringEntry.useLines(Color.RED,
 				"minicraft.displays.controls_settings.popup_display.confirm_reset", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel")));
 		}

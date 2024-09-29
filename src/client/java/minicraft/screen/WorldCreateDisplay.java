@@ -17,6 +17,7 @@ import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,7 +113,7 @@ public class WorldCreateDisplay extends Display {
 	 * @param beforeRenamed {@code null} if it is not renaming a world; else the original world name,
 	 * this will be used to check if the user input matches the original world name and thus perform no change.
 	 */
-	public static WorldNameInputEntry makeWorldNameInput(@Nullable Localization.LocalizationString prompt,
+	public static WorldNameInputEntry makeWorldNameInput(@Nullable DisplayString prompt,
 	                                                     String initValue, @Nullable String beforeRenamed) {
 		return new WorldNameInputEntry(prompt, initValue, beforeRenamed);
 	}
@@ -122,7 +123,7 @@ public class WorldCreateDisplay extends Display {
 		private String lastInput;
 		private boolean valid;
 
-		public WorldNameInputEntry(@Nullable Localization.LocalizationString prompt, String initValue,
+		public WorldNameInputEntry(@Nullable DisplayString prompt, String initValue,
 		                           @Nullable String beforeRenamed) {
 			super(prompt, WorldCreateDisplay.worldNameRegex, 36, initValue);
 			this.beforeRenamed = beforeRenamed;
@@ -161,19 +162,19 @@ public class WorldCreateDisplay extends Display {
 	public WorldCreateDisplay() {
 		super(true);
 
-		WorldNameInputEntry nameField = makeWorldNameInput(new Localization.LocalizationString(
+		WorldNameInputEntry nameField = makeWorldNameInput(Localization.getStaticDisplay(
 			"minicraft.displays.world_create.options.world_name"), "", null);
 
-		worldSeed = new InputEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.seed"),
+		worldSeed = new InputEntry(Localization.getStaticDisplay("minicraft.displays.world_create.options.seed"),
 			"[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
 		};
 
-		StringEntry nameNotify = new StringEntry(new Localization.LocalizationString(
+		StringEntry nameNotify = new StringEntry(Localization.getStaticDisplay(
 			"minicraft.display.world_naming.world_name_notify", DEFAULT_NAME), Color.DARK_GRAY);
 
-		createWorld = new SelectEntry(new Localization.LocalizationString("minicraft.displays.world_create.create_world"), () -> {
+		createWorld = new SelectEntry(Localization.getStaticDisplay("minicraft.displays.world_create.create_world"), () -> {
 			if (!nameField.isValid()) return;
 			WorldSelectDisplay.setWorldName(nameField.getWorldName(), false);
 			OptionalLong seed = getSeed();
@@ -189,9 +190,9 @@ public class WorldCreateDisplay extends Display {
 			boolean valid = nameField.isValid();
 			createWorld.setSelectable(valid);
 			nameNotify.setText(valid ?
-				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify",
+				Localization.getStaticDisplay("minicraft.display.world_naming.world_name_notify",
 					nameField.getWorldName()) :
-				new Localization.LocalizationString("minicraft.display.world_naming.world_name_notify_invalid"));
+				Localization.getStaticDisplay("minicraft.display.world_naming.world_name_notify_invalid"));
 		});
 
 		Menu mainMenu =
@@ -209,10 +210,10 @@ public class WorldCreateDisplay extends Display {
 				Settings.getEntry("scoretime"),
 				new BlankEntry(),
 				createWorld,
-				new StringEntry(new Localization.LocalizationString("minicraft.display.popup.cancel",
+				new StringEntry(Localization.getStaticDisplay("minicraft.display.popup.cancel",
 					Game.input.getMapping("EXIT")), Color.GRAY)
 			)
-				.setTitle(new Localization.LocalizationString("minicraft.displays.world_create.title"))
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.world_create.title"))
 				.createMenu();
 
 		onScreenKeyboardMenu = OnScreenKeyboardMenu.checkAndCreateMenu();

@@ -85,8 +85,8 @@ public class LegacyLoad {
 		loadEntities("Entities", Game.player);
 		// 100%
 
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
-			new Localization.LocalizationString("minicraft.displays.loading.message.type.completing")));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
+			Localization.getStaticDisplay("minicraft.displays.loading.message.type.completing")));
 		if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 			Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 			Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
@@ -174,8 +174,8 @@ public class LegacyLoad {
 	private int playerac = 0; // This is a temp storage var for use to restore player arrow count.
 
 	public void loadGame(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
-			new Localization.LocalizationString("minicraft.displays.loading.message.type.game")));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
+			Localization.getStaticDisplay("minicraft.displays.loading.message.type.game")));
 		loadFromFile(location + filename + extension);
 		worldVer = new Version(data.get(0)); // Gets the world version
 		Updater.setTime(Integer.parseInt(data.get(1)));
@@ -195,10 +195,10 @@ public class LegacyLoad {
 	}
 
 	public void loadWorld(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
-			new Localization.LocalizationString("minicraft.displays.loading.message.type.levels")));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
+			Localization.getStaticDisplay("minicraft.displays.loading.message.type.levels")));
 		for (int l = 0; l < World.levels.length; l++) {
-			LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
+			LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
 				Level.getDepthString((l - 1) * -1)));
 			loadFromFile(location + filename + l + extension);
 
@@ -228,8 +228,8 @@ public class LegacyLoad {
 	}
 
 	public void loadPlayer(String filename, Player player) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
-			new Localization.LocalizationString("minicraft.displays.loading.message.type.player")));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
+			Localization.getStaticDisplay("minicraft.displays.loading.message.type.player")));
 		loadFromFile(location + filename + extension);
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
@@ -283,8 +283,8 @@ public class LegacyLoad {
 	}
 
 	public void loadInventory(String filename, Inventory inventory) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
-			new Localization.LocalizationString("minicraft.displays.loading.message.type.inventory")));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
+			Localization.getStaticDisplay("minicraft.displays.loading.message.type.inventory")));
 		deathChest = new DeathChest();
 		loadFromFile(location + filename + extension);
 		inventory.clearInv();
@@ -325,8 +325,8 @@ public class LegacyLoad {
 	}
 
 	public void loadEntities(String filename, Player player) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.label.legacy",
-			new Localization.LocalizationString("minicraft.displays.loading.message.type.entities")));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.label.legacy",
+			Localization.getStaticDisplay("minicraft.displays.loading.message.type.entities")));
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {

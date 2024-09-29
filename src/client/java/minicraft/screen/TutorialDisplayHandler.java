@@ -157,7 +157,7 @@ public class TutorialDisplayHandler {
 		currentOngoingElement = null;
 		Settings.set("tutorials", false);
 		Logging.TUTORIAL.debug("Tutorial completed.");
-		Game.notifications.add(new Localization.LocalizationString("minicraft.notification.tutorials_completed"));
+		Game.notifications.add(Localization.getStaticDisplay("minicraft.notification.tutorials_completed"));
 	}
 
 	private static void turnOffGuides() {
@@ -194,7 +194,7 @@ public class TutorialDisplayHandler {
 
 		if (currentOngoingElement != null) {
 			if (input.getMappedKey("expandQuestDisplay").isClicked() && Game.getDisplay() == null) {
-				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(new Localization.LocalizationString(
+				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(Localization.getStaticDisplay(
 					currentOngoingElement.key), null, 4),
 					currentOngoingElement.description));
 			}

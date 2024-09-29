@@ -5,11 +5,12 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Font;
+import minicraft.util.DisplayString;
 
 public class SelectEntry extends ListEntry {
 
 	private Action onSelect;
-	private Localization.LocalizationString text;
+	private DisplayString text;
 
 	/**
 	 * Creates a new entry which acts as a button.
@@ -18,7 +19,7 @@ public class SelectEntry extends ListEntry {
 	 * @param text Text displayed on this entry
 	 * @param onSelect Action which happens when the entry is selected
 	 */
-	public SelectEntry(Localization.LocalizationString text, Action onSelect) {
+	public SelectEntry(DisplayString text, Action onSelect) {
 		this.onSelect = onSelect;
 		this.text = text;
 	}
@@ -27,11 +28,11 @@ public class SelectEntry extends ListEntry {
 	 * Changes the text of the entry.
 	 * @param text new text
 	 */
-	void setText(Localization.LocalizationString text) {
+	void setText(DisplayString text) {
 		this.text = text;
 	}
 
-	public Localization.LocalizationString getText() {
+	public DisplayString getText() {
 		return text;
 	}
 

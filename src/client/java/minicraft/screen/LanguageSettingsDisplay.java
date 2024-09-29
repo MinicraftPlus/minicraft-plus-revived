@@ -8,6 +8,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.util.DisplayString;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class LanguageSettingsDisplay extends Display {
 		for (Localization.LocaleInformation locale : list) {
 			boolean selected = Localization.getSelectedLanguage() == locale;
 			if (selected) index = count;
-			entries.add(new SelectEntry(new Localization.LocalizationString(false, locale.toString()),
+			entries.add(new SelectEntry(new DisplayString.StaticString(locale.toString()),
 				() -> languageSelected(locale)) {
 				@Override
 				public int getColor(boolean isSelected) {
@@ -49,7 +50,7 @@ public class LanguageSettingsDisplay extends Display {
 		Map.Entry<ArrayList<ListEntry>, Integer> entries = getEntries();
 		menus = new Menu[] {
 			new Menu.Builder(false, 2, RelPos.CENTER, entries.getKey())
-				.setTitle(new Localization.LocalizationString("minicraft.displays.language_settings.title"))
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.language_settings.title"))
 				.setSelectable(true)
 				.setDisplayLength(12)
 				.setPositioning(new Point(Screen.w / 2, 10), RelPos.BOTTOM)

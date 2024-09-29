@@ -14,6 +14,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.screen.entry.ItemListing;
+import minicraft.util.DisplayString;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 public class CraftingDisplay extends Display {
 
 	private final Player player;
-	private final Localization.LocalizationString title;
+	private final DisplayString title;
 	private Recipe[] recipes;
 	private final List<Recipe> availableRecipes = new ArrayList<>();
 
@@ -38,11 +39,11 @@ public class CraftingDisplay extends Display {
 
 	private static final HashSet<Recipe> unlockedRecipes = new HashSet<>();
 
-	public CraftingDisplay(List<Recipe> recipes, Localization.LocalizationString title, Player player) {
+	public CraftingDisplay(List<Recipe> recipes, DisplayString title, Player player) {
 		this(recipes, title, player, false);
 	}
 
-	public CraftingDisplay(List<Recipe> recipes, Localization.LocalizationString title, Player player, boolean isPersonal) {
+	public CraftingDisplay(List<Recipe> recipes, DisplayString title, Player player, boolean isPersonal) {
 		for (Recipe recipe : recipes)
 			recipe.checkCanCraft(player);
 		this.player = player;
@@ -52,12 +53,12 @@ public class CraftingDisplay extends Display {
 
 		menus = new Menu[3];
 		menus[1] = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle(new Localization.LocalizationString("minicraft.displays.crafting.container_title.have"))
+			.setTitle(Localization.getStaticDisplay("minicraft.displays.crafting.container_title.have"))
 			.setTitlePos(RelPos.TOP_LEFT)
 			.createMenu();
 
 		menus[2] = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle(new Localization.LocalizationString("minicraft.displays.crafting.container_title.cost"))
+			.setTitle(Localization.getStaticDisplay("minicraft.displays.crafting.container_title.cost"))
 			.setTitlePos(RelPos.TOP_LEFT)
 			.createMenu();
 		refreshDisplayRecipes();

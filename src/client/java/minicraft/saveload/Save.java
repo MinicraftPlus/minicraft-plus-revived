@@ -112,7 +112,7 @@ public class Save {
 
 		WorldSelectDisplay.updateWorlds();
 
-		Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.world_saved"));
+		Updater.notifyAll(Localization.getStaticDisplay("minicraft.notification.world_saved"));
 		Updater.asTick = 0;
 		Updater.saving = false;
 	}
@@ -272,7 +272,7 @@ public class Save {
 	}
 
 	private void writeWorld(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.levels"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.levels"));
 		for (int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
@@ -333,7 +333,7 @@ public class Save {
 	}
 
 	private void writePlayer(String filename, Player player) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.player"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.player"));
 		writePlayer(player, data);
 		writeToFile(location + filename + extension, data);
 	}
@@ -394,7 +394,7 @@ public class Save {
 	}
 
 	private void writeEntities(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.entities"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.entities"));
 		for (int l = 0; l < World.levels.length; l++) {
 			for (Entity e : World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);

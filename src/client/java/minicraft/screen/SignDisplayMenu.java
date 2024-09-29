@@ -8,6 +8,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 
 import java.util.Collections;
@@ -32,7 +33,7 @@ public class SignDisplayMenu extends Menu {
 			lines = Collections.emptyList();
 			Logging.WORLDNAMED.warn("Sign at ({}, {}) does not exist or has not initialized, but a display menu is invoked.", x, y);
 		}
-		setEntries(lines.stream().map(r -> new StringEntry(new Localization.LocalizationString(false, r))).collect(Collectors.toList()));
+		setEntries(lines.stream().map(r -> new StringEntry(new DisplayString.StaticString(r))).collect(Collectors.toList()));
 	}
 
 	/** Checks if this sign's coordinates differ from the given ones. */

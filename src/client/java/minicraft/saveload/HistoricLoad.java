@@ -179,7 +179,7 @@ public class HistoricLoad {
 
 	static void loadSave(String worldName) throws Load.LoadingSessionFailedException {
 		String location = Game.gameDir + "/saves/" + worldName + "/";
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.historic"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.historic"));
 		try {
 			Game.player.getInventory().clearInv(); // Prepare for loading.
 			loadGame(location + "Game" + Save.extension);

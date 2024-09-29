@@ -14,10 +14,10 @@ import minicraft.screen.entry.StringEntry;
 public class PlayDisplay extends Display {
 	public PlayDisplay() {
 		super(true, true, new Menu.Builder(false, 2, RelPos.CENTER,
-				new StringEntry(new Localization.LocalizationString("Game Mode"), Color.YELLOW),
+				new StringEntry(Localization.getStaticDisplay("Game Mode"), Color.YELLOW),
 				new BlankEntry(),
 				new BlankEntry(),
-				new SelectEntry(new Localization.LocalizationString("Singleplayer"), () -> {
+				new SelectEntry(Localization.getStaticDisplay("Singleplayer"), () -> {
 //					if (WorldSelectDisplay.hasWorld())
 //						Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
 //								new SelectEntry("Load World", () -> Game.setDisplay(new WorldSelectDisplay())),
@@ -25,7 +25,7 @@ public class PlayDisplay extends Display {
 //						).createMenu()));
 //					else Game.setDisplay(new WorldGenDisplay());
 				}),
-				new SelectEntry(new Localization.LocalizationString("Multiplayer"),
+				new SelectEntry(Localization.getStaticDisplay("Multiplayer"),
 					() -> Game.setDisplay(new MultiplayerDisplay()))
 		).createMenu());
 	}

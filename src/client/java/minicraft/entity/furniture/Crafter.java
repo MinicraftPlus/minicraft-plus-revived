@@ -52,7 +52,7 @@ public class Crafter extends Furniture {
 	}
 
 	public boolean use(Player player) {
-		Game.setDisplay(new CraftingDisplay(type.recipes, new Localization.LocalizationString((type.name().equalsIgnoreCase("DyeVat") ? "Dye Vat" : type.name())), player));
+		Game.setDisplay(new CraftingDisplay(type.recipes, Localization.getStaticDisplay((type.name().equalsIgnoreCase("DyeVat") ? "Dye Vat" : type.name())), player));
 		return true;
 	}
 

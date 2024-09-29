@@ -20,6 +20,7 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
@@ -192,7 +193,7 @@ public class QuestsDisplay extends Display {
 		for (QuestSeries questSeries : series) {
 			boolean isCompleted = questSeries.isCompleted();
 			boolean isUnlocked = questSeries.isUnlocked();
-			SelectEntry select = new SelectEntry(new Localization.LocalizationString(questSeries.key),
+			SelectEntry select = new SelectEntry(Localization.getStaticDisplay(questSeries.key),
 				() -> Game.setDisplay(new SeriesInformationDisplay(questSeries))) {
 				@Override
 				public int getColor(boolean isSelected) {
@@ -238,7 +239,7 @@ public class QuestsDisplay extends Display {
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 52), RelPos.CENTER)
 				.setDisplayLength(3)
 				.setSize(240, 44)
-				.setEntries(new StringEntry(new Localization.LocalizationString(
+				.setEntries(new StringEntry(Localization.getStaticDisplay(
 					"minicraft.displays.quests.display.no_quest_desc")))
 				.setSelectable(false)
 				.createMenu()
@@ -252,40 +253,40 @@ public class QuestsDisplay extends Display {
 			super(false, true);
 			ArrayList<ListEntry> entries = new ArrayList<>();
 
-			entries.add(series.isCompleted() ? new StringEntry(new Localization.LocalizationString(
+			entries.add(series.isCompleted() ? new StringEntry(Localization.getStaticDisplay(
 				"minicraft.displays.quests.quest_info.display.status",
-				new Localization.LocalizationString("minicraft.displays.quests.quest_info.display.status.completed")),
+				Localization.getStaticDisplay("minicraft.displays.quests.quest_info.display.status.completed")),
 				Color.GREEN) :
-				series.isUnlocked() ? new StringEntry(new Localization.LocalizationString(
+				series.isUnlocked() ? new StringEntry(Localization.getStaticDisplay(
 					"minicraft.displays.quests.quest_info.display.status",
-					new Localization.LocalizationString("minicraft.displays.quests.quest_info.display.status.unlocked")),
+					Localization.getStaticDisplay("minicraft.displays.quests.quest_info.display.status.unlocked")),
 					Color.WHITE) :
-					new StringEntry(new Localization.LocalizationString(
+					new StringEntry(Localization.getStaticDisplay(
 						"minicraft.displays.quests.quest_info.display.status",
-					new Localization.LocalizationString("minicraft.displays.quests.quest_info.display.status.locked")),
+					Localization.getStaticDisplay("minicraft.displays.quests.quest_info.display.status.locked")),
 						Color.GRAY) // Locked series would not been shown...?
 			);
 
-			entries.add(new StringEntry(new Localization.LocalizationString(
+			entries.add(new StringEntry(Localization.getStaticDisplay(
 				"minicraft.displays.quests.quest_info.display.quests_completed_count",
 				series.getSeriesQuests().values().stream().filter(AdvancementElement::isCompleted).count()), Color.WHITE));
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
 				Localization.getLocalized("minicraft.displays.quests.quest_info.display.description",
 					Localization.getLocalized(series.description)))));
-			entries.add(new StringEntry(new Localization.LocalizationString(
+			entries.add(new StringEntry(Localization.getStaticDisplay(
 				"minicraft.displays.quests.quest_info.display.ongoing_quests",
 				series.getSeriesQuests().values().stream().filter(AdvancementElement::isDisplayableAtStatus).count()),
 				Color.WHITE));
 
 			entries.add(new BlankEntry());
-			entries.add(new SelectEntry(new Localization.LocalizationString(
+			entries.add(new SelectEntry(Localization.getStaticDisplay(
 				"minicraft.displays.quests.quest_info.view_quests"),
 				() -> Game.setDisplay(new SeriesQuestViewerDisplay(series))));
 
 			menus = new Menu[] {
 				new Menu.Builder(true, 0, RelPos.CENTER)
 					.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
-					.setEntries(new StringEntry(new Localization.LocalizationString(series.key)))
+					.setEntries(new StringEntry(Localization.getStaticDisplay(series.key)))
 					.setSelectable(false)
 					.createMenu(),
 				new Menu.Builder(true, 2, RelPos.CENTER)
@@ -663,15 +664,15 @@ public class QuestsDisplay extends Display {
 					menus = new Menu[] {
 						new Menu.Builder(true, 1, RelPos.CENTER)
 							.setPositioning(new Point(Screen.w / 2, 5), RelPos.BOTTOM)
-							.setEntries(new StringEntry(new Localization.LocalizationString(quest.getSeries().key)),
-								new StringEntry(new Localization.LocalizationString(
+							.setEntries(new StringEntry(Localization.getStaticDisplay(quest.getSeries().key)),
+								new StringEntry(Localization.getStaticDisplay(
 									"minicraft.displays.quests.quest_info.quest.display.status",
 									Localization.getLocalized(quest.key), Localization.getLocalized(state)), color),
 								new StringEntry(quest.shouldAllCriteriaBeCompleted() ?
-									new Localization.LocalizationString(
+									Localization.getStaticDisplay(
 										"minicraft.displays.quests.quest_info.display.progress",
 										quest.getNumCriteriaCompleted(), quest.getTotalNumCriteria()) :
-									new Localization.LocalizationString(
+									Localization.getStaticDisplay(
 										"minicraft.displays.quests.quest_info.display.progress_uncompleted"),
 									Color.WHITE))
 							.setSelectable(false)
@@ -752,9 +753,9 @@ public class QuestsDisplay extends Display {
 		}
 	}
 
-	private final List<Localization.LocalizationString> headers = Arrays.asList( // Safely buffered
-		new Localization.LocalizationString("minicraft.displays.quests.display.header.unlocked"),
-		new Localization.LocalizationString("minicraft.displays.quests.display.header.completed")
+	private final List<DisplayString> headers = Arrays.asList( // Safely buffered
+		Localization.getStaticDisplay("minicraft.displays.quests.display.header.unlocked"),
+		Localization.getStaticDisplay("minicraft.displays.quests.display.header.completed")
 	);
 
 	@Override

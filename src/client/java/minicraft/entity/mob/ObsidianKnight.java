@@ -60,7 +60,7 @@ public class ObsidianKnight extends EnemyMob {
 	public ObsidianKnight(int health) {
 		super(1, armored, MaxHealth, false, 16 * 8, -1, 10, 50);
 
-		Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.obsidian_knight_awoken")); // On spawn tell player.
+		Updater.notifyAll(Localization.getStaticDisplay("minicraft.notification.obsidian_knight_awoken")); // On spawn tell player.
 
 		active = true;
 		speed = 1;
@@ -255,7 +255,7 @@ public class ObsidianKnight extends EnemyMob {
 		Sound.play("bossdeath");
 
 		//Analytics.AirWizardDeath.ping();
-		Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.obsidian_knight_defeated"));
+		Updater.notifyAll(Localization.getStaticDisplay("minicraft.notification.obsidian_knight_defeated"));
 
 
 		// If this is the first time we beat the obsidian knight.

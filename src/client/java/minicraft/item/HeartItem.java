@@ -46,7 +46,7 @@ public class HeartItem extends StackableItem {
 			success = true;
 		} else {
 			// When at max, health cannot be increased more and doesn't consume item
-			Updater.notifyAll(new Localization.LocalizationString("minicraft.notification.health_at_max"));
+			Updater.notifyAll(Localization.getStaticDisplay("minicraft.notification.health_at_max"));
 			return false;
 		}
 

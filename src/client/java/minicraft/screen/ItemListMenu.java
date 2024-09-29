@@ -5,6 +5,7 @@ import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ItemEntry;
+import minicraft.util.DisplayString;
 import org.intellij.lang.annotations.MagicConstant;
 
 class ItemListMenu extends Menu {
@@ -42,7 +43,7 @@ class ItemListMenu extends Menu {
 		return builder;
 	}
 
-	protected ItemListMenu(Builder b, ItemEntry[] entries, Localization.LocalizationString title) {
+	protected ItemListMenu(Builder b, ItemEntry[] entries, DisplayString title) {
 		super(b
 			.setEntries(entries)
 			.setTitle(title)
@@ -50,7 +51,7 @@ class ItemListMenu extends Menu {
 		);
 	}
 
-	protected ItemListMenu(ItemEntry[] entries, Localization.LocalizationString title) {
+	protected ItemListMenu(ItemEntry[] entries, DisplayString title) {
 		this(getBuilder(), entries, title);
 	}
 }

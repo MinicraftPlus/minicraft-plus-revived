@@ -20,37 +20,37 @@ public class PauseDisplay extends Display {
 	public PauseDisplay() {
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 			new BlankEntry(),
-			new SelectEntry(new Localization.LocalizationString("minicraft.displays.pause.return"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.displays.pause.return"),
 				() -> Game.setDisplay(null)),
-			new SelectEntry(new Localization.LocalizationString("minicraft.display.options_display"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.display.options_display"),
 				() -> Game.setDisplay(new OptionsWorldDisplay())),
-			new SelectEntry(new Localization.LocalizationString("minicraft.displays.achievements"),
+			new SelectEntry(Localization.getStaticDisplay("minicraft.displays.achievements"),
 				() -> Game.setDisplay(new AchievementsDisplay()))
 		));
 
 		if (TutorialDisplayHandler.inQuests())
-			entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.quests"),
+			entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.quests"),
 				() -> Game.setDisplay(new QuestsDisplay())));
 
-		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.pause.save"), () -> {
+		entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.pause.save"), () -> {
 			Game.setDisplay(null);
 			new Save(WorldSelectDisplay.getWorldName());
 		}));
 
-		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.pause.menu"), () -> {
+		entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.pause.menu"), () -> {
 			ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines("minicraft.displays.pause.display.exit_popup.0")));
 
 			items.addAll(Arrays.asList(StringEntry.useLines(Color.RED, "minicraft.displays.pause.display.exit_popup.1")));
 			items.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "minicraft.displays.pause.display.exit_popup.2")));
 			items.add(new BlankEntry());
-			items.add(new SelectEntry(new Localization.LocalizationString(
+			items.add(new SelectEntry(Localization.getStaticDisplay(
 				"minicraft.displays.pause.display.exit_popup.cancel"), Game::exitDisplay));
-			items.add(new SelectEntry(new Localization.LocalizationString(
+			items.add(new SelectEntry(Localization.getStaticDisplay(
 				"minicraft.displays.pause.display.exit_popup.quit"), () -> {
 				Game.setDisplay(new TitleDisplay());
 				World.onWorldExits();
 			}));
-			items.add(new SelectEntry(new Localization.LocalizationString(
+			items.add(new SelectEntry(Localization.getStaticDisplay(
 				"minicraft.displays.pause.display.exit_popup.save"), () -> {
 				new Save(WorldSelectDisplay.getWorldName());
 				Game.setDisplay(new TitleDisplay());
@@ -62,7 +62,7 @@ public class PauseDisplay extends Display {
 
 		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
-				.setTitle(new Localization.LocalizationString("minicraft.displays.pause"), Color.YELLOW)
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.pause"), Color.YELLOW)
 				.createMenu()
 		};
 	}

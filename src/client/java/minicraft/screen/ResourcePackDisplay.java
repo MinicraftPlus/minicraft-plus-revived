@@ -21,6 +21,7 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.BookData;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -216,7 +217,7 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(new Localization.LocalizationString(false, pack.name),
+			entries0.add(new SelectEntry(new DisplayString.StaticString(pack.name),
 				() -> Game.setDisplay(new MessageDisplay(pack.name, pack.description))) {
 				@Override
 				public int getColor(boolean isSelected) {
@@ -228,7 +229,7 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(new Localization.LocalizationString(false, pack.name),
+			entries1.add(new SelectEntry(new DisplayString.StaticString(pack.name),
 				() -> Game.setDisplay(new MessageDisplay(pack.name, pack.description))) {
 				@Override
 				public int getColor(boolean isSelected) {

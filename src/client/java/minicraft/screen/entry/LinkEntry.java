@@ -7,6 +7,7 @@ import minicraft.screen.MessageDisplay;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.TempDisplay;
+import minicraft.util.DisplayString;
 import org.tinylog.Logger;
 
 import java.awt.Desktop;
@@ -20,23 +21,23 @@ public class LinkEntry extends SelectEntry {
 	private static Desktop desktop = null;
 	private static boolean canBrowse = false;
 
-	private static final Localization.LocalizationString openMsg =
-		new Localization.LocalizationString("minicraft.display.gui.link_opening");
+	private static final DisplayString openMsg =
+		Localization.getStaticDisplay("minicraft.display.gui.link_opening");
 
 	private final int color;
 
 	// note that if the failMsg should be localized, such must be done before passing them as parameters, for this class will not do it since, by default, the failMsg contains a url.
 
 	public LinkEntry(int color, String urlText) {
-		this(color, new Localization.LocalizationString(false, urlText), urlText);
+		this(color, new DisplayString.StaticString(urlText), urlText);
 	}
 
-	public LinkEntry(int color, Localization.LocalizationString text, String url) {
+	public LinkEntry(int color, DisplayString text, String url) {
 		this(color, text, url,
-			new Localization.LocalizationString("minicraft.display.entry.link.default_failed_msg", url));
+			Localization.getStaticDisplay("minicraft.display.entry.link.default_failed_msg", url));
 	}
 
-	public LinkEntry(int color, Localization.LocalizationString text, String url, Localization.LocalizationString failMsg) {
+	public LinkEntry(int color, DisplayString text, String url, DisplayString failMsg) {
 		super(text, () -> {
 			if (!checkedDesktop) {
 				checkedDesktop = true;

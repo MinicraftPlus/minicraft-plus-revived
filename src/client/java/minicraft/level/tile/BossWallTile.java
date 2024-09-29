@@ -11,12 +11,13 @@ import minicraft.gfx.SpriteLinker;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraft.util.DisplayString;
 
 public class BossWallTile extends WallTile {
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteLinker.SpriteType.Tile, "obsidian_wall")
 		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 
-	private static final Localization.LocalizationString wallMsg = new Localization.LocalizationString(
+	private static final DisplayString wallMsg = Localization.getStaticDisplay(
 		"minicraft.notification.defeat_obsidian_knight_first");
 
 	protected BossWallTile() {

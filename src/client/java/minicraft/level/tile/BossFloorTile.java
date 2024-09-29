@@ -9,9 +9,10 @@ import minicraft.entity.mob.Player;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraft.util.DisplayString;
 
 public class BossFloorTile extends FloorTile {
-	private static final Localization.LocalizationString floorMsg = new Localization.LocalizationString(
+	private static final DisplayString floorMsg = Localization.getStaticDisplay(
 		"minicraft.notification.defeat_obsidian_knight_first");
 
 	protected BossFloorTile() {

@@ -1,10 +1,11 @@
 package minicraft.screen.entry;
 
 import minicraft.core.io.Localization;
+import minicraft.util.DisplayString;
 
 public class BooleanEntry extends ArrayEntry<Boolean> {
 
-	public BooleanEntry(Localization.LocalizationString label, boolean initial) {
+	public BooleanEntry(DisplayString label, boolean initial) {
 		super(label, true, new Boolean[] { true, false });
 
 		setSelection(initial ? 0 : 1);

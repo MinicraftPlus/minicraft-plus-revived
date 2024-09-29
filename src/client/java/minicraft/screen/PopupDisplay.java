@@ -10,6 +10,7 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -174,11 +175,11 @@ public class PopupDisplay extends Display {
 	}
 
 	public static class PopupConfig {
-		public @Nullable Localization.LocalizationString title;
+		public @Nullable DisplayString title;
 		public @Nullable ArrayList<PopupActionCallback> callbacks;
 		public int entrySpacing;
 
-		public PopupConfig(@Nullable Localization.LocalizationString title,
+		public PopupConfig(@Nullable DisplayString title,
 		                   @Nullable ArrayList<PopupActionCallback> callbacks, int entrySpacing) {
 			this.title = title;
 			this.callbacks = callbacks;

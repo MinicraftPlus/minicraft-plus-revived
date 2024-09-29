@@ -16,6 +16,7 @@ import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 
 import java.awt.GraphicsDevice;
@@ -335,11 +336,11 @@ public class Updater extends Game {
 	/**
 	 * This adds a notification to all player games.
 	 */
-	public static void notifyAll(Localization.LocalizationString msg) {
+	public static void notifyAll(DisplayString msg) {
 		notifyAll(msg, 0);
 	}
 
-	public static void notifyAll(Localization.LocalizationString msg, int notetick) {
+	public static void notifyAll(DisplayString msg, int notetick) {
 		notifications.add(msg);
 		Updater.notetick = notetick;
 	}

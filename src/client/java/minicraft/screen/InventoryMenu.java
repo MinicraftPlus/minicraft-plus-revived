@@ -8,6 +8,7 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import minicraft.util.DisplayString;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,17 +19,17 @@ class InventoryMenu extends ItemListMenu {
 	private final boolean creativeInv;
 	private final @Nullable Action onStackUpdateListener; // The length of the entry shown may change when there is an update to the stack.
 
-	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	InventoryMenu(Entity holder, Inventory inv, DisplayString title,
 	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot,
 	              @Nullable Action onStackUpdateListener) {
 		this(holder, inv, title, slot, false, onStackUpdateListener);
 	}
-	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	InventoryMenu(Entity holder, Inventory inv, DisplayString title,
 	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot,
 	              boolean creativeInv) {
 		this(holder, inv, title, slot, creativeInv, null);
 	}
-	InventoryMenu(Entity holder, Inventory inv, Localization.LocalizationString title,
+	InventoryMenu(Entity holder, Inventory inv, DisplayString title,
 	              @MagicConstant(intValues = { ItemListMenu.POS_LEFT, ItemListMenu.POS_RIGHT }) int slot,
 	              boolean creativeInv, @Nullable Action onStackUpdateListener) {
 		super(ItemListMenu.getBuilder(slot), ItemEntry.useItems(inv.getItems()), title);

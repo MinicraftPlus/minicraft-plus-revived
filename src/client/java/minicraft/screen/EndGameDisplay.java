@@ -45,22 +45,22 @@ public class EndGameDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 
 		// calculate the score
-		entries.add(new StringEntry(new Localization.LocalizationString(
+		entries.add(new StringEntry(Localization.getStaticDisplay(
 			"minicraft.displays.end_game.display.player_score", Game.player.getScore()), Color.WHITE));
-		entries.add(new StringEntry(new Localization.LocalizationString(
+		entries.add(new StringEntry(Localization.getStaticDisplay(
 			"minicraft.displays.end_game.display.bonuses"), Color.YELLOW));
 
 		finalScore = Game.player.getScore();
 		for (String item : scoredItems)
 			addBonus(item);
 
-		entries.add(new StringEntry(new Localization.LocalizationString(
+		entries.add(new StringEntry(Localization.getStaticDisplay(
 			"minicraft.displays.end_game.display.final_score", finalScore)));
 
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
 
-		entries.add(new SelectEntry(new Localization.LocalizationString("minicraft.displays.end_game.exit"),
+		entries.add(new SelectEntry(Localization.getStaticDisplay("minicraft.displays.end_game.exit"),
 			() -> Game.setDisplay(new TitleDisplay())));
 
 		menus = new Menu[] {
@@ -103,7 +103,7 @@ public class EndGameDisplay extends Display {
 
 		StringEntry[] entries = new StringEntry[unlocks.size()];
 		for (int i = 0; i < entries.length; i++)
-			entries[i] = new StringEntry(new Localization.LocalizationString(
+			entries[i] = new StringEntry(Localization.getStaticDisplay(
 				"minicraft.displays.end_game.display.unlocked", unlocks.get(i)));
 
 		new Save(); // Write preferences and unlocks.

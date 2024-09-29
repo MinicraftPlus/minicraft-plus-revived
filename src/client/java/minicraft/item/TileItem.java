@@ -15,6 +15,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.SignDisplay;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DisplayString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -178,13 +179,13 @@ public class TileItem extends StackableItem {
 		Logger.tag("TileItem").debug("{} cannot be placed on {}.", model, tile.name);
 
 		if (model != null) {
-			Localization.LocalizationString note = null;
+			DisplayString note = null;
 			if (model.tile.contains("WALL")) {
-				note = new Localization.LocalizationString("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
+				note = Localization.getStaticDisplay("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 			} else if (model.tile.contains("DOOR")) {
-				note = new Localization.LocalizationString("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
+				note = Localization.getStaticDisplay("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 			} else if ((model.tile.contains("BRICK") || model.tile.contains("PLANK") || model.tile.equals("STONE") || model.tile.contains("ORNATE"))) {
-				note = new Localization.LocalizationString("minicraft.notification.dig_hole");
+				note = Localization.getStaticDisplay("minicraft.notification.dig_hole");
 			}
 
 			if (note != null) {

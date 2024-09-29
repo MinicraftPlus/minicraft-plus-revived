@@ -41,7 +41,7 @@ public enum PotionType {
 
 				if (playerDepth == 0) {
 					// player is in overworld
-					Game.notifications.add(new Localization.LocalizationString("You can't escape from here!"));
+					Game.notifications.add(Localization.getStaticDisplay("You can't escape from here!"));
 					return false;
 				}
 

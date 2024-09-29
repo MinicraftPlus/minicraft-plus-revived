@@ -196,7 +196,7 @@ public class Load {
 			}));
 
 			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-					new Localization.LocalizationString("minicraft.displays.save.popup_display.world_backup_prompt"),
+					Localization.getStaticDisplay("minicraft.displays.save.popup_display.world_backup_prompt"),
 				callbacks, 2),
 				entries.toArray(new ListEntry[0])));
 
@@ -265,7 +265,7 @@ public class Load {
 			loadPlayer("Player", Game.player);
 			// 100%
 
-			LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.completing"));
+			LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.completing"));
 			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
 				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
@@ -308,7 +308,7 @@ public class Load {
 					if (acted.get()) {
 						if (continues.get()) {
 							Logging.SAVELOAD.trace("Regenerating dungeon (B4)...");
-							LoadingDisplay.setMessage(new Localization.LocalizationString(
+							LoadingDisplay.setMessage(Localization.getStaticDisplay(
 								"minicraft.displays.loading.message.dungeon_regeneration"));
 							int lvlidx = World.lvlIdx(-4);
 							boolean reAdd = Game.player.getLevel().depth == -4;
@@ -506,7 +506,7 @@ public class Load {
 	}
 
 	private void loadGame(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.game"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.game"));
 		loadFromFile(location + filename + extension);
 
 		worldVer = new Version(data.remove(0)); // Gets the world version
@@ -743,7 +743,7 @@ public class Load {
 	}
 
 	private void loadWorld(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.levels"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.levels"));
 		assert worldVer != null;
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			LoadingDisplay.setMessage(Level.getDepthString(l));
@@ -853,7 +853,7 @@ public class Load {
 			LoadingDisplay.progress(50f / World.levels.length);
 		}
 
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.quests"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.quests"));
 
 		if (new File(location + "Quests.json").exists()) {
 			Logging.SAVELOAD.warn("Quest.json exists and it has been deprecated; renaming...");
@@ -937,7 +937,7 @@ public class Load {
 	}
 
 	public void loadPlayer(String filename, Player player) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.player"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.player"));
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 		LoadingDisplay.progress(15);
@@ -1107,7 +1107,7 @@ public class Load {
 	}
 
 	public void loadInventory(String filename, Inventory inventory) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.inventory"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.inventory"));
 		deathChest = new DeathChest();
 		loadFromFile(location + filename + extension);
 		loadInventory(inventory, data);
@@ -1157,7 +1157,7 @@ public class Load {
 	}
 
 	private void loadEntities(String filename) {
-		LoadingDisplay.setMessage(new Localization.LocalizationString("minicraft.displays.loading.message.type.entities"));
+		LoadingDisplay.setMessage(Localization.getStaticDisplay("minicraft.displays.loading.message.type.entities"));
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {

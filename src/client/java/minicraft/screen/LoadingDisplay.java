@@ -14,6 +14,7 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 
 import javax.swing.Timer;
 
@@ -24,12 +25,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LoadingDisplay extends Display {
 
 	private static float percentage = 0;
-	private static Localization.LocalizationString progressType = null;
+	private static DisplayString progressType = null;
 
 	private final Timer t;
 	private final Ellipsis ellipsis = new SmoothEllipsis(new TimeUpdater());
 
-	private Localization.LocalizationString msg = null;
+	private DisplayString msg = null;
 
 	public LoadingDisplay(WorldCreateDisplay.WorldSettings settings) {
 		super(true, false);
@@ -74,7 +75,7 @@ public class LoadingDisplay extends Display {
 						Localization.getLocalized("minicraft.displays.loading.corrupted_world_fixer_available.select",
 							Game.input.getMapping("SELECT"))));
 					Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-						new Localization.LocalizationString("minicraft.displays.loading.corrupted_world.title"),
+						Localization.getStaticDisplay("minicraft.displays.loading.corrupted_world.title"),
 						callbacks, 2), entries.toArray(new ListEntry[0])));
 
 					while (true) {
@@ -83,7 +84,7 @@ public class LoadingDisplay extends Display {
 								dataFixer.startFixer(WorldSelectDisplay.getWorldName(), settings);
 							} else {
 								Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
-									new Localization.LocalizationString(
+									Localization.getStaticDisplay(
 										"minicraft.displays.loading.corrupted_world_fixing_cancelled.title"),
 									null, 2),
 									StringEntry.useLines(Color.WHITE, false, Localization.getLocalized(
@@ -122,11 +123,11 @@ public class LoadingDisplay extends Display {
 		if (parent != null && parent.getParent() == this) return; // Undefined behaviour
 		super.init(parent);
 		percentage = 0;
-		progressType = new Localization.LocalizationString("minicraft.displays.loading.message.type.world");
+		progressType = Localization.getStaticDisplay("minicraft.displays.loading.message.type.world");
 		if (WorldSelectDisplay.hasLoadedWorld())
-			msg = new Localization.LocalizationString("minicraft.displays.loading.message.session.loading");
+			msg = Localization.getStaticDisplay("minicraft.displays.loading.message.session.loading");
 		else
-			msg = new Localization.LocalizationString("minicraft.displays.loading.message.session.generating");
+			msg = Localization.getStaticDisplay("minicraft.displays.loading.message.session.generating");
 		t.start();
 	}
 
@@ -134,8 +135,8 @@ public class LoadingDisplay extends Display {
 	public void onExit() {
 		percentage = 0;
 		if (!WorldSelectDisplay.hasLoadedWorld()) {
-			msg = new Localization.LocalizationString("minicraft.displays.loading.message.session.saving");
-			progressType = new Localization.LocalizationString("minicraft.displays.loading.message.type.world");
+			msg = Localization.getStaticDisplay("minicraft.displays.loading.message.session.saving");
+			progressType = Localization.getStaticDisplay("minicraft.displays.loading.message.type.world");
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.notifications.clear();
 		}
@@ -149,7 +150,7 @@ public class LoadingDisplay extends Display {
 		return percentage;
 	}
 
-	public static void setMessage(Localization.LocalizationString progressType) {
+	public static void setMessage(DisplayString progressType) {
 		LoadingDisplay.progressType = progressType;
 	}
 

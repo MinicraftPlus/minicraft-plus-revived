@@ -18,6 +18,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DisplayString;
 
 public class WallTile extends Tile {
 	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
@@ -27,7 +28,7 @@ public class WallTile extends Tile {
 	private static SpriteAnimation obsidian = new SpriteAnimation(SpriteType.Tile, "obsidian_wall")
 		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 
-	private static final Localization.LocalizationString obrickMsg = new Localization.LocalizationString(
+	private static final DisplayString obrickMsg = Localization.getStaticDisplay(
 		"minicraft.notification.defeat_air_wizard_first");
 	protected Material type;
 

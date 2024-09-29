@@ -17,6 +17,7 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ItemEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectableStringEntry;
+import minicraft.util.DisplayString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ public class Menu {
 	private Rectangle entryRenderingBounds = null;
 	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 
-	private @Nullable Localization.LocalizationString title = null;
+	private @Nullable DisplayString title = null;
 	private int titleColor;
 	private Point titleLoc = null; // standard point is anchor, with anchor.x + SpriteSheet.boxWidth
 	private boolean drawVertically = false;
@@ -182,7 +183,7 @@ public class Menu {
 		return new Rectangle(bounds);
 	}
 
-	Localization.LocalizationString getTitle() {
+	DisplayString getTitle() {
 		return title;
 	}
 
@@ -656,16 +657,16 @@ public class Menu {
 			return this;
 		}
 
-		public Builder setTitle(Localization.LocalizationString title) {
+		public Builder setTitle(DisplayString title) {
 			menu.title = title;
 			return this;
 		}
 
-		public Builder setTitle(Localization.LocalizationString title, int color) {
+		public Builder setTitle(DisplayString title, int color) {
 			return setTitle(title, color, false);
 		}
 
-		public Builder setTitle(Localization.LocalizationString title, int color, boolean fullColor) {
+		public Builder setTitle(DisplayString title, int color, boolean fullColor) {
 			menu.title = title;
 
 			fullTitleColor = fullColor;

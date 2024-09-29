@@ -55,6 +55,7 @@ import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
@@ -527,7 +528,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			if (Game.getDisplay() == null) {
 				if (input.inputPressed("craft") && !use()) {
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, new Localization.LocalizationString(
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, Localization.getStaticDisplay(
 						"minicraft.displays.crafting"), this, true));
 					return;
 				} else if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
@@ -762,7 +763,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// For secret messages :=)
-						Game.notifications.add(new Localization.LocalizationString(false, itemData.substring(1)));
+						Game.notifications.add(new DisplayString.StaticString(itemData.substring(1)));
 					} else {
 						if (Items.get(itemData).equals(Items.get("Raw Fish"))) {
 							AchievementsDisplay.setAchievement("minicraft.achievement.fish", true);

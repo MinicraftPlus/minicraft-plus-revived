@@ -5,6 +5,7 @@ import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.util.DisplayString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,16 +33,16 @@ public class StringEntry extends SelectableStringEntry {
 		}
 		StringEntry[] entries = new StringEntry[lns.size()];
 		for (int i = 0; i < lns.size(); i++)
-			entries[i] = new StringEntry(new Localization.LocalizationString(false, lns.get(i)), color);
+			entries[i] = new StringEntry(new DisplayString.StaticString(lns.get(i)), color);
 
 		return entries;
 	}
 
-	public StringEntry(Localization.LocalizationString text) {
+	public StringEntry(DisplayString text) {
 		this(text, DEFAULT_COLOR);
 	}
 
-	public StringEntry(Localization.LocalizationString text, int color) {
+	public StringEntry(DisplayString text, int color) {
 		super(text, color);
 		setSelectable(false);
 	}

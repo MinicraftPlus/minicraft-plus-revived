@@ -15,30 +15,30 @@ public final class Settings {
 	private static final HashMap<String, ArrayEntry<?>> options = new HashMap<>();
 
 	static {
-		options.put("fps", new RangeEntry(new Localization.LocalizationString("minicraft.settings.fps"), 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
-		options.put("diff", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.difficulty"), "minicraft.displays.world_create.options.difficulty.easy", "minicraft.displays.world_create.options.difficulty.normal", "minicraft.displays.world_create.options.difficulty.hard"));
+		options.put("fps", new RangeEntry(Localization.getStaticDisplay("minicraft.settings.fps"), 10, 300, getDefaultRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("diff", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.displays.world_create.options.difficulty"), "minicraft.displays.world_create.options.difficulty.easy", "minicraft.displays.world_create.options.difficulty.normal", "minicraft.displays.world_create.options.difficulty.hard"));
 		options.get("diff").setSelection(1);
-		options.put("mode", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.game_mode"), "minicraft.displays.world_create.options.game_mode.survival", "minicraft.displays.world_create.options.game_mode.creative", "minicraft.displays.world_create.options.game_mode.hardcore", "minicraft.displays.world_create.options.game_mode.score"));
+		options.put("mode", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.displays.world_create.options.game_mode"), "minicraft.displays.world_create.options.game_mode.survival", "minicraft.displays.world_create.options.game_mode.creative", "minicraft.displays.world_create.options.game_mode.hardcore", "minicraft.displays.world_create.options.game_mode.score"));
 
-		options.put("scoretime", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.score_time"), 10, 20, 40, 60, 120));
+		options.put("scoretime", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.displays.world_create.options.score_time"), 10, 20, 40, 60, 120));
 		options.get("scoretime").setValueVisibility(10, false);
 		options.get("scoretime").setValueVisibility(120, false);
 
-		options.put("sound", new BooleanEntry(new Localization.LocalizationString("minicraft.settings.sound"), true));
-		options.put("autosave", new BooleanEntry(new Localization.LocalizationString("minicraft.settings.autosave"), true));
+		options.put("sound", new BooleanEntry(Localization.getStaticDisplay("minicraft.settings.sound"), true));
+		options.put("autosave", new BooleanEntry(Localization.getStaticDisplay("minicraft.settings.autosave"), true));
 		// For Windows, OpenGL hardware acceleration is disabled by default
-		options.put("hwa", new BooleanEntry(new Localization.LocalizationString("minicraft.settings.opengl_hwa"), !FileHandler.OS.contains("windows")));
+		options.put("hwa", new BooleanEntry(Localization.getStaticDisplay("minicraft.settings.opengl_hwa"), !FileHandler.OS.contains("windows")));
 
-		options.put("size", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.world_size"), 128, 256, 512));
-		options.put("theme", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.theme"), "minicraft.displays.world_create.options.theme.normal", "minicraft.displays.world_create.options.theme.forest", "minicraft.displays.world_create.options.theme.desert", "minicraft.displays.world_create.options.theme.plain", "minicraft.displays.world_create.options.theme.hell"));
-		options.put("type", new ArrayEntry<>(new Localization.LocalizationString("minicraft.displays.world_create.options.terrain_type"), "minicraft.displays.world_create.options.terrain_type.island", "minicraft.displays.world_create.options.terrain_type.box", "minicraft.displays.world_create.options.terrain_type.mountain", "minicraft.displays.world_create.options.terrain_type.irregular"));
+		options.put("size", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.displays.world_create.options.world_size"), 128, 256, 512));
+		options.put("theme", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.displays.world_create.options.theme"), "minicraft.displays.world_create.options.theme.normal", "minicraft.displays.world_create.options.theme.forest", "minicraft.displays.world_create.options.theme.desert", "minicraft.displays.world_create.options.theme.plain", "minicraft.displays.world_create.options.theme.hell"));
+		options.put("type", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.displays.world_create.options.terrain_type"), "minicraft.displays.world_create.options.terrain_type.island", "minicraft.displays.world_create.options.terrain_type.box", "minicraft.displays.world_create.options.terrain_type.mountain", "minicraft.displays.world_create.options.terrain_type.irregular"));
 
 		// TODO localize these labels
-		options.put("tutorials", new BooleanEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.tutorials"), false));
-		options.put("quests", new BooleanEntry(new Localization.LocalizationString("minicraft.displays.world_create.options.quests"), false));
-		options.put("showquests", new BooleanEntry(new Localization.LocalizationString("Quests Panel"), true));
+		options.put("tutorials", new BooleanEntry(Localization.getStaticDisplay("minicraft.displays.world_create.options.tutorials"), false));
+		options.put("quests", new BooleanEntry(Localization.getStaticDisplay("minicraft.displays.world_create.options.quests"), false));
+		options.put("showquests", new BooleanEntry(Localization.getStaticDisplay("Quests Panel"), true));
 
-		options.put("updatecheck", new ArrayEntry<>(new Localization.LocalizationString("minicraft.settings.update_check"), "minicraft.settings.update_check.all", "minicraft.settings.update_check.full_only", "minicraft.settings.update_check.disabled"));
+		options.put("updatecheck", new ArrayEntry<>(Localization.getStaticDisplay("minicraft.settings.update_check"), "minicraft.settings.update_check.all", "minicraft.settings.update_check.full_only", "minicraft.settings.update_check.disabled"));
 
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.displays.world_create.options.game_mode.score".equals(value))

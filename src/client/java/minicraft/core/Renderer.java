@@ -39,6 +39,7 @@ import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectableStringEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.DisplayString;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
@@ -694,7 +695,7 @@ public class Renderer extends Game {
 				Updater.notetick = 0;
 			}
 			List<String> print = new ArrayList<>();
-			for (Localization.LocalizationString n : notifications) {
+			for (DisplayString n : notifications) {
 				print.addAll(Arrays.asList(Font.getLines(n.toString(), Screen.w, Screen.h, 0)));
 			}
 
@@ -871,12 +872,12 @@ public class Renderer extends Game {
 			QuestSeries series = q.getSeries();
 
 			questsShown.add(!expanding ?
-				new StringEntry(new Localization.LocalizationString(q.key), Color.WHITE) :
+				new StringEntry(Localization.getStaticDisplay(q.key), Color.WHITE) :
 				new StringEntry(q.shouldAllCriteriaBeCompleted() && q.getTotalNumCriteria() > 1 ?
-					new Localization.LocalizationString(false, String.format("%s (%d/%d)",
+					DisplayString.staticArgString("%s (%d/%d)",
 						Localization.getLocalized(series.key), q.getNumCriteriaCompleted(),
-						q.getTotalNumCriteria())) :
-					new Localization.LocalizationString(series.key), Color.WHITE)
+						q.getTotalNumCriteria()) :
+					Localization.getStaticDisplay(series.key), Color.WHITE)
 			);
 
 			if (questsShown.size() >= length) break;
@@ -886,7 +887,7 @@ public class Renderer extends Game {
 			potionRenderOffset = 9 + (Math.min(questsShown.size(), 3)) * 8 + 8 * 2;
 			new Menu.Builder(true, 0, RelPos.RIGHT, questsShown)
 				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-				.setTitle(new Localization.LocalizationString("minicraft.displays.quests"))
+				.setTitle(Localization.getStaticDisplay("minicraft.displays.quests"))
 				.createMenu()
 				.render(screen);
 		} else {

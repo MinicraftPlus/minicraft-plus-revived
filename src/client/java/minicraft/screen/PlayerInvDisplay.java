@@ -38,7 +38,7 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		menus = new Menu[] { new InventoryMenu(player, player.getInventory(), new Localization.LocalizationString(
+		menus = new Menu[] { new InventoryMenu(player, player.getInventory(), Localization.getStaticDisplay(
 			"minicraft.display.menus.inventory"), ItemListMenu.POS_LEFT, this::update) };
 		this.player = player;
 		Menu.Builder descriptionMenuBuilder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
@@ -52,7 +52,7 @@ public class PlayerInvDisplay extends Display {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				menus[0],
-				new InventoryMenu(player, creativeInv, new Localization.LocalizationString(
+				new InventoryMenu(player, creativeInv, Localization.getStaticDisplay(
 					"minicraft.displays.player_inv.container_title.items"), ItemListMenu.POS_RIGHT, true),
 				descriptionMenu
 			};
