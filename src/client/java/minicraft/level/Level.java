@@ -64,6 +64,9 @@ public class Level {
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
+	// TODO Level#w and Level#h should be stored in a world instead of being saved separately
+	// as the level widths and heights should be the same within the same world
+	// to ensure that there are no errors occurring and by the game design.
 	public int w, h; // Width and height of the level
 	private final long seed; // The used seed that was used to generate the world
 
