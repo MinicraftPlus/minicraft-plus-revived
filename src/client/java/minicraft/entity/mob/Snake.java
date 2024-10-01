@@ -4,6 +4,7 @@ import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
+import minicraft.util.DamageSource;
 
 public class Snake extends EnemyMob {
 	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
@@ -18,11 +19,9 @@ public class Snake extends EnemyMob {
 	}
 
 	@Override
-	protected void touchedBy(Entity entity) {
-		if (entity instanceof Player) {
-			int damage = lvl + Settings.getIdx("diff");
-			((Player) entity).hurt(this, damage);
-		}
+	public boolean attack(Entity entity) {
+		return hurt(new DamageSource( DamageSource.DamageType.GENERIC,this, null), dir,
+			lvl + Settings.getIdx("diff"));
 	}
 
 	public void die() {

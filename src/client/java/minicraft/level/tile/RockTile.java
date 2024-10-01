@@ -19,16 +19,18 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
+	private static final int MAX_HEALTH = 50;
+
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "rock")
 		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof RockTile)
 		.setSingletonWithConnective(true);
 
 	private boolean dropCoal = false;
-	private int maxHealth = 50;
 
 	private int damage;
 
@@ -45,44 +47,42 @@ public class RockTile extends Tile {
 		return false;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		dropCoal = false; // Can only be reached when player hits w/o pickaxe, so remove ability to get coal
-		hurt(level, x, y, dmg);
-		return true;
-	}
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			handleDamage(level, x, y, source, item, MAX_HEALTH);
+			return true;
+		}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+		// Can only be reached when player hits w/o pickaxe, so remove ability to get coal
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && player.payStamina(5 - tool.level) && tool.payDurability()) {
-				int data = level.getData(xt, yt);
+			if (tool.type == ToolType.Pickaxe && ((Player) source).payStamina(5 - tool.level) && tool.payDurability()) {
+				int data = level.getData(x, y);
 				// Drop coal since we use a pickaxe.
-				dropCoal = true;
-				hurt(level, xt, yt, tool.getDamage());
+				handleDamage(level, x, y, source, item, tool.getDamage());
 				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-						item, this, data, xt, yt, level.depth));
+						item, this, data, x, y, level.depth));
 				return true;
 			}
 		}
-		return false;
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
 		damage = level.getData(x, y) + dmg;
-
-		if (Game.isMode("minicraft.settings.mode.creative")) {
-			dmg = damage = maxHealth;
-			dropCoal = true;
-		}
 
 		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
-		if (damage >= maxHealth) {
+		if (damage >= MAX_HEALTH) {
 			int stone = 1;
-			if (dropCoal) {
+// 			if (dropCoal) {
 				stone += random.nextInt(3) + 1;
 
 				int coal = 1;
@@ -91,7 +91,7 @@ public class RockTile extends Tile {
 				}
 
 				level.dropItem((x << 4) + 8, (y << 4) + 8, 0, coal, Items.get("Coal"));
-			}
+// 			}
 
 			level.dropItem((x << 4) + 8, (y << 4) + 8, stone, Items.get("Stone"));
 			level.setTile(x, y, Tiles.get("Dirt"));

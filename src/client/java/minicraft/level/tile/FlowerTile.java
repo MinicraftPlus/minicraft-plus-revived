@@ -1,7 +1,9 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
@@ -13,6 +15,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class FlowerTile extends Tile {
 	public enum FlowerVariant {
@@ -80,11 +83,23 @@ public class FlowerTile extends Tile {
 		FlowerVariant.values()[level.getData(x, y)].sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.setTile(x, y, Tiles.get("Grass"));
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Flower"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Rose"));
+			return true;
+		}
+
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
+				if (((Player) source).payStamina(2 - tool.level) && tool.payDurability()) {
 					int data = level.getData(x, y);
 					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.play("monsterhurt");
@@ -96,10 +111,7 @@ public class FlowerTile extends Tile {
 				}
 			}
 		}
-		return false;
-	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get(FlowerVariant.values()[level.getData(x, y)].name));
 		level.setTile(x, y, Tiles.get("Grass"));
 		return true;

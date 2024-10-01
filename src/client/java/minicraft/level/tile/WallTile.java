@@ -18,8 +18,11 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class WallTile extends Tile {
+	private static final int MAX_HEALTH = 100;
+
 	private static SpriteAnimation wood = new SpriteAnimation(SpriteType.Tile, "wood_wall")
 		.setConnectionChecker((level, x, y, tile, side) -> tile instanceof WallTile);
 	private static SpriteAnimation stone = new SpriteAnimation(SpriteType.Tile, "stone_wall")
@@ -55,29 +58,22 @@ public class WallTile extends Tile {
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-			hurt(level, x, y, 0);
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			handleDamage(level, x, y, source, item, MAX_HEALTH);
 			return true;
-		} else {
-			Game.notifications.add(Localization.getLocalized(obrickMsg));
-			return false;
 		}
-	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
-			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
 				if (level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-						int data = level.getData(xt, yt);
-						hurt(level, xt, yt, tool.getDamage());
+					if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
+						int data = level.getData(x, y);
+						hurt(level, x, y, source, item, attackDir, tool.getDamage());
 						AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 							new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-								item, this, data, xt, yt, level.depth));
+								item, this, data, x, y, level.depth));
 						return true;
 					}
 				} else {
@@ -85,19 +81,19 @@ public class WallTile extends Tile {
 				}
 			}
 		}
-		return false;
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int sbwHealth = 100;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = sbwHealth;
-
 		level.add(new SmashParticle(x << 4, y << 4));
 		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
-		if (damage >= sbwHealth) {
+		if (damage >= MAX_HEALTH) {
 			String itemName = "", tilename = "";
 			switch (type) { // Get what tile to set and what item to drop
 				case Wood: {

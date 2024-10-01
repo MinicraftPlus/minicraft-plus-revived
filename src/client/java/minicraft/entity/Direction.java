@@ -46,4 +46,8 @@ public enum Direction {
 	public int getDir() {
 		return ordinal() - 1;
 	}
+
+	public Direction getOpposite() {
+		return Direction.getDirection(getDir() ^ 0b11);
+	}
 }
