@@ -12,13 +12,14 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.ItemHolder;
+import minicraft.entity.PlayerRideable;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.entity.rideable.RideableEntity;
+import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
@@ -42,8 +43,10 @@ import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.level.tile.LavaTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.WaterTile;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.AchievementsDisplay;
@@ -57,6 +60,7 @@ import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -113,11 +117,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	private int hungerStamCnt, stamHungerTicks; // Tiers of hunger penalties before losing a burger.
 	private static final int maxHungerTicks = 400; // The cutoff value for stamHungerTicks
-	private static final int[] maxHungerStams = { 10, 7, 5 }; // TungerStamCnt required to lose a burger.
-	private static final int[] hungerTickCount = { 120, 30, 10 }; // Ticks before decrementing stamHungerTicks.
-	private static final int[] hungerStepCount = { 8, 3, 1 }; // Steps before decrementing stamHungerTicks.
-	private static final int[] minStarveHealth = { 5, 3, 0 }; // Min hearts required for hunger to hurt you.
+	private static final int[] maxHungerStams = {10, 7, 5}; // TungerStamCnt required to lose a burger.
+	private static final int[] hungerTickCount = {120, 30, 10}; // Ticks before decrementing stamHungerTicks.
+	private static final int[] hungerStepCount = {8, 3, 1}; // Steps before decrementing stamHungerTicks.
+	private static final int[] minStarveHealth = {5, 3, 0}; // Min hearts required for hunger to hurt you.
+	private static final int maxRideStaminaTick = 180;
 	private int stepCount; // Used to penalize hunger for movement.
+	private int rideStaminaTick;
 	private int hungerChargeDelay; // The delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 
@@ -136,6 +142,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int maxFishingTicks = 120;
 	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
+
+	private @Nullable Entity ride = null;
 
 	private LinkedSprite hudSheet;
 
@@ -473,16 +481,24 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
 			if ((vec.x != 0 || vec.y != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
-				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				int xd = (int) (vec.x * spd);
-				int yd = (int) (vec.y * spd);
+				Entity ride;
+				if ((ride = getRide()) != null && ride instanceof PlayerRideable) {
+					if (!((PlayerRideable) ride).rideTick(this, vec)) {
+						((PlayerRideable) ride).stopRiding(this);
+						this.ride = null;
+					}
+				} else {
+					double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
+					int xd = (int) (vec.x * spd);
+					int yd = (int) (vec.y * spd);
 
-				Direction newDir = Direction.getDirection(xd, yd);
-				if (newDir == Direction.NONE) newDir = dir;
+					Direction newDir = Direction.getDirection(xd, yd);
+					if (newDir == Direction.NONE) newDir = dir;
 
-				// Move the player
-				boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
-				if (moved) stepCount++;
+					// Move the player
+					boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
+					if (moved) stepCount++;
+				}
 			}
 
 
@@ -592,12 +608,120 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			activeItem = null;
 	}
 
+	private void stopRiding(@NotNull Entity ride) {
+		if (this.ride != ride || !(ride instanceof PlayerRideable)) return;
+		Point p = findNearestLand();
+		((PlayerRideable) ride).stopRiding(this);
+		this.ride = null;
+		if (p != null) {
+			x = p.x * 16 + 8;
+			y = p.y * 16 + 8;
+		} else {
+			p = findAlternativeLandingPoint();
+			x = p.x;
+			y = p.y;
+		}
+	}
+
+	private boolean isTileForLand(Level level, int x, int y) {
+		Tile tile = level.getTile(x, y);
+		return tile.mayPass(level, x, y, this) && !(tile instanceof WaterTile || tile instanceof LavaTile);
+	}
+
+	private @Nullable Point findNearestLand() {
+		// Tiles nearby
+		int xt = x >> 4;
+		int yt = y >> 4;
+		if (dir.getX() != 0) { // x-axis
+			// orthogonal to the direction pointing to
+			if (isTileForLand(level, xt, yt - 1))
+				return new Point(xt, yt - 1);
+			if (isTileForLand(level, xt, yt + 1))
+				return new Point(xt, yt + 1);
+			// parallel to the direction pointing to
+			if (isTileForLand(level, xt - 1, yt))
+				return new Point(xt - 1, yt);
+			if (isTileForLand(level, xt + 1, yt))
+				return new Point(xt + 1, yt);
+		} else { // y-axis
+			// orthogonal to the direction pointing to
+			if (isTileForLand(level, xt - 1, yt))
+				return new Point(xt - 1, yt);
+			if (isTileForLand(level, xt + 1, yt))
+				return new Point(xt + 1, yt);
+			// parallel to the direction pointing to
+			if (isTileForLand(level, xt, yt - 1))
+				return new Point(xt, yt - 1);
+			if (isTileForLand(level, xt, yt + 1))
+				return new Point(xt, yt + 1);
+		}
+
+		// Cross-nearby
+		if (isTileForLand(level, xt - 1, yt - 1))
+			return new Point(xt - 1, yt - 1);
+		if (isTileForLand(level, xt + 1, yt - 1))
+			return new Point(xt + 1, yt - 1);
+		if (isTileForLand(level, xt + 1, yt + 1))
+			return new Point(xt + 1, yt + 1);
+		if (isTileForLand(level, xt - 1, yt + 1))
+			return new Point(xt - 1, yt + 1);
+
+		return null;
+	}
+
+	private Point findAlternativeLandingPoint() {
+		int xt = x >> 4;
+		int yt = y >> 4;
+		// Right-hand-side or left-hand-side tile
+		switch (dir) {
+			case DOWN:
+				xt = (x - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x - 12, y);
+				xt = (x + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x + 12, y);
+				break;
+			case UP:
+				xt = (x + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x + 12, y);
+				xt = (x - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x - 12, y);
+				break;
+			case LEFT:
+				yt = (y - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y - 12);
+				yt = (y + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y + 12);
+				break;
+			case RIGHT:
+				yt = (y + 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y + 12);
+				yt = (y - 12) >> 4;
+				if (level.getTile(xt, yt).mayPass(level, xt, yt, this))
+					return new Point(x, y - 12);
+				break;
+		}
+
+		return new Point(x, y); // Same position
+	}
+
 	/**
 	 * This method is called when we press the attack button.
 	 */
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
+
+		if (ride != null) { // Stops riding when the player interacts with attacking.
+			stopRiding(ride);
+			return;
+		}
 
 		if (isFishing) {
 			isFishing = false;
@@ -795,8 +919,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		for (Entity e : entities) {
 			if (e instanceof Furniture && ((Furniture) e).use(this))
 				return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			else if (e instanceof PlayerRideable && getRide() != e && canRide() && ((PlayerRideable) e).startRiding(this)) {
+				ride = e;
+				return true;
+			}
 		}
 		return false;
+	}
+
+	private boolean canRide() {
+		return ride == null;
+	}
+
+	@Nullable
+	private Entity getRide() {
+		return ride;
 	}
 
 	/**
@@ -822,14 +959,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int dmg = getAttackDamage(e);
 				maxDmg = Math.max(dmg, maxDmg);
 				((Mob) e).hurt(this, dmg, attackDir);
-			}
-			if (e instanceof Furniture)
+			} else if (e instanceof Furniture)
 				e.interact(this, null, attackDir);
-			if (e instanceof RideableEntity) {
-				int dmg = getAttackDamage(e);
-				maxDmg = Math.max(dmg, maxDmg);
-				((RideableEntity) e).hurt(this, dmg);
-			}
+			else if (e instanceof Boat && e != ride)
+				((Boat) e).hurt();
 		}
 		return maxDmg > 0;
 	}
