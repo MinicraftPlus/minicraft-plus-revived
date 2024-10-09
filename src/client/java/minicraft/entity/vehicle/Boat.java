@@ -1,5 +1,6 @@
 package minicraft.entity.vehicle;
 
+import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -7,8 +8,8 @@ import minicraft.entity.Entity;
 import minicraft.entity.PlayerRideable;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
@@ -17,20 +18,56 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Boat extends Entity implements PlayerRideable {
+	private static final SpriteLinker.LinkedSprite[][] boatSprites = new SpriteLinker.LinkedSprite[][] {
+		Mob.compileSpriteList(0, 0, 3, 3, 0, 4, "boat"), //
+		Mob.compileSpriteList(0, 3, 3, 3, 0, 4, "boat")
+	};
+
 	private static final int MOVE_SPEED = 1;
 
 	private @Nullable Entity passenger;
 
 	private @NotNull Direction dir;
 
+	private int walkDist = 0;
+
 	public Boat(@NotNull Direction dir) {
-		super(5, 5);
+		super(6, 6);
 		this.dir = dir;
 	}
 
 	@Override
 	public void render(Screen screen) {
-		Font.draw("BOAT", screen, x - 2 * 8, y - 4);
+		int xo = x - 8; // Horizontal
+		int yo = y - 8; // Vertical
+
+		if (Game.player.equals(passenger)) {
+			switch (((Player) passenger).dir) {
+				case UP: // if currently riding upwards...
+					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
+					passenger.render(screen);
+					break;
+				case LEFT: // Riding to the left... (Same as above)
+					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
+					passenger.render(screen);
+					break;
+
+				case RIGHT: // Riding to the right (Same as above)
+					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
+					passenger.render(screen);
+					break;
+
+				case DOWN: // Riding downwards (Same as above)
+					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
+					passenger.render(screen);
+					break;
+
+				case NONE:
+					break;
+			}
+		} else {
+			screen.render(xo - 4, yo - 4, boatSprites[0][0]);
+		}
 	}
 
 	@Override
@@ -77,8 +114,10 @@ public class Boat extends Entity implements PlayerRideable {
 	private void syncPassengerState(Entity passenger) {
 		passenger.x = x;
 		passenger.y = y;
-		if (passenger instanceof Mob)
+		if (passenger instanceof Mob) {
 			((Mob) passenger).dir = dir;
+			((Mob) passenger).walkDist = walkDist;
+		}
 	}
 
 	@Override
@@ -94,6 +133,7 @@ public class Boat extends Entity implements PlayerRideable {
 		int yd = (int) (vec.y * MOVE_SPEED);
 		dir = Direction.getDirection(xd, yd);
 		if (move(xd, yd)) {
+			walkDist += 1;
 			syncPassengerState(passenger);
 		}
 
@@ -105,6 +145,7 @@ public class Boat extends Entity implements PlayerRideable {
 		if (passenger == null) {
 			passenger = player;
 			syncPassengerState(passenger);
+			Game.player.isRiding = true;
 			return true;
 		} else
 			return false;
@@ -112,7 +153,9 @@ public class Boat extends Entity implements PlayerRideable {
 
 	@Override
 	public void stopRiding(Player player) {
-		if (passenger == player)
+		if (passenger == player) {
+			Game.player.isRiding = false;
 			passenger = null;
+		}
 	}
 }

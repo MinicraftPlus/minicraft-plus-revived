@@ -1054,10 +1054,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				Sprite sprite = curSprite.getSprite();
 				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
 				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
-			} else if (isRiding) { // If we are riding an entity
+			} else if (isRiding && (dir.equals(Direction.LEFT)||dir.equals(Direction.RIGHT))) { // If we are riding an entity
 				Sprite sprite = curSprite.getSprite();
 				screen.render(xo, yo + 2, sprite.spritePixels[0][0], shirtColor);
 				screen.render(xo + 8, yo + 2, sprite.spritePixels[0][1], shirtColor);
+			} else if (isRiding && (dir.equals(Direction.UP)||dir.equals(Direction.DOWN))) { // If we are riding an entity
+				screen.render(xo, yo, curSprite.setColor(shirtColor));
 			} else {
 				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 			}
@@ -1121,19 +1123,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders the furniture if the player is holding one.
 		if (activeItem instanceof FurnitureItem) {
-			if (!((FurnitureItem) activeItem).isRideable) {
 				Furniture furniture = ((FurnitureItem) activeItem).furniture;
 				furniture.x = x;
 				furniture.y = yo - 4;
 				furniture.render(screen);
-			} else {
-				RideableEntity rideable = ((FurnitureItem) activeItem).rideable;
-				rideable.x = x;
-				rideable.y = yo - 4;
-				rideable.render(screen);
 			}
 		}
-	}
 
 	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {

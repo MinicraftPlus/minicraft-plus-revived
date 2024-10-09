@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class EntitySummonItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
-		items.add(new EntitySummonItem("Boat", SpriteLinker.missingTexture(SpriteLinker.SpriteType.Item), Boat::new));
+		items.add(new EntitySummonItem("Boat", new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Item, "boat"), Boat::new));
 		return items;
 	}
 
@@ -29,7 +29,7 @@ public class EntitySummonItem extends StackableItem {
 
 	@Override
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		level.add(entitySupplier.apply(attackDir), player.x + 8 * attackDir.getX(), player.y + 8 * attackDir.getY());
+		level.add(entitySupplier.apply(attackDir), player.x + 12 * attackDir.getX(), player.y + 12 * attackDir.getY());
 		return true;
 	}
 
