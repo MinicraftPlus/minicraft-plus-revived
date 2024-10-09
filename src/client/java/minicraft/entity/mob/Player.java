@@ -137,6 +137,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	public int shirtColor = Color.get(1, 51, 51, 0); // Player shirt color.
 
+	public boolean isRiding = false;
 	public boolean isFishing = false;
 	public int maxFishingTicks = 120;
 	public int fishingTicks = maxFishingTicks;
@@ -176,8 +177,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			@Override
-			public int add(int slot, Item item) {
-				int res = super.add(slot, item);
+			public @Nullable Item add(Item item) {
+				Item res = super.add(item);
 				triggerTrigger();
 				return res;
 			}
@@ -260,8 +261,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Adds a new potion effect to the player.
-	 *
-	 * @param type     Type of potion.
+	 * @param type Type of potion.
 	 * @param duration How long the effect lasts.
 	 */
 	public void addPotionEffect(PotionType type, int duration) {
@@ -270,7 +270,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Adds a potion effect to the player.
-	 *
 	 * @param type Type of effect.
 	 */
 	public void addPotionEffect(PotionType type) {
@@ -279,7 +278,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Returns all the potion effects currently affecting the player.
-	 *
 	 * @return all potion effects on the player.
 	 */
 	public HashMap<PotionType, Integer> getPotionEffects() {
@@ -512,16 +510,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
 				Item drop = activeItem.copy();
 
-				if (input.inputPressed("drop-one") && drop instanceof StackableItem && ((StackableItem) drop).count > 1) {
-					// Drop one from stack
-					((StackableItem) activeItem).count--;
-					((StackableItem) drop).count = 1;
-				} else {
+				if (!input.inputPressed("drop-stack") || !(drop instanceof StackableItem) || ((StackableItem) drop).count <= 1) {
 					activeItem = null; // Remove it from the "inventory"
 					if (isFishing) {
 						isFishing = false;
 						fishingTicks = maxFishingTicks;
 					}
+				} else {
+					// Drop one from stack
+					((StackableItem) activeItem).count--;
+					((StackableItem) drop).count = 1;
 				}
 
 				level.dropItem(x, y, drop);
@@ -534,16 +532,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				attack();
 			}
 
-			if (input.inputPressed("menu") && activeItem != null) {
-				int returned = inventory.add(0, activeItem);
-				if (activeItem instanceof StackableItem) {
-					StackableItem stackable = (StackableItem) activeItem;
-					if (stackable.count > 0) {
-						getLevel().dropItem(x, y, stackable.copy());
-					}
-				} else if (returned <= 0) {
-					getLevel().dropItem(x, y, activeItem);
-				}
+			if ((input.inputPressed("menu") || input.inputPressed("craft")) && activeItem != null) {
+				tryAddToInvOrDrop(activeItem);
 
 				activeItem = null;
 				if (isFishing) {
@@ -553,14 +543,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.inputPressed("pause"))
-					Game.setDisplay(new PauseDisplay());
-				if (input.inputPressed("craft") && !use())
+				if (input.inputPressed("craft") && !use()) {
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
-
-				if (input.inputDown("info")) Game.setDisplay(new InfoDisplay());
+					return;
+				} else if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+					Game.setDisplay(new PlayerInvDisplay(this));
+					return;
+				} else if (input.inputPressed("pause")) {
+					Game.setDisplay(new PauseDisplay());
+					return;
+				} else if (input.inputDown("info")) {
+					Game.setDisplay(new InfoDisplay());
+					return;
+				}
 
 				if (input.inputDown("quicksave") && !Updater.saving) {
 					Updater.saving = true;
@@ -602,14 +597,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
 			if (prevItem != null) { // and you had a previous item that we should care about...
-				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
-				if (prevItem instanceof StackableItem) {
-					if (((StackableItem) prevItem).count > 0) {
-						getLevel().dropItem(x, y, prevItem.copy());
-					}
-				} else if (returned == 0) {
-					getLevel().dropItem(x, y, prevItem);
-				}
+				tryAddToInvOrDrop(prevItem); // Then add that previous item to your inventory so it isn't lost.
 			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
@@ -981,7 +969,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Calculates how much damage the player will do.
-	 *
 	 * @param e Entity being attacked.
 	 * @return How much damage the player does.
 	 */
@@ -1012,9 +999,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		int yo = y - 11; // Vertical
 
 		// Renders swimming
-		if (isSwimming() && onFallDelay <= 0) {
+		if (isSwimming() && onFallDelay <= 0 && !isRiding) {
 			yo += 4; // y offset is moved up by 4
-			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
+			if (level.getTile(x >> 4, y >> 4) == Tiles.get("water")) {
 
 				// animation effect
 				if (tickTime / 8 % 2 == 0) {
@@ -1025,7 +1012,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					screen.render(xo + 8, yo + 3, 5, 1, 1, hudSheet.getSheet());
 				}
 
-			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
+			} else if (level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) {
 
 				if (tickTime / 8 % 2 == 0) {
 					screen.render(xo + 0, yo + 3, 6, 0, 1, hudSheet.getSheet()); // Render the lava graphic
@@ -1063,11 +1050,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 			// Render each corner of the sprite
-			if (isSwimming()) {
+			if (isSwimming() && !isRiding) { // Don't render the bottom half if swimming.
 				Sprite sprite = curSprite.getSprite();
 				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
 				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
-			} else { // Don't render the bottom half if swimming.
+			} else if (isRiding) { // If we are riding an entity
+				Sprite sprite = curSprite.getSprite();
+				screen.render(xo, yo + 2, sprite.spritePixels[0][0], shirtColor);
+				screen.render(xo + 8, yo + 2, sprite.spritePixels[0][1], shirtColor);
+			} else {
 				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 			}
 		}
@@ -1130,31 +1121,55 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders the furniture if the player is holding one.
 		if (activeItem instanceof FurnitureItem) {
-			Furniture furniture = ((FurnitureItem) activeItem).furniture;
-			furniture.x = x;
-			furniture.y = yo - 4;
-			furniture.render(screen);
+			if (!((FurnitureItem) activeItem).isRideable) {
+				Furniture furniture = ((FurnitureItem) activeItem).furniture;
+				furniture.x = x;
+				furniture.y = yo - 4;
+				furniture.render(screen);
+			} else {
+				RideableEntity rideable = ((FurnitureItem) activeItem).rideable;
+				rideable.x = x;
+				rideable.y = yo - 4;
+				rideable.render(screen);
+			}
 		}
 	}
 
-	/**
-	 * What happens when the player interacts with a itemEntity
-	 */
+	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {
-		int picked = 0;
-		int total = 1;
+		boolean successful = false; // If there is any item successfully added to the player
+		boolean remove = false; // Whether to remove the item entity (when empty)
 		if (itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
-			((StackableItem) activeItem).count += ((StackableItem) itemEntity.item).count;
-			picked = ((StackableItem) itemEntity.item).count;
-		} else {
-			if (itemEntity.item instanceof StackableItem) total = ((StackableItem) itemEntity.item).count;
-			picked = inventory.add(itemEntity.item); // Add item to inventory
+			int toAdd = Math.min(((StackableItem) activeItem).count + ((StackableItem) itemEntity.item).count, ((StackableItem) activeItem).maxCount)
+				- ((StackableItem) activeItem).count;
+			if (toAdd > 0) {
+				((StackableItem) activeItem).count += toAdd;
+				((StackableItem) itemEntity.item).count -= toAdd;
+				successful = true;
+			}
+			if (((StackableItem) itemEntity.item).count == 0) { // Empty
+				remove = true; // Remove the item entity
+			}
 		}
 
-		if (picked == total) {
-			Sound.play("pickup");
+		if (!(itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).count == 0)) {
+			// Add item to inventory
+			Item remaining;
+			if (itemEntity.item instanceof StackableItem) {
+				int orig = ((StackableItem) itemEntity.item).count;
+				remaining = inventory.add(itemEntity.item);
+				if (remaining != null && ((StackableItem) remaining).count != orig) {
+					successful = true;
+				}
+			} else remaining = inventory.add(itemEntity.item);
+			if (remaining == null) {
+				successful = remove = true;
+			}
+		}
 
-			itemEntity.remove();
+		if (remove) itemEntity.remove();
+		if (successful) {
+			Sound.play("pickup");
 			addScore(1);
 		}
 	}
@@ -1171,8 +1186,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Finds a starting position for the player.
-	 *
-	 * @param level     Level which the player wants to start in.
+	 * @param level Level which the player wants to start in.
 	 * @param spawnSeed Spawn seed.
 	 */
 	public void findStartPos(Level level, long spawnSeed) {
@@ -1182,7 +1196,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Finds the starting position for the player in a level.
-	 *
 	 * @param level The level.
 	 */
 	public void findStartPos(Level level) {
@@ -1221,7 +1234,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Finds a location where the player can respawn in a given level.
-	 *
 	 * @param level The level.
 	 */
 	public void respawn(Level level) {
@@ -1236,7 +1248,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Uses an amount of stamina to do an action.
-	 *
 	 * @param cost How much stamina the action requires.
 	 * @return true if the player had enough stamina, false if not.
 	 */
@@ -1298,8 +1309,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Hurt the player.
-	 *
-	 * @param damage    How much damage to do to player.
+	 * @param damage How much damage to do to player.
 	 * @param attackDir What direction to attack.
 	 */
 	public void hurt(int damage, Direction attackDir) {
@@ -1349,8 +1359,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/**
 	 * Hurt the player directly. Don't use the armor as a shield.
-	 *
-	 * @param damage    Amount of damage to do to player
+	 * @param damage Amount of damage to do to player
 	 * @param attackDir The direction of attack.
 	 */
 	private void directHurt(int damage, Direction attackDir) {
@@ -1387,17 +1396,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	/**
-	 * Trying to add item(s) to the player inventory.
-	 * If no more item(s) can be added to the inventory, drop the item(s) near the player.
+	 * Trying to add a stack of item(s) to the top of player inventory.
+	 * If there is/are no more item(s) can be added to the inventory, drop the item(s) near the player.
 	 */
 	public void tryAddToInvOrDrop(@Nullable Item item) {
 		if (item != null) {
-			int returned = inventory.add(0, item);
-			if (item instanceof StackableItem) {
-				if (((StackableItem) item).count > 0) {
-					getLevel().dropItem(x, y, item);
-				}
-			} else if (returned == 0) {
+			if (inventory.add(item) != null) {
 				getLevel().dropItem(x, y, item);
 			}
 		}

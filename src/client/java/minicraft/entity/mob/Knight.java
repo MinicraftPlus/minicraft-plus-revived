@@ -5,7 +5,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 
 public class Knight extends EnemyMob {
-	private static LinkedSprite[][][] sprites = new LinkedSprite[][][]{
+	private static LinkedSprite[][][] sprites = new LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "knight"),
 		Mob.compileMobSpriteAnimations(0, 2, "knight"),
 		Mob.compileMobSpriteAnimations(0, 4, "knight"),
@@ -14,7 +14,6 @@ public class Knight extends EnemyMob {
 
 	/**
 	 * Creates a knight of a given level.
-	 *
 	 * @param lvl The knights level.
 	 */
 	public Knight(int lvl) {

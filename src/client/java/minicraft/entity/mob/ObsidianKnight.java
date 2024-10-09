@@ -19,13 +19,13 @@ import minicraft.screen.AchievementsDisplay;
 import org.jetbrains.annotations.Range;
 
 public class ObsidianKnight extends EnemyMob {
-	private static final SpriteLinker.LinkedSprite[][][] armored = new SpriteLinker.LinkedSprite[][][]{
+	private static final SpriteLinker.LinkedSprite[][][] armored = new SpriteLinker.LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "obsidian_knight_armored"),
 		Mob.compileMobSpriteAnimations(0, 2, "obsidian_knight_armored"),
 		Mob.compileMobSpriteAnimations(0, 4, "obsidian_knight_armored"),
 		Mob.compileMobSpriteAnimations(0, 6, "obsidian_knight_armored")
 	};
-	private static final SpriteLinker.LinkedSprite[][][] broken = new SpriteLinker.LinkedSprite[][][]{
+	private static final SpriteLinker.LinkedSprite[][][] broken = new SpriteLinker.LinkedSprite[][][] {
 		Mob.compileMobSpriteAnimations(0, 0, "obsidian_knight_broken"),
 		Mob.compileMobSpriteAnimations(0, 2, "obsidian_knight_broken"),
 		Mob.compileMobSpriteAnimations(0, 4, "obsidian_knight_broken"),

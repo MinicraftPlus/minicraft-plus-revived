@@ -22,8 +22,11 @@ import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
 import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
+import minicraft.entity.rideable.Boat;
+import minicraft.entity.rideable.RideableEntity;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new Spawner(new Knight(1))));
 
 		items.add(new FurnitureItem(new Chest()));
-		items.add(new FurnitureItem(new DungeonChest(false, true)));
+		items.add(new FurnitureItem(new DungeonChest(null, true)));
 
 		// Add the various types of crafting furniture
 		for (Crafter.Type type : Crafter.Type.values()) {
@@ -59,6 +62,7 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new Tnt()));
 		items.add(new FurnitureItem(new Bed()));
 		items.add(new FurnitureItem(new Composter()));
+		items.add(new FurnitureItem(new Boat()));
 
 		return items;
 	}
@@ -66,10 +70,25 @@ public class FurnitureItem extends Item {
 	public Furniture furniture; // The furniture of this item
 	public boolean placed; // Value if the furniture has been placed or not.
 
+	public boolean isRideable;
+
+	public RideableEntity rideable;
+
 	public FurnitureItem(Furniture furniture) {
 		super(furniture.name, furniture.itemSprite);
 		this.furniture = furniture; // Assigns the furniture to the item
 		placed = false;
+		isRideable = false;
+	}
+
+	/**
+	 * Made for rideable entities that aren't living such as boats
+	 */
+	public FurnitureItem(RideableEntity entity){
+		super(entity.name, entity.itemSprite);
+		rideable = entity;
+		placed = false;
+		isRideable = true;
 	}
 
 	/**
@@ -83,16 +102,30 @@ public class FurnitureItem extends Item {
 	 * What happens when you press the "Attack" key with the furniture in your hands
 	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
+		if (!isRideable && tile.mayPass(level, xt, yt, furniture)) { // IsRideable is looked at first to prevent unnecessary checking for if a boat can swim; If the furniture can go on the tile
 			Sound.play("craft");
 
 			// Placed furniture's X and Y positions
-			furniture.x = xt * 16 + 8;
-			furniture.y = yt * 16 + 8;
+			furniture.x = (xt << 4) + 8;
+			furniture.y = (yt << 4) + 8;
 
 			level.add(furniture); // Adds the furniture to the world
-			if (Game.isMode("minicraft.settings.mode.creative"))
+			if (Game.isMode("minicraft.settings.mode.creative") && !isRideable)
 				furniture = furniture.copy();
+			else
+				placed = true; // The value becomes true, which removes it from the player's active item
+
+			return true;
+		} else if (tile.equals(Tiles.get("Water"))) {
+			Sound.play("craft");
+
+			// Placed rideable X and Y positions
+			rideable.x = xt * 16 + 8;
+			rideable.y = yt * 16 + 8;
+
+			level.add(rideable); // Adds the rideable "furniture" or object to the world
+			if (Game.isMode("minicraft.settings.mode.creative") && isRideable)
+				rideable = new Boat();
 			else
 				placed = true; // The value becomes true, which removes it from the player's active item
 
@@ -108,6 +141,9 @@ public class FurnitureItem extends Item {
 	public @NotNull FurnitureItem copy() {
 		// in case the item is a spawner, it will use the sprite position (sx, sy)
 		// instead if it is not, the constructor will obtain said sprite
-		return new FurnitureItem(furniture.copy());
+		if (!isRideable)
+			return new FurnitureItem(furniture.copy());
+		else
+			return new FurnitureItem(rideable);
 	}
 }
