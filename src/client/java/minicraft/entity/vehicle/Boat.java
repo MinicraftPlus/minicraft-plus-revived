@@ -41,7 +41,7 @@ public class Boat extends Entity implements PlayerRideable {
 		int xo = x - 8; // Horizontal
 		int yo = y - 8; // Vertical
 
-		if (Game.player.equals(passenger)) {
+		if (passenger != null) {
 			switch (((Player) passenger).dir) {
 				case UP: // if currently riding upwards...
 					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
@@ -133,7 +133,7 @@ public class Boat extends Entity implements PlayerRideable {
 		int yd = (int) (vec.y * MOVE_SPEED);
 		dir = Direction.getDirection(xd, yd);
 		if (move(xd, yd)) {
-			walkDist += 1;
+			if (Updater.tickCount % 2 != 0) walkDist++; // Slower the animation
 			syncPassengerState(passenger);
 		}
 
@@ -145,7 +145,6 @@ public class Boat extends Entity implements PlayerRideable {
 		if (passenger == null) {
 			passenger = player;
 			syncPassengerState(passenger);
-			Game.player.isRiding = true;
 			return true;
 		} else
 			return false;
@@ -154,7 +153,6 @@ public class Boat extends Entity implements PlayerRideable {
 	@Override
 	public void stopRiding(Player player) {
 		if (passenger == player) {
-			Game.player.isRiding = false;
 			passenger = null;
 		}
 	}

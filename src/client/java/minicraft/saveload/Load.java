@@ -1269,8 +1269,8 @@ public class Load {
 				return new KnightStatue(0);
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
-            case "Boat":
-                return new Boat(Direction.getDirection(0));
+			case "Boat":
+				return new Boat(Direction.NONE);
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;

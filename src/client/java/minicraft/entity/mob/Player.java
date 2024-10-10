@@ -137,7 +137,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	public int shirtColor = Color.get(1, 51, 51, 0); // Player shirt color.
 
-	public boolean isRiding = false;
 	public boolean isFishing = false;
 	public int maxFishingTicks = 120;
 	public int fishingTicks = maxFishingTicks;
@@ -999,7 +998,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		int yo = y - 11; // Vertical
 
 		// Renders swimming
-		if (isSwimming() && onFallDelay <= 0 && !isRiding) {
+		if (isSwimming() && onFallDelay <= 0) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x >> 4, y >> 4) == Tiles.get("water")) {
 
@@ -1050,16 +1049,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else {
 			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // Gets the correct sprite to render.
 			// Render each corner of the sprite
-			if (isSwimming() && !isRiding) { // Don't render the bottom half if swimming.
+			if (isSwimming()) { // Don't render the bottom half if swimming.
 				Sprite sprite = curSprite.getSprite();
 				screen.render(xo, yo, sprite.spritePixels[0][0], shirtColor);
 				screen.render(xo + 8, yo, sprite.spritePixels[0][1], shirtColor);
-			} else if (isRiding && (dir.equals(Direction.LEFT)||dir.equals(Direction.RIGHT))) { // If we are riding an entity
-				Sprite sprite = curSprite.getSprite();
-				screen.render(xo, yo + 2, sprite.spritePixels[0][0], shirtColor);
-				screen.render(xo + 8, yo + 2, sprite.spritePixels[0][1], shirtColor);
-			} else if (isRiding && (dir.equals(Direction.UP)||dir.equals(Direction.DOWN))) { // If we are riding an entity
-				screen.render(xo, yo, curSprite.setColor(shirtColor));
+			} else if (ride != null) { // If we are riding an entity
+				if (dir.getX() != 0) { // if direction is x-axis (left/right)
+					Sprite sprite = curSprite.getSprite();
+					screen.render(xo, yo + 2, sprite.spritePixels[0][0], shirtColor);
+					screen.render(xo + 8, yo + 2, sprite.spritePixels[0][1], shirtColor);
+				} else if (dir.getY() != 0) { // if direction is y-axis (up/down)
+					screen.render(xo, yo, curSprite.setColor(shirtColor));
+				} else // Other direction is invalid
+					throw new UnsupportedOperationException("dir should not be NONE");
 			} else {
 				screen.render(xo, yo - 4 * onFallDelay, curSprite.setColor(shirtColor));
 			}
@@ -1123,12 +1125,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders the furniture if the player is holding one.
 		if (activeItem instanceof FurnitureItem) {
-				Furniture furniture = ((FurnitureItem) activeItem).furniture;
-				furniture.x = x;
-				furniture.y = yo - 4;
-				furniture.render(screen);
-			}
+			Furniture furniture = ((FurnitureItem) activeItem).furniture;
+			furniture.x = x;
+			furniture.y = yo - 4;
+			furniture.render(screen);
 		}
+	}
 
 	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {

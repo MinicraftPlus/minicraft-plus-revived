@@ -83,7 +83,7 @@ public class FurnitureItem extends Item {
 	 * What happens when you press the "Attack" key with the furniture in your hands
 	 */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (tile.mayPass(level, xt, yt, furniture)) { // IsRideable is looked at first to prevent unnecessary checking for if a boat can swim; If the furniture can go on the tile
+		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
 			Sound.play("craft");
 
 			// Placed furniture's X and Y positions
