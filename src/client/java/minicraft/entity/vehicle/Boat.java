@@ -11,6 +11,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Items;
+import minicraft.level.tile.LavaTile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import minicraft.util.Vector2;
@@ -51,17 +52,14 @@ public class Boat extends Entity implements PlayerRideable {
 					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
 					passenger.render(screen);
 					break;
-
 				case RIGHT: // Riding to the right (Same as above)
 					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
 					passenger.render(screen);
 					break;
-
 				case DOWN: // Riding downwards (Same as above)
 					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
 					passenger.render(screen);
 					break;
-
 				case NONE:
 					break;
 			}
@@ -73,8 +71,11 @@ public class Boat extends Entity implements PlayerRideable {
 	@Override
 	public void tick() {
 		if (isRemoved()) return;
-		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava"))
+		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) {
 			hurt();
+			if (isRemoved()) return;
+		}
+
 		// Moves the furniture in the correct direction.
 		move(pushDir.getX(), pushDir.getY());
 		pushDir = Direction.NONE;
@@ -100,15 +101,21 @@ public class Boat extends Entity implements PlayerRideable {
 		return level.getTile(x >> 4, y >> 4) instanceof WaterTile;
 	}
 
+	public boolean isInLava() {
+		return level.getTile(x >> 4, y >> 4) instanceof LavaTile;
+	}
+
 	@Override
 	protected int getPushTimeDelay() {
-		return isInWater() ? 2 : 6;
+		return isInWater() ? 2 : isInLava() ? 4 : 6;
 	}
 
 	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player)
 			tryPush((Player) entity);
+		if (entity instanceof Boat && ((Boat) entity).passenger instanceof Player)
+			tryPush((Player) ((Boat) entity).passenger);
 	}
 
 	private void syncPassengerState(Entity passenger) {
@@ -128,12 +135,16 @@ public class Boat extends Entity implements PlayerRideable {
 	@Override
 	public boolean rideTick(Player passenger, Vector2 vec) {
 		if (this.passenger != passenger) return false;
-		if (!isInWater() && Updater.tickCount % 4 != 0) return true; // Slower when not in water.
+		boolean inLava = isInLava(), inWater = isInWater();
+		if (inLava) {
+			if (Updater.tickCount % 2 != 0) return true; // A bit slower when in lava.
+		} else if (!inWater && Updater.tickCount % 4 != 0) return true; // Slower when not in water.
 		int xd = (int) (vec.x * MOVE_SPEED);
 		int yd = (int) (vec.y * MOVE_SPEED);
 		dir = Direction.getDirection(xd, yd);
 		if (move(xd, yd)) {
-			if (Updater.tickCount % 2 != 0) walkDist++; // Slower the animation
+			if (!(inWater || inLava) || (inLava && Updater.tickCount % 4 == 0) ||
+				(inWater && Updater.tickCount % 2 != 0)) walkDist++; // Slower the animation
 			syncPassengerState(passenger);
 		}
 

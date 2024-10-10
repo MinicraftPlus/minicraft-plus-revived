@@ -998,7 +998,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		int yo = y - 11; // Vertical
 
 		// Renders swimming
-		if (isSwimming() && onFallDelay <= 0) {
+		if (isSwimming() && onFallDelay <= 0 && ride == null) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x >> 4, y >> 4) == Tiles.get("water")) {
 
