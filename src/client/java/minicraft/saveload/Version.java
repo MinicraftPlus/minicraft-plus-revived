@@ -80,6 +80,10 @@ public class Version implements Comparable<Version> {
 		return 0; // The versions are equal.
 	}
 
+	public boolean isDev() {
+		return dev != 0;
+	}
+
 	@Override
 	public String toString() {
 		return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev);

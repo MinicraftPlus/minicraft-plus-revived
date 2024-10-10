@@ -44,6 +44,8 @@ public class Items {
 		addAll(SummonItem.getAllInstances());
 		addAll(HeartItem.getAllInstances());
 		addAll(WateringCanItem.getAllInstances());
+		addAll(DyeItem.getAllInstances());
+		addAll(WoolItem.getAllInstances());
 		addAll(EntitySummonItem.getAllInstances());
 	}
 

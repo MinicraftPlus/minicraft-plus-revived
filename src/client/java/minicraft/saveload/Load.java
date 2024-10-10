@@ -43,6 +43,7 @@ import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.item.ArmorItem;
+import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -63,6 +64,7 @@ import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
+import minicraft.screen.WorldSelectDisplay;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
@@ -128,6 +130,87 @@ public class Load {
 		//	hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
 
 		if (!loadGame) return;
+
+		// Is dev build
+		if (Game.VERSION.isDev() && worldVer.compareTo(Game.VERSION) < 0) {
+			Logging.SAVELOAD.info("Old world detected, backup prompting...");
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
+				Localization.getLocalized("minicraft.displays.save.popup_display.world_backup_prompt.msg",
+					worldVer, Game.VERSION))));
+			entries.addAll(Arrays.asList(StringEntry.useLines("minicraft.display.popup.escape_cancel")));
+
+			AtomicBoolean acted = new AtomicBoolean(false);
+			AtomicBoolean continues = new AtomicBoolean(false);
+			AtomicBoolean doBackup = new AtomicBoolean(false);
+
+			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+			callbacks.add(new PopupDisplay.PopupActionCallback("EXIT", m -> {
+				Game.exitDisplay();
+				acted.set(true);
+				return true;
+			}));
+
+			callbacks.add(new PopupDisplay.PopupActionCallback("ENTER|Y", m -> {
+				Game.exitDisplay();
+				continues.set(true);
+				doBackup.set(true);
+				acted.set(true);
+				return true;
+			}));
+
+			callbacks.add(new PopupDisplay.PopupActionCallback("N", m -> {
+				Game.exitDisplay();
+				continues.set(true);
+				acted.set(true);
+				return true;
+			}));
+
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
+					"minicraft.displays.save.popup_display.world_backup_prompt", callbacks, 2),
+					entries.toArray(new ListEntry[0])));
+
+			while (true) {
+				if (acted.get()) {
+					if (continues.get()) {
+						if (doBackup.get()) {
+							Logging.SAVELOAD.info("Performing world backup...");
+							int i = 0;
+							String filename = worldname;
+							File f = new File(location + "/saves/", filename);
+							while (f.exists()) { // Increments world name if world exists
+								i++;
+								filename = worldname + " (" + i + ")";
+								f = new File(location + "/saves/", filename);
+							}
+							f.mkdirs();
+							try {
+								FileHandler.copyFolderContents(Paths.get(location, "saves", worldname),
+									f.toPath(), FileHandler.SKIP, false);
+							} catch (IOException e) {
+								Logging.SAVELOAD.error(e, "Error occurs while performing world backup, loading aborted");
+								throw new RuntimeException(new InterruptedException("World loading interrupted."));
+							}
+
+							Logging.SAVELOAD.info("World backup \"{}\" is created.", filename);
+							WorldSelectDisplay.updateWorlds();
+						} else
+							Logging.SAVELOAD.warn("World backup is skipped.");
+						Logging.SAVELOAD.debug("World loading continues...");
+					} else {
+						Logging.SAVELOAD.info("User cancelled world loading, loading aborted.");
+						throw new RuntimeException(new InterruptedException("World loading interrupted."));
+					}
+
+					break;
+				}
+
+				try {
+					//noinspection BusyWait
+					Thread.sleep(10);
+				} catch (InterruptedException ignored) {}
+			}
+		}
 
 		if (worldVer.compareTo(new Version("1.9.2")) < 0)
 			new LegacyLoad(worldname);
@@ -199,6 +282,11 @@ public class Load {
 
 						break;
 					}
+
+					try {
+						//noinspection BusyWait
+						Thread.sleep(10);
+					} catch (InterruptedException ignored) {}
 				}
 			}
 		}
@@ -647,25 +735,29 @@ public class Load {
 						}
 					}
 
-					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
+					if (tilename.equalsIgnoreCase("Wool")) {
+						if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+							switch (Integer.parseInt(extradata.get(tileidx))) {
+								case 1:
+									tilename = "Red Wool";
+									break;
+								case 2:
+									tilename = "Yellow Wool";
+									break;
+								case 3:
+									tilename = "Green Wool";
+									break;
+								case 4:
+									tilename = "Blue Wool";
+									break;
+								case 5:
+									tilename = "Black Wool";
+									break;
+								default:
+									tilename = "White Wool";
+							}
+						} else if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if (Math.random() < 0.8) // don't replace *all* the lapis
@@ -683,7 +775,7 @@ public class Load {
 						}
 					}
 
-					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
+					loadTile(worldVer, tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -754,7 +846,7 @@ public class Load {
 		}
 
 		boolean signsLoadSucceeded = false;
-		if (new File(location+"signs.json").exists()) {
+		if (new File(location + "signs.json").exists()) {
 			try {
 				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
 				@SuppressWarnings("unused")
@@ -785,14 +877,18 @@ public class Load {
 
 	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
 
-	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+	public static void loadTile(Version worldVer, short[] tiles, short[] data, int idx, String tileName, String tileData) {
 		Matcher matcher;
 		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
 			tiles[idx] = 57; // ID of TORCH tile
 			data[idx] = Tiles.get(matcher.group(1)).id;
 		} else {
 			tiles[idx] = Tiles.get(tileName).id;
-			data[idx] = Short.parseShort(tileData);
+			if (worldVer.compareTo(new Version("2.2.1-dev1")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
+				data[idx] = 0;
+			} else {
+				data[idx] = Short.parseShort(tileData);
+			}
 		}
 	}
 
@@ -951,6 +1047,16 @@ public class Load {
 				name = name.replace("Potion", "Awkward Potion");
 		}
 
+		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+			if (name.startsWith("Wool"))
+				name = name.replace("Wool", "White Wool");
+		}
+
+		if (worldVer.compareTo(new Version("2.2.1-dev2")) < 0) {
+			if (name.startsWith("Flower"))
+				name = name.replace("Flower", "Oxeye Daisy");
+		}
+
 		return name;
 	}
 
@@ -1056,6 +1162,14 @@ public class Load {
 				newEntity = new Spark((AirWizard) sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
+				return null;
+			}
+		} else if (entityName.contains(" Bed")) { // with a space, meaning that the bed has a color name in the front
+			String colorName = entityName.substring(0, entityName.length() - 4).toUpperCase().replace(' ', '_');
+			try {
+				newEntity = new Bed(DyeItem.DyeColor.valueOf(colorName));
+			} catch (IllegalArgumentException e) {
+				Logging.SAVELOAD.error("Invalid bed variant: `{}`, skipping.", entityName);
 				return null;
 			}
 		} else {
@@ -1205,7 +1319,6 @@ public class Load {
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
 			case "Player":
-				return null;
 			case "RemotePlayer":
 				return null;
 			case "Cow":
@@ -1269,6 +1382,8 @@ public class Load {
 				return new KnightStatue(0);
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
+			case "DyeVat":
+				return new Crafter(Crafter.Type.DyeVat);
 			case "Boat":
 				return new Boat(Direction.NONE);
 			default:

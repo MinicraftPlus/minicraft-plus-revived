@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.entity.furniture.Bed;
+import minicraft.level.tile.FlowerTile;
 import minicraft.saveload.Save;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +31,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +47,7 @@ public class Recipes {
 	public static final ArrayList<Recipe> enchantRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> craftRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> loomRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> dyeVatRecipes = new ArrayList<>();
 
 	static {
 		craftRecipes.add(new Recipe("Workbench_1", "Wood_10"));
@@ -57,6 +60,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("plank_2", "Wood_1"));
+		workbenchRecipes.add(new Recipe("Ornate Wood_1", "Wood_1"));
 		workbenchRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		workbenchRecipes.add(new Recipe("Wood Door_1", "plank_5"));
 		workbenchRecipes.add(new Recipe("Wood Fence_1", "plank_3"));
@@ -77,7 +81,8 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Chest_1", "Wood_20"));
 		workbenchRecipes.add(new Recipe("Anvil_1", "iron_5"));
 		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "Sand_8"));
-		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "Wool_5"));
+		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "White Wool_5"));
+		workbenchRecipes.add(new Recipe("Dye Vat_1", "Stone_10", "iron_5"));
 		workbenchRecipes.add(new Recipe("Boat_1", "Wood_10", "Wood Shovel_1"));
 		workbenchRecipes.add(new Recipe("Wood Fishing Rod_1", "Wood_10", "String_3"));
 		workbenchRecipes.add(new Recipe("Iron Fishing Rod_1", "Iron_10", "String_3"));
@@ -101,21 +106,100 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		workbenchRecipes.add(new Recipe("Snake Armor_1", "scale_15"));
 
-		loomRecipes.add(new Recipe("String_2", "Wool_1"));
-		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
-		loomRecipes.add(new Recipe("blue wool_1", "Wool_1", "Lapis_1"));
-		loomRecipes.add(new Recipe("green wool_1", "Wool_1", "Cactus_1"));
-		loomRecipes.add(new Recipe("yellow wool_1", "Wool_1", "Flower_1"));
-		loomRecipes.add(new Recipe("black wool_1", "Wool_1", "coal_1"));
-		loomRecipes.add(new Recipe("Bed_1", "Wood_5", "Wool_3"));
+		dyeVatRecipes.add(new Recipe("white dye_1", "White Lily_1"));
+		dyeVatRecipes.add(new Recipe("light gray dye_1", "Oxeye Daisy_1"));
+		dyeVatRecipes.add(new Recipe("light gray dye_1", "Hydrangea_1"));
+		dyeVatRecipes.add(new Recipe("light gray dye_1", "White Tulip_1"));
+		dyeVatRecipes.add(new Recipe("blue dye_1", "Lapis_1"));
+		dyeVatRecipes.add(new Recipe("blue dye_1", "Cornflower_1"));
+		dyeVatRecipes.add(new Recipe("blue dye_1", "Iris_1"));
+		dyeVatRecipes.add(new Recipe("green dye_1", "Cactus_1"));
+		dyeVatRecipes.add(new Recipe("yellow dye_1", "Sunflower_1"));
+		dyeVatRecipes.add(new Recipe("yellow dye_1", "Dandelion_1"));
+		dyeVatRecipes.add(new Recipe("light blue dye_1", "Blue Orchid_1"));
+		dyeVatRecipes.add(new Recipe("light blue dye_1", "Periwinkle_1"));
+		dyeVatRecipes.add(new Recipe("black dye_1", "Coal_1"));
+		dyeVatRecipes.add(new Recipe("red dye_1", "Rose_1"));
+		dyeVatRecipes.add(new Recipe("red dye_1", "Red Tulip_1"));
+		dyeVatRecipes.add(new Recipe("red dye_1", "Poppy_1"));
+		dyeVatRecipes.add(new Recipe("magenta dye_1", "Allium_1"));
+		dyeVatRecipes.add(new Recipe("orange dye_1", "Orange Tulip_1"));
+		dyeVatRecipes.add(new Recipe("pink dye_1", "Pink Tulip_1"));
+		dyeVatRecipes.add(new Recipe("pink dye_1", "Peony_1"));
+		dyeVatRecipes.add(new Recipe("pink dye_1", "Pink Lily_1"));
+		dyeVatRecipes.add(new Recipe("purple dye_1", "Violet_1"));
+		dyeVatRecipes.add(new Recipe("orange dye_2", "red dye_1", "yellow dye_1"));
+		dyeVatRecipes.add(new Recipe("purple dye_2", "blue dye_1", "red dye_1"));
+		dyeVatRecipes.add(new Recipe("cyan dye_2", "blue dye_1", "green dye_1"));
+		dyeVatRecipes.add(new Recipe("brown dye_2", "green dye_1", "red dye_1"));
+		dyeVatRecipes.add(new Recipe("pink dye_2", "white dye_1", "red dye_1"));
+		dyeVatRecipes.add(new Recipe("light blue dye_2", "white dye_1", "blue dye_1"));
+		dyeVatRecipes.add(new Recipe("lime dye_2", "white dye_1", "green dye_1"));
+		dyeVatRecipes.add(new Recipe("gray dye_2", "white dye_1", "black dye_1"));
+		dyeVatRecipes.add(new Recipe("light gray dye_2", "white dye_1", "gray dye_1"));
+		dyeVatRecipes.add(new Recipe("light gray dye_3", "white dye_2", "black dye_1"));
+		dyeVatRecipes.add(new Recipe("magenta dye_2", "purple dye_1", "pink dye_1"));
+		dyeVatRecipes.add(new Recipe("magenta dye_4", "red dye_2", "white dye_1", "blue dye_1"));
+		dyeVatRecipes.add(new Recipe("magenta dye_4", "pink dye_1", "red dye_1", "blue dye_1"));
 
-		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "Lapis_1"));
-		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "Cactus_1"));
-		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "Flower_1"));
-		loomRecipes.add(new Recipe("black clothes_1", "cloth_5", "coal_1"));
-		loomRecipes.add(new Recipe("orange clothes_1", "cloth_5", "rose_1", "Flower_1"));
-		loomRecipes.add(new Recipe("purple clothes_1", "cloth_5", "Lapis_1", "rose_1"));
-		loomRecipes.add(new Recipe("cyan clothes_1", "cloth_5", "Lapis_1", "Cactus_1"));
+		loomRecipes.add(new Recipe("String_2", "white wool_1"));
+		loomRecipes.add(new Recipe("white wool_1", "String_3"));
+		loomRecipes.add(new Recipe("black wool_1", "white wool_1", "black dye_1"));
+		loomRecipes.add(new Recipe("red wool_1", "white wool_1", "red dye_1"));
+		loomRecipes.add(new Recipe("green wool_1", "white wool_1", "green dye_1"));
+		loomRecipes.add(new Recipe("brown wool_1", "white wool_1", "brown dye_1"));
+		loomRecipes.add(new Recipe("blue wool_1", "white wool_1", "blue dye_1"));
+		loomRecipes.add(new Recipe("purple wool_1", "white wool_1", "purple dye_1"));
+		loomRecipes.add(new Recipe("cyan wool_1", "white wool_1", "cyan dye_1"));
+		loomRecipes.add(new Recipe("light gray wool_1", "white wool_1", "light gray dye_1"));
+		loomRecipes.add(new Recipe("gray wool_1", "white wool_1", "gray dye_1"));
+		loomRecipes.add(new Recipe("pink wool_1", "white wool_1", "pink dye_1"));
+		loomRecipes.add(new Recipe("lime wool_1", "white wool_1", "lime dye_1"));
+		loomRecipes.add(new Recipe("yellow wool_1", "white wool_1", "yellow dye_1"));
+		loomRecipes.add(new Recipe("light blue wool_1", "white wool_1", "light blue dye_1"));
+		loomRecipes.add(new Recipe("magenta wool_1", "white wool_1", "magenta dye_1"));
+		loomRecipes.add(new Recipe("orange wool_1", "white wool_1", "orange dye_1"));
+
+		loomRecipes.add(new Recipe("white Bed_1", "Wood_5", "white wool_3"));
+		loomRecipes.add(new Recipe("black Bed_1", "Wood_5", "black wool_3"));
+		loomRecipes.add(new Recipe("red Bed_1", "Wood_5", "red wool_3"));
+		loomRecipes.add(new Recipe("green Bed_1", "Wood_5", "green wool_3"));
+		loomRecipes.add(new Recipe("brown Bed_1", "Wood_5", "brown wool_3"));
+		loomRecipes.add(new Recipe("blue Bed_1", "Wood_5", "blue wool_3"));
+		loomRecipes.add(new Recipe("purple Bed_1", "Wood_5", "purple wool_3"));
+		loomRecipes.add(new Recipe("cyan Bed_1", "Wood_5", "cyan wool_3"));
+		loomRecipes.add(new Recipe("light gray Bed_1", "Wood_5", "light gray wool_3"));
+		loomRecipes.add(new Recipe("gray Bed_1", "Wood_5", "gray wool_3"));
+		loomRecipes.add(new Recipe("pink Bed_1", "Wood_5", "pink wool_3"));
+		loomRecipes.add(new Recipe("lime Bed_1", "Wood_5", "lime wool_3"));
+		loomRecipes.add(new Recipe("yellow Bed_1", "Wood_5", "yellow wool_3"));
+		loomRecipes.add(new Recipe("light blue Bed_1", "Wood_5", "light blue wool_3"));
+		loomRecipes.add(new Recipe("magenta Bed_1", "Wood_5", "magenta wool_3"));
+		loomRecipes.add(new Recipe("orange Bed_1", "Wood_5", "orange wool_3"));
+
+		loomRecipes.add(new Recipe("black Bed_1", "White Bed_1", "black dye_1"));
+		loomRecipes.add(new Recipe("red Bed_1", "White Bed_1", "red dye_1"));
+		loomRecipes.add(new Recipe("green Bed_1", "White Bed_1", "green dye_1"));
+		loomRecipes.add(new Recipe("brown Bed_1", "White Bed_1", "brown dye_1"));
+		loomRecipes.add(new Recipe("blue Bed_1", "White Bed_1", "blue dye_1"));
+		loomRecipes.add(new Recipe("purple Bed_1", "White Bed_1", "purple dye_1"));
+		loomRecipes.add(new Recipe("cyan Bed_1", "White Bed_1", "cyan dye_1"));
+		loomRecipes.add(new Recipe("light gray Bed_1", "White Bed_1", "light gray dye_1"));
+		loomRecipes.add(new Recipe("gray Bed_1", "White Bed_1", "gray dye_1"));
+		loomRecipes.add(new Recipe("pink Bed_1", "White Bed_1", "pink dye_1"));
+		loomRecipes.add(new Recipe("lime Bed_1", "White Bed_1", "lime dye_1"));
+		loomRecipes.add(new Recipe("yellow Bed_1", "White Bed_1", "yellow dye_1"));
+		loomRecipes.add(new Recipe("light blue Bed_1", "White Bed_1", "light blue dye_1"));
+		loomRecipes.add(new Recipe("magenta Bed_1", "White Bed_1", "magenta dye_1"));
+		loomRecipes.add(new Recipe("orange Bed_1", "White Bed_1", "orange dye_1"));
+
+		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "blue dye_1"));
+		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "green dye_1"));
+		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "yellow dye_1"));
+		loomRecipes.add(new Recipe("black clothes_1", "cloth_5", "black dye_1"));
+		loomRecipes.add(new Recipe("orange clothes_1", "cloth_5", "orange dye_1"));
+		loomRecipes.add(new Recipe("purple clothes_1", "cloth_5", "purple dye_1"));
+		loomRecipes.add(new Recipe("cyan clothes_1", "cloth_5", "cyan dye_1"));
 		loomRecipes.add(new Recipe("reg clothes_1", "cloth_5"));
 
 		loomRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
@@ -174,7 +258,6 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("Escape Potion_1", "awkward potion_1", "Gunpowder_3", "Lapis_7"));
 		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5", "Cloud Ore_5"));
 		enchantRecipes.add(new Recipe("Obsidian Poppet_1", "gold_10", "gem_10", "Lapis_5", "Shard_15"));
-		enchantRecipes.add(new Recipe("Arcane Fertilizer_3", "Lapis_6", "Bone_2"));
 	}
 
 	/**
@@ -190,6 +273,7 @@ public class Recipes {
 		recipes.addAll(enchantRecipes);
 		recipes.addAll(craftRecipes);
 		recipes.addAll(loomRecipes);
+		recipes.addAll(dyeVatRecipes);
 		HashMap<String, Recipe> recipeMap = new HashMap<>();
 		HashMap<String, HashSet<Recipe>> duplicatedRecipes = new HashMap<>();
 		Function<Item, String> itemNameFixer = item -> {
@@ -198,15 +282,30 @@ public class Recipes {
 				item instanceof ToolItem ? name.replaceAll("(?i)wood", "wooden").replaceAll("(?i)rock", "stone") : name)
 				.toLowerCase().replace(' ', '_');
 		};
+		String[] flowerNames = Arrays.stream(FlowerTile.FlowerVariant.values()).map(FlowerTile.FlowerVariant::getName).toArray(String[]::new);
+		HashMap<Recipe, String> resolvedRecipes = new HashMap<>(); // Directly hardcoded
+		resolvedRecipes.put(new Recipe("light gray dye_2", "white dye_1", "gray dye_1"), "light_gray_dye_from_gray_white_dye");
+		resolvedRecipes.put(new Recipe("light gray dye_2", "white dye_1", "black dye_1"), "light_gray_dye_from_black_white_dye");
+		resolvedRecipes.put(new Recipe("magenta dye_2", "purple dye_1", "pink dye_1"), "magenta_dye_from_purple_and_pink");
+		resolvedRecipes.put(new Recipe("magenta dye_4", "red dye_2", "white dye_1", "blue dye_1"), "magenta_dye_from_blue_red_white_dye");
+		resolvedRecipes.put(new Recipe("magenta dye_4", "pink dye_1", "red dye_1", "blue dye_1"), "magenta_dye_from_blue_red_pink");
 		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurs.
 			Item item = recipe.getProduct();
 			String name = itemNameFixer.apply(item);
-			/*if (item instanceof DyeItem) { TODO
+			String resolved;
+			if ((resolved = resolvedRecipes.get(recipe)) != null) return resolved;
+			if (item instanceof DyeItem) {
 				Map<String, Integer> costs = recipe.getCosts();
-				if (costs.size() == 2 && costs.containsKey("WHITE DYE"))
+				if (costs.size() == 2 && costs.containsKey("WHITE DYE") &&
+					costs.keySet().stream().filter(c -> c.endsWith("DYE")).count() == 1)
 					return name + "_from_white_dye";
-				return name;
-			} else*/ if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
+				if (costs.size() == 1) {
+					String cost = costs.keySet().iterator().next();
+					if (Arrays.stream(flowerNames).anyMatch(n -> n.equalsIgnoreCase(cost))) {
+						return name + "_from_" + cost.toLowerCase().replace(' ', '_');
+					}
+				}
+			} else if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
 				if (recipe.getCosts().containsKey("WHITE BED"))
 					return name + "_from_white_bed";
 				return name;

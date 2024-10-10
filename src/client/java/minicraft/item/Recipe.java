@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -113,5 +114,11 @@ public class Recipe {
 		result = 31 * result + product.hashCode();
 		result = 31 * result + amount;
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return product + ":" + amount +
+			"[" + String.join(";", costs.entrySet().stream().<CharSequence>map(e -> e.getKey() + ":" + e.getValue())::iterator) + "]";
 	}
 }
