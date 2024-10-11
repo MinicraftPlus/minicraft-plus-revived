@@ -384,6 +384,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			if (isSwimming() && !potioneffects.containsKey(PotionType.Swim) && ride == null)
 				staminaRecharge = 0; // Don't recharge stamina while swimming.
+			if (ride != null && ((Boat)ride).isMoving())
+				staminaRecharge = 0; // Don't recharge stamina while rowing the boat.
 
 			// Recharge a bolt for each multiple of maxStaminaRecharge.
 			while (staminaRecharge > maxStaminaRecharge) {

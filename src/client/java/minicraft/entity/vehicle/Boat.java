@@ -32,6 +32,8 @@ public class Boat extends Entity implements PlayerRideable {
 
 	private int walkDist = 0;
 
+	private boolean moving = false;
+
 	public Boat(@NotNull Direction dir) {
 		super(6, 6);
 		this.dir = dir;
@@ -141,19 +143,22 @@ public class Boat extends Entity implements PlayerRideable {
 			if (!(inWater || inLava) || (inLava && Updater.tickCount % 4 == 0) ||
 				(inWater && Updater.tickCount % 2 != 0)) walkDist++; // Slower the animation
 			syncPassengerState(passenger);
-		}
-
+			if (Updater.tickCount % 60 == 0) {
+				passenger.payStamina(1);
+			}
+			moving = true;
+		} else moving = false;
 		return true;
 	}
 
 	@Override
 	public boolean move(int xd, int yd) {
 		if (passenger != null) {
-			if (((Player) passenger).stamina > 0 && ((Player) passenger).staminaRechargeDelay == 0)
+			if (((Player) passenger).stamina > 0 && ((Player) passenger).staminaRechargeDelay == 0) {
 				return super.move(xd, yd);
-			else if (((Player) passenger).staminaRechargeDelay == 0) {
+			} else if (((Player) passenger).staminaRechargeDelay == 0) {
 				((Player) passenger).staminaRechargeDelay = 5;
-				return true;
+				return false;
 			}
 		}
 		return false;
@@ -161,6 +166,10 @@ public class Boat extends Entity implements PlayerRideable {
 
 	public @NotNull Direction getDir() {
 		return dir;
+	}
+
+	public boolean isMoving() {
+		return moving;
 	}
 
 	@Override
