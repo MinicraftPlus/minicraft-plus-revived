@@ -151,7 +151,8 @@ public class Boat extends Entity implements PlayerRideable {
 			unitMoveCounter++;
 			return true;
 		} else {
-			if (unitMoveCounter > 0) unitMoveCounter--;
+			if (unitMoveCounter > 0) // Simulation of resting
+				unitMoveCounter--;
 			return false;
 		}
 	}
@@ -179,7 +180,6 @@ public class Boat extends Entity implements PlayerRideable {
 	public void stopRiding(Player player) {
 		if (passenger == player) {
 			passenger = null;
-			moving = false;
 			unitMoveCounter = 0; // reset counters
 		}
 	}
