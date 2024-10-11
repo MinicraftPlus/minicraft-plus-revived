@@ -1274,6 +1274,8 @@ public class Load {
 		} else if (newEntity instanceof KnightStatue) {
 			int health = Integer.parseInt(info.get(2));
 			newEntity = new KnightStatue(health);
+		} else if (newEntity instanceof Boat) {
+			newEntity = new Boat(Direction.getDirection(Integer.parseInt(info.get(2))));
 		}
 
 		if (!isLocalSave) {

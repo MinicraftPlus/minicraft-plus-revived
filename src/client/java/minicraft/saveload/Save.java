@@ -446,7 +446,7 @@ public class Save {
 		} else if (e instanceof Bed) {
 			name = ((Bed) e).name;
 		} else if (e instanceof Boat) {
-			extradata.append(":").append(((Boat) e).getDir());
+			extradata.append(":").append(((Boat) e).getDir().getDir());
 		}
 
 		if (!isLocalSave) {
