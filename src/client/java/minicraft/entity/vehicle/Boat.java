@@ -152,6 +152,23 @@ public class Boat extends Entity implements PlayerRideable {
 	}
 
 	@Override
+	public boolean move(int xd, int yd) {
+		if (passenger != null) {
+			if (((Player) passenger).stamina > 0 && ((Player) passenger).staminaRechargeDelay == 0)
+				return super.move(xd, yd);
+			else if (((Player) passenger).staminaRechargeDelay == 0) {
+				((Player) passenger).staminaRechargeDelay = 5;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public @NotNull Direction getDir() {
+		return dir;
+	}
+
+	@Override
 	public boolean startRiding(Player player) {
 		if (passenger == null) {
 			passenger = player;

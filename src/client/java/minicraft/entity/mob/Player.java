@@ -382,7 +382,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (staminaRechargeDelay == 0) {
 			staminaRecharge++; // Ticks since last recharge, accounting for the time potion effect.
 
-			if (isSwimming() && !potioneffects.containsKey(PotionType.Swim))
+			if (isSwimming() && !potioneffects.containsKey(PotionType.Swim) && ride == null)
 				staminaRecharge = 0; // Don't recharge stamina while swimming.
 
 			// Recharge a bolt for each multiple of maxStaminaRecharge.
