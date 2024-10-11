@@ -43,28 +43,38 @@ public class Boat extends Entity implements PlayerRideable {
 		int yo = y - 8; // Vertical
 
 		if (passenger != null) {
-			switch (((Player) passenger).dir) {
+			switch (getDir()) {
 				case UP: // if currently riding upwards...
 					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
-					passenger.render(screen);
 					break;
 				case LEFT: // Riding to the left... (Same as above)
 					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
-					passenger.render(screen);
 					break;
 				case RIGHT: // Riding to the right (Same as above)
 					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
-					passenger.render(screen);
 					break;
 				case DOWN: // Riding downwards (Same as above)
 					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
-					passenger.render(screen);
 					break;
-				case NONE:
+				default:
 					break;
 			}
+			passenger.render(screen);
 		} else {
-			screen.render(xo - 4, yo - 4, boatSprites[0][0]);
+			switch (getDir()) {
+				case UP:
+					screen.render(xo - 4, yo - 4, boatSprites[0][2].getSprite());
+					break;
+				case LEFT:
+					screen.render(xo - 4, yo - 4, boatSprites[1][0].getSprite());
+					break;
+				case RIGHT:
+					screen.render(xo - 4, yo - 4, boatSprites[1][2].getSprite());
+					break;
+				case DOWN:
+					screen.render(xo - 4, yo - 4, boatSprites[0][0].getSprite());
+					break;
+			}
 		}
 	}
 
