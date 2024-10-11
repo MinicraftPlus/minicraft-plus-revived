@@ -25,14 +25,13 @@ public class Boat extends Entity implements PlayerRideable {
 	};
 
 	private static final int MOVE_SPEED = 1;
+	private static final int STAMINA_COST_TIME = 45; // a unit of stamina is consumed per this amount of time of move
 
 	private @Nullable Entity passenger;
-
 	private @NotNull Direction dir;
 
 	private int walkDist = 0;
-
-	private boolean moving = false;
+	private int unitMoveCounter = 0;
 
 	public Boat(@NotNull Direction dir) {
 		super(6, 6);
@@ -132,6 +131,12 @@ public class Boat extends Entity implements PlayerRideable {
 	@Override
 	public boolean rideTick(Player passenger, Vector2 vec) {
 		if (this.passenger != passenger) return false;
+
+		if (unitMoveCounter >= STAMINA_COST_TIME) {
+			passenger.payStamina(1);
+			unitMoveCounter -= STAMINA_COST_TIME;
+		}
+
 		boolean inLava = isInLava(), inWater = isInWater();
 		if (inLava) {
 			if (Updater.tickCount % 2 != 0) return true; // A bit slower when in lava.
@@ -139,29 +144,16 @@ public class Boat extends Entity implements PlayerRideable {
 		int xd = (int) (vec.x * MOVE_SPEED);
 		int yd = (int) (vec.y * MOVE_SPEED);
 		dir = Direction.getDirection(xd, yd);
-		if (move(xd, yd)) {
+		if (passenger.stamina > 0 && move(xd, yd)) {
 			if (!(inWater || inLava) || (inLava && Updater.tickCount % 4 == 0) ||
 				(inWater && Updater.tickCount % 2 != 0)) walkDist++; // Slower the animation
 			syncPassengerState(passenger);
-			if (Updater.tickCount % 60 == 0) {
-				passenger.payStamina(1);
-			}
-			moving = true;
-		} else moving = false;
-		return true;
-	}
-
-	@Override
-	public boolean move(int xd, int yd) {
-		if (passenger != null) {
-			if (((Player) passenger).stamina > 0 && ((Player) passenger).staminaRechargeDelay == 0) {
-				return super.move(xd, yd);
-			} else if (((Player) passenger).staminaRechargeDelay == 0) {
-				((Player) passenger).staminaRechargeDelay = 5;
-				return false;
-			}
+			unitMoveCounter++;
+			return true;
+		} else {
+			if (unitMoveCounter > 0) unitMoveCounter--;
+			return false;
 		}
-		return false;
 	}
 
 	public @NotNull Direction getDir() {
@@ -169,13 +161,14 @@ public class Boat extends Entity implements PlayerRideable {
 	}
 
 	public boolean isMoving() {
-		return moving;
+		return unitMoveCounter > 0;
 	}
 
 	@Override
 	public boolean startRiding(Player player) {
 		if (passenger == null) {
 			passenger = player;
+			unitMoveCounter = 0;
 			syncPassengerState(passenger);
 			return true;
 		} else
@@ -186,6 +179,8 @@ public class Boat extends Entity implements PlayerRideable {
 	public void stopRiding(Player player) {
 		if (passenger == player) {
 			passenger = null;
+			moving = false;
+			unitMoveCounter = 0; // reset counters
 		}
 	}
 }
