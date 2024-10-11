@@ -501,7 +501,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 
-			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // If drowning... :P
+			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim) && ride == null) { // If drowning... :P
 				if (stamina > 0) payStamina(1); // Take away stamina
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}

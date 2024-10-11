@@ -1385,7 +1385,7 @@ public class Load {
 			case "DyeVat":
 				return new Crafter(Crafter.Type.DyeVat);
 			case "Boat":
-				return new Boat(Direction.NONE);
+				return new Boat(Direction.DOWN); // Can't be none or rendering will break
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
