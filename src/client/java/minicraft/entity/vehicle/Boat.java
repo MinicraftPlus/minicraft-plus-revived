@@ -42,40 +42,25 @@ public class Boat extends Entity implements PlayerRideable {
 		int xo = x - 8; // Horizontal
 		int yo = y - 8; // Vertical
 
-		if (passenger != null) {
-			switch (getDir()) {
-				case UP: // if currently riding upwards...
-					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
-					break;
-				case LEFT: // Riding to the left... (Same as above)
-					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
-					break;
-				case RIGHT: // Riding to the right (Same as above)
-					screen.render(xo - 4, yo - 4, boatSprites[1][((((Player) passenger).walkDist >> 3) & 1) + 2].getSprite());
-					break;
-				case DOWN: // Riding downwards (Same as above)
-					screen.render(xo - 4, yo - 4, boatSprites[0][((((Player) passenger).walkDist >> 3) & 1)].getSprite());
-					break;
-				default:
-					break;
-			}
-			passenger.render(screen);
-		} else {
-			switch (getDir()) {
-				case UP:
-					screen.render(xo - 4, yo - 4, boatSprites[0][2].getSprite());
-					break;
-				case LEFT:
-					screen.render(xo - 4, yo - 4, boatSprites[1][0].getSprite());
-					break;
-				case RIGHT:
-					screen.render(xo - 4, yo - 4, boatSprites[1][2].getSprite());
-					break;
-				case DOWN:
-					screen.render(xo - 4, yo - 4, boatSprites[0][0].getSprite());
-					break;
-			}
+		switch (dir) {
+			case UP: // if currently riding upwards...
+				screen.render(xo - 4, yo - 4, boatSprites[0][((walkDist >> 3) & 1) + 2].getSprite());
+				break;
+			case LEFT: // Riding to the left... (Same as above)
+				screen.render(xo - 4, yo - 4, boatSprites[1][((walkDist >> 3) & 1)].getSprite());
+				break;
+			case RIGHT: // Riding to the right (Same as above)
+				screen.render(xo - 4, yo - 4, boatSprites[1][((walkDist >> 3) & 1) + 2].getSprite());
+				break;
+			case DOWN: // Riding downwards (Same as above)
+				screen.render(xo - 4, yo - 4, boatSprites[0][((walkDist >> 3) & 1)].getSprite());
+				break;
+			default:
+				throw new UnsupportedOperationException("dir must be defined when on world");
 		}
+
+		if (passenger != null)
+			passenger.render(screen);
 	}
 
 	@Override
