@@ -149,12 +149,13 @@ public class Boat extends Entity implements PlayerRideable {
 				(inWater && Updater.tickCount % 2 != 0)) walkDist++; // Slower the animation
 			syncPassengerState(passenger);
 			unitMoveCounter++;
-			return true;
 		} else {
+			if (passenger.dir != this.dir) // Sync direction even not moved to render in consistent state
+				syncPassengerState(passenger);
 			if (unitMoveCounter > 0) // Simulation of resting
 				unitMoveCounter--;
-			return false;
 		}
+		return true;
 	}
 
 	public @NotNull Direction getDir() {
