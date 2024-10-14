@@ -176,12 +176,10 @@ public abstract class Entity implements Tickable {
 	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.<br>
 	 * Note that this should only be invoked by {@link #move(int, int)}.
-	 * @param d Displacement relative to the axis.
+	 * @param d Displacement relative to the axis; should be non-zero
 	 * @return true if the move was successful, false if not.
 	 */
 	protected boolean moveX(int d) {
-		if (d == 0) return true; // Was not stopped
-
 		//boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 
 		// Taking the axis of movement (towards) as the front axis, and the horizontal axis with another axis.
@@ -210,12 +208,10 @@ public abstract class Entity implements Tickable {
 	 * Moves the entity a long only on X axis without "teleporting".
 	 * Will throw exception otherwise.<br>
 	 * Note that this should only be invoked by {@link #move(int, int)}.
-	 * @param d Displacement relative to the axis.
-	 * @return true if the move was successful, false if not.
+	 * @param d Displacement relative to the axis; should be non-zero
+	 * @return true if there is movement, false if not.
 	 */
 	protected boolean moveY(int d) {
-		if (d == 0) return true; // Was not stopped
-
 		//boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 
 		// Taking the axis of movement (towards) as the front axis, and the horizontal axis with another axis.
