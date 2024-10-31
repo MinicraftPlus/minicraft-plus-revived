@@ -33,6 +33,7 @@ import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
@@ -168,21 +169,14 @@ public class Renderer extends Game {
 				count++;
 			}
 
-			try { // https://stackoverflow.com/a/4216635
-				int w = image.getWidth();
-				int h = image.getHeight();
-				BufferedImage before = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-				before.getRaster().setRect(image.getData());
-				int scale = (Integer) Settings.get("screenshot");
-				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
-				AffineTransform at = new AffineTransform();
-				at.scale(scale, scale); // Setting the scaling.
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-
-				// Use this solution without larger scales which use up a lot of memory.
-				// With scale 20, up to around 360MB overall RAM use.
-				BufferedImage after = scaleOp.filter(before, null);
-				ImageIO.write(after, "png", file);
+			try {
+				// A blank image as same as the canvas
+				BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+				Graphics2D g2d = img.createGraphics();
+				g2d.drawImage(image, xOffset, yOffset, ww, hh, null); // The same invoke as the one on canvas graphics
+				g2d.dispose();
+				ImageIO.write(img, "png", file);
+				Logging.PLAYER.info("Saved screenshot as {}.", file.getName());
 			} catch (IOException e) {
 				CrashHandler.errorHandle(e);
 			}
@@ -202,8 +196,8 @@ public class Renderer extends Game {
 		// Stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...Left border.
 		if (yScroll < 0) yScroll = 0; // ...Top border.
-		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...Right border.
-		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...Bottom border.
+		if (xScroll > (level.w << 4) - Screen.w) xScroll = (level.w << 4) - Screen.w; // ...Right border.
+		if (yScroll > (level.h << 4) - Screen.h) yScroll = (level.h << 4) - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
 			MinicraftImage cloud = spriteLinker.getSheet(SpriteType.Tile, "cloud_background");
 			for (int y = 0; y < 28; y++)
@@ -510,8 +504,8 @@ public class Renderer extends Game {
 			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
 
 			info.add("walk spd: " + player.moveSpeed);
-			info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
-			info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
+			info.add("X: " + (player.x >> 4) + "-" + (player.x % 16));
+			info.add("Y: " + (player.y >> 4) + "-" + (player.y % 16));
 			if (levels[currentLevel] != null)
 				info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
 			if (isMode("minicraft.settings.mode.score")) info.add("Score: " + player.getScore());

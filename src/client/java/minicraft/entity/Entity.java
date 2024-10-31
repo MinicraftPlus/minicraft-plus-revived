@@ -156,12 +156,14 @@ public abstract class Entity implements Tickable {
 	 * Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.
 	 */
 	public boolean move(int xd, int yd) {
+		// TODO Validate existence of `Updater.saving` here, may potentially cause issue
 		if (Updater.saving || (xd == 0 && yd == 0)) return true; // Pretend that it kept moving
 
 		boolean stopped = true; // Used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
+		// Either xd or yd must be non-zero, so at least either one of them is invoked.
 		//noinspection RedundantIfStatement
-		if (moveX(xd)) stopped = false; // Becomes false if horizontal movement was successful.
-		if (moveY(yd)) stopped = false; // Becomes false if vertical movement was successful.
+		if (xd != 0 && moveX(xd)) stopped = false; // Becomes false if horizontal movement was successful.
+		if (yd != 0 && moveY(yd)) stopped = false; // Becomes false if vertical movement was successful.
 		if (!stopped) {
 			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
@@ -172,13 +174,12 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Moves the entity a long only on X axis without "teleporting".
-	 * Will throw exception otherwise.
-	 * @param d Displacement relative to the axis.
+	 * Will throw exception otherwise.<br>
+	 * Note that this should only be invoked by {@link #move(int, int)}.
+	 * @param d Displacement relative to the axis; should be non-zero
 	 * @return true if the move was successful, false if not.
 	 */
 	protected boolean moveX(int d) {
-		if (d == 0) return true; // Was not stopped
-
 		//boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 
 		// Taking the axis of movement (towards) as the front axis, and the horizontal axis with another axis.
@@ -205,13 +206,12 @@ public abstract class Entity implements Tickable {
 
 	/**
 	 * Moves the entity a long only on X axis without "teleporting".
-	 * Will throw exception otherwise.
-	 * @param d Displacement relative to the axis.
-	 * @return true if the move was successful, false if not.
+	 * Will throw exception otherwise.<br>
+	 * Note that this should only be invoked by {@link #move(int, int)}.
+	 * @param d Displacement relative to the axis; should be non-zero
+	 * @return true if there is movement, false if not.
 	 */
 	protected boolean moveY(int d) {
-		if (d == 0) return true; // Was not stopped
-
 		//boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 
 		// Taking the axis of movement (towards) as the front axis, and the horizontal axis with another axis.

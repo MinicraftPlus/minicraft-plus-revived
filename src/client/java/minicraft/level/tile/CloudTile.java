@@ -34,7 +34,7 @@ public class CloudTile extends Tile {
 				int data = level.getData(xt, yt);
 				level.setTile(xt, yt, Tiles.get("Infinite Fall")); // Would allow you to shovel cloud, I think.
 				Sound.play("monsterhurt");
-				level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, 3, Items.get("Cloud"));
+				level.dropItem((xt << 4) + 8, (yt << 4) + 8, 1, 3, Items.get("Cloud"));
 				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 						item, this, data, xt, yt, level.depth));

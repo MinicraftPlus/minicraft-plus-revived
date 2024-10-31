@@ -58,7 +58,7 @@ public abstract class Mob extends Entity {
 
 		if (canBurn()) {
 			if (this.burningDuration > 0) {
-				if (level.getTile(x / 16, y / 16) == Tiles.get("water")) this.burningDuration = 0;
+				if (level.getTile(x >> 4, y >> 4) == Tiles.get("water")) this.burningDuration = 0;
 				if (this.burningDuration % 10 == 0)
 					level.add(new BurnParticle(x - 8 + (random.nextInt(8) - 4), y - 8 + (random.nextInt(8) - 4)));
 				this.burningDuration--;
@@ -196,7 +196,7 @@ public abstract class Mob extends Entity {
 	private boolean isWooling() { // supposed to walk at half speed on wool
 		if (level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		return tile == Tiles.get("wool");
+		return tile == Tiles.get("white wool");
 	}
 
 	/**

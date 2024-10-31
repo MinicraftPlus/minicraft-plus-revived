@@ -62,7 +62,7 @@ public class DungeonChest extends Chest {
 				isLocked = false;
 				this.sprite = openSprite; // Set to the unlocked color
 
-				level.add(new SmashParticle(x * 16, y * 16));
+				level.add(new SmashParticle(x << 4, y << 4));
 				level.add(new TextParticle(Localization.getLocalized("minicraft.text_particales.key_consumed"), x, y, Color.RED));
 				level.chestCount--;
 

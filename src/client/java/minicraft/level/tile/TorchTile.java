@@ -46,7 +46,7 @@ public class TorchTile extends Tile {
 			int data = level.getData(xt, yt);
 			level.setTile(xt, yt, Tiles.get((short) data));
 			Sound.play("monsterhurt");
-			level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Torch"));
+			level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Torch"));
 			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 					item, this, data, xt, yt, level.depth));

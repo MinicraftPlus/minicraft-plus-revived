@@ -11,7 +11,7 @@ public class FireSpark extends Entity {
 	private static final SpriteLinker.LinkedSprite sprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "spark");
 
 	private final int lifeTime; // How much time until the spark disappears
-	private final double xa, ya; // The x and y acceleration
+	private final double xa, ya; // The x and y velocities
 	private double xx, yy; // The x and y positions
 	private int time; // The amount of time that has passed
 	private int stoppedTime;
@@ -52,19 +52,7 @@ public class FireSpark extends Entity {
 				return;
 			}
 		} else {
-			// Move the spark:
-			int x0 = (int) xx; // Original position
-			int y0 = (int) yy;
-			xx += xa; // Final position
-			yy += ya;
-			boolean stopped = true;
-			//noinspection RedundantIfStatement
-			if (moveX(((int) xx) - x0))
-				stopped = false; // This kind of difference is handled due to errors by flooring.
-			if (moveY(((int) yy) - y0)) stopped = false;
-			if (stopped) {
-				this.stopped = true;
-			}
+			move();
 		}
 
 		Player player = getClosestPlayer();
@@ -73,6 +61,24 @@ public class FireSpark extends Entity {
 				player.burn(5); // Burn the player for 5 seconds
 			}
 		}
+	}
+
+	public boolean move() {
+		// Moving the spark:
+		// Real coordinate (int) fields: x, y
+		// Virtual coordinate (double) fields: xx, yy
+		// Entity real movement on the world is based on real coordinates,
+		// but this entity moves in a smaller scale, thus double virtual coordinates are used.
+		// However, practically it may have not moved a full unit/"pixel",
+		// so this is not quite perfect, but should be enough and negligible
+		// at the moment, to simply the situation.
+		xx += xa; // Final position
+		yy += ya;
+		// This kind of difference is handled due to errors by flooring.
+		// New real coordinates are calculated and saved by #move
+		boolean moved = move((int) xx - x, (int) yy - y);
+		if (!moved) this.stopped = true; // Suppose and assume it is fully stopped
+		return moved;
 	}
 
 	/**
