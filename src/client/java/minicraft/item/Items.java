@@ -46,6 +46,7 @@ public class Items {
 		addAll(WateringCanItem.getAllInstances());
 		addAll(DyeItem.getAllInstances());
 		addAll(WoolItem.getAllInstances());
+		addAll(EntitySummonItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {
