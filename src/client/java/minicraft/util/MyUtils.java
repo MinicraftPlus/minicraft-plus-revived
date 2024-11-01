@@ -21,8 +21,9 @@ public final class MyUtils {
 		return (int) (Math.random() * (max - min + 1)) + min;
 	}
 
+	// num should be a natural number.
 	public static String plural(int num, String word) {
-		String p = num == 1 ? "" : "s";
+		String p = num <= 1 ? "" : "s";
 		return num + " " + word + p;
 	}
 
