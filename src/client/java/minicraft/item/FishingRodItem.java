@@ -25,7 +25,7 @@ public class FishingRodItem extends Item {
 		return items;
 	}
 
-	private int uses = 0; // The more uses, the higher the chance of breaking
+	public int uses = 0; // The more uses, the higher the chance of breaking
 	public int level; // The higher the level the lower the chance of breaking
 
 	private Random random = new Random();
@@ -40,7 +40,7 @@ public class FishingRodItem extends Item {
 		{ 79, 69, 59, 4 } // Gem has very high chance of rare items
 	};
 
-	private static final String[] LEVEL_NAMES = {
+	public static final String[] LEVEL_NAMES = {
 		"Wood",
 		"Iron",
 		"Gold",
