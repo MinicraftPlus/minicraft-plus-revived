@@ -35,6 +35,11 @@
     "score": 5
   },
   {
+    "id": "minicraft.achievement.boat",
+    "desc": "minicraft.achievement.boat.desc",
+    "score": 5
+  },
+  {
     "id": "minicraft.achievement.clothes",
     "desc": "minicraft.achievement.clothes.desc",
     "score": 5

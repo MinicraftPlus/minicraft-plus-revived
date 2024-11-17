@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class Furniture extends Entity {
 
-	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
-	private Direction pushDir = Direction.NONE; // The direction to push the furniture
 	public LinkedSprite sprite;
 	public LinkedSprite itemSprite;
 	public String name;
@@ -109,17 +107,6 @@ public class Furniture extends Entity {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Tries to let the player push this furniture.
-	 * @param player The player doing the pushing.
-	 */
-	public void tryPush(Player player) {
-		if (pushTime == 0) {
-			pushDir = player.dir; // Set pushDir to the player's dir.
-			pushTime = multiPushTime = 10; // Set pushTime to 10.
-		}
 	}
 
 	@Override

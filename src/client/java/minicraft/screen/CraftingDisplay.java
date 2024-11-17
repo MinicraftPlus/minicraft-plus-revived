@@ -186,6 +186,8 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
+					} else if (selectedRecipe.getProduct().equals(Items.get("Boat"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.boat", true);
 					}
 
 					selectedRecipe.craft(player);

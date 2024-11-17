@@ -8,6 +8,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
@@ -56,6 +57,7 @@ public class CactusTile extends Tile {
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
+		if (entity instanceof Boat) ((Boat) entity).hurt();
 		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
