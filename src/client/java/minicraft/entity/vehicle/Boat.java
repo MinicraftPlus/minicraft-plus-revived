@@ -83,6 +83,7 @@ public class Boat extends Entity implements PlayerRideable {
 	public void hurt() {
 		if (isRemoved())
 			return;
+		stopRiding((Player)passenger);
 		die();
 	}
 
