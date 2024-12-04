@@ -5,6 +5,7 @@ plugins {
 
 allprojects {
     apply plugin: "java"
+    apply plugin: "application"
 
     version = "2.2.1-dev2"
 
@@ -79,6 +80,11 @@ project(":server") {
 // Building the root project actually just builds the client project.
 dependencies {
     implementation project(":client")
+}
+
+// Running the root project actually just runs the client project
+application {
+    mainClass = 'minicraft.core.Game'
 }
 
 // Build a runnable game distribution.
