@@ -67,8 +67,10 @@ public class Level {
 	public int w, h; // Width and height of the level
 	private final long seed; // The used seed that was used to generate the world
 
-	public short[] tiles; // An array of all the tiles in the world.
-	public short[] data; // An array of the data of the tiles in the world.
+	public ChunkManager chunkManager;
+
+	// public short[] tiles; // An array of all the tiles in the world.
+	// public short[] data; // An array of the data of the tiles in the world.
 
 	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 
@@ -186,23 +188,17 @@ public class Level {
 		updateMobCap();
 
 		if (!makeWorld) {
-			int arrsize = w * h;
-			tiles = new short[arrsize];
-			data = new short[arrsize];
+			chunkManager = new ChunkManager(w, h);
 			return;
 		}
 
 		Logging.WORLD.debug("Making level " + level + "...");
 
-		maps = LevelGen.createAndValidateMap(w, h, level, seed);
-		if (maps == null) {
-			Logging.WORLD.error("Level generation: Returned maps array is null");
+		chunkManager = LevelGen.createAndValidateMap(w, h, level, seed);
+		if (chunkManager == null || chunkManager.chunks == null) {
+			Logging.WORLD.error("Level generation: Returned chunks array is null");
 			return;
 		}
-
-		tiles = maps[0]; // Assigns the tiles in the map
-		data = maps[1]; // Assigns the data of the tiles
-
 
 		if (level < 0)
 			generateSpawnerStructures();
@@ -559,8 +555,7 @@ public class Level {
 	}
 
 	public Tile getTile(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
-		return Tiles.get(tiles[x + y * w]);
+		return chunkManager.getTile(x, y);
 	}
 
 	/**
@@ -582,21 +577,16 @@ public class Level {
 	}
 
 	public void setTile(int x, int y, Tile t, int dataVal) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return;
-
-		tiles[x + y * w] = t.id;
-		data[x + y * w] = (short) dataVal;
-		t.onTileSet(this, x, y);
+		chunkManager.setTile(x, y, t, dataVal);
+		getTile(x, y).onTileSet(this, x, y);
 	}
 
 	public int getData(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w] & 0xFFFF;
+		return chunkManager.getData(x, y);
 	}
 
 	public void setData(int x, int y, int val) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data[x + y * w] = (short) val;
+		chunkManager.setData(x, y, val);
 	}
 
 	public void add(Entity e) {
@@ -1193,7 +1183,7 @@ public class Level {
 	 */
 	public void regenerateBossRoom() {
 		if (depth == -4) {
-			Structure.dungeonBossRoom.draw(tiles, w / 2, h / 2, w); // Generating the boss room at the center.
+			Structure.dungeonBossRoom.draw(chunkManager, w / 2, h / 2); // Generating the boss room at the center.
 			for (int x = w / 2 - 4; x < w / 2 + 5; x++) { // Resetting tile data.
 				for (int y = h / 2 - 4; y < h / 2 + 5; y++) {
 					setData(x, y, 0);

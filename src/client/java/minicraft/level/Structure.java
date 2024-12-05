@@ -50,9 +50,9 @@ public class Structure {
 		}
 	}
 
-	public void draw(short[] map, int xt, int yt, int mapWidth) {
+	public void draw(ChunkManager map, int xt, int yt) {
 		for (TilePoint p : tiles)
-			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
+			map.setTile(xt + p.x, yt + p.y, p.t, 0);
 	}
 
 	public void setData(String keys, String data) {

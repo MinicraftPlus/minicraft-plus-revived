@@ -50,6 +50,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.item.StackableItem;
+import minicraft.level.ChunkManager;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
@@ -716,8 +717,7 @@ public class Load {
 			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
 			Settings.set("size", lvlw);
 
-			short[] tiles = new short[lvlw * lvlh];
-			short[] tdata = new short[lvlw * lvlh];
+			ChunkManager map = new ChunkManager(lvlw, lvlh);
 
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {
@@ -774,7 +774,7 @@ public class Load {
 						}
 					}
 
-					loadTile(worldVer, tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
+					loadTile(worldVer, map, x, y, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -782,13 +782,12 @@ public class Load {
 			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
 
 			Level curLevel = World.levels[lvlidx];
-			curLevel.tiles = tiles;
-			curLevel.data = tdata;
+			curLevel.chunkManager.chunks = map.chunks;
 
 			// Tile initialization
 			for (int x = 0; x < curLevel.w; ++x) {
 				for (int y = 0; y < curLevel.h; ++y) {
-					Tiles.get(curLevel.tiles[x + y * curLevel.w]).onTileSet(curLevel, x, y);
+					curLevel.getTile(x, y).onTileSet(curLevel, x, y);
 				}
 			}
 
@@ -876,18 +875,15 @@ public class Load {
 
 	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
 
-	public static void loadTile(Version worldVer, short[] tiles, short[] data, int idx, String tileName, String tileData) {
+	public static void loadTile(Version worldVer, ChunkManager map, int x, int y, String tileName, String tileData) {
 		Matcher matcher;
 		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
-			tiles[idx] = 57; // ID of TORCH tile
-			data[idx] = Tiles.get(matcher.group(1)).id;
+			map.setTile(x, y, Tiles.get("Torch"), Tiles.get(matcher.group(1)).id);
 		} else {
-			tiles[idx] = Tiles.get(tileName).id;
-			if (worldVer.compareTo(new Version("2.2.1-dev1")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
-				data[idx] = 0;
-			} else {
-				data[idx] = Short.parseShort(tileData);
-			}
+			short data = 0;
+			if (worldVer.compareTo(new Version("2.2.1-dev1")) > 0 || !tileName.equalsIgnoreCase("FLOWER"))
+				data = Short.parseShort(tileData);
+			map.setTile(x, y, Tiles.get(tileName), data);
 		}
 	}
 
