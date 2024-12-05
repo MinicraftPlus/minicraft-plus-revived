@@ -2,7 +2,6 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
@@ -10,9 +9,8 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
-import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
-import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class StairsTile extends Tile {
 	private static SpriteAnimation down = new SpriteAnimation(SpriteType.Tile, "stairs_down");
@@ -37,20 +35,15 @@ public class StairsTile extends Tile {
 	}
 
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		super.interact(level, xt, yt, player, item, attackDir);
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
 
+	@Override
+	public @Nullable Item take(Level level, int x, int y, Player player) {
 		// Makes it so you can remove the stairs if you are in creative and debug mode.
-		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
-			int data = level.getData(xt, yt);
-			level.setTile(xt, yt, Tiles.get("Grass"));
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			level.setTile(x, y, Tiles.get("Grass"));
 			Sound.play("monsterhurt");
-			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-					item, this, data, xt, yt, level.depth));
-			return true;
-		} else {
-			return false;
 		}
+		return null;
 	}
 }

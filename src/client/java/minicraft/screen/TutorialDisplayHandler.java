@@ -69,8 +69,8 @@ public class TutorialDisplayHandler {
 					Game.input.getMapping("move-right")))));
 		controlGuides.add(new ControlGuide(1, "attack",
 			() -> Localization.getLocalized("minicraft.control_guide.attack", Game.input.getMapping("attack"))));
-		controlGuides.add(new ControlGuide(1, "menu",
-			() -> Localization.getLocalized("minicraft.control_guide.menu", Game.input.getMapping("menu"))));
+		controlGuides.add(new ControlGuide(1, "inventory",
+			() -> Localization.getLocalized("minicraft.control_guide.menu", Game.input.getMapping("INVENTORY"))));
 		controlGuides.add(new ControlGuide(1, "craft",
 			() -> Localization.getLocalized("minicraft.control_guide.craft", Game.input.getMapping("craft"))));
 	}
@@ -168,7 +168,7 @@ public class TutorialDisplayHandler {
 	public static void tick(InputHandler input) {
 		if (currentGuide != null) {
 			if (ControlGuide.animation > 0) ControlGuide.animation--;
-			if (input.getMappedKey("expandQuestDisplay").isClicked()) {
+			if (input.getMappedKey("EXPAND-QUEST-DISPLAY").isClicked()) {
 				Logging.TUTORIAL.debug("Force-completed the guides.");
 				turnOffGuides();
 				return;
@@ -190,7 +190,7 @@ public class TutorialDisplayHandler {
 		}
 
 		if (currentOngoingElement != null) {
-			if (input.getMappedKey("expandQuestDisplay").isClicked() && Game.getDisplay() == null) {
+			if (input.getMappedKey("EXPAND-QUEST-DISPLAY").isClicked() && Game.getDisplay() == null) {
 				Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(currentOngoingElement.key, null, 4),
 					currentOngoingElement.description));
 			}
@@ -240,7 +240,7 @@ public class TutorialDisplayHandler {
 			menu.render(screen);
 			Rectangle bounds = menu.getBounds();
 			String text = Localization.getLocalized("minicraft.displays.tutorial_display_handler.display.element_examine_help",
-				Game.input.getMapping("expandQuestDisplay"));
+				Game.input.getMapping("EXPAND-QUEST-DISPLAY"));
 			String[] lines = Font.getLines(text, Screen.w * 2 / 3, Screen.h, 0);
 			for (int i = 0; i < lines.length; i++)
 				Font.draw(lines[i], screen, bounds.getRight() - Font.textWidth(lines[i]), bounds.getBottom() + 8 * (1 + i), Color.GRAY);

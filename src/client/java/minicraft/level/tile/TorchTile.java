@@ -1,16 +1,20 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
-import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
-import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class TorchTile extends Tile {
 	protected TorchTile() {
@@ -41,18 +45,32 @@ public class TorchTile extends Tile {
 		return 5;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof PowerGloveItem) {
-			int data = level.getData(xt, yt);
-			level.setTile(xt, yt, Tiles.get((short) data));
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
+		level.add(new SmashParticle(x << 4, y << 4));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+	}
+
+	@Override
+	public @Nullable Item take(Level level, int x, int y, Player player) {
+		int data = level.getData(x, y);
+		level.setTile(x, y, Tiles.get((short) data));
+		Sound.play("monsterhurt");
+		return Items.get("Torch");
+	}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			int data = level.getData(x, y);
+			level.setTile(x, y, Tiles.get((short) data));
 			Sound.play("monsterhurt");
-			level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Torch"));
-			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-					item, this, data, xt, yt, level.depth));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Torch"));
 			return true;
-		} else {
-			return false;
 		}
+
+		// Hard torch?
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 }
