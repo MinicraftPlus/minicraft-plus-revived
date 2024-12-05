@@ -5,25 +5,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Inventory {
-	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
-
-	protected int maxItem = 27;
-	protected boolean unlimited = false;
-
-	public int getMaxSlots() {
-		return maxItem;
-	}
+/**
+ * An item storage space for general purposes, based on the maximum number of item stacks,
+ * and the default item maximum count for stackable items.
+ * <p>
+ *     For special conditional storage space for items, like custom maximum count of items and
+ *     storage space that is variable to other conditions, slots or a custom implementation
+ *     is recommended instead.
+ * </p>
+ */
+public abstract class Inventory {
+	protected final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 
 	/**
 	 * Returns all the items which are in this inventory.
-	 * @return ArrayList containing all the items in the inventory.
+	 * @return a read-only view of the internal list containing all the items in the inventory.
 	 */
-	public List<Item> getItems() {
-		return new ArrayList<>(items);
+	public List<Item> getItemsView() {
+		return Collections.unmodifiableList(items);
 	}
 
 	public void clearInv() {
@@ -72,74 +75,12 @@ public class Inventory {
 	 * @param item Item to be added.
 	 * @return the remaining item not being added; {@code null} if whole stack of items has been added successfully
 	 */
-	public @Nullable Item add(@Nullable Item item) {
-		if (item == null) return null;
-		// Do not add to inventory if it is a PowerGlove
-		if (item instanceof PowerGloveItem) {
-			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
-			return null;
-		}
-
-		if (item instanceof StackableItem) { // If the item is a item...
-			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-			for (Item value : items) {
-				if (toTake.stacksWith(value)) {
-					StackableItem stack = (StackableItem) value;
-					if (!unlimited) {
-						if (stack.count < stack.maxCount) {
-							int r = stack.maxCount - stack.count;
-							if (r >= toTake.count) {
-								// Matching implies that the other item is stackable, too.
-								stack.count += toTake.count;
-								return null;
-							} else {
-								toTake.count -= r;
-								stack.count += r;
-							}
-						}
-					} else {
-						stack.count += toTake.count;
-						return null;
-					}
-				}
-			}
-
-			if (!unlimited) {
-				if (items.size() < maxItem) {
-					while (toTake.count > 0) {
-						if (items.size() == maxItem) return toTake;
-						StackableItem adding = toTake.copy();
-						adding.count = Math.min(toTake.count, toTake.maxCount);
-						items.add(adding); // Add the item to the items list
-						toTake.count -= adding.count;
-					}
-					return null;
-				} else {
-					return toTake;
-				}
-			} else {
-				items.add(toTake);
-				return null;
-			}
-		}
-
-		if (!unlimited) {
-			if (items.size() < maxItem) {
-				items.add(item); // Add the item to the items list
-				return null;
-			} else {
-				return item;
-			}
-		} else {
-			items.add(item);
-			return null;
-		}
-	}
+	public abstract @Nullable Item add(@Nullable Item item);
 
 	/**
 	 * Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed.
 	 */
-	private int removeFromStack(StackableItem given, int count) {
+	protected int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // To keep track of amount removed.
 		for (int i = 0; i < items.size(); i++) {
 			if (!(items.get(i) instanceof StackableItem)) continue;
@@ -201,7 +142,7 @@ public class Inventory {
 	}
 
 	/**
-	 * Returns the how many of an item you have in the inventory.
+	 * Returns how many of an item you have in the inventory.
 	 */
 	public int count(Item given) {
 		if (given == null) return 0; // null requests get no items. :)
@@ -233,19 +174,6 @@ public class Inventory {
 			itemdata = new StringBuilder(itemdata.substring(0, itemdata.length() - 1)); // Remove extra ",".
 
 		return itemdata.toString();
-	}
-
-	/**
-	 * Replaces all the items in the inventory with the items in the string.
-	 * @param items String representation of an inventory.
-	 */
-	public void updateInv(String items) {
-		clearInv();
-
-		if (items.length() == 0) return; // There are no items to add.
-
-		for (String item : items.split(":")) // This still generates a 1-item array when "items" is blank... [""].
-			add(Items.get(item));
 	}
 
 	/**
