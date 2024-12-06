@@ -722,7 +722,7 @@ public class Load {
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {
 					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+					int tileidx = y + x * lvlh; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
 					if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
 						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
@@ -774,6 +774,7 @@ public class Load {
 						}
 					}
 
+					// Tiles are read in an ord
 					loadTile(worldVer, map, x, y, tilename, extradata.get(tileidx));
 				}
 			}
@@ -782,7 +783,7 @@ public class Load {
 			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
 
 			Level curLevel = World.levels[lvlidx];
-			curLevel.chunkManager.chunks = map.chunks;
+			curLevel.chunkManager = map;
 
 			// Tile initialization
 			for (int x = 0; x < curLevel.w; ++x) {

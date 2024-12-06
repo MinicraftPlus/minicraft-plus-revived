@@ -230,14 +230,14 @@ public class LegacyLoad {
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+					int tileidx = y + x * lvlh; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					Load.loadTile(worldVer, map, x, y, Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))),
 						extradata.get(tileidx));
 				}
 			}
 
 			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
-			World.levels[l].chunkManager.chunks = map.chunks;
+			World.levels[l].chunkManager = map;
 		}
 	}
 

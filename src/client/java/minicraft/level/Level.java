@@ -195,7 +195,7 @@ public class Level {
 		Logging.WORLD.debug("Making level " + level + "...");
 
 		chunkManager = LevelGen.createAndValidateMap(w, h, level, seed);
-		if (chunkManager == null || chunkManager.chunks == null) {
+		if (chunkManager == null) {
 			Logging.WORLD.error("Level generation: Returned chunks array is null");
 			return;
 		}
