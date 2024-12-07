@@ -198,8 +198,8 @@ public abstract class Tile {
 			Level curLevel = World.levels[lvlidx];
 			int pos = x + curLevel.w * y;
 
-			int tileid = curLevel.tiles[pos];
-			int tiledata = curLevel.data[pos];
+			int tileid = curLevel.getTile(x, y).id;
+			int tiledata = curLevel.getData(x, y);
 
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch (NullPointerException | IndexOutOfBoundsException ignored) {
