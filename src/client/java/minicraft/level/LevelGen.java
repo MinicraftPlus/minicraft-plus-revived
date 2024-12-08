@@ -1,20 +1,35 @@
 package minicraft.level;
 
-import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Rectangle;
 import minicraft.level.tile.FlowerTile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
+import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -219,14 +234,15 @@ public class LevelGen {
 	}
 
 	private static short[][] createTopMap(int w, int h) { // Create surface map
+		// Irregular: larger the map, larger the features.
 		// creates a bunch of value maps, some with small size...
-		LevelGen mnoise1 = new LevelGen(w, h, 16);
-		LevelGen mnoise2 = new LevelGen(w, h, 16);
-		LevelGen mnoise3 = new LevelGen(w, h, 16);
+		LevelGen mnoise1 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 8 : 16);
+		LevelGen mnoise2 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 8 : 16);
+		LevelGen mnoise3 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 8 : 16);
 
 		// ...and some with larger size.
-		LevelGen noise1 = new LevelGen(w, h, 32);
-		LevelGen noise2 = new LevelGen(w, h, 32);
+		LevelGen noise1 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 4 : 32);
+		LevelGen noise2 = new LevelGen(w, h, Settings.get("Type").equals("minicraft.settings.type.irregular") ? w / 4 : 32);
 
 		short[] map = new short[w * h];
 		short[] data = new short[w * h];
@@ -240,24 +256,21 @@ public class LevelGen {
 				mval = Math.abs(mval - mnoise3.values[i]) * 3 - 2;
 
 				// This calculates a sort of distance based on the current coordinate.
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
-				val += 1 - dist * 20;
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
+				val += 1 - 4 * Math.pow((w - dist * 2.0) / w, 4);
 
 				switch ((String) Settings.get("Type")) {
 					case "minicraft.settings.type.island":
 
-						if (val < -0.5) {
+						if (val < -1) {
 							if (Settings.get("Theme").equals("minicraft.settings.theme.hell"))
 								map[i] = Tiles.get("lava").id;
 							else
 								map[i] = Tiles.get("water").id;
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
 						} else {
 							map[i] = Tiles.get("grass").id;
@@ -266,13 +279,13 @@ public class LevelGen {
 						break;
 					case "minicraft.settings.type.box":
 
-						if (val < -1.5) {
+						if (val < -1 || dist < 10 && mval > -2) {
 							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
 								map[i] = Tiles.get("water").id;
 							}
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0 && mval < -0.5) {
 							map[i] = Tiles.get("rock").id;
 						} else {
 							map[i] = Tiles.get("grass").id;
@@ -281,9 +294,9 @@ public class LevelGen {
 						break;
 					case "minicraft.settings.type.mountain":
 
-						if (val < -0.4) {
+						if (val < -0.6 && mval > -2) {
 							map[i] = Tiles.get("grass").id;
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0.6 && mval < -1.5) {
 							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
@@ -302,7 +315,7 @@ public class LevelGen {
 							if (!Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
 								map[i] = Tiles.get("water").id;
 							}
-						} else if (val > 0.5 && mval < -1.5) {
+						} else if (val > 0.5 && mval < -1) {
 							map[i] = Tiles.get("rock").id;
 						} else {
 							map[i] = Tiles.get("grass").id;
@@ -312,8 +325,9 @@ public class LevelGen {
 			}
 		}
 
+		// Sand
 		if (Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
-
+			// Mainly sand
 			for (int i = 0; i < w * h / 200; i++) {
 				int xs = random.nextInt(w);
 				int ys = random.nextInt(h);
@@ -333,11 +347,9 @@ public class LevelGen {
 					}
 				}
 			}
-		}
-
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
-
-			for (int i = 0; i < w * h / 2800; i++) {
+		} else {
+			// Normal sand
+			for (int i = 0; i < w * h / 3800; i++) {
 				int xs = random.nextInt(w);
 				int ys = random.nextInt(h);
 				for (int k = 0; k < 10; k++) {
@@ -356,40 +368,41 @@ public class LevelGen {
 					}
 				}
 			}
-		}
 
-		if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
-			for (int i = 0; i < w * h / 200; i++) {
-				int x = random.nextInt(w);
-				int y = random.nextInt(h);
-				for (int j = 0; j < 200; j++) {
-					int xx = x + random.nextInt(15) - random.nextInt(15);
-					int yy = y + random.nextInt(15) - random.nextInt(15);
-					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
-						}
+			// Beaches
+			for (int i = 0; i < w * h / 1800; i++) {
+				int xs = random.nextInt(w);
+				int ys = random.nextInt(h);
+				for (int k = 0; k < 5; k++) {
+					int x = xs + random.nextInt(21) - 10;
+					int y = ys + random.nextInt(21) - 10;
+					for (int j = 0; j < 5; j++) {
+						int xo = x + random.nextInt(5) - random.nextInt(5);
+						int yo = y + random.nextInt(5) - random.nextInt(5);
+						boolean foundWater = false;
+						for (int yy = yo - 3; yy <= yo + 3; yy++)
+							for (int xx = xo - 3; xx <= xo + 3; xx++)
+								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+									if (map[xx + yy * w] == Tiles.get("water").id) {
+										foundWater = true;
+									}
+								}
+						if (!foundWater) continue;
+						for (int yy = yo - 1; yy <= yo + 1; yy++)
+							for (int xx = xo - 1; xx <= xo + 1; xx++)
+								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+									if (map[xx + yy * w] == Tiles.get("grass").id) {
+										map[xx + yy * w] = Tiles.get("sand").id;
+									}
+								}
 					}
 				}
 			}
 		}
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.forest") && !Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
-			for (int i = 0; i < w * h / 1200; i++) {
-				int x = random.nextInt(w);
-				int y = random.nextInt(h);
-				for (int j = 0; j < 200; j++) {
-					int xx = x + random.nextInt(15) - random.nextInt(15);
-					int yy = y + random.nextInt(15) - random.nextInt(15);
-					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
-						if (map[xx + yy * w] == Tiles.get("grass").id) {
-							map[xx + yy * w] = Tiles.get("tree").id;
-						}
-					}
-				}
-			}
-		}
 
+		// Trees
 		if (Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+			// Raw trees
 			for (int i = 0; i < w * h / 2800; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -403,8 +416,40 @@ public class LevelGen {
 					}
 				}
 			}
-		}
-		if (!Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+		} else {
+			if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
+				// Concentrated trees
+				for (int i = 0; i < w * h / 200; i++) {
+					int x = random.nextInt(w);
+					int y = random.nextInt(h);
+					for (int j = 0; j < 200; j++) {
+						int xx = x + random.nextInt(15) - random.nextInt(15);
+						int yy = y + random.nextInt(15) - random.nextInt(15);
+						if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+							if (map[xx + yy * w] == Tiles.get("grass").id) {
+								map[xx + yy * w] = Tiles.get("tree").id;
+							}
+						}
+					}
+				}
+			} else {
+				// Normal trees
+				for (int i = 0; i < w * h / 1200; i++) {
+					int x = random.nextInt(w);
+					int y = random.nextInt(h);
+					for (int j = 0; j < 200; j++) {
+						int xx = x + random.nextInt(15) - random.nextInt(15);
+						int yy = y + random.nextInt(15) - random.nextInt(15);
+						if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+							if (map[xx + yy * w] == Tiles.get("grass").id) {
+								map[xx + yy * w] = Tiles.get("tree").id;
+							}
+						}
+					}
+				}
+			}
+
+			// Common trees
 			for (int i = 0; i < w * h / 400; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -420,11 +465,12 @@ public class LevelGen {
 			}
 		}
 
-		for (int i = 0; i < w * h / 400; i++) {
+		// Flowers
+		for (int i = 0; i < w * h / 600; i++) {
 			int x = random.nextInt(w);
 			int y = random.nextInt(h);
 			int col = random.nextInt(4) * random.nextInt(4);
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < 20; j++) {
 				int xx = x + random.nextInt(5) - random.nextInt(5);
 				int yy = y + random.nextInt(5) - random.nextInt(5);
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
@@ -436,6 +482,7 @@ public class LevelGen {
 			}
 		}
 
+		// Cactuses
 		for (int i = 0; i < w * h / 100; i++) {
 			int xx = random.nextInt(w);
 			int yy = random.nextInt(h);
@@ -448,10 +495,10 @@ public class LevelGen {
 
 		int count = 0;
 
-		//if (Game.debug) System.out.println("Generating stairs for surface level...");
+		Logging.WORLD.trace("Generating stairs for surface level...");
 
 		stairsLoop:
-		for (int i = 0; i < w * h / 100; i++) { // Loops a certain number of times, more for bigger world sizes.
+		for (int i = 0; i < w * h / 10; i++) { // Loops a certain number of times, more for bigger world sizes.
 			int x = random.nextInt(w - 2) + 1;
 			int y = random.nextInt(h - 2) + 1;
 
@@ -473,11 +520,6 @@ public class LevelGen {
 			if (count >= w / 21) break;
 		}
 
-		//System.out.println("min="+min);
-		//System.out.println("max="+max);
-		//average /= w*h;
-		//System.out.println(average);
-
 		return new short[][] { map, data };
 	}
 
@@ -493,23 +535,21 @@ public class LevelGen {
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
-				double xd = x / (w - 1.1) * 2 - 1;
-				double yd = y / (h - 1.1) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
+				// This calculates a sort of distance based on the current coordinate.
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
 				val = -val * 1 - 2.2;
-				val += 1 - dist * 2;
+				val += 1 - 2 * Math.pow((w - dist * 2.0) / w, 4);
 
-				if (val < -0.05) {
+				if (val < -.6 || dist < 4) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-				} else if (val >= -0.05 && val < -0.03) {
+				} else if (val >= -0.02 && val < 0) {
 					map[i] = Tiles.get("Lava").id;
 				} else {
-					if (random.nextInt(2) == 1) {
-						if (random.nextInt(2) == 1) {
+					if (random.nextInt(3) != 0) {
+						if (random.nextBoolean()) {
 							map[i] = Tiles.get("Obsidian").id;
 						} else {
 							map[i] = Tiles.get("Raw Obsidian").id;
@@ -521,22 +561,25 @@ public class LevelGen {
 			}
 		}
 
-		decorLoop:
 		for (int i = 0; i < w * h / 450; i++) {
 			int x = random.nextInt(w - 2) + 1;
 			int y = random.nextInt(h - 2) + 1;
 
-			for (int yy = y - 1; yy <= y + 1; yy++) {
-				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("Obsidian").id)
-						continue decorLoop;
+			if (x > 8 && y > 8) {
+				if (x < w - 8 && y < w - 8) {
+					if (random.nextInt(6) == 0)
+						Structure.ornateLavaPool.draw(map, x, y, w);
 				}
 			}
+		}
+
+		for (int i = 0; i < w * h / 1000; i++) {
+			int x = random.nextInt(w - 2) + 1;
+			int y = random.nextInt(h - 2) + 1;
 
 			if (x > 8 && y > 8) {
 				if (x < w - 8 && y < w - 8) {
-					if (random.nextInt(2) == 0)
-						Structure.ornateLavaPool.draw(map, x, y, w);
+					Structure.lavaPool.draw(map, x, y, w);
 				}
 			}
 		}
@@ -582,15 +625,14 @@ public class LevelGen {
 				double wval = Math.abs(wnoise1.values[i] - wnoise2.values[i]);
 				wval = Math.abs(wval - wnoise3.values[i]) * 3 - 2;
 
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = Math.pow(dist, 8);
-				val += 1 - dist * 20;
+				// This calculates a sort of distance based on the current coordinate.
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
+				val += 1 - 3 * Math.pow((w - dist * 2.0) / w, 4);
 
-				if (val > -1 && wval < -1 + (depth) / 2.0 * 3) {
+				if (val > -1 && wval < -1 + (depth) / 2.0 * 3 && (nval < -.5 || nval > .5)) {
 					if (depth == 3) map[i] = Tiles.get("lava").id;
 					else if (depth == 1) map[i] = Tiles.get("dirt").id;
 					else map[i] = Tiles.get("water").id;
@@ -606,10 +648,10 @@ public class LevelGen {
 		}
 		{
 			int r = 2;
-			for (int i = 0; i < w * h / 400; i++) {
+			for (int i = 0; i < w * h / 300; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
-				for (int j = 0; j < 30; j++) {
+				for (int j = 0; j < 20; j++) {
 					int xx = x + random.nextInt(5) - random.nextInt(5);
 					int yy = y + random.nextInt(5) - random.nextInt(5);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
@@ -618,12 +660,12 @@ public class LevelGen {
 						}
 					}
 				}
-				for (int j = 0; j < 10; j++) {
+				for (int j = 0; j < 8; j++) {
 					int xx = x + random.nextInt(3) - random.nextInt(2);
 					int yy = y + random.nextInt(3) - random.nextInt(2);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
-							map[xx + yy * w] = (short) (Tiles.get("Lapis").id & 0xffff);
+							map[xx + yy * w] = Tiles.get("Lapis").id;
 						}
 					}
 				}
@@ -631,31 +673,27 @@ public class LevelGen {
 		}
 
 		if (depth > 2) { // The level above dungeon.
-			int r = 1;
 			int xm = w / 2;
 			int ym = h / 2;
 			int side = 6; // The side of the lock is 5, and pluses margin with 1.
 			int edgeMargin = w / 20; // The distance between the world enge and the lock sides.
+			Rectangle edgeRect = new Rectangle(edgeMargin, edgeMargin, w - edgeMargin, h - edgeMargin, Rectangle.CORNERS);
 			Rectangle lockRect = new Rectangle(0, 0, side, side, 0);
 			Rectangle bossRoomRect = new Rectangle(xm, ym, 20, 20, Rectangle.CENTER_DIMS);
 			do { // Trying to generate a lock not intersecting to the boss room in the dungeon.
 				int xx = random.nextInt(w);
 				int yy = random.nextInt(h);
 				lockRect.setPosition(xx, yy, RelPos.CENTER);
-				if (lockRect.getTop() > edgeMargin && lockRect.getLeft() > edgeMargin &&
-					lockRect.getRight() < w - edgeMargin && lockRect.getBottom() < h - edgeMargin &&
-					!lockRect.intersects(bossRoomRect)) {
+				if (lockRect.isWithin(edgeRect) && !lockRect.intersects(bossRoomRect)) {
 
 					Structure.dungeonLock.draw(map, xx, yy, w);
 
 					/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
-					map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
+					map[xx + yy * w] = Tiles.get("Stairs Down").id;
 					break; // The generation is successful.
 				}
 			} while (true);
-		}
-
-		if (depth < 3) {
+		} else { // Other underground levels
 			int count = 0;
 			stairsLoop:
 			for (int i = 0; i < w * h / 100; i++) {
@@ -681,8 +719,8 @@ public class LevelGen {
 	}
 
 	private static short[][] createSkyMap(int w, int h) {
-		LevelGen noise1 = new LevelGen(w, h, 8);
-		LevelGen noise2 = new LevelGen(w, h, 8);
+		LevelGen noise1 = new LevelGen(w, h, Math.min(w / 16, 16));
+		LevelGen noise2 = new LevelGen(w, h, Math.min(w / 16, 16));
 
 		short[] map = new short[w * h];
 		short[] data = new short[w * h];
@@ -693,17 +731,15 @@ public class LevelGen {
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
-				double xd = x / (w - 1.0) * 2 - 1;
-				double yd = y / (h - 1.0) * 2 - 1;
-				if (xd < 0) xd = -xd;
-				if (yd < 0) yd = -yd;
-				double dist = Math.max(xd, yd);
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
+				// This calculates a sort of distance based on the current coordinate.
+				int xd = Math.min(w - 1 - x, x); // Distance from x edges to the current position.
+				int yd = Math.min(h - 1 - y, y); // Distance from y edges to the current position.
+				// Range: 0 to size/2
+				int dist = Math.min(xd, yd); // The closest distance from edges to the current position.
 				val = -val * 1 - 2.2;
-				val += 1 - dist * 20;
+				val += 1 - 2 * Math.pow((w - dist * 2.0) / w, 4);
 
-				if (val < -0.25) {
+				if (val < -1) {
 					map[i] = Tiles.get("Infinite Fall").id;
 				} else {
 					map[i] = Tiles.get("cloud").id;
@@ -751,55 +787,82 @@ public class LevelGen {
 	}
 
 	public static void main(String[] args) {
-		LevelGen.worldSeed = 0x100;
-
-		// Fixes to get this method to work
-
-		// AirWizard needs this in constructor
-		Game.gameDir = "";
-
-		Tiles.initTileList();
-		// End of fixes
-
-		int idx = -2;
-
-		int[] maplvls = new int[args.length];
-		boolean valid = true;
-		if (maplvls.length > 0) {
-			for (int i = 0; i < args.length; i++) {
-				try {
-					int lvlnum = Integer.parseInt(args[i]);
-					maplvls[i] = lvlnum;
-				} catch (Exception ex) {
-					valid = false;
-					break;
-				}
+		JFrame frame = new JFrame("World Level Generation Test");
+		frame.setResizable(false);
+		frame.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
 			}
-		} else valid = false;
+			@Override
+			public void windowClosed(WindowEvent e) {
+				System.exit(0);
+			}
+			@Override
+			public void windowIconified(WindowEvent e) {}
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+			@Override
+			public void windowActivated(WindowEvent e) {}
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+		});
+		frame.setLayout(new BorderLayout());
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new FlowLayout());
+		mainPanel.add(new JLabel("World Level Generation Test Type"));
+		frame.add(mainPanel, BorderLayout.CENTER);
 
-		if (!valid) {
-			maplvls = new int[1];
+		AtomicReference<Boolean> typeChoice = new AtomicReference<>();
+		JPanel buttonPanel = new JPanel();
+		JButton buttonClassic = new JButton("Classic Tuple");
+		buttonClassic.addActionListener(e -> {
+			typeChoice.set(true);
+			frame.setVisible(false);
+		});
+		buttonPanel.add(buttonClassic);
+		JButton buttonFlexible = new JButton("Flexible");
+		buttonFlexible.addActionListener(e -> {
+			typeChoice.set(false);
+			frame.setVisible(false);
+		});
+		buttonPanel.add(buttonFlexible);
+		buttonPanel.setLayout(new FlowLayout());
+		frame.add(buttonPanel, BorderLayout.SOUTH);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		while (true) {
+			synchronized (frame) {
+				if (!frame.isVisible()) break;
+			}
 		}
 
-		//noinspection InfiniteLoopStatement
-		while (true) {
-			int w = 128;
-			int h = 128;
+		mainPanel.removeAll();
+		buttonPanel.removeAll();
+		JButton buttonNext = new JButton("Next");
+		buttonPanel.add(buttonNext);
 
-			//noinspection ConstantConditions
-			int lvl = maplvls[idx++ % maplvls.length];
-			if (lvl > 1 || lvl < -4) continue;
-
-			short[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl, LevelGen.worldSeed);
-
-			if (fullmap == null) continue;
-			short[] map = fullmap[0];
-
-			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			int[] pixels = new int[w * h];
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++) {
-					int i = x + y * w;
+		Boolean typeChoiceValue = typeChoice.get();
+		List<Runnable> query = Collections.synchronizedList(new LinkedList<>());
+		class Config {
+			public final int w;
+			public final int h;
+			public Config(int w, int h) {
+				this.w = w;
+				this.h = h;
+			}
+		}
+		AtomicReference<Config> configHolder = new AtomicReference<>(new Config(128, 128));
+		Consumer<short[]> imgOutput = map -> {
+			Config cfg = configHolder.get();
+			BufferedImage img = new BufferedImage(cfg.w, cfg.h, BufferedImage.TYPE_INT_RGB);
+			int[] pixels = new int[cfg.w * cfg.h];
+			for (int y = 0; y < cfg.h; y++) {
+				for (int x = 0; x < cfg.w; x++) {
+					int i = x + y * cfg.w;
 
 					if (map[i] == Tiles.get("water").id) pixels[i] = 0x000080;
 					if (map[i] == Tiles.get("iron Ore").id) pixels[i] = 0x000080;
@@ -822,12 +885,158 @@ public class LevelGen {
 					if (map[i] == Tiles.get("Raw Obsidian").id) pixels[i] = 0x0a0080;
 				}
 			}
-			img.setRGB(0, 0, w, h, pixels, 0, w);
-			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed " + worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] { "Next", "0x100", "0xAAFF20" }, "Next");
-			if (op == 1) LevelGen.worldSeed = 0x100;
-			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
-			else LevelGen.worldSeed++;
+			img.setRGB(0, 0, cfg.w, cfg.h, pixels, 0, cfg.w);
+			mainPanel.removeAll();
+			mainPanel.add(new JLabel(new ImageIcon(img.getScaledInstance(800, 800, Image.SCALE_AREA_AVERAGING))));
+			frame.pack();
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
+		};
+
+		Settings.set("type", "minicraft.settings.type.island");
+		Settings.set("theme", "minicraft.settings.theme.normal");
+
+		if (typeChoiceValue == null) {
+			System.exit(0); // No choice.
+		} else if (typeChoiceValue) { // Classic Tuple
+			LevelGen.worldSeed = 0x100;
+
+			// Fixes to get this method to work
+
+			Tiles.initTileList();
+			// End of fixes
+
+			AtomicInteger idx = new AtomicInteger(-2);
+
+			int[] maplvls = new int[args.length];
+			boolean valid = true;
+			if (maplvls.length > 0) {
+				for (int i = 0; i < args.length; i++) {
+					try {
+						int lvlnum = Integer.parseInt(args[i]);
+						maplvls[i] = lvlnum;
+					} catch (Exception ex) {
+						valid = false;
+						break;
+					}
+				}
+			} else valid = false;
+
+			if (!valid) {
+				maplvls = new int[1];
+			}
+
+			int[] finalMaplvls = maplvls;
+			Runnable runner = new Runnable() {
+				@Override
+				public void run() {
+					Config cfg = configHolder.get();
+					int lvl = finalMaplvls[idx.getAndIncrement() % finalMaplvls.length];
+					if (lvl > 1 || lvl < -4) {
+						synchronized (query) {
+							query.add(this);
+						}
+						return;
+					}
+
+					short[][] fullmap = LevelGen.createAndValidateMap(cfg.w, cfg.h, lvl, LevelGen.worldSeed);
+
+					if (fullmap == null) {
+						synchronized (query) {
+							query.add(this);
+						}
+						return;
+					}
+					short[] map = fullmap[0];
+					imgOutput.accept(map);
+					if (LevelGen.worldSeed == 0x100)
+						LevelGen.worldSeed = 0xAAFF20;
+					else
+						LevelGen.worldSeed = 0x100;
+				}
+			};
+			buttonNext.addActionListener(e -> {
+				frame.setVisible(false);
+				synchronized (query) {
+					query.add(runner);
+				}
+			});
+			runner.run();
+		} else { // Flexible
+			Tiles.initTileList();
+
+			JButton buttonConfirm = new JButton("Confirm");
+			JComboBox<Integer> comboBox = new JComboBox<>(new Integer[] { 128, 256, 512 });
+			comboBox.setEditable(false);
+			Random random = new Random();
+			AtomicInteger idx = new AtomicInteger();
+			int[] levels = new int[] { 0, 1, -1, -2, -3, -4 };
+			Runnable runner = new Runnable() {
+				@Override
+				public void run() {
+					Config cfg = configHolder.get();
+					short[][] fullmap = LevelGen.createAndValidateMap(cfg.w, cfg.h, levels[idx.get()], LevelGen.worldSeed);
+					if (fullmap == null) {
+						synchronized (query) {
+							query.add(this);
+						}
+						return;
+					}
+					short[] map = fullmap[0];
+					imgOutput.accept(map);
+				}
+			};
+			Runnable cfgRunner = () -> {
+				mainPanel.removeAll();
+				mainPanel.add(comboBox);
+				buttonPanel.removeAll();
+				buttonPanel.add(buttonConfirm);
+				frame.setTitle("World Level Generation Test");
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			};
+			JButton buttonNextLevel = new JButton("Next Level");
+			buttonNextLevel.addActionListener(e -> {
+				frame.setVisible(false);
+				if (idx.incrementAndGet() == levels.length - 1) {
+					buttonPanel.remove(buttonNextLevel);
+				}
+				synchronized (query) {
+					query.add(runner);
+				}
+			});
+			buttonConfirm.addActionListener(e -> {
+				frame.setVisible(false);
+				buttonPanel.removeAll();
+				buttonPanel.add(buttonNext);
+				buttonPanel.add(buttonNextLevel);
+				int size = Objects.requireNonNull((Integer) comboBox.getSelectedItem());
+				configHolder.set(new Config(size, size));
+				LevelGen.worldSeed = random.nextLong();
+				idx.set(0);
+				frame.setTitle("World Level Generation Test: " + configHolder.get().h + "; " + LevelGen.worldSeed);
+				synchronized (query) {
+					query.add(runner);
+				}
+			});
+			buttonNext.addActionListener(e -> {
+				frame.setVisible(false);
+				if (buttonNextLevel.getParent() != buttonPanel)
+					buttonPanel.add(buttonNextLevel);
+				synchronized (query) {
+					query.add(cfgRunner);
+				}
+			});
+			cfgRunner.run();
+		}
+		// noinspection InfiniteLoopStatement
+		while (true) {
+			synchronized (query) {
+				if (!query.isEmpty()) {
+					query.remove(0).run();
+				}
+			}
 		}
 	}
 }
