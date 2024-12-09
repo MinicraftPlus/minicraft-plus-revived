@@ -7,18 +7,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but some sections are changed to compliant this project.
 
-## [2.2.1]
+## [2.3.0]
 
 ### Additions
 
 * Added ornate wood tiles
+* Added dye vat 
+* Added 16 new flowers
+* Added 16 dye colors
+* Added 15 bed colors
+* Added 10 wool colors
+* Added a backup feature whenever using a development build
 
 ### Changes
 
 * Disabled hardware acceleration by default
 * Hardware acceleration is now a toggle in settings
 * Screenshots will now be the size of the rendered view within the window
-* Updated localization
+* Updated textures of wool items
+* Updated textures of wool tiles
 
 ### Removals
 
@@ -27,9 +34,22 @@ but some sections are changed to compliant this project.
 
 ### Fixes
 
-* Optimized light source rendering
-* Optimized calculations
-* Fixed the texture on stone hoe
+
+## [2.2.1]
+
+### Additions
+* Added inventory capacity counter
+
+### Fixes
+* Prevent creepers from blowing up stairs
+* Updated localisation
+* Fixed Russian font
+* Fixed performance issues
+* Fixed corner rendering of some tiles
+* Fixed overworld rendering as totally black at night
+* Fixed some keys not bound to cursor mappings
+* Fixed a wrong texture
+* Fixed problems with screenshot feature
 
 ## [2.2.0]
 
