@@ -33,6 +33,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
+import minicraft.level.ChunkManager;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
@@ -224,21 +225,19 @@ public class LegacyLoad {
 			int lvldepth = Integer.parseInt(data.get(2));
 			Settings.set("size", lvlw);
 
-			short[] tiles = new short[lvlw * lvlh];
-			short[] tdata = new short[lvlw * lvlh];
+			ChunkManager map = new ChunkManager(lvlw, lvlh);
 
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					Load.loadTile(worldVer, tiles, tdata, tileArrIdx, Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))),
+					int tileidx = y + x * lvlh; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+					Load.loadTile(worldVer, map, x, y, Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3))),
 						extradata.get(tileidx));
 				}
 			}
 
 			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
-			World.levels[l].tiles = tiles;
-			World.levels[l].data = tdata;
+			World.levels[l].chunkManager = map;
 		}
 	}
 
