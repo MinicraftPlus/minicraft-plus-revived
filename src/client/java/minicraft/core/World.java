@@ -81,7 +81,7 @@ public class World extends Game {
 		playerDeadTime = 0;
 		currentLevel = 3;
 		Updater.asTick = 0;
-		Updater.notifications.clear();
+		Updater.inGameNotifications.clear();
 
 		// Adds a new player
 		if (keepPlayer) {
