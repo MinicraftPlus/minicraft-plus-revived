@@ -205,6 +205,8 @@
   "minicraft.control_guide.craft": "Use %s to open your crafting menu.",
   "minicraft.control_guide.menu": "Use %s to open your inventory menu.",
   "minicraft.control_guide.move": "Use %s to move.",
+  "minicraft.display.debug_panel": "Debug Panel",
+  "minicraft.display.debug_panel.command_popup": "Command Popup",
   "minicraft.display.entries.boolean.false": "Off",
   "minicraft.display.entries.boolean.true": "On",
   "minicraft.display.gui.link_opening": "Opening with browser...",
