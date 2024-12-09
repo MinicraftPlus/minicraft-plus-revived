@@ -12,10 +12,15 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.level.Level;
+import minicraft.util.DamageSource;
+import org.jetbrains.annotations.Nullable;
 
 public class CactusTile extends Tile {
+	private static final int MAX_HEALTH = 10;
+
 	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "cactus");
 
 	protected CactusTile(String name) {
@@ -31,14 +36,22 @@ public class CactusTile extends Tile {
 		return false;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			handleDamage(level, x, y, source, item, MAX_HEALTH);
+		} else
+			handleDamage(level, x, y, source, item, damage);
+		return true;
+	}
+
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int cHealth = 10;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x << 4, y << 4));
 		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
 
-		if (damage >= cHealth) {
+		if (damage >= MAX_HEALTH) {
 			//int count = random.nextInt(2) + 2;
 			level.setTile(x, y, Tiles.get("sand"));
 			Sound.play("monsterhurt");
@@ -46,7 +59,6 @@ public class CactusTile extends Tile {
 		} else {
 			level.setData(x, y, damage);
 		}
-		return true;
 	}
 
 	@Override
@@ -59,13 +71,14 @@ public class CactusTile extends Tile {
 		if (!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {
-			m.hurt(this, x, y, 1);
-		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
-			m.hurt(this, x, y, 1);
-		}
-		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
-			m.hurt(this, x, y, 2);
+			m.hurt(new DamageSource(DamageSource.DamageType.CACTUS, level, (x << 4) + 8, (y << 4) + 8, this),
+				m.dir.getOpposite(), 1);
+		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {
+			m.hurt(new DamageSource(DamageSource.DamageType.CACTUS, level, (x << 4) + 8, (y << 4) + 8, this),
+				m.dir.getOpposite(), 1);
+		} else if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {
+			m.hurt(new DamageSource(DamageSource.DamageType.CACTUS, level, (x << 4) + 8, (y << 4) + 8, this),
+				m.dir.getOpposite(), 2);
 		}
 	}
 

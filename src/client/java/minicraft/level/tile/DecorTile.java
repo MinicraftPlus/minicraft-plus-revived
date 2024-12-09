@@ -1,9 +1,13 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
@@ -12,6 +16,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class DecorTile extends Tile {
 	private static final SpriteAnimation stoneSprite = new SpriteAnimation(SpriteType.Tile, "ornate_stone");
@@ -55,16 +60,48 @@ public class DecorTile extends Tile {
 		screen.render(x * 16 + 0, y * 16, sprite.getCurrentFrame().getSprite().spritePixels[0][0]);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
+		level.add(new SmashParticle(x << 4, y << 4));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+	}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			if (level.depth == 1) {
+				level.setTile(x, y, Tiles.get("Cloud"));
+			} else {
+				level.setTile(x, y, Tiles.get("Hole"));
+			}
+			Item drop;
+			switch (thisType) {
+				case ORNATE_STONE:
+					drop = Items.get("Ornate Stone");
+					break;
+				case ORNATE_OBSIDIAN:
+					drop = Items.get("Ornate Obsidian");
+					break;
+				case ORNATE_WOOD:
+					drop = Items.get("Ornate Wood");
+					break;
+				default:
+					throw new IllegalStateException("Unexpected value: " + thisType);
+			}
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, drop);
+			return true;
+		}
+
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == mType.getRequiredTool()) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
+				if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
 					if (level.depth == 1) {
-						level.setTile(xt, yt, Tiles.get("Cloud"));
+						level.setTile(x, y, Tiles.get("Cloud"));
 					} else {
-						level.setTile(xt, yt, Tiles.get("Hole"));
+						level.setTile(x, y, Tiles.get("Hole"));
 					}
 					Item drop;
 					switch (thisType) {
@@ -81,15 +118,17 @@ public class DecorTile extends Tile {
 							throw new IllegalStateException("Unexpected value: " + thisType);
 					}
 					Sound.play("monsterhurt");
-					level.dropItem((xt << 4) + 8, (yt << 4) + 8, drop);
+					level.dropItem((x << 4) + 8, (y << 4) + 8, drop);
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}
 		}
-		return false;
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

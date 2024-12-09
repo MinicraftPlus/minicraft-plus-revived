@@ -19,7 +19,7 @@ public class KnightStatue extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, Item heldItem, Direction attackDir) {
+	public boolean use(Player player, Item heldItem, Direction attackDir) {
 		if (!ObsidianKnight.active) {
 			if (touches == 0) { // Touched the first time.
 				Game.notifications.add(Localization.getLocalized("minicraft.notifications.statue_tapped"));

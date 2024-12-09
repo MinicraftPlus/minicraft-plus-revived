@@ -35,7 +35,7 @@ public class PotionItem extends StackableItem {
 	}
 
 	// The return value is used to determine if the potion was used, which means being discarded.
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (type.equals(PotionType.Lava)) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.lava", true);
 		}
@@ -76,11 +76,6 @@ public class PotionItem extends StackableItem {
 	@Override
 	public int hashCode() {
 		return super.hashCode() + type.name.hashCode();
-	}
-
-	@Override
-	public boolean interactsWithWorld() {
-		return false;
 	}
 
 	public @NotNull PotionItem copy() {
