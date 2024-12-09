@@ -19,6 +19,7 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.RewardChest;
 import minicraft.entity.furniture.Spawner;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.mob.AirWizard;
@@ -86,6 +87,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -107,13 +109,14 @@ public class Load {
 
 	private Version worldVer;
 
-	private DeathChest deathChest;
+	private final HashSet<Item> overflowingItems;
 
 	{
 		worldVer = null;
 
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
+		overflowingItems = new HashSet<>();
 	}
 
 	public Load(String worldname) {
@@ -227,9 +230,9 @@ public class Load {
 			loadInventory("Inventory", Game.player.getInventory());
 			loadPlayer("Player", Game.player);
 
-			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
-				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
-				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
+			if (!overflowingItems.isEmpty()) {
+				Game.player.getLevel().add(new RewardChest(overflowingItems), Game.player.x, Game.player.y);
+				Logging.SAVELOAD.debug("Added a RewardChest containing inventory-overflowing items.");
 			}
 
 			if (worldVer.compareTo(new Version("2.2.0-dev3")) < 0) {
@@ -925,7 +928,7 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));
 			if (worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount).forEach(deathChest.getInventory()::add);
+				overflowingItems.addAll(player.getInventory().add(Items.get("arrow"), arrowCount));
 		}
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
@@ -1057,7 +1060,6 @@ public class Load {
 	}
 
 	public void loadInventory(String filename, Inventory inventory) {
-		deathChest = new DeathChest();
 		loadFromFile(location + filename + extension);
 		loadInventory(inventory, data);
 	}
@@ -1099,7 +1101,7 @@ public class Load {
 
 	private void loadItem(Inventory inventory, Item item) {
 		if (inventory.add(item) != null) {
-			deathChest.getInventory().add(item.copy());
+			overflowingItems.add(item.copy());
 		}
 	}
 
@@ -1242,6 +1244,7 @@ public class Load {
 			List<String> chestInfo = info.subList(2, info.size() - 1);
 
 			int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
+			ArrayList<Item> chestItems = new ArrayList<>();
 			for (int idx = 0; idx < endIdx; idx++) {
 				String itemData = subOldName(chestInfo.get(idx), worldVer);
 
@@ -1249,7 +1252,13 @@ public class Load {
 				if (itemData.contains("Totem of Wind")) continue;
 
 				Item item = Items.get(itemData);
-				chest.getInventory().add(item);
+				chestItems.add(item);
+			}
+
+			if (newEntity instanceof RewardChest) {
+				newEntity = new RewardChest(chestItems);
+			} else {
+				chestItems.forEach(chest.getInventory()::add);
 			}
 
 			if (isDeathChest) {
@@ -1259,8 +1268,6 @@ public class Load {
 				if (((DungeonChest) chest).isLocked())
 					World.levels[Integer.parseInt(info.get(info.size() - 1))].chestCount++;
 			}
-
-			newEntity = chest;
 		} else if (newEntity instanceof Spawner) {
 			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".") + 1), Integer.parseInt(info.get(3)));
 			if (mob != null)
@@ -1348,6 +1355,8 @@ public class Load {
 				return new DeathChest();
 			case "DungeonChest":
 				return new DungeonChest(null);
+			case "RewardChest":
+				return new RewardChest(null);
 			case "Anvil":
 				return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter":
