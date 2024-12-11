@@ -67,10 +67,7 @@ public class Level {
 	public int w, h; // Width and height of the level
 	private final long seed; // The used seed that was used to generate the world
 
-	public ChunkManager chunkManager;
-
-	// public short[] tiles; // An array of all the tiles in the world.
-	// public short[] data; // An array of the data of the tiles in the world.
+	public ChunkManager chunkManager; // A collection of chunks with it's own interface
 
 	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 

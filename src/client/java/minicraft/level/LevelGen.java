@@ -789,7 +789,6 @@ public class LevelGen {
 			ChunkManager map = LevelGen.createAndValidateMap(w, h, lvl, LevelGen.worldSeed);
 
 			if (map == null) continue;
-			// short[] map = fullmap[0];
 
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			int[] pixels = new int[w * h];
