@@ -24,7 +24,11 @@
       "region": "Italy"
     },
     "nb-no": {
-      "name": "Norwegian",
+      "name": "Bokmål",
+      "region": "Norway"
+    },
+    "nn-no": {
+      "name": "Nynorsk",
       "region": "Norway"
     },
     "pt-pt": {
