@@ -3,11 +3,15 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
+import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.Nullable;
 
 public class PassiveMob extends MobAi {
 	protected int color;
@@ -40,6 +44,21 @@ public class PassiveMob extends MobAi {
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
+	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
 	}
 
 	@Override

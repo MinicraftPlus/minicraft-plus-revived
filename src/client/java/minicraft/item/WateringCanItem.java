@@ -46,7 +46,7 @@ public class WateringCanItem extends Item {
 	}
 
 	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile instanceof WaterTile) {
 			content = CAPACITY;
 			updateSprite();

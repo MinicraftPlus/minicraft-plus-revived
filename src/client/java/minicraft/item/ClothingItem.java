@@ -42,7 +42,7 @@ public class ClothingItem extends StackableItem {
 	}
 
 	// Put on clothes
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
@@ -58,11 +58,6 @@ public class ClothingItem extends StackableItem {
 			player.shirtColor = playerCol;
 			return super.interactOn(true);
 		}
-	}
-
-	@Override
-	public boolean interactsWithWorld() {
-		return false;
 	}
 
 	public @NotNull ClothingItem copy() {

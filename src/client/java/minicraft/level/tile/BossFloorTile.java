@@ -4,11 +4,13 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class BossFloorTile extends FloorTile {
 	private static final String floorMsg = "minicraft.notification.defeat_obsidian_knight_first";
@@ -17,12 +19,13 @@ public class BossFloorTile extends FloorTile {
 		super(Material.Obsidian, "Boss Floor");
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative")) {
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative") && source instanceof Player) {
 			if (item instanceof ToolItem) {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {
-					if (player.payStamina(1)) {
+					if (((Player) source).payStamina(1)) {
 						Game.notifications.add(Localization.getLocalized(floorMsg));
 						Sound.play("monsterhurt");
 						return true;
@@ -33,6 +36,6 @@ public class BossFloorTile extends FloorTile {
 			return false;
 		}
 
-		return super.interact(level, xt, yt, player, item, attackDir);
+		return super.hurt(level, x, y, source, item, attackDir, damage);
 	}
 }
