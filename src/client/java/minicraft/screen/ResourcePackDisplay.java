@@ -100,17 +100,11 @@ public class ResourcePackDisplay extends Display {
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	private static final MinicraftImage defaultLogo;
-	// private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
-	// private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
 	private static final int padding = 10;
 
 	private WatcherThread fileWatcher;
-	// private ArrayList<ListEntry> entries0 = new ArrayList<>();
-	// private ArrayList<ListEntry> entries1 = new ArrayList<>();
 	private ArrayList<ListEntry> entries = new ArrayList<>(), toggleIndicators = new ArrayList<>();
-	// private Menu.Builder builder0;
-	// private Menu.Builder builder1;
 	private Menu.Builder builder, indicatorsBuilder;
 	private boolean changed = false;
 
@@ -180,25 +174,11 @@ public class ResourcePackDisplay extends Display {
 		indicatorsBuilder = new Menu.Builder(false, 2, RelPos.LEFT).setPositioning(new Point(20, 60), RelPos.BOTTOM_RIGHT);
 		builder = new Menu.Builder(false, 2, RelPos.LEFT).setPositioning(new Point(20, 60), RelPos.BOTTOM_LEFT);
 
-		// Left Hand Side
-		// builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
-			// .setDisplayLength(8)
-			// .setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT);
-
-		// Right Hand Side
-		// builder1 = new Menu.Builder(false, 2, RelPos.RIGHT)
-			// .setDisplayLength(8)
-			// .setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT);
-
 		reloadEntries();
 
 		menus = new Menu[] {
 			indicatorsBuilder.setEntries(toggleIndicators).createMenu(),
 			builder.setEntries(entries).createMenu()
-			// builder0.setEntries(entries0)
-				// .createMenu(),
-			// builder1.setEntries(entries1)
-				// .createMenu()
 		};
 
 		selection = 1;
@@ -214,15 +194,8 @@ public class ResourcePackDisplay extends Display {
 		super.onSelectionChange(oldSel, newSel);
 		if (oldSel == newSel)
 			return; // this also serves as a protection against access to menus[0] when such may not exist.
-		/*menus[0].translate(-menus[0].getBounds().getLeft(), 0);
-		menus[1].translate(Screen.w - menus[1].getBounds().getRight(), 0);*/
-		// if (newSel == 0) {
 		if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
 			menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
-		// } else if (newSel == 1) {
-			// if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
-				// menus[0].translate(-(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding), 0);
-		// }
 	}
 
 	/**
@@ -234,13 +207,7 @@ public class ResourcePackDisplay extends Display {
 		entries.clear();
 		toggleIndicators.clear();
 		for (ResourcePack pack : resourcePacks) { // List all available resource packs
-			entries.add(new SelectEntry(pack.name, () -> { pack.toggle(); changed = true; }, false) {
-				@Override
-				public int getColor(boolean isSelected) {
-					// if(pack.isEnabled()) return Color.GREEN;
-					return super.getColor(isSelected);
-				}
-			});
+			entries.add(new SelectEntry(pack.name, () -> { pack.toggle(); changed = true; }, false));
 			toggleIndicators.add(new SelectEntry("✓", () -> {}, false) {
 				@Override
 				public String toString() {
@@ -401,7 +368,6 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("select")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.info", Game.input.getMapping("menu")), screen, Screen.h - 9, Color.DARK_GRAY);
 
-		// ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (resourcePacks.size() > 0) { // If there is any pack that can be selected.
 			@SuppressWarnings("resource")
 			MinicraftImage logo = resourcePacks.get(menus[1].getSelection()).logo;
