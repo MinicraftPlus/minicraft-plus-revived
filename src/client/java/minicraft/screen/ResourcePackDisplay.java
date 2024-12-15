@@ -93,23 +93,19 @@ public class ResourcePackDisplay extends Display {
 	 */
 
 
-	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // Packs that are not loaded.
+	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // List of all packs, in order of loading priority
 	private static final File FOLDER_LOCATION = new File(FileHandler.gameDir + "/resourcepacks");
 	@SuppressWarnings("unused")
 	private static final int VERSION = 1;
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	private static final MinicraftImage defaultLogo;
-	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
-	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
 	private static final int padding = 10;
 
 	private WatcherThread fileWatcher;
-	private ArrayList<ListEntry> entries0 = new ArrayList<>();
-	private ArrayList<ListEntry> entries1 = new ArrayList<>();
-	private Menu.Builder builder0;
-	private Menu.Builder builder1;
+	private ArrayList<ListEntry> entries = new ArrayList<>(), toggleIndicators = new ArrayList<>();
+	private Menu.Builder builder, indicatorsBuilder;
 	private boolean changed = false;
 
 	static { // Initializing the default pack and logo.
@@ -153,7 +149,9 @@ public class ResourcePackDisplay extends Display {
 
 		// Default resources
 		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
-		loadedPacks.add(defaultPack);
+		defaultPack.enable();
+		defaultPack.lock();
+		resourcePacks.add(defaultPack);
 		try {
 			defaultLogo = MinicraftImage.createDefaultCompatible(ImageIO.read(Objects.requireNonNull(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png"))));
 		} catch (IOException e) {
@@ -173,24 +171,17 @@ public class ResourcePackDisplay extends Display {
 		super(true, true);
 		initPacks();
 
-		// Left Hand Side
-		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
-			.setDisplayLength(8)
-			.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT);
-
-		// Right Hand Side
-		builder1 = new Menu.Builder(false, 2, RelPos.RIGHT)
-			.setDisplayLength(8)
-			.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT);
+		indicatorsBuilder = new Menu.Builder(false, 2, RelPos.LEFT).setPositioning(new Point(20, 60), RelPos.BOTTOM_RIGHT);
+		builder = new Menu.Builder(false, 2, RelPos.LEFT).setPositioning(new Point(20, 60), RelPos.BOTTOM_LEFT);
 
 		reloadEntries();
 
 		menus = new Menu[] {
-			builder0.setEntries(entries0)
-				.createMenu(),
-			builder1.setEntries(entries1)
-				.createMenu()
+			indicatorsBuilder.setEntries(toggleIndicators).createMenu(),
+			builder.setEntries(entries).createMenu()
 		};
+
+		selection = 1;
 
 		if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
 			menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
@@ -203,42 +194,36 @@ public class ResourcePackDisplay extends Display {
 		super.onSelectionChange(oldSel, newSel);
 		if (oldSel == newSel)
 			return; // this also serves as a protection against access to menus[0] when such may not exist.
-		menus[0].translate(-menus[0].getBounds().getLeft(), 0);
-		menus[1].translate(Screen.w - menus[1].getBounds().getRight(), 0);
-		if (newSel == 0) {
-			if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
-				menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
-		} else if (newSel == 1) {
-			if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
-				menus[0].translate(-(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding), 0);
-		}
+		if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
+			menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
 	}
 
 	/**
 	 * Reloading the entries to refresh the current pack list.
 	 */
 	private void reloadEntries() {
-		entries0.clear(); // First list: unloaded.
-		for (ResourcePack pack : resourcePacks) { // First list: all available resource packs.
-			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
+		// Entries will hold selectable resource pack entries,
+		// toggleIndicators just indicate whether a pack is enabled
+		entries.clear();
+		toggleIndicators.clear();
+		for (ResourcePack pack : resourcePacks) { // List all available resource packs
+			entries.add(new SelectEntry(pack.name, () -> { pack.toggle(); changed = true; }, false));
+			toggleIndicators.add(new SelectEntry("✓", () -> {}, false) {
 				@Override
-				public int getColor(boolean isSelected) {
-					if (selection == 1) return SelectEntry.COL_UNSLCT;
-					return super.getColor(isSelected);
+				public String toString() {
+					if(pack.isEnabled()) return super.toString();
+					else return "";
 				}
-			});
-		}
 
-		entries1.clear(); // Second list: to be loaded.
-		for (ResourcePack pack : loadedPacks) { // Second List: loaded resource packs.
-			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
-					if (selection == 0) return SelectEntry.COL_UNSLCT;
-					return super.getColor(isSelected);
+					if(pack == defaultPack) return COL_UNSLCT;
+					else return COL_SLCT;
 				}
 			});
+			toggleIndicators.get(toggleIndicators.size()-1).setSelectable(false);
 		}
+		entries.get(toggleIndicators.size()-1).setSelectable(false);
 	}
 
 	/**
@@ -247,10 +232,8 @@ public class ResourcePackDisplay extends Display {
 	private void refreshEntries() {
 		reloadEntries();
 		Menu[] newMenus = new Menu[] {
-			builder0.setEntries(entries0)
-				.createMenu(),
-			builder1.setEntries(entries1)
-				.createMenu()
+			indicatorsBuilder.setEntries(toggleIndicators).createMenu(),
+			builder.setEntries(entries).createMenu()
 		};
 
 		// Reapplying selections.
@@ -327,7 +310,7 @@ public class ResourcePackDisplay extends Display {
 
 	@Override
 	public void onExit() {
-		resourcePacks.clear(); // Releases unloaded packs.
+		releaseUnloadedPacks();
 		fileWatcher.close(); // Removes watcher.
 		new Save();
 		if (changed) reloadResources();
@@ -336,58 +319,35 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getMappedKey("shift+cursor-right").isClicked()) { // Move the selected pack to the second list.
-			if (selection == 0 && resourcePacks.size() > 0) {
-				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
+		if (input.getMappedKey("cursor-right").isClicked()) { // Move the selected pack down.
+			if (menus[1].getSelection() < resourcePacks.size() - 2) { // Only if it has space to move down (and stay above default)
+				int i = menus[1].getSelection();
+				ResourcePack swap = resourcePacks.get(i + 1);
+				resourcePacks.set(i + 1, resourcePacks.get(i));
+				resourcePacks.set(i, swap);
+				menus[1].setSelection(i + 1);
 				changed = true;
 				refreshEntries();
 				Sound.play("select");
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-left").isClicked()) { // Move the selected pack to the first list.
-			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
-				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
+		} else if (input.getMappedKey("cursor-left").isClicked()) { // Move the selected pack up.
+			if (menus[1].getSelection() > 0 && resourcePacks.get(menus[1].getSelection()) != defaultPack) {
+				int i = menus[1].getSelection();
+				ResourcePack swap = resourcePacks.get(i - 1);
+				resourcePacks.set(i - 1, resourcePacks.get(i));
+				resourcePacks.set(i, swap);
+				menus[1].setSelection(i - 1);
 				changed = true;
 				refreshEntries();
 				Sound.play("select");
 			}
 
 			return;
-		} else if (input.getMappedKey("shift+cursor-up").isClicked()) { // Move up the selected pack in the second list.
-			if (selection == 1 && menus[1].getSelection() > 0) {
-				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
-				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
-				changed = true;
-				refreshEntries();
-				Sound.play("select");
-			}
-
-			return;
-		} else if (input.getMappedKey("shift+cursor-down").isClicked()) { // Move down the selected pack in the second list.
-			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
-				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
-				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
-				changed = true;
-				refreshEntries();
-				Sound.play("select");
-			}
-
-			return;
-		} else if (input.getMappedKey("cursor-right").isClicked()) { // Move cursor to the second list.
-			if (selection == 0) {
-				Sound.play("select");
-				onSelectionChange(0, 1);
-			}
-
-			return;
-		} else if (input.getMappedKey("cursor-left").isClicked()) { // Move cursor to the first list.
-			if (selection == 1) {
-				Sound.play("select");
-				onSelectionChange(1, 0);
-			}
-
-			return;
+		} else if (input.getMappedKey("menu").isClicked()) {
+			ResourcePack pack = resourcePacks.get(menus[1].getSelection());
+			Game.setDisplay(new PopupDisplay(null, pack.name, pack.description));
 		}
 
 		super.tick(input);
@@ -402,15 +362,15 @@ public class ResourcePackDisplay extends Display {
 
 		// Info text at the bottom.
 		if (Game.input.anyControllerConnected())
-			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 33, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
+			Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.keyboard_needed"), screen, Screen.h - 41, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-up"), Game.input.getMapping("cursor-down")), screen, Screen.h - 33, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.reorder", Game.input.getMapping("cursor-left"), Game.input.getMapping("cursor-right")), screen, Screen.h - 25, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("select")), screen, Screen.h - 17, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.info", Game.input.getMapping("menu")), screen, Screen.h - 9, Color.DARK_GRAY);
 
-		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
-		if (packs.size() > 0) { // If there is any pack that can be selected.
+		if (resourcePacks.size() > 0) { // If there is any pack that can be selected.
 			@SuppressWarnings("resource")
-			MinicraftImage logo = packs.get(menus[selection].getSelection()).logo;
+			MinicraftImage logo = resourcePacks.get(menus[1].getSelection()).logo;
 			int h = logo.height / 8;
 			int w = logo.width / 8;
 			int xo = (Screen.w - logo.width) / 2;
@@ -439,6 +399,8 @@ public class ResourcePackDisplay extends Display {
 		private final String name; // The name of the pack.
 		private final String description; // The description of the pack.
 		private MinicraftImage logo; // The logo of the pack.
+
+		private boolean enabled = false, locked = false;
 
 		private boolean opened = false; // If the zip file stream is opened.
 		private ZipFile zipFile = null; // The zip file stream.
@@ -485,6 +447,20 @@ public class ResourcePackDisplay extends Display {
 					}
 				} else logo = defaultLogo;
 			}
+		}
+
+		private boolean isEnabled() {
+			return enabled;
+		}
+
+		private void lock() { locked = true; }
+		private void enable() {
+			if(locked) return;
+			enabled = true;
+		}
+		private void toggle() {
+			if(locked) return;
+			enabled = !enabled;
 		}
 
 		/**
@@ -597,26 +573,23 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		ArrayList<URL> urls = new ArrayList<>();
+		urls.add(defaultPack.packRoot); // Add default pack first
+
+		// Add already recognized resourcePacks
+		for (ResourcePack pack : resourcePacks) {
+			if (!urls.contains(pack.packRoot)) {
+				urls.add(pack.packRoot);
+			}
+		}
+
 		// Read and add the .zip file to the resource pack list. Only accept files ending with .zip or directory.
 		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) -> name.endsWith(".zip")))) {
 			try {
-				urls.add(file.toPath().toUri().toURL());
+				URL url = file.toPath().toUri().toURL();
+				if(!urls.contains(url))
+					urls.add(url);
 			} catch (MalformedURLException e) {
 				CrashHandler.errorHandle(e);
-			}
-		}
-
-		// Adding all unadded packs for refreshing.
-		URL theURL;
-		for (ResourcePack pack : resourcePacks) {
-			if (!urls.contains(theURL = pack.packRoot)) {
-				urls.add(theURL);
-			}
-		}
-
-		for (ResourcePack pack : loadedPacks) {
-			if (pack == defaultPack && !urls.contains(theURL = pack.packRoot)) {
-				urls.add(theURL);
 			}
 		}
 
@@ -635,12 +608,6 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		for (ResourcePack pack : loadedPacks) {
-			if (pack.packRoot.equals(url)) {
-				return pack;
-			}
-		}
-
 		return null;
 	}
 
@@ -649,22 +616,23 @@ public class ResourcePackDisplay extends Display {
 	 * @param urls The packs' url to be refreshed.
 	 */
 	private static void refreshResourcePacks(List<URL> urls) {
+		// Reverse from entry-order (default last) to priority order (default first)
+		Collections.reverse(resourcePacks);
+
+		Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Refreshing from " + urls);
 		for (URL url : urls) {
 			ResourcePack pack = findPackByURL(url);
-			if (pack != null) { // Refresh the current.
+			if (pack != null) { // Re-check and refresh if it exists
 				try {
 					if (new File(url.toURI()).exists())
 						pack.refreshPack();
-					else { // Remove if not exist.
+					else // Remove if it doesn't exist
 						resourcePacks.remove(pack);
-						loadedPacks.remove(pack);
-					}
 				} catch (URISyntaxException e) {
 					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Resource pack URL not found.");
 					resourcePacks.remove(pack);
-					loadedPacks.remove(pack);
 				}
-			} else { // Add new pack as it should be exist.
+			} else { // Add as a new pack
 				pack = loadPackMetadata(url);
 				if (pack != null) {
 					resourcePacks.add(pack);
@@ -672,14 +640,19 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
+		// Reverse from priority-order (default first) to entry order (default last)
+		Collections.reverse(resourcePacks);
 	}
 
 	/**
 	 * Releasing the unloaded packs.
 	 */
 	public static void releaseUnloadedPacks() {
-		resourcePacks.clear(); // Releases unloaded packs.
+		for(int i = 0; i < resourcePacks.size(); i++) {
+			if(!resourcePacks.get(i).isEnabled()) {
+				resourcePacks.remove(i--); // Releases unloaded packs.
+			}
+		}
 	}
 
 	/**
@@ -688,11 +661,10 @@ public class ResourcePackDisplay extends Display {
 	 */
 	public static void loadResourcePacks(String[] names) {
 		for (String name : names) {
-			for (ResourcePack pack : new ArrayList<>(resourcePacks)) {
+			for (ResourcePack pack : resourcePacks) {
 				try {
 					if (Paths.get(pack.packRoot.toURI()).equals(FOLDER_LOCATION.toPath().resolve(name))) {
-						resourcePacks.remove(pack);
-						loadedPacks.add(loadedPacks.indexOf(defaultPack), pack);
+						pack.enable();
 					}
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
@@ -708,8 +680,8 @@ public class ResourcePackDisplay extends Display {
 	 */
 	public static ArrayList<String> getLoadedPacks() {
 		ArrayList<String> packs = new ArrayList<>();
-		for (ResourcePack pack : loadedPacks) {
-			if (pack != defaultPack) {
+		for (ResourcePack pack : resourcePacks) {
+			if (pack != defaultPack && pack.isEnabled()) {
 				try {
 					packs.add(new File(pack.packRoot.toURI()).getName());
 				} catch (URISyntaxException e) {
@@ -726,8 +698,8 @@ public class ResourcePackDisplay extends Display {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void reloadResources() {
-		loadQuery.clear();
-		loadQuery.addAll(loadedPacks);
+		ArrayList<ResourcePack> loadQuery = new ArrayList<>();
+		loadQuery.addAll(resourcePacks);
 		Collections.reverse(loadQuery);
 
 		// Clear all previously loaded resources.
