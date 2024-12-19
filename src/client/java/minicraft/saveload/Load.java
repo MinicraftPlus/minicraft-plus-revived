@@ -883,7 +883,7 @@ public class Load {
 			data[idx] = Tiles.get(matcher.group(1)).id;
 		} else {
 			tiles[idx] = Tiles.get(tileName).id;
-			if (worldVer.compareTo(new Version("2.3.0-dev1")) <= 0 && tileName.equalsIgnoreCase("FLOWER")) {
+			if (worldVer.compareTo(new Version("2.3.0-dev1")) < 0 && tileName.equalsIgnoreCase("FLOWER")) {
 				data[idx] = 0;
 			} else {
 				data[idx] = Short.parseShort(tileData);
