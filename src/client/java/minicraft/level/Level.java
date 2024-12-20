@@ -34,6 +34,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.level.tile.TreeTile;
+import minicraft.level.tile.TreeTile.TreeType;
 import minicraft.util.Logging;
 import minicraft.util.MyUtils;
 
@@ -426,6 +427,16 @@ public class Level {
 			trySpawn();
 	}
 
+	public void loadChunksAround(int tileX, int tileY) {
+		// Update all chunks up to 3 chunks away from the player to make sure they are loaded
+		int cX = Math.floorDiv(tileX, ChunkManager.CHUNK_SIZE), cY = Math.floorDiv(tileY, ChunkManager.CHUNK_SIZE);
+		for(int x = cX - 3; x <= cX + 3; x++)
+			for(int y = cY - 3; y <= cY + 3; y++) {
+				if(chunkManager.getChunkStage(x, y) == 0)
+					LevelGen.generateChunk(chunkManager, x, y, depth, seed);
+			}
+	}
+
 	public boolean entityNearPlayer(Entity entity) {
 		for (Player player : players) {
 			if (Math.abs(player.x - entity.x) < 128 && Math.abs(player.y - entity.y) < 76) {
@@ -549,6 +560,16 @@ public class Level {
 			else
 				remove(e);
 		}
+	}
+
+	public TreeTile.TreeType getTreeType(int x, int y) {
+		if(x >= 0 && x < w && y >= 0 && y < h)
+			return treeTypes[x + y * w];
+		LevelGen noise1 = new LevelGen(1, 1, 32);
+		LevelGen noise2 = new LevelGen(1, 1, 32);
+
+		int idx = (int)Math.round(Math.abs(noise1.values[0] - noise2.values[0]) * 3 - 2);
+		return (idx >= TreeType.values().length || idx < 0) ? TreeType.OAK : TreeType.values()[idx];
 	}
 
 	public Tile getTile(int x, int y) {

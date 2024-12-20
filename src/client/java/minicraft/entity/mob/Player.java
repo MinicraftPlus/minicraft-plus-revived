@@ -286,6 +286,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			return;
 		}
 
+		// Ensure chunks generated around player
+		level.loadChunksAround(x >> 4, y >> 4);
+
 		super.tick(); // Ticks Mob.java
 
 		tickMultiplier();

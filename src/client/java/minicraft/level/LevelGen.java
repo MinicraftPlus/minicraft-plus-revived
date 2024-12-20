@@ -116,6 +116,20 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
+	static void generateChunk(ChunkManager chunkManager, int x, int y, int level, long seed) {
+		worldSeed = seed;
+
+		if(level == 1)
+			generateSkyChunk(chunkManager, x, y);
+		if(level == 0)
+			generateTopChunk(chunkManager, x, y);
+		if(level == -4)
+			generateDungeonChunk(chunkManager, x, y);
+		if(level > -4 && level < 0)
+			generateUndergroundChunk(chunkManager, x, y, -level);
+		chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+	}
+
 	static ChunkManager createAndValidateMap(int w, int h, int level, long seed) {
 		worldSeed = seed;
 
@@ -140,6 +154,10 @@ public class LevelGen {
 
 			int[] count = new int[256];
 
+			for(int x = 0; x < w / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < h / ChunkManager.CHUNK_SIZE; y++)
+					result.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+
 			for(int x = 0; x < w; x++)
 				for(int y = 0; y < h; y++)
 					count[result.getTile(x, y).id & 0xffff]++;
@@ -161,6 +179,10 @@ public class LevelGen {
 		random.setSeed(worldSeed);
 		do {
 			ChunkManager result = createUndergroundMap(w, h, depth);
+
+			for(int x = 0; x < w / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < h / ChunkManager.CHUNK_SIZE; y++)
+					result.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
 
 			int[] count = new int[256];
 
@@ -186,6 +208,10 @@ public class LevelGen {
 		do {
 			ChunkManager result = createDungeon(w, h);
 
+			for(int x = 0; x < w / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < h / ChunkManager.CHUNK_SIZE; y++)
+					result.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+
 			int[] count = new int[256];
 
 			for(int x = 0; x < w; x++)
@@ -206,6 +232,10 @@ public class LevelGen {
 		do {
 			ChunkManager result = createSkyMap(w, h);
 
+			for(int x = 0; x < w / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < h / ChunkManager.CHUNK_SIZE; y++)
+					result.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+
 			int[] count = new int[256];
 
 			for(int x = 0; x < w; x++)
@@ -218,6 +248,250 @@ public class LevelGen {
 
 			return result;
 		} while (true);
+	}
+
+	private static void generateTopChunk(ChunkManager map, int chunkX, int chunkY) {
+		random.setSeed(worldSeed);
+
+		// creates a bunch of value maps, some with small size...
+		LevelGen mnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen mnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen mnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+
+		// ...and some with larger size.
+		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 32);
+		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 32);
+
+		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
+		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++)
+			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
+				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+				double mval = Math.abs(mnoise1.values[i] - mnoise2.values[i]);
+				mval = Math.abs(mval - mnoise3.values[i]) * 3 - 2;
+
+				// This calculates a sort of distance based on the current coordinate.
+				double dist = 0;
+				val += 1 - dist * 20;
+
+				switch ((String) Settings.get("Type")) {
+					case "minicraft.settings.type.island":
+
+						if (val < -0.5) {
+							if (Settings.get("Theme").equals("minicraft.settings.theme.hell"))
+								map.setTile(x, y, Tiles.get("lava"), 0);
+							else
+								map.setTile(x, y, Tiles.get("water"), 0);
+						} else if (val > 0.5 && mval < -1.5) {
+							map.setTile(x, y, Tiles.get("rock"), 0);
+						} else {
+							map.setTile(x, y, Tiles.get("grass"), 0);
+						}
+
+						break;
+					case "minicraft.settings.type.box":
+
+						if (val < -1.5) {
+							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+								map.setTile(x, y, Tiles.get("lava"), 0);
+							} else {
+								map.setTile(x, y, Tiles.get("water"), 0);
+							}
+						} else if (val > 0.5 && mval < -1.5) {
+							map.setTile(x, y, Tiles.get("rock"), 0);
+						} else {
+							map.setTile(x, y, Tiles.get("grass"), 0);
+						}
+
+						break;
+					case "minicraft.settings.type.mountain":
+
+						if (val < -0.4) {
+							map.setTile(x, y, Tiles.get("grass"), 0);
+						} else if (val > 0.5 && mval < -1.5) {
+							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+								map.setTile(x, y, Tiles.get("lava"), 0);
+							} else {
+								map.setTile(x, y, Tiles.get("water"), 0);
+							}
+						} else {
+							map.setTile(x, y, Tiles.get("rock"), 0);
+						}
+						break;
+
+					case "minicraft.settings.type.irregular":
+						if (val < -0.5 && mval < -0.5) {
+							if (Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+								map.setTile(x, y, Tiles.get("lava"), 0);
+							}
+							if (!Settings.get("Theme").equals("minicraft.settings.theme.hell")) {
+								map.setTile(x, y, Tiles.get("water"), 0);
+							}
+						} else if (val > 0.5 && mval < -1.5) {
+							map.setTile(x, y, Tiles.get("rock"), 0);
+						} else {
+							map.setTile(x, y, Tiles.get("grass"), 0);
+						}
+						break;
+				}
+
+			}
+
+		if (Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 200; i++) {
+				int xs = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int ys = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int k = 0; k < 10; k++) {
+					int x = xs + random.nextInt(21) - 10;
+					int y = ys + random.nextInt(21) - 10;
+					for (int j = 0; j < 100; j++) {
+						int xo = x + random.nextInt(5) - random.nextInt(5);
+						int yo = y + random.nextInt(5) - random.nextInt(5);
+						for (int yy = yo - 1; yy <= yo + 1; yy++)
+							for (int xx = xo - 1; xx <= xo + 1; xx++)
+								if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+									if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+										map.setTile(xx + tileX, yy + tileY, Tiles.get("sand"), 0);
+									}
+								}
+					}
+				}
+			}
+		}
+
+		if (!Settings.get("Theme").equals("minicraft.settings.theme.desert")) {
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 2800; i++) {
+				int xs = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int ys = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int k = 0; k < 10; k++) {
+					int x = xs + random.nextInt(21) - 10;
+					int y = ys + random.nextInt(21) - 10;
+					for (int j = 0; j < 100; j++) {
+						int xo = x + random.nextInt(5) - random.nextInt(5);
+						int yo = y + random.nextInt(5) - random.nextInt(5);
+						for (int yy = yo - 1; yy <= yo + 1; yy++)
+							for (int xx = xo - 1; xx <= xo + 1; xx++)
+								if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+									if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+										map.setTile(xx + tileX, yy + tileY, Tiles.get("sand"), 0);
+									}
+								}
+					}
+				}
+			}
+		}
+
+		if (Settings.get("Theme").equals("minicraft.settings.theme.forest")) {
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 200; i++) {
+				int x = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int j = 0; j < 200; j++) {
+					int xx = x + random.nextInt(15) - random.nextInt(15);
+					int yy = y + random.nextInt(15) - random.nextInt(15);
+					if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+						if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+							map.setTile(xx + tileX, yy + tileY, Tiles.get("tree"), 0);
+						}
+					}
+				}
+			}
+		}
+		if (!Settings.get("Theme").equals("minicraft.settings.theme.forest") && !Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 1200; i++) {
+				int x = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int j = 0; j < 200; j++) {
+					int xx = x + random.nextInt(15) - random.nextInt(15);
+					int yy = y + random.nextInt(15) - random.nextInt(15);
+					if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+						if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+							map.setTile(xx + tileX, yy + tileY, Tiles.get("tree"), 0);
+						}
+					}
+				}
+			}
+		}
+
+		if (Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 2800; i++) {
+				int x = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int j = 0; j < 200; j++) {
+					int xx = x + random.nextInt(15) - random.nextInt(15);
+					int yy = y + random.nextInt(15) - random.nextInt(15);
+					if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+						if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+							map.setTile(xx + tileX, yy + tileY, Tiles.get("tree"), 0);
+						}
+					}
+				}
+			}
+		}
+		if (!Settings.get("Theme").equals("minicraft.settings.theme.plain")) {
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 400; i++) {
+				int x = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int j = 0; j < 200; j++) {
+					int xx = x + random.nextInt(15) - random.nextInt(15);
+					int yy = y + random.nextInt(15) - random.nextInt(15);
+					if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+						if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+							map.setTile(xx + tileX, yy + tileY, Tiles.get("tree"), 0);
+						}
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 400; i++) {
+			int x = random.nextInt(ChunkManager.CHUNK_SIZE);
+			int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+			int col = random.nextInt(4) * random.nextInt(4);
+			for (int j = 0; j < 30; j++) {
+				int xx = x + random.nextInt(5) - random.nextInt(5);
+				int yy = y + random.nextInt(5) - random.nextInt(5);
+				if (xx >= 0 && yy >= 0 && xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+					if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("grass")) {
+						map.setTile(xx + tileX, yy + tileY, Tiles.get("flower"), col + random.nextInt(3)); // Data determines what the flower is
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 100; i++) {
+			int xx = random.nextInt(ChunkManager.CHUNK_SIZE);
+			int yy = random.nextInt(ChunkManager.CHUNK_SIZE);
+			if (xx < ChunkManager.CHUNK_SIZE && yy < ChunkManager.CHUNK_SIZE) {
+				if (map.getTile(xx + tileX, yy + tileY) == Tiles.get("sand")) {
+					map.setTile(xx + tileX, yy + tileY, Tiles.get("cactus"), 0);
+				}
+			}
+		}
+
+		int count = 0;
+
+		stairsLoop:
+		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 100; i++) { // Loops a certain number of times, more for bigger world sizes.
+			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+
+			// The first loop, which checks to make sure that a new stairs tile will be completely surrounded by rock.
+			for (int yy = y - 1; yy <= y + 1; yy++)
+				for (int xx = x - 1; xx <= x + 1; xx++)
+					if (map.getTile(xx, yy) != Tiles.get("rock"))
+						continue stairsLoop;
+
+			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
+			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(ChunkManager.CHUNK_SIZE - 1, y + stairRadius); yy++)
+				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(ChunkManager.CHUNK_SIZE - 1, x + stairRadius); xx++)
+					if (map.getTile(xx, yy) == Tiles.get("Stairs Down"))
+						continue stairsLoop;
+
+			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
+
+			count++;
+			if (count >= ChunkManager.CHUNK_SIZE / 21) break;
+		}
 	}
 
 	private static ChunkManager createTopMap(int w, int h) { // Create surface map
@@ -448,8 +722,6 @@ public class LevelGen {
 
 		int count = 0;
 
-		//if (Game.debug) System.out.println("Generating stairs for surface level...");
-
 		stairsLoop:
 		for (int i = 0; i < w * h / 100; i++) { // Loops a certain number of times, more for bigger world sizes.
 			int x = random.nextInt(w - 2) + 1;
@@ -479,6 +751,60 @@ public class LevelGen {
 		//System.out.println(average);
 
 		return map;
+	}
+
+	private static void generateDungeonChunk(ChunkManager map, int chunkX, int chunkY) {
+		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 10);
+		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 10);
+
+		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
+		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++) {
+			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
+				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+
+				double dist = 0;
+				val = -val * 1 - 2.2;
+				val += 1 - dist * 2;
+
+				if (val < -0.05) {
+					map.setTile(x, y, Tiles.get("Obsidian Wall"), 0);
+				} else if (val >= -0.05 && val < -0.03) {
+					map.setTile(x, y, Tiles.get("Lava"), 0);
+				} else {
+					if (random.nextInt(2) == 1) {
+						if (random.nextInt(2) == 1) {
+							map.setTile(x, y, Tiles.get("Obsidian"), 0);
+						} else {
+							map.setTile(x, y, Tiles.get("Raw Obsidian"), 0);
+						}
+					} else {
+						map.setTile(x, y, Tiles.get("dirt"), 0);
+					}
+				}
+			}
+		}
+
+		decorLoop:
+		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 450; i++) {
+			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+
+			for (int yy = y - 1; yy <= y + 1; yy++) {
+				for (int xx = x - 1; xx <= x + 1; xx++) {
+					if (map.getTile(xx, yy) != Tiles.get("Obsidian"))
+						continue decorLoop;
+				}
+			}
+
+			if (x > 8 && y > 8) {
+				if (x < ChunkManager.CHUNK_SIZE - 8 && y < ChunkManager.CHUNK_SIZE - 8) {
+					if (random.nextInt(2) == 0)
+						Structure.ornateLavaPool.draw(map, x, y);
+				}
+			}
+		}
 	}
 
 	private static ChunkManager createDungeon(int w, int h) {
@@ -543,6 +869,104 @@ public class LevelGen {
 		return map;
 	}
 
+	private static void generateUndergroundChunk(ChunkManager map, int chunkX, int chunkY, int depth) {
+		LevelGen mnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen mnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen mnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+
+		LevelGen nnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen nnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen nnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+
+		LevelGen wnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen wnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen wnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+
+		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 32);
+		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 32);
+
+		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
+		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++) {
+			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
+				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+
+				double mval = Math.abs(mnoise1.values[i] - mnoise2.values[i]);
+				mval = Math.abs(mval - mnoise3.values[i]) * 3 - 2;
+
+				double nval = Math.abs(nnoise1.values[i] - nnoise2.values[i]);
+				nval = Math.abs(nval - nnoise3.values[i]) * 3 - 2;
+
+				double wval = Math.abs(wnoise1.values[i] - wnoise2.values[i]);
+				wval = Math.abs(wval - wnoise3.values[i]) * 3 - 2;
+
+				double dist = 0;
+				dist = Math.pow(dist, 8);
+				val += 1 - dist * 20;
+
+				if (val > -1 && wval < -1 + (depth) / 2.0 * 3) {
+					if (depth == 3) map.setTile(x, y, Tiles.get("lava"), 0);
+					else if (depth == 1) map.setTile(x, y, Tiles.get("dirt"), 0);
+					else map.setTile(x, y, Tiles.get("water"), 0);
+
+				} else if (val > -2 && (mval < -1.7 || nval < -1.4)) {
+					map.setTile(x, y, Tiles.get("dirt"), 0);
+
+				} else {
+					map.setTile(x, y, Tiles.get("rock"), 0);
+				}
+			}
+		}
+		{
+			int r = 2;
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 400; i++) {
+				int x = random.nextInt(ChunkManager.CHUNK_SIZE);
+				int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+				for (int j = 0; j < 30; j++) {
+					int xx = x + random.nextInt(5) - random.nextInt(5);
+					int yy = y + random.nextInt(5) - random.nextInt(5);
+					if (xx >= r && yy >= r && xx < ChunkManager.CHUNK_SIZE - r && yy < ChunkManager.CHUNK_SIZE - r) {
+						if (map.getTile(xx, yy) == Tiles.get("rock")) {
+							map.setTile(xx, yy, Tiles.get((short)(Tiles.get("iron Ore").id + depth - 1)), 0);
+						}
+					}
+				}
+				for (int j = 0; j < 10; j++) {
+					int xx = x + random.nextInt(3) - random.nextInt(2);
+					int yy = y + random.nextInt(3) - random.nextInt(2);
+					if (xx >= r && yy >= r && xx < ChunkManager.CHUNK_SIZE - r && yy < ChunkManager.CHUNK_SIZE - r) {
+						if (map.getTile(xx, yy) == Tiles.get("rock")) {
+							map.setTile(xx, yy, Tiles.get("Lapis"), 0);
+						}
+					}
+				}
+			}
+		}
+
+		if (depth < 3) {
+			int count = 0;
+			stairsLoop:
+			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 100; i++) {
+				int x = random.nextInt(ChunkManager.CHUNK_SIZE - 20) + 10;
+				int y = random.nextInt(ChunkManager.CHUNK_SIZE - 20) + 10;
+
+				for (int yy = y - 1; yy <= y + 1; yy++)
+					for (int xx = x - 1; xx <= x + 1; xx++)
+						if (map.getTile(xx, yy) != Tiles.get("rock")) continue stairsLoop;
+
+				// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
+				for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(ChunkManager.CHUNK_SIZE - 1, y + stairRadius); yy++)
+					for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(ChunkManager.CHUNK_SIZE - 1, x + stairRadius); xx++)
+						if (map.getTile(xx, yy) == Tiles.get("Stairs Down")) continue stairsLoop;
+
+				map.setTile(x, y, Tiles.get("Stairs Down"), 0);
+				count++;
+				if (count >= ChunkManager.CHUNK_SIZE / 32) break;
+			}
+		}
+
+	}
 
 	private static ChunkManager createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
@@ -675,6 +1099,66 @@ public class LevelGen {
 		}
 
 		return map;
+	}
+
+	private static void generateSkyChunk(ChunkManager map, int chunkX, int chunkY) {
+		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 8);
+		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 8);
+
+		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
+		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++) {
+			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
+				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+
+				double dist = 0;
+				val = -val * 1 - 2.2;
+				val += 1 - dist * 20;
+
+				if (val < -0.25) {
+					map.setTile(x, y, Tiles.get("Infinite Fall"), 0);
+				} else {
+					map.setTile(x, y, Tiles.get("cloud"), 0);
+				}
+			}
+		}
+
+		stairsLoop:
+		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 50; i++) {
+			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+
+			for (int yy = y - 1; yy <= y + 1; yy++) {
+				for (int xx = x - 1; xx <= x + 1; xx++) {
+					if (map.getTile(xx, yy) == Tiles.get("Infinite Fall")) continue stairsLoop;
+				}
+			}
+
+			map.setTile(x, y, Tiles.get("Cloud Cactus"), 0);
+		}
+
+		int count = 0;
+		stairsLoop:
+		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE; i++) {
+			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+
+			for (int yy = y - 1; yy <= y + 1; yy++) {
+				for (int xx = x - 1; xx <= x + 1; xx++) {
+					if (map.getTile(xx, yy) != Tiles.get("cloud")) continue stairsLoop;
+				}
+			}
+
+			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
+			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(ChunkManager.CHUNK_SIZE - 1, y + stairRadius); yy++)
+				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(ChunkManager.CHUNK_SIZE - 1, x + stairRadius); xx++)
+					if (map.getTile(xx, yy) == Tiles.get("Stairs Down")) continue stairsLoop;
+
+			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
+			count++;
+			if (count >= ChunkManager.CHUNK_SIZE / 64) break;
+		}
 	}
 
 	private static ChunkManager createSkyMap(int w, int h) {

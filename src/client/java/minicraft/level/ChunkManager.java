@@ -10,6 +10,8 @@ public class ChunkManager {
 
 	public static final int CHUNK_SIZE = 64;
 
+	public static final int CHUNK_STAGE_DONE = 4;
+
 	/**
 	 * A data structure where
 	 * [x][y] input points to CHUNK_SIZE x CHUNK_SIZE list of TileDat
@@ -28,9 +30,8 @@ public class ChunkManager {
 		// If [cX][cY] are not keys in chunks, put them there
 		if(!chunks.containsKey(cX))
 			chunks.put(cX, new HashMap<>());
-		if(!chunks.get(cX).containsKey(cY)) {
+		if(!chunks.get(cX).containsKey(cY))
 			chunks.get(cX).put(cY, new Chunk());
-		}
 		return chunks.get(cX).get(cY);
 	}
 
@@ -58,8 +59,25 @@ public class ChunkManager {
 		getChunk(x, y).getTileDat(x, y).data = (short) val;
 	}
 
+	public int getChunkStage(int chunkX, int chunkY) {
+		// If [cX][cY] are not keys in chunks, stage must be 0
+		if(!chunks.containsKey(chunkX) || !chunks.get(chunkX).containsKey(chunkY))
+			return 0;
+		return chunks.get(chunkX).get(chunkY).stage;
+	}
+
+	public void setChunkStage(int chunkX, int chunkY, int stage) {
+		// If [chunkX][chunkY] are not keys in chunks, put them there
+		if(!chunks.containsKey(chunkX))
+			chunks.put(chunkX, new HashMap<>());
+		if(!chunks.get(chunkX).containsKey(chunkY))
+			chunks.get(chunkX).put(chunkY, new Chunk());
+		chunks.get(chunkX).get(chunkY).stage = (short)stage;
+	}
+
 	private static class Chunk {
 		protected TileDat[] tiles;
+		protected short stage = 0;
 		public Chunk() {
 			tiles = new TileDat[CHUNK_SIZE * CHUNK_SIZE];
 		}
@@ -74,11 +92,6 @@ public class ChunkManager {
 
 	private static class TileDat {
 		protected short id, data;
-
-		public TileDat(short id, short data) {
-			this.id = id;
-			this.data = data;
-		}
 
 		public TileDat(short id) {
 			this.id = id;

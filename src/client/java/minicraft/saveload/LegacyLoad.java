@@ -236,6 +236,10 @@ public class LegacyLoad {
 				}
 			}
 
+			for(int x = 0; x < lvlw / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < lvlh / ChunkManager.CHUNK_SIZE; y++)
+					map.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+
 			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
 			World.levels[l].chunkManager = map;
 		}

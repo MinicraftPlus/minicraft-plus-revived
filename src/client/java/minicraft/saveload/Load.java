@@ -791,6 +791,9 @@ public class Load {
 					curLevel.getTile(x, y).onTileSet(curLevel, x, y);
 				}
 			}
+			for(int x = 0; x < curLevel.w / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < curLevel.h / ChunkManager.CHUNK_SIZE; y++)
+					curLevel.chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
 
 			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
