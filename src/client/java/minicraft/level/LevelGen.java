@@ -230,7 +230,7 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(w, h, 32);
 		LevelGen noise2 = new LevelGen(w, h, 32);
 
-		ChunkManager map = new ChunkManager(w, h);
+		ChunkManager map = new ChunkManager();
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -485,7 +485,7 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(w, h, 10);
 		LevelGen noise2 = new LevelGen(w, h, 10);
 
-		ChunkManager map = new ChunkManager(w, h);
+		ChunkManager map = new ChunkManager();
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -560,7 +560,7 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(w, h, 32);
 		LevelGen noise2 = new LevelGen(w, h, 32);
 
-		ChunkManager map = new ChunkManager(w, h);
+		ChunkManager map = new ChunkManager();
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -681,7 +681,7 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 
-		ChunkManager map = new ChunkManager(w, h);
+		ChunkManager map = new ChunkManager();
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {

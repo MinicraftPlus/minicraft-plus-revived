@@ -717,7 +717,7 @@ public class Load {
 			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
 			Settings.set("size", lvlw);
 
-			ChunkManager map = new ChunkManager(lvlw, lvlh);
+			ChunkManager map = new ChunkManager();
 
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {

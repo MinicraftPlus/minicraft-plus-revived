@@ -185,7 +185,7 @@ public class Level {
 		updateMobCap();
 
 		if (!makeWorld) {
-			chunkManager = new ChunkManager(w, h);
+			chunkManager = new ChunkManager();
 			return;
 		}
 

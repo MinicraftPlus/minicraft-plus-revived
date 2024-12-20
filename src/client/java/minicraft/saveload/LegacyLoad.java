@@ -225,7 +225,7 @@ public class LegacyLoad {
 			int lvldepth = Integer.parseInt(data.get(2));
 			Settings.set("size", lvlw);
 
-			ChunkManager map = new ChunkManager(lvlw, lvlh);
+			ChunkManager map = new ChunkManager();
 
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
