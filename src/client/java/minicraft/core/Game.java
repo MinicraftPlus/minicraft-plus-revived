@@ -10,8 +10,10 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
+import minicraft.screen.AppToast;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
+import minicraft.screen.Toast;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +32,9 @@ public class Game {
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
 
-	public static List<String> notifications = new ArrayList<>();
+	public static List<String> inGameNotifications = new ArrayList<>();
+	public static ArrayDeque<AppToast> inAppToasts = new ArrayDeque<>();
+	public static ArrayDeque<Toast> inGameToasts = new ArrayDeque<>(); // Canvas size is limited, so handled one by one
 
 	public static int MAX_FPS;
 

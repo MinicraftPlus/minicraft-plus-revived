@@ -154,7 +154,7 @@ public class TutorialDisplayHandler {
 		currentOngoingElement = null;
 		Settings.set("tutorials", false);
 		Logging.TUTORIAL.debug("Tutorial completed.");
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorials_completed"));
+		Game.inGameNotifications.add(Localization.getLocalized("minicraft.notification.tutorials_completed"));
 	}
 
 	private static void turnOffGuides() {

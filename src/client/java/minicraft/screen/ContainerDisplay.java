@@ -54,7 +54,6 @@ public class ContainerDisplay extends Display {
 
 		if (oldSel == newSel)
 			return; // this also serves as a protection against access to menus[0] when such may not exist.
-
 		int shift = 0;
 
 		if (newSel == 0) shift = padding - menus[0].getBounds().getLeft();

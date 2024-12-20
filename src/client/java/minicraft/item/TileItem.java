@@ -188,7 +188,7 @@ public class TileItem extends StackableItem {
 			}
 
 			if (note.length() > 0) {
-				Game.notifications.add(note);
+				Game.inGameNotifications.add(note);
 			}
 		}
 

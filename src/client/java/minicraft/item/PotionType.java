@@ -40,7 +40,7 @@ public enum PotionType {
 
 				if (playerDepth == 0) {
 					// player is in overworld
-					Game.notifications.add("You can't escape from here!");
+					Game.inGameNotifications.add("You can't escape from here!");
 					return false;
 				}
 

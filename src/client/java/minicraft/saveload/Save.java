@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
@@ -239,6 +240,7 @@ public class Save {
 		json.put("resourcePacks", new JSONArray(ResourcePackDisplay.getLoadedPacks()));
 		json.put("showquests", String.valueOf(Settings.get("showquests")));
 		json.put("hwa", String.valueOf(Settings.get("hwa")));
+		json.put("controllerEnabled", String.valueOf(Game.input.isControllerEnabled()));
 
 		// Save json
 		try {
