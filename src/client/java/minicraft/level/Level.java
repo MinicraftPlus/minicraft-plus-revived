@@ -563,10 +563,8 @@ public class Level {
 	}
 
 	public TreeTile.TreeType getTreeType(int x, int y) {
-		if(x >= 0 && x < w && y >= 0 && y < h)
-			return treeTypes[x + y * w];
-		LevelGen noise1 = new LevelGen(1, 1, 32);
-		LevelGen noise2 = new LevelGen(1, 1, 32);
+		LevelGen noise1 = new LevelGen(x, y, 1, 1, 32, -1);
+		LevelGen noise2 = new LevelGen(x, y, 1, 1, 32, -2);
 
 		int idx = (int)Math.round(Math.abs(noise1.values[0] - noise2.values[0]) * 3 - 2);
 		return (idx >= TreeType.values().length || idx < 0) ? TreeType.OAK : TreeType.values()[idx];

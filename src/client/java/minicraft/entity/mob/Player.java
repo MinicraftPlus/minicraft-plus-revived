@@ -655,7 +655,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			Point t = getInteractionTile();
 
 			// If the target coordinates are a valid tile.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			// if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 
 				// Get any entities (except dropped items and particles) on the tile.
 				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
@@ -682,7 +682,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						fishingTicks = maxFishingTicks;
 					}
 				}
-			}
+			// }
 			if (done) return; // Skip the rest if interaction was handled
 		}
 
@@ -695,10 +695,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			Point t = getInteractionTile();
 
 			// Check if tile is in bounds of the map.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			// if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
 				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
-			}
+			// }
 
 			if (used && activeItem instanceof ToolItem)
 				((ToolItem) activeItem).payDurability();
