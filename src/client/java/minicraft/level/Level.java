@@ -69,6 +69,7 @@ public class Level {
 	private final long seed; // The used seed that was used to generate the world
 
 	public ChunkManager chunkManager; // A collection of chunks with it's own interface
+	private Level parentLevel = null; // reference to parent level
 
 	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 
@@ -146,6 +147,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
+		this.parentLevel = parentLevel;
 		random = new Random(seed);
 		short[][] maps; // Multidimensional array (an array within a array), used for the map
 
@@ -431,10 +433,35 @@ public class Level {
 		// Update all chunks up to 3 chunks away from the player to make sure they are loaded
 		int cX = Math.floorDiv(tileX, ChunkManager.CHUNK_SIZE), cY = Math.floorDiv(tileY, ChunkManager.CHUNK_SIZE);
 		for(int x = cX - 3; x <= cX + 3; x++)
-			for(int y = cY - 3; y <= cY + 3; y++) {
-				if(chunkManager.getChunkStage(x, y) == 0)
-					LevelGen.generateChunk(chunkManager, x, y, depth, seed);
-			}
+			for(int y = cY - 3; y <= cY + 3; y++)
+				if(chunkManager.getChunkStage(x, y) != ChunkManager.CHUNK_STAGE_DONE)
+					loadChunk(x, y);
+	}
+
+	public void loadChunk(int x, int y) {
+		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_NO_STAIRS_UP && parentLevel != null) {
+			if(parentLevel.chunkManager.getChunkStage(x, y) == 0)
+				LevelGen.generateChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
+			int S = ChunkManager.CHUNK_SIZE;
+			for(int i = x * S; i < x * S + S; i++)
+				for(int j = y * S; j < y * S + S; j++) {
+					if (parentLevel.getTile(i, j) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
+						if (depth == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
+							Structure.dungeonGate.draw(this, i, j); // Te gate should not intersect with the boss room.
+							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
+						} else if (depth == 0) { // Surface
+							Logging.WORLD.trace("Setting tiles around " + i + "," + j + " to hard rock");
+							setAreaTiles(i, j, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
+						} else // Any other level, the up-stairs should have dirt on all sides.
+							setAreaTiles(i, j, 1, Tiles.get("dirt"), 0);
+
+						setTile(i, j, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
+					}
+				}
+			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+		}
+		if(chunkManager.getChunkStage(x, y) == 0)
+			LevelGen.generateChunk(chunkManager, x, y, depth, seed);
 	}
 
 	public boolean entityNearPlayer(Entity entity) {

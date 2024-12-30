@@ -10,6 +10,7 @@ public class ChunkManager {
 
 	public static final int CHUNK_SIZE = 64;
 
+	public static final int CHUNK_STAGE_NO_STAIRS_UP = 3;
 	public static final int CHUNK_STAGE_DONE = 4;
 
 	/**
