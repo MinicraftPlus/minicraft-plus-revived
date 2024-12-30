@@ -2,6 +2,7 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
@@ -20,7 +21,11 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -29,6 +34,8 @@ public class LevelGen {
 	public double[] values; // An array of doubles, used to help making noise for the map
 	private final int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
+
+	private static final int NOISE_LAYER_DIFF = 100;
 
 	/**
 	 * This creates noise to create random values for level generation
@@ -47,7 +54,7 @@ public class LevelGen {
 
 		for(int x = 0; x < w; x++)
 			for(int y = 0; y < h; y++) {
-				setSample(x, y, noise.noise3((x + xOffset) / (float)featureSize, (y + yOffset) / (float)featureSize, layer * featureSize));
+				setSample(x, y, noise.noise3((x + xOffset) / (float)featureSize, (y + yOffset) / (float)featureSize, layer * NOISE_LAYER_DIFF));
 			}
 	}
 
@@ -126,8 +133,9 @@ public class LevelGen {
 			if (count[Tiles.get("grass").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("tree").id & 0xffff] < 100) continue;
 
-			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 21)
-				continue; // Size 128 = 6 stairs min
+			// Will generate the most possible stairs in the world up to w/21, if it generates less than w/21, regenerating is not going to change that number
+			// if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 21)
+				// continue; // Size 128 = 6 stairs min
 
 			return result;
 
@@ -163,6 +171,7 @@ public class LevelGen {
 
 	private static ChunkManager createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
+		noise.setSeed(worldSeed);
 
 		do {
 			ChunkManager result = createDungeon(w, h);
@@ -211,6 +220,7 @@ public class LevelGen {
 
 	private static void generateTopChunk(ChunkManager map, int chunkX, int chunkY) {
 		random.setSeed(worldSeed);
+		noise.setSeed(worldSeed);
 
 		// Brevity
 		int S = ChunkManager.CHUNK_SIZE;
@@ -223,6 +233,8 @@ public class LevelGen {
 		// ...and some with larger size.
 		LevelGen noise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 3);
 		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 4);
+
+		List<Point> rocks = new ArrayList<>();
 
 		int tileX = chunkX * S, tileY = chunkY * S;
 		for(int y = tileY; y < tileY + S; y++)
@@ -243,6 +255,7 @@ public class LevelGen {
 							else
 								map.setTile(x, y, Tiles.get("water"), 0);
 						} else if (val > 0.5 && mval < -1.5) {
+							rocks.add(new Point(x,y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
@@ -258,6 +271,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 							}
 						} else if (val > 0.5 && mval < -1.5) {
+							rocks.add(new Point(x,y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
@@ -275,6 +289,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 							}
 						} else {
+							rocks.add(new Point(x,y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						}
 						break;
@@ -288,6 +303,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 							}
 						} else if (val > 0.5 && mval < -1.5) {
+							rocks.add(new Point(x,y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
@@ -431,27 +447,26 @@ public class LevelGen {
 		int count = 0;
 
 		stairsLoop:
-		for (int i = 0; i < S * S; i++) { // Loops a certain number of times, more for bigger world sizes.
-			int x = random.nextInt(S - 2) + 1;
-			int y = random.nextInt(S - 2) + 1;
+		while(!rocks.isEmpty() && count < S / 21) { // Loops a certain number of times, more for bigger world sizes.
+			int i = random.nextInt(rocks.size());
+
+			Point p = rocks.get(i);
+			rocks.remove(i);
 
 			// The first loop, which checks to make sure that a new stairs tile will be completely surrounded by rock.
-			for (int yy = y - 1; yy <= y + 1; yy++)
-				for (int xx = x - 1; xx <= x + 1; xx++)
+			for (int yy = p.y - 1; yy <= p.y + 1; yy++)
+				for (int xx = p.x - 1; xx <= p.x + 1; xx++)
 					if (map.getTile(xx, yy) != Tiles.get("rock"))
 						continue stairsLoop;
 
 			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
-			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(S - 1, y + stairRadius); yy++)
-				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(S - 1, x + stairRadius); xx++)
+			for (int yy = p.y - stairRadius; yy <= p.y + stairRadius; yy++)
+				for (int xx = p.x - stairRadius; xx <= p.x + stairRadius; xx++)
 					if (map.getTile(xx, yy) == Tiles.get("Stairs Down"))
 						continue stairsLoop;
 
-			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
-			Logging.SAVELOAD.debug("Put stairs at " + (x + chunkX * S) + ", " + (y + chunkY * S));
-
+			map.setTile(p.x, p.y, Tiles.get("Stairs Down"), 0);
 			count++;
-			if (count >= S / 21) break;
 		}
 	}
 
@@ -466,6 +481,8 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32, 4);
 
 		ChunkManager map = new ChunkManager();
+
+		List<Point> rocks = new ArrayList<>();
 
 		for (int x = 0; x < w; x++) {
 			for (int y = 0; y < h; y++) {
@@ -493,6 +510,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 						} else if (val > 0.5 && mval < -1.5) {
 							map.setTile(x, y, Tiles.get("rock"), 0);
+							rocks.add(new Point(x,y));
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
 						}
@@ -508,6 +526,7 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map.setTile(x, y, Tiles.get("rock"), 0);
+							rocks.add(new Point(x,y));
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
 						}
@@ -525,6 +544,7 @@ public class LevelGen {
 							}
 						} else {
 							map.setTile(x, y, Tiles.get("rock"), 0);
+							rocks.add(new Point(x,y));
 						}
 						break;
 
@@ -538,6 +558,7 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map.setTile(x, y, Tiles.get("rock"), 0);
+							rocks.add(new Point(x,y));
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
 						}
@@ -682,26 +703,29 @@ public class LevelGen {
 		int count = 0;
 
 		stairsLoop:
-		for (int i = 0; i < w * h; i++) { // Loops a certain number of times, more for bigger world sizes.
-			int x = random.nextInt(w - 2) + 1;
-			int y = random.nextInt(h - 2) + 1;
+		while(!rocks.isEmpty() && count < w / 21) { // Loops until all rocks are checked or minimum stairs have been reached
+			int i = random.nextInt(rocks.size());
+
+			Point p = rocks.get(i);
+			rocks.remove(i);
+
 
 			// The first loop, which checks to make sure that a new stairs tile will be completely surrounded by rock.
-			for (int yy = y - 1; yy <= y + 1; yy++)
-				for (int xx = x - 1; xx <= x + 1; xx++)
+			for (int yy = p.y - 1; yy <= p.y + 1; yy++)
+				for (int xx = p.x - 1; xx <= p.x + 1; xx++)
 					if (map.getTile(xx, yy) != Tiles.get("rock"))
 						continue stairsLoop;
 
 			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
-			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(h - 1, y + stairRadius); yy++)
-				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(w - 1, x + stairRadius); xx++)
+			for (int yy = Math.max(0, p.y - stairRadius); yy <= Math.min(h - 1, p.y + stairRadius); yy++)
+				for (int xx = Math.max(0, p.x - stairRadius); xx <= Math.min(w - 1, p.x + stairRadius); xx++)
 					if (map.getTile(xx, yy) == Tiles.get("Stairs Down"))
 						continue stairsLoop;
 
-			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
+			map.setTile(p.x, p.y, Tiles.get("Stairs Down"), 0);
+			System.out.printf("Placed stairs at %d, %d%n", p.x, p.y);
 
 			count++;
-			if (count >= w / 21) break;
 		}
 
 		//System.out.println("min="+min);
@@ -713,19 +737,20 @@ public class LevelGen {
 	}
 
 	private static void generateDungeonChunk(ChunkManager map, int chunkX, int chunkY) {
-		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 10);
-		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 10);
+		int S = ChunkManager.CHUNK_SIZE;
+		LevelGen noise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 10, 0);
+		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 10, 1);
 
-		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
-		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++) {
-			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
-				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+		int tileX = chunkX * S, tileY = chunkY * S;
+		for(int y = tileY; y < tileY + S; y++) {
+			for(int x = tileX; x < tileX + S; x++) {
+				int i = (x - tileX) + (y - tileY) * S;
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
-				double dist = 0;
-				val = -val * 1 - 2.2;
-				val += 1 - dist * 2;
+				double dist = 0.1;
+				val = -val;
+				val += 1.5 - dist * 2;
 
 				if (val < -0.05) {
 					map.setTile(x, y, Tiles.get("Obsidian Wall"), 0);
@@ -746,9 +771,9 @@ public class LevelGen {
 		}
 
 		decorLoop:
-		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 450; i++) {
-			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
-			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+		for (int i = 0; i < S * S / 450; i++) {
+			int x = random.nextInt(S - 2) + 1;
+			int y = random.nextInt(S - 2) + 1;
 
 			for (int yy = y - 1; yy <= y + 1; yy++) {
 				for (int xx = x - 1; xx <= x + 1; xx++) {
@@ -758,7 +783,7 @@ public class LevelGen {
 			}
 
 			if (x > 8 && y > 8) {
-				if (x < ChunkManager.CHUNK_SIZE - 8 && y < ChunkManager.CHUNK_SIZE - 8) {
+				if (x < S - 8 && y < S - 8) {
 					if (random.nextInt(2) == 0)
 						Structure.ornateLavaPool.draw(map, x, y);
 				}
@@ -766,9 +791,18 @@ public class LevelGen {
 		}
 	}
 
+	private static float a(double a) {return (float)Math.max(0, Math.min(1, 0.5 + 0.5*a));}
+
 	private static ChunkManager createDungeon(int w, int h) {
-		LevelGen noise1 = new LevelGen(w, h, 10);
-		LevelGen noise2 = new LevelGen(w, h, 10);
+		LevelGen noise1 = new LevelGen(w, h, 10, 0);
+		LevelGen noise2 = new LevelGen(w, h, 10, 1);
+
+		BufferedImage out1 = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage out2 = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage out3 = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+		Graphics g1 = out1.getGraphics();
+		Graphics g2 = out2.getGraphics();
+		Graphics g3 = out3.getGraphics();
 
 		ChunkManager map = new ChunkManager();
 		for (int y = 0; y < h; y++) {
@@ -784,8 +818,15 @@ public class LevelGen {
 				double dist = Math.max(xd, yd);
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val = -val * 1 - 2.2;
-				val += 1 - dist * 2;
+				g2.setColor(new Color(a(val), a(val), a(val)));
+				g2.drawRect(x, y, 1, 1);
+				val = -val;
+				val += 1.5 - dist * 2;
+
+				g1.setColor(new Color(a(noise1.values[i]), a(noise1.values[i]), a(noise1.values[i])));
+				g1.drawRect(x, y, 1, 1);
+				g3.setColor(new Color(a(val), a(val), a(val)));
+				g3.drawRect(x, y, 1, 1);
 
 				if (val < -0.05) {
 					map.setTile(x, y, Tiles.get("Obsidian Wall"), 0);
@@ -803,6 +844,14 @@ public class LevelGen {
 					}
 				}
 			}
+		}
+
+		try {
+			ImageIO.write(out1, "png", new File("out1.png"));
+			ImageIO.write(out2, "png", new File("out2.png"));
+			ImageIO.write(out3, "png", new File("out3.png"));
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 
 		decorLoop:
@@ -829,25 +878,28 @@ public class LevelGen {
 	}
 
 	private static void generateUndergroundChunk(ChunkManager map, int chunkX, int chunkY, int depth) {
-		LevelGen mnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
-		LevelGen mnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
-		LevelGen mnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		random.setSeed(worldSeed);
+		noise.setSeed(worldSeed);
+		int S = ChunkManager.CHUNK_SIZE;
+		LevelGen mnoise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 0);
+		LevelGen mnoise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 1);
+		LevelGen mnoise3 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 2);
 
-		LevelGen nnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
-		LevelGen nnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
-		LevelGen nnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen nnoise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 3);
+		LevelGen nnoise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 4);
+		LevelGen nnoise3 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 5);
 
-		LevelGen wnoise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
-		LevelGen wnoise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
-		LevelGen wnoise3 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 16);
+		LevelGen wnoise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 6);
+		LevelGen wnoise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 7);
+		LevelGen wnoise3 = new LevelGen(chunkX * S, chunkY * S, S, S, 16, depth * 11 + 8);
 
-		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 32);
-		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 32);
+		LevelGen noise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, depth * 11 + 9);
+		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, depth * 11 + 10);
 
-		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
-		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++) {
-			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
-				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+		int tileX = chunkX * S, tileY = chunkY * S;
+		for(int y = tileY; y < tileY + S; y++) {
+			for(int x = tileX; x < tileX + S; x++) {
+				int i = (x - tileX) + (y - tileY) * S;
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
@@ -859,10 +911,6 @@ public class LevelGen {
 
 				double wval = Math.abs(wnoise1.values[i] - wnoise2.values[i]);
 				wval = Math.abs(wval - wnoise3.values[i]) * 3 - 2;
-
-				double dist = 0;
-				dist = Math.pow(dist, 8);
-				val += 1 - dist * 20;
 
 				if (val > -1 && wval < -1 + (depth) / 2.0 * 3) {
 					if (depth == 3) map.setTile(x, y, Tiles.get("lava"), 0);
@@ -879,26 +927,27 @@ public class LevelGen {
 		}
 		{
 			int r = 2;
-			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 400; i++) {
-				int x = random.nextInt(ChunkManager.CHUNK_SIZE);
-				int y = random.nextInt(ChunkManager.CHUNK_SIZE);
+			for (int i = 0; i < S * S / 200; i++) {
+				int x = tileX + random.nextInt(S);
+				int y = tileY + random.nextInt(S);
+				System.out.printf("Trying to put ore at %d, %d%n", x, y);
 				for (int j = 0; j < 30; j++) {
 					int xx = x + random.nextInt(5) - random.nextInt(5);
 					int yy = y + random.nextInt(5) - random.nextInt(5);
-					if (xx >= r && yy >= r && xx < ChunkManager.CHUNK_SIZE - r && yy < ChunkManager.CHUNK_SIZE - r) {
+					// if (xx >= r && yy >= r && xx < S - r && yy < S - r) {
 						if (map.getTile(xx, yy) == Tiles.get("rock")) {
 							map.setTile(xx, yy, Tiles.get((short)(Tiles.get("iron Ore").id + depth - 1)), 0);
 						}
-					}
+					// }
 				}
 				for (int j = 0; j < 10; j++) {
 					int xx = x + random.nextInt(3) - random.nextInt(2);
 					int yy = y + random.nextInt(3) - random.nextInt(2);
-					if (xx >= r && yy >= r && xx < ChunkManager.CHUNK_SIZE - r && yy < ChunkManager.CHUNK_SIZE - r) {
+					// if (xx >= r && yy >= r && xx < S - r && yy < S - r) {
 						if (map.getTile(xx, yy) == Tiles.get("rock")) {
 							map.setTile(xx, yy, Tiles.get("Lapis"), 0);
 						}
-					}
+					// }
 				}
 			}
 		}
@@ -906,42 +955,42 @@ public class LevelGen {
 		if (depth < 3) {
 			int count = 0;
 			stairsLoop:
-			for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 100; i++) {
-				int x = random.nextInt(ChunkManager.CHUNK_SIZE - 20) + 10;
-				int y = random.nextInt(ChunkManager.CHUNK_SIZE - 20) + 10;
+			for (int i = 0; i < S * S / 100; i++) {
+				int x = tileX + random.nextInt(S);
+				int y = tileY + random.nextInt(S);
 
 				for (int yy = y - 1; yy <= y + 1; yy++)
 					for (int xx = x - 1; xx <= x + 1; xx++)
 						if (map.getTile(xx, yy) != Tiles.get("rock")) continue stairsLoop;
 
 				// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
-				for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(ChunkManager.CHUNK_SIZE - 1, y + stairRadius); yy++)
-					for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(ChunkManager.CHUNK_SIZE - 1, x + stairRadius); xx++)
+				for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(S - 1, y + stairRadius); yy++)
+					for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(S - 1, x + stairRadius); xx++)
 						if (map.getTile(xx, yy) == Tiles.get("Stairs Down")) continue stairsLoop;
 
 				map.setTile(x, y, Tiles.get("Stairs Down"), 0);
 				count++;
-				if (count >= ChunkManager.CHUNK_SIZE / 32) break;
+				if (count >= S / 32) break;
 			}
 		}
 
 	}
 
 	private static ChunkManager createUndergroundMap(int w, int h, int depth) {
-		LevelGen mnoise1 = new LevelGen(w, h, 16);
-		LevelGen mnoise2 = new LevelGen(w, h, 16);
-		LevelGen mnoise3 = new LevelGen(w, h, 16);
+		LevelGen mnoise1 = new LevelGen(w, h, 16, depth * 11 + 0);
+		LevelGen mnoise2 = new LevelGen(w, h, 16, depth * 11 + 1);
+		LevelGen mnoise3 = new LevelGen(w, h, 16, depth * 11 + 2);
 
-		LevelGen nnoise1 = new LevelGen(w, h, 16);
-		LevelGen nnoise2 = new LevelGen(w, h, 16);
-		LevelGen nnoise3 = new LevelGen(w, h, 16);
+		LevelGen nnoise1 = new LevelGen(w, h, 16, depth * 11 + 3);
+		LevelGen nnoise2 = new LevelGen(w, h, 16, depth * 11 + 4);
+		LevelGen nnoise3 = new LevelGen(w, h, 16, depth * 11 + 5);
 
-		LevelGen wnoise1 = new LevelGen(w, h, 16);
-		LevelGen wnoise2 = new LevelGen(w, h, 16);
-		LevelGen wnoise3 = new LevelGen(w, h, 16);
+		LevelGen wnoise1 = new LevelGen(w, h, 16, depth * 11 + 6);
+		LevelGen wnoise2 = new LevelGen(w, h, 16, depth * 11 + 7);
+		LevelGen wnoise3 = new LevelGen(w, h, 16, depth * 11 + 8);
 
-		LevelGen noise1 = new LevelGen(w, h, 32);
-		LevelGen noise2 = new LevelGen(w, h, 32);
+		LevelGen noise1 = new LevelGen(w, h, 32, depth * 11 + 9);
+		LevelGen noise2 = new LevelGen(w, h, 32, depth * 11 + 10);
 
 		ChunkManager map = new ChunkManager();
 		for (int y = 0; y < h; y++) {
@@ -1061,19 +1110,20 @@ public class LevelGen {
 	}
 
 	private static void generateSkyChunk(ChunkManager map, int chunkX, int chunkY) {
-		LevelGen noise1 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 8);
-		LevelGen noise2 = new LevelGen(ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_SIZE, 8);
+		int S = ChunkManager.CHUNK_SIZE;
+		LevelGen noise1 = new LevelGen(S * chunkX, S * chunkY, S, S, 8, 0);
+		LevelGen noise2 = new LevelGen(S * chunkX, S * chunkY, S, S, 8, 1);
 
-		int tileX = chunkX * ChunkManager.CHUNK_SIZE, tileY = chunkY * ChunkManager.CHUNK_SIZE;
-		for(int y = tileY; y < tileY + ChunkManager.CHUNK_SIZE; y++) {
-			for(int x = tileX; x < tileX + ChunkManager.CHUNK_SIZE; x++) {
-				int i = (x - tileX) + (y - tileY) * ChunkManager.CHUNK_SIZE;
+		int tileX = chunkX * S, tileY = chunkY * S;
+		for(int y = tileY; y < tileY + S; y++) {
+			for(int x = tileX; x < tileX + S; x++) {
+				int i = (x - tileX) + (y - tileY) * S;
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
 				double dist = 0;
 				val = -val * 1 - 2.2;
-				val += 1 - dist * 20;
+				val += 1.75 - dist * 20;
 
 				if (val < -0.25) {
 					map.setTile(x, y, Tiles.get("Infinite Fall"), 0);
@@ -1084,9 +1134,9 @@ public class LevelGen {
 		}
 
 		stairsLoop:
-		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE / 50; i++) {
-			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
-			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+		for (int i = 0; i < S * S / 50; i++) {
+			int x = tileX + random.nextInt(S - 2) + 1;
+			int y = tileY + random.nextInt(S - 2) + 1;
 
 			for (int yy = y - 1; yy <= y + 1; yy++) {
 				for (int xx = x - 1; xx <= x + 1; xx++) {
@@ -1099,9 +1149,9 @@ public class LevelGen {
 
 		int count = 0;
 		stairsLoop:
-		for (int i = 0; i < ChunkManager.CHUNK_SIZE * ChunkManager.CHUNK_SIZE; i++) {
-			int x = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
-			int y = random.nextInt(ChunkManager.CHUNK_SIZE - 2) + 1;
+		for (int i = 0; i < S * S; i++) {
+			int x = random.nextInt(S - 2) + 1;
+			int y = random.nextInt(S - 2) + 1;
 
 			for (int yy = y - 1; yy <= y + 1; yy++) {
 				for (int xx = x - 1; xx <= x + 1; xx++) {
@@ -1110,19 +1160,19 @@ public class LevelGen {
 			}
 
 			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
-			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(ChunkManager.CHUNK_SIZE - 1, y + stairRadius); yy++)
-				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(ChunkManager.CHUNK_SIZE - 1, x + stairRadius); xx++)
+			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(S - 1, y + stairRadius); yy++)
+				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(S - 1, x + stairRadius); xx++)
 					if (map.getTile(xx, yy) == Tiles.get("Stairs Down")) continue stairsLoop;
 
 			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
 			count++;
-			if (count >= ChunkManager.CHUNK_SIZE / 64) break;
+			if (count >= S / 64) break;
 		}
 	}
 
 	private static ChunkManager createSkyMap(int w, int h) {
-		LevelGen noise1 = new LevelGen(w, h, 8);
-		LevelGen noise2 = new LevelGen(w, h, 8);
+		LevelGen noise1 = new LevelGen(w, h, 8, 0);
+		LevelGen noise2 = new LevelGen(w, h, 8, 1);
 
 		ChunkManager map = new ChunkManager();
 
@@ -1140,7 +1190,7 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
-				val += 1 - dist * 20;
+				val += 1.75 - dist * 20;
 
 				if (val < -0.25) {
 					map.setTile(x, y, Tiles.get("Infinite Fall"), 0);
