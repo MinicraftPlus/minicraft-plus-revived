@@ -118,10 +118,11 @@ public class Level {
 	}
 
 	public void printTileLocs(Tile t) {
-		for (int x = 0; x < w; x++)
-			for (int y = 0; y < h; y++)
-				if (getTile(x, y).id == t.id)
-					printLevelLoc(t.name, x, y);
+		for(Point p : chunkManager.getAllChunks())
+			for(int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
+				for(int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
+					if (getTile(x, y).id == t.id)
+						printLevelLoc(t.name, x, y);
 	}
 
 	public void printEntityLocs(Class<? extends Entity> c) {
@@ -986,10 +987,11 @@ public class Level {
 
 	public List<Point> getMatchingTiles(TileCheck condition) {
 		List<Point> matches = new ArrayList<>();
-		for (int y = 0; y < h; y++)
-			for (int x = 0; x < w; x++)
-				if (condition.check(getTile(x, y), x, y))
-					matches.add(new Point(x, y));
+		for(Point p : chunkManager.getAllChunks())
+			for(int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
+				for(int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
+					if (condition.check(getTile(x, y), x, y))
+						matches.add(new Point(x, y));
 
 		return matches;
 	}

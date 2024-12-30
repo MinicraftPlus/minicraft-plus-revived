@@ -1,8 +1,11 @@
 package minicraft.level;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import minicraft.gfx.Point;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
@@ -21,6 +24,14 @@ public class ChunkManager {
 
 	public ChunkManager() {
 		chunks = new HashMap<>();
+	}
+
+	public Set<Point> getAllChunks() {
+		HashSet<Point> out = new HashSet<>();
+		for(int x : chunks.keySet())
+			for(int y : chunks.get(x).keySet())
+				out.add(new Point(x, y));
+		return out;
 	}
 
 	/**
