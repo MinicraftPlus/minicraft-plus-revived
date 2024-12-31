@@ -93,7 +93,7 @@ public class LevelGen {
 		else
 			Logger.tag("LevelGen").error("Level index is not valid. Could not generate a chunk at " + x + ", " + y + " on level " + level + " with seed " + seed);
 
-		chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_NO_STAIRS_UP);
+		chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS);
 	}
 
 	static ChunkManager createAndValidateMap(int w, int h, int level, long seed) {

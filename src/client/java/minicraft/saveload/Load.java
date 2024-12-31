@@ -225,7 +225,7 @@ public class Load {
 
 			LoadingDisplay.setPercentage(0);
 			loadGame("Game"); // More of the version will be determined here
-			if(worldVer.compareTo(new Version("2.3.0-dev1")) < 0)
+			if(worldVer.compareTo(new Version("2.3.0-dev2")) < 0)
 				loadWorld("Level");
 			else
 				loadWorldInf("Level");
@@ -934,16 +934,15 @@ public class Load {
 
 			if (parent == null) continue;
 			/// confirm that there are stairs in all the places that should have stairs.
+			// if there isn't, mark the chunk as needing stairs
 			for (minicraft.gfx.Point p : parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
 				if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
-					curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
-					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
+					curLevel.chunkManager.setChunkStage(p.x / ChunkManager.CHUNK_SIZE, p.y / ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS);
 				}
 			}
 			for (minicraft.gfx.Point p : curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
 				if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
-					parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
-					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
+					parent.chunkManager.setChunkStage(p.x / ChunkManager.CHUNK_SIZE, p.y / ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS);
 				}
 			}
 		}

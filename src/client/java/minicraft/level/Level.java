@@ -440,7 +440,7 @@ public class Level {
 	}
 
 	public void loadChunk(int x, int y) {
-		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_NO_STAIRS_UP && parentLevel != null) {
+		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
 			if(parentLevel.chunkManager.getChunkStage(x, y) == 0)
 				LevelGen.generateChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
 			int S = ChunkManager.CHUNK_SIZE;
@@ -457,6 +457,8 @@ public class Level {
 							setAreaTiles(i, j, 1, Tiles.get("dirt"), 0);
 
 						setTile(i, j, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
+					} else if (getTile(i, j) == Tiles.get("Stairs Up") && parentLevel.getTile(i, j) != Tiles.get("Stairs Down")) {
+						parentLevel.setTile(i, j, "Stairs Down");
 					}
 				}
 			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
