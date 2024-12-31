@@ -675,9 +675,8 @@ public class Level {
 			int lvl = -MyUtils.clamp(player.getLevel().depth, -4, 0);
 			for (int i = 0; i < 30 && !spawned; i++) {
 				int rnd = random.nextInt(100);
-				int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
-				double distance = Math.hypot(Math.abs(nx - player.x), Math.abs(ny - player.y));
-				if (distance < 160) continue; // Spawns only far from 10 tiles away.
+				int nx = (random.nextInt(ChunkManager.CHUNK_SIZE*2) - ChunkManager.CHUNK_SIZE) * 16 + player.x,
+				    ny = (random.nextInt(ChunkManager.CHUNK_SIZE*2) - ChunkManager.CHUNK_SIZE) * 16 + player.y;
 
 				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
@@ -708,21 +707,21 @@ public class Level {
 					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 					else if (rnd >= 68) add((new Pig()), nx, ny);
 					else { // Sheep spawning
-					double colorRnd = random.nextDouble();
-					if (colorRnd < 0.8) { // 80% for default color, i.e. white
-						add((new Sheep()), nx, ny);
-					} else if (colorRnd < 0.85) { // 5% for black
-						add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
-					} else if (colorRnd < 0.9) { // 5% for gray
-						add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
-					} else if (colorRnd < 0.95) { // 5% for light gray
-						add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
-					} else if (colorRnd < 0.98) { // 3% for brown
-						add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
-					} else { // 2% for pink
-						add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+						double colorRnd = random.nextDouble();
+						if (colorRnd < 0.8) { // 80% for default color, i.e. white
+							add((new Sheep()), nx, ny);
+						} else if (colorRnd < 0.85) { // 5% for black
+							add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
+						} else if (colorRnd < 0.9) { // 5% for gray
+							add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
+						} else if (colorRnd < 0.95) { // 5% for light gray
+							add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
+						} else if (colorRnd < 0.98) { // 3% for brown
+							add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
+						} else { // 2% for pink
+							add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+						}
 					}
-				}
 
 					spawned = true;
 				}
