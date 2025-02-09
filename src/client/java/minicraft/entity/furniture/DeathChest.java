@@ -13,7 +13,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import minicraft.item.UnlimitedInventory;
 
 public class DeathChest extends Chest {
 	private static LinkedSprite normalSprite = new LinkedSprite(SpriteType.Entity, "chest");
@@ -22,15 +22,12 @@ public class DeathChest extends Chest {
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // What direction the red shade (redtick) is changing.
-	private Inventory inventory = new Inventory() {{
-		unlimited = true;
-	}}; // Implement the inventory locally instead.
 
 	/**
 	 * Creates a custom chest with the name Death Chest
 	 */
 	public DeathChest() {
-		super("Death Chest", new LinkedSprite(SpriteType.Item, "dungeon_chest"));
+		super(new UnlimitedInventory(), "Death Chest", new LinkedSprite(SpriteType.Item, "dungeon_chest"));
 		this.sprite = normalSprite;
 
 		/// Set the expiration time based on the world difficulty.
@@ -47,7 +44,7 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		for (Item i : player.getInventory().getItems()) {
+		for (Item i : player.getInventory().getItemsView()) {
 			inventory.add(i.copy());
 		}
 	}
@@ -95,14 +92,11 @@ public class DeathChest extends Chest {
 		return false;
 	} // can't open it, just walk into it.
 
-	public void take(Player player) {
-	} // can't grab a death chest.
-
 	@Override
 	public void touchedBy(Entity other) {
 		if (other instanceof Player) {
 			Inventory playerInv = ((Player) other).getInventory();
-			for (Item i : inventory.getItems()) {
+			for (Item i : inventory.getItemsView()) {
 				if (playerInv.add(i) != null) {
 					Game.notifications.add("Your inventory is full!");
 					return;
@@ -114,10 +108,5 @@ public class DeathChest extends Chest {
 			remove();
 			Game.notifications.add(Localization.getLocalized("minicraft.notification.death_chest_retrieved"));
 		}
-	}
-
-	@Override
-	public Inventory getInventory() {
-		return inventory;
 	}
 }

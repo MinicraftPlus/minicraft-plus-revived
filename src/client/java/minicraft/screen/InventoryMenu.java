@@ -21,7 +21,7 @@ class InventoryMenu extends ItemListMenu {
 	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, @Nullable Action onStackUpdateListener) { this(holder, inv, title, entryPos, false, onStackUpdateListener); }
 	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv) { this(holder, inv, title, entryPos, creativeInv, null); }
 	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos, boolean creativeInv, @Nullable Action onStackUpdateListener) {
-		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
+		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItemsView()), title);
 		this.inv = inv;
 		this.holder = holder;
 		this.title = title;
@@ -31,7 +31,7 @@ class InventoryMenu extends ItemListMenu {
 	}
 
 	InventoryMenu(InventoryMenu model) {
-		super(ItemListMenu.getBuilder(model.entryPos), ItemEntry.useItems(model.inv.getItems()), model.title);
+		super(ItemListMenu.getBuilder(model.entryPos), ItemEntry.useItems(model.inv.getItemsView()), model.title);
 		this.inv = model.inv;
 		this.holder = model.holder;
 		this.creativeInv = model.creativeInv;
