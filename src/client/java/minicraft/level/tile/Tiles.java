@@ -109,6 +109,7 @@ public final class Tiles {
 		tiles.put((short) 57, new TorchTile());
 		tiles.put((short) 58, new SignTile());
 		tiles.put((short) 59, new DecorTile(DecorTile.decorType.ORNATE_WOOD));
+		tiles.put((short) 60, new TallGrassTile());
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());

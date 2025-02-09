@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Random;
 
-public class CropTile extends FarmTile {
+public abstract class CropTile extends FarmTile {
 	protected final @Nullable String seed;
 
 	protected int maxAge = 0b111; // Must be a bit mask.
@@ -104,6 +104,7 @@ public class CropTile extends FarmTile {
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof StackableItem && item.getName().equalsIgnoreCase("Fertilizer")) {
+			//noinspection DuplicatedCode
 			((StackableItem) item).count--;
 			Random random = new Random();
 			for (int i = 0; i < 2; ++i) {
