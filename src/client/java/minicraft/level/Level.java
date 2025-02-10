@@ -324,18 +324,17 @@ public class Level {
 			while (!addedchest) { // Keep running until we successfully add a DungeonChest
 
 				// Pick a random tile:
-				int x2 = random.nextInt(16 * w) / 16;
-				int y2 = random.nextInt(16 * h) / 16;
+				int x2 = random.nextInt(w);
+				int y2 = random.nextInt(h);
 				if (getTile(x2, y2) == Tiles.get("Grass")) {
-					boolean xaxis = random.nextBoolean();
-					if (xaxis) {
+					if (random.nextBoolean()) { // x-axis
 						for (int s = x2; s < w - s; s++) {
 							if (getTile(s, y2) == Tiles.get("Obsidian Wall") || getTile(s, y2) == Tiles.get("Ornate Obsidian")) {
 								d.x = s * 20 - 16;
 								d.y = y2 * 24 - 14;
 							}
 						}
-					} else { // y axis
+					} else { // y-axis
 						for (int s = y2; s < h - s; s++) {
 							if (getTile(x2, s) == Tiles.get("Obsidian Wall") || getTile(x2, s) == Tiles.get("Ornate Obsidian")) {
 								d.x = x2 * 23 - 14;
@@ -347,6 +346,12 @@ public class Level {
 						d.x = (x2 << 4) - 8;
 						d.y = (y2 << 4) - 8;
 					}
+
+					// Target place may not exist a dungeon chest
+					if (!getEntitiesInTiles(d.x >> 4, d.y >> 4, 0, true, DungeonChest.class).isEmpty()) continue;
+					// If target place is blocking wall, remove it
+					if (getTile(d.x >> 4, d.y >> 4) == Tiles.get("Obsidian Wall"))
+						setTile(d.x >> 4, d.y >> 4, Tiles.get("Raw Obsidian"));
 
 					add(d);
 					chestCount++;
