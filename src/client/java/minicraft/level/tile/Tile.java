@@ -5,6 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
+import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.item.Item;
@@ -78,7 +79,11 @@ public abstract class Tile {
 	 * Returns if the player can walk on it, overrides in sub-classes
 	 */
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return true;
+		// Prevents boats, etc. in the water/lava going on the land,
+		// but allows boats go into water/lava from land.
+		return !(e instanceof Boat) || (this instanceof WaterTile && ((Boat) e).isInWater()) ||
+			(this instanceof LavaTile && ((Boat) e).isInLava()) ||
+			!(this instanceof WaterTile || this instanceof LavaTile || ((Boat) e).isInWater() || ((Boat) e).isInLava());
 	}
 
 	/**
