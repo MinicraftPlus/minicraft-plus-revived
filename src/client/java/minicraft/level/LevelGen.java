@@ -7,6 +7,7 @@ import minicraft.gfx.Rectangle;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
 import minicraft.util.Logging;
+import minicraft.util.Simplex;
 
 import org.tinylog.Logger;
 
