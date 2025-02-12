@@ -7,7 +7,6 @@ import minicraft.gfx.Rectangle;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.RelPos;
 import minicraft.util.Logging;
-import minicraft.util.Simplex;
 
 import org.tinylog.Logger;
 
@@ -120,7 +119,7 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 3);
 		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 4);
 
-		List<Point> rocks = new ArrayList<>();
+    List<Point> rocks = new ArrayList<>();
 
 		int tileX = chunkX * S, tileY = chunkY * S;
 		for(int y = tileY; y < tileY + S; y++)

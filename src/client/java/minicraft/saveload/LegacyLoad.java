@@ -227,7 +227,7 @@ public class LegacyLoad {
 
 			ChunkManager map = new ChunkManager();
 
-			for (int x = 0; x < lvlw - 1; x++) {
+      for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = y + x * lvlh; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.

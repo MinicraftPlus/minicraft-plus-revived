@@ -12,7 +12,6 @@ import minicraft.level.tile.Tiles;
 public class ChunkManager {
 
 	public static final int CHUNK_SIZE = 64;
-
 	public static final int CHUNK_STAGE_UNFINISHED_STAIRS = 3;
 	public static final int CHUNK_STAGE_DONE = 4;
 
