@@ -225,9 +225,9 @@ public class LegacyLoad {
 			int lvldepth = Integer.parseInt(data.get(2));
 			Settings.set("size", lvlw);
 
-			ChunkManager map = new ChunkManager(lvlw, lvlh);
+			ChunkManager map = new ChunkManager();
 
-			for (int x = 0; x < lvlw - 1; x++) {
+      for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = y + x * lvlh; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
@@ -235,6 +235,10 @@ public class LegacyLoad {
 						extradata.get(tileidx));
 				}
 			}
+
+			for(int x = 0; x < lvlw / ChunkManager.CHUNK_SIZE; x++)
+				for(int y = 0; y < lvlh / ChunkManager.CHUNK_SIZE; y++)
+					map.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
 
 			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
 			World.levels[l].chunkManager = map;
