@@ -49,6 +49,8 @@ public class Initializer extends Game {
 				saveDir = args[i];
 			} else if (args[i].equalsIgnoreCase("--fullscreen")) {
 				Updater.FULLSCREEN = true;
+			} else if (args[i].equalsIgnoreCase("--debug")) { // Basic debugging flag
+				debug = true;
 			} else if (args[i].equalsIgnoreCase("--debug-log-time")) {
 				Logging.logTime = true;
 			} else if (args[i].equalsIgnoreCase("--debug-log-thread")) {
