@@ -39,7 +39,7 @@ public class ArmorItem extends StackableItem {
 		staminaCost = 9;
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
 		if (player.curArmor == null && player.payStamina(staminaCost)) {
 			player.curArmor = this; // Set the current armor being worn to this.
@@ -48,11 +48,6 @@ public class ArmorItem extends StackableItem {
 		}
 
 		return super.interactOn(success);
-	}
-
-	@Override
-	public boolean interactsWithWorld() {
-		return false;
 	}
 
 	public @NotNull ArmorItem copy() {

@@ -57,7 +57,7 @@ public class BucketItem extends StackableItem {
 		this.filling = fill;
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Fill fill = getFilling(tile);
 		if (fill == null) return false;
 
