@@ -30,7 +30,7 @@ public abstract class ListEntry {
 
 		String string = toString();
 
-		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
+		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.REDO_CODE), screen, x, y);
 	}
 
 	/**
@@ -43,9 +43,9 @@ public abstract class ListEntry {
 	 */
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		if (visible) {
-			String text = toString().replace(Color.WHITE_CODE + Color.GRAY_CODE, Color.toStringCode(getColor(isSelected)));
+			String text = toString();
 			if (text.contains(String.valueOf(Color.COLOR_CHAR)))
-				Font.drawColor(Color.toStringCode(getColor(isSelected)) + text, screen, x, y);
+				Font.drawColor(text, screen, x, y, getColor(isSelected));
 			else
 				Font.draw(text, screen, x, y, getColor(isSelected));
 		}
