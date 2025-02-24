@@ -7,6 +7,11 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
+import minicraft.util.DamageSource;
+import org.jetbrains.annotations.Nullable;
 
 public class Spark extends Entity {
 	private final int lifeTime; // How much time until the spark disappears
@@ -51,7 +56,8 @@ public class Spark extends Entity {
 
 		Player player = getClosestPlayer();
 		if (player != null && player.isWithin(0, this)) {
-			player.hurt(owner, 1);
+			player.hurt(new DamageSource(DamageSource.DamageType.SPARK, owner, this, null),
+				getInteractionDir(this, player), 1);
 		}
 	}
 
@@ -59,6 +65,29 @@ public class Spark extends Entity {
 	 * Can this entity block you? Nope.
 	 */
 	public boolean isSolid() {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
+	@Override
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
 		return false;
 	}
 

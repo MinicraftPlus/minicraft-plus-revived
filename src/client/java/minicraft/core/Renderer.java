@@ -336,19 +336,19 @@ public class Renderer extends Game {
 		}
 
 		// This renders the potions overlay
-		if (player.showpotioneffects && player.potioneffects.size() > 0) {
+		if (player.showPotionEffects && player.potioneffects.size() > 0) {
 
 			@SuppressWarnings("unchecked")
 			Map.Entry<PotionType, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]);
 
 			// The key is potion type, value is remaining potion duration.
-			if (!player.simpPotionEffects) {
+			if (!player.simplifyPotionEffects) {
 				for (int i = 0; i < effects.length; i++) {
 					PotionType pType = effects[i].getKey();
 					int pTime = effects[i].getValue() / Updater.normSpeed;
 					int minutes = pTime / 60;
 					int seconds = pTime % 60;
-					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.hide_hint", input.getMapping("potionEffects")), screen, 180, 9);
+					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.hide_hint", input.getMapping("POTION-EFFECTS")), screen, 180, 9);
 					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.potion_dur", pType, minutes, seconds), screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
 				}
 			} else {

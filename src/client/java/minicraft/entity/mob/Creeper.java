@@ -12,6 +12,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
+import minicraft.util.DamageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +98,9 @@ public class Creeper extends EnemyMob {
 						int distx = Math.abs(mob.x - x);
 						int disty = Math.abs(mob.y - y);
 						float distDiag = (float) Math.sqrt(distx * distx + disty * disty);
-						mob.hurt(this, (int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
+						entity.hurt(new DamageSource(DamageSource.DamageType.EXPLOSION, this, null),
+							getInteractionDir(this, mob),
+							(int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
 					} else if (entity instanceof Spawner) {
 						spawners.add(entity);
 					}
@@ -155,7 +158,7 @@ public class Creeper extends EnemyMob {
 				fuseTime = MAX_FUSE_TIME;
 				fuseLit = true;
 			}
-			((Player) entity).hurt(this, 1);
+			attack(entity);
 		}
 	}
 

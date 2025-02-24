@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
@@ -77,7 +78,8 @@ public class Sheep extends PassiveMob {
 		}
 	}
 
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	@Override
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			if (!cut && ((ToolItem) item).type == ToolType.Shears) {
 				cut = true;

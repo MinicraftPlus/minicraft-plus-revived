@@ -160,7 +160,7 @@ public class TileItem extends StackableItem {
 		}
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
 				Tile t = TileModel.getTile(model);

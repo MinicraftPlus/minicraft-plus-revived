@@ -4,7 +4,9 @@ package minicraft.level.tile;
 import minicraft.entity.Entity;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 // TODO Remove this.
 // IMPORTANT: This tile should never be used for anything, it only exists to allow tiles right next to the edge of the world to connect to it
@@ -17,6 +19,9 @@ public class ConnectTile extends Tile {
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
+
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
 
 	@Override
 	public boolean maySpawn() {

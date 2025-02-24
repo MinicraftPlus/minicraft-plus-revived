@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -13,7 +14,7 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import org.jetbrains.annotations.Nullable;
 
 public class DeathChest extends Chest {
 	private static LinkedSprite normalSprite = new LinkedSprite(SpriteType.Entity, "chest");
@@ -91,12 +92,9 @@ public class DeathChest extends Chest {
 		Font.draw(timeString, screen, x - Font.textWidth(timeString) / 2, y - Font.textHeight() - getBounds().getHeight() / 2, Color.WHITE);
 	}
 
-	public boolean use(Player player) {
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
 		return false;
 	} // can't open it, just walk into it.
-
-	public void take(Player player) {
-	} // can't grab a death chest.
 
 	@Override
 	public void touchedBy(Entity other) {

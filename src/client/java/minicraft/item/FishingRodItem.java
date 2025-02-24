@@ -58,7 +58,7 @@ public class FishingRodItem extends Item {
 	}
 
 	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile == Tiles.get("water") && !player.isSwimming()) { // Make sure not to use it if swimming
 			uses++;
 			player.isFishing = true;
@@ -66,11 +66,6 @@ public class FishingRodItem extends Item {
 			return true;
 		}
 
-		return false;
-	}
-
-	@Override
-	public boolean canAttack() {
 		return false;
 	}
 

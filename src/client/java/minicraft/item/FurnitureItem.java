@@ -77,17 +77,8 @@ public class FurnitureItem extends Item {
 		placed = false;
 	}
 
-	/**
-	 * Determines if you can attack enemies with furniture (you can't)
-	 */
-	public boolean canAttack() {
-		return false;
-	}
-
-	/**
-	 * What happens when you press the "Attack" key with the furniture in your hands
-	 */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+    /** What happens when you press the "Attack" key with the furniture in your hands */
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
 			Sound.play("craft");
 

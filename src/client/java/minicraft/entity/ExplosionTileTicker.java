@@ -1,10 +1,13 @@
 package minicraft.entity;
 
 import minicraft.gfx.Screen;
+import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.ExplodedTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.util.DamageSource;
+import org.jetbrains.annotations.Nullable;
 
 // This is a kind of tile entity. Maybe this should be savable.
 public class ExplosionTileTicker extends Entity {
@@ -52,5 +55,28 @@ public class ExplosionTileTicker extends Entity {
 		}
 
 		tick++;
+	}
+
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return false;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
+	@Override
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {}
+
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		return false;
 	}
 }

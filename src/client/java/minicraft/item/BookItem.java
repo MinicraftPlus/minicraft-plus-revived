@@ -41,14 +41,9 @@ public class BookItem extends Item {
 		this.hasTitlePage = hasTitlePage;
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean useOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Game.setDisplay(new BookDisplay(book.collect(), hasTitlePage));
 		return true;
-	}
-
-	@Override
-	public boolean interactsWithWorld() {
-		return false;
 	}
 
 	public @NotNull BookItem copy() {

@@ -6,7 +6,6 @@ import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.Arrow;
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -39,7 +38,6 @@ import minicraft.item.Recipes;
 import minicraft.item.StackableItem;
 import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -54,6 +52,7 @@ import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
+import minicraft.util.DamageSource;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
@@ -91,12 +90,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	private final Inventory inventory;
 
-	public Item activeItem;
-	Item attackItem; // attackItem is useful again b/c of the power glove.
-	private Item prevItem; // Holds the item held before using the POW glove.
+	public @Nullable Item activeItem;
 
 	int attackTime;
-	public Direction attackDir;
 
 	private int onStairDelay; // The delay before changing levels.
 	private int onFallDelay; // The delay before falling b/c we're on an InfiniteFallTile
@@ -121,8 +117,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 
 	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
-	public boolean showpotioneffects; // Whether to display the current potion effects on screen
-	public boolean simpPotionEffects;
+	public boolean showPotionEffects; // Whether to display the current potion effects on screen
+	public boolean simplifyPotionEffects;
 	public boolean renderGUI;
 	public int questExpanding; // Lets the display keeps expanded.
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
@@ -187,15 +183,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		};
 
 		potioneffects = new HashMap<>();
-		showpotioneffects = true;
-		simpPotionEffects = false;
+		showPotionEffects = true;
+		simplifyPotionEffects = false;
 		renderGUI = true;
 
 		cooldowninfo = 0;
 		regentick = 0;
 		questExpanding = 0;
 
-		attackDir = dir;
 		armor = 0;
 		curArmor = null;
 		armorDamageBuffer = 0;
@@ -319,20 +314,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (cooldowninfo > 0) cooldowninfo--;
 		if (questExpanding > 0) questExpanding--;
 
-		if (input.inputPressed("potionEffects") && cooldowninfo == 0) {
+		if (input.inputPressed("POTION-EFFECTS") && cooldowninfo == 0) {
 			cooldowninfo = 10;
-			showpotioneffects = !showpotioneffects;
+			showPotionEffects = !showPotionEffects;
 		}
 
-		if (input.inputPressed("simpPotionEffects")) {
-			simpPotionEffects = !simpPotionEffects;
+		if (input.inputPressed("SIMPLIFY-POTION-EFFECTS")) {
+			simplifyPotionEffects = !simplifyPotionEffects;
 		}
 
-		if (input.inputPressed("toggleHUD")) {
+		if (input.inputPressed("TOGGLE-HUD")) {
 			renderGUI = !renderGUI;
 		}
 
-		if (input.inputPressed("expandQuestDisplay")) {
+		if (input.inputPressed("EXPAND-QUEST-DISPLAY")) {
 			questExpanding = 30;
 		}
 
@@ -433,7 +428,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (hunger == 0 && health > minStarveHealth[diffIdx]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					directHurt(1, Direction.NONE); // Do 1 damage to the player
+					hurt(new DamageSource(DamageSource.DamageType.STARVE),
+						Direction.NONE, 1); // Do 1 damage to the player
 				}
 			}
 		}
@@ -486,7 +482,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // If drowning... :P
 				if (stamina > 0) payStamina(1); // Take away stamina
-				else directHurt(1, Direction.NONE); // If no stamina, take damage.
+				else
+					hurt(new DamageSource(DamageSource.DamageType.DROWN),
+						Direction.NONE, 1); // If no stamina, take damage.
 			}
 
 			if (activeItem != null && (input.inputPressed("drop-one") || input.inputPressed("drop-stack"))) {
@@ -507,28 +505,36 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.inputPressed("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if (input.inputPressed("attack") && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if ((input.inputPressed("menu") || input.inputPressed("craft")) && activeItem != null) {
-				tryAddToInvOrDrop(activeItem);
+			if (input.inputPressed("USE") && stamina != 0 && onFallDelay <= 0) { // This only allows interactions when such action is possible.
+				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
+				staminaRecharge = 0;
 
-				activeItem = null;
-				if (isFishing) {
-					isFishing = false;
-					fishingTicks = maxFishingTicks;
-				}
+				use();
+			}
+
+			if (input.inputPressed("pickup") && (activeItem == null) && stamina != 0 && onFallDelay <= 0) {
+				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
+				staminaRecharge = 0;
+
+				pickup();
+			}
+
+			if ((input.inputPressed("INVENTORY") || input.inputPressed("craft")) && activeItem != null) {
+				resolveHoldingItem();
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.inputPressed("craft") && !use()) {
+				if (input.inputPressed("craft")) { // obtain SHIFT modifier input with E
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 					return;
-				} else if (input.inputPressed("menu") && !use()) { // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				} else if (input.inputPressed("INVENTORY")) {
 					Game.setDisplay(new PlayerInvDisplay(this));
 					return;
 				} else if (input.inputPressed("pause")) {
@@ -539,7 +545,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					return;
 				}
 
-				if (input.inputDown("quicksave") && !Updater.saving) {
+				if (input.inputDown("QUICK-SAVE") && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
@@ -550,44 +556,26 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						PotionItem.applyPotion(this, potionType, false);
 					}
 				}
-
-				if (input.inputPressed("pickup") && (activeItem == null || !activeItem.used_pending)) {
-					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
-						prevItem = activeItem; // Then save the current item...
-						if (isFishing) {
-							isFishing = false;
-							fishingTicks = maxFishingTicks;
-						}
-						activeItem = new PowerGloveItem(); // and replace it with a power glove.
-					}
-					attack(); // Attack (with the power glove)
-					resolveHeldItem();
-				}
 			}
 
 			if (attackTime > 0) {
 				attackTime--;
-				if (attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 			}
 		}
 	}
 
 	/**
-	 * Removes an held item and places it back into the inventory.
-	 * Looks complicated to so it can handle the powerglove.
+	 * Removes a holding item and places it back into the inventory.
 	 */
-	public void resolveHeldItem() {
-		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
-			if (prevItem != null) { // and you had a previous item that we should care about...
-				tryAddToInvOrDrop(prevItem); // Then add that previous item to your inventory so it isn't lost.
-			} // If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
-		} else
-			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
-
-		prevItem = null; // This is no longer of use.
-
-		if (activeItem instanceof PowerGloveItem) // If, for some odd reason, you are still holding a power glove at this point, then null it because it's useless and shouldn't remain in hand.
-			activeItem = null;
+	public void resolveHoldingItem() {
+		if (activeItem != null) {
+			tryAddToInvOrDrop(activeItem);
+			activeItem = null; // Removed
+			if (isFishing) {
+				isFishing = false;
+				fishingTicks = maxFishingTicks;
+			}
+		}
 	}
 
 	/**
@@ -596,17 +584,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
+		attackTime = activeItem == null ? 5 : 10;
 
-		if (isFishing) {
-			isFishing = false;
-			fishingTicks = maxFishingTicks;
-		}
-
-		if (activeItem != null && !activeItem.interactsWithWorld()) {
-			attackDir = dir; // Make the attack direction equal the current direction
-			attackItem = activeItem; // Make attackItem equal activeItem
-			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (activeItem.isDepleted()) {
+		// If the interaction between you and an entity is successful, then return.
+		if (attack(getInteractionBox(INTERACT_DIST))) {
+			if (activeItem != null && activeItem.isDepleted()) {
 				activeItem = null;
 				if (isFishing) {
 					isFishing = false;
@@ -614,91 +596,90 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 			}
 			return;
-		}
+		} // Then there is no entity hitbox blocking the player hitting the tile.
 
-		attackDir = dir; // Make the attack direction equal the current direction
-		attackItem = activeItem; // Make attackItem equal activeItem
+		// Attempt to interact with the tile.
+		Point t = getInteractionTile();
 
-		// If we are holding an item.
-		if (activeItem != null) {
-			attackTime = 10;
-			boolean done = false;
+		// If the target coordinates are a valid tile.
+		if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			Tile tile = level.getTile(t.x, t.y);
+			boolean successful = false;
+			if (activeItem != null && activeItem.attackOn(tile, level, t.x, t.y, this, dir))
+				successful = true;
+			if (tile.hurt(level, t.x, t.y, this, activeItem, dir, random.nextInt(baseDamage() + 1)))
+				successful = true;
+			if (successful)
+				Logging.PLAYER.info("Attacked tile {} at ({}, {}, {}) with {}", tile, level.depth, t.x, t.y, activeItem);
 
-			// Fire a bow if we have the stamina and an arrow.
-			if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
-				ToolItem tool = (ToolItem) activeItem;
-				if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
-
-					inventory.removeItem(Items.arrowItem);
-					level.add(new Arrow(this, attackDir, tool.level));
-					attackTime = 10;
-
-					if (!Game.isMode("minicraft.settings.mode.creative")) tool.dur--;
-
-					AchievementsDisplay.setAchievement("minicraft.achievement.bow", true);
-
-					return;
+			if (successful && activeItem != null && activeItem.isDepleted()) {
+				// If the activeItem has 0 items left, then "destroy" it.
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
 				}
 			}
+		}
+	}
 
-			// If the interaction between you and an entity is successful, then return.
-			if (interact(getInteractionBox(INTERACT_DIST))) {
-				if (activeItem.isDepleted())
-					activeItem = null;
-				return;
+	protected void use() {
+		// walkDist is not synced, so this can happen for both the client and server.
+		walkDist += 8; // Increase the walkDist (changes the sprite, like you moved your arm)
+		attackTime = activeItem == null ? 5 : 10;
+
+		if (isFishing) {
+			isFishing = false;
+			fishingTicks = maxFishingTicks;
+		}
+
+		// If the interaction between you and an entity is successful, then return.
+		if (use(getInteractionBox(INTERACT_DIST))) return;
+
+		// Attempt to interact with the tile.
+		Point t = getInteractionTile();
+
+		// If the target coordinates are a valid tile.
+		if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			Tile tile = level.getTile(t.x, t.y);
+			boolean successful = false;
+			if (activeItem != null && activeItem.useOn(tile, level, t.x, t.y, this, dir))
+				successful = true;
+			if (tile.use(level, t.x, t.y, this, activeItem, dir))
+				successful = true;
+			if (successful)
+				Logging.PLAYER.info("Used item {} on tile ({}, {}, {}).", activeItem, level.depth, t.x, t.y);
+
+			if (successful && activeItem != null && activeItem.isDepleted()) {
+				// If the activeItem has 0 items left, then "destroy" it.
+				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
+				}
+			}
+		}
+	}
+
+	protected void pickup() {
+		List<Entity> entities = level.getEntitiesInRect(getInteractionBox(INTERACT_DIST)); // Gets the entities within the 4 points
+		boolean blocked = false;
+		for (Entity e : entities)
+			if (e != this) {
+				blocked |= !(e instanceof ItemEntity || e instanceof Particle);
+				if ((activeItem = e.take(this)) != null)
+					return;
 			}
 
+		if (!blocked) {
 			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
 
 			// If the target coordinates are a valid tile.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
-
-				// Get any entities (except dropped items and particles) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
-
-				// If there are no other entities than us on the tile.
-				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
-					Tile tile = level.getTile(t.x, t.y);
-
-					// If the item successfully interacts with the target tile.
-					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
-						done = true;
-
-						// Returns true if the target tile successfully interacts with the item.
-					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)) {
-						done = true;
-					}
-				}
-
-				if (activeItem.isDepleted()) {
-					// If the activeItem has 0 items left, then "destroy" it.
-					activeItem = null;
-					if (isFishing) {
-						isFishing = false;
-						fishingTicks = maxFishingTicks;
-					}
-				}
-			}
-			if (done) return; // Skip the rest if interaction was handled
-		}
-
-		if (activeItem == null || activeItem.canAttack()) { // If there is no active item, OR if the item can be used to attack...
-			attackTime = 5;
-			// Attacks the enemy in the appropriate direction.
-			boolean used = hurt(getInteractionBox(ATTACK_DIST));
-
-			// Attempts to hurt the tile in the appropriate direction.
-			Point t = getInteractionTile();
-
-			// Check if tile is in bounds of the map.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
-				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
+				activeItem = tile.take(level, t.x, t.y, this);
 			}
-
-			if (used && activeItem instanceof ToolItem)
-				((ToolItem) activeItem).payDurability();
 		}
 	}
 
@@ -781,63 +762,40 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		fishingTicks = maxFishingTicks; // If you didn't catch anything, try again in 120 ticks
 	}
 
-	private boolean use() {
-		return use(getInteractionBox(INTERACT_DIST));
-	}
-
-	/**
-	 * called by other use method; this serves as a buffer in case there is no entity in front of the player.
-	 */
+	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area); // Gets the entities within the 4 points
 		for (Entity e : entities) {
-			if (e instanceof Furniture && ((Furniture) e).use(this))
-				return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			if (e != this && e.use(this, activeItem, dir))
+				return true; // If the entity is not the player, then call it's use method, and return the result.
 		}
 		return false;
 	}
 
-	/**
-	 * same, but for interaction.
-	 */
-	private boolean interact(Rectangle area) {
+	/** called by other attack method; this serves as a buffer in case there is no entity in front of the player. */
+	private boolean attack(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
+		boolean blocked = false;
 		for (Entity e : entities) {
-			if (e != this && e.interact(this, activeItem, attackDir))
-				return true; // This is the ONLY place that the Entity.interact method is actually called.
-		}
-		return false;
-	}
-
-	/**
-	 * same, but for attacking.
-	 */
-	private boolean hurt(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area);
-		int maxDmg = 0;
-		for (Entity e : entities) {
-			if (e != this && e instanceof Mob) {
-				int dmg = getAttackDamage(e);
-				maxDmg = Math.max(dmg, maxDmg);
-				((Mob) e).hurt(this, dmg, attackDir);
+			if (e != this && e.isAttackable(this, activeItem, dir) &&
+				!e.isInvulnerableTo(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem))) {
+				blocked |= !(e instanceof ItemEntity || e instanceof Particle);
+				if (attack(e)) {
+					Logging.PLAYER.info("Attacked {} with {}.", e, activeItem);
+				}
 			}
-			if (e instanceof Furniture)
-				e.interact(this, null, attackDir);
 		}
-		return maxDmg > 0;
+		// Returns whether there is any entity hitbox blocking interaction on target tile
+		return blocked;
 	}
 
-	/**
-	 * Calculates how much damage the player will do.
-	 * @param e Entity being attacked.
-	 * @return How much damage the player does.
-	 */
-	private int getAttackDamage(Entity e) {
-		int dmg = random.nextInt(2) + 1;
+	@Override
+	public boolean attack(Entity entity) {
+		int dmg = random.nextInt(2) + baseDamage();
 		if (activeItem != null && activeItem instanceof ToolItem) {
-			dmg += ((ToolItem) activeItem).getAttackDamageBonus(e); // Sword/Axe are more effective at dealing damage.
+			dmg += ((ToolItem) activeItem).getAttackDamageBonus(entity); // Sword/Axe are more effective at dealing damage.
 		}
-		return dmg;
+		return entity.hurt(new DamageSource(DamageSource.DamageType.GENERIC, this, activeItem), dir, dmg);
 	}
 
 	/**
@@ -921,33 +879,33 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders slashes:
 		if (attackTime > 0) {
-			switch (attackDir) {
+			switch (dir) {
 				case UP:  // If currently attacking upwards...
 					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
 					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						screen.render(xo + 4, yo - 4, attackItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
+					if (activeItem != null) { // If the player had an item when they last attacked...
+						screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
 					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
 					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo - 4, yo + 4, attackItem.sprite.getSprite(), 1, false);
+					if (activeItem != null) {
+						screen.render(xo - 4, yo + 4, activeItem.sprite.getSprite(), 1, false);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
 					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
 					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 8 + 4, yo + 4, attackItem.sprite.getSprite());
+					if (activeItem != null) {
+						screen.render(xo + 8 + 4, yo + 4, activeItem.sprite.getSprite());
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
 					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
 					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
-					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						screen.render(xo + 4, yo + 8 + 4, attackItem.sprite.getSprite());
+					if (activeItem != null) {
+						screen.render(xo + 4, yo + 8 + 4, activeItem.sprite.getSprite());
 					}
 					break;
 				case NONE:
@@ -956,7 +914,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Renders the fishing rods when fishing
-		if (isFishing) {
+		if (isFishing && activeItem != null) {
 			switch (dir) {
 				case UP:
 					screen.render(xo + 4, yo - 4, activeItem.sprite.getSprite(), 1, false);
@@ -989,6 +947,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		boolean successful = false; // If there is any item successfully added to the player
 		boolean remove = false; // Whether to remove the item entity (when empty)
 		if (itemEntity.item instanceof StackableItem && ((StackableItem) itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
+			assert activeItem != null;
 			int toAdd = Math.min(((StackableItem) activeItem).count + ((StackableItem) itemEntity.item).count, ((StackableItem) activeItem).maxCount)
 				- ((StackableItem) activeItem).count;
 			if (toAdd > 0) {
@@ -1126,6 +1085,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return r; // Return light radius
 	}
 
+	@Override
+	public boolean isAttackable(Entity source, @Nullable Item item, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isAttackable(Tile source, Level level, int x, int y, Direction attackDir) {
+		return true;
+	}
+
+	@Override
+	public boolean isUsable() {
+		return false;
+	}
+
 	/**
 	 * What happens when the player dies
 	 */
@@ -1156,19 +1130,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		payStamina(dmg * 2);
 	}
 
-	/**
-	 * Hurt the player.
-	 * @param damage How much damage to do to player.
-	 * @param attackDir What direction to attack.
-	 */
-	public void hurt(int damage, Direction attackDir) {
-		doHurt(damage, attackDir);
+	@Override
+	public boolean isFireImmune() {
+		return potioneffects.containsKey(PotionType.Lava);
 	}
 
 	@Override
-	protected void doHurt(int damage, Direction attackDir) {
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
 		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
-			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+			return false; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0, armorDam = 0;
 		if (this == Game.player) {
@@ -1199,34 +1169,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (healthDam > 0 || this != Game.player) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+			if (this == Game.player) handleDamage(source, attackDir, healthDam); // Sets knockback, and takes away health.
 		}
 
 		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
-	}
-
-	/**
-	 * Hurt the player directly. Don't use the armor as a shield.
-	 * @param damage Amount of damage to do to player
-	 * @param attackDir The direction of attack.
-	 */
-	private void directHurt(int damage, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this))
-			return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
-
-		int healthDam = 0;
-		if (this == Game.player) {
-			healthDam = damage; // Subtract that amount
-		}
-
-		if (healthDam > 0 || this != Game.player) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
-		}
-
-		Sound.play("playerhurt");
-		hurtTime = playerHurtTime;
+		return true;
 	}
 
 	@Override

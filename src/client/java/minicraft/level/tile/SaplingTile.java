@@ -2,11 +2,14 @@ package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class SaplingTile extends Tile {
 	private static final SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "sapling");
@@ -54,7 +57,11 @@ public class SaplingTile extends Tile {
 		return true;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
 		level.setTile(x, y, onType);
 		Sound.play("monsterhurt");
 		return true;

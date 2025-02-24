@@ -87,7 +87,7 @@ public class PlayerInvDisplay extends Display {
 		if (onScreenKeyboardMenu == null || !curMenu.isSearcherBarActive() && !onScreenKeyboardMenu.isVisible()) {
 			super.tick(input);
 
-			if (input.inputPressed("menu")) {
+			if (input.inputPressed("INVENTORY")) {
 				Game.exitDisplay();
 				return;
 			}
@@ -105,7 +105,7 @@ public class PlayerInvDisplay extends Display {
 			if (!acted)
 				curMenu.tick(input);
 
-			if (input.getMappedKey("menu").isClicked()) { // Should not listen button press.
+			if (input.getMappedKey("menu").isClicked() || input.inputPressed("EXIT")) { // Should not listen button press.
 				Game.exitDisplay();
 				return;
 			}
@@ -127,7 +127,7 @@ public class PlayerInvDisplay extends Display {
 
 				Inventory from, to;
 				if (selection == 0) {
-					if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+					if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 						player.activeItem = player.getInventory().remove(menus[0].getSelection());
 						Game.exitDisplay();
 						return;
@@ -180,7 +180,7 @@ public class PlayerInvDisplay extends Display {
 				}
 
 			} else {
-				if (input.inputPressed("attack") && menus[0].getNumOptions() > 0) {
+				if (input.inputPressed("SELECT") && menus[0].getNumOptions() > 0) {
 					player.activeItem = player.getInventory().remove(menus[0].getSelection());
 					Game.exitDisplay();
 				}

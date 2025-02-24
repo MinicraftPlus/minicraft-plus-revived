@@ -24,7 +24,8 @@ public class PauseDisplay extends Display {
 			new BlankEntry(),
 			new SelectEntry("minicraft.displays.pause.return", () -> Game.setDisplay(null)),
 			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsWorldDisplay())),
-			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay()))
+			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
+				new SelectEntry("minicraft.displays.info.title", () -> Game.setDisplay(new InfoDisplay()))
 		));
 
 		if (TutorialDisplayHandler.inQuests())

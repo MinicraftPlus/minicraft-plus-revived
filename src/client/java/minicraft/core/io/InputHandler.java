@@ -148,10 +148,11 @@ public class InputHandler implements KeyListener {
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
 
-		keymap.put("QUICKSAVE", "R"); // Saves the game while still playing
+		keymap.put("QUICK-SAVE", "R"); // Saves the game while still playing
 
-		keymap.put("ATTACK", "C|SPACE|ENTER"); // Attack action references "C" key
-		keymap.put("MENU", "X|E"); // And so on... menu does various things.
+		keymap.put("ATTACK", "C|SPACE"); // Attack/destroy action references "C" key
+		keymap.put("USE", "X|ENTER"); // Use action references "X" key (formerly "menu")
+		keymap.put("INVENTORY", "E"); // Open/close player inventory menu and exit action of some displays.
 		keymap.put("CRAFT", "Z|SHIFT-E"); // Open/close personal crafting window.
 		keymap.put("PICKUP", "V|P"); // Pickup torches / furniture; this replaces the power glove.
 		keymap.put("DROP-ONE", "Q"); // Drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
@@ -166,12 +167,11 @@ public class InputHandler implements KeyListener {
 
 		keymap.put("PAUSE", "ESCAPE"); // Pause the Game.
 
-		keymap.put("POTIONEFFECTS", "P"); // Toggle potion effect display
-		keymap.put("SIMPPOTIONEFFECTS", "O"); // Whether to simplify the potion effect display
-		keymap.put("EXPANDQUESTDISPLAY", "L"); // Expands the quest display
-		keymap.put("TOGGLEHUD", "F1"); // Toggle HUD
+		keymap.put("POTION-EFFECTS", "P"); // Toggle potion effect display
+		keymap.put("SIMPLIFY-POTION-EFFECTS", "O"); // Whether to simplify the potion effect display
+		keymap.put("EXPAND-QUEST-DISPLAY", "L"); // Expands the quest display
+		keymap.put("TOGGLE-HUD", "F1"); // Toggle HUD
 		keymap.put("SCREENSHOT", "F2"); // To make screenshot
-		keymap.put("INFO", "SHIFT-I"); // Toggle player stats display
 
 		keymap.put("FULLSCREEN", "F11");
 	}
@@ -194,16 +194,17 @@ public class InputHandler implements KeyListener {
 		buttonMap.put("EXIT", ControllerButton.B);
 
 		buttonMap.put("ATTACK", ControllerButton.A);
-		buttonMap.put("MENU", ControllerButton.X);
+		buttonMap.put("USE", ControllerButton.B);
+		buttonMap.put("INVENTORY", ControllerButton.X);
 		buttonMap.put("CRAFT", ControllerButton.Y);
-		buttonMap.put("PICKUP", ControllerButton.LEFTBUMPER);
+		buttonMap.put("PICKUP", ControllerButton.LEFTSTICK);
 
 		buttonMap.put("SEARCHER-BAR", ControllerButton.START);
 
 		buttonMap.put("PAUSE", ControllerButton.START);
 
-		buttonMap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
-		buttonMap.put("DROP-STACK", ControllerButton.RIGHTSTICK);
+		buttonMap.put("DROP-ONE", ControllerButton.LEFTBUMPER);
+		buttonMap.put("DROP-STACK", ControllerButton.RIGHTBUMPER);
 	}
 
 	public void resetKeyBindings() {

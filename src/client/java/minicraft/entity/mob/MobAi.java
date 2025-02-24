@@ -148,26 +148,6 @@ public abstract class MobAi extends Mob {
 	}
 
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
-		if (isRemoved() || hurtTime > 0)
-			return; // If the mob has been hurt recently and hasn't cooled down, don't continue
-
-		Player player = getClosestPlayer();
-		if (player != null) { // If there is a player in the level
-
-			/// Play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
-			int xd = player.x - x;
-			int yd = player.y - y;
-			if (xd * xd + yd * yd < 80 * 80) {
-				Sound.play("monsterhurt");
-			}
-		}
-		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
-
-		super.doHurt(damage, attackDir);
-	}
-
-	@Override
 	public boolean canWool() {
 		return true;
 	}

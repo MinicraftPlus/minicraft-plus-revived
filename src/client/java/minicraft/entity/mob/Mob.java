@@ -1,7 +1,7 @@
 package minicraft.entity.mob;
 
-import minicraft.core.Game;
 import minicraft.core.Renderer;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Tnt;
@@ -10,9 +10,13 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.Item;
 import minicraft.item.PotionType;
+import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.util.DamageSource;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class Mob extends Entity {
 
@@ -54,7 +58,8 @@ public abstract class Mob extends Entity {
 		noActionTime++;
 
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
-			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
+			// Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
+			hurt(new DamageSource(DamageSource.DamageType.LAVA, level, x, y, Tiles.get("lava")), Direction.NONE, 4);
 
 		if (canBurn()) {
 			if (this.burningDuration > 0) {
@@ -62,13 +67,9 @@ public abstract class Mob extends Entity {
 				if (this.burningDuration % 10 == 0)
 					level.add(new BurnParticle(x - 8 + (random.nextInt(8) - 4), y - 8 + (random.nextInt(8) - 4)));
 				this.burningDuration--;
-				if (this instanceof Player) {
-					if (this.burningDuration % 70 == 0 && !Renderer.player.potioneffects.containsKey(PotionType.Lava))
-						hurt(this, 1, Direction.NONE); //burning damage
-				} else {
-					if (this.burningDuration % 70 == 0)
-						hurt(this, 2, Direction.NONE); //burning damage
-				}
+				// TODO different damage?
+				hurt(new DamageSource(DamageSource.DamageType.ON_FIRE, level, x, y, null), // TODO last attacker
+					Direction.NONE, this instanceof Player ? 1 : 2); //burning damage
 			}
 		}
 
@@ -79,11 +80,11 @@ public abstract class Mob extends Entity {
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
 		int xd = 0, yd = 0;
 		if (xKnockback != 0) {
-			xd = (int) Math.ceil(xKnockback / 2);
+			xd = (int) Math.ceil(xKnockback / 2F);
 			xKnockback -= xKnockback / Math.abs(xKnockback);
 		}
 		if (yKnockback != 0) {
-			yd = (int) Math.ceil(yKnockback / 2);
+			yd = (int) Math.ceil(yKnockback / 2F);
 			yKnockback -= yKnockback / Math.abs(yKnockback);
 		}
 
@@ -219,37 +220,12 @@ public abstract class Mob extends Entity {
 	}
 
 	/**
-	 * Do damage to the mob this method is called on.
-	 * @param tile The tile that hurt the player
-	 * @param x The x position of the mob
-	 * @param y The x position of the mob
-	 * @param damage The amount of damage to hurt the mob with
+	 * Attacks an entity
+	 * @param entity The entity to attack
+	 * @return If the interaction was successful
 	 */
-	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
-		Direction attackDir = Direction.getDirection(dir.getDir() ^ 1); // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd.
-		if (!(tile == Tiles.get("lava") && this instanceof Player && ((Player) this).potioneffects.containsKey(PotionType.Lava)))
-			doHurt(damage, tile.mayPass(level, x, y, this) ? Direction.NONE : attackDir); // Call the method that actually performs damage, and set it to no particular direction
-	}
-
-	/**
-	 * Do damage to the mob this method is called on.
-	 * @param mob The mob that hurt this mob
-	 * @param damage The amount of damage to hurt the mob with
-	 */
-	public void hurt(Mob mob, int damage) {
-		hurt(mob, damage, getAttackDir(mob, this));
-	}
-
-	/**
-	 * Do damage to the mob this method is called on.
-	 * @param mob The mob that hurt this mob
-	 * @param damage The amount of damage to hurt the mob with
-	 * @param attackDir The direction this mob was attacked from
-	 */
-	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
-		if (mob instanceof Player && Game.isMode("minicraft.settings.mode.creative") && mob != this)
-			doHurt(health, attackDir); // Kill the mob instantly
-		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
+	public boolean attack(Entity entity) {
+		return false;
 	}
 
 	/**
@@ -265,18 +241,32 @@ public abstract class Mob extends Entity {
 	 * @param dmg The amount of damage the explosion does.
 	 */
 	public void onExploded(Tnt tnt, int dmg) {
-		doHurt(dmg, getAttackDir(tnt, this));
+		hurt(new DamageSource(DamageSource.DamageType.EXPLOSION, tnt, null),
+			getInteractionDir(tnt, this), dmg);
 	}
 
-	/**
-	 * Hurt the mob, based on only damage and a direction
-	 * This is overridden in Player.java
-	 * @param damage The amount of damage to hurt the mob with
-	 * @param attackDir The direction this mob was attacked from
-	 */
-	protected void doHurt(int damage, Direction attackDir) {
+	@Override
+	public boolean hurt(DamageSource source, Direction attackDir, int damage) {
+		handleDamage(source, attackDir, damage);
+		return true;
+	}
+
+	@Override
+	protected void handleDamage(DamageSource source, Direction attackDir, int damage) {
 		if (isRemoved() || hurtTime > 0)
 			return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+
+		Player player = getClosestPlayer();
+		if (player != null) { // If there is a player in the level
+
+			/// Play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
+			int xd = player.x - x;
+			int yd = player.y - y;
+			if (xd * xd + yd * yd < 80 * 80) {
+				Sound.play("monsterhurt");
+			}
+		}
+		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
 
 		health -= damage; // Actually change the health
 
@@ -297,18 +287,5 @@ public abstract class Mob extends Entity {
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > (Player.baseHealth + Player.extraHealth))
 			health = (Player.baseHealth + Player.extraHealth); // If our health has exceeded our maximum, lower it back down to said maximum
-	}
-
-	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
-		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
-	}
-
-	/**
-	 * This checks how the {@code attacker} can damage this mob.
-	 * @param attacker The attacker entity.
-	 * @return The calculated damage.
-	 */
-	public int calculateEntityDamage(Entity attacker, int damage) {
-		return damage;
 	}
 }

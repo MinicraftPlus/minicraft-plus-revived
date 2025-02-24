@@ -46,7 +46,7 @@ public class DungeonChest extends Chest {
 		return new DungeonChest(null, !this.isLocked);
 	}
 
-	public boolean use(Player player) {
+	public boolean use(Player player, @Nullable Item item, Direction attackDir) {
 		if (isLocked) {
 			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
 			boolean invKey = player.getInventory().count(Items.get("key")) > 0;
@@ -71,11 +71,11 @@ public class DungeonChest extends Chest {
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 				}
 
-				return super.use(player); // the player unlocked the chest.
+				return super.use(player, item, attackDir); // the player unlocked the chest.
 			}
 
 			return false; // the chest is locked, and the player has no key.
-		} else return super.use(player); // the chest was already unlocked.
+		} else return super.use(player, item, attackDir); // the chest was already unlocked.
 	}
 
 	/**
@@ -110,9 +110,9 @@ public class DungeonChest extends Chest {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public @Nullable Item take(Player player) {
 		if (!isLocked)
-			return super.interact(player, item, attackDir);
-		return false;
+			return super.take(player);
+		return null;
 	}
 }

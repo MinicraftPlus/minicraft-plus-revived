@@ -20,8 +20,11 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 
 public class TreeTile extends Tile {
+	private static final int MAX_HEALTH = 20;
+
 	private static final LinkedSprite oakSprite = new LinkedSprite(SpriteType.Tile, "oak");
 	private static final LinkedSprite oakSpriteFull = new LinkedSprite(SpriteType.Tile, "oak_full");
 	private static final LinkedSprite spruceSprite = new LinkedSprite(SpriteType.Tile, "spruce");
@@ -121,44 +124,41 @@ public class TreeTile extends Tile {
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		hurt(level, x, y, dmg);
-		return true;
-	}
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			handleDamage(level, x, y, source, item, MAX_HEALTH);
+			return true; // Go directly to hurt method
+		}
 
-	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (Game.isMode("minicraft.settings.mode.creative"))
-			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
+		if (item instanceof ToolItem && source instanceof Player) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					int data = level.getData(xt, yt);
-					hurt(level, xt, yt, tool.getDamage());
+				if (((Player) source).payStamina(4 - tool.level) && tool.payDurability()) {
+					int data = level.getData(x, y);
+					hurt(level, x, y, source, item, attackDir, tool.getDamage());
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-							item, this, data, xt, yt, level.depth));
+							item, this, data, x, y, level.depth));
 					return true;
 				}
 			}
 		}
-		return false;
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
+	@Override
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
 		if (random.nextInt(100) == 0)
 			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Apple"));
 
 		int damage = level.getData(x, y) + dmg;
-		int treeHealth = 20;
-		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
-
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= treeHealth) {
+		if (damage >= MAX_HEALTH) {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
 			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));

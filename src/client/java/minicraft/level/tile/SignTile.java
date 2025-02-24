@@ -7,6 +7,9 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker;
@@ -19,6 +22,7 @@ import minicraft.level.tile.entity.SignTileEntity;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SignDisplayMenu;
 import minicraft.util.AdvancementElement;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public class SignTile extends Tile {
@@ -46,35 +50,43 @@ public class SignTile extends Tile {
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item != null) {
-			if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
-				int data = level.getData(xt, yt);
-				level.setTile(xt, yt, Tiles.get((short) data));
-				SignDisplay.removeSign(level.depth, xt, yt);
-				Sound.play("monsterhurt");
-				level.dropItem(xt*16+8, yt*16+8, Items.get("Sign"));
-				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
-					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
-						item, this, data, xt, yt, level.depth));
-				return true;
-			}
-		} else { // TODO Add a way to lock signs
-			Game.setDisplay(new SignDisplay(level, xt, yt));
-			return true;
-		}
-
-		return false;
+	@Override
+	public boolean use(Level level, int xt, int yt, Player player, @Nullable Item item, Direction attackDir) {
+		Game.setDisplay(new SignDisplay(level, xt, yt));
+		return true; // TODO Add a way to lock signs
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (source instanceof Player) {
-			Game.setDisplay(new SignDisplay(level, x, y));
+	protected void handleDamage(Level level, int x, int y, Entity source, @Nullable Item item, int dmg) {
+		level.add(new SmashParticle(x << 4, y << 4));
+		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
+	}
+
+	@Override
+	public boolean hurt(Level level, int x, int y, Entity source, @Nullable Item item, Direction attackDir, int damage) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
+			int data = level.getData(x, y);
+			level.setTile(x, y, Tiles.get((short) data));
+			SignDisplay.removeSign(level.depth, x, y);
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Sign"));
 			return true;
 		}
 
-		return false;
+		if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
+			int data = level.getData(x, y);
+			level.setTile(x, y, Tiles.get((short) data));
+			SignDisplay.removeSign(level.depth, x, y);
+			Sound.play("monsterhurt");
+			level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get("Sign"));
+			AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
+				new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
+					item, this, data, x, y, level.depth));
+			return true;
+		}
+
+		handleDamage(level, x, y, source, item, 0);
+		return true;
 	}
 
 	@Override
