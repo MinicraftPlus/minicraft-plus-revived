@@ -512,7 +512,7 @@ public class ResourcePackDisplay extends Display {
 						paths.add(entry.getName());
 					}
 				}
-			} else {
+			} else if (Files.exists(this.packRootPath.resolve(path))) {
 				try (Stream<Path> stream = Files.walk(this.packRootPath.resolve(path), 1)) {
 					stream.forEach(p -> {
 						boolean isDir = Files.isDirectory(p);
@@ -593,8 +593,13 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		// Read and add the .zip file to the resource pack list. Only accept files ending with .zip or directory.
-		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) -> name.endsWith(".zip")))) {
+		// Read and add the folder (that contains a pack.json) or .zip file to the resource pack list.
+		// Only accept files ending with .zip or directory.
+		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) -> {
+				if (name.endsWith(".zip")) return true;
+				Path path = dur.toPath().resolve(name);
+				return Files.isDirectory(path) && Files.exists(path.resolve("pack.json"));
+			}))) {
 			try {
 				URL url = file.toPath().toUri().toURL();
 				if(!urls.contains(url))
