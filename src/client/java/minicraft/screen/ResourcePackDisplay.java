@@ -511,7 +511,7 @@ public class ResourcePackDisplay extends Display {
 						(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
 						String entryName = entry.getName();
 						if (entryName.contains("..")) continue;
-						paths.add(entryNameq);
+						paths.add(entryName);
 					}
 				}
 			} else if (Files.exists(this.packRootPath.resolve(path))) {
