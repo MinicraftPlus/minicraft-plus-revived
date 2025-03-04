@@ -509,7 +509,9 @@ public class ResourcePackDisplay extends Display {
 					Path parent;
 					if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
 						(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
-						paths.add(entry.getName());
+						String entryName = entry.getName();
+						if (entryName.contains("..")) continue;
+						paths.add(entryNameq);
 					}
 				}
 			} else if (Files.exists(this.packRootPath.resolve(path))) {
