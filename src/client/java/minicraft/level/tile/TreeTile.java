@@ -68,19 +68,19 @@ public class TreeTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 
-		TreeType thisType = level.treeTypes[x + y * level.w];
+		TreeType thisType = level.getTreeType(x, y);
 		// Checking whether the target direction has targeted the same TreeTile
-		boolean isUpTileSame = level.getTile(x, y - 1) == this && thisType == level.treeTypes[x + (y - 1) * level.w];
-		boolean isLeftTileSame = level.getTile(x - 1, y) == this && thisType == level.treeTypes[(x - 1) + y * level.w];
-		boolean isRightTileSame = level.getTile(x + 1, y) == this && thisType == level.treeTypes[(x + 1) + y * level.w];
-		boolean isDownTileSame = level.getTile(x, y + 1) == this && thisType == level.treeTypes[x + (y + 1) * level.w];
-		boolean isUpLeftTileSame = level.getTile(x - 1, y - 1) == this && thisType == level.treeTypes[(x - 1) + (y - 1) * level.w];
-		boolean isUpRightTileSame = level.getTile(x + 1, y - 1) == this && thisType == level.treeTypes[(x + 1) + (y - 1) * level.w];
-		boolean isDownLeftTileSame = level.getTile(x - 1, y + 1) == this && thisType == level.treeTypes[(x - 1) + (y + 1) * level.w];
-		boolean isDownRightTileSame = level.getTile(x + 1, y + 1) == this && thisType == level.treeTypes[(x + 1) + (y + 1) * level.w];
+		boolean isUpTileSame = level.getTile(x, y - 1) == this && thisType == level.getTreeType(x, y - 1);
+		boolean isLeftTileSame = level.getTile(x - 1, y) == this && thisType == level.getTreeType(x - 1, y);
+		boolean isRightTileSame = level.getTile(x + 1, y) == this && thisType == level.getTreeType(x + 1, y);
+		boolean isDownTileSame = level.getTile(x, y + 1) == this && thisType == level.getTreeType(x, y + 1);
+		boolean isUpLeftTileSame = level.getTile(x - 1, y - 1) == this && thisType == level.getTreeType(x - 1, y - 1);
+		boolean isUpRightTileSame = level.getTile(x + 1, y - 1) == this && thisType == level.getTreeType(x + 1, y - 1);
+		boolean isDownLeftTileSame = level.getTile(x - 1, y + 1) == this && thisType == level.getTreeType(x - 1, y + 1);
+		boolean isDownRightTileSame = level.getTile(x + 1, y + 1) == this && thisType == level.getTreeType(x + 1, y + 1);
 
-		Sprite sprite = level.treeTypes[x + y * level.w].treeSprite.getSprite();
-		Sprite spriteFull = level.treeTypes[x + y * level.w].treeSpriteFull.getSprite();
+		Sprite sprite = level.getTreeType(x, y).treeSprite.getSprite();
+		Sprite spriteFull = level.getTreeType(x, y).treeSpriteFull.getSprite();
 
 		if (isUpTileSame && isUpLeftTileSame && isLeftTileSame) {
 			screen.render((x << 4) + 0, (y << 4) + 0, spriteFull.spritePixels[0][1]);
