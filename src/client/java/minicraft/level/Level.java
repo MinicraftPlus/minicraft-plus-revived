@@ -28,6 +28,7 @@ import minicraft.entity.mob.Zombie;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.item.DyeItem;
 import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -66,8 +67,7 @@ public class Level {
 	public int w, h; // Width and height of the level
 	private final long seed; // The used seed that was used to generate the world
 
-	public short[] tiles; // An array of all the tiles in the world.
-	public short[] data; // An array of the data of the tiles in the world.
+	public ChunkManager chunkManager; // A collection of chunks with it's own interface
 
 	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 
@@ -185,23 +185,17 @@ public class Level {
 		updateMobCap();
 
 		if (!makeWorld) {
-			int arrsize = w * h;
-			tiles = new short[arrsize];
-			data = new short[arrsize];
+			chunkManager = new ChunkManager(w, h);
 			return;
 		}
 
 		Logging.WORLD.debug("Making level " + level + "...");
 
-		maps = LevelGen.createAndValidateMap(w, h, level, seed);
-		if (maps == null) {
-			Logging.WORLD.error("Level generation: Returned maps array is null");
+		chunkManager = LevelGen.createAndValidateMap(w, h, level, seed);
+		if (chunkManager == null) {
+			Logging.WORLD.error("Level generation: Returned chunks array is null");
 			return;
 		}
-
-		tiles = maps[0]; // Assigns the tiles in the map
-		data = maps[1]; // Assigns the data of the tiles
-
 
 		if (level < 0)
 			generateSpawnerStructures();
@@ -323,18 +317,17 @@ public class Level {
 			while (!addedchest) { // Keep running until we successfully add a DungeonChest
 
 				// Pick a random tile:
-				int x2 = random.nextInt(16 * w) / 16;
-				int y2 = random.nextInt(16 * h) / 16;
+				int x2 = random.nextInt(w);
+				int y2 = random.nextInt(h);
 				if (getTile(x2, y2) == Tiles.get("Grass")) {
-					boolean xaxis = random.nextBoolean();
-					if (xaxis) {
+					if (random.nextBoolean()) { // x-axis
 						for (int s = x2; s < w - s; s++) {
 							if (getTile(s, y2) == Tiles.get("Obsidian Wall") || getTile(s, y2) == Tiles.get("Ornate Obsidian")) {
 								d.x = s * 20 - 16;
 								d.y = y2 * 24 - 14;
 							}
 						}
-					} else { // y axis
+					} else { // y-axis
 						for (int s = y2; s < h - s; s++) {
 							if (getTile(x2, s) == Tiles.get("Obsidian Wall") || getTile(x2, s) == Tiles.get("Ornate Obsidian")) {
 								d.x = x2 * 23 - 14;
@@ -346,6 +339,12 @@ public class Level {
 						d.x = (x2 << 4) - 8;
 						d.y = (y2 << 4) - 8;
 					}
+
+					// Target place may not exist a dungeon chest
+					if (!getEntitiesInTiles(d.x >> 4, d.y >> 4, 0, true, DungeonChest.class).isEmpty()) continue;
+					// If target place is blocking wall, remove it
+					if (getTile(d.x >> 4, d.y >> 4) == Tiles.get("Obsidian Wall"))
+						setTile(d.x >> 4, d.y >> 4, Tiles.get("Raw Obsidian"));
 
 					add(d);
 					chestCount++;
@@ -558,8 +557,7 @@ public class Level {
 	}
 
 	public Tile getTile(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
-		return Tiles.get(tiles[x + y * w]);
+		return chunkManager.getTile(x, y);
 	}
 
 	/**
@@ -581,21 +579,16 @@ public class Level {
 	}
 
 	public void setTile(int x, int y, Tile t, int dataVal) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return;
-
-		tiles[x + y * w] = t.id;
-		data[x + y * w] = (short) dataVal;
-		t.onTileSet(this, x, y);
+		chunkManager.setTile(x, y, t, dataVal);
+		getTile(x, y).onTileSet(this, x, y);
 	}
 
 	public int getData(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w] & 0xFFFF;
+		return chunkManager.getData(x, y);
 	}
 
 	public void setData(int x, int y, int val) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data[x + y * w] = (short) val;
+		chunkManager.setData(x, y, val);
 	}
 
 	public void add(Entity e) {
@@ -672,7 +665,22 @@ public class Level {
 					// Spawns the friendly mobs.
 					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 					else if (rnd >= 68) add((new Pig()), nx, ny);
-					else add((new Sheep()), nx, ny);
+					else { // Sheep spawning
+					double colorRnd = random.nextDouble();
+					if (colorRnd < 0.8) { // 80% for default color, i.e. white
+						add((new Sheep()), nx, ny);
+					} else if (colorRnd < 0.85) { // 5% for black
+						add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
+					} else if (colorRnd < 0.9) { // 5% for gray
+						add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
+					} else if (colorRnd < 0.95) { // 5% for light gray
+						add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
+					} else if (colorRnd < 0.98) { // 3% for brown
+						add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
+					} else { // 2% for pink
+						add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+					}
+				}
 
 					spawned = true;
 				}
@@ -1177,7 +1185,7 @@ public class Level {
 	 */
 	public void regenerateBossRoom() {
 		if (depth == -4) {
-			Structure.dungeonBossRoom.draw(tiles, w / 2, h / 2, w); // Generating the boss room at the center.
+			Structure.dungeonBossRoom.draw(chunkManager, w / 2, h / 2); // Generating the boss room at the center.
 			for (int x = w / 2 - 4; x < w / 2 + 5; x++) { // Resetting tile data.
 				for (int y = h / 2 - 4; y < h / 2 + 5; y++) {
 					setData(x, y, 0);

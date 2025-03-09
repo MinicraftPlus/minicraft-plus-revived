@@ -42,6 +42,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.item.ArmorItem;
+import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -49,6 +50,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.item.StackableItem;
+import minicraft.level.ChunkManager;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
@@ -62,6 +64,7 @@ import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.SignDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.TutorialDisplayHandler;
+import minicraft.screen.WorldSelectDisplay;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.AdvancementElement;
@@ -127,6 +130,87 @@ public class Load {
 		//	hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
 
 		if (!loadGame) return;
+
+		// Is dev build
+		if (Game.VERSION.isDev() && worldVer.compareTo(Game.VERSION) < 0) {
+			Logging.SAVELOAD.info("Old world detected, backup prompting...");
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
+				Localization.getLocalized("minicraft.displays.save.popup_display.world_backup_prompt.msg",
+					worldVer, Game.VERSION))));
+			entries.addAll(Arrays.asList(StringEntry.useLines("minicraft.display.popup.escape_cancel")));
+
+			AtomicBoolean acted = new AtomicBoolean(false);
+			AtomicBoolean continues = new AtomicBoolean(false);
+			AtomicBoolean doBackup = new AtomicBoolean(false);
+
+			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+			callbacks.add(new PopupDisplay.PopupActionCallback("EXIT", m -> {
+				Game.exitDisplay();
+				acted.set(true);
+				return true;
+			}));
+
+			callbacks.add(new PopupDisplay.PopupActionCallback("ENTER|Y", m -> {
+				Game.exitDisplay();
+				continues.set(true);
+				doBackup.set(true);
+				acted.set(true);
+				return true;
+			}));
+
+			callbacks.add(new PopupDisplay.PopupActionCallback("N", m -> {
+				Game.exitDisplay();
+				continues.set(true);
+				acted.set(true);
+				return true;
+			}));
+
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
+					"minicraft.displays.save.popup_display.world_backup_prompt", callbacks, 2),
+					entries.toArray(new ListEntry[0])));
+
+			while (true) {
+				if (acted.get()) {
+					if (continues.get()) {
+						if (doBackup.get()) {
+							Logging.SAVELOAD.info("Performing world backup...");
+							int i = 0;
+							String filename = worldname;
+							File f = new File(location + "/saves/", filename);
+							while (f.exists()) { // Increments world name if world exists
+								i++;
+								filename = worldname + " (" + i + ")";
+								f = new File(location + "/saves/", filename);
+							}
+							f.mkdirs();
+							try {
+								FileHandler.copyFolderContents(Paths.get(location, "saves", worldname),
+									f.toPath(), FileHandler.SKIP, false);
+							} catch (IOException e) {
+								Logging.SAVELOAD.error(e, "Error occurs while performing world backup, loading aborted");
+								throw new RuntimeException(new InterruptedException("World loading interrupted."));
+							}
+
+							Logging.SAVELOAD.info("World backup \"{}\" is created.", filename);
+							WorldSelectDisplay.updateWorlds();
+						} else
+							Logging.SAVELOAD.warn("World backup is skipped.");
+						Logging.SAVELOAD.debug("World loading continues...");
+					} else {
+						Logging.SAVELOAD.info("User cancelled world loading, loading aborted.");
+						throw new RuntimeException(new InterruptedException("World loading interrupted."));
+					}
+
+					break;
+				}
+
+				try {
+					//noinspection BusyWait
+					Thread.sleep(10);
+				} catch (InterruptedException ignored) {}
+			}
+		}
 
 		if (worldVer.compareTo(new Version("1.9.2")) < 0)
 			new LegacyLoad(worldname);
@@ -198,6 +282,11 @@ public class Load {
 
 						break;
 					}
+
+					try {
+						//noinspection BusyWait
+						Thread.sleep(10);
+					} catch (InterruptedException ignored) {}
 				}
 			}
 		}
@@ -628,13 +717,12 @@ public class Load {
 			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
 			Settings.set("size", lvlw);
 
-			short[] tiles = new short[lvlw * lvlh];
-			short[] tdata = new short[lvlw * lvlh];
+			ChunkManager map = new ChunkManager(lvlw, lvlh);
 
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {
 					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+					int tileidx = y + x * lvlh; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
 					if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
 						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
@@ -646,25 +734,29 @@ public class Load {
 						}
 					}
 
-					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
+					if (tilename.equalsIgnoreCase("Wool")) {
+						if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+							switch (Integer.parseInt(extradata.get(tileidx))) {
+								case 1:
+									tilename = "Red Wool";
+									break;
+								case 2:
+									tilename = "Yellow Wool";
+									break;
+								case 3:
+									tilename = "Green Wool";
+									break;
+								case 4:
+									tilename = "Blue Wool";
+									break;
+								case 5:
+									tilename = "Black Wool";
+									break;
+								default:
+									tilename = "White Wool";
+							}
+						} else if (worldVer.compareTo(new Version("2.3.0-dev1")) < 0) {
+							tilename = "White Wool";
 						}
 					} else if (l == World.minLevelDepth + 1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if (Math.random() < 0.8) // don't replace *all* the lapis
@@ -682,7 +774,8 @@ public class Load {
 						}
 					}
 
-					loadTile(tiles, tdata, tileArrIdx, tilename, extradata.get(tileidx));
+					// Tiles are read in an ord
+					loadTile(worldVer, map, x, y, tilename, extradata.get(tileidx));
 				}
 			}
 
@@ -690,13 +783,12 @@ public class Load {
 			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
 
 			Level curLevel = World.levels[lvlidx];
-			curLevel.tiles = tiles;
-			curLevel.data = tdata;
+			curLevel.chunkManager = map;
 
 			// Tile initialization
 			for (int x = 0; x < curLevel.w; ++x) {
 				for (int y = 0; y < curLevel.h; ++y) {
-					Tiles.get(curLevel.tiles[x + y * curLevel.w]).onTileSet(curLevel, x, y);
+					curLevel.getTile(x, y).onTileSet(curLevel, x, y);
 				}
 			}
 
@@ -753,7 +845,7 @@ public class Load {
 		}
 
 		boolean signsLoadSucceeded = false;
-		if (new File(location+"signs.json").exists()) {
+		if (new File(location + "signs.json").exists()) {
 			try {
 				JSONObject fileObj = new JSONObject(loadFromFile(location + "signs.json", true));
 				@SuppressWarnings("unused")
@@ -784,14 +876,15 @@ public class Load {
 
 	private static final Pattern OLD_TORCH_TILE_REGEX = Pattern.compile("TORCH ([\\w ]+)");
 
-	public static void loadTile(short[] tiles, short[] data, int idx, String tileName, String tileData) {
+	public static void loadTile(Version worldVer, ChunkManager map, int x, int y, String tileName, String tileData) {
 		Matcher matcher;
 		if ((matcher = OLD_TORCH_TILE_REGEX.matcher(tileName.toUpperCase())).matches()) {
-			tiles[idx] = 57; // ID of TORCH tile
-			data[idx] = Tiles.get(matcher.group(1)).id;
+			map.setTile(x, y, Tiles.get("Torch"), Tiles.get(matcher.group(1)).id);
 		} else {
-			tiles[idx] = Tiles.get(tileName).id;
-			data[idx] = Short.parseShort(tileData);
+			short data = 0;
+			if (worldVer.compareTo(new Version("2.3.0-dev1")) > 0 || !tileName.equalsIgnoreCase("FLOWER"))
+				data = Short.parseShort(tileData);
+			map.setTile(x, y, Tiles.get(tileName), data);
 		}
 	}
 
@@ -950,6 +1043,13 @@ public class Load {
 				name = name.replace("Potion", "Awkward Potion");
 		}
 
+		if (worldVer.compareTo(new Version("2.3.0-dev1")) < 0) {
+			if (name.startsWith("Wool"))
+				name = name.replace("Wool", "White Wool");
+			if (name.startsWith("Flower"))
+				name = name.replace("Flower", "Oxeye Daisy");
+		}
+
 		return name;
 	}
 
@@ -1055,6 +1155,14 @@ public class Load {
 				newEntity = new Spark((AirWizard) sparkOwner, x, y);
 			else {
 				Logging.SAVELOAD.error("Failed to load Spark; owner id doesn't point to a correct entity");
+				return null;
+			}
+		} else if (entityName.contains(" Bed")) { // with a space, meaning that the bed has a color name in the front
+			String colorName = entityName.substring(0, entityName.length() - 4).toUpperCase().replace(' ', '_');
+			try {
+				newEntity = new Bed(DyeItem.DyeColor.valueOf(colorName));
+			} catch (IllegalArgumentException e) {
+				Logging.SAVELOAD.error("Invalid bed variant: `{}`, skipping.", entityName);
 				return null;
 			}
 		} else {
@@ -1204,7 +1312,6 @@ public class Load {
 	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
 			case "Player":
-				return null;
 			case "RemotePlayer":
 				return null;
 			case "Cow":
@@ -1268,6 +1375,8 @@ public class Load {
 				return new KnightStatue(0);
 			case "ObsidianKnight":
 				return new ObsidianKnight(0);
+			case "DyeVat":
+				return new Crafter(Crafter.Type.DyeVat);
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;

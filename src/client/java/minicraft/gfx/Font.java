@@ -3,6 +3,7 @@ package minicraft.gfx;
 import minicraft.core.Action;
 import minicraft.core.Renderer;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public class Font {
 			"ÙÛÝ*«»£$&€§ªºabcdefghijklmnopqrs" +
 			"tuvwxyzáàãâäéèêëíìîïóòõôöúùûüçñý" +
 			"ÿабвгдеёжзийклмнопрстуфхцчшщъыьэ" +
-			"юяışő";
+			"юяışő✓";
 
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 
@@ -115,7 +116,22 @@ public class Font {
 	}
 
 	public static int textWidth(String text) { // Filtering out coloring codes.
-		return (int) (Math.max(text.length() - text.chars().filter(ch -> ch == Color.COLOR_CHAR).count() * 5, 0) * 8);
+		return Math.max(text.length() - countMatches(text, Color.COLOR_CHAR) * 5, 0) * 8;
+	}
+
+	// Source: Apache commons-lang lang3 StringUtils
+	private static int countMatches(@NotNull final CharSequence str, final char ch) {
+		if (str.length() == 0) {
+			return 0;
+		}
+		int count = 0;
+		// We could also call str.toCharArray() for faster lookups but that would generate more garbage.
+		for (int i = 0; i < str.length(); i++) {
+			if (ch == str.charAt(i)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public static int textWidth(String[] para) {
