@@ -31,7 +31,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,6 +40,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -52,9 +52,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 public class ResourcePackDisplay extends Display {
 	/* Resource Pack
@@ -109,42 +109,12 @@ public class ResourcePackDisplay extends Display {
 	private boolean changed = false;
 
 	static { // Initializing the default pack and logo.
-		// Add the default pack.
-		URL defaultPackURL = Game.class.getProtectionDomain().getCodeSource().getLocation();
-		if (Game.class.getProtectionDomain().getCodeSource().getLocation().toString().endsWith("/")) { // If the source is a directory.
-			try {
-				File zip = File.createTempFile("resources", ".zip");
-				Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created temp zip file: {}", zip.getAbsolutePath());
-				if (zip.exists()) zip.delete(); // Delete if exists.
-				try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-					ArrayList<String> assets = FileHandler.listAssets();
-					assets.add("pack.json");
-					assets.add("pack.png");
-					for (String name : assets) { // Copy only assets and pack configuration.
-						if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
-							out.putNextEntry(new ZipEntry(name));
-							if (!name.endsWith("/")) {
-								int b;
-								InputStream stream = Game.class.getResourceAsStream("/" + name);
-								while ((b = stream.read()) != -1) // Write per byte.
-									out.write(b);
-							}
-
-							out.closeEntry();
-						}
-					}
-				} catch (IOException e) {
-					CrashHandler.crashHandle(e);
-				}
-
-				try {
-					defaultPackURL = zip.toURI().toURL();
-				} catch (MalformedURLException e) {
-					CrashHandler.crashHandle(e);
-				}
-			} catch (IOException e) {
-				CrashHandler.crashHandle(e);
-			}
+		URL defaultPackURL;
+		try {
+			defaultPackURL = FileHandler.getJarResourcesPath().toUri().toURL();
+		} catch (MalformedURLException e) {
+			CrashHandler.crashHandle(e);
+			throw new RuntimeException(e);
 		}
 
 		// Default resources
@@ -390,6 +360,7 @@ public class ResourcePackDisplay extends Display {
 	 */
 	private static class ResourcePack implements Closeable {
 		private URL packRoot;
+		private Path packRootPath;
 
 		/**
 		 * 0 - before 2.2.0; 1 - 2.2.0-latest
@@ -405,8 +376,16 @@ public class ResourcePackDisplay extends Display {
 		private boolean opened = false; // If the zip file stream is opened.
 		private ZipFile zipFile = null; // The zip file stream.
 
-		private ResourcePack(URL packRoot, int packFormat, String name, String desc) {
+		private boolean isZip;
+
+		private ResourcePack(URL packRoot, int packFormat, String name, String desc) throws IOException {
 			this.packRoot = packRoot;
+			try {
+				this.packRootPath = Paths.get(packRoot.toURI());
+			} catch (URISyntaxException e) {
+				throw new IOException(e);
+			}
+			this.isZip = packRoot.getFile().endsWith(".zip");
 			this.packFormat = packFormat;
 			this.name = name;
 			this.description = desc;
@@ -469,7 +448,10 @@ public class ResourcePackDisplay extends Display {
 		 */
 		private boolean openStream() {
 			try {
-				zipFile = new ZipFile(new File(packRoot.toURI()));
+				if (!this.isZip)
+					return Files.exists(this.packRootPath) && Files.isDirectory(this.packRootPath);
+
+				zipFile = new ZipFile(new File(this.packRoot.toURI()));
 				return opened = true;
 			} catch (IOException | URISyntaxException e) {
 				e.printStackTrace();
@@ -497,7 +479,10 @@ public class ResourcePackDisplay extends Display {
 		 */
 		private InputStream getResourceAsStream(String path) throws IOException {
 			try {
-				return zipFile.getInputStream(zipFile.getEntry(path));
+				if (this.isZip)
+					return zipFile.getInputStream(zipFile.getEntry(path));
+				else
+					return Files.newInputStream(this.packRootPath.resolve(path));
 			} catch (NullPointerException e) {
 				throw new IOException(e);
 			}
@@ -517,12 +502,28 @@ public class ResourcePackDisplay extends Display {
 		@NotNull
 		private ArrayList<String> getFiles(String path, FilesFilter filter) {
 			ArrayList<String> paths = new ArrayList<>();
-			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
-				ZipEntry entry = e.nextElement();
-				Path parent;
-				if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
-					(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
-					paths.add(entry.getName());
+
+			if (this.isZip) {
+				for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
+					ZipEntry entry = e.nextElement();
+					Path parent;
+					if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
+						(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
+						String entryName = entry.getName();
+						if (!this.packRootPath.resolve(entryName).normalize().startsWith(this.packRootPath)) continue;
+						paths.add(entryName);
+					}
+				}
+			} else if (Files.exists(this.packRootPath.resolve(path))) {
+				try (Stream<Path> stream = Files.walk(this.packRootPath.resolve(path), 1)) {
+					stream.forEach(p -> {
+						boolean isDir = Files.isDirectory(p);
+						if ((filter == null || filter.check(p, isDir))) {
+							paths.add(this.packRootPath.relativize(p).toString().replaceAll("\\\\", "/") + (isDir ? "/" : ""));
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -542,22 +543,34 @@ public class ResourcePackDisplay extends Display {
 
 	/**
 	 * Loading pack metadata of the pack.
-	 * @param file The path of the pack.
+	 * @param fileUrl The path of the pack.
 	 * @return The loaded pack with metadata.
 	 */
-	public static ResourcePack loadPackMetadata(URL file) {
-		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
-			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
-				JSONObject meta = new JSONObject(readStringFromInputStream(in));
-				return new ResourcePack(file.toURI().toURL(),
-					meta.getInt("pack_format"), meta.optString("name", new File(file.toURI()).getName()), meta.optString("description", "No description"));
+	public static ResourcePack loadPackMetadata(URL fileUrl) {
+
+		try {
+			File file = new File(fileUrl.toURI());
+			if (file.isDirectory()) {
+				try (InputStream in = Files.newInputStream(Paths.get(fileUrl.toURI()).resolve("pack.json"))) {
+					JSONObject meta = new JSONObject(readStringFromInputStream(in));
+					return new ResourcePack(fileUrl.toURI().toURL(),
+						meta.getInt("pack_format"), meta.optString("name", new File(fileUrl.toURI()).getName()), meta.optString("description", "No description"));
+				}
+			} else {
+				try (ZipFile zip = new ZipFile(file)) {
+					try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
+						JSONObject meta = new JSONObject(readStringFromInputStream(in));
+						return new ResourcePack(fileUrl.toURI().toURL(),
+							meta.getInt("pack_format"), meta.optString("name", new File(fileUrl.toURI()).getName()), meta.optString("description", "No description"));
+					}
+				}
 			}
 		} catch (JSONException | IOException | URISyntaxException e) {
 			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Cannot Load Resource Pack",
-				CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load resource pack: %s.", file.getPath())));
+				CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load resource pack: %s.", fileUrl.getPath())));
 		} catch (NullPointerException e) { // pack.json is missing.
 			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Resource Pack not Supported",
-				CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Missing pack.json in resource pack: %s.", file.getPath())));
+				CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Missing pack.json in resource pack: %s.", fileUrl.getPath())));
 		}
 
 		return null;
@@ -582,8 +595,13 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
-		// Read and add the .zip file to the resource pack list. Only accept files ending with .zip or directory.
-		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) -> name.endsWith(".zip")))) {
+		// Read and add the folder (that contains a pack.json) or .zip file to the resource pack list.
+		// Only accept files ending with .zip or directory.
+		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) -> {
+				if (name.endsWith(".zip")) return true;
+				Path path = dur.toPath().resolve(name);
+				return Files.isDirectory(path) && Files.exists(path.resolve("pack.json"));
+			}))) {
 			try {
 				URL url = file.toPath().toUri().toURL();
 				if(!urls.contains(url))

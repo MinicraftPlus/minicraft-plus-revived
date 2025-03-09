@@ -36,6 +36,7 @@ public class FileHandler extends Game {
 	public static final String OS;
 	private static final String localGameDir;
 	static final String systemGameDir;
+	private static Path jarResourcesPath;
 
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
@@ -165,21 +166,28 @@ public class FileHandler extends Game {
 			deleteFolder(origFolder.toFile());
 	}
 
-	public static ArrayList<String> listAssets() {
-		Path path;
-		try {
-			path = Paths.get(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI());
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
-		} catch (FileSystemNotFoundException e) {
+	public static Path getJarResourcesPath() {
+		if (jarResourcesPath == null) {
+			Path path;
 			try {
-				FileSystem fs = FileSystems.newFileSystem(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI(), Collections.emptyMap());
-				path = fs.getPath("/assets/");
-			} catch (URISyntaxException | IOException ee1) {
-				throw new RuntimeException(ee1); // CRITICAL ERROR (GAME ASSETS)
+				path = Paths.get(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI());
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e); // CRITICAL ERROR (GAME ASSETS)
+			} catch (FileSystemNotFoundException e) {
+				try {
+					FileSystem fs = FileSystems.newFileSystem(Objects.requireNonNull(Game.class.getResource("/assets/")).toURI(), Collections.emptyMap());
+					path = fs.getPath("/assets/");
+				} catch (URISyntaxException | IOException ee1) {
+					throw new RuntimeException(ee1); // CRITICAL ERROR (GAME ASSETS)
+				}
 			}
+			jarResourcesPath = path.getParent();
 		}
+		return jarResourcesPath;
+	}
 
+	public static ArrayList<String> listAssets() {
+		Path path = getJarResourcesPath().resolve("assets");
 		ArrayList<String> names = new ArrayList<>();
 		try (Stream<Path> paths = Files.walk(path)) {
 			Path finalPath = path;
