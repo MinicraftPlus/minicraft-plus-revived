@@ -19,6 +19,7 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.RepairBench;
 import minicraft.entity.furniture.Spawner;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.mob.AirWizard;
@@ -1514,6 +1515,7 @@ public class Load {
 				return new ObsidianKnight(0);
 			case "DyeVat":
 				return new Crafter(Crafter.Type.DyeVat);
+			case "RepairBench": return new RepairBench();
 			default:
 				Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
