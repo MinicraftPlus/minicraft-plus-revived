@@ -37,7 +37,7 @@ public final class Settings {
 		options.put("quests", new BooleanEntry("minicraft.settings.quests", false));
 		options.put("showquests", new BooleanEntry("minicraft.settings.show_quests", true));
 
-		options.get("mode").setChangeAction(value ->
+		options.get("mode").setChangeListener(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
 		);
 	}

@@ -33,6 +33,7 @@ public class Game {
 	public static List<String> notifications = new ArrayList<>();
 
 	public static int MAX_FPS;
+	public static boolean debug = false;
 
 	// DISPLAY
 	static Display currentDisplay = null;

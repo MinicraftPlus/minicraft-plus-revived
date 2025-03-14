@@ -7,7 +7,7 @@ import minicraft.gfx.Font;
 
 import java.util.Arrays;
 
-public class ArrayEntry<T> extends ListEntry {
+public class ArrayEntry<T> extends ListEntry implements UserMutable {
 
 	private final String label;
 	private T[] options;
@@ -157,7 +157,8 @@ public class ArrayEntry<T> extends ListEntry {
 		return str;
 	}
 
-	public void setChangeAction(ChangeListener l) {
+	@Override
+	public void setChangeListener(ChangeListener l) {
 		this.changeAction = l;
 		if (l != null)
 			l.onChange(getValue());
