@@ -41,7 +41,7 @@ but some sections are changed to compliant this project.
 * Added support for folder resources packs
 
 ### Fixes
-* Dungeon chests spawning in weird places
+* Fixed dungeon chests spawning in weird places
 * Bug in inventory that would crash the game
 * Stopped the game from creating temporary resource packs
 
