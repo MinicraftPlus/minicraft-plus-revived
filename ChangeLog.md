@@ -39,6 +39,7 @@ but some sections are changed to compliant this project.
 ### Additions
 * New resource pack menu
 * Added support for folder resources packs
+* Norwegian Nynorsk language support
 
 ### Fixes
 * Fixed dungeon chests spawning in weird places
