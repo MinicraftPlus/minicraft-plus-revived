@@ -9,31 +9,41 @@ but some sections are changed to compliant this project.
 
 ## [2.3.0]
 
-### Additions
+### MAJOR ADDITIONS
+* Infinite terrain generation
 
-* Added ornate wood tiles
-* Added dye vat 
-* Added 16 new flowers
-* Added 16 dye colors
-* Added 15 bed colors
-* Added 10 wool colors
-* Added a backup feature whenever using a development build
+### Additions
+* Ornate wood tiles
+* Dye vat 
+* 16 new flowers
+* 16 dye colors
+* 15 bed colors
+* 10 wool colors
+* Backup feature whenever using a development build
 
 ### Changes
-
 * Disabled hardware acceleration by default
 * Hardware acceleration is now a toggle in settings
 * Screenshots will now be the size of the rendered view within the window
-* Updated textures of wool items
-* Updated textures of wool tiles
+* Updated textures of wool items and tiles
+* Updated flower textures
 
 ### Removals
-
 * Removed argument flag `--no-hardware-acceleration`
 * Removed screenshot size setting
 
 ### Fixes
 
+## [2.2.2]
+
+### Additions
+* New resource pack menu
+* Added support for folder resources packs
+
+### Fixes
+* Dungeon chests spawning in weird places
+* Bug in inventory that would crash the game
+* Stopped the game from creating temporary resource packs
 
 ## [2.2.1]
 
