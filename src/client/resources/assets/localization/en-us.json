@@ -359,6 +359,7 @@
   "minicraft.displays.resource_packs.display.title": "Resource Packs",
   "minicraft.displays.save.popup_display.world_backup_prompt": "World Backup Prompt",
   "minicraft.displays.save.popup_display.world_backup_prompt.msg": "The world is on version %s while you are on version %s. You are advised to perform a backup in case of irreversible world corruption. Should you like to perform a backup before continuing? (Y|N)",
+  "minicraft.displays.save.popup_display.finite_world_backup_prompt.msg": "The world is on an finite version %s while you are on infinite version %s. You are advised to perform a backup due irreversible world upgrade and possible world corruption. To stay on finite please use the dev jar instead of infdev jar. Should you like to perform a backup before continuing? (Y|N)",
   "minicraft.displays.skin": "Skins",
   "minicraft.displays.skin.display.help.move": "Use %s and %s to move.",
   "minicraft.displays.skin.display.help.select": "%s to select, and %s to cancel.",

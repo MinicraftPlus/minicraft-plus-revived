@@ -134,8 +134,47 @@ public class Load {
 
 		if (!loadGame) return;
 
-		// Is dev build
-		if (Game.VERSION.isDev() && worldVer.compareTo(Game.VERSION) < 0) {
+		if (Game.VERSION.isSpecial() && !worldVer.isSpecial()) {
+			Logging.SAVELOAD.info("Old finite world detected, backup prompting...");
+			ArrayList<ListEntry> entries = new ArrayList<>();
+			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
+				Localization.getLocalized("minicraft.displays.save.popup_display.finite_world_backup_prompt.msg",
+					worldVer, Game.VERSION))));
+			entries.addAll(Arrays.asList(StringEntry.useLines("minicraft.display.popup.escape_cancel")));
+
+			AtomicBoolean acted = new AtomicBoolean(false);
+			AtomicBoolean continues = new AtomicBoolean(false);
+			AtomicBoolean doBackup = new AtomicBoolean(false);
+
+			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
+			callbacks.add(new PopupDisplay.PopupActionCallback("EXIT", m -> {
+				Game.exitDisplay();
+				acted.set(true);
+				return true;
+			}));
+
+			callbacks.add(new PopupDisplay.PopupActionCallback("ENTER|Y", m -> {
+				Game.exitDisplay();
+				continues.set(true);
+				doBackup.set(true);
+				acted.set(true);
+				return true;
+			}));
+
+			callbacks.add(new PopupDisplay.PopupActionCallback("N", m -> {
+				Game.exitDisplay();
+				continues.set(true);
+				acted.set(true);
+				return true;
+			}));
+
+			Game.setDisplay(new PopupDisplay(new PopupDisplay.PopupConfig(
+				"minicraft.displays.save.popup_display.world_backup_prompt", callbacks, 2),
+				entries.toArray(new ListEntry[0])));
+		}
+
+		// Is dev build and if both versions are special or not
+		if (Game.VERSION.isDev() && worldVer.compareTo(Game.VERSION) < 0 && (Game.VERSION.isSpecial() == worldVer.isSpecial())) {
 			Logging.SAVELOAD.info("Old world detected, backup prompting...");
 			ArrayList<ListEntry> entries = new ArrayList<>();
 			entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, false,
