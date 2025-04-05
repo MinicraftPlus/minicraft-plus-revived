@@ -194,10 +194,10 @@ public class Renderer extends Game {
 		int yScroll = player.y - (Screen.h - 8) / 2; // Scrolls the screen in the y axis.
 
 		// Stop scrolling if the screen is at the ...
-		if (xScroll < 0) xScroll = 0; // ...Left border.
-		if (yScroll < 0) yScroll = 0; // ...Top border.
-		if (xScroll > (level.w << 4) - Screen.w) xScroll = (level.w << 4) - Screen.w; // ...Right border.
-		if (yScroll > (level.h << 4) - Screen.h) yScroll = (level.h << 4) - Screen.h; // ...Bottom border.
+		// if (xScroll < 0) xScroll = 0; // ...Left border.
+		// if (yScroll < 0) yScroll = 0; // ...Top border.
+		// if (xScroll > (level.w << 4) - Screen.w) xScroll = (level.w << 4) - Screen.w; // ...Right border.
+		// if (yScroll > (level.h << 4) - Screen.h) yScroll = (level.h << 4) - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
 			MinicraftImage cloud = spriteLinker.getSheet(SpriteType.Tile, "cloud_background");
 			for (int y = 0; y < 28; y++)
