@@ -36,6 +36,9 @@ public abstract class Entity implements Tickable {
 	// Entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
+	protected int pushTime = 0;
+	protected int multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
+	protected Direction pushDir = Direction.NONE; // The direction to push the furniture
 	private int xr, yr; // x, y radius of entity
 	private boolean removed; // If the entity is to be removed from the level.
 	protected Level level; // The level that the entity is on.
@@ -115,6 +118,22 @@ public abstract class Entity implements Tickable {
 	public boolean canSwim() {
 		return false;
 	} // Determines if the entity can swim (extended in sub-classes)
+
+	/**
+	 * Tries to let the player push this entity.
+	 *
+	 * @param player The player doing the pushing.
+	 */
+	public void tryPush(Player player) {
+		if (pushTime == 0) {
+			pushDir = player.dir; // Set pushDir to the player's dir.
+			pushTime = multiPushTime = getPushTimeDelay(); // Set pushTime to 10.
+		}
+	}
+
+	protected int getPushTimeDelay() {
+		return 10;
+	}
 
 	public boolean canWool() {
 		return false;

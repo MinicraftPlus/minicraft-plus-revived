@@ -27,6 +27,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.Sheep;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Point;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -453,6 +454,8 @@ public class Save {
 			extradata.append(":").append(((KnightStatue) e).getBossHealth());
 		} else if (e instanceof Bed) {
 			name = ((Bed) e).name;
+		} else if (e instanceof Boat) {
+			extradata.append(":").append(((Boat) e).getDir().getDir());
 		}
 
 		if (!isLocalSave) {

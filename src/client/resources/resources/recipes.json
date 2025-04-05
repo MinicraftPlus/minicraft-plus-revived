@@ -65,6 +65,35 @@
       "Leather Armor_1"
     ]}}
   },
+  "minicraft.advancements.recipes.boat": {
+    "criteria": {
+      "has_wood": {
+        "trigger": "inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wood"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "has_wood"
+      ]
+    ],
+    "rewards": {
+      "recipes": {
+        "Boat_1": [
+          "Wood_10",
+          "Wood Shovel_1"
+        ]
+      }
+    }
+  },
   "minicraft.advancements.recipes.green_wool": {
     "requirements": [[
       "has_green_dye",
