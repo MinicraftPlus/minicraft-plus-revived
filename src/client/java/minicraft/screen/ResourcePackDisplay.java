@@ -109,20 +109,23 @@ public class ResourcePackDisplay extends Display {
 	private boolean changed = false;
 
 	static { // Initializing the default pack and logo.
+		Path defaultPackPath = FileHandler.getJarResourcesPath();
 		URL defaultPackURL;
 		try {
-			defaultPackURL = FileHandler.getJarResourcesPath().toUri().toURL();
+			defaultPackURL = defaultPackPath.toUri().toURL();
 		} catch (MalformedURLException e) {
 			CrashHandler.crashHandle(e);
 			throw new RuntimeException(e);
 		}
 
 		// Default resources
-		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultPackURL));
-		defaultPack.enable();
-		defaultPack.lock();
-		resourcePacks.add(defaultPack);
 		try {
+			defaultPack = Objects.requireNonNull(
+				loadPackFromStream(defaultPackURL, defaultPackPath.resolve("pack.json").toUri().toURL().openStream(), "Default")
+			);
+			defaultPack.enable();
+			defaultPack.lock();
+			resourcePacks.add(defaultPack);
 			defaultLogo = MinicraftImage.createDefaultCompatible(ImageIO.read(Objects.requireNonNull(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png"))));
 		} catch (IOException e) {
 			CrashHandler.crashHandle(e);
@@ -542,6 +545,22 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	/**
+	 * Construct a resource pack from a location, pack.json input stream, and default filename
+	 * @param url The source location of the resource pack
+	 * @param packMeta The input stream of a pack.json file
+	 * @param filename The name to default to if no "name" key found in pack.json
+	 */
+	public static ResourcePack loadPackFromStream(URL url, InputStream packMeta, String filename) throws IOException {
+		JSONObject meta = new JSONObject(readStringFromInputStream(packMeta));
+		return new ResourcePack(
+			url,
+			meta.getInt("pack_format"),
+			meta.optString("name", filename),
+			meta.optString("description", "No description")
+		);
+	}
+
+	/**
 	 * Loading pack metadata of the pack.
 	 * @param fileUrl The path of the pack.
 	 * @return The loaded pack with metadata.
@@ -552,16 +571,12 @@ public class ResourcePackDisplay extends Display {
 			File file = new File(fileUrl.toURI());
 			if (file.isDirectory()) {
 				try (InputStream in = Files.newInputStream(Paths.get(fileUrl.toURI()).resolve("pack.json"))) {
-					JSONObject meta = new JSONObject(readStringFromInputStream(in));
-					return new ResourcePack(fileUrl.toURI().toURL(),
-						meta.getInt("pack_format"), meta.optString("name", new File(fileUrl.toURI()).getName()), meta.optString("description", "No description"));
+					return loadPackFromStream(fileUrl, in, file.getName());
 				}
 			} else {
 				try (ZipFile zip = new ZipFile(file)) {
 					try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
-						JSONObject meta = new JSONObject(readStringFromInputStream(in));
-						return new ResourcePack(fileUrl.toURI().toURL(),
-							meta.getInt("pack_format"), meta.optString("name", new File(fileUrl.toURI()).getName()), meta.optString("description", "No description"));
+						return loadPackFromStream(fileUrl, in, file.getName());
 					}
 				}
 			}
@@ -642,7 +657,7 @@ public class ResourcePackDisplay extends Display {
 			ResourcePack pack = findPackByURL(url);
 			if (pack != null) { // Re-check and refresh if it exists
 				try {
-					if (new File(url.toURI()).exists())
+					if (pack == defaultPack || new File(url.toURI()).exists())
 						pack.refreshPack();
 					else // Remove if it doesn't exist
 						resourcePacks.remove(pack);
