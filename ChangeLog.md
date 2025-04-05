@@ -11,10 +11,11 @@ but some sections are changed to compliant this project.
 
 ### MAJOR ADDITIONS
 * Infinite terrain generation
+* Boats
 
 ### Additions
 * Ornate wood tiles
-* Dye vat 
+* Dye vat
 * 16 new flowers
 * 16 dye colors
 * 15 bed colors
