@@ -6,7 +6,6 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -25,7 +24,7 @@ public class Game {
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
-	public static final Version VERSION = new Version("2.3.0-dev1");
+	public static final Version VERSION = new Version("2.3.0-infdev2");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -97,8 +96,6 @@ public class Game {
 
 		Initializer.parseArgs(args); // Parses the command line arguments
 		// Applying Game#debug first.
-
-		Analytics.GameStartup.ping();
 
 		new Load(true, true); // This loads basic saved preferences.
 		// Reference: https://stackoverflow.com/a/13832805

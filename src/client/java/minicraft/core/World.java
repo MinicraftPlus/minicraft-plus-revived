@@ -4,7 +4,6 @@ import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
-import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
@@ -131,8 +130,6 @@ public class World extends Game {
 		if (WorldSelectDisplay.hasLoadedWorld()) {
 			new Load(WorldSelectDisplay.getWorldName());
 		} else {
-			Analytics.WorldCreation.ping();
-
 			worldSize = (Integer) Settings.get("size");
 
 			seed = WorldGenDisplay.getSeed().orElse(new Random().nextLong());

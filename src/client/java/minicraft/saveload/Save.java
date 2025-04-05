@@ -33,6 +33,7 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
+import minicraft.level.ChunkManager;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
 import minicraft.screen.LoadingDisplay;
@@ -55,7 +56,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Save {
 
@@ -271,7 +271,7 @@ public class Save {
 	private void writeWorld(String filename) {
 		LoadingDisplay.setMessage("minicraft.displays.loading.message.levels");
 		for (int l = 0; l < World.levels.length; l++) {
-			String worldSize = String.valueOf(Settings.get("size"));
+			/*String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
 			data.add(worldSize);
 			data.add(Long.toString(World.levels[l].getSeed()));
@@ -283,17 +283,26 @@ public class Save {
 				}
 			}
 
-			writeToFile(location + filename + l + extension, data);
-		}
-
-		for (int l = 0; l < World.levels.length; l++) {
-			for (int x = 0; x < World.levels[l].w; x++) {
-				for (int y = 0; y < World.levels[l].h; y++) {
-					data.add(String.valueOf(World.levels[l].getData(x, y)));
-				}
+			writeToFile(location + filename + l + extension, data);*/
+			new File(location + filename + l).mkdir();
+			List<String> index = new ArrayList<>();
+			ChunkManager c = World.levels[l].chunkManager;
+			for(Point p : c.getAllChunks()) {
+				if(c.getChunkStage(p.x, p.y) != ChunkManager.CHUNK_STAGE_DONE)
+					continue;
+				index.add(String.valueOf(p.x));
+				index.add(String.valueOf(p.y));
+				List<String> tiles = new ArrayList<>();
+				for(int x = 0; x < ChunkManager.CHUNK_SIZE; x++)
+					for(int y = 0; y < ChunkManager.CHUNK_SIZE; y++) {
+						int tX = x+p.x*ChunkManager.CHUNK_SIZE, tY = y+p.y*ChunkManager.CHUNK_SIZE;
+						tiles.add(String.valueOf(World.levels[l].getTile(tX, tY).name));
+						data.add(String.valueOf(World.levels[l].getData(tX, tY)));
+					}
+				writeToFile(location + filename + l + "/d." + String.valueOf(p.x) + "." + String.valueOf(p.y) + extension, data);
+				writeToFile(location + filename + l + "/t." + String.valueOf(p.x) + "." + String.valueOf(p.y) + extension, tiles);
 			}
-
-			writeToFile(location + filename + l + "data" + extension, data);
+			writeToFile(location + filename + l + "/index" + extension, index);
 		}
 
 		{ // Advancements

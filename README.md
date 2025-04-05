@@ -1,12 +1,15 @@
 [![Nightly build](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/autobuild.yml/badge.svg?branch=main)](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/autobuild.yml)
 [![CodeQL](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/MinicraftPlus/minicraft-plus-revived/actions/workflows/codeql-analysis.yml)
 
+# NOTICE:
+"Main" Branch has game breaking features during infdev phase, for the latest fully working repo use the "2.3.0-dev" branch.
+
 # Minicraft+
 
 ![Minicraft+](https://user-images.githubusercontent.com/37084190/138313821-75ac3112-7044-45c1-bdbb-d89f2333c2c0.png)
 
 Minicraft+ is an overhaul mod of Minicraft, a game made by Markus "Notch" Persson in the Ludum Dare 22 contest. To learn
-more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), talk to the community at
+more about Minicraft take a look at [our website](https://minicraftplus.github.io/), talk to the community at
 our [Discord](https://discord.me/minicraft), or check out
 our [wiki.gg Wiki](https://minicraft.wiki.gg/wiki/).
 

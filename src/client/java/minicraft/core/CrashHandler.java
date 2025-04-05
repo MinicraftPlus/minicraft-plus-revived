@@ -4,7 +4,6 @@ import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
 import minicraft.core.CrashHandler.ErrorInfo.ErrorType;
 import minicraft.core.io.ClipboardHandler;
-import minicraft.network.Analytics;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -46,17 +44,6 @@ public class CrashHandler {
 		StringWriter string = new StringWriter();
 		PrintWriter printer = new PrintWriter(string);
 		throwable.printStackTrace(printer);
-
-		Future<HttpResponse<Empty>> ping = Analytics.Crashes.ping();
-
-		// Ensure ping finishes before program closes.
-		if (GraphicsEnvironment.isHeadless() && ping != null) {
-			try {
-				ping.get();
-			} catch (Exception ignored) {
-			}
-			return;
-		}
 
 		Logging.CRASHHANDLER.error("Crash: " + info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
 
@@ -96,14 +83,6 @@ public class CrashHandler {
 		dialog.setVisible(true); // Shows the dialog.
 		dialog.dispose();
 
-		// Ensure ping finishes before program closes.
-		if (ping != null) {
-			try {
-				ping.get();
-			} catch (Exception ignored) {
-			}
-		}
-
 		// Exits the program when the dialog closes.
 		Logging.CRASHHANDLER.error("Application closes due to the crash.");
 		System.exit(info.type.exitCode);
@@ -128,17 +107,6 @@ public class CrashHandler {
 		StringWriter string = new StringWriter();
 		PrintWriter printer = new PrintWriter(string);
 		throwable.printStackTrace(printer);
-
-		Future<HttpResponse<Empty>> ping = Analytics.Crashes.ping();
-
-		// Ensure ping finishes before program closes.
-		if (GraphicsEnvironment.isHeadless() && ping != null) {
-			try {
-				ping.get();
-			} catch (Exception ignored) {
-			}
-			return;
-		}
 
 		Logging.CRASHHANDLER.error(info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
 
@@ -171,7 +139,7 @@ public class CrashHandler {
 		// Add all components to the dialog.
 		gridPanel.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
 		dialog.getContentPane().add(gridPanel, BorderLayout.NORTH);
-		dialog.getContentPane().add(getErrorPanel(info, getErrorScrollPane(string.toString()), dialog, string.toString(), handling, ping));
+		dialog.getContentPane().add(getErrorPanel(info, getErrorScrollPane(string.toString()), dialog, string.toString(), handling));
 
 		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Disables the close button.
 		dialog.pack();
@@ -214,7 +182,7 @@ public class CrashHandler {
 		return panel;
 	}
 
-	private static JPanel getErrorPanel(ErrorInfo info, JScrollPane errorPane, JDialog dialog, String stackTrace, Action callback, Future<HttpResponse<Empty>> ping) {
+	private static JPanel getErrorPanel(ErrorInfo info, JScrollPane errorPane, JDialog dialog, String stackTrace, Action callback) {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(errorPane);
 		JPanel buttonPanel = new JPanel();
@@ -229,14 +197,6 @@ public class CrashHandler {
 			exitButton.addActionListener(e -> {
 				dialog.setVisible(false);
 				dialog.dispose();
-
-				// Ensure ping finishes before program closes.
-				if (ping != null) {
-					try {
-						ping.get();
-					} catch (Exception ignored) {
-					}
-				}
 
 				Logging.CRASHHANDLER.error("Application closes due to the error.");
 				System.exit(info.type.exitCode);

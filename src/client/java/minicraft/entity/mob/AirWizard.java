@@ -12,7 +12,6 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
-import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
 public class AirWizard extends EnemyMob {
@@ -170,15 +169,12 @@ public class AirWizard extends EnemyMob {
 
 		Sound.play("bossdeath");
 
-		Analytics.AirWizardDeath.ping();
 		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
 
 
 		// If this is the first time we beat the air wizard.
 		if (!beaten) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
-
-			Analytics.FirstAirWizardDeath.ping();
 			Updater.notifyAll("minicraft.notification.dungeon_opened", -400);
 		}
 

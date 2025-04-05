@@ -34,6 +34,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.level.tile.TreeTile;
+import minicraft.level.tile.TreeTile.TreeType;
 import minicraft.util.Logging;
 import minicraft.util.MyUtils;
 
@@ -68,6 +69,7 @@ public class Level {
 	private final long seed; // The used seed that was used to generate the world
 
 	public ChunkManager chunkManager; // A collection of chunks with it's own interface
+	private Level parentLevel = null; // reference to parent level
 
 	public final TreeTile.TreeType[] treeTypes; // An array of tree types
 
@@ -116,10 +118,11 @@ public class Level {
 	}
 
 	public void printTileLocs(Tile t) {
-		for (int x = 0; x < w; x++)
-			for (int y = 0; y < h; y++)
-				if (getTile(x, y).id == t.id)
-					printLevelLoc(t.name, x, y);
+		for(Point p : chunkManager.getAllChunks())
+			for(int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
+				for(int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
+					if (getTile(x, y).id == t.id)
+						printLevelLoc(t.name, x, y);
 	}
 
 	public void printEntityLocs(Class<? extends Entity> c) {
@@ -145,6 +148,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
+		this.parentLevel = parentLevel;
 		random = new Random(seed);
 		short[][] maps; // Multidimensional array (an array within a array), used for the map
 
@@ -185,7 +189,7 @@ public class Level {
 		updateMobCap();
 
 		if (!makeWorld) {
-			chunkManager = new ChunkManager(w, h);
+			chunkManager = new ChunkManager();
 			return;
 		}
 
@@ -431,6 +435,43 @@ public class Level {
 			trySpawn();
 	}
 
+	public void loadChunksAround(int tileX, int tileY) {
+		// Update all chunks up to 3 chunks away from the player to make sure they are loaded
+		int cX = Math.floorDiv(tileX, ChunkManager.CHUNK_SIZE), cY = Math.floorDiv(tileY, ChunkManager.CHUNK_SIZE);
+		for(int x = cX - 3; x <= cX + 3; x++)
+			for(int y = cY - 3; y <= cY + 3; y++)
+				if(chunkManager.getChunkStage(x, y) != ChunkManager.CHUNK_STAGE_DONE)
+					loadChunk(x, y);
+	}
+
+	public void loadChunk(int x, int y) {
+		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
+			if(parentLevel.chunkManager.getChunkStage(x, y) == 0)
+				LevelGen.generateChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
+			int S = ChunkManager.CHUNK_SIZE;
+			for(int i = x * S; i < x * S + S; i++)
+				for(int j = y * S; j < y * S + S; j++) {
+					if (parentLevel.getTile(i, j) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
+						if (depth == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
+							Structure.dungeonGate.draw(this, i, j); // Te gate should not intersect with the boss room.
+							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
+						} else if (depth == 0) { // Surface
+							Logging.WORLD.trace("Setting tiles around " + i + "," + j + " to hard rock");
+							setAreaTiles(i, j, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
+						} else // Any other level, the up-stairs should have dirt on all sides.
+							setAreaTiles(i, j, 1, Tiles.get("dirt"), 0);
+
+						setTile(i, j, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
+					} else if (getTile(i, j) == Tiles.get("Stairs Up") && parentLevel.getTile(i, j) != Tiles.get("Stairs Down")) {
+						parentLevel.setTile(i, j, "Stairs Down");
+					}
+				}
+			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
+		}
+		if(chunkManager.getChunkStage(x, y) == 0)
+			LevelGen.generateChunk(chunkManager, x, y, depth, seed);
+	}
+
 	public boolean entityNearPlayer(Entity entity) {
 		for (Player player : players) {
 			if (Math.abs(player.x - entity.x) < 128 && Math.abs(player.y - entity.y) < 76) {
@@ -556,6 +597,14 @@ public class Level {
 		}
 	}
 
+	public TreeTile.TreeType getTreeType(int x, int y) {
+		LevelGen noise1 = new LevelGen(x, y, 1, 1, 32, -1);
+		LevelGen noise2 = new LevelGen(x, y, 1, 1, 32, -2);
+
+		int idx = (int)Math.round(Math.abs(noise1.values[0] - noise2.values[0]) * 3 - 2);
+		return (idx >= TreeType.values().length || idx < 0) ? TreeType.OAK : TreeType.values()[idx];
+	}
+
 	public Tile getTile(int x, int y) {
 		return chunkManager.getTile(x, y);
 	}
@@ -633,9 +682,8 @@ public class Level {
 			int lvl = -MyUtils.clamp(player.getLevel().depth, -4, 0);
 			for (int i = 0; i < 30 && !spawned; i++) {
 				int rnd = random.nextInt(100);
-				int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
-				double distance = Math.hypot(Math.abs(nx - player.x), Math.abs(ny - player.y));
-				if (distance < 160) continue; // Spawns only far from 10 tiles away.
+				int nx = (random.nextInt(ChunkManager.CHUNK_SIZE*2) - ChunkManager.CHUNK_SIZE) * 16 + player.x,
+				    ny = (random.nextInt(ChunkManager.CHUNK_SIZE*2) - ChunkManager.CHUNK_SIZE) * 16 + player.y;
 
 				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
@@ -666,21 +714,21 @@ public class Level {
 					if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 					else if (rnd >= 68) add((new Pig()), nx, ny);
 					else { // Sheep spawning
-					double colorRnd = random.nextDouble();
-					if (colorRnd < 0.8) { // 80% for default color, i.e. white
-						add((new Sheep()), nx, ny);
-					} else if (colorRnd < 0.85) { // 5% for black
-						add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
-					} else if (colorRnd < 0.9) { // 5% for gray
-						add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
-					} else if (colorRnd < 0.95) { // 5% for light gray
-						add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
-					} else if (colorRnd < 0.98) { // 3% for brown
-						add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
-					} else { // 2% for pink
-						add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+						double colorRnd = random.nextDouble();
+						if (colorRnd < 0.8) { // 80% for default color, i.e. white
+							add((new Sheep()), nx, ny);
+						} else if (colorRnd < 0.85) { // 5% for black
+							add((new Sheep(DyeItem.DyeColor.BLACK)), nx, ny);
+						} else if (colorRnd < 0.9) { // 5% for gray
+							add((new Sheep(DyeItem.DyeColor.GRAY)), nx, ny);
+						} else if (colorRnd < 0.95) { // 5% for light gray
+							add((new Sheep(DyeItem.DyeColor.LIGHT_GRAY)), nx, ny);
+						} else if (colorRnd < 0.98) { // 3% for brown
+							add((new Sheep(DyeItem.DyeColor.BROWN)), nx, ny);
+						} else { // 2% for pink
+							add((new Sheep(DyeItem.DyeColor.PINK)), nx, ny);
+						}
 					}
-				}
 
 					spawned = true;
 				}
@@ -945,10 +993,11 @@ public class Level {
 
 	public List<Point> getMatchingTiles(TileCheck condition) {
 		List<Point> matches = new ArrayList<>();
-		for (int y = 0; y < h; y++)
-			for (int x = 0; x < w; x++)
-				if (condition.check(getTile(x, y), x, y))
-					matches.add(new Point(x, y));
+		for(Point p : chunkManager.getAllChunks())
+			for(int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
+				for(int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
+					if (condition.check(getTile(x, y), x, y))
+						matches.add(new Point(x, y));
 
 		return matches;
 	}
