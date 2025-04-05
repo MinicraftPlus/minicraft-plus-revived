@@ -15,8 +15,8 @@ import minicraft.gfx.Ellipsis.SequentialEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
-import minicraft.network.Analytics;
 import minicraft.util.Logging;
+//import minicraft.network.Analytics;
 
 /**
  * @deprecated As multiplayer mode removed. This class is not localized.
@@ -127,7 +127,7 @@ public class MultiplayerDisplay extends Display {
 	}
 
 	private void fetchName(String uuid) {
-		Analytics.LoginAttempt.ping();
+		//Analytics.LoginAttempt.ping();
 		/// HTTP REQUEST - ATTEMPT TO SEND UUID TO SERVER AND UPDATE USERNAME
 		HttpResponse<JsonNode> response = null;
 
@@ -150,7 +150,7 @@ public class MultiplayerDisplay extends Display {
 				case "success":
 					Logging.NETWORK.debug("Successfully received username from playminicraft server.");
 					savedUsername = json.getString("name");
-					Analytics.LoginSuccess.ping();
+					//Analytics.LoginSuccess.ping();
 					break;
 			}
 		} else

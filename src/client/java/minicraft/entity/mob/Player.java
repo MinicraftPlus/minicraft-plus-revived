@@ -43,7 +43,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
@@ -1134,8 +1133,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	@Override
 	public void die() {
-		Analytics.SinglePlayerDeath.ping();
-
 		score -= score / 3; // Subtracts score penalty (minus 1/3 of the original score)
 		resetMultiplier();
 
