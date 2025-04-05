@@ -395,6 +395,7 @@
   "minicraft.displays.world_select.display.help.3": "%s to rename",
   "minicraft.displays.world_select.display.help.4": "%s to delete",
   "minicraft.displays.world_select.display.world_too_new": "Higher version, cannot load world!",
+  "minicraft.displays.world_select.display.world_incompatible" : "Incompatible version!",
   "minicraft.displays.world_select.display.world_version": "World Version: %s",
   "minicraft.displays.world_select.popups.display.cancel": "%s to cancel",
   "minicraft.displays.world_select.popups.display.change": "New World Name:",
