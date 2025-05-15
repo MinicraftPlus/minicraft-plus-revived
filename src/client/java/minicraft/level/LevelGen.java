@@ -54,7 +54,7 @@ public class LevelGen {
 
 		for(int x = 0; x < w; x++)
 			for(int y = 0; y < h; y++) {
-				setSample(x, y, noise.noise3((x + xOffset) / (float)featureSize, (y + yOffset) / (float)featureSize, layer * NOISE_LAYER_DIFF));
+				setSample(x, y, noise.noise3((x + xOffset) / (double)featureSize, (y + yOffset) / (double)featureSize, layer * NOISE_LAYER_DIFF));
 			}
 	}
 
