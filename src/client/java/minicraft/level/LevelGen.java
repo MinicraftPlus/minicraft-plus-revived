@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Point;
 import minicraft.level.biome.Biome;
+import minicraft.level.biome.Biomes;
 import minicraft.level.noise.LevelNoise;
 import minicraft.level.tile.Tiles;
 import minicraft.util.Simplex;
@@ -29,7 +30,7 @@ public class LevelGen {
 
 	private static final int NOISE_LAYER_DIFF = 100;
 
-	public static final int SKY_LEVEL = 1, SURFACE_LEVEL = 0, IRON_LEVEL = 1, GOLD_LEVEL = 2, GEM_LEVEL = 3, DUNGEON_LEVEL = 4;
+	public static final int SKY_LEVEL = 1, SURFACE_LEVEL = 0, IRON_LEVEL = -1, GOLD_LEVEL = -2, GEM_LEVEL = -3, DUNGEON_LEVEL = -4;
 
 	/**
 	 * This creates noise to create random values for level generation
@@ -81,12 +82,13 @@ public class LevelGen {
 			case ChunkManager.CHUNK_STAGE_NONE:
 				noise.add(new LevelNoise(seed, S * x, S * y, 20, S, S, 3, 128));
 				if(level == SKY_LEVEL)
-					noise.add(new LevelNoise(seed, S * x, S * y, 10, S, S, 3, 8));
+					noise.add(new LevelNoise(seed, S * x, S * y, 10, S, S, 10, 8));
 				else if(level == SURFACE_LEVEL) {
 					noise.add(new LevelNoise(seed, S * x, S * y, 0, S, S, 5, 16));
-					noise.add(new LevelNoise(seed, S * x, S * y, 5, S, S, 5, 32));
+					noise.add(new LevelNoise(seed, S * x, S * y, 5, S, S, 3, 32));
+					noise.add(new LevelNoise(seed, S * x, S * y, 8, S, S, 2, 8));
 				} else if(level == DUNGEON_LEVEL)
-					noise.add(new LevelNoise(seed, S * x, S * y, -60, S, S, 2, 10));
+					noise.add(new LevelNoise(seed, S * x, S * y, -60, S, S, 10, 10));
 				else {
 					noise.add(new LevelNoise(seed, S * x, S * y, -15*level, S, S, 10, 16));
 					noise.add(new LevelNoise(seed, S * x, S * y, -15*level+10, S, S, 5, 32));
@@ -99,7 +101,7 @@ public class LevelGen {
 						float temperature = (float) noise.get(0).sample(tileX, tileY, 0);
 						float height = (float) noise.get(0).sample(tileX, tileY, 1);
 						float humidity = (float) noise.get(0).sample(tileX, tileY, 2);
-						Biome biome = Biome.getLayerBiomes(level).getClosestBiome(temperature, height, humidity);
+						Biome biome = Biomes.getLayerBiomes(level).getClosestBiome(temperature, height, humidity);
 						chunkManager.setBiome(tileX + S * x, tileY + S * y, biome);
 					}
 				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_ASSIGNED_BIOMES);

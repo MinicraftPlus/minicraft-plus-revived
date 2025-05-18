@@ -6,6 +6,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.level.biome.Biomes;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -108,6 +109,7 @@ public class Game {
 		ResourcePackDisplay.reloadResources();
 
 		Tiles.initTileList();
+		Biomes.initBiomeList();
 
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();
