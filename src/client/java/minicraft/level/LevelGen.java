@@ -81,17 +81,21 @@ public class LevelGen {
 		switch(stage) {
 			case ChunkManager.CHUNK_STAGE_NONE:
 				noise.add(new LevelNoise(seed, S * x, S * y, 20, S, S, 3, 128));
-				if(level == SKY_LEVEL)
+				if(level == SKY_LEVEL) {
 					noise.add(new LevelNoise(seed, S * x, S * y, 10, S, S, 10, 8));
-				else if(level == SURFACE_LEVEL) {
+					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
+				} else if(level == SURFACE_LEVEL) {
 					noise.add(new LevelNoise(seed, S * x, S * y, 0, S, S, 5, 16));
 					noise.add(new LevelNoise(seed, S * x, S * y, 5, S, S, 3, 32));
 					noise.add(new LevelNoise(seed, S * x, S * y, 8, S, S, 2, 8));
-				} else if(level == DUNGEON_LEVEL)
+					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
+				} else if(level == DUNGEON_LEVEL) {
 					noise.add(new LevelNoise(seed, S * x, S * y, -60, S, S, 10, 10));
-				else {
+					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
+				} else {
 					noise.add(new LevelNoise(seed, S * x, S * y, -15*level, S, S, 10, 16));
 					noise.add(new LevelNoise(seed, S * x, S * y, -15*level+10, S, S, 5, 32));
+					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
 				}
 				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_PRIMED_NOISE);
 				break;

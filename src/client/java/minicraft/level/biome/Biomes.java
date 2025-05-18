@@ -18,6 +18,7 @@ public class Biomes {
 
 		getLayerBiomes(LevelGen.SKY_LEVEL).addBiome("Sky", new SkyBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Surface", new SurfaceBiome());
+		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Desert", new DesertBiome());
 		getLayerBiomes(LevelGen.IRON_LEVEL).addBiome("IronCave", new IronCaveBiome());
 		getLayerBiomes(LevelGen.GOLD_LEVEL).addBiome("GoldCave", new GoldCaveBiome());
 		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("GemCave", new GemCaveBiome());
