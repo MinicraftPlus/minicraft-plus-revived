@@ -1,17 +1,23 @@
 package minicraft.level;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import minicraft.gfx.Point;
+import minicraft.level.biome.Biome;
+import minicraft.level.noise.LevelNoise;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class ChunkManager {
 
 	public static final int CHUNK_SIZE = 64;
+	public static final int CHUNK_STAGE_NONE = 0;
+	public static final int CHUNK_STAGE_PRIMED_NOISE = 1;
+	public static final int CHUNK_STAGE_ASSIGNED_BIOMES = 2;
 	public static final int CHUNK_STAGE_UNFINISHED_STAIRS = 3;
 	public static final int CHUNK_STAGE_DONE = 4;
 
@@ -33,11 +39,7 @@ public class ChunkManager {
 		return out;
 	}
 
-	/**
-	 * Return the chunk  in which the tileX and tileY land
-	 */
-	private Chunk getChunk(int tileX, int tileY) {
-		int cX = Math.floorDiv(tileX, CHUNK_SIZE), cY = Math.floorDiv(tileY, CHUNK_SIZE);
+	private Chunk getChunk(int cX, int cY) {
 		// If [cX][cY] are not keys in chunks, put them there
 		if(!chunks.containsKey(cX))
 			chunks.put(cX, new HashMap<>());
@@ -47,50 +49,75 @@ public class ChunkManager {
 	}
 
 	/**
+	 * Return the chunk  in which the tileX and tileY land
+	 */
+	private Chunk getTileChunk(int tileX, int tileY) {
+		int cX = Math.floorDiv(tileX, CHUNK_SIZE), cY = Math.floorDiv(tileY, CHUNK_SIZE);
+		return getChunk(cX, cY);
+	}
+
+	/**
 	* Returns a tile. After finding the right chunk, mods x and y to the range 0-CHUNK_SIZE as to never be out of bounds
 	*/
 	public Tile getTile(int x, int y) {
-		return Tiles.get(getChunk(x, y).getTileDat(x, y).id);
+		return Tiles.get(getTileChunk(x, y).getTileDat(x, y).id);
 	}
 
 	/**
 	* Updates a tile. After finding the right chunk, mods x and y to the range 0-CHUNK_SIZE as to never be out of bounds
 	*/
 	public void setTile(int x, int y, Tile t, int dataVal) {
-		TileDat dat = getChunk(x, y).getTileDat(x, y);
+		TileDat dat = getTileChunk(x, y).getTileDat(x, y);
 		dat.id = t.id;
 		dat.data = (short) dataVal;
 	}
 
 	public int getData(int x, int y) {
-		return getChunk(x, y).getTileDat(x, y).data;
+		return getTileChunk(x, y).getTileDat(x, y).data;
+	}
+
+	public Biome getBiome(int x, int y) {
+		return getTileChunk(x, y).getTileDat(x, y).getBiome();
+	}
+
+	public Biome setBiome(int x, int y, Biome b) {
+		return getTileChunk(x, y).getTileDat(x, y).biome = b;
 	}
 
 	public void setData(int x, int y, int val) {
-		getChunk(x, y).getTileDat(x, y).data = (short) val;
+		getTileChunk(x, y).getTileDat(x, y).data = (short) val;
 	}
 
 	public int getChunkStage(int chunkX, int chunkY) {
 		// If [cX][cY] are not keys in chunks, stage must be 0
 		if(!chunks.containsKey(chunkX) || !chunks.get(chunkX).containsKey(chunkY))
-			return 0;
+			return CHUNK_STAGE_NONE;
 		return chunks.get(chunkX).get(chunkY).stage;
 	}
 
+	public ArrayList<LevelNoise> getChunkNoise(int chunkX, int chunkY) {
+		return getChunk(chunkX, chunkY).noise;
+	}
+
+	public ArrayList<LevelNoise> getTileNoise(int x, int y) {
+		return getTileChunk(x, y).noise;
+	}
+
 	public void setChunkStage(int chunkX, int chunkY, int stage) {
-		// If [chunkX][chunkY] are not keys in chunks, put them there
-		if(!chunks.containsKey(chunkX))
-			chunks.put(chunkX, new HashMap<>());
-		if(!chunks.get(chunkX).containsKey(chunkY))
-			chunks.get(chunkX).put(chunkY, new Chunk());
-		chunks.get(chunkX).get(chunkY).stage = (short)stage;
+		getChunk(chunkX, chunkY).stage = (short)stage;
+
+		// Let go of noise if no longer needed
+		if(stage == CHUNK_STAGE_UNFINISHED_STAIRS)
+			chunks.get(chunkX).get(chunkY).noise.clear();
 	}
 
 	private static class Chunk {
 		protected TileDat[] tiles;
 		protected short stage = 0;
+		protected ArrayList<LevelNoise> noise = null;
 		public Chunk() {
 			tiles = new TileDat[CHUNK_SIZE * CHUNK_SIZE];
+			noise = new ArrayList<>();
 		}
 
 		public TileDat getTileDat(int tileX, int tileY) {
@@ -102,11 +129,16 @@ public class ChunkManager {
 	}
 
 	private static class TileDat {
+		protected Biome biome;
 		protected short id, data;
 
 		public TileDat(short id) {
 			this.id = id;
 			this.data = 0;
+		}
+
+		public Biome getBiome() {
+			return biome;
 		}
 	}
 }

@@ -446,8 +446,10 @@ public class Level {
 
 	public void loadChunk(int x, int y) {
 		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
-			if(parentLevel.chunkManager.getChunkStage(x, y) == 0)
-				LevelGen.generateChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
+			if(parentLevel.chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS) {
+				LevelGen.advanceChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
+				return;
+			}
 			int S = ChunkManager.CHUNK_SIZE;
 			for(int i = x * S; i < x * S + S; i++)
 				for(int j = y * S; j < y * S + S; j++) {
@@ -468,8 +470,8 @@ public class Level {
 				}
 			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
 		}
-		if(chunkManager.getChunkStage(x, y) == 0)
-			LevelGen.generateChunk(chunkManager, x, y, depth, seed);
+		else if(chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS)
+			LevelGen.advanceChunk(chunkManager, x, y, depth, seed);
 	}
 
 	public boolean entityNearPlayer(Entity entity) {

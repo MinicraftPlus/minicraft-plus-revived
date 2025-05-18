@@ -3,29 +3,21 @@ package minicraft.level;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
+import minicraft.level.biome.Biome;
+import minicraft.level.noise.LevelNoise;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.RelPos;
-import minicraft.util.Logging;
 import minicraft.util.Simplex;
 
 import org.tinylog.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -36,6 +28,8 @@ public class LevelGen {
 	private static final int stairRadius = 15;
 
 	private static final int NOISE_LAYER_DIFF = 100;
+
+	public static final int SKY_LEVEL = 1, SURFACE_LEVEL = 0, IRON_LEVEL = 1, GOLD_LEVEL = 2, GEM_LEVEL = 3, DUNGEON_LEVEL = 4;
 
 	/**
 	 * This creates noise to create random values for level generation
@@ -79,7 +73,48 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 
-	static void generateChunk(ChunkManager chunkManager, int x, int y, int level, long seed) {
+	static void advanceChunk(ChunkManager chunkManager, int x, int y, int level, long seed) {
+		int stage = chunkManager.getChunkStage(x, y);
+		ArrayList<LevelNoise> noise = chunkManager.getChunkNoise(x, y);
+		final int S = ChunkManager.CHUNK_SIZE;
+		switch(stage) {
+			case ChunkManager.CHUNK_STAGE_NONE:
+				noise.add(new LevelNoise(seed, S * x, S * y, 20, S, S, 3, 128));
+				if(level == SKY_LEVEL)
+					noise.add(new LevelNoise(seed, S * x, S * y, 10, S, S, 3, 8));
+				else if(level == SURFACE_LEVEL) {
+					noise.add(new LevelNoise(seed, S * x, S * y, 0, S, S, 5, 16));
+					noise.add(new LevelNoise(seed, S * x, S * y, 5, S, S, 5, 32));
+				} else if(level == DUNGEON_LEVEL)
+					noise.add(new LevelNoise(seed, S * x, S * y, -60, S, S, 2, 10));
+				else {
+					noise.add(new LevelNoise(seed, S * x, S * y, -15*level, S, S, 10, 16));
+					noise.add(new LevelNoise(seed, S * x, S * y, -15*level+10, S, S, 5, 32));
+				}
+				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_PRIMED_NOISE);
+				break;
+			case ChunkManager.CHUNK_STAGE_PRIMED_NOISE:
+				for(int tileX = 0; tileX < S; tileX++)
+					for(int tileY = 0; tileY < S; tileY++) {
+						float temperature = (float) noise.get(0).sample(tileX, tileY, 0);
+						float height = (float) noise.get(0).sample(tileX, tileY, 1);
+						float humidity = (float) noise.get(0).sample(tileX, tileY, 2);
+						Biome biome = Biome.getLayerBiomes(level).getClosestBiome(temperature, height, humidity);
+						chunkManager.setBiome(tileX + S * x, tileY + S * y, biome);
+					}
+				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_ASSIGNED_BIOMES);
+				break;
+			case ChunkManager.CHUNK_STAGE_ASSIGNED_BIOMES:
+				for(int tileX = 0; tileX < S; tileX++)
+					for(int tileY = 0; tileY < S; tileY++) {
+						chunkManager.getBiome(tileX + S * x, tileY + S * y).generate(chunkManager, tileX + S * x, tileY + S * y);
+					}
+				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS);
+				break;
+		}
+	}
+
+	static void generateChunks(ChunkManager chunkManager, int x, int y, int level, long seed) {
 		worldSeed = seed;
 
 		if(level == 1)
@@ -100,7 +135,8 @@ public class LevelGen {
 		ChunkManager cm = new ChunkManager();
 		for(int i = 0; i < w / ChunkManager.CHUNK_SIZE; i++)
 			for(int j = 0; j < h / ChunkManager.CHUNK_SIZE; j++)
-				generateChunk(cm, i, j, level, seed);
+				for(int k = ChunkManager.CHUNK_STAGE_NONE; k < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS; k++)
+					advanceChunk(cm, i, j, level, seed);
 		return cm;
 	}
 
