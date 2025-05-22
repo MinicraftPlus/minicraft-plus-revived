@@ -7,6 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
 but some sections are changed to compliant this project.
 
+## [2.2.2]
+
+### Additions
+* New resource pack menu
+* Added support for folder resources packs
+* Norwegian Nynorsk language support
+
+### Fixes
+* Fixed dungeon chests spawning in weird places
+* Bug in inventory that would crash the game
+* Stopped the game from creating temporary resource packs
+* Fixed crash when default resource pack failed to load
+* Fixed exploit that let you save world before deleting it on hardcore mode
+
 ## [2.2.1]
 
 ### Additions
