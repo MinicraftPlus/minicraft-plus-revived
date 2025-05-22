@@ -46,6 +46,8 @@ but some sections are changed to compliant this project.
 * Fixed dungeon chests spawning in weird places
 * Bug in inventory that would crash the game
 * Stopped the game from creating temporary resource packs
+* Fixed crash when default resource pack failed to load
+* Fixed exploit that let you save world before deleting it on hardcore mode
 
 ## [2.2.1]
 
