@@ -19,13 +19,15 @@ public class DecorTile extends Tile {
 	private static final SpriteAnimation woodSprite = new SpriteAnimation(SpriteType.Tile, "ornate_wood");
 	private static final SpriteAnimation sandStoneSprite = new SpriteAnimation(SpriteType.Tile, "sandstone");
 	private static final SpriteAnimation rawEtherealSprite = new SpriteAnimation(SpriteType.Tile, "cloud");//"raw_ethereal");
+	private static final SpriteAnimation lavaStoneSprite = new SpriteAnimation(SpriteType.Tile, "lava_stone");
 
 	public enum decorType {
 		ORNATE_OBSIDIAN(obsidianSprite, "Ornate Obsidian", Material.Obsidian),
 		ORNATE_STONE(stoneSprite, "Ornate Stone", Material.Stone),
 		ORNATE_WOOD(woodSprite, "Ornate Wood", Material.Wood),
 		SANDSTONE(sandStoneSprite, "Sandstone", Material.Stone),
-		RAW_ETHEREAL(rawEtherealSprite, "Raw Ethereal", Material.Obsidian),;
+		RAW_ETHEREAL(rawEtherealSprite, "Raw Ethereal", Material.Obsidian),
+		LAVA_STONE(lavaStoneSprite, "Lava Stone", Material.Stone),;
 
 		private final SpriteAnimation decorSprite;
 		private final String name;
@@ -76,6 +78,9 @@ public class DecorTile extends Tile {
 							break;
 						case ORNATE_WOOD:
 							drop = Items.get("Ornate Wood");
+							break;
+						case LAVA_STONE:
+							drop = Items.get("Lava Stone");
 							break;
 						default:
 							throw new IllegalStateException("Unexpected value: " + thisType);

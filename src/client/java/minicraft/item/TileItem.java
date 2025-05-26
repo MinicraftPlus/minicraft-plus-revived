@@ -56,6 +56,10 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Obsidian Wall", new LinkedSprite(SpriteType.Item, "obsidian_wall"), new TileModel("Obsidian Wall"), "Obsidian"));
 		items.add(new TileItem("Obsidian Door", new LinkedSprite(SpriteType.Item, "obsidian_door"), new TileModel("Obsidian Door"), "Obsidian"));
 		items.add(new TileItem("Obsidian Fence", new LinkedSprite(SpriteType.Item, "obsidian_fence"), new TileModel("Obsidian Fence", placeOverWithID), solidTiles));
+		items.add(new TileItem("Ashed Dirt", new LinkedSprite(SpriteType.Item, "dirt"), new TileModel("Ashed Dirt"), "hole", "water", "lava"));
+		items.add(new TileItem("Lava Stone", new LinkedSprite(SpriteType.Item, "lava_stone"), new TileModel("Lava Stone"), "hole", "lava"));
+		items.add(new TileItem("Lava Stone Wall", new LinkedSprite(SpriteType.Item, "lava_stone"), new TileModel("Lava Stone Wall"), "Lava Stone"));
+
 
 		items.add(new TileItem("Sand", new LinkedSprite(SpriteType.Item, "sand"), new TileModel("sand"), "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", new LinkedSprite(SpriteType.Item, "cactus"), new TileModel("cactus Sapling"), "sand"));
