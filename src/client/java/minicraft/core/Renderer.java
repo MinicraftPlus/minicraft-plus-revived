@@ -19,11 +19,13 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.WateringCanItem;
+import minicraft.item.component.ComponentTypes;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
@@ -41,11 +43,8 @@ import javax.imageio.ImageIO;
 
 import java.awt.Canvas;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -237,9 +236,9 @@ public class Renderer extends Game {
 
 
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
-		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem) player.activeItem).type == ToolType.Bow) {
-				int ac = player.getInventory().count(Items.arrowItem);
+		if (player.activeItem != null && player.activeItem.getItem() instanceof ToolItem) {
+			if (((ToolItem) player.activeItem.getItem()).type == ToolType.Bow) {
+				int ac = player.getInventory().count(new ItemStack(Items.arrowItem));
 				// "^" is an infinite symbol.
 				if (isMode("minicraft.settings.mode.creative") || ac >= 10000)
 					Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
@@ -318,19 +317,19 @@ public class Renderer extends Game {
 		}
 
 		// TOOL DURABILITY STATUS
-		if (player.activeItem instanceof ToolItem) {
+		if (player.activeItem != null && player.activeItem.getItem() instanceof ToolItem) {
 			// Draws the text
-			ToolItem tool = (ToolItem) player.activeItem;
-			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
+			ToolItem tool = (ToolItem) player.activeItem.getItem();
+			int dura = player.activeItem.get(ComponentTypes.DURABILITY) * 100 / (tool.type.durability * (tool.level + 1));
 			int green = (int) (dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
 		// WATERING CAN CONTAINER STATUS
-		if (player.activeItem instanceof WateringCanItem) {
+		if (player.activeItem != null && player.activeItem.getItem() instanceof WateringCanItem) {
 			// Draws the text
-			WateringCanItem tin = (WateringCanItem) player.activeItem;
-			int dura = tin.content * 100 / tin.CAPACITY;
+			WateringCanItem tin = (WateringCanItem) player.activeItem.getItem();
+			int dura = player.activeItem.get(ComponentTypes.WATERING_CAN).content() * 100 / tin.CAPACITY;
 			int green = (int) (dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
@@ -381,7 +380,7 @@ public class Renderer extends Game {
 				// Renders armor
 				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
-					screen.render(i * 8, Screen.h - 24, player.curArmor.sprite);
+					screen.render(i * 8, Screen.h - 24, player.curArmor.getSprite());
 				}
 
 				if (player.staminaRechargeDelay > 0) {

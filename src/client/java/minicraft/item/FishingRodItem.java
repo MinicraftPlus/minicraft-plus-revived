@@ -5,10 +5,11 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.item.component.ComponentMap;
+import minicraft.item.component.ComponentTypes;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -25,10 +26,9 @@ public class FishingRodItem extends Item {
 		return items;
 	}
 
-	private int uses = 0; // The more uses, the higher the chance of breaking
-	public int level; // The higher the level the lower the chance of breaking
+	public final int level; // The higher the level the lower the chance of breaking
 
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	/* These numbers are a bit confusing, so here's an explanation
 	 * If you want to know the percent chance of a category (let's say tool, which is third)
@@ -49,7 +49,7 @@ public class FishingRodItem extends Item {
 
 	public FishingRodItem(int level) {
 		super(LEVEL_NAMES[level] + " Fishing Rod", new LinkedSprite(SpriteType.Item,
-			LEVEL_NAMES[level].toLowerCase().replace("wood", "wooden") + "_fishing_rod"));
+			LEVEL_NAMES[level].toLowerCase().replace("wood", "wooden") + "_fishing_rod"), ComponentMap.builder().add(ComponentTypes.FISHING_ROD_USES, 0).build());
 		this.level = level;
 	}
 
@@ -58,9 +58,9 @@ public class FishingRodItem extends Item {
 	}
 
 	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		if (tile == Tiles.get("water") && !player.isSwimming()) { // Make sure not to use it if swimming
-			uses++;
+			stack.put(ComponentTypes.FISHING_ROD_USES, stack.get(ComponentTypes.FISHING_ROD_USES) + 1);
 			player.isFishing = true;
 			player.fishingLevel = this.level;
 			return true;
@@ -70,23 +70,16 @@ public class FishingRodItem extends Item {
 	}
 
 	@Override
-	public boolean canAttack() {
+	public boolean canAttack(ItemStack stack) {
 		return false;
 	}
 
 	@Override
-	public boolean isDepleted() {
-		if (random.nextInt(100) > 120 - uses + level * 6) { // Breaking is random, the lower the level, and the more times you use it, the higher the chance
+	public boolean isDepleted(ItemStack stack) {
+		if (random.nextInt(100) > 120 - stack.get(ComponentTypes.FISHING_ROD_USES) + level * 6) { // Breaking is random, the lower the level, and the more times you use it, the higher the chance
 			Game.notifications.add("Your Fishing rod broke.");
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public @NotNull Item copy() {
-		FishingRodItem item = new FishingRodItem(this.level);
-		item.uses = this.uses;
-		return item;
 	}
 }

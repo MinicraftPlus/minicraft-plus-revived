@@ -6,7 +6,6 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -20,15 +19,11 @@ public class HeartItem extends StackableItem {
 		return items;
 	}
 
-	private int health; // The amount of health to increase by.
-	private int staminaCost; // The amount of stamina it costs to consume.
+	private final int health; // The amount of health to increase by.
+	private final int staminaCost; // The amount of stamina it costs to consume.
 
 	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int health) {
-		this(name, sprite, 1, health);
-	}
-
-	private HeartItem(String name, SpriteLinker.LinkedSprite sprite, int count, int health) {
-		super(name, sprite, count);
+		super(name, sprite);
 		this.health = health;
 		staminaCost = 7;
 	}
@@ -36,8 +31,8 @@ public class HeartItem extends StackableItem {
 	/**
 	 * What happens when the player uses the item on a tile
 	 */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		boolean success = false;
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
+		boolean success;
 
 		if ((Player.baseHealth + Player.extraHealth) < Player.maxHealth) {
 			Player.extraHealth += health; // Permanent increase of health by health variable (Basically 5)
@@ -48,15 +43,11 @@ public class HeartItem extends StackableItem {
 			return false;
 		}
 
-		return super.interactOn(success);
+		return super.interactOn(success, stack);
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	public @NotNull HeartItem copy() {
-		return new HeartItem(getName(), sprite, count, health);
 	}
 }

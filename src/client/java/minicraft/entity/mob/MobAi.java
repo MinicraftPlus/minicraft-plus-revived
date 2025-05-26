@@ -10,7 +10,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -193,7 +193,7 @@ public abstract class MobAi extends Mob {
 	 * @param maxcount Most amount of items to add.
 	 * @param items Which items should be added.
 	 */
-	protected void dropItem(int mincount, int maxcount, Item... items) {
+	protected void dropItem(int mincount, int maxcount, ItemStack... items) {
 		int count = random.nextInt(maxcount - mincount + 1) + mincount;
 		for (int i = 0; i < count; i++)
 			level.dropItem(x, y, items);

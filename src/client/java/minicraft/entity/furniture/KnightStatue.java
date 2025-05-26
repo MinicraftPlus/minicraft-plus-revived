@@ -6,8 +6,9 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class KnightStatue extends Furniture {
 	private int touches = 0; // >= 0
@@ -19,7 +20,7 @@ public class KnightStatue extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, Item heldItem, Direction attackDir) {
+	public boolean interact(Player player, @Nullable ItemStack heldItem, Direction attackDir) {
 		if (!ObsidianKnight.active) {
 			if (touches == 0) { // Touched the first time.
 				Game.notifications.add(Localization.getLocalized("minicraft.notifications.statue_tapped"));

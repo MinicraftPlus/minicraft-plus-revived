@@ -31,6 +31,7 @@ import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Point;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.level.ChunkManager;
@@ -375,7 +376,7 @@ public class Save {
 		for (Recipe recipe : CraftingDisplay.getUnlockedRecipes()) {
 			JSONArray costs = new JSONArray();
 			recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
-			unlockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+			unlockedRecipes.put(recipe.getProduct().getItem().getName() + "_" + recipe.getAmount(), costs);
 		}
 		data.add(unlockedRecipes.toString());
 	}
@@ -435,7 +436,7 @@ public class Save {
 			Chest chest = (Chest) e;
 
 			for (int ii = 0; ii < chest.getInventory().invSize(); ii++) {
-				Item item = chest.getInventory().get(ii);
+				ItemStack item = chest.getInventory().get(ii);
 				extradata.append(":").append(item.getData());
 			}
 

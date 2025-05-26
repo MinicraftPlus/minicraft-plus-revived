@@ -1,13 +1,13 @@
 package minicraft.entity.mob;
 
 import minicraft.item.DyeItem;
+import minicraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -77,17 +77,17 @@ public class Sheep extends PassiveMob {
 		}
 	}
 
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			if (!cut && ((ToolItem) item).type == ToolType.Shears) {
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
+		if (item != null && item.getItem() instanceof ToolItem) {
+			if (!cut && ((ToolItem) item.getItem()).type == ToolType.Shears) {
 				cut = true;
-				dropItem(1, 3, Items.get(color.toString().replace('_', ' ') + " Wool"));
-				((ToolItem) item).payDurability();
+				dropItem(1, 3, Items.getStackOf(color.toString().replace('_', ' ') + " Wool"));
+				((ToolItem) item.getItem()).payDurability(item);
 				return true;
 			}
-		} else if (item instanceof DyeItem) {
-			color = ((DyeItem) item).color;
-			((DyeItem) item).count--;
+		} else if (item != null && item.getItem() instanceof DyeItem) {
+			color = ((DyeItem) item.getItem()).color;
+			item.decrement(1);
 			return true;
 		}
 		return false;
@@ -108,8 +108,8 @@ public class Sheep extends PassiveMob {
 			max = 2;
 		}
 
-		if (!cut) dropItem(min, max, Items.get(color.toString().replace('_', ' ') + " Wool"));
-		dropItem(min, max, Items.get("Raw Beef"));
+		if (!cut) dropItem(min, max, Items.getStackOf(color.toString().replace('_', ' ') + " Wool"));
+		dropItem(min, max, Items.getStackOf("Raw Beef"));
 
 		super.die();
 	}

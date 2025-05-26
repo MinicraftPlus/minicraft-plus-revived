@@ -9,7 +9,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.util.AdvancementElement;
@@ -37,11 +37,11 @@ public class StairsTile extends Tile {
 	}
 
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		super.interact(level, xt, yt, player, item, attackDir);
 
 		// Makes it so you can remove the stairs if you are in creative and debug mode.
-		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
+		if (item.getItem() instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
 			int data = level.getData(xt, yt);
 			level.setTile(xt, yt, Tiles.get("Grass"));
 			Sound.play("monsterhurt");

@@ -46,11 +46,11 @@ import minicraft.item.ArmorItem;
 import minicraft.item.DyeItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
-import minicraft.item.StackableItem;
 import minicraft.level.ChunkManager;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -1128,11 +1128,11 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.5-dev5")) >= 0 || player.armor > 0 || worldVer.compareTo(new Version("2.0.5-dev4")) == 0 && data.size() > 5) {
 			if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 				// Reverse order b/c we are taking from the end
-				player.curArmor = (ArmorItem) Items.get(data.remove(data.size() - 1));
+				player.curArmor = Items.getStackOf(data.remove(data.size() - 1));
 				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size() - 1));
 			} else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
-				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
+				player.curArmor = Items.getStackOf(data.remove(0), true);
 			}
 		}
 		player.setScore(Integer.parseInt(data.remove(0)));
@@ -1140,7 +1140,7 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));
 			if (worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount).forEach(deathChest.getInventory()::add);
+				player.getInventory().add(Items.getStackOf("arrow"), arrowCount).forEach(deathChest.getInventory()::add);
 		}
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
@@ -1296,23 +1296,23 @@ public class Load {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
 
-				Item newItem = Items.get(itemName);
+				ItemStack newItem = Items.getStackOf(itemName);
 
 				int count = Integer.parseInt(curData[1]);
 
-				if (newItem instanceof StackableItem) {
-					((StackableItem) newItem).count = count;
+				if (newItem.isStackable()) {
+					newItem.setCount(count);
 					loadItem(inventory, newItem);
 				} else {
 					for (int i = 0; i < count; i++) loadItem(inventory, newItem);
 				}
 			} else {
-				loadItem(inventory, Items.get(item));
+				loadItem(inventory, Items.getStackOf(item));
 			}
 		}
 	}
 
-	private void loadItem(Inventory inventory, Item item) {
+	private void loadItem(Inventory inventory, ItemStack item) {
 		if (inventory.add(item) != null) {
 			deathChest.getInventory().add(item.copy());
 		}
@@ -1463,7 +1463,7 @@ public class Load {
 				if (itemData.contains("Power Glove")) continue;
 				if (itemData.contains("Totem of Wind")) continue;
 
-				Item item = Items.get(itemData);
+				ItemStack item = Items.getStackOf(itemData);
 				chest.getInventory().add(item);
 			}
 
@@ -1500,7 +1500,7 @@ public class Load {
 				}
 			}
 			if (newEntity instanceof ItemEntity) {
-				Item item = Items.get(info.get(2));
+				ItemStack item = Items.getStackOf(info.get(2));
 				double zz = Double.parseDouble(info.get(3));
 				int lifetime = Integer.parseInt(info.get(4));
 				int timeleft = Integer.parseInt(info.get(5));
@@ -1584,7 +1584,7 @@ public class Load {
 			case "Arrow":
 				return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
 			case "ItemEntity":
-				return new ItemEntity(Items.get("unknown"), 0, 0);
+				return new ItemEntity(Items.getStackOf("unknown"), 0, 0);
 			case "FireParticle":
 				return new FireParticle(0, 0);
 			case "SmashParticle":

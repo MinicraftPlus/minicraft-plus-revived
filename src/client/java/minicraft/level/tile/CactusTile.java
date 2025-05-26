@@ -43,7 +43,7 @@ public class CactusTile extends Tile {
 			//int count = random.nextInt(2) + 2;
 			level.setTile(x, y, Tiles.get("sand"));
 			Sound.play("monsterhurt");
-			level.dropItem((x << 4) + 8, (y << 4) + 8, 2, 4, Items.get("Cactus"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 2, 4, Items.getStackOf("Cactus"));
 		} else {
 			level.setData(x, y, damage);
 		}

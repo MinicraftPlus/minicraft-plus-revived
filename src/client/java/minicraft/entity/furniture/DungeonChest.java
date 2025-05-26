@@ -9,9 +9,8 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
-import minicraft.item.StackableItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,15 +47,15 @@ public class DungeonChest extends Chest {
 
 	public boolean use(Player player) {
 		if (isLocked) {
-			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
-			boolean invKey = player.getInventory().count(Items.get("key")) > 0;
+			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.getStackOf("Key"));
+			boolean invKey = player.getInventory().count(Items.getStackOf("key")) > 0;
 
 			if (activeKey || invKey) { // If the player has a key...
 				if (activeKey) { // Remove activeItem
-					StackableItem key = (StackableItem) player.activeItem;
-					key.count--;
+					ItemStack key = player.activeItem;
+					key.decrement(1);
 				} else { // Remove from inv
-					player.getInventory().removeItem(Items.get("key"));
+					player.getInventory().removeItem(Items.getStackOf("key"));
 				}
 
 				isLocked = false;
@@ -68,7 +67,7 @@ public class DungeonChest extends Chest {
 
 				// If this is the last chest.
 				if (level.chestCount == 0) {
-					level.dropItem(x, y, 5, Items.get("Gold Apple"));
+					level.dropItem(x, y, 5, Items.getStackOf("Gold Apple"));
 				}
 
 				return super.use(player); // the player unlocked the chest.
@@ -110,7 +109,7 @@ public class DungeonChest extends Chest {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
 		if (!isLocked)
 			return super.interact(player, item, attackDir);
 		return false;

@@ -6,7 +6,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
@@ -17,10 +17,10 @@ public class BossFloorTile extends FloorTile {
 		super(Material.Obsidian, "Boss Floor");
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		if ((!ObsidianKnight.beaten || ObsidianKnight.active) && !Game.isMode("minicraft.settings.mode.creative")) {
-			if (item instanceof ToolItem) {
-				ToolItem tool = (ToolItem) item;
+			if (item.getItem() instanceof ToolItem) {
+				ToolItem tool = (ToolItem) item.getItem();
 				if (tool.type == type.getRequiredTool()) {
 					if (player.payStamina(1)) {
 						Game.notifications.add(Localization.getLocalized(floorMsg));

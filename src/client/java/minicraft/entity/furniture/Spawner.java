@@ -23,12 +23,13 @@ import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import java.util.ArrayList;
@@ -173,9 +174,9 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
+		if (item != null && item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 
 			Sound.play("monsterhurt");
 
@@ -203,11 +204,11 @@ public class Spawner extends Furniture {
 			return true;
 		}
 
-		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
+		if (item != null && item.getItem() instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
 			level.remove(this);
-			if (!(player.activeItem instanceof PowerGloveItem))
+			if (!(player.activeItem.getItem() instanceof PowerGloveItem))
 				player.getLevel().dropItem(player.x, player.y, player.activeItem);
-			player.activeItem = new FurnitureItem(this);
+			player.activeItem = new ItemStack(new FurnitureItem(this));
 			return true;
 		}
 

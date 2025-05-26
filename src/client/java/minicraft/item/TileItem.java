@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 public class TileItem extends StackableItem {
 
@@ -114,15 +113,11 @@ public class TileItem extends StackableItem {
 	public final List<String> validTiles;
 
 	protected TileItem(String name, LinkedSprite sprite, TileModel model, String... validTiles) {
-		this(name, sprite, 1, model, Arrays.asList(validTiles));
+		this(name, sprite, model, Arrays.asList(validTiles));
 	}
 
-	protected TileItem(String name, LinkedSprite sprite, int count, TileModel model, String... validTiles) {
-		this(name, sprite, count, model, Arrays.asList(validTiles));
-	}
-
-	protected TileItem(String name, LinkedSprite sprite, int count, @Nullable TileModel model, List<String> validTiles) {
-		super(name, sprite, count);
+	protected TileItem(String name, LinkedSprite sprite, @Nullable TileModel model, List<String> validTiles) {
+		super(name, sprite);
 		this.model = model;
 		this.validTiles = new ArrayList<>();
 		for (String tile : validTiles)
@@ -160,18 +155,18 @@ public class TileItem extends StackableItem {
 		}
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
 				Tile t = TileModel.getTile(model);
 				level.setTile(xt, yt, t, TileModel.getTileData(model, t, tile, level, xt, yt, player, attackDir));
 				AdvancementElement.AdvancementTrigger.PlacedTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.PlacedTileTrigger.PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions(
-						this, level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth
+						new ItemStack(this), level.getTile(xt, yt), level.getData(xt, yt), xt, yt, level.depth
 					));
 
 				Sound.play("craft");
-				return super.interactOn(true);
+				return super.interactOn(true, stack);
 			}
 		}
 
@@ -192,7 +187,7 @@ public class TileItem extends StackableItem {
 			}
 		}
 
-		return super.interactOn(false);
+		return super.interactOn(false, stack);
 	}
 
 	@Override
@@ -203,9 +198,5 @@ public class TileItem extends StackableItem {
 	@Override
 	public int hashCode() {
 		return super.hashCode() + (model == null ? 0xFF123 : model.hashCode());
-	}
-
-	public @NotNull TileItem copy() {
-		return new TileItem(getName(), sprite, count, model, validTiles);
 	}
 }

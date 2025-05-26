@@ -7,7 +7,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -54,15 +54,15 @@ public class DirtTile extends Tile {
 		levelSprite[dIdx(level.depth)].render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.play("monsterhurt");
-					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Dirt"));
+					level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.getStackOf("Dirt"));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, xt, yt, level.depth));
@@ -70,7 +70,7 @@ public class DirtTile extends Tile {
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.play("monsterhurt");

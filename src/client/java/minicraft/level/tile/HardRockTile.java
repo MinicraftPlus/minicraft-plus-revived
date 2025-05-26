@@ -12,7 +12,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -38,15 +38,15 @@ public class HardRockTile extends Tile {
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 
 			// If we are hitting with a gem pickaxe.
 			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
-				if (player.payStamina(2) && tool.payDurability()) {
+				if (player.payStamina(2) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					hurt(level, xt, yt, tool.getDamage());
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
@@ -71,8 +71,8 @@ public class HardRockTile extends Tile {
 		level.add(new TextParticle("" + dmg, (x << 4) + 8, (y << 4) + 8, Color.RED));
 		if (damage >= hrHealth) {
 			level.setTile(x, y, Tiles.get("dirt"));
-			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3, Items.get("Stone"));
-			level.dropItem((x << 4) + 8, (y << 4) + 8, 0, 1, Items.get("Coal"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3, Items.getStackOf("Stone"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 0, 1, Items.getStackOf("Coal"));
 		} else {
 			level.setData(x, y, damage);
 		}

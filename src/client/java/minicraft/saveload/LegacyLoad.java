@@ -29,10 +29,10 @@ import minicraft.entity.mob.Zombie;
 import minicraft.item.ArmorItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
 import minicraft.level.ChunkManager;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -259,7 +259,7 @@ public class LegacyLoad {
 			if (data.size() >= 14) {
 				if (worldVer == null) worldVer = new Version("1.9.1-pre1");
 				player.armorDamageBuffer = Integer.parseInt(data.get(13));
-				player.curArmor = (ArmorItem) Items.get(data.get(14));
+				player.curArmor = Items.getStackOf(data.get(14));
 			} else player.armor = 0;
 
 			Game.currentLevel = Integer.parseInt(data.get(8));
@@ -323,7 +323,7 @@ public class LegacyLoad {
 
 		if (playerac > 0 && inventory == Game.player.getInventory()) {
 			for (int i = 0; i < playerac; i++)
-				loadItem(inventory, Items.get("arrow"));
+				loadItem(inventory, Items.getStackOf("arrow"));
 			playerac = 0;
 		}
 	}
@@ -335,18 +335,18 @@ public class LegacyLoad {
 			if (oldSave) itemName = subOldName(itemName);
 
 			//System.out.println("Item to fetch: " + itemName + "; count=" + curData[1]);
-			Item newItem = Items.get(itemName);
+			ItemStack newItem = Items.getStackOf(itemName);
 			int count = Integer.parseInt(curData[1]);
 			for (int i = 0; i < count; i++)
 				loadItem(inventory, newItem);
 		} else {
 			if (oldSave) item = subOldName(item);
-			Item toAdd = Items.get(item);
+			ItemStack toAdd = Items.getStackOf(item);
 			loadItem(inventory, toAdd);
 		}
 	}
 
-	private void loadItem(Inventory inventory, Item item) {
+	private void loadItem(Inventory inventory, ItemStack item) {
 		if (inventory.add(item) != null) {
 			deathChest.getInventory().add(item.copy());
 		}

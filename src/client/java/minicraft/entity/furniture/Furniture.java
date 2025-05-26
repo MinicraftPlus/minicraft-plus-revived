@@ -7,7 +7,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.PowerGloveItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,13 +97,13 @@ public class Furniture extends Entity {
 	 * @param player The player picking up the furniture.
 	 */
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if (item instanceof PowerGloveItem) {
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
+		if (item != null && item.getItem() instanceof PowerGloveItem) {
 			Sound.play("monsterhurt");
 			remove();
-			if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
+			if (player.activeItem != null && !(player.activeItem.getItem() instanceof PowerGloveItem))
 				player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory
-			player.activeItem = new FurnitureItem(this); // Make this the player's current item.
+			player.activeItem = new ItemStack(new FurnitureItem(this)); // Make this the player's current item.
 			return true;
 		}
 		return false;

@@ -22,13 +22,13 @@ public class Knight extends EnemyMob {
 
 	public void die() {
 		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy"))
-			dropItem(1, 3, Items.get("shard"));
+			dropItem(1, 3, Items.getStackOf("shard"));
 		else
-			dropItem(0, 2, Items.get("shard")
+			dropItem(0, 2, Items.getStackOf("shard")
 			);
 
 		if (random.nextInt(24 / lvl / (Settings.getIdx("diff") + 1)) == 0)
-			dropItem(1, 1, Items.get("key"));
+			dropItem(1, 1, Items.getStackOf("key"));
 
 		super.die();
 	}

@@ -8,7 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Inventory;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.saveload.Load;
 import minicraft.screen.ContainerDisplay;
@@ -55,12 +55,12 @@ public class Chest extends Furniture implements ItemHolder {
 				//System.out.println(line);
 				String[] data = line.split(",");
 				if (!line.startsWith(":")) {
-					inventory.tryAdd(random, Integer.parseInt(data[0]), Items.get(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
+					inventory.tryAdd(random, Integer.parseInt(data[0]), Items.getStackOf(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
 				} else if (inventory.invSize() == 0) {
 					// Adds the "fallback" items to ensure there's some stuff
 					String[] fallbacks = line.substring(1).split(":");
 					for (String item : fallbacks) {
-						inventory.add(Items.get(item.split(",")[0]), Integer.parseInt(item.split(",")[1]));
+						inventory.add(Items.getStackOf(item.split(",")[0]), Integer.parseInt(item.split(",")[1]));
 					}
 				}
 			}
@@ -70,7 +70,7 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
 		if (inventory.invSize() == 0)
 			return super.interact(player, item, attackDir);
 		return false;
@@ -84,8 +84,8 @@ public class Chest extends Furniture implements ItemHolder {
 	@Override
 	public void die() {
 		if (level != null) {
-			List<Item> items = inventory.getItems();
-			level.dropItem(x, y, items.toArray(new Item[0]));
+			List<ItemStack> items = inventory.getItems();
+			level.dropItem(x, y, items.toArray(new ItemStack[0]));
 		}
 		super.die();
 	}

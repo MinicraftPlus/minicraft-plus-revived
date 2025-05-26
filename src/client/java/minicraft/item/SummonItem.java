@@ -12,7 +12,6 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 import java.awt.Rectangle;
@@ -32,18 +31,14 @@ public class SummonItem extends StackableItem {
 	private final String mob;
 
 	private SummonItem(String name, LinkedSprite sprite, String mob) {
-		this(name, sprite, 1, mob);
-	}
-
-	private SummonItem(String name, LinkedSprite sprite, int count, String mob) {
-		super(name, sprite, count);
+		super(name, sprite);
 		this.mob = mob;
 	}
 
 	/**
 	 * What happens when the player uses the item on a tile
 	 */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		boolean success = false;
 
 		switch (mob) {
@@ -106,15 +101,11 @@ public class SummonItem extends StackableItem {
 				break;
 		}
 
-		return super.interactOn(success);
+		return super.interactOn(success, stack);
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	public @NotNull SummonItem copy() {
-		return new SummonItem(getName(), sprite, count, mob);
 	}
 }

@@ -13,7 +13,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -51,10 +51,10 @@ public class RockTile extends Tile {
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && player.payStamina(5 - tool.level) && tool.payDurability()) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
+			if (tool.type == ToolType.Pickaxe && player.payStamina(5 - tool.level) && tool.payDurability(item)) {
 				int data = level.getData(xt, yt);
 				// Drop coal since we use a pickaxe.
 				dropCoal = true;
@@ -90,10 +90,10 @@ public class RockTile extends Tile {
 					coal += 1;
 				}
 
-				level.dropItem((x << 4) + 8, (y << 4) + 8, 0, coal, Items.get("Coal"));
+				level.dropItem((x << 4) + 8, (y << 4) + 8, 0, coal, Items.getStackOf("Coal"));
 			}
 
-			level.dropItem((x << 4) + 8, (y << 4) + 8, stone, Items.get("Stone"));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, stone, Items.getStackOf("Stone"));
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
 			level.setData(x, y, damage);

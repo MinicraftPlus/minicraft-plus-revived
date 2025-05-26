@@ -13,7 +13,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -127,13 +127,13 @@ public class TreeTile extends Tile {
 	}
 
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+		if (item != null && item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == ToolType.Axe) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					hurt(level, xt, yt, tool.getDamage());
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
@@ -148,7 +148,7 @@ public class TreeTile extends Tile {
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		if (random.nextInt(100) == 0)
-			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Apple"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, Items.getStackOf("Apple"));
 
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth = 20;
@@ -159,8 +159,8 @@ public class TreeTile extends Tile {
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
-			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
-			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.get("Acorn"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.getStackOf("Wood"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 2, Items.getStackOf("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
 		} else {

@@ -5,7 +5,6 @@ import minicraft.core.io.Localization;
 import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -44,17 +43,11 @@ public class StackableItem extends Item {
 		return items;
 	}
 
-	public int count;
-	public int maxCount = 100;
+// 	public int count;
 
 	protected StackableItem(String name, LinkedSprite sprite) {
 		super(name, sprite);
-		count = 1;
-	}
-
-	protected StackableItem(String name, LinkedSprite sprite, int count) {
-		this(name, sprite);
-		this.count = count;
+		this.maxCount = 100;
 	}
 
 	public boolean stacksWith(Item other) {
@@ -62,9 +55,9 @@ public class StackableItem extends Item {
 	}
 
 	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
-	protected boolean interactOn(boolean subClassSuccess) {
+	protected boolean interactOn(boolean subClassSuccess, ItemStack stack) {
 		if (subClassSuccess && !Game.isMode("minicraft.settings.mode.creative"))
-			count--;
+			stack.decrement(1);
 		return subClassSuccess;
 	}
 
@@ -72,27 +65,17 @@ public class StackableItem extends Item {
 	 * Called to determine if this item should be removed from an inventory.
 	 */
 	@Override
-	public boolean isDepleted() {
-		return count <= 0;
+	public boolean isDepleted(ItemStack stack) {
+		return stack.getCount() <= 0;
+	}
+
+	public String getData(ItemStack stack) {
+		return getName() + "_" + stack.getCount();
 	}
 
 	@Override
-	public @NotNull StackableItem copy() {
-		return new StackableItem(getName(), sprite, count);
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + "-Stack_Size:" + count;
-	}
-
-	public String getData() {
-		return getName() + "_" + count;
-	}
-
-	@Override
-	public String getDisplayName() {
-		String amt = (Math.min(count, 999)) + " ";
+	public String getDisplayName(ItemStack stack) {
+		String amt = (Math.min(stack.getCount(), 999)) + " ";
 		return " " + amt + Localization.getLocalized(getName());
 	}
 }

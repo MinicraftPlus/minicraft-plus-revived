@@ -1,12 +1,13 @@
 package minicraft.screen.entry;
 
 import minicraft.item.Item;
+import minicraft.item.ItemStack;
 
 public class ItemListing extends ItemEntry {
 
 	private String info;
 
-	public ItemListing(Item i, String text) {
+	public ItemListing(ItemStack i, String text) {
 		super(i);
 		setSelectable(false);
 		this.info = text;

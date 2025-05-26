@@ -3,7 +3,7 @@ package minicraft.entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 	private int lifeTime; // The life time of this entity in the level
 	private double xa, ya, za; // The x, y, and z accelerations.
 	private double xx, yy, zz; // The x, y, and z coordinates; in double precision.
-	public Item item; // The item that this entity is based off of.
+	public ItemStack item; // The item that this entity is based off of.
 	private int time = 0; // Time it has lasted in the level
 
 	// Solely for multiplayer use.
@@ -24,7 +24,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 	 * @param x position on map
 	 * @param y position on map
 	 */
-	public ItemEntity(Item item, int x, int y) {
+	public ItemEntity(ItemStack item, int x, int y) {
 		super(2, 2);
 
 		this.item = item.copy();
@@ -55,7 +55,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 	 * @param ya y velocity
 	 * @param za z velocity?
 	 */
-	public ItemEntity(Item item, int x, int y, double zz, int lifetime, int time, double xa, double ya, double za) {
+	public ItemEntity(ItemStack item, int x, int y, double zz, int lifetime, int time, double xa, double ya, double za) {
 		this(item, x, y);
 		this.lifeTime = lifetime;
 		this.time = time;
@@ -128,8 +128,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 			if (time / 6 % 2 == 0) return;
 		}
 
-		screen.render(x - 4, y - 4, item.sprite.getSprite(), 0, false, Color.get(0, 31)); // Item shadow
-		screen.render(x - 4, y - 4 - (int) zz, item.sprite); // Item
+		screen.render(x - 4, y - 4, item.getSprite().getSprite(), 0, false, Color.get(0, 31)); // Item shadow
+		screen.render(x - 4, y - 4 - (int) zz, item.getSprite()); // Item
 	}
 
 	@Override

@@ -6,7 +6,8 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import org.jetbrains.annotations.NotNull;
+import minicraft.item.component.ComponentMap;
+import minicraft.item.component.ComponentTypes;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,14 +29,13 @@ public class ToolItem extends Item {
 		return items;
 	}
 
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	public static final String[] LEVEL_NAMES = { "Wood", "Rock", "Iron", "Gold", "Gem" }; // The names of the different levels. A later level means a stronger tool.
 
-	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
-	public int level; // Level of said tool
-	public int dur; // The durability of the tool
-	private int damage; // The damage of the tool
+	public final ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
+	public final int level; // Level of said tool
+	private final int damage; // The damage of the tool
 
 	private static String getSpriteName(String typeName, String level) {
 		level = level.toLowerCase().replace("wood", "wooden").replace("rock", "stone");
@@ -46,46 +46,49 @@ public class ToolItem extends Item {
 	 * Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc)
 	 */
 	public ToolItem(ToolType type, int level) {
-		super(LEVEL_NAMES[level] + " " + type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")));
+		super(LEVEL_NAMES[level] + " " + type.name(),
+			new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), LEVEL_NAMES[level] + "_")),
+			ComponentMap.builder().add(ComponentTypes.DURABILITY, type.durability * (level + 1)).build());
 
 		this.type = type;
 		this.level = level;
 		this.damage = level * 5 + 10;
-
-		dur = type.durability * (level + 1); // Initial durability fetched from the ToolType
 	}
 
 	public ToolItem(ToolType type) {
-		super(type.name(), new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), "")));
+		super(type.name(),
+			new LinkedSprite(SpriteType.Item, getSpriteName(type.toString(), "")),
+			ComponentMap.builder().add(ComponentTypes.DURABILITY, type.durability).build());
 
 		this.type = type;
-		dur = type.durability;
+		this.level = 0;
+		this.damage = 0;
 	}
 
 	/**
 	 * Gets the name of this tool (and it's type) as a display string.
 	 */
 	@Override
-	public String getDisplayName() {
+	public String getDisplayName(ItemStack stack) {
 		if (!type.noLevel)
 			return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 		else return " " + Localization.getLocalized(type.toString());
 	}
 
-	public boolean isDepleted() {
-		return dur <= 0 && type.durability > 0;
+	public boolean isDepleted(ItemStack stack) {
+		return stack.get(ComponentTypes.DURABILITY) <= 0 && type.durability > 0;
 	}
 
 	/**
 	 * You can attack mobs with tools.
 	 */
-	public boolean canAttack() {
+	public boolean canAttack(ItemStack stack) {
 		return type != ToolType.Shears;
 	}
 
-	public boolean payDurability() {
-		if (dur <= 0) return false;
-		if (!Game.isMode("minicraft.settings.mode.creative")) dur--;
+	public boolean payDurability(ItemStack stack) {
+		if (stack.get(ComponentTypes.DURABILITY) <= 0) return false;
+		if (!Game.isMode("minicraft.settings.mode.creative")) stack.put(ComponentTypes.DURABILITY, stack.get(ComponentTypes.DURABILITY) - 1);
 		return true;
 	}
 
@@ -96,8 +99,8 @@ public class ToolItem extends Item {
 	/**
 	 * Gets the attack damage bonus from an item/tool (sword/axe)
 	 */
-	public int getAttackDamageBonus(Entity e) {
-		if (!payDurability())
+	public int getAttackDamageBonus(Entity e, ItemStack stack) {
+		if (!payDurability(stack))
 			return 0;
 
 		if (e instanceof Mob) {
@@ -116,8 +119,8 @@ public class ToolItem extends Item {
 	}
 
 	@Override
-	public String getData() {
-		return super.getData() + "_" + dur;
+	public String getData(ItemStack stack) {
+		return super.getData(stack) + "_" + stack.get(ComponentTypes.DURABILITY);
 	}
 
 	/**
@@ -135,16 +138,5 @@ public class ToolItem extends Item {
 	@Override
 	public int hashCode() {
 		return type.name().hashCode() + level;
-	}
-
-	public @NotNull ToolItem copy() {
-		ToolItem ti;
-		if (type.noLevel) {
-			ti = new ToolItem(type);
-		} else {
-			ti = new ToolItem(type, level);
-		}
-		ti.dur = dur;
-		return ti;
 	}
 }

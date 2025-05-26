@@ -6,6 +6,8 @@ import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.WaterParticle;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
+import minicraft.item.component.ComponentTypes;
+import minicraft.item.component.type.WateringCanComponent;
 import minicraft.level.Level;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.FlowerTile;
@@ -14,7 +16,6 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WaterTile;
 import minicraft.level.tile.farming.CropTile;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -38,25 +39,24 @@ public class WateringCanItem extends Item {
 	};
 
 	public final int CAPACITY = 1800;
-	public int content = 0;
-	private int renderingTick = 0;
 
 	protected WateringCanItem(String name) {
 		super(name, sprite);
 	}
 
 	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
+		WateringCanComponent component = stack.get(ComponentTypes.WATERING_CAN);
+
 		if (tile instanceof WaterTile) {
-			content = CAPACITY;
-			updateSprite();
+			stack.put(ComponentTypes.WATERING_CAN, component.withContent(CAPACITY));
 			return true;
-		} else if (content > 0) {
-			content--;
-			updateSprite();
-			renderingTick++;
+		} else if (component.content() > 0) {
+			component = component.withContent(component.content() - 1);
+			component = component.withRenderingTick(component.renderingTick() + 1);
+
 			Random random = new Random();
-			if (renderingTick >= 8) {
+			if (component.renderingTick() >= 8) {
 				for (int i = 0; i < 4; i++) {
 					SpriteLinker.LinkedSprite splash = spriteSplash[random.nextInt(spriteSplash.length)];
 					// 2-pixel deviation for centering particle sprites.
@@ -65,7 +65,7 @@ public class WateringCanItem extends Item {
 					int x = player.x - 2 + 4 * attackDir.getX() + random.nextInt(5) - 2;
 					int y = player.y - 2 + 4 * attackDir.getY() + random.nextInt(5) - 2;
 					level.add(new WaterParticle(x, y, 80 + random.nextInt(61) - 30, splash, destX, destY));
-					renderingTick = 0;
+					component = component.withRenderingTick(0);
 				}
 			}
 			if (tile instanceof CropTile) {
@@ -119,23 +119,20 @@ public class WateringCanItem extends Item {
 				}
 			}
 
+			stack.put(ComponentTypes.WATERING_CAN, component);
 			return true;
 		}
 
 		return false;
 	}
 
-	private void updateSprite() {
-		super.sprite = content > 0 ? spriteFilled : sprite;
+	@Override
+	public SpriteLinker.LinkedSprite getSprite(ItemStack stack) {
+		return stack.get(ComponentTypes.WATERING_CAN).content() > 0 ? spriteFilled : sprite;
 	}
 
 	@Override
-	public String getData() {
-		return super.getData() + "_" + content;
-	}
-
-	@Override
-	public @NotNull Item copy() {
-		return new WateringCanItem(getName());
+	public String getData(ItemStack stack) {
+		return super.getData(stack) + "_" + stack.get(ComponentTypes.WATERING_CAN).content();
 	}
 }
