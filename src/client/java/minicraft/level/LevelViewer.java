@@ -14,6 +14,7 @@ public class LevelViewer {
 
 	public static void main(String[] args) {
 		long worldSeed = 0x100;
+		Random rand = new Random();
 
 		// Fixes to get this method to work
 
@@ -111,7 +112,7 @@ public class LevelViewer {
 			}
 			else if (op == 4) worldSeed = 0x100;
 			else if (op == 5) worldSeed = 0xAAFF20;
-			else if (op == 6) worldSeed = new Random().nextLong(0xAAFF20);
+			else if (op == 6) worldSeed = rand.nextLong();
 			else if (op == 7) return;
 			else worldSeed++;
 		}
