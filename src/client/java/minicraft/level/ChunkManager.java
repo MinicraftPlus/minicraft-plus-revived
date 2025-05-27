@@ -95,11 +95,11 @@ public class ChunkManager {
 		return chunks.get(chunkX).get(chunkY).stage;
 	}
 
-	public ArrayList<LevelNoise> getChunkNoise(int chunkX, int chunkY) {
+	public LevelNoise getChunkNoise(int chunkX, int chunkY) {
 		return getChunk(chunkX, chunkY).noise;
 	}
 
-	public ArrayList<LevelNoise> getTileNoise(int x, int y) {
+	public LevelNoise getTileNoise(int x, int y) {
 		return getTileChunk(x, y).noise;
 	}
 
@@ -108,16 +108,19 @@ public class ChunkManager {
 
 		// Let go of noise if no longer needed
 		if(stage == CHUNK_STAGE_UNFINISHED_STAIRS)
-			chunks.get(chunkX).get(chunkY).noise.clear();
+			chunks.get(chunkX).get(chunkY).noise = null;
+	}
+
+	public void setChunkNoise(int chunkX, int chunkY, LevelNoise noise) {
+		getChunk(chunkX, chunkY).noise = noise;
 	}
 
 	private static class Chunk {
 		protected TileDat[] tiles;
 		protected short stage = 0;
-		protected ArrayList<LevelNoise> noise = null;
+		protected LevelNoise noise = null;
 		public Chunk() {
 			tiles = new TileDat[CHUNK_SIZE * CHUNK_SIZE];
-			noise = new ArrayList<>();
 		}
 
 		public TileDat getTileDat(int tileX, int tileY) {

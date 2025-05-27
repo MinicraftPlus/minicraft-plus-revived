@@ -3,7 +3,6 @@ package minicraft.level.biome;
 import java.util.Random; // TODO: Make single-instance tiles (stairs) into structures
 
 import minicraft.level.ChunkManager;
-import minicraft.level.LevelGen;
 import minicraft.level.noise.LevelNoise;
 import minicraft.level.tile.Tiles;
 
@@ -13,22 +12,21 @@ public class GemCaveBiome extends Biome {
 	}
 
 	public void generate(ChunkManager map, int x, int y) {
-		LevelNoise n16 = map.getTileNoise(x, y).get(1);
-		LevelNoise n32 = map.getTileNoise(x, y).get(2);
+		LevelNoise noise = map.getTileNoise(x, y);
 
-		double val = Math.abs(n32.sample(x, y, 0) - n32.sample(x, y, 1));
-		double mval = Math.abs(Math.abs(n16.sample(x, y, 0) - n16.sample(x, y, 1)) - n16.sample(x, y, 2));
-		double nval = Math.abs(Math.abs(n16.sample(x, y, 3) - n16.sample(x, y, 4)) - n16.sample(x, y, 5));
-		double wval = Math.abs(Math.abs(n16.sample(x, y, 6) - n16.sample(x, y, 7)) - n16.sample(x, y, 8));
+		double val = Math.abs(noise.getScale32Noise(x, y, 0) - noise.getScale32Noise(x, y, 1));
+		double mval = Math.abs(Math.abs(noise.getScale16Noise(x, y, 0) - noise.getScale16Noise(x, y, 1)) - noise.getScale16Noise(x, y, 2));
+		double nval = Math.abs(Math.abs(noise.getScale16Noise(x, y, 3) - noise.getScale16Noise(x, y, 4)) - noise.getScale16Noise(x, y, 5));
+		double wval = Math.abs(Math.abs(noise.getScale16Noise(x, y, 6) - noise.getScale16Noise(x, y, 7)) - noise.getScale16Noise(x, y, 8));
 		if (val > 0.25 && wval < 0.45)
 			map.setTile(x, y, Tiles.get("lava"), 0);
 		else if(val > 0.125 && mval < 0.20 || nval < 0.25)
 			map.setTile(x, y, Tiles.get("dirt"), 0);
-		else if(n16.sample(x, y, 9) > 0.7)
+		else if(noise.getScale16Noise(x, y, 9) > 0.7)
 			map.setTile(x, y, Tiles.get("gem Ore"), 0);
-		else if(n32.sample(x, y, 3) > 0.85)
+		else if(noise.getScale32Noise(x, y, 3) > 0.85)
 			map.setTile(x, y, Tiles.get("Lapis"), 0);
-		else if (new Random(System.nanoTime()).nextDouble() < 0.002 * 5)
+		else if (new Random(System.nanoTime()).nextDouble() < 0.002)
 			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
 		else
 			map.setTile(x, y, Tiles.get("rock"), 0);

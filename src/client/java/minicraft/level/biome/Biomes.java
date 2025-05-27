@@ -19,6 +19,10 @@ public class Biomes {
 		getLayerBiomes(LevelGen.SKY_LEVEL).addBiome("Sky", new SkyBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Surface", new SurfaceBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Desert", new DesertBiome());
+		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Forest", new ForestBiome());
+		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Ocean", new OceanBiome());
+		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("River", new RiverBiome());
+		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Rock", new RockBiome());
 		getLayerBiomes(LevelGen.IRON_LEVEL).addBiome("IronCave", new IronCaveBiome());
 		getLayerBiomes(LevelGen.GOLD_LEVEL).addBiome("GoldCave", new GoldCaveBiome());
 		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("GemCave", new GemCaveBiome());
@@ -45,7 +49,7 @@ public class Biomes {
 				float x = b.getTemperature() - temperature;
 				float y = b.getHeight() - height;
 				float z = b.getHumidity() - humidity;
-				float dist = x * x + y * y + z * z;
+				float dist = (x * x + y * y + z * z) / b.getRarity();
 				if (dist < minDist) {
 					minDist = dist;
 					nearest = b;

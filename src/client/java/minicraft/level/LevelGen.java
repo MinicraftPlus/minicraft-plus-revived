@@ -11,11 +11,14 @@ import minicraft.util.Simplex;
 
 import org.tinylog.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -76,35 +79,19 @@ public class LevelGen {
 
 	static void advanceChunk(ChunkManager chunkManager, int x, int y, int level, long seed) {
 		int stage = chunkManager.getChunkStage(x, y);
-		ArrayList<LevelNoise> noise = chunkManager.getChunkNoise(x, y);
 		final int S = ChunkManager.CHUNK_SIZE;
+		LevelNoise noise = chunkManager.getChunkNoise(x, y);
 		switch(stage) {
 			case ChunkManager.CHUNK_STAGE_NONE:
-				noise.add(new LevelNoise(seed, S * x, S * y, 20, S, S, 3, 128));
-				if(level == SKY_LEVEL) {
-					noise.add(new LevelNoise(seed, S * x, S * y, 10, S, S, 10, 8));
-					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
-				} else if(level == SURFACE_LEVEL) {
-					noise.add(new LevelNoise(seed, S * x, S * y, 0, S, S, 5, 16));
-					noise.add(new LevelNoise(seed, S * x, S * y, 5, S, S, 3, 32));
-					noise.add(new LevelNoise(seed, S * x, S * y, 8, S, S, 2, 8));
-					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
-				} else if(level == DUNGEON_LEVEL) {
-					noise.add(new LevelNoise(seed, S * x, S * y, -60, S, S, 10, 10));
-					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
-				} else {
-					noise.add(new LevelNoise(seed, S * x, S * y, -15*level, S, S, 10, 16));
-					noise.add(new LevelNoise(seed, S * x, S * y, -15*level+10, S, S, 5, 32));
-					noise.add(new LevelNoise(seed, S * x, S * y, 40, S, S, 5, 1));
-				}
+				chunkManager.setChunkNoise(x, y, new LevelNoise(seed, S * x, S * y, 0, S, S));
 				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_PRIMED_NOISE);
 				break;
 			case ChunkManager.CHUNK_STAGE_PRIMED_NOISE:
 				for(int tileX = 0; tileX < S; tileX++)
 					for(int tileY = 0; tileY < S; tileY++) {
-						float temperature = (float) noise.get(0).sample(tileX, tileY, 0);
-						float height = (float) noise.get(0).sample(tileX, tileY, 1);
-						float humidity = (float) noise.get(0).sample(tileX, tileY, 2);
+						float temperature = (float) noise.getTemperature(tileX, tileY);
+						float height = (float) noise.getHeight(tileX, tileY);
+						float humidity = (float) noise.getHumidity(tileX, tileY);
 						Biome biome = Biomes.getLayerBiomes(level).getClosestBiome(temperature, height, humidity);
 						chunkManager.setBiome(tileX + S * x, tileY + S * y, biome);
 					}
@@ -162,7 +149,7 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 3);
 		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 4);
 
-    List<Point> rocks = new ArrayList<>();
+		List<Point> rocks = new ArrayList<>();
 
 		int tileX = chunkX * S, tileY = chunkY * S;
 		for(int y = tileY; y < tileY + S; y++)
@@ -610,6 +597,7 @@ public class LevelGen {
 
 	public static void main(String[] args) {
 		LevelGen.worldSeed = 0x100;
+		Biomes.initBiomeList();
 
 		// Fixes to get this method to work
 
@@ -641,8 +629,8 @@ public class LevelGen {
 
 		//noinspection InfiniteLoopStatement
 		while (true) {
-			int w = 128;
-			int h = 128;
+			int w = 512;
+			int h = 512;
 
 			//noinspection ConstantConditions
 			int lvl = maplvls[idx++ % maplvls.length];
@@ -668,18 +656,29 @@ public class LevelGen {
 					if (map.getTile(x, y) == Tiles.get("sand")) pixels[i] = 0xa0a040;
 					if (map.getTile(x, y) == Tiles.get("Stone Bricks")) pixels[i] = 0xa0a040;
 					if (map.getTile(x, y) == Tiles.get("tree")) pixels[i] = 0x003000;
+					if (map.getTile(x, y) == Tiles.get("flower")) pixels[i] = 0xa050ff;
+					if (map.getTile(x, y) == Tiles.get("cactus")) pixels[i] = 0x105000;
 					if (map.getTile(x, y) == Tiles.get("Obsidian Wall")) pixels[i] = 0x0aa0a0;
 					if (map.getTile(x, y) == Tiles.get("Obsidian")) pixels[i] = 0x000000;
 					if (map.getTile(x, y) == Tiles.get("lava")) pixels[i] = 0xffff2020;
 					if (map.getTile(x, y) == Tiles.get("cloud")) pixels[i] = 0xa0a0a0;
-					if (map.getTile(x, y) == Tiles.get("Stairs Down")) pixels[i] = 0xffffffff;
-					if (map.getTile(x, y) == Tiles.get("Stairs Up")) pixels[i] = 0xffffffff;
+					if (map.getTile(x, y) == Tiles.get("Stairs Down")) pixels[i] = 0xff0000ff;
+					if (map.getTile(x, y) == Tiles.get("Stairs Up")) pixels[i] = 0xff00ffff;
 					if (map.getTile(x, y) == Tiles.get("Cloud Cactus")) pixels[i] = 0xffff00ff;
 					if (map.getTile(x, y) == Tiles.get("Ornate Obsidian")) pixels[i] = 0x000f0a;
 					if (map.getTile(x, y) == Tiles.get("Raw Obsidian")) pixels[i] = 0x0a0080;
+
+					if(map.getTileNoise(x, y) == null)
+						map.setChunkNoise(x / ChunkManager.CHUNK_SIZE, y / ChunkManager.CHUNK_SIZE, new LevelNoise(LevelGen.worldSeed, x, y, 0, 64, 64));
+					// pixels[i] = (int)Math.max(Math.min(map.getTileNoise(x, y).getHeight(x, y)*127+128, 255), 0);
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
+
+			try {
+				ImageIO.write(img, "png", new File("./seed" + LevelGen.worldSeed + ".png"));
+			} catch(IOException ignored) {}
+
 			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed " + worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
 				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] { "Next", "0x100", "0xAAFF20" }, "Next");
 			if (op == 1) LevelGen.worldSeed = 0x100;
