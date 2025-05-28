@@ -1,31 +1,14 @@
 package minicraft.level;
 
-import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.RelPos;
-import minicraft.util.Logging;
 import minicraft.util.Simplex;
-
 import org.tinylog.Logger;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -52,9 +35,9 @@ public class LevelGen {
 
 		values = new double[w * h];
 
-		for(int x = 0; x < w; x++)
-			for(int y = 0; y < h; y++) {
-				setSample(x, y, noise.noise3((x + xOffset) / (float)featureSize, (y + yOffset) / (float)featureSize, layer * NOISE_LAYER_DIFF));
+		for (int x = 0; x < w; x++)
+			for (int y = 0; y < h; y++) {
+				setSample(x, y, noise.noise3((x + xOffset) / (float) featureSize, (y + yOffset) / (float) featureSize, layer * NOISE_LAYER_DIFF));
 			}
 	}
 
@@ -82,13 +65,13 @@ public class LevelGen {
 	static void generateChunk(ChunkManager chunkManager, int x, int y, int level, long seed) {
 		worldSeed = seed;
 
-		if(level == 1)
+		if (level == 1)
 			generateSkyChunk(chunkManager, x, y);
-		else if(level == 0)
+		else if (level == 0)
 			generateTopChunk(chunkManager, x, y);
-		else if(level == -4)
+		else if (level == -4)
 			generateDungeonChunk(chunkManager, x, y);
-		else if(level > -4 && level < 0)
+		else if (level > -4 && level < 0)
 			generateUndergroundChunk(chunkManager, x, y, -level);
 		else
 			Logger.tag("LevelGen").error("Level index is not valid. Could not generate a chunk at " + x + ", " + y + " on level " + level + " with seed " + seed);
@@ -98,8 +81,8 @@ public class LevelGen {
 
 	static ChunkManager createAndValidateMap(int w, int h, int level, long seed) {
 		ChunkManager cm = new ChunkManager();
-		for(int i = 0; i < w / ChunkManager.CHUNK_SIZE; i++)
-			for(int j = 0; j < h / ChunkManager.CHUNK_SIZE; j++)
+		for (int i = 0; i < w / ChunkManager.CHUNK_SIZE; i++)
+			for (int j = 0; j < h / ChunkManager.CHUNK_SIZE; j++)
 				generateChunk(cm, i, j, level, seed);
 		return cm;
 	}
@@ -120,11 +103,11 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 3);
 		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, 4);
 
-    List<Point> rocks = new ArrayList<>();
+		List<Point> rocks = new ArrayList<>();
 
 		int tileX = chunkX * S, tileY = chunkY * S;
-		for(int y = tileY; y < tileY + S; y++)
-			for(int x = tileX; x < tileX + S; x++) {
+		for (int y = tileY; y < tileY + S; y++)
+			for (int x = tileX; x < tileX + S; x++) {
 				int i = (x - tileX) + (y - tileY) * S;
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 1;
 				double mval = Math.abs(mnoise1.values[i] - mnoise2.values[i]);
@@ -141,7 +124,7 @@ public class LevelGen {
 							else
 								map.setTile(x, y, Tiles.get("water"), 0);
 						} else if (val > 0.5 && mval < -1.5) {
-							rocks.add(new Point(x,y));
+							rocks.add(new Point(x, y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
@@ -157,7 +140,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 							}
 						} else if (val > 0.5 && mval < -1.5) {
-							rocks.add(new Point(x,y));
+							rocks.add(new Point(x, y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
@@ -175,7 +158,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 							}
 						} else {
-							rocks.add(new Point(x,y));
+							rocks.add(new Point(x, y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						}
 						break;
@@ -189,7 +172,7 @@ public class LevelGen {
 								map.setTile(x, y, Tiles.get("water"), 0);
 							}
 						} else if (val > 0.5 && mval < -1.5) {
-							rocks.add(new Point(x,y));
+							rocks.add(new Point(x, y));
 							map.setTile(x, y, Tiles.get("rock"), 0);
 						} else {
 							map.setTile(x, y, Tiles.get("grass"), 0);
@@ -333,7 +316,7 @@ public class LevelGen {
 		int count = 0;
 
 		stairsLoop:
-		while(!rocks.isEmpty() && count < S / 21) { // Loops a certain number of times, more for bigger world sizes.
+		while (!rocks.isEmpty() && count < S / 21) { // Loops a certain number of times, more for bigger world sizes.
 			int i = random.nextInt(rocks.size());
 
 			Point p = rocks.get(i);
@@ -362,8 +345,8 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 10, 1);
 
 		int tileX = chunkX * S, tileY = chunkY * S;
-		for(int y = tileY; y < tileY + S; y++) {
-			for(int x = tileX; x < tileX + S; x++) {
+		for (int y = tileY; y < tileY + S; y++) {
+			for (int x = tileX; x < tileX + S; x++) {
 				int i = (x - tileX) + (y - tileY) * S;
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * -3 + 3.5;
@@ -427,8 +410,8 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(chunkX * S, chunkY * S, S, S, 32, depth * 11 + 10);
 
 		int tileX = chunkX * S, tileY = chunkY * S;
-		for(int y = tileY; y < tileY + S; y++) {
-			for(int x = tileX; x < tileX + S; x++) {
+		for (int y = tileY; y < tileY + S; y++) {
+			for (int x = tileX; x < tileX + S; x++) {
 				int i = (x - tileX) + (y - tileY) * S;
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
@@ -464,18 +447,18 @@ public class LevelGen {
 					int xx = x + random.nextInt(5) - random.nextInt(5);
 					int yy = y + random.nextInt(5) - random.nextInt(5);
 					// if (xx >= r && yy >= r && xx < S - r && yy < S - r) {
-						if (map.getTile(xx, yy) == Tiles.get("rock")) {
-							map.setTile(xx, yy, Tiles.get((short)(Tiles.get("iron Ore").id + depth - 1)), 0);
-						}
+					if (map.getTile(xx, yy) == Tiles.get("rock")) {
+						map.setTile(xx, yy, Tiles.get((short) (Tiles.get("iron Ore").id + depth - 1)), 0);
+					}
 					// }
 				}
 				for (int j = 0; j < 10; j++) {
 					int xx = x + random.nextInt(3) - random.nextInt(2);
 					int yy = y + random.nextInt(3) - random.nextInt(2);
 					// if (xx >= r && yy >= r && xx < S - r && yy < S - r) {
-						if (map.getTile(xx, yy) == Tiles.get("rock")) {
-							map.setTile(xx, yy, Tiles.get("Lapis"), 0);
-						}
+					if (map.getTile(xx, yy) == Tiles.get("rock")) {
+						map.setTile(xx, yy, Tiles.get("Lapis"), 0);
+					}
 					// }
 				}
 			}
@@ -511,8 +494,8 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(S * chunkX, S * chunkY, S, S, 8, 1);
 
 		int tileX = chunkX * S, tileY = chunkY * S;
-		for(int y = tileY; y < tileY + S; y++) {
-			for(int x = tileX; x < tileX + S; x++) {
+		for (int y = tileY; y < tileY + S; y++) {
+			for (int x = tileX; x < tileX + S; x++) {
 				int i = (x - tileX) + (y - tileY) * S;
 
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
@@ -566,7 +549,7 @@ public class LevelGen {
 		}
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		LevelGen.worldSeed = 0x100;
 
 		// Fixes to get this method to work
@@ -645,6 +628,6 @@ public class LevelGen {
 			else LevelGen.worldSeed++;
 		}
 	}
-
+*/
 	// Used to easily interface with a list of chunks
 }

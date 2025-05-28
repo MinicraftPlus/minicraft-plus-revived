@@ -39,7 +39,6 @@ import minicraft.util.Logging;
 import minicraft.util.MyUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -118,9 +117,9 @@ public class Level {
 	}
 
 	public void printTileLocs(Tile t) {
-		for(Point p : chunkManager.getAllChunks())
-			for(int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
-				for(int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
+		for (Point p : chunkManager.getAllChunks())
+			for (int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
+				for (int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
 					if (getTile(x, y).id == t.id)
 						printLevelLoc(t.name, x, y);
 	}
@@ -264,6 +263,55 @@ public class Level {
 
 	public long getSeed() {
 		return seed;
+	}
+
+	protected static ChunkManager genStructuresToMap(ChunkManager map, Level level) {
+
+		level.chunkManager = map;
+
+		if (level.depth < 0)
+			level.generateSpawnerStructures();
+
+		if (level.depth == 0) {
+			level.generateVillages();
+		}
+		if (level.parentLevel != null) { // If the level above this one is not null (aka, if this isn't a sky level)
+			for (int y = 0; y < level.h; y++) { // Loop through height
+				for (int x = 0; x < level.w; x++) { // Loop through width
+					if (level.parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
+						if (level.depth == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
+							level.generateDungeonStructures();
+							Structure.dungeonGate.draw(level, x, y); // Te gate should not intersect with the boss room.
+							Structure.dungeonBossRoom.draw(level, level.w / 2, level.h / 2); // Generating the boss room at the center.
+						} else if (level.depth == 0) { // Surface
+							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
+							level.setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
+						} else // Any other level, the up-stairs should have dirt on all sides.
+							level.setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
+
+						level.setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
+					}
+				}
+			}
+		} else { // This is a sky level
+			boolean placedHouse = false;
+			while (!placedHouse) {
+
+				int x = level.random.nextInt(level.w - 7);
+				int y = level.random.nextInt(level.h - 5);
+
+				if (level.getTile(x - 3, y - 2) == Tiles.get("Cloud") && level.getTile(x + 3, y - 2) == Tiles.
+
+					get("Cloud")) {
+					if (level.getTile(x - 3, y + 2) == Tiles.get("Cloud") && level.getTile(x + 3, y + 2) == Tiles.get("Cloud")) {
+						Structure.airWizardHouse.draw(level, x, y);
+
+						placedHouse = true;
+					}
+				}
+			}
+		}
+		return level.chunkManager;
 	}
 
 	public void checkAirWizard() {
@@ -438,19 +486,19 @@ public class Level {
 	public void loadChunksAround(int tileX, int tileY) {
 		// Update all chunks up to 3 chunks away from the player to make sure they are loaded
 		int cX = Math.floorDiv(tileX, ChunkManager.CHUNK_SIZE), cY = Math.floorDiv(tileY, ChunkManager.CHUNK_SIZE);
-		for(int x = cX - 3; x <= cX + 3; x++)
-			for(int y = cY - 3; y <= cY + 3; y++)
-				if(chunkManager.getChunkStage(x, y) != ChunkManager.CHUNK_STAGE_DONE)
+		for (int x = cX - 3; x <= cX + 3; x++)
+			for (int y = cY - 3; y <= cY + 3; y++)
+				if (chunkManager.getChunkStage(x, y) != ChunkManager.CHUNK_STAGE_DONE)
 					loadChunk(x, y);
 	}
 
 	public void loadChunk(int x, int y) {
-		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
-			if(parentLevel.chunkManager.getChunkStage(x, y) == 0)
+		if (chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
+			if (parentLevel.chunkManager.getChunkStage(x, y) == 0)
 				LevelGen.generateChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
 			int S = ChunkManager.CHUNK_SIZE;
-			for(int i = x * S; i < x * S + S; i++)
-				for(int j = y * S; j < y * S + S; j++) {
+			for (int i = x * S; i < x * S + S; i++)
+				for (int j = y * S; j < y * S + S; j++) {
 					if (parentLevel.getTile(i, j) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
 						if (depth == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, i, j); // Te gate should not intersect with the boss room.
@@ -468,7 +516,7 @@ public class Level {
 				}
 			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
 		}
-		if(chunkManager.getChunkStage(x, y) == 0)
+		if (chunkManager.getChunkStage(x, y) == 0)
 			LevelGen.generateChunk(chunkManager, x, y, depth, seed);
 	}
 
@@ -601,7 +649,7 @@ public class Level {
 		LevelGen noise1 = new LevelGen(x, y, 1, 1, 32, -1);
 		LevelGen noise2 = new LevelGen(x, y, 1, 1, 32, -2);
 
-		int idx = (int)Math.round(Math.abs(noise1.values[0] - noise2.values[0]) * 3 - 2);
+		int idx = (int) Math.round(Math.abs(noise1.values[0] - noise2.values[0]) * 3 - 2);
 		return (idx >= TreeType.values().length || idx < 0) ? TreeType.OAK : TreeType.values()[idx];
 	}
 
@@ -682,8 +730,8 @@ public class Level {
 			int lvl = -MyUtils.clamp(player.getLevel().depth, -4, 0);
 			for (int i = 0; i < 30 && !spawned; i++) {
 				int rnd = random.nextInt(100);
-				int nx = (random.nextInt(ChunkManager.CHUNK_SIZE*2) - ChunkManager.CHUNK_SIZE) * 16 + player.x,
-				    ny = (random.nextInt(ChunkManager.CHUNK_SIZE*2) - ChunkManager.CHUNK_SIZE) * 16 + player.y;
+				int nx = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) * 16 + player.x,
+					ny = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) * 16 + player.y;
 
 				//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 
@@ -784,11 +832,11 @@ public class Level {
 
 	/**
 	 * Get entities in a certain area on the level, and filter them by class.
-	 * @param xt0 Left
-	 * @param yt0 Top
-	 * @param xt1 Right
-	 * @param yt1 Bottom
-	 * @param includeGiven If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
+	 * @param xt0           Left
+	 * @param yt0           Top
+	 * @param xt1           Right
+	 * @param yt1           Bottom
+	 * @param includeGiven  If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
 	 * @param entityClasses Entities to accept.
 	 * @return A list of entities in the area.
 	 */
@@ -893,13 +941,13 @@ public class Level {
 
 	/**
 	 * Calculates maximum position can be reached by an entity with the front boundary of hit box by tile hit box.
-	 * @param sgn One-dimensional direction of displacement
-	 * @param d Displacement vector
-	 * @param hitBoxLeft The left boundary of hit box
-	 * @param hitBoxRight The right boundary of hit box
-	 * @param hitBoxFront The front boundary of hit box
+	 * @param sgn                    One-dimensional direction of displacement
+	 * @param d                      Displacement vector
+	 * @param hitBoxLeft             The left boundary of hit box
+	 * @param hitBoxRight            The right boundary of hit box
+	 * @param hitBoxFront            The front boundary of hit box
 	 * @param frontTilePassableCheck The check of whether the front boundary of hit box hits the tile hit box;
-	 * 	the first parameter takes the front tile position and second one takes the horizontal position
+	 *                               the first parameter takes the front tile position and second one takes the horizontal position
 	 * @return The maximum front position can be reached by tile hit box check
 	 */
 	public static int calculateMaxFrontClosestTile(int sgn, int d, int hitBoxLeft, int hitBoxRight, int hitBoxFront,
@@ -993,9 +1041,9 @@ public class Level {
 
 	public List<Point> getMatchingTiles(TileCheck condition) {
 		List<Point> matches = new ArrayList<>();
-		for(Point p : chunkManager.getAllChunks())
-			for(int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
-				for(int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
+		for (Point p : chunkManager.getAllChunks())
+			for (int x = p.x * ChunkManager.CHUNK_SIZE; x < (p.x + 1) * ChunkManager.CHUNK_SIZE; x++)
+				for (int y = p.y * ChunkManager.CHUNK_SIZE; y < (p.y + 1) * ChunkManager.CHUNK_SIZE; y++)
 					if (condition.check(getTile(x, y), x, y))
 						matches.add(new Point(x, y));
 
