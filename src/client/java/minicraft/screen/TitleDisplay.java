@@ -91,7 +91,7 @@ public class TitleDisplay extends Display {
 		if (latestVersion == null) {
 			Network.findLatestVersion(this::checkVersion);
 		} else {
-			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
+			if (latestVersion.version.compareTo(Game.VERSION) > 0) {
 				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("minicraft.displays.title.display.new_version", latestVersion.releaseName), Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, Localization.getLocalized("minicraft.displays.title.select_to_download"), latestVersion.releaseUrl, Localization.getLocalized("minicraft.displays.title.link_to_version", latestVersion.releaseUrl)));
 			} else if (latestVersion.releaseName.length() > 0) {
