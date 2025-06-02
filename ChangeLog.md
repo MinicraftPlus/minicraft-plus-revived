@@ -35,6 +35,11 @@ but some sections are changed to compliant this project.
 
 ### Fixes
 
+## [2.2.3]
+
+### Fixes
+* Fixed issue when trying to load resources with invalid path.
+
 ## [2.2.2]
 
 ### Additions
