@@ -450,9 +450,9 @@ public class Level {
 			// This prevents any entity (or tile) tick action from happening on a server level with no players.
 
 			for(Player player : players) {
-				for (int i = 0; i < w * h / 50; i++) { // remain using tick rate based on W and H, TODO: add tickrate constant (or variable) when removing w and h
-					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.x >> 4);
-					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.y >> 4);
+				for (int i = 0; i < 10; i++) { // remain using tick rate based on W and H, TODO: add tickrate constant (or variable) when removing w and h, currently tick 10 tiles in surrounding chunks
+					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.x >> 4;
+					int yt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.y >> 4;
 					getTile(xt, yt).tick(this, xt, yt);
 				}
 			}
