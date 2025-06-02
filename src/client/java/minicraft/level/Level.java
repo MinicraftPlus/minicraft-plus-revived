@@ -449,10 +449,12 @@ public class Level {
 		if (fullTick) {
 			// This prevents any entity (or tile) tick action from happening on a server level with no players.
 
-			for (int i = 0; i < w * h / 50; i++) {
-				int xt = random.nextInt(w);
-				int yt = random.nextInt(w);
-				getTile(xt, yt).tick(this, xt, yt);
+			for(Player player : players) {
+				for (int i = 0; i < w * h / 50; i++) { // remain using tick rate based on W and H, TODO: add tickrate constant (or variable) when removing w and h
+					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.x >> 4);
+					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.y >> 4);
+					getTile(xt, yt).tick(this, xt, yt);
+				}
 			}
 
 			// Entity loop
