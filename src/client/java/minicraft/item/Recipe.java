@@ -4,7 +4,6 @@ import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -39,8 +38,8 @@ public class Recipe {
 		}
 	}
 
-	public Item getProduct() {
-		return Items.get(product);
+	public ItemStack getProduct() {
+		return Items.getStackOf(product);
 	}
 
 	public Map<String, Integer> getCosts() {
@@ -68,7 +67,7 @@ public class Recipe {
 
 		for (String cost : costs.keySet().toArray(new String[0])) { // Cycles through the costs list
 			/// This method ONLY WORKS if costs does not contain two elements such that inventory.count will count an item it contains as matching more than once.
-			if (player.getInventory().count(Items.get(cost)) < costs.get(cost)) {
+			if (player.getInventory().count(Items.getStackOf(cost)) < costs.get(cost)) {
 				return false;
 			}
 		}
@@ -83,13 +82,13 @@ public class Recipe {
 		if (!Game.isMode("minicraft.settings.mode.creative")) {
 			// Remove the cost items from the inventory.
 			for (String cost : costs.keySet().toArray(new String[0])) {
-				player.getInventory().removeItems(Items.get(cost), costs.get(cost));
+				player.getInventory().removeItems(Items.getStackOf(cost), costs.get(cost));
 			}
 		}
 
 		// Rdd the crafted items.
 		for (int i = 0; i < amount; i++) {
-			Item product = getProduct();
+			ItemStack product = getProduct();
 			if (player.getInventory().add(product) != null)
 				player.getLevel().dropItem(player.x, player.y, product);
 		}

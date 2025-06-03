@@ -249,8 +249,8 @@ public class ObsidianKnight extends EnemyMob {
 		if (players.length > 0) { // If the player is still here
 			for (Player p : players) {
 				p.addScore(300000); // Give the player 300K points.
-				dropItem(15, 25, Items.get("shard"));
-				dropItem(1, 1, Items.get("Obsidian Heart")); // Drop it's precious item.
+				dropItem(15, 25, Items.getStackOf("shard"));
+				dropItem(1, 1, Items.getStackOf("Obsidian Heart")); // Drop it's precious item.
 			}
 		}
 

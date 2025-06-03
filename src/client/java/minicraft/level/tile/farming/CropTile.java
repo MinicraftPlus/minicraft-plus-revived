@@ -7,9 +7,8 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.SpriteLinker;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
-import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -102,9 +101,9 @@ public class CropTile extends FarmTile {
 	private static final SpriteLinker.LinkedSprite particleSprite = new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Entity, "glint");
 
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof StackableItem && item.getName().equalsIgnoreCase("Fertilizer")) {
-			((StackableItem) item).count--;
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
+		if (item.isStackable() && item.getItem().getName().equalsIgnoreCase("Fertilizer")) {
+			item.decrement(1);
 			Random random = new Random();
 			for (int i = 0; i < 2; ++i) {
 				double x = (double) xt * 16 + 8 + (random.nextGaussian() * 0.5) * 8;
@@ -138,12 +137,12 @@ public class CropTile extends FarmTile {
 		int age = (data >> 3) & maxAge;
 
 		if (seed != null)
-			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(seed));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.getStackOf(seed));
 
 		if (age == maxAge) {
-			level.dropItem(x * 16 + 8, y * 16 + 8, random.nextInt(3) + 2, Items.get(name));
+			level.dropItem(x * 16 + 8, y * 16 + 8, random.nextInt(3) + 2, Items.getStackOf(name));
 		} else if (seed == null) {
-			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(name));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.getStackOf(name));
 		}
 
 		if (age == maxAge && entity instanceof Player) {

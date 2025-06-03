@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import minicraft.entity.furniture.Bed;
+import minicraft.item.component.ComponentTypes;
 import minicraft.level.tile.FlowerTile;
 import minicraft.saveload.Save;
 import org.json.JSONArray;
@@ -290,11 +291,11 @@ public class Recipes {
 		resolvedRecipes.put(new Recipe("magenta dye_4", "red dye_2", "white dye_1", "blue dye_1"), "magenta_dye_from_blue_red_white_dye");
 		resolvedRecipes.put(new Recipe("magenta dye_4", "pink dye_1", "red dye_1", "blue dye_1"), "magenta_dye_from_blue_red_pink");
 		Function<Recipe, String> recipeNameFixer = recipe -> { // This is applied when duplication occurs.
-			Item item = recipe.getProduct();
-			String name = itemNameFixer.apply(item);
+			ItemStack item = recipe.getProduct();
+			String name = itemNameFixer.apply(item.getItem());
 			String resolved;
 			if ((resolved = resolvedRecipes.get(recipe)) != null) return resolved;
-			if (item instanceof DyeItem) {
+			if (item.getItem() instanceof DyeItem) {
 				Map<String, Integer> costs = recipe.getCosts();
 				if (costs.size() == 2 && costs.containsKey("WHITE DYE") &&
 					costs.keySet().stream().filter(c -> c.endsWith("DYE")).count() == 1)
@@ -305,7 +306,7 @@ public class Recipes {
 						return name + "_from_" + cost.toLowerCase().replace(' ', '_');
 					}
 				}
-			} else if (item instanceof FurnitureItem && ((FurnitureItem) item).furniture instanceof Bed) {
+			} else if (item.getItem() instanceof FurnitureItem && item.get(ComponentTypes.FURNITURE).furniture() instanceof Bed) {
 				if (recipe.getCosts().containsKey("WHITE BED"))
 					return name + "_from_white_bed";
 				return name;
@@ -326,7 +327,7 @@ public class Recipes {
 					recipeMap.put(recipeNameFixer.apply(recipe), recipe);
 				}
 			} else {
-				recipeMap.put(itemNameFixer.apply(recipe.getProduct()), recipe);
+				recipeMap.put(itemNameFixer.apply(recipe.getProduct().getItem()), recipe);
 			}
 		}
 		for (String key : duplicatedRecipes.keySet()) {
@@ -425,7 +426,7 @@ public class Recipes {
 			JSONObject criteriaJson = new JSONObject();
 			Map<String, Integer> costMap = recipe.getCosts();
 			for (String itemKey : costMap.keySet()) {
-				Item item = Items.get(itemKey);
+				ItemStack item = Items.getStackOf(itemKey);
 				JSONObject criterionJson = new JSONObject();
 
 				criterionJson.put("trigger", "inventory_changed");
@@ -439,7 +440,7 @@ public class Recipes {
 				itemConditionsJsonArray.put(itemConditionsJson);
 				conditionsJson.put("items", itemConditionsJsonArray);
 				criterionJson.put("conditions", conditionsJson);
-				criteriaJson.put("has_" + itemNameFixer.apply(item), criterionJson);
+				criteriaJson.put("has_" + itemNameFixer.apply(item.getItem()), criterionJson);
 
 				costs.add(item.getName() + "_" + costMap.get(itemKey));
 			}
@@ -455,7 +456,7 @@ public class Recipes {
 			JSONObject recipesJson = new JSONObject();
 			JSONArray costsJson = new JSONArray();
 			costsJson.putAll(costs);
-			recipesJson.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costsJson);
+			recipesJson.put(recipe.getProduct().getItem().getName() + "_" + recipe.getAmount(), costsJson);
 			rewardsJson.put("recipes", recipesJson);
 			recipeUnlockingJson.put("rewards", rewardsJson);
 

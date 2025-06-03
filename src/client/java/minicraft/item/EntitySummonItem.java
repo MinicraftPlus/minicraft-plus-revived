@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class EntitySummonItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
@@ -28,18 +27,13 @@ public class EntitySummonItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		level.add(entitySupplier.apply(attackDir), player.x + 12 * attackDir.getX(), player.y + 12 * attackDir.getY());
 		return true;
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	@Override
-	public @NotNull StackableItem copy() {
-		return new EntitySummonItem(getName(), sprite, entitySupplier);
 	}
 }

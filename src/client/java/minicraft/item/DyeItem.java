@@ -2,7 +2,6 @@ package minicraft.item;
 
 import minicraft.gfx.SpriteLinker;
 import minicraft.util.MyUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -49,10 +48,5 @@ public class DyeItem extends StackableItem {
 		DyeColor(int color) {
 			this.color = color;
 		}
-	}
-
-	@Override
-	public @NotNull DyeItem copy() {
-		return new DyeItem(getName(), sprite, color);
 	}
 }

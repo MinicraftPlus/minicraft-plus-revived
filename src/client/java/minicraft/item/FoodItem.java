@@ -6,7 +6,6 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -33,33 +32,25 @@ public class FoodItem extends StackableItem {
 	private static final int staminaCost = 2; // The amount of stamina it costs to consume the food.
 
 	private FoodItem(String name, LinkedSprite sprite, int feed) {
-		this(name, sprite, 1, feed);
-	}
-
-	private FoodItem(String name, LinkedSprite sprite, int count, int feed) {
-		super(name, sprite, count);
+		super(name, sprite);
 		this.feed = feed;
 	}
 
 	/**
 	 * What happens when the player uses the item on a tile
 	 */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		boolean success = false;
-		if (count > 0 && player.hunger < Player.maxHunger && player.payStamina(staminaCost)) { // If the player has hunger to fill, and stamina to pay...
+		if (stack.getCount() > 0 && player.hunger < Player.maxHunger && player.payStamina(staminaCost)) { // If the player has hunger to fill, and stamina to pay...
 			player.hunger = Math.min(player.hunger + feed, Player.maxHunger); // Restore the hunger
 			success = true;
 		}
 
-		return super.interactOn(success);
+		return super.interactOn(success, stack);
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	public @NotNull FoodItem copy() {
-		return new FoodItem(getName(), sprite, count, feed);
 	}
 }

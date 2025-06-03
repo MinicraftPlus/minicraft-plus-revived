@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Inventory {
-	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
+	private final List<ItemStack> items = new ArrayList<>(); // The list of items that is in the inventory.
 
 	protected int maxItem = 27;
 	protected boolean unlimited = false;
@@ -22,7 +22,7 @@ public class Inventory {
 	 * Returns all the items which are in this inventory.
 	 * @return ArrayList containing all the items in the inventory.
 	 */
-	public List<Item> getItems() {
+	public List<ItemStack> getItems() {
 		return new ArrayList<>(items);
 	}
 
@@ -39,7 +39,7 @@ public class Inventory {
 	 * @param idx The index of the item in the inventory's item array.
 	 * @return The specified item.
 	 */
-	public Item get(int idx) {
+	public ItemStack get(int idx) {
 		return items.get(idx);
 	}
 
@@ -48,7 +48,7 @@ public class Inventory {
 	 * @param idx The index of the item in the inventory's item array.
 	 * @return The removed item.
 	 */
-	public Item remove(int idx) {
+	public ItemStack remove(int idx) {
 		return items.remove(idx);
 	}
 
@@ -58,10 +58,10 @@ public class Inventory {
 	 * @param num Amount of items to add.
 	 * @return the remaining item not being added; empty if whole stack of items has been added successfully
 	 */
-	public List<Item> add(@NotNull Item item, int num) {
-		ArrayList<Item> remaining = new ArrayList<>();
+	public List<ItemStack> add(@NotNull ItemStack item, int num) {
+		ArrayList<ItemStack> remaining = new ArrayList<>();
 		for (int i = 0; i < num; i++) {
-			Item remain = add(item.copy());
+			ItemStack remain = add(item.copy());
 			if (remain != null) remaining.add(remain);
 		}
 		return remaining;
@@ -72,33 +72,32 @@ public class Inventory {
 	 * @param item Item to be added.
 	 * @return the remaining item not being added; {@code null} if whole stack of items has been added successfully
 	 */
-	public @Nullable Item add(@Nullable Item item) {
+	public @Nullable ItemStack add(@Nullable ItemStack item) {
 		if (item == null) return null;
 		// Do not add to inventory if it is a PowerGlove
-		if (item instanceof PowerGloveItem) {
+		if (item.isOf(PowerGloveItem.class)) {
 			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
 			return null;
 		}
 
-		if (item instanceof StackableItem) { // If the item is a item...
-			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-			for (Item value : items) {
-				if (toTake.stacksWith(value)) {
-					StackableItem stack = (StackableItem) value;
+		if (item.isStackable()) { // If the item is a item...
+			ItemStack toTake = item; // ...convert it into a StackableItem object.
+			for (ItemStack stack : items) {
+				if (((StackableItem) toTake.getItem()).stacksWith(stack.getItem())) {
 					if (!unlimited) {
-						if (stack.count < stack.maxCount) {
-							int r = stack.maxCount - stack.count;
-							if (r >= toTake.count) {
+						if (stack.getCount() < stack.getMaxCount()) {
+							int r = stack.getMaxCount() - stack.getCount();
+							if (r >= toTake.getCount()) {
 								// Matching implies that the other item is stackable, too.
-								stack.count += toTake.count;
+								stack.increment(toTake.getCount());
 								return null;
 							} else {
-								toTake.count -= r;
-								stack.count += r;
+								toTake.decrement(r);
+								stack.increment(r);
 							}
 						}
 					} else {
-						stack.count += toTake.count;
+						stack.increment(toTake.getCount());
 						return null;
 					}
 				}
@@ -106,12 +105,12 @@ public class Inventory {
 
 			if (!unlimited) {
 				if (items.size() < maxItem) {
-					while (toTake.count > 0) {
+					while (toTake.getCount() > 0) {
 						if (items.size() == maxItem) return toTake;
-						StackableItem adding = toTake.copy();
-						adding.count = Math.min(toTake.count, toTake.maxCount);
+						ItemStack adding = toTake.copy();
+						adding.setCount(Math.min(toTake.getCount(), toTake.getMaxCount()));
 						items.add(adding); // Add the item to the items list
-						toTake.count -= adding.count;
+						toTake.decrement(adding.getCount());
 					}
 					return null;
 				} else {
@@ -142,13 +141,13 @@ public class Inventory {
 	private int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // To keep track of amount removed.
 		for (int i = 0; i < items.size(); i++) {
-			if (!(items.get(i) instanceof StackableItem)) continue;
-			StackableItem curItem = (StackableItem) items.get(i);
-			if (!curItem.stacksWith(given)) continue; // Can't do equals, becuase that includes the stack size.
+			if (!(items.get(i).isStackable())) continue;
+			ItemStack curItem = items.get(i);
+			if (!((StackableItem) curItem.getItem()).stacksWith(given)) continue; // Can't do equals, becuase that includes the stack size.
 			// equals; and current item is stackable.
-			int amountRemoving = Math.min(count - removed, curItem.count); // This is the number of items that are being removed from the stack this run-through.
-			curItem.count -= amountRemoving;
-			if (curItem.count == 0) { // Remove the item from the inventory if its stack is empty.
+			int amountRemoving = Math.min(count - removed, curItem.getCount()); // This is the number of items that are being removed from the stack this run-through.
+			curItem.decrement(amountRemoving);
+			if (curItem.getCount() == 0) { // Remove the item from the inventory if its stack is empty.
 				remove(i);
 				i--;
 			}
@@ -169,10 +168,10 @@ public class Inventory {
 	/**
 	 * Removes the item from the inventory entirely, whether it's a stack, or a lone item.
 	 */
-	public void removeItem(Item i) {
+	public void removeItem(ItemStack i) {
 		//if (Game.debug) System.out.println("original item: " + i);
-		if (i instanceof StackableItem)
-			removeItems(i.copy(), ((StackableItem) i).count);
+		if (i.isStackable())
+			removeItems(i.copy(), i.getCount());
 		else
 			removeItems(i.copy(), 1);
 	}
@@ -182,12 +181,12 @@ public class Inventory {
 	 * @param given Item to remove.
 	 * @param count Max amount of the item to remove.
 	 */
-	public void removeItems(Item given, int count) {
-		if (given instanceof StackableItem)
-			count -= removeFromStack((StackableItem) given, count);
+	public void removeItems(ItemStack given, int count) {
+		if (given.isStackable())
+			count -= removeFromStack((StackableItem) given.getItem(), count);
 		else {
 			for (int i = 0; i < items.size(); i++) {
-				Item curItem = items.get(i);
+				Item curItem = items.get(i).getItem();
 				if (curItem.equals(given)) {
 					remove(i);
 					count--;
@@ -203,15 +202,15 @@ public class Inventory {
 	/**
 	 * Returns the how many of an item you have in the inventory.
 	 */
-	public int count(Item given) {
+	public int count(ItemStack given) {
 		if (given == null) return 0; // null requests get no items. :)
 
 		int found = 0; // Initialize counting var
 		// Assign current item
-		for (Item curItem : items) { // Loop though items in inv
+		for (ItemStack curItem : items) { // Loop though items in inv
 			// If the item can be a stack...
-			if (curItem instanceof StackableItem && ((StackableItem) curItem).stacksWith(given))
-				found += ((StackableItem) curItem).count; // Add however many items are in the stack.
+			if (curItem.getItem() instanceof StackableItem && ((StackableItem) curItem.getItem()).stacksWith(given.getItem()))
+				found += curItem.getCount(); // Add however many items are in the stack.
 			else if (curItem.equals(given))
 				found++; // Otherwise, just add 1 to the found count.
 		}
@@ -226,7 +225,7 @@ public class Inventory {
 	 */
 	public String getItemData() {
 		StringBuilder itemdata = new StringBuilder();
-		for (Item i : items)
+		for (ItemStack i : items)
 			itemdata.append(i.getData()).append(":");
 
 		if (itemdata.length() > 0)
@@ -245,7 +244,7 @@ public class Inventory {
 		if (items.length() == 0) return; // There are no items to add.
 
 		for (String item : items.split(":")) // This still generates a 1-item array when "items" is blank... [""].
-			add(Items.get(item));
+			add(Items.getStackOf(item));
 	}
 
 	/**
@@ -257,17 +256,17 @@ public class Inventory {
 	 * @param allOrNothing if true, either all items will be added or none, if false its possible to add
 	 * 	between 0-num items.
 	 */
-	public void tryAdd(Random random, int chance, Item item, int num, boolean allOrNothing) {
+	public void tryAdd(Random random, int chance, ItemStack item, int num, boolean allOrNothing) {
 		if (!allOrNothing || random.nextInt(chance) == 0)
 			for (int i = 0; i < num; i++)
 				if (allOrNothing || random.nextInt(chance) == 0)
 					add(item.copy());
 	}
 
-	public void tryAdd(Random random, int chance, @Nullable Item item, int num) {
+	public void tryAdd(Random random, int chance, @Nullable ItemStack item, int num) {
 		if (item == null) return;
-		if (item instanceof StackableItem) {
-			((StackableItem) item).count *= num;
+		if (item.isStackable()) {
+			item.setCount(item.getCount() * num);
 			tryAdd(random, chance, item, 1, true);
 		} else
 			tryAdd(random, chance, item, num, false);

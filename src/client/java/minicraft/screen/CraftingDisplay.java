@@ -8,7 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.screen.entry.ItemListing;
@@ -98,7 +98,7 @@ public class CraftingDisplay extends Display {
 
 		Map<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for (String itemName : costMap.keySet()) {
-			Item cost = Items.get(itemName);
+			ItemStack cost = Items.getStackOf(itemName);
 			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
 		}
 
@@ -163,30 +163,30 @@ public class CraftingDisplay extends Display {
 				if (recipes.length == 0) return;
 				Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
 				if (selectedRecipe.getCanCraft()) {
-					if (selectedRecipe.getProduct().equals(Items.get("Workbench"))) {
+					if (selectedRecipe.getProduct().equals(Items.getStackOf("Workbench"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking", true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))) {
+					} else if (selectedRecipe.getProduct().equals(Items.getStackOf("Plank"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.planks", true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))) {
+					} else if (selectedRecipe.getProduct().equals(Items.getStackOf("Wood Door"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.doors", true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Hoe")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
+					} else if (selectedRecipe.getProduct().equals(Items.getStackOf("Rock Sword")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("Rock Pickaxe")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("Rock Axe")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("Rock Shovel")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("Rock Hoe")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("Rock Bow")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("Rock Claymore"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
+					} else if (selectedRecipe.getProduct().equals(Items.getStackOf("blue clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("green clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("yellow clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("black clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("orange clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("purple clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("cyan clothes")) ||
+						selectedRecipe.getProduct().equals(Items.getStackOf("reg clothes"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
-					} else if (selectedRecipe.getProduct().equals(Items.get("Boat"))) {
+					} else if (selectedRecipe.getProduct().equals(Items.getStackOf("Boat"))) {
 						AchievementsDisplay.setAchievement("minicraft.achievement.boat", true);
 					}
 

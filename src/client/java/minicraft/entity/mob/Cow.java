@@ -32,7 +32,7 @@ public class Cow extends PassiveMob {
 			max = 1;
 		}
 
-		dropItem(min, max, Items.get("leather"), Items.get("raw beef"));
+		dropItem(min, max, Items.getStackOf("leather"), Items.getStackOf("raw beef"));
 
 		super.die();
 	}

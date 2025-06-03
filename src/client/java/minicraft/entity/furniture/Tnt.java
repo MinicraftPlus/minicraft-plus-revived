@@ -11,17 +11,12 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.PowerGloveItem;
-import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
+import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Timer;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class Tnt extends Furniture {
@@ -99,8 +94,8 @@ public class Tnt extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, Item heldItem, Direction attackDir) {
-		if (heldItem instanceof PowerGloveItem) {
+	public boolean interact(Player player, @Nullable ItemStack heldItem, Direction attackDir) {
+		if (heldItem != null && heldItem.getItem() instanceof PowerGloveItem) {
 			if (!fuseLit) {
 				return super.interact(player, heldItem, attackDir);
 			}

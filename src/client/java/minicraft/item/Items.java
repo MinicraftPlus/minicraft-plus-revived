@@ -1,5 +1,7 @@
 package minicraft.item;
 
+import minicraft.item.component.ComponentTypes;
+import minicraft.item.component.type.WateringCanComponent;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,14 +59,14 @@ public class Items {
 	 * fetches an item from the list given its name.
 	 */
 	@NotNull
-	public static Item get(String name) {
-		Item i = get(name, false);
-		if (i == null) return new UnknownItem("NULL"); // Technically shouldn't ever happen
+	public static ItemStack getStackOf(String name) {
+		ItemStack i = getStackOf(name, false);
+		if (i == null) return new ItemStack(new UnknownItem("NULL")); // Technically shouldn't ever happen
 		return i;
 	}
 
 	@Nullable
-	public static Item get(String name, boolean allowNull) {
+	public static ItemStack getStackOf(String name, boolean allowNull) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
 		int data = 1;
@@ -91,41 +93,41 @@ public class Items {
 			if (allowNull) return null;
 			else {
 				Logging.ITEMS.warn("Items.get passed argument \"null\" when null is not allowed; returning UnknownItem.");
-				return new UnknownItem("NULL");
+				return new ItemStack(new UnknownItem("NULL"));
 			}
 		}
 
 		if (name.equals("UNKNOWN"))
-			return new UnknownItem("BLANK");
+			return new ItemStack(new UnknownItem("BLANK"));
 
-		Item i = null;
+		ItemStack i = null;
 		for (Item cur : items) {
 			if (cur.getName().equalsIgnoreCase(name)) {
-				i = cur;
+				i = new ItemStack(cur);
 				break;
 			}
 		}
 
 		if (i != null) {
 			i = i.copy();
-			if (i instanceof StackableItem)
-				((StackableItem) i).count = data;
-			if (i instanceof ToolItem && hadUnderscore)
-				((ToolItem) i).dur = data;
-			if (i instanceof WateringCanItem)
-				((WateringCanItem) i).content = data;
+			if (i.getItem() instanceof StackableItem)
+				i.setCount(data);
+			if (i.getItem() instanceof ToolItem && hadUnderscore)
+				i.setDurability(data);
+			if (i.getItem() instanceof WateringCanItem)
+				i.put(ComponentTypes.WATERING_CAN, new WateringCanComponent(data, 0));
 			return i;
 		} else {
 			Logging.ITEMS.error("Requested invalid item with name: '{}'", name);
-			return new UnknownItem(name);
+			return new ItemStack(new UnknownItem(name));
 		}
 	}
 
-	public static Item arrowItem = get("arrow");
+	public static Item arrowItem = getStackOf("arrow").getItem();
 
-	public static int getCount(Item item) {
-		if (item instanceof StackableItem) {
-			return ((StackableItem) item).count;
+	public static int getCount(ItemStack item) {
+		if (item.isStackable()) {
+			return item.getCount();
 		} else if (item != null) {
 			return 1;
 		} else {
@@ -141,7 +143,7 @@ public class Items {
 		CreativeModeInventory() {
 			unlimited = true;
 			items.forEach(i -> {
-				if (!(i instanceof PowerGloveItem)) add(i.copy());
+				if (!(i instanceof PowerGloveItem)) add(new ItemStack(i));
 			});
 		}
 	}

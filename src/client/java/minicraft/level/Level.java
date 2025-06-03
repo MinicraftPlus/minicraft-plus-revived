@@ -30,6 +30,7 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.DyeItem;
 import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
@@ -555,21 +556,21 @@ public class Level {
 		}
 	}
 
-	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
+	public void dropItem(int x, int y, int mincount, int maxcount, ItemStack... items) {
 		dropItem(x, y, mincount + random.nextInt(maxcount - mincount + 1), items);
 	}
 
-	public void dropItem(int x, int y, int count, Item... items) {
+	public void dropItem(int x, int y, int count, ItemStack... items) {
 		for (int i = 0; i < count; i++)
 			dropItem(x, y, items);
 	}
 
-	public void dropItem(int x, int y, Item... items) {
-		for (Item i : items)
+	public void dropItem(int x, int y, ItemStack... items) {
+		for (ItemStack i : items)
 			dropItem(x, y, i);
 	}
 
-	public ItemEntity dropItem(int x, int y, Item i) {
+	public ItemEntity dropItem(int x, int y, ItemStack i) {
 		int ranx, rany;
 
 		do {

@@ -6,7 +6,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
@@ -30,24 +30,24 @@ public class MaterialTile extends Tile {
 		}
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == type.getRequiredTool()) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					if (level.depth == 1) {
 						level.setTile(xt, yt, Tiles.get("Cloud"));
 					} else {
 						level.setTile(xt, yt, Tiles.get("Hole"));
 					}
-					Item drop;
+					ItemStack drop;
 					switch (type) {
 						case Stone:
-							drop = Items.get("Stone");
+							drop = Items.getStackOf("Stone");
 							break;
 						case Obsidian:
-							drop = Items.get("Raw Obsidian");
+							drop = Items.getStackOf("Raw Obsidian");
 							break;
 						default:
 							throw new IllegalStateException("Unexpected value: " + type);

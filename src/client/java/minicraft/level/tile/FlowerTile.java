@@ -7,7 +7,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -80,15 +80,15 @@ public class FlowerTile extends Tile {
 		FlowerVariant.values()[level.getData(x, y)].sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean interact(Level level, int x, int y, Player player, ItemStack item, Direction attackDir) {
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(2 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(x, y);
 					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.play("monsterhurt");
-					level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get(FlowerVariant.values()[level.getData(x, y)].name));
+					level.dropItem((x << 4) + 8, (y << 4) + 8, Items.getStackOf(FlowerVariant.values()[level.getData(x, y)].name));
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 							item, this, data, x, y, level.depth));
@@ -100,7 +100,7 @@ public class FlowerTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		level.dropItem((x << 4) + 8, (y << 4) + 8, Items.get(FlowerVariant.values()[level.getData(x, y)].name));
+		level.dropItem((x << 4) + 8, (y << 4) + 8, Items.getStackOf(FlowerVariant.values()[level.getData(x, y)].name));
 		level.setTile(x, y, Tiles.get("Grass"));
 		return true;
 	}

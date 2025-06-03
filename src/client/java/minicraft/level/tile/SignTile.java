@@ -1,25 +1,21 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
-import minicraft.core.Renderer;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.entity.SignTileEntity;
 import minicraft.screen.SignDisplay;
-import minicraft.screen.SignDisplayMenu;
 import minicraft.util.AdvancementElement;
-import org.tinylog.Logger;
 
 public class SignTile extends Tile {
 	protected SignTile() {
@@ -46,14 +42,14 @@ public class SignTile extends Tile {
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		if (item != null) {
-			if (item instanceof ToolItem && ((ToolItem) item).type == ToolType.Axe) {
+			if (item.getItem() instanceof ToolItem && ((ToolItem) item.getItem()).type == ToolType.Axe) {
 				int data = level.getData(xt, yt);
 				level.setTile(xt, yt, Tiles.get((short) data));
 				SignDisplay.removeSign(level.depth, xt, yt);
 				Sound.play("monsterhurt");
-				level.dropItem(xt*16+8, yt*16+8, Items.get("Sign"));
+				level.dropItem(xt*16+8, yt*16+8, Items.getStackOf("Sign"));
 				AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 					new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
 						item, this, data, xt, yt, level.depth));

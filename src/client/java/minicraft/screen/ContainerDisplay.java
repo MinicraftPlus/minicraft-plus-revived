@@ -16,7 +16,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import minicraft.item.ItemStack;
 
 public class ContainerDisplay extends Display {
 
@@ -317,24 +317,24 @@ public class ContainerDisplay extends Display {
 				int toSel = menus[otherIdx].getSelection();
 				int fromSel = curMenu.getSelection();
 
-				Item fromItem = from.get(fromSel);
+				ItemStack fromItem = from.get(fromSel);
 
-				boolean transferAll = input.getMappedKey("shift").isDown() || !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
+				boolean transferAll = input.getMappedKey("shift").isDown() || fromItem.getCount() == 1;
 
-				Item toItem = fromItem.copy();
+				ItemStack toItem = fromItem.copy();
 
-				if (fromItem instanceof StackableItem) {
+				if (fromItem.isStackable()) {
 					int move = 1;
 					if (!transferAll) {
-						((StackableItem) toItem).count = 1;
+						toItem.setCount(1);
 					} else {
-						move = ((StackableItem) toItem).count;
+						move = toItem.getCount();
 					}
 
 					if (to.add(toItem) != null) {
-						((StackableItem)fromItem).count -= move - ((StackableItem) toItem).count;
+						fromItem.decrement(move - toItem.getCount());
 					} else if (!transferAll) {
-						((StackableItem) fromItem).count--;
+						fromItem.decrement(1);
 					} else {
 						from.remove(fromSel);
 					}

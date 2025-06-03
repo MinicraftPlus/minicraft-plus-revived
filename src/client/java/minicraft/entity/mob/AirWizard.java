@@ -163,7 +163,7 @@ public class AirWizard extends EnemyMob {
 		if (players.length > 0) { // If the player is still here
 			for (Player p : players) {
 				p.addScore(100000); // Give the player 100K points.
-				dropItem(5, 10, Items.get("cloud ore")); // Drop cloud ore to guarantee respawn.
+				dropItem(5, 10, Items.getStackOf("cloud ore")); // Drop cloud ore to guarantee respawn.
 			}
 		}
 

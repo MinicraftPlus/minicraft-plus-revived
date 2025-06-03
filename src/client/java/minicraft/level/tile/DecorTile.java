@@ -7,7 +7,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
@@ -55,27 +55,27 @@ public class DecorTile extends Tile {
 		screen.render(x * 16 + 0, y * 16, sprite.getCurrentFrame().getSprite().spritePixels[0][0]);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == mType.getRequiredTool()) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					if (level.depth == 1) {
 						level.setTile(xt, yt, Tiles.get("Cloud"));
 					} else {
 						level.setTile(xt, yt, Tiles.get("Hole"));
 					}
-					Item drop;
+					ItemStack drop;
 					switch (thisType) {
 						case ORNATE_STONE:
-							drop = Items.get("Ornate Stone");
+							drop = Items.getStackOf("Ornate Stone");
 							break;
 						case ORNATE_OBSIDIAN:
-							drop = Items.get("Ornate Obsidian");
+							drop = Items.getStackOf("Ornate Obsidian");
 							break;
 						case ORNATE_WOOD:
-							drop = Items.get("Ornate Wood");
+							drop = Items.getStackOf("Ornate Wood");
 							break;
 						default:
 							throw new IllegalStateException("Unexpected value: " + thisType);

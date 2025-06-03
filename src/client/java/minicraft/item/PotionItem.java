@@ -8,7 +8,6 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.AchievementsDisplay;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -23,29 +22,25 @@ public class PotionItem extends StackableItem {
 		return items;
 	}
 
-	public PotionType type;
+	public final PotionType type;
 
 	private PotionItem(PotionType type) {
-		this(type, 1);
-	}
-
-	private PotionItem(PotionType type, int count) {
-		super(type.name, new LinkedSprite(SpriteType.Item, "potion").setColor(type.dispColor), count);
+		super(type.name, new LinkedSprite(SpriteType.Item, "potion").setColor(type.dispColor));
 		this.type = type;
 	}
 
 	// The return value is used to determine if the potion was used, which means being discarded.
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		if (type.equals(PotionType.Lava)) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.lava", true);
 		}
-		return interactOn(applyPotion(player, type, true), player);
+		return interactOn(applyPotion(player, type, true), player, stack);
 	}
 
-	protected boolean interactOn(boolean subClassSuccess, Player player) {
+	protected boolean interactOn(boolean subClassSuccess, Player player, ItemStack stack) {
 		if (subClassSuccess && !Game.isMode("minicraft.settings.mode.creative"))
-			player.tryAddToInvOrDrop(Items.get("glass bottle"));
-		return super.interactOn(subClassSuccess);
+			player.tryAddToInvOrDrop(Items.getStackOf("glass bottle"));
+		return super.interactOn(subClassSuccess, stack);
 	}
 
 	/// Only ever called to load from file
@@ -79,11 +74,7 @@ public class PotionItem extends StackableItem {
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	public @NotNull PotionItem copy() {
-		return new PotionItem(type, count);
 	}
 }

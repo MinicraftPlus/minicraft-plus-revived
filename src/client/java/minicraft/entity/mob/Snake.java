@@ -27,10 +27,10 @@ public class Snake extends EnemyMob {
 
 	public void die() {
 		int num = Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 1 : 0;
-		dropItem(num, num + 1, Items.get("scale"));
+		dropItem(num, num + 1, Items.getStackOf("scale"));
 
 		if (random.nextInt(24 / lvl / (Settings.getIdx("diff") + 1)) == 0)
-			dropItem(1, 1, Items.get("key"));
+			dropItem(1, 1, Items.getStackOf("key"));
 
 		super.die();
 	}

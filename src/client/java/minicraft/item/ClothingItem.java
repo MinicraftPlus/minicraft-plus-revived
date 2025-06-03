@@ -8,7 +8,6 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -30,42 +29,33 @@ public class ClothingItem extends StackableItem {
 		return items;
 	}
 
-	private int playerCol;
+	private final int playerCol;
 
 	private ClothingItem(String name, LinkedSprite sprite, int pcol) {
-		this(name, 1, sprite, pcol);
-	}
-
-	private ClothingItem(String name, int count, LinkedSprite sprite, int pcol) {
-		super(name, sprite, count);
+		super(name, sprite);
 		playerCol = pcol;
 	}
 
 	// Put on clothes
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
 			if (!Game.isMode("minicraft.settings.mode.creative")) {
-				ClothingItem lastClothing = (ClothingItem) getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
+				Item lastClothing = getAllInstances().stream().filter(i -> i instanceof ClothingItem && ((ClothingItem) i).playerCol == player.shirtColor)
 					.findAny().orElse(null);
 				if (lastClothing == null)
-					lastClothing = (ClothingItem) Items.get("Reg Clothes");
-				lastClothing = lastClothing.copy();
-				lastClothing.count = 1;
-				player.tryAddToInvOrDrop(lastClothing);
+					lastClothing = Items.getStackOf("Reg Clothes").getItem();
+
+				player.tryAddToInvOrDrop(new ItemStack(lastClothing));
 			}
 			player.shirtColor = playerCol;
-			return super.interactOn(true);
+			return super.interactOn(true, stack);
 		}
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	public @NotNull ClothingItem copy() {
-		return new ClothingItem(getName(), count, sprite, playerCol);
 	}
 }

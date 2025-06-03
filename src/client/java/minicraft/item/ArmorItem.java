@@ -6,7 +6,6 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -28,34 +27,26 @@ public class ArmorItem extends StackableItem {
 	private final int staminaCost;
 	public final int level;
 
-	private ArmorItem(String name, LinkedSprite sprite, float health, int level) {
-		this(name, sprite, 1, health, level);
-	}
-
-	private ArmorItem(String name, LinkedSprite sprite, int count, float health, int level) {
-		super(name, sprite, count);
+	private ArmorItem(String name, LinkedSprite sprite,  float health, int level) {
+		super(name, sprite);
 		this.armor = health;
 		this.level = level;
 		staminaCost = 9;
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		boolean success = false;
 		if (player.curArmor == null && player.payStamina(staminaCost)) {
-			player.curArmor = this; // Set the current armor being worn to this.
+			player.curArmor = stack; // Set the current armor being worn to this.
 			player.armor = (int) (armor * Player.maxArmor); // Armor is how many hits are left
 			success = true;
 		}
 
-		return super.interactOn(success);
+		return super.interactOn(success, stack);
 	}
 
 	@Override
-	public boolean interactsWithWorld() {
+	public boolean interactsWithWorld(ItemStack stack) {
 		return false;
-	}
-
-	public @NotNull ArmorItem copy() {
-		return new ArmorItem(getName(), sprite, count, armor, level);
 	}
 }

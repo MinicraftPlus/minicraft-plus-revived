@@ -4,8 +4,7 @@ import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import minicraft.item.ItemStack;
 import minicraft.screen.entry.ItemEntry;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,17 +49,17 @@ class InventoryMenu extends ItemListMenu {
 		if (getNumOptions() > 0 && (dropOne || input.inputPressed("drop-stack"))) {
 			ItemEntry entry = ((ItemEntry) getCurEntry());
 			if (entry == null) return;
-			Item invItem = entry.getItem();
-			Item drop = invItem.copy();
+			ItemStack invItem = entry.getItem();
+			ItemStack drop = invItem.copy();
 
 			if (!creativeInv) {
-				if (!dropOne || !(drop instanceof StackableItem) || ((StackableItem) drop).count <= 1) {
+				if (!dropOne || !(drop.isStackable()) || drop.getCount() <= 1) {
 					// drop the whole item.
 					removeSelectedEntry();
 				} else {
 					// just drop one from the stack
-					((StackableItem) drop).count = 1;
-					((StackableItem) invItem).count--;
+					drop.setCount(1);
+					invItem.decrement(1);
 				}
 
 				if (onStackUpdateListener != null) {

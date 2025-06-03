@@ -11,7 +11,6 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Items;
-import minicraft.level.tile.Tiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,7 +164,7 @@ public class Creeper extends EnemyMob {
 
 	public void die() {
 		// Only drop items if the creeper has not exploded
-		if (!fuseLit) dropItem(1, 4 - Settings.getIdx("diff"), Items.get("Gunpowder"));
+		if (!fuseLit) dropItem(1, 4 - Settings.getIdx("diff"), Items.getStackOf("Gunpowder"));
 		super.die();
 	}
 }

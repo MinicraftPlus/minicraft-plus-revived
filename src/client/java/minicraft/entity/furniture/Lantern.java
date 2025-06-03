@@ -11,7 +11,7 @@ public class Lantern extends Furniture {
 		GOLD("Gold Lantern", 15, 4);
 
 		protected int light, offset;
-		protected String title;
+		public final String title;
 
 		Type(String title, int light, int offset) {
 			this.title = title;

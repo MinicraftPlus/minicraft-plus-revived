@@ -29,7 +29,7 @@ public class Pig extends PassiveMob {
 			max = 2;
 		}
 
-		dropItem(min, max, Items.get("raw pork"));
+		dropItem(min, max, Items.getStackOf("raw pork"));
 
 		super.die();
 	}

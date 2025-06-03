@@ -12,7 +12,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -25,21 +25,21 @@ public class OreTile extends Tile {
 	private final OreType type;
 
 	public enum OreType {
-		Iron(Items.get("Iron Ore"), new SpriteAnimation(SpriteType.Tile, "iron_ore")),
-		Lapis(Items.get("Lapis"), new SpriteAnimation(SpriteType.Tile, "lapis_ore")),
-		Gold(Items.get("Gold Ore"), new SpriteAnimation(SpriteType.Tile, "gold_ore")),
-		Gem(Items.get("Gem"), new SpriteAnimation(SpriteType.Tile, "gem_ore")),
-		Cloud(Items.get("Cloud Ore"), new SpriteAnimation(SpriteType.Tile, "cloud_ore"));
+		Iron(Items.getStackOf("Iron Ore"), new SpriteAnimation(SpriteType.Tile, "iron_ore")),
+		Lapis(Items.getStackOf("Lapis"), new SpriteAnimation(SpriteType.Tile, "lapis_ore")),
+		Gold(Items.getStackOf("Gold Ore"), new SpriteAnimation(SpriteType.Tile, "gold_ore")),
+		Gem(Items.getStackOf("Gem"), new SpriteAnimation(SpriteType.Tile, "gem_ore")),
+		Cloud(Items.getStackOf("Cloud Ore"), new SpriteAnimation(SpriteType.Tile, "cloud_ore"));
 
-		private final Item drop;
+		private final ItemStack drop;
 		public final SpriteAnimation sheet;
 
-		OreType(Item drop, SpriteAnimation sheet) {
+		OreType(ItemStack drop, SpriteAnimation sheet) {
 			this.drop = drop;
 			this.sheet = sheet;
 		}
 
-		private Item getOre() {
+		private ItemStack getOre() {
 			return drop.copy();
 		}
 	}
@@ -66,13 +66,13 @@ public class OreTile extends Tile {
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(6 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(6 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					hurt(level, xt, yt, tool.getDamage());
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
@@ -85,7 +85,7 @@ public class OreTile extends Tile {
 		return false;
 	}
 
-	public Item getOre() {
+	public ItemStack getOre() {
 		return type.getOre();
 	}
 
@@ -110,7 +110,7 @@ public class OreTile extends Tile {
 			} else {
 				level.setData(x, y, damage);
 			}
-			if (type.drop.equals(Items.get("gem"))) {
+			if (type.drop.equals(Items.getStackOf("gem"))) {
 				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);
 			}
 			level.dropItem((x << 4) + 8, (y << 4) + 8, count, type.getOre());

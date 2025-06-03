@@ -6,7 +6,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -50,16 +50,16 @@ public class GrassTile extends Tile {
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
+		if (item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) == 0) { // 20% chance to drop Grass seeds
-						level.dropItem((xt << 4) + 8, (yt << 4) + 8, 1, Items.get("Grass Seeds"));
+						level.dropItem((xt << 4) + 8, (yt << 4) + 8, 1, Items.getStackOf("Grass Seeds"));
 					}
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
@@ -68,12 +68,12 @@ public class GrassTile extends Tile {
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					int data = level.getData(xt, yt);
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.play("monsterhurt");
 					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
-						level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.get("Wheat Seeds"));
+						level.dropItem((xt << 4) + 8, (yt << 4) + 8, Items.getStackOf("Wheat Seeds"));
 					}
 					AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
 						new AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions(
@@ -82,7 +82,7 @@ public class GrassTile extends Tile {
 				}
 			}
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 					level.setTile(xt, yt, Tiles.get("Path"));
 					Sound.play("monsterhurt");
 				}

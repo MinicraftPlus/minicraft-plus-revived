@@ -22,9 +22,11 @@ import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
 import minicraft.entity.mob.Snake;
 import minicraft.entity.mob.Zombie;
+import minicraft.item.component.ComponentMap;
+import minicraft.item.component.ComponentTypes;
+import minicraft.item.component.type.FurnitureComponent;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -68,51 +70,44 @@ public class FurnitureItem extends Item {
 		return items;
 	}
 
-	public Furniture furniture; // The furniture of this item
-	public boolean placed; // Value if the furniture has been placed or not.
-
 	public FurnitureItem(Furniture furniture) {
-		super(furniture.name, furniture.itemSprite);
-		this.furniture = furniture; // Assigns the furniture to the item
-		placed = false;
+		super(furniture.name, furniture.itemSprite, ComponentMap.builder().add(ComponentTypes.FURNITURE, new FurnitureComponent(furniture)).build());
 	}
 
 	/**
 	 * Determines if you can attack enemies with furniture (you can't)
 	 */
-	public boolean canAttack() {
+	public boolean canAttack(ItemStack stack) {
 		return false;
 	}
 
 	/**
 	 * What happens when you press the "Attack" key with the furniture in your hands
 	 */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
+		if (tile.mayPass(level, xt, yt, stack.get(ComponentTypes.FURNITURE).furniture())) { // If the furniture can go on the tile
 			Sound.play("craft");
+
+			Furniture furniture = stack.get(ComponentTypes.FURNITURE).furniture().copy();
 
 			// Placed furniture's X and Y positions
 			furniture.x = (xt << 4) + 8;
 			furniture.y = (yt << 4) + 8;
 
 			level.add(furniture); // Adds the furniture to the world
-			if (Game.isMode("minicraft.settings.mode.creative"))
-				furniture = furniture.copy();
-			else
-				placed = true; // The value becomes true, which removes it from the player's active item
+			if (Game.isMode("minicraft.settings.mode.creative")) {
+				stack.put(ComponentTypes.FURNITURE, new FurnitureComponent(furniture.copy()));
+			} else {
+				// The value becomes true, which removes it from the player's active item
+				stack.put(ComponentTypes.FURNITURE, new FurnitureComponent(furniture.copy(), true));
+			}
 
 			return true;
 		}
 		return false;
 	}
 
-	public boolean isDepleted() {
-		return placed;
-	}
-
-	public @NotNull FurnitureItem copy() {
-		// in case the item is a spawner, it will use the sprite position (sx, sy)
-		// instead if it is not, the constructor will obtain said sprite
-		return new FurnitureItem(furniture.copy());
+	public boolean isDepleted(ItemStack stack) {
+		return stack.get(ComponentTypes.FURNITURE).placed();
 	}
 }

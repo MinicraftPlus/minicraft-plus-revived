@@ -3,10 +3,9 @@ package minicraft.util;
 import minicraft.core.World;
 import minicraft.entity.furniture.Chest;
 import minicraft.item.Inventory;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
-import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
@@ -107,13 +106,13 @@ public class AdvancementElement {
 	}
 
 	public static ElementRewards loadRewards(JSONObject json) {
-		ArrayList<Item> items = new ArrayList<>();
+		ArrayList<ItemStack> items = new ArrayList<>();
 		ArrayList<Recipe> recipes = new ArrayList<>();
 		if (json != null) {
 			JSONArray itemsJson = json.optJSONArray("items");
 			if (itemsJson != null) {
 				for (int i = 0; i < itemsJson.length(); i++) {
-					items.add(Items.get(itemsJson.getString(i)));
+					items.add(Items.getStackOf(itemsJson.getString(i)));
 				}
 			}
 
@@ -226,15 +225,15 @@ public class AdvancementElement {
 	}
 
 	public static class ElementRewards {
-		private final ArrayList<Item> items;
+		private final ArrayList<ItemStack> items;
 		private final ArrayList<Recipe> recipes;
 
-		public ElementRewards(ArrayList<Item> items, ArrayList<Recipe> recipes) {
+		public ElementRewards(ArrayList<ItemStack> items, ArrayList<Recipe> recipes) {
 			this.items = items;
 			this.recipes = recipes;
 		}
 
-		public ArrayList<Item> getItems() {
+		public ArrayList<ItemStack> getItems() {
 			return new ArrayList<>(items);
 		}
 
@@ -350,12 +349,12 @@ public class AdvancementElement {
 
 	protected void sendRewards() {
 		if (rewards != null) {
-			ArrayList<Item> items = rewards.getItems();
+			ArrayList<ItemStack> items = rewards.getItems();
 			if (items.size() > 0) {
 				Chest chest = new Chest("Rewards");
 				chest.x = World.player.x;
 				chest.y = World.player.y;
-				for (Item item : items) chest.getInventory().add(item);
+				for (ItemStack item : items) chest.getInventory().add(item);
 				World.levels[World.currentLevel].add(chest);
 			}
 
@@ -602,14 +601,14 @@ public class AdvancementElement {
 					}
 
 					@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-					private boolean matches(Item item) {
+					private boolean matches(ItemStack item) {
 						if (!Rangeable.isAbsent(count))
-							if (!count.inRange(item instanceof StackableItem ? ((StackableItem) item).count : 1))
+							if (!count.inRange(item.getCount()))
 								return false;
-						if (!Rangeable.isAbsent(durability) && item instanceof ToolItem)
-							if (!durability.inRange(((ToolItem) item).dur))
+						if (!Rangeable.isAbsent(durability) && item.getItem() instanceof ToolItem)
+							if (!durability.inRange(item.getDurability()))
 								return false;
-						return items.isEmpty() || items.stream().anyMatch(s -> s.equalsIgnoreCase(item.getName()));
+						return items.isEmpty() || items.stream().anyMatch(s -> s.equalsIgnoreCase(item.getItem().getName()));
 					}
 				}
 
@@ -737,7 +736,7 @@ public class AdvancementElement {
 			@Override
 			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
 				if (conditions instanceof InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) {
-					ArrayList<Item> items = ((InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) conditions).items;
+					ArrayList<ItemStack> items = ((InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) conditions).items;
 					int maxSlots = ((InventoryChangedTriggerConditionHandler.InventoryChangedTriggerConditions) conditions).maxSlots;
 					for (ElementCriterion criterion : new HashSet<>(registeredCriteria)) {
 						if (criterion.conditions instanceof InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions) {
@@ -748,7 +747,7 @@ public class AdvancementElement {
 									continue;
 							if (!AdvancementTriggerConditionHandler.AdvancementCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsFull))
 								if (!criterionConditions.slotsFull.inRange((int) items.stream().filter(i ->
-									!(i instanceof StackableItem) || ((StackableItem) i).count >= ((StackableItem) i).maxCount).count()))
+									i.getCount() >= i.getMaxCount()).count()))
 									continue;
 							if (!AdvancementTriggerConditionHandler.AdvancementCriterionConditions.Rangeable.isAbsent(criterionConditions.slotsOccupied))
 								if (!criterionConditions.slotsOccupied.inRange(items.size()))
@@ -765,7 +764,7 @@ public class AdvancementElement {
 			/**
 			 * Modified from {@link #test(List, List)}.
 			 */
-			private static boolean isConditionalMatched(ArrayList<Item> items,
+			private static boolean isConditionalMatched(ArrayList<ItemStack> items,
 			                                            HashSet<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> itemConditions) {
 				Set<HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String>> combinations = new HashSet<>();
 				List<List<String>> combinationsOutput = new ArrayList<>();
@@ -800,19 +799,19 @@ public class AdvancementElement {
 			/**
 			 * Used by {@link #allMatch(Collection, Collection, HashMap)} for conditional check for each element.
 			 */
-			private static boolean isMatched(Item item, InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions itemConditions,
+			private static boolean isMatched(ItemStack item, InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions itemConditions,
 			                                 @Nullable String selectedItem) {
 				if (!itemConditions.matches(item))
 					return false;
-				return selectedItem == null || item.getName().equalsIgnoreCase(selectedItem);
+				return selectedItem == null || item.getItem().getName().equalsIgnoreCase(selectedItem);
 			}
 
 			/**
 			 * Modified from {@link #containsAll(List, List)}.
 			 */
-			private static boolean allMatch(Collection<Item> source, Collection<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> target,
+			private static boolean allMatch(Collection<ItemStack> source, Collection<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions> target,
 			                                HashMap<InventoryChangedTriggerConditionHandler.InventoryChangedCriterionConditions.ItemConditions, String> selectedItems) {
-				for (Item e : source) {
+				for (ItemStack e : source) {
 					target.removeIf(conditions1 -> isMatched(e, conditions1, selectedItems.get(conditions1)));
 					if (target.isEmpty()) {
 						return true;
@@ -924,7 +923,7 @@ public class AdvancementElement {
 				}
 
 				public static class InventoryChangedTriggerConditions extends AdvancementTriggerConditions {
-					private final ArrayList<Item> items = new ArrayList<>();
+					private final ArrayList<ItemStack> items = new ArrayList<>();
 					private final int maxSlots;
 
 					public InventoryChangedTriggerConditions(Inventory inventory) {
@@ -960,7 +959,7 @@ public class AdvancementElement {
 			@Override
 			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
 				if (conditions instanceof PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) {
-					Item item = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).item;
+					ItemStack item = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).item;
 					Tile tile = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).tile;
 					int data = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).data;
 					int x = ((PlacedTileTriggerConditionHandler.PlacedTileTriggerConditions) conditions).x;
@@ -1001,14 +1000,14 @@ public class AdvancementElement {
 				}
 
 				public static class PlacedTileTriggerConditions extends AdvancementTriggerConditions {
-					private final Item item;
+					private final ItemStack item;
 					private final Tile tile;
 					private final int data;
 					private final int x;
 					private final int y;
 					private final int level;
 
-					public PlacedTileTriggerConditions(Item item, Tile tile, int data, int x, int y, int level) {
+					public PlacedTileTriggerConditions(ItemStack item, Tile tile, int data, int x, int y, int level) {
 						this.item = item;
 						this.tile = tile;
 						this.data = data;
@@ -1045,7 +1044,7 @@ public class AdvancementElement {
 			@Override
 			protected void trigger0(AdvancementTriggerConditionHandler.AdvancementTriggerConditions conditions) {
 				if (conditions instanceof ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) {
-					Item item = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).item;
+					ItemStack item = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).item;
 					Tile tile = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).tile;
 					int data = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).data;
 					int x = ((ItemUsedOnTileTriggerConditionHandler.ItemUsedOnTileTriggerConditions) conditions).x;
@@ -1076,14 +1075,14 @@ public class AdvancementElement {
 				}
 
 				public static class ItemUsedOnTileTriggerConditions extends AdvancementTriggerConditions {
-					private final Item item;
+					private final ItemStack item;
 					private final Tile tile;
 					private final int data;
 					private final int x;
 					private final int y;
 					private final int level;
 
-					public ItemUsedOnTileTriggerConditions(Item item, Tile tile, int data, int x, int y, int level) {
+					public ItemUsedOnTileTriggerConditions(ItemStack item, Tile tile, int data, int x, int y, int level) {
 						this.item = item;
 						this.tile = tile;
 						this.data = data;

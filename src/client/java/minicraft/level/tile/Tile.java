@@ -9,6 +9,7 @@ import minicraft.entity.vehicle.Boat;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 
@@ -146,7 +147,7 @@ public abstract class Tile {
 	 * @param attackDir The direction of the player attacking.
 	 * @return Was the operation successful?
 	 */
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		return false;
 	}
 
@@ -186,7 +187,7 @@ public abstract class Tile {
 
 	/**
 	 * @deprecated Similar to {@link #getData(String)}. Also, param {@code thisData} is unused.
-	 * 	The current only usage is in {@link minicraft.item.TileItem#interactOn(Tile, Level, int, int, Player, Direction)}.
+	 * 	The current only usage is in {@link Item#interactOn(Tile, Level, int, int, Player, Direction, ItemStack)}.
 	 */
 	@Deprecated
 	public boolean matches(int thisData, String tileInfo) {

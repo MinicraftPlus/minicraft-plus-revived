@@ -5,7 +5,7 @@ import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.level.Level;
 import minicraft.network.Network;
 import minicraft.util.Logging;
@@ -167,7 +167,7 @@ public abstract class Entity implements Tickable {
 	 * @param attackDir The direction to interact
 	 * @return If the interaction was successful
 	 */
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
 		return false;
 	}
 

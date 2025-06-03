@@ -14,9 +14,8 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker;
 import minicraft.item.Inventory;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
-import minicraft.item.StackableItem;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 
@@ -136,19 +135,19 @@ public class PlayerInvDisplay extends Display {
 					from = player.getInventory();
 
 					int fromSel = curMenu.getSelection();
-					Item fromItem = from.get(fromSel);
+					ItemStack fromItem = from.get(fromSel);
 
 					boolean deleteAll;
 					if (input.getMappedKey("SHIFT-D").isClicked() || input.buttonPressed(ControllerButton.Y)) {
 						deleteAll = true;
 					} else if (input.getMappedKey("D").isClicked() || input.buttonPressed(ControllerButton.X)) {
-						deleteAll = !(fromItem instanceof StackableItem) || ((StackableItem) fromItem).count == 1;
+						deleteAll = fromItem.getCount() == 1;
 					} else return;
 
 					if (deleteAll) {
 						from.remove(fromSel);
 					} else {
-						((StackableItem) fromItem).count--; // this is known to be valid.
+						fromItem.decrement(1); // this is known to be valid.
 					}
 
 					update();
@@ -160,18 +159,18 @@ public class PlayerInvDisplay extends Display {
 					int toSel = menus[otherIdx].getSelection();
 					int fromSel = curMenu.getSelection();
 
-					Item fromItem = from.get(fromSel);
+					ItemStack fromItem = from.get(fromSel);
 
 					boolean transferAll;
 					if (input.getMappedKey("SHIFT-SELECT").isClicked()) {
 						transferAll = true;
 					} else if (input.inputPressed("SELECT")) { // If stack limit is available, this can transfer whole stack
-						transferAll = !(fromItem instanceof StackableItem);
+						transferAll = !(fromItem.isStackable());
 					} else return;
 
-					Item toItem = fromItem.copy();
-					if (toItem instanceof StackableItem && transferAll)
-						((StackableItem) toItem).count = ((StackableItem) toItem).maxCount;
+					ItemStack toItem = fromItem.copy();
+					if (toItem.isStackable() && transferAll)
+						toItem.setCount(toItem.getMaxCount());
 
 					if (to.add(toItem) != null)
 						Logging.PLAYER.trace("Item {} cannot be added to the player inventory because max slot reached.", toItem);

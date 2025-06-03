@@ -8,7 +8,6 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -45,19 +44,15 @@ public class BucketItem extends StackableItem {
 		return null;
 	}
 
-	private Fill filling;
+	private final Fill filling;
 
 	private BucketItem(Fill fill) {
-		this(fill, 1);
-	}
-
-	private BucketItem(Fill fill, int count) {
 		super(fill.toString() + " Bucket", new LinkedSprite(SpriteType.Item, fill == Fill.Empty ? "bucket" :
-			fill == Fill.Lava ? "lava_bucket" : "water_bucket"), count);
+			fill == Fill.Lava ? "lava_bucket" : "water_bucket"));
 		this.filling = fill;
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir, ItemStack stack) {
 		Fill fill = getFilling(tile);
 		if (fill == null) return false;
 
@@ -65,17 +60,17 @@ public class BucketItem extends StackableItem {
 			if (fill == Fill.Empty) {
 				level.setTile(xt, yt, filling.contained);
 				if (!Game.isMode("minicraft.settings.mode.creative"))
-					player.activeItem = editBucket(player, Fill.Empty);
+					player.activeItem = editBucket(player, Fill.Empty, stack);
 				return true;
 			} else if (fill == Fill.Lava && filling == Fill.Water) {
 				level.setTile(xt, yt, Tiles.get("Obsidian"));
 				if (!Game.isMode("minicraft.settings.mode.creative"))
-					player.activeItem = editBucket(player, Fill.Empty);
+					player.activeItem = editBucket(player, Fill.Empty, stack);
 				return true;
 			}
 		} else { // This is an empty bucket
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, fill);
+			if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, fill, stack);
 			return true;
 		}
 
@@ -85,14 +80,14 @@ public class BucketItem extends StackableItem {
 	/**
 	 * This method exists due to the fact that buckets are stackable, but only one should be changed at one time.
 	 */
-	private BucketItem editBucket(Player player, Fill newFill) {
-		if (count == 0) return null; // This honestly should never happen...
-		if (count == 1) return new BucketItem(newFill);
+	private ItemStack editBucket(Player player, Fill newFill, ItemStack item) {
+		if (item.getCount() == 0) return null; // This honestly should never happen...
+		if (item.getCount() == 1) return new ItemStack(new BucketItem(newFill));
 
 		// This item object is a stack of buckets.
-		count--;
-		player.tryAddToInvOrDrop(new BucketItem(newFill));
-		return this;
+		item.decrement(1);
+		player.tryAddToInvOrDrop(new ItemStack(new BucketItem(newFill)));
+		return item;
 	}
 
 	public boolean equals(Item other) {
@@ -102,9 +97,5 @@ public class BucketItem extends StackableItem {
 	@Override
 	public int hashCode() {
 		return super.hashCode() + filling.offset * 31;
-	}
-
-	public @NotNull BucketItem copy() {
-		return new BucketItem(filling, count);
 	}
 }

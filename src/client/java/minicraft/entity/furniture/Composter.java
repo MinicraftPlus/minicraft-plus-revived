@@ -3,9 +3,8 @@ package minicraft.entity.furniture;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.SpriteLinker;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
-import minicraft.item.StackableItem;
 import org.jetbrains.annotations.Nullable;
 
 public class Composter extends Furniture {
@@ -22,21 +21,19 @@ public class Composter extends Furniture {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(Player player, @Nullable ItemStack item, Direction attackDir) {
 		if (compost == MAX_COMPOST) {
 			compost = 0;
-			StackableItem i = (StackableItem) Items.get("Fertilizer").copy();
-			i.count = 1;
-			player.getLevel().dropItem(x, y, i);
+			player.getLevel().dropItem(x, y, Items.getStackOf("Fertilizer"));
 			refreshStatus();
 			return true;
 		}
 
-		if (item instanceof StackableItem) {
+		if (item.isStackable()) {
 			// 100% compost as they are heavy food
 			if (item.getName().equalsIgnoreCase("Baked Potato") || item.getName().equalsIgnoreCase("Bread")) {
 				compost++;
-				((StackableItem) item).count--;
+				item.decrement(1);
 				refreshStatus();
 				return true;
 
@@ -46,7 +43,7 @@ public class Composter extends Furniture {
 				item.getName().equalsIgnoreCase("Potato") || item.getName().equalsIgnoreCase("Carrot")) {
 				if (random.nextInt(4) != 0) { // 75%
 					compost++;
-					((StackableItem) item).count--;
+					item.decrement(1);
 					refreshStatus();
 					return true;
 				}
@@ -56,7 +53,7 @@ public class Composter extends Furniture {
 				item.getName().equalsIgnoreCase("Wheat Seeds") || item.getName().equalsIgnoreCase("Grass Seeds")) {
 				if (random.nextInt(3) != 0) { // 66.7%
 					compost++;
-					((StackableItem) item).count--;
+					item.decrement(1);
 					refreshStatus();
 					return true;
 				}

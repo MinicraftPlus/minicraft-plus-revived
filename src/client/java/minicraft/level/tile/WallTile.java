@@ -13,7 +13,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.SpriteAnimation;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import minicraft.item.Item;
+import minicraft.item.ItemStack;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
@@ -65,14 +65,14 @@ public class WallTile extends Tile {
 		}
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, ItemStack item, Direction attackDir) {
 		if (Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
-		if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
+		if (item != null && item.getItem() instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item.getItem();
 			if (tool.type == type.getRequiredTool()) {
 				if (level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					if (player.payStamina(4 - tool.level) && tool.payDurability(item)) {
 						int data = level.getData(xt, yt);
 						hurt(level, xt, yt, tool.getDamage());
 						AdvancementElement.AdvancementTrigger.ItemUsedOnTileTrigger.INSTANCE.trigger(
@@ -117,7 +117,7 @@ public class WallTile extends Tile {
 				}
 			}
 
-			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3 - type.ordinal(), Items.get(itemName));
+			level.dropItem((x << 4) + 8, (y << 4) + 8, 1, 3 - type.ordinal(), Items.getStackOf(itemName));
 			level.setTile(x, y, Tiles.get(tilename));
 		} else {
 			level.setData(x, y, damage);

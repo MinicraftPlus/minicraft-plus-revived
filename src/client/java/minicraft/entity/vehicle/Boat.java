@@ -1,6 +1,5 @@
 package minicraft.entity.vehicle;
 
-import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -89,7 +88,7 @@ public class Boat extends Entity implements PlayerRideable {
 
 	@Override
 	public void die() {
-		level.dropItem(x, y, Items.get("Boat"));
+		level.dropItem(x, y, Items.getStackOf("Boat"));
 		Sound.play("monsterhurt");
 		super.die();
 	}
