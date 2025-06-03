@@ -18,4 +18,10 @@ public class RockBiome extends Biome {
 		else
 			map.setTile(x, y, Tiles.get("rock"), 0);
 	}
+
+	@Override
+	public float getGenerationWeight(LevelNoise noise, int x, int y) {
+		float a = (float)noise.getHeight(x, y) * 3.f - 1.f;
+		return a * a * a * a * a * a * a * a * a * a * a * a * a;
+	}
 }

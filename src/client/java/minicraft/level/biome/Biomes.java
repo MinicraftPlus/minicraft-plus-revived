@@ -2,6 +2,7 @@ package minicraft.level.biome;
 
 import java.util.HashMap;
 import minicraft.level.LevelGen;
+import minicraft.level.noise.LevelNoise;
 
 public class Biomes {
 	protected static final HashMap<Integer, BiomeCollection> BIOMES_LAYERS = new HashMap<>();
@@ -22,6 +23,7 @@ public class Biomes {
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Forest", new ForestBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Ocean", new OceanBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("River", new RiverBiome());
+		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("RiverBank", new RiverBankBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Rock", new RockBiome());
 		getLayerBiomes(LevelGen.IRON_LEVEL).addBiome("IronCave", new IronCaveBiome());
 		getLayerBiomes(LevelGen.GOLD_LEVEL).addBiome("GoldCave", new GoldCaveBiome());
@@ -42,20 +44,17 @@ public class Biomes {
 			return biomes.get(name);
 		}
 
-		public Biome getClosestBiome(float temperature, float height, float humidity) {
-			float minDist = Float.POSITIVE_INFINITY;
-			Biome nearest = null;
+		public Biome getClosestBiome(LevelNoise noise, int x, int y) {
+			float maxWeight = Float.NEGATIVE_INFINITY;
+			Biome closest = null;
 			for (Biome b : biomes.values()) {
-				float x = b.getTemperature() - temperature;
-				float y = b.getHeight() - height;
-				float z = b.getHumidity() - humidity;
-				float dist = (x * x + y * y + z * z) / b.getRarity();
-				if (dist < minDist) {
-					minDist = dist;
-					nearest = b;
+				float weight = b.getGenerationWeight(noise, x, y);
+				if (weight > maxWeight) {
+					maxWeight = weight;
+					closest = b;
 				}
 			}
-			return nearest;
+			return closest;
 		}
 
 		protected void addBiome(String id, Biome b) {

@@ -7,6 +7,8 @@ import minicraft.level.biome.Biome;
 import minicraft.level.biome.Biomes;
 import minicraft.level.noise.LevelNoise;
 
+import minicraft.core.Game;
+
 import minicraft.level.tile.Tiles;
 import minicraft.util.Simplex;
 import org.tinylog.Logger;
@@ -89,10 +91,7 @@ public class LevelGen {
 			case ChunkManager.CHUNK_STAGE_PRIMED_NOISE:
 				for(int tileX = 0; tileX < S; tileX++)
 					for(int tileY = 0; tileY < S; tileY++) {
-						float temperature = (float) noise.getTemperature(tileX, tileY);
-						float height = (float) noise.getHeight(tileX, tileY);
-						float humidity = (float) noise.getHumidity(tileX, tileY);
-						Biome biome = Biomes.getLayerBiomes(level).getClosestBiome(temperature, height, humidity);
+						Biome biome = Biomes.getLayerBiomes(level).getClosestBiome(noise, tileX, tileY);
 						chunkManager.setBiome(tileX + S * x, tileY + S * y, biome);
 					}
 				chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_ASSIGNED_BIOMES);
@@ -116,7 +115,7 @@ public class LevelGen {
 		return cm;
 	}
 
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		LevelGen.worldSeed = 0x100;
 		Biomes.initBiomeList();
 
@@ -150,8 +149,8 @@ public class LevelGen {
 
 		//noinspection InfiniteLoopStatement
 		while (true) {
-			int w = 512;
-			int h = 512;
+			int w = 1024;
+			int h = 1024;
 
 			//noinspection ConstantConditions
 			int lvl = maplvls[idx++ % maplvls.length];
@@ -189,8 +188,8 @@ public class LevelGen {
 					if (map.getTile(x, y) == Tiles.get("Ornate Obsidian")) pixels[i] = 0x000f0a;
 					if (map.getTile(x, y) == Tiles.get("Raw Obsidian")) pixels[i] = 0x0a0080;
 
-					if(map.getTileNoise(x, y) == null)
-						map.setChunkNoise(x / ChunkManager.CHUNK_SIZE, y / ChunkManager.CHUNK_SIZE, new LevelNoise(LevelGen.worldSeed, x, y, 0, 64, 64));
+					// if(map.getTileNoise(x, y) == null)
+						// map.setChunkNoise(x / ChunkManager.CHUNK_SIZE, y / ChunkManager.CHUNK_SIZE, new LevelNoise(LevelGen.worldSeed, x, y, 0, 64, 64));
 					// pixels[i] = (int)Math.max(Math.min(map.getTileNoise(x, y).getHeight(x, y)*127+128, 255), 0);
 				}
 			}
@@ -201,12 +200,12 @@ public class LevelGen {
 			} catch(IOException ignored) {}
 
 			int op = JOptionPane.showOptionDialog(null, null, "Map With Seed " + worldSeed, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-				new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)), new String[] { "Next", "0x100", "0xAAFF20" }, "Next");
+				new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING)), new String[] { "Next", "0x100", "0xAAFF20" }, "Next");
 			if (op == 1) LevelGen.worldSeed = 0x100;
 			else if (op == 2) LevelGen.worldSeed = 0xAAFF20;
 			else LevelGen.worldSeed++;
 		}
 	}
-*/
+
 	// Used to easily interface with a list of chunks
 }
