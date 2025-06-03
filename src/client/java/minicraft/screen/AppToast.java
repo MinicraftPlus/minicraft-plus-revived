@@ -35,11 +35,23 @@ public class AppToast extends Toast {
 	private final AppToastFrame frame;
 	private final int color;
 
-	public static abstract class AppToastFrame extends ToastFrame {
-		public static final AppToastFrame FRAME_GENERAL = new GeneralAppToastFrame();
-		public static final AppToastFrame FRAME_URGENT = new UrgentAppToastFrame();
-		public static final AppToastFrame FRAME_WINDOW = new WindowAppToastFrame();
-		public static final AppToastFrame FRAME_BRICK = new BrickAppToastFrame();
+	public static class AppToastFrame extends ToastFrame {
+		public static final AppToastFrame FRAME_GENERAL = new AppToastFrame(
+			new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
+				.setSpriteDim(0, 0, 3, 3), new Insets(4)
+		);
+		public static final AppToastFrame FRAME_URGENT = new AppToastFrame(
+			new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
+				.setSpriteDim(3, 0, 3, 3), new Insets(4)
+		);
+		public static final AppToastFrame FRAME_WINDOW = new AppToastFrame(
+			new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
+			.setSpriteDim(0, 3, 3, 3), new Insets(6, 4, 2, 8)
+		);
+		public static final AppToastFrame FRAME_BRICK = new AppToastFrame(
+			new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
+			.setSpriteDim(3, 3, 3, 3), new Insets(6, 6, 2, 6)
+		);
 
 		protected final @Nullable SpriteLinker.LinkedSprite sprite;
 
@@ -52,34 +64,6 @@ public class AppToast extends Toast {
 		public void render(Screen screen, int x, int y, int w, int h) {
 			assert sprite != null; // If sprite == null, this implementation should be overridden.
 			render(screen, x, y, w, h, sprite.getSprite());
-		}
-
-		private static class GeneralAppToastFrame extends AppToastFrame {
-			private GeneralAppToastFrame() {
-				super(new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
-					.setSpriteDim(0, 0, 3, 3), new Insets(4));
-			}
-		}
-
-		private static class UrgentAppToastFrame extends AppToastFrame {
-			private UrgentAppToastFrame() {
-				super(new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
-					.setSpriteDim(3, 0, 3, 3), new Insets(4));
-			}
-		}
-
-		private static class WindowAppToastFrame extends AppToastFrame {
-			private WindowAppToastFrame() {
-				super(new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
-					.setSpriteDim(0, 3, 3, 3), new Insets(6, 4, 2, 8));
-			}
-		}
-
-		private static class BrickAppToastFrame extends AppToastFrame {
-			private BrickAppToastFrame() {
-				super(new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
-					.setSpriteDim(3, 3, 3, 3), new Insets(6, 6, 2, 6));
-			}
 		}
 	}
 

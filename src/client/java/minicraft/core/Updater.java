@@ -176,8 +176,8 @@ public class Updater extends Game {
 		if (input.getMappedKey("BACK_QUOTE").isDown())
 			Renderer.appStatusBar.show(1);
 		if (updateNoteTick) notetick++;
-		AppToast appToast;
-		if ((appToast = inAppToasts.peek()) != null) {
+		AppToast appToast = inAppToasts.peek();
+		if (appToast != null) {
 			boolean refresh = true;
 			if (appToast.isExpired()) {
 				inAppToasts.pop(); // Removes
@@ -223,8 +223,8 @@ public class Updater extends Game {
 				}
 
 				player.tick(); // Ticks the player when there's no menu.
-				Toast gameToast;
-				if ((gameToast = inGameToasts.peek()) != null) {
+				Toast gameToast = inGameToasts.peek();
+				if (gameToast != null) {
 					boolean refresh = true;
 					if (gameToast.isExpired()) {
 						inGameToasts.pop(); // Removes
@@ -252,7 +252,7 @@ public class Updater extends Game {
 					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
 						Game.setDisplay(new LevelTransitionDisplay(1));
 					}
-					
+
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");

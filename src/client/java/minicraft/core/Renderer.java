@@ -133,8 +133,8 @@ public class Renderer extends Game {
 
 		appStatusBar.render();
 
-		AppToast toast;
-		if ((toast = inAppToasts.peek()) != null) {
+		AppToast toast = inAppToasts.peek();
+		if (toast != null) {
 			toast.render(screen);
 		}
 
@@ -561,8 +561,8 @@ public class Renderer extends Game {
 		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
 
-		Toast toast;
-		if ((toast = inGameToasts.peek()) != null) {
+		Toast toast = inGameToasts.peek();
+		if (toast != null) {
 			toast.render(screen);
 		}
 	}
