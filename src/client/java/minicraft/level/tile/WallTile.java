@@ -60,7 +60,7 @@ public class WallTile extends Tile {
 			hurt(level, x, y, 0);
 			return true;
 		} else {
-			Game.inGameNotifications.add(Localization.getLocalized(obrickMsg));
+			Game.notifications.add(Localization.getLocalized(obrickMsg));
 			return false;
 		}
 	}
@@ -81,7 +81,7 @@ public class WallTile extends Tile {
 						return true;
 					}
 				} else {
-					Game.inGameNotifications.add(obrickMsg);
+					Game.notifications.add(obrickMsg);
 				}
 			}
 		}

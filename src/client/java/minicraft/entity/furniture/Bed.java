@@ -48,7 +48,7 @@ public class Bed extends Furniture {
 			// It is too early to sleep; display how much time is remaining.
 			int sec = (int) Math.ceil((Updater.sleepStartTime - Updater.tickCount) * 1.0 / Updater.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
 			String note = Localization.getLocalized("minicraft.notification.cannot_sleep", sec / 60, sec % 60);
-			Game.inGameNotifications.add(note); // Add the notification displaying the time remaining in minutes and seconds.
+			Game.notifications.add(note); // Add the notification displaying the time remaining in minutes and seconds.
 
 			return false;
 		}

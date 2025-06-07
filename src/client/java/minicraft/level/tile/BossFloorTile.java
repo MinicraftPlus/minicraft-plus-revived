@@ -23,7 +23,7 @@ public class BossFloorTile extends FloorTile {
 				ToolItem tool = (ToolItem) item;
 				if (tool.type == type.getRequiredTool()) {
 					if (player.payStamina(1)) {
-						Game.inGameNotifications.add(Localization.getLocalized(floorMsg));
+						Game.notifications.add(Localization.getLocalized(floorMsg));
 						Sound.play("monsterhurt");
 						return true;
 					}

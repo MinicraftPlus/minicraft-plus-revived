@@ -365,7 +365,7 @@ public class Updater extends Game {
 
 	public static void notifyAll(String msg, int notetick) {
 		msg = Localization.getLocalized(msg);
-		inGameNotifications.add(msg);
+		notifications.add(msg);
 		Updater.notetick = notetick;
 	}
 }

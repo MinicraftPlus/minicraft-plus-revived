@@ -44,16 +44,14 @@ import javax.imageio.ImageIO;
 
 import java.awt.Canvas;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -405,20 +403,19 @@ public class Renderer extends Game {
 		// NOTIFICATIONS
 
 		Updater.updateNoteTick = false;
-		if (permStatus.size() == 0 && inGameNotifications.size() > 0) {
+		if (permStatus.size() == 0 && notifications.size() > 0) {
 			Updater.updateNoteTick = true;
-			if (inGameNotifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
-				inGameNotifications = inGameNotifications.subList(inGameNotifications.size() - 3, inGameNotifications.size());
+			if (notifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
+				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
 
 			if (Updater.notetick > 180) { // Display time per notification.
-				inGameNotifications.remove(0);
+				notifications.remove(0);
 				Updater.notetick = 0;
 			}
 			List<String> print = new ArrayList<>();
-			for (String n : inGameNotifications) {
-				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
-					print.add(l);
+			for (String n : notifications) {
+				print.addAll(Arrays.asList(Font.getLines(n, Screen.w, Screen.h, 0)));
 			}
 
 			// Draw each current notification, with shadow text effect.
