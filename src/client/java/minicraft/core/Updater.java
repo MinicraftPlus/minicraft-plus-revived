@@ -176,12 +176,14 @@ public class Updater extends Game {
 		if (input.getMappedKey("BACK_QUOTE").isDown())
 			Renderer.appStatusBar.show(1);
 		if (updateNoteTick) notetick++;
-		AppToast appToast = inAppToasts.peek();
+
+		// Handling app toasts
+		AppToast appToast = appToasts.peek();
 		if (appToast != null) {
 			boolean refresh = true;
 			if (appToast.isExpired()) {
-				inAppToasts.pop(); // Removes
-				refresh = (appToast = inAppToasts.peek()) != null; // Tries getting new
+				appToasts.poll(); // Removes
+				refresh = (appToast = appToasts.peek()) != null; // Tries getting new
 			}
 
 			if (refresh) appToast.tick();
@@ -223,12 +225,14 @@ public class Updater extends Game {
 				}
 
 				player.tick(); // Ticks the player when there's no menu.
-				Toast gameToast = inGameToasts.peek();
+
+				// Handling game toasts
+				Toast gameToast = gameToasts.peek();
 				if (gameToast != null) {
 					boolean refresh = true;
 					if (gameToast.isExpired()) {
-						inGameToasts.pop(); // Removes
-						refresh = (gameToast = inGameToasts.peek()) != null; // Tries getting new
+						gameToasts.poll(); // Removes
+						refresh = (gameToast = gameToasts.peek()) != null; // Tries getting new
 					}
 
 					if (refresh) gameToast.tick();

@@ -11,6 +11,7 @@ import minicraft.gfx.Insets;
 import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
@@ -18,6 +19,7 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Achievement;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -173,7 +175,7 @@ public class AchievementsDisplay extends Display {
 			achievementScore += a.score;
 
 			// Tells the player that they got an achievement.
-			Game.inGameToasts.add(new AchievementUnlockToast(id));
+			Game.gameToasts.add(new AchievementUnlockToast(id));
 		} else
 			achievementScore -= a.score; // Logical?
 
@@ -183,52 +185,55 @@ public class AchievementsDisplay extends Display {
 		return true;
 	}
 
-	private static class AchievementUnlockToast extends Toast {
-		private static final int ICON_PADDING = 16; // 16 pixels wide space is reserved.
+	private static class AchievementUnlockToast extends GameToast {
+		private static final int EXPIRE_TIME = 240; // 4 seconds
+		private static final int ICON_PADDING = 16; // 16 pixels wide space reserved for icon.
+		private static final SpriteLinker.LinkedSprite SPRITE =
+			new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
+				.setSpriteDim(0, 6, 3, 3);
+		private static final Insets FRAME_PADDING = new Insets(3);
 
-		private static final AchievementUnlockToastFrame FRAME = new AchievementUnlockToastFrame();
-
-		private static class AchievementUnlockToastFrame extends ToastFrame {
-			private static final SpriteLinker.LinkedSprite sprite =
-				new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
-					.setSpriteDim(0, 6, 3, 3);
-
-			protected AchievementUnlockToastFrame() {
-				super(new Insets(3));
-			}
-
-			@Override
-			public void render(Screen screen, int x, int y, int w, int h) {
-				render(screen, x, y, w, h, sprite.getSprite());
+		private static SpriteLinker.LinkedSprite getIcon(String id) {
+			switch (id) {
+				default: // placeholder
+					return Objects.requireNonNull(SpriteLinker.missingTexture(SpriteLinker.SpriteType.Item));
 			}
 		}
 
-		private final String title = Localization.getLocalized(
-			"minicraft.toast.achievements.achievement_unlocked.title");
+		private static Dimension getSize(String id) {
+			// (x + 7) / 8 * 8 means rounding up to the nearest multiple of 8.
+			return new Dimension(
+				(Math.max(Font.textWidth(Localization.getLocalized(id)), Font.textWidth(getTitle())) +
+					FRAME_PADDING.left + FRAME_PADDING.right + ICON_PADDING + 7) / 8 * 8,
+				(Math.max(0, 2 * Font.textHeight() + SPACING +
+					FRAME_PADDING.top + FRAME_PADDING.bottom) + 7) / 8 * 8);
+		}
+
+		private static String getTitle() {
+			return Localization.getLocalized("minicraft.toast.achievements.achievement_unlocked.title");
+		}
+
+		private final SpriteLinker.LinkedSprite icon;
 		private final String name;
-		private final Dimension size;
 
 		public AchievementUnlockToast(String id) {
-			super(240); // 4 seconds
+			super(EXPIRE_TIME, getSize(id));
 			name = Localization.getLocalized(id);
-			size = new Dimension((Math.max(Font.textWidth(name), Font.textWidth(title)) +
-				FRAME.paddings.left + FRAME.paddings.right + ICON_PADDING + 7) / 8 * 8,
-				(Math.max(0, 2 * Font.textHeight() + SPACING +
-					FRAME.paddings.top + FRAME.paddings.bottom) + 7) / 8 * 8);
+			icon = getIcon(id);
 		}
 
 		@Override
-		public void render(Screen screen) {
-			// From the left
-			int x = -size.width * (ANIMATION_TIME - animationTick) / ANIMATION_TIME; // Shifting with animation (sliding)
-			int y = 0;
-			FRAME.render(screen, x, y, size.width / 8, size.height / 8);
-			screen.render(x + FRAME.paddings.left + (ICON_PADDING - MinicraftImage.boxWidth) / 2,
-				y + FRAME.paddings.top + MinicraftImage.boxWidth / 2,
-					Objects.requireNonNull(SpriteLinker.missingTexture(SpriteLinker.SpriteType.Item)));
-			Font.draw(title, screen, x + FRAME.paddings.left + ICON_PADDING, y + FRAME.paddings.top, Color.GOLD);
-			Font.draw(name, screen, x + FRAME.paddings.left + ICON_PADDING,
-				y + FRAME.paddings.top + SPACING + Font.textHeight(), Color.WHITE);
+		protected @NotNull Sprite getSprite() {
+			return SPRITE.getSprite();
+		}
+
+		@Override
+		protected void render(Screen screen, int x) {
+			screen.render(x + FRAME_PADDING.left + (ICON_PADDING - MinicraftImage.boxWidth) / 2,
+				FRAME_PADDING.top + MinicraftImage.boxWidth / 2, icon);
+			Font.draw(getTitle(), screen, x + FRAME_PADDING.left + ICON_PADDING, FRAME_PADDING.top, Color.GOLD);
+			Font.draw(name, screen, x + FRAME_PADDING.left + ICON_PADDING,
+				FRAME_PADDING.top + SPACING + Font.textHeight(), Color.WHITE);
 		}
 	}
 

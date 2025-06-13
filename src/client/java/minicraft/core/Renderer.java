@@ -38,7 +38,7 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
-import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.imageio.ImageIO;
 
@@ -131,7 +131,7 @@ public class Renderer extends Game {
 
 		appStatusBar.render();
 
-		AppToast toast = inAppToasts.peek();
+		AppToast toast = appToasts.peek();
 		if (toast != null) {
 			toast.render(screen);
 		}
@@ -238,7 +238,11 @@ public class Renderer extends Game {
 			HARDWARE_ACCELERATION_STATUS.initialize();
 		}
 
-		public abstract class AppStatusElement {
+		public enum GeneralStatus {
+			OFF, ON
+		}
+
+		public abstract class AppStatusElement<E extends Enum<E>> {
 			// width == 16 - size * 2
 			protected final int size; // 0: largest, 1: smaller, etc. (gradually)
 
@@ -252,6 +256,7 @@ public class Renderer extends Game {
 			private boolean blinking = false;
 			private int blinkTick = 0;
 
+			@ApiStatus.OverrideOnly
 			protected void render(int x, int y, MinicraftImage sheet) {
 				if (durationUpdated > 0) {
 					if (blinking) {
@@ -277,32 +282,23 @@ public class Renderer extends Game {
 				onStatusUpdate();
 			}
 
-			public abstract void updateStatus(int status);
+			public abstract void updateStatus(E status);
 
 			protected void initialize() {}
 		}
 
-		public class HardwareAccelerationElementStatus extends AppStatusElement {
-			public final int ACCELERATION_ON = 0;
-			public final int ACCELERATION_OFF = 1;
-
-			@MagicConstant(intValues = {ACCELERATION_ON, ACCELERATION_OFF})
-			private int status = ACCELERATION_ON;
+		public class HardwareAccelerationElementStatus extends AppStatusElement<GeneralStatus> {
+			private final GeneralStatus STATUS =
+				System.getProperty("sun.java2d.opengl").equals("true") ? GeneralStatus.ON : GeneralStatus.OFF;
 
 			private HardwareAccelerationElementStatus() {
 				super(0);
 			}
 
 			@Override
-			protected void initialize() {
-				status = Boolean.parseBoolean(System.getProperty("sun.java2d.opengl")) ?
-					ACCELERATION_ON : ACCELERATION_OFF;
-			}
-
-			@Override
 			protected void render(int x, int y, MinicraftImage sheet) {
 				super.render(x, y, sheet);
-				if (status == ACCELERATION_ON) {
+				if (STATUS == GeneralStatus.ON) {
 					for (int xx = 0; xx < 2; ++xx)
 						screen.render(x + xx * 8, y, xx, 4, 0, sheet);
 				} else {
@@ -312,10 +308,7 @@ public class Renderer extends Game {
 			}
 
 			@Override
-			public void updateStatus(int status) {
-				super.updateStatus();
-				this.status = status;
-			}
+			public void updateStatus(GeneralStatus status) {} // Unsupported
 		}
 	}
 
@@ -558,7 +551,7 @@ public class Renderer extends Game {
 		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
 
-		Toast toast = inGameToasts.peek();
+		Toast toast = gameToasts.peek();
 		if (toast != null) {
 			toast.render(screen);
 		}
