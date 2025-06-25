@@ -109,7 +109,6 @@ public class Renderer extends Game {
 		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
-		appStatusBar.initialize();
 	}
 
 
@@ -128,8 +127,6 @@ public class Renderer extends Game {
 
 		if (currentDisplay != null) // Renders menu, if present.
 			currentDisplay.render(screen);
-
-		appStatusBar.render();
 
 		AppToast toast = appToasts.peek();
 		if (toast != null) {
@@ -191,124 +188,6 @@ public class Renderer extends Game {
 			}
 
 			Updater.screenshot--;
-		}
-	}
-
-	public static final AppStatusBar appStatusBar = new AppStatusBar();
-
-	public static class AppStatusBar {
-		private static final int DURATION_ON_UPDATE = 90; // 1.5s
-
-		public final AppStatusElement HARDWARE_ACCELERATION_STATUS = new HardwareAccelerationElementStatus();
-
-		private AppStatusBar() {}
-
-		private int duration = 120; // Shows for 2 seconds initially.
-
-		private void render() {
-			if (duration == 0) return;
-			MinicraftImage sheet = spriteLinker.getSheet(SpriteType.Gui, "app_status_bar"); // Obtains sheet.
-
-			// Background
-			for (int x = 0; x < 12; ++x) {
-				for (int y = 0; y < 2; ++y) {
-					screen.render(Screen.w - 16 * 8 + x * 8, y * 8, x, y, 0, sheet);
-				}
-			}
-
-			// Hardware Acceleration Status (width = 16)
-			HARDWARE_ACCELERATION_STATUS.render(Screen.w - 16 * 8 + 5, 2, sheet);
-		}
-
-		void tick() {
-			if (duration > 0)
-				duration--;
-			HARDWARE_ACCELERATION_STATUS.tick();
-		}
-
-		void show(int duration) {
-			this.duration = Math.max(this.duration, duration);
-		}
-
-		private void onStatusUpdate() {
-			show(DURATION_ON_UPDATE);
-		}
-
-		private void initialize() {
-			HARDWARE_ACCELERATION_STATUS.initialize();
-		}
-
-		public enum GeneralStatus {
-			OFF, ON
-		}
-
-		public abstract class AppStatusElement<E extends Enum<E>> {
-			// width == 16 - size * 2
-			protected final int size; // 0: largest, 1: smaller, etc. (gradually)
-
-			private AppStatusElement(int size) {
-				this.size = size;
-			}
-
-			private static final int BLINK_PERIOD = 10; // 6 Hz
-
-			private int durationUpdated = 0;
-			private boolean blinking = false;
-			private int blinkTick = 0;
-
-			@ApiStatus.OverrideOnly
-			protected void render(int x, int y, MinicraftImage sheet) {
-				if (durationUpdated > 0) {
-					if (blinking) {
-						screen.render(x, y, 10, 3 + size, 0, sheet);
-					}
-				}
-			}
-
-			protected void tick() {
-				if (durationUpdated > 0) {
-					durationUpdated--;
-					if (blinkTick == 0) {
-						blinkTick = BLINK_PERIOD;
-						blinking = !blinking;
-					} else blinkTick--;
-				}
-			}
-
-			protected void updateStatus() {
-				durationUpdated = DURATION_ON_UPDATE;
-				blinking = false;
-				blinkTick = 0;
-				onStatusUpdate();
-			}
-
-			public abstract void updateStatus(E status);
-
-			protected void initialize() {}
-		}
-
-		public class HardwareAccelerationElementStatus extends AppStatusElement<GeneralStatus> {
-			private final GeneralStatus STATUS =
-				System.getProperty("sun.java2d.opengl").equals("true") ? GeneralStatus.ON : GeneralStatus.OFF;
-
-			private HardwareAccelerationElementStatus() {
-				super(0);
-			}
-
-			@Override
-			protected void render(int x, int y, MinicraftImage sheet) {
-				super.render(x, y, sheet);
-				if (STATUS == GeneralStatus.ON) {
-					for (int xx = 0; xx < 2; ++xx)
-						screen.render(x + xx * 8, y, xx, 4, 0, sheet);
-				} else {
-					for (int xx = 0; xx < 2; ++xx)
-						screen.render(x + xx * 8, y, 2 + xx, 4, 0, sheet);
-				}
-			}
-
-			@Override
-			public void updateStatus(GeneralStatus status) {} // Unsupported
 		}
 	}
 
