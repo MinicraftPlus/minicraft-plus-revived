@@ -7,6 +7,7 @@ import minicraft.entity.particle.WaterParticle;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
+import minicraft.level.tile.FlowerTile;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.GrassTile;
 import minicraft.level.tile.Tile;
@@ -56,15 +57,13 @@ public class WateringCanItem extends Item {
 			renderingTick++;
 			Random random = new Random();
 			if (renderingTick >= 8) {
-				int px = player.x + 16 * attackDir.getX();
-				int py = player.y + 16 * attackDir.getY();
-
 				for (int i = 0; i < 4; i++) {
 					SpriteLinker.LinkedSprite splash = spriteSplash[random.nextInt(spriteSplash.length)];
-					int x = px + random.nextInt(5) - 2;
-					int y = py + random.nextInt(5) - 2;
-					int destX = px + random.nextInt(3) - 1;
-					int destY = py + random.nextInt(3) - 1;
+					// 2-pixel deviation for centering particle sprites.
+					int destX = player.x - 2 + 12 * attackDir.getX() + random.nextInt(9) - 4;
+					int destY = player.y - 2 + 12 * attackDir.getY() + random.nextInt(9) - 4;
+					int x = player.x - 2 + 4 * attackDir.getX() + random.nextInt(5) - 2;
+					int y = player.y - 2 + 4 * attackDir.getY() + random.nextInt(5) - 2;
 					level.add(new WaterParticle(x, y, 80 + random.nextInt(61) - 30, splash, destX, destY));
 				}
 				renderingTick = 0;
