@@ -19,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Boat extends Entity implements PlayerRideable {
+	public static final int RADIUS_X = 6;
+	public static final int RADIUS_Y = 6;
+
 	private static final SpriteLinker.LinkedSprite[][] boatSprites = new SpriteLinker.LinkedSprite[][] {
 		Mob.compileSpriteList(0, 0, 3, 3, 0, 4, "boat"), //
 		Mob.compileSpriteList(0, 3, 3, 3, 0, 4, "boat")
@@ -34,7 +37,7 @@ public class Boat extends Entity implements PlayerRideable {
 	private int unitMoveCounter = 0;
 
 	public Boat(@NotNull Direction dir) {
-		super(6, 6);
+		super(RADIUS_X, RADIUS_Y);
 		this.dir = dir;
 	}
 
