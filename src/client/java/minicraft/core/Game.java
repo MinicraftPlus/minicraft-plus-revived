@@ -9,6 +9,8 @@ import minicraft.level.tile.Tiles;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
+import minicraft.screen.AppToast;
+import minicraft.screen.GameToast;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 public class Game {
 	protected Game() {
@@ -29,7 +32,13 @@ public class Game {
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
 
+	/**
+	 * In-game notifications
+	 */
 	public static List<String> notifications = new ArrayList<>();
+	// Since the canvas size is limited, toasts are handled one by one using Deque (as Queue)
+	public static final Queue<AppToast> appToasts = new ArrayDeque<>();
+	public static final Queue<GameToast> gameToasts = new ArrayDeque<>();
 
 	public static int MAX_FPS;
 

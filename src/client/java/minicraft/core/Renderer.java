@@ -27,8 +27,10 @@ import minicraft.item.WateringCanItem;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
+import minicraft.screen.AppToast;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.Toast;
 import minicraft.screen.SignDisplayMenu;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.entry.ListEntry;
@@ -36,21 +38,20 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.imageio.ImageIO;
 
 import java.awt.Canvas;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -126,6 +127,11 @@ public class Renderer extends Game {
 
 		if (currentDisplay != null) // Renders menu, if present.
 			currentDisplay.render(screen);
+
+		AppToast toast = appToasts.peek();
+		if (toast != null) {
+			toast.render(screen);
+		}
 
 		if (!canvas.hasFocus())
 			renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
@@ -281,8 +287,7 @@ public class Renderer extends Game {
 			}
 			List<String> print = new ArrayList<>();
 			for (String n : notifications) {
-				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
-					print.add(l);
+				print.addAll(Arrays.asList(Font.getLines(n, Screen.w, Screen.h, 0)));
 			}
 
 			// Draw each current notification, with shadow text effect.
@@ -424,6 +429,11 @@ public class Renderer extends Game {
 		renderQuestsDisplay();
 		if (signDisplayMenu != null) signDisplayMenu.render(screen);
 		renderDebugInfo();
+
+		Toast toast = gameToasts.peek();
+		if (toast != null) {
+			toast.render(screen);
+		}
 	}
 
 	public static void renderBossbar(int length, String title) {
