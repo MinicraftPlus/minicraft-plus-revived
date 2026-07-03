@@ -47,6 +47,7 @@ public class Items {
 		addAll(DyeItem.getAllInstances());
 		addAll(WoolItem.getAllInstances());
 		addAll(EntitySummonItem.getAllInstances());
+                addAll(DevItem.getAllInstances());
 	}
 
 	public static ArrayList<Item> getAll() {

@@ -25,9 +25,19 @@ public class Biomes {
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("River", new RiverBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("RiverBank", new RiverBankBiome());
 		getLayerBiomes(LevelGen.SURFACE_LEVEL).addBiome("Rock", new RockBiome());
-		getLayerBiomes(LevelGen.IRON_LEVEL).addBiome("IronCave", new IronCaveBiome());
-		getLayerBiomes(LevelGen.GOLD_LEVEL).addBiome("GoldCave", new GoldCaveBiome());
-		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("GemCave", new GemCaveBiome());
+                
+                // Iron is more abundant
+		getLayerBiomes(LevelGen.IRON_LEVEL).addBiome("IronCave1", new IronCaveBiome());
+                
+                // Gold is more abundant, iron can still be found
+		getLayerBiomes(LevelGen.GOLD_LEVEL).addBiome("IronCave2", new IronCaveBiome());
+		getLayerBiomes(LevelGen.GOLD_LEVEL).addBiome("GoldCave1", new GoldCaveBiome());
+                
+                // Gems are more abundant, gold and lava stone can be found
+		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("GemCave1", new GemCaveBiome());
+		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("GemCave2", new GemCaveBiome());
+		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("LavaStone", new LavaStoneCaveBiome());
+		getLayerBiomes(LevelGen.GEM_LEVEL).addBiome("GoldCave2", new GoldCaveBiome());
 		getLayerBiomes(LevelGen.DUNGEON_LEVEL).addBiome("Dungeon", new DungeonBiome());
 	}
 

@@ -8,13 +8,13 @@ import minicraft.level.tile.Tiles;
 
 public class GoldCaveBiome extends Biome {
 	public GoldCaveBiome() {
-		super(0, 0, 0);
+		super(0.3f, 0.1f, 0.3f);
 	}
 
 	public void generate(ChunkManager map, int x, int y) {
 		LevelNoise noise = map.getTileNoise(x, y);
 
-		double val = Math.abs(noise.getScale32Noise(x, y, 0) - noise.getScale32Noise(x, y, 1));
+		double val = Math.abs(noise.getScale16Noise(x, y, 0) - noise.getScale16Noise(x, y, 1));
 		double mval = Math.abs(Math.abs(noise.getScale16Noise(x, y, 0) - noise.getScale16Noise(x, y, 1)) - noise.getScale16Noise(x, y, 2));
 		double nval = Math.abs(Math.abs(noise.getScale16Noise(x, y, 3) - noise.getScale16Noise(x, y, 4)) - noise.getScale16Noise(x, y, 5));
 		double wval = Math.abs(Math.abs(noise.getScale16Noise(x, y, 6) - noise.getScale16Noise(x, y, 7)) - noise.getScale16Noise(x, y, 8));
