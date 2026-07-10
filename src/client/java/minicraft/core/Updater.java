@@ -12,7 +12,9 @@ import minicraft.saveload.Save;
 import minicraft.screen.Display;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
+import minicraft.screen.AppToast;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.Toast;
 import minicraft.screen.TutorialDisplayHandler;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.AdvancementElement;
@@ -172,6 +174,18 @@ public class Updater extends Game {
 
 		if (updateNoteTick) notetick++;
 
+		// Handling app toasts
+		AppToast appToast = appToasts.peek();
+		if (appToast != null) {
+			boolean refresh = true;
+			if (appToast.isExpired()) {
+				appToasts.poll(); // Removes
+				refresh = (appToast = appToasts.peek()) != null; // Tries getting new
+			}
+
+			if (refresh) appToast.tick();
+		}
+
 		Sound.tick();
 
 		// This is the general action statement thing! Regulates menus, mostly.
@@ -209,6 +223,18 @@ public class Updater extends Game {
 
 				player.tick(); // Ticks the player when there's no menu.
 
+				// Handling game toasts
+				Toast gameToast = gameToasts.peek();
+				if (gameToast != null) {
+					boolean refresh = true;
+					if (gameToast.isExpired()) {
+						gameToasts.poll(); // Removes
+						refresh = (gameToast = gameToasts.peek()) != null; // Tries getting new
+					}
+
+					if (refresh) gameToast.tick();
+				}
+
 				if (level != null) {
 					level.tick(true);
 					Tile.tickCount++;
@@ -227,7 +253,7 @@ public class Updater extends Game {
 					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
 						Game.setDisplay(new LevelTransitionDisplay(1));
 					}
-					
+
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");

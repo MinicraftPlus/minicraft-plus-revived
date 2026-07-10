@@ -5,15 +5,21 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
+import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
+import minicraft.gfx.Insets;
+import minicraft.gfx.MinicraftImage;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Achievement;
 import minicraft.util.Logging;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +32,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AchievementsDisplay extends Display {
@@ -168,14 +175,66 @@ public class AchievementsDisplay extends Display {
 			achievementScore += a.score;
 
 			// Tells the player that they got an achievement.
-			Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked", Localization.getLocalized(id)));
+			Game.gameToasts.add(new AchievementUnlockToast(id));
 		} else
-			achievementScore -= a.score;
+			achievementScore -= a.score; // Logical?
 
 		// Save the new list of achievements stored in memory.
 		if (save) new Save();
 
 		return true;
+	}
+
+	private static class AchievementUnlockToast extends GameToast {
+		private static final int EXPIRE_TIME = 240; // 4 seconds
+		private static final int ICON_PADDING = 16; // 16 pixels wide space reserved for icon.
+		private static final SpriteLinker.LinkedSprite SPRITE =
+			new SpriteLinker.LinkedSprite(SpriteLinker.SpriteType.Gui, "toasts")
+				.setSpriteDim(0, 6, 3, 3);
+		private static final Insets FRAME_PADDING = new Insets(3);
+
+		private static SpriteLinker.LinkedSprite getIcon(String id) {
+			switch (id) {
+				default: // placeholder
+					return Objects.requireNonNull(SpriteLinker.missingTexture(SpriteLinker.SpriteType.Item));
+			}
+		}
+
+		private static Dimension getSize(String id) {
+			// (x + 7) / 8 * 8 means rounding up to the nearest multiple of 8.
+			return new Dimension(
+				(Math.max(Font.textWidth(Localization.getLocalized(id)), Font.textWidth(getTitle())) +
+					FRAME_PADDING.left + FRAME_PADDING.right + ICON_PADDING + 7) / 8 * 8,
+				(Math.max(0, 2 * Font.textHeight() + SPACING +
+					FRAME_PADDING.top + FRAME_PADDING.bottom) + 7) / 8 * 8);
+		}
+
+		private static String getTitle() {
+			return Localization.getLocalized("minicraft.toast.achievements.achievement_unlocked.title");
+		}
+
+		private final SpriteLinker.LinkedSprite icon;
+		private final String name;
+
+		public AchievementUnlockToast(String id) {
+			super(EXPIRE_TIME, getSize(id));
+			name = Localization.getLocalized(id);
+			icon = getIcon(id);
+		}
+
+		@Override
+		protected @NotNull Sprite getSprite() {
+			return SPRITE.getSprite();
+		}
+
+		@Override
+		protected void render(Screen screen, int x) {
+			screen.render(x + FRAME_PADDING.left + (ICON_PADDING - MinicraftImage.boxWidth) / 2,
+				FRAME_PADDING.top + MinicraftImage.boxWidth / 2, icon);
+			Font.draw(getTitle(), screen, x + FRAME_PADDING.left + ICON_PADDING, FRAME_PADDING.top, Color.GOLD);
+			Font.draw(name, screen, x + FRAME_PADDING.left + ICON_PADDING,
+				FRAME_PADDING.top + SPACING + Font.textHeight(), Color.WHITE);
+		}
 	}
 
 	/**

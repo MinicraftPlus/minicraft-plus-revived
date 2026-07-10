@@ -13,7 +13,6 @@ import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
 
 public class DeathChest extends Chest {
 	private static LinkedSprite normalSprite = new LinkedSprite(SpriteType.Entity, "chest");
