@@ -386,7 +386,7 @@ public class ResourcePackDisplay extends Display {
 			try {
 				this.packRootPath = Paths.get(packRoot.toURI());
 			} catch (URISyntaxException e) {
-				throw new IOException(e);
+				//throw new IOException(e);
 			}
 			this.isZip = packRoot.getFile().endsWith(".zip");
 			this.packFormat = packFormat;
