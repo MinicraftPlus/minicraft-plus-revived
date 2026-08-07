@@ -449,10 +449,12 @@ public class Level {
 		if (fullTick) {
 			// This prevents any entity (or tile) tick action from happening on a server level with no players.
 
-			for (int i = 0; i < w * h / 50; i++) {
-				int xt = random.nextInt(w);
-				int yt = random.nextInt(w);
-				getTile(xt, yt).tick(this, xt, yt);
+			for(Player player : players) {
+				for (int i = 0; i < 10; i++) { // remain using tick rate based on W and H, TODO: add tickrate constant (or variable) when removing w and h, currently tick 10 tiles in surrounding chunks
+					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.x >> 4;
+					int yt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.y >> 4;
+					getTile(xt, yt).tick(this, xt, yt);
+				}
 			}
 
 			// Entity loop
@@ -493,9 +495,11 @@ public class Level {
 	}
 
 	public void loadChunk(int x, int y) {
-		if (chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
-			if (parentLevel.chunkManager.getChunkStage(x, y) == 0)
-				LevelGen.generateChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
+		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
+			if(parentLevel.chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS) {
+				LevelGen.advanceChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
+				return;
+			}
 			int S = ChunkManager.CHUNK_SIZE;
 			for (int i = x * S; i < x * S + S; i++)
 				for (int j = y * S; j < y * S + S; j++) {
@@ -516,8 +520,8 @@ public class Level {
 				}
 			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
 		}
-		if (chunkManager.getChunkStage(x, y) == 0)
-			LevelGen.generateChunk(chunkManager, x, y, depth, seed);
+		else if(chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS)
+			LevelGen.advanceChunk(chunkManager, x, y, depth, seed);
 	}
 
 	public boolean entityNearPlayer(Entity entity) {
