@@ -38,7 +38,10 @@ public class PlayerDeathDisplay extends Display {
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.setDisplay(new TitleDisplay());
 		}));
-		entries.add(new SelectEntry("minicraft.displays.player_death.quit", () -> Game.setDisplay(new TitleDisplay())));
+
+		if (!Game.isMode("minicraft.settings.mode.hardcore")) {
+			entries.add(new SelectEntry("minicraft.displays.player_death.quit", () -> Game.setDisplay(new TitleDisplay())));
+		}
 
 		menus = new Menu[] {
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)

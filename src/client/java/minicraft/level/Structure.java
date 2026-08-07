@@ -107,7 +107,7 @@ public class Structure {
 	static final Structure dungeonLock;
 	static final Structure dungeonBossRoom;
 	static final Structure lavaPool;
-	static final Structure ornateLavaPool;
+	public static final Structure ornateLavaPool;
 	static final Structure dungeonGarden;
 	static final Structure dungeonChest;
 	static final Structure dungeonSpawner;

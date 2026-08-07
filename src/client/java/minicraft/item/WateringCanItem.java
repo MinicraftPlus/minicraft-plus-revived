@@ -7,8 +7,8 @@ import minicraft.entity.particle.WaterParticle;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteLinker;
 import minicraft.level.Level;
-import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.FlowerTile;
+import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.GrassTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -65,8 +65,8 @@ public class WateringCanItem extends Item {
 					int x = player.x - 2 + 4 * attackDir.getX() + random.nextInt(5) - 2;
 					int y = player.y - 2 + 4 * attackDir.getY() + random.nextInt(5) - 2;
 					level.add(new WaterParticle(x, y, 80 + random.nextInt(61) - 30, splash, destX, destY));
-					renderingTick = 0;
 				}
+				renderingTick = 0;
 			}
 			if (tile instanceof CropTile) {
 				int fertilization = ((CropTile) tile).getFertilization(level.getData(xt, yt));
@@ -87,7 +87,7 @@ public class WateringCanItem extends Item {
 					}
 					if (random.nextInt(60) == 0) { // Small chance for growing flowers
 						level.setTile(xt, yt, Tiles.get((short) 2),
-							random.nextInt(FlowerTile.FlowerVariant.values().length));
+						random.nextInt(FlowerTile.FlowerVariant.values().length));
 					}
 				}
 

@@ -6,6 +6,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.level.biome.Biomes;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -24,7 +25,7 @@ public class Game {
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 
-	public static final Version VERSION = new Version("2.3.0-infdev2");
+	public static final Version VERSION = new Version("2.3.0-infdev3");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -108,6 +109,7 @@ public class Game {
 		ResourcePackDisplay.reloadResources();
 
 		Tiles.initTileList();
+		Biomes.initBiomeList();
 
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();

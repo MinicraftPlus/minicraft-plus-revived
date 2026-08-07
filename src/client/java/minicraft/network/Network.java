@@ -6,12 +6,14 @@ import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import minicraft.core.Action;
 import minicraft.core.Game;
+import minicraft.saveload.Version;
 import minicraft.core.VersionInfo;
 import minicraft.entity.Entity;
 import minicraft.level.Level;
 import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
+import kong.unirest.json.JSONArray;
 
 import java.util.Random;
 
@@ -33,13 +35,26 @@ public class Network extends Game {
 		new Thread(() -> {
 			Logging.NETWORK.debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
 			try {
-				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").asJson();
+				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repositories/83168941/releases").asJson();
 				if (response.getStatus() != 200) {
 					Logging.NETWORK.error("Version request returned status code " + response.getStatus() + ": " + response.getStatusText());
 					Logging.NETWORK.error("Response body: " + response.getBody());
 					latestVersion = new VersionInfo(VERSION, "", "");
 				} else {
-					latestVersion = new VersionInfo(new JSONObject(response.getBody().getArray().getJSONObject(0).toString()));
+					JSONArray versions = response.getBody().getArray();
+					Version highestVersion = new Version("0.0.0");
+					int idx = 0;
+					for (int i = 10; 0 >= i; i--)
+					{
+						kong.unirest.json.JSONObject versionJson = versions.getJSONObject(i);
+						Version version = new Version(versionJson.getString("tag_name").substring(1));
+						if (version.compareTo(highestVersion) > 0)
+						{
+							highestVersion = version;
+							idx = i;
+						}
+					}
+					latestVersion = new VersionInfo(new JSONObject(versions.getJSONObject(idx).toString()));
 				}
 			} catch (UnirestException e) {
 				e.printStackTrace();

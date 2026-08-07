@@ -522,7 +522,11 @@ public class ResourcePackDisplay extends Display {
 					stream.forEach(p -> {
 						boolean isDir = Files.isDirectory(p);
 						if ((filter == null || filter.check(p, isDir))) {
-							paths.add(this.packRootPath.relativize(p).toString().replaceAll("\\\\", "/") + (isDir ? "/" : ""));
+							String pathStr = this.packRootPath.relativize(p).toString().replaceAll("\\\\", "/");
+							if (isDir && !pathStr.endsWith("/")) {
+								pathStr += "/";
+							}
+							paths.add(pathStr);
 						}
 					});
 				} catch (IOException e) {
