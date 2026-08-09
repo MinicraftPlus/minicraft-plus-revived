@@ -1,5 +1,6 @@
 package minicraft.gfx;
 
+import minicraft.core.Action;
 import minicraft.core.Renderer;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
@@ -40,32 +44,61 @@ public class Font {
 		}
 	}
 
-	public static void drawColor(String message, Screen screen, int x, int y) {
-		// Set default color message if it doesn't have initially
-		if (message.charAt(0) != Color.COLOR_CHAR) {
-			message = Color.WHITE_CODE + message;
+	public static void drawColor(String message, Screen screen, int x, int y) { drawColor(message, screen, x, y, -1); }
+	public static void drawColor(String message, Screen screen, int x, int y, int whiteTint) {
+		AtomicInteger leading = new AtomicInteger();
+		AtomicReference<StringBuilder> toRender = new AtomicReference<>(new StringBuilder());
+		SizedStack<Integer> colors = new SizedStack<>(2);
+		Action textRenderer = () -> {
+			if (toRender.get().length() > 0) {
+				String text = toRender.toString();
+				Font.draw(text, screen, x + leading.get(), y, colors.isEmpty() ? whiteTint : colors.peek());
+				leading.addAndGet(Font.textWidth(text));
+				toRender.set(new StringBuilder()); // Clears the appended text.
+			}
+		};
+		for (int i = 0; i < message.length(); i++) {
+			char c = message.charAt(i);
+			if (c == Color.COLOR_CHAR) {
+				if (message.length() - 1 - i >= 4) { // There should be 4 chars for color values.
+					textRenderer.act(); // Renders with the last color instantly.
+					String colorCode = message.substring(i, i + 5); // Gets the 5 characters including color char.
+					if (colorCode.equals(Color.RESET_CODE)) {
+						colors.clear();
+					} else if (colorCode.equals(Color.REDO_CODE)) {
+						if (colors.size() > 0) colors.pop();
+					} else {
+						colors.add(Color.get(colorCode));
+					}
+
+					i += 4; // Shifts for 4 characters (color values).
+					continue;
+				}
+			}
+
+			toRender.get().append(c);
+			if (i == message.length() - 1) { // If this is the last character
+				textRenderer.act(); // Renders the text remaining.
+			}
+		}
+	}
+
+	// Reference: https://stackoverflow.com/a/16206356
+	private static class SizedStack<T> extends Stack<T> {
+		private final int maxSize;
+
+		public SizedStack(int size) {
+			super();
+			this.maxSize = size;
 		}
 
-		int leading = 0;
-		for (String data : message.split(String.valueOf(Color.COLOR_CHAR))) {
-			if (data.isEmpty()) {
-				continue;
+		@Override
+		public T push(T object) {
+			//If the stack is too big, remove elements until it's the right size.
+			while (this.size() >= maxSize) {
+				this.remove(0);
 			}
-
-			String text;
-			String color;
-
-			try {
-				text = data.substring(4);
-				color = data.substring(0, 4); // ARGB value
-			} catch (IndexOutOfBoundsException ignored) {
-				// Bad formatted colored string
-				text = data;
-				color = Color.WHITE_CODE;
-			}
-
-			Font.draw(text, screen, x + leading, y, Color.get(color));
-			leading += Font.textWidth(text);
+			return super.push(object);
 		}
 	}
 

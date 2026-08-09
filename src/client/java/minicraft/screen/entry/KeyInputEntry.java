@@ -26,11 +26,10 @@ public class KeyInputEntry extends SelectEntry {
 		for (int spaces = 0; spaces < Screen.w / Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
 			buffer.append(" ");
 
-		String newMapping = "";
+		StringBuilder newMapping = new StringBuilder();
 		for (String k : mapping.split("\\|")) {
-			if (duplicated.contains(k)) k = Color.RED_CODE + k;
-			k = Color.GRAY_CODE + k + Color.WHITE_CODE;
-			newMapping += k + "|";
+			if (duplicated.contains(k)) k = Color.RED_CODE + k + Color.RESET_CODE;
+			newMapping.append(k).append("|");
 		}
 
 		this.mapping = newMapping.substring(0, newMapping.length() - 1);
