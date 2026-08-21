@@ -279,7 +279,6 @@
   "minicraft.displays.quests.display.no_quest_desc": "Ingen oppgave",
   "minicraft.displays.resource_packs.display.help.keyboard_needed": "Kun tastaturinndata er godtatt.",
   "minicraft.displays.resource_packs.display.help.move": "Brul %s og %s for bevege.",
-  "minicraft.displays.resource_packs.display.help.position": "Shift-[Venstetast|Høyretast|Opptast|Nedtast] for å bevege ressurspakker. ",
   "minicraft.displays.resource_packs.display.help.select": "%s for å eksaminere.",
   "minicraft.displays.resource_packs.display.title": "Resurspakker",
   "minicraft.displays.skin": "Drakter",

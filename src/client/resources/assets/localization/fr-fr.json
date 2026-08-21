@@ -325,7 +325,6 @@
   "minicraft.displays.quests.display.no_quest_desc": "Pas de quête",
   "minicraft.displays.resource_packs.display.help.keyboard_needed": "Seul les entrées par clavier sont acceptées",
   "minicraft.displays.resource_packs.display.help.move": "Utilisez %s et %s pour bouger",
-  "minicraft.displays.resource_packs.display.help.position": "MAJ-[GAUCHE|DROITE|HAUT|BAS] pour bouger des paquets. ␣",
   "minicraft.displays.resource_packs.display.help.select": "%s pour examiner",
   "minicraft.displays.resource_packs.display.title": "Pack de Ressource",
   "minicraft.displays.skin": "Skins",

@@ -276,7 +276,6 @@
   "minicraft.displays.quests.display.header.unlocked": "Açıldı",
   "minicraft.displays.quests.display.no_quest_desc": "Görev yok",
   "minicraft.displays.resource_packs.display.help.move": "%s ve %s ile haraket et.",
-  "minicraft.displays.resource_packs.display.help.position": "SHIFT-[SOL|SAĞ|YUKARI|AŞAĞI] ile paketleri sırala",
   "minicraft.displays.resource_packs.display.help.select": "%s ile incele.",
   "minicraft.displays.resource_packs.display.title": "Kaynak Paketleri",
   "minicraft.displays.skin": "Skinler",

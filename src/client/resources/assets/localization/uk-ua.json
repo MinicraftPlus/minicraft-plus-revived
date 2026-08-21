@@ -321,7 +321,6 @@
   "minicraft.displays.quests.display.no_quest_desc": "Немає завдань",
   "minicraft.displays.resource_packs.display.help.keyboard_needed": "Тільки ввід з клавіатури приймається.",
   "minicraft.displays.resource_packs.display.help.move": "Використовуйте %s і %s для переміщення.",
-  "minicraft.displays.resource_packs.display.help.position": "SHIFT-[LEFT|RIGHT|UP|DOWN] щоб переміщати пакунки. ",
   "minicraft.displays.resource_packs.display.help.select": "%s, щоб дослідити.",
   "minicraft.displays.resource_packs.display.title": "Пакунки ресурсів",
   "minicraft.displays.skin": "Скіни",

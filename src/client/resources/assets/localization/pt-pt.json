@@ -263,7 +263,6 @@
   "minicraft.displays.quests.display.no_quest": "Nenhuma missão desbloqueada",
   "minicraft.displays.quests.display.no_quest_desc": "Nenhuma missão",
   "minicraft.displays.resource_packs.display.help.move": "Usa %s e %s para te movimentares.",
-  "minicraft.displays.resource_packs.display.help.position": "SHIFT-[LEFT|RIGHT|UP|DOWN] para mover pacotes.␣",
   "minicraft.displays.resource_packs.display.help.select": "%s para examinar.",
   "minicraft.displays.resource_packs.display.title": "Pacotes de recurso",
   "minicraft.displays.skin": "Skins",
