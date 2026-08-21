@@ -275,7 +275,6 @@
   "minicraft.displays.quests.display.header.unlocked": "Ontgrendeld",
   "minicraft.displays.quests.display.no_quest_desc": "Geen uitdaging",
   "minicraft.displays.resource_packs.display.help.move": "Gebruik %s en %s om te bewegen.",
-  "minicraft.displays.resource_packs.display.help.position": "SHIFT-[LINKS|RECHTS|OMHOOG|OMLAAG] om pakketten te bewegen.",
   "minicraft.displays.resource_packs.display.help.select": "%s om te onderzoeken.",
   "minicraft.displays.resource_packs.display.title": "resourcepakketten",
   "minicraft.displays.skin": "Skins",

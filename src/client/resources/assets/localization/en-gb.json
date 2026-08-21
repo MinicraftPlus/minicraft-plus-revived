@@ -321,7 +321,6 @@
   "minicraft.displays.quests.display.no_quest_desc": "No quest",
   "minicraft.displays.resource_packs.display.help.keyboard_needed": "Only keyboard input is accepted.",
   "minicraft.displays.resource_packs.display.help.move": "Use %s and %s to move.",
-  "minicraft.displays.resource_packs.display.help.position": "SHIFT-[ARROW KEYS] to move packs. ",
   "minicraft.displays.resource_packs.display.help.select": "%s to examine",
   "minicraft.displays.resource_packs.display.title": "Resource Packs",
   "minicraft.displays.skin": "Skins",
