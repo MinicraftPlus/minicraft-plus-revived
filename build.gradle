@@ -124,3 +124,14 @@ tasks.withType(Tar) {
 tasks.withType(Zip) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
+
+// Exercise Chinese resources and the pixel renderer without opening a game window.
+project(":client") {
+    tasks.register('checkChinese', JavaExec) {
+        dependsOn testClasses
+        classpath = sourceSets.test.runtimeClasspath
+        mainClass = 'minicraft.gfx.ChineseLocalizationCheck'
+        args file("$buildDir/reports/chinese").absolutePath
+    }
+    check.dependsOn checkChinese
+}

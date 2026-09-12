@@ -37,6 +37,9 @@ public class Menu {
 	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 
 	private String title = "";
+	private String titleKey = "";
+	private Builder layout;
+	private Locale layoutLocale;
 	private int titleColor;
 	private Point titleLoc = null; // standard point is anchor, with anchor.x + SpriteSheet.boxWidth
 	private boolean drawVertically = false;
@@ -80,6 +83,9 @@ public class Menu {
 		entryBounds = m.entryBounds == null ? null : new Rectangle(m.entryBounds);
 		entryPos = m.entryPos;
 		title = m.title;
+		titleKey = m.titleKey;
+		layout = m.layout;
+		layoutLocale = m.layoutLocale;
 		titleColor = m.titleColor;
 		titleLoc = m.titleLoc;
 		drawVertically = m.drawVertically;
@@ -317,6 +323,18 @@ public class Menu {
 	}
 
 	public void render(Screen screen) {
+		// Recompute layout as well as text when returning from the language selector.
+		if (layout != null && !Localization.getSelectedLocale().equals(layoutLocale)) {
+			Menu refreshed = layout.copy().setEntries(entries).setSelection(selection).createMenu();
+			bounds = refreshed.bounds;
+			entryBounds = refreshed.entryBounds;
+			titleLoc = refreshed.titleLoc;
+			title = refreshed.title;
+			displayLength = refreshed.displayLength;
+			padding = refreshed.padding;
+			layoutLocale = Localization.getSelectedLocale();
+			init();
+		}
 		renderFrame(screen);
 
 		// render the title
@@ -588,7 +606,10 @@ public class Menu {
 			if (b == this)
 				return copy().createMenu(this);
 
-			menu.title = Localization.getLocalized(menu.title);
+			menu.titleKey = menu.title;
+			menu.layout = b.copy();
+			menu.layoutLocale = Localization.getSelectedLocale();
+			menu.title = Localization.getLocalized(menu.titleKey);
 
 			// set default selectability
 			if (!setSelectable) {

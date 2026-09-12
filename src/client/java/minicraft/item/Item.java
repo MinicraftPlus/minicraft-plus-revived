@@ -95,7 +95,7 @@ public abstract class Item {
 	 * Gets the description used for display item information.
 	 */
 	public String getDescription() {
-		return getName();
+		return Localization.getLocalized(getName());
 	}
 
 	public final String getName() {

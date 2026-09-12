@@ -349,7 +349,7 @@ public class Renderer extends Game {
 					int minutes = pTime / 60;
 					int seconds = pTime % 60;
 					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.hide_hint", input.getMapping("potionEffects")), screen, 180, 9);
-					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.potion_dur", pType, minutes, seconds), screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
+					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.potion_dur", Localization.getLocalized(pType.toString()), minutes, seconds), screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
 				}
 			} else {
 				for (int i = 0; i < effects.length; i++) {
