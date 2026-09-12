@@ -141,7 +141,7 @@ public class TitleDisplay extends Display {
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol * 51, bcol * 51, bcol * 25);
 
-		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
+		Font.drawCentered(Localization.getLocalizedOrDefault("minicraft.splash." + rand, splashes[rand]), screen, (Screen.h / 2) - 44, splashColor);
 
 		Font.draw(Localization.getLocalized("minicraft.displays.title.display.version", Game.VERSION), screen, 1, 1, Color.get(1, 51));
 

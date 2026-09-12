@@ -60,6 +60,11 @@ public class Localization {
 		return (localString == null ? key : localString);
 	}
 
+	/** Optional localized content; resource-pack book text remains the fallback. */
+	public static String getLocalizedOrDefault(String key, String fallback) {
+		return localization.containsKey(key) ? getLocalized(key) : fallback;
+	}
+
 	/**
 	 * Gets the currently selected locale.
 	 * @return A locale object.

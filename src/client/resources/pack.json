@@ -46,6 +46,10 @@
     "tr-tr": {
       "name": "Turkish",
       "region": "Turkey"
+    },
+    "zh-cn": {
+      "name": "Chinese",
+      "region": "简体中文"
     }
   }
 }

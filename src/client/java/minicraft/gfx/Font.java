@@ -2,10 +2,8 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.gfx.SpriteLinker.SpriteType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Font {
@@ -31,16 +29,22 @@ public class Font {
 	 */
 	public static void
 	draw(String msg, Screen screen, int x, int y, int whiteTint) {
-		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
-			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
+		int cursor = x;
+		for (int i = 0; i < msg.length();) {
+			int codePoint = msg.codePointAt(i);
+			int ix = codePoint <= Character.MAX_VALUE ? chars.indexOf((char) codePoint) : -1;
 			if (ix >= 0) {
-				// If that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i + 1)), y, ix % 32, ix / 32, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "font"), whiteTint);
+				screen.render(cursor, y, ix % 32, ix / 32, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "font"), whiteTint);
+			} else if (!Character.isWhitespace(codePoint)) {
+				screen.render(cursor, y, 0, 0, 0, UnicodeFont.glyph(codePoint), whiteTint);
 			}
+			cursor += 8;
+			i += Character.charCount(codePoint);
 		}
 	}
 
 	public static void drawColor(String message, Screen screen, int x, int y) {
+		if (message.isEmpty()) return;
 		// Set default color message if it doesn't have initially
 		if (message.charAt(0) != Color.COLOR_CHAR) {
 			message = Color.WHITE_CODE + message;
@@ -74,31 +78,23 @@ public class Font {
 	}
 
 	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
-		for (int i = 0; i < msg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(msg.substring(i, i + 1)), y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
+		for (int offset = 0; offset < textWidth(msg); offset += 8) {
+			screen.render(x + offset, y, 5, 2, 0, Renderer.spriteLinker.getSheet(SpriteType.Gui, "hud"));
 		}
-
-		// Renders the text
 		draw(msg, screen, x, y, whiteTint);
 	}
 
-	public static int textWidth(String text) { // Filtering out coloring codes.
-		return Math.max(text.length() - countMatches(text, Color.COLOR_CHAR) * 5, 0) * 8;
-	}
-
-	// Source: Apache commons-lang lang3 StringUtils
-	private static int countMatches(@NotNull final CharSequence str, final char ch) {
-		if (str.length() == 0) {
-			return 0;
-		}
-		int count = 0;
-		// We could also call str.toCharArray() for faster lookups but that would generate more garbage.
-		for (int i = 0; i < str.length(); i++) {
-			if (ch == str.charAt(i)) {
-				count++;
+	public static int textWidth(String text) {
+		int width = 0;
+		for (int i = 0; i < text.length();) {
+			if (text.charAt(i) == Color.COLOR_CHAR && i + 4 < text.length()) {
+				i += 5;
+			} else {
+				i += Character.charCount(text.codePointAt(i));
+				width += 8;
 			}
 		}
-		return count;
+		return width;
 	}
 
 	public static int textWidth(String[] para) {
@@ -176,35 +172,25 @@ public class Font {
 	// this returns the position index at which the given string should be split so that the first part is the longest line possible.
 	// note, the index returned is exclusive; it should not be included in the line.
 	private static int getLine(String text, int maxWidth) {
-		if (maxWidth <= 0) return 0; // just to pass the monkey test. :P
-
-		text = text.replaceAll(" ?\n ?", " \n ");
-
-		String[] words = text.split(" ", -1);
-
-		int curWidth = textWidth(words[0]);
-
-		if (curWidth > maxWidth) {
-			// we can't even fit the first word on to the line, even by itself. So we'll have to fit what we can.
-			int i;
-			for (i = 1; i < words[0].length(); i++) // find how many characters do fit
-				if (textWidth(words[0].substring(0, i + 1)) > maxWidth)
-					break;
-
-			return i; // stop here and return, because we know we can't fit more so we can ignore all that's below
+		if (maxWidth <= 0) throw new IllegalArgumentException("Text width must be positive");
+		int width = 0;
+		int lastSpace = -1;
+		for (int i = 0; i < text.length();) {
+			int codePoint = text.codePointAt(i);
+			if (codePoint == '\n') return i;
+			if (codePoint == Color.COLOR_CHAR && i + 4 < text.length()) {
+				i += 5;
+				continue;
+			}
+			if (codePoint == ' ') lastSpace = i;
+			if (width + 8 > maxWidth) {
+				if (lastSpace > 0) return lastSpace;
+				// A long word or Chinese sentence can wrap between code points.
+				return width == 0 ? i + Character.charCount(codePoint) : i;
+			}
+			width += 8;
+			i += Character.charCount(codePoint);
 		}
-
-		int i;
-		for (i = 1; i < words.length; i++) {
-			if (words[i].equals("\n")) break;
-
-			curWidth += textWidth(" " + words[i]);
-			if (curWidth > maxWidth)
-				break;
-		}
-		// i now contains the number of words that fit on the line.
-
-		String line = String.join(" ", Arrays.copyOfRange(words, 0, i));
-		return line.length();
+		return text.length();
 	}
 }

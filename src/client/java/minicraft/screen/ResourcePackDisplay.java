@@ -975,19 +975,19 @@ public class ResourcePackDisplay extends Display {
 				String book = BookData.loadBook(readStringFromInputStream(pack.getResourceAsStream(path)));
 				switch (path) {
 					case "assets/books/about.txt":
-						BookData.about = () -> book;
+						BookData.about = () -> Localization.getLocalizedOrDefault("minicraft.books.about", book);
 						break;
 					case "assets/books/credits.txt":
-						BookData.credits = () -> book;
+						BookData.credits = () -> Localization.getLocalizedOrDefault("minicraft.books.credits", book);
 						break;
 					case "assets/books/instructions.txt":
-						BookData.instructions = () -> book;
+						BookData.instructions = () -> Localization.getLocalizedOrDefault("minicraft.books.instructions", book);
 						break;
 					case "assets/books/antidous.txt":
-						BookData.antVenomBook = () -> book;
+						BookData.antVenomBook = () -> Localization.getLocalizedOrDefault("minicraft.books.antidous", book);
 						break;
 					case "assets/books/game_guide.txt":
-						BookData.storylineGuide = () -> book;
+						BookData.storylineGuide = () -> Localization.getLocalizedOrDefault("minicraft.books.game_guide", book);
 						break;
 				}
 			} catch (IOException e) {
