@@ -86,7 +86,16 @@ public class AirWizard extends EnemyMob {
 		if (player != null && randomWalkTime == 0) { // If there is a player around, and the walking is not random
 			int xd = player.x - x; // The horizontal distance between the player and the air wizard.
 			int yd = player.y - y; // The vertical distance between the player and the air wizard.
-			if (xd * xd + yd * yd < 16 * 16 * 2 * 2) {
+			if (xd * xd + yd * yd > 16 * 16 * 64 * 64) { // 64 tiles away
+				/// Snap towards the player if too far away!
+				double dist = Math.sqrt(xd*xd+yd*yd);
+				double xDir = (double)xd / dist;
+				double yDir = (double)yd / dist;
+				// Travel all but the last 64 tiles towards player
+				dist -= 16 * 64;
+				x = player.x + (int)(dist * xDir);
+				y = player.y + (int)(dist * yDir);
+			} else if (xd * xd + yd * yd < 16 * 16 * 2 * 2) {
 				/// Move away from the player if less than 2 blocks away
 
 				this.xmov = 0; // Accelerations

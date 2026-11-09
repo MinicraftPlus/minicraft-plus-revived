@@ -1,6 +1,7 @@
 package minicraft.level;
 
 import minicraft.core.Game;
+import minicraft.core.World;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -30,16 +31,23 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.DyeItem;
 import minicraft.item.Item;
+import minicraft.level.biome.Biome;
+import minicraft.level.biome.Biomes;
+import minicraft.level.noise.LevelNoise;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.level.tile.TreeTile;
 import minicraft.level.tile.TreeTile.TreeType;
+import minicraft.level.structure.Structure;
+import minicraft.level.structure.Structures;
 import minicraft.util.Logging;
 import minicraft.util.MyUtils;
+import minicraft.util.Simplex;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,9 +59,11 @@ import java.util.function.ToIntFunction;
 
 public class Level {
 	private final Random random;
+	private final Simplex simplex;
+
+	public static final int SKY_LEVEL = 1, SURFACE_LEVEL = 0, IRON_LEVEL = -1, GOLD_LEVEL = -2, GEM_LEVEL = -3, DUNGEON_LEVEL = -4;
 
 	private static final String[] levelNames = { "Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon" };
-
 	public static String getLevelName(int depth) {
 		return levelNames[-1 * depth + 1];
 	}
@@ -70,19 +80,20 @@ public class Level {
 	public ChunkManager chunkManager; // A collection of chunks with it's own interface
 	private Level parentLevel = null; // reference to parent level
 
-	public final TreeTile.TreeType[] treeTypes; // An array of tree types
-
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
 	public int chestCount;
 	public int mobCount = 0;
 
+	// Entities
 	private final Object entityLock = new Object(); // I will be using this lock to avoid concurrency exceptions in entities and sparks set
 	private final Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
 	private final Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
 	private final List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+
+	private final ChunkGenerator chunkGenerator;
 
 	// Creates a sorter for all the entities to be rendered.
 	//private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y); // Broken
@@ -94,6 +105,53 @@ public class Level {
 		}
 	});
 
+	// Create a level object!
+	public Level(int w, int h, long seed, int level, Level parentLevel, boolean makeWorld) {
+		depth = level;
+		this.w = w;
+		this.h = h;
+		this.seed = seed;
+		this.parentLevel = parentLevel;
+		random = new Random(seed);
+		simplex = new Simplex(seed);
+		short[][] maps; // Multidimensional array (an array within a array), used for the map
+
+		chunkGenerator = new ChunkGenerator(this);
+		new Thread(chunkGenerator, "Level " + level + " Chunk Generator").start();
+
+		if (level != -4 && level != 0)
+			monsterDensity = 8;
+
+		updateMobCap();
+
+		if (!makeWorld) {
+			chunkManager = new ChunkManager();
+			return;
+		}
+
+		Logging.WORLD.debug("Making level " + level + "...");
+
+		chunkManager = new ChunkManager();
+		if (chunkManager == null) {
+			Logging.WORLD.error("Level generation: Returned chunks array is null");
+			return;
+		}
+
+		checkAirWizard();
+	}
+
+	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
+		this(w, h, 0, level, parentLevel, makeWorld);
+	}
+
+	/**
+	 * Level which the world is contained in
+	 */
+	public Level(int w, int h, int level, Level parentLevel) {
+		this(w, h, level, parentLevel, true);
+	}
+
+	// Save data
 	public Entity[] getEntitiesToSave() {
 		Entity[] allEntities = new Entity[entities.size() + entitiesToAdd.size()];
 		Entity[] toAdd = entitiesToAdd.toArray(new Entity[0]);
@@ -136,273 +194,86 @@ public class Level {
 		Logging.WORLDNAMED.info("Found " + numfound + " entities in level of depth " + depth);
 	}
 
+	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
+		// "searching" can contain any number of class names I want to print when found.
+		String clazz = entity.getClass().getCanonicalName();
+		clazz = clazz.substring(clazz.lastIndexOf(".") + 1);
+		for (String search : searching) {
+			try {
+				if (Class.forName("minicraft.entity." + search).isAssignableFrom(entity.getClass())) {
+					printLevelLoc(entityMessage + clazz, entity.x >> 4, entity.y >> 4, ": " + entity);
+					break;
+				}
+			} catch (ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	// Pick mob cap based on difficulty level & depth
 	private void updateMobCap() {
 		maxMobCount = 150 + 150 * Settings.getIdx("diff");
 		if (depth == 1) maxMobCount /= 2;
 		if (depth == 0 || depth == -4 || depth == -5) maxMobCount = maxMobCount * 2 / 3;
 	}
 
-	public Level(int w, int h, long seed, int level, Level parentLevel, boolean makeWorld) {
-		depth = level;
-		this.w = w;
-		this.h = h;
-		this.seed = seed;
-		this.parentLevel = parentLevel;
-		random = new Random(seed);
-		short[][] maps; // Multidimensional array (an array within a array), used for the map
-
-		treeTypes = new TreeTile.TreeType[w * h];
-		{
-			LevelGen noise1 = new LevelGen(w, h, 32);
-			LevelGen noise2 = new LevelGen(w, h, 32);
-			TreeTile.TreeType[] types = TreeTile.TreeType.values();
-			for (int y = 0; y < h; y++) { // Loop through height
-				for (int x = 0; x < w; x++) { // Loop through width
-					// Randomly selecting a tree type.
-					int i = x + y * w;
-					double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
-					// This calculates a sort of distance based on the current coordinate.
-					double xd = x / (w - 1.0) * 2 - 1;
-					double yd = y / (h - 1.0) * 2 - 1;
-					if (xd < 0) xd = -xd;
-					if (yd < 0) yd = -yd;
-					double dist = Math.max(xd, yd);
-					dist = dist * dist * dist * dist;
-					dist = dist * dist * dist * dist;
-					val += 1 - dist * 20;
-					val += 1.5; // Assuming the range of value is from 0 to 2.
-					val *= types.length / 2.0;
-					val += 1; // Incrementing index.
-					// The original val mainly falls in small interval instead of averagely.
-					val = 1.0 / (3 * types.length) * Math.pow(val - 5, 2); // Quadratically bloating the value.
-					int idx = (int) Math.round(val - 1); // Decrementing index.
-					treeTypes[x + y * w] = (idx >= types.length || idx < 0) ? TreeTile.TreeType.OAK // Oak by default.
-						: types[idx];
-				}
-			}
-		}
-
-		if (level != -4 && level != 0)
-			monsterDensity = 8;
-
-		updateMobCap();
-
-		if (!makeWorld) {
-			chunkManager = new ChunkManager();
-			return;
-		}
-
-		Logging.WORLD.debug("Making level " + level + "...");
-
-		chunkManager = LevelGen.createAndValidateMap(w, h, level, seed);
-		if (chunkManager == null) {
-			Logging.WORLD.error("Level generation: Returned chunks array is null");
-			return;
-		}
-
-		if (level < 0)
-			generateSpawnerStructures();
-
-		if (level == 0)
-			generateVillages();
-
-		if (level == -4)
-			generateDungeonStructures();
-
-		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't a sky level)
-			for (int y = 0; y < h; y++) { // Loop through height
-				for (int x = 0; x < w; x++) { // Loop through width
-					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
-							Structure.dungeonGate.draw(this, x, y); // Te gate should not intersect with the boss room.
-							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
-						} else if (level == 0) { // Surface
-							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
-						} else // Any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
-
-						setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
-					}
-				}
-			}
-		} else { // This is a sky level
-			boolean placedHouse = false;
-			while (!placedHouse) {
-
-				int x = random.nextInt(this.w - 7);
-				int y = random.nextInt(this.h - 5);
-
-				if (this.getTile(x - 3, y - 2) == Tiles.get("Cloud") && this.getTile(x + 3, y - 2) == Tiles.get("Cloud")) {
-					if (this.getTile(x - 3, y + 2) == Tiles.get("Cloud") && this.getTile(x + 3, y + 2) == Tiles.get("Cloud")) {
-						Structure.airWizardHouse.draw(this, x, y);
-
-						placedHouse = true;
-					}
-				}
-			}
-		}
-
-		checkChestCount(false);
-
-		checkAirWizard();
-
-		if (Logging.logLevel) printTileLocs(Tiles.get("Stairs Down"));
-	}
-
-	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
-		this(w, h, 0, level, parentLevel, makeWorld);
-	}
-
-	/**
-	 * Level which the world is contained in
-	 */
-	public Level(int w, int h, int level, Level parentLevel) {
-		this(w, h, level, parentLevel, true);
-	}
-
 	public long getSeed() {
 		return seed;
 	}
 
-	protected static ChunkManager genStructuresToMap(ChunkManager map, Level level) {
+	// Generate just enough of this level to find a valid spawn for the player
+	public List<Point> prepareForSpawn() {
+		int radius = 0;
+		List<Point> spawnOptions;
+		// Look for at least 64 spawnable tiles...
+		int targetNumOptions = 64;
+		do {
+			for(int x = -radius; x <= radius; x++)
+				for(int y = -radius; y <= radius; y++)
+					while(chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_ASSIGNED_TILES)
+						chunkGenerator.advanceChunk(x, y);
 
-		level.chunkManager = map;
+			spawnOptions = getMatchingTiles(Tiles.get("grass"));
+			if(spawnOptions.size() < targetNumOptions && radius >= 1)
+				spawnOptions.addAll(getMatchingTiles((t, x, y) -> t.maySpawn()));
 
-		if (level.depth < 0)
-			level.generateSpawnerStructures();
+			radius++;
+		} while (spawnOptions.size() < targetNumOptions && radius < 8);
 
-		if (level.depth == 0) {
-			level.generateVillages();
+		// Couldn't find ANYTHING??
+		// Add default 0, 0
+		if(spawnOptions.isEmpty()) {
+			Logging.WORLD.debug("No valid spawnpoints found! " + radius);
+			spawnOptions.add(new Point(0, 0));
 		}
-		if (level.parentLevel != null) { // If the level above this one is not null (aka, if this isn't a sky level)
-			for (int y = 0; y < level.h; y++) { // Loop through height
-				for (int x = 0; x < level.w; x++) { // Loop through width
-					if (level.parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level.depth == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
-							level.generateDungeonStructures();
-							Structure.dungeonGate.draw(level, x, y); // Te gate should not intersect with the boss room.
-							Structure.dungeonBossRoom.draw(level, level.w / 2, level.h / 2); // Generating the boss room at the center.
-						} else if (level.depth == 0) { // Surface
-							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
-							level.setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
-						} else // Any other level, the up-stairs should have dirt on all sides.
-							level.setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
 
-						level.setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
-					}
-				}
-			}
-		} else { // This is a sky level
-			boolean placedHouse = false;
-			while (!placedHouse) {
-
-				int x = level.random.nextInt(level.w - 7);
-				int y = level.random.nextInt(level.h - 5);
-
-				if (level.getTile(x - 3, y - 2) == Tiles.get("Cloud") && level.getTile(x + 3, y - 2) == Tiles.
-
-					get("Cloud")) {
-					if (level.getTile(x - 3, y + 2) == Tiles.get("Cloud") && level.getTile(x + 3, y + 2) == Tiles.get("Cloud")) {
-						Structure.airWizardHouse.draw(level, x, y);
-
-						placedHouse = true;
-					}
-				}
-			}
-		}
-		return level.chunkManager;
+		return spawnOptions;
 	}
 
+	public ChunkGenerator getChunkGenerator() {
+		return chunkGenerator;
+	}
+
+	// Check if there isn't an air wizard where there needs to be
 	public void checkAirWizard() {
-		checkAirWizard(true);
-	}
+		if (depth != 1 || AirWizard.beaten)
+			return;
 
-	private void checkAirWizard(boolean check) {
-		if (depth == 1 && !AirWizard.beaten) { // Add the airwizard to the surface
-
-			boolean found = false;
-			if (check) {
-				for (Entity e : entitiesToAdd)
-					if (e instanceof AirWizard) {
-						found = true;
-						break;
-					}
-				for (Entity e : entities)
-					if (e instanceof AirWizard) {
-						found = true;
-						break;
-					}
+		boolean found = false;
+		for (Entity e : entitiesToAdd)
+			if (e instanceof AirWizard) {
+				found = true;
+				break;
+			}
+		for (Entity e : entities)
+			if (e instanceof AirWizard) {
+				found = true;
+				break;
 			}
 
-			if (!found) {
-				AirWizard aw = new AirWizard();
-				add(aw, w / 2, h / 2, true);
-			}
-		}
-	}
-
-	public void checkChestCount() {
-		checkChestCount(true);
-	}
-
-	private void checkChestCount(boolean check) {
-		// If the level is the dungeon, and we're not just loading the world...
-		if (depth != -4) return;
-
-		int numChests = 0;
-
-		if (check) {
-			for (Entity e : entitiesToAdd)
-				if (e instanceof DungeonChest)
-					numChests++;
-			for (Entity e : entities)
-				if (e instanceof DungeonChest)
-					numChests++;
-			Logging.WORLDNAMED.debug("Found " + numChests + " chests.");
-		}
-
-		/// Make DungeonChests!
-		for (int i = numChests; i < 10 * (w / 128); i++) {
-			DungeonChest d = new DungeonChest(random);
-			boolean addedchest = false;
-			while (!addedchest) { // Keep running until we successfully add a DungeonChest
-
-				// Pick a random tile:
-				int x2 = random.nextInt(w);
-				int y2 = random.nextInt(h);
-				if (getTile(x2, y2) == Tiles.get("Grass")) {
-					if (random.nextBoolean()) { // x-axis
-						for (int s = x2; s < w - s; s++) {
-							if (getTile(s, y2) == Tiles.get("Obsidian Wall") || getTile(s, y2) == Tiles.get("Ornate Obsidian")) {
-								d.x = s * 20 - 16;
-								d.y = y2 * 24 - 14;
-							}
-						}
-					} else { // y-axis
-						for (int s = y2; s < h - s; s++) {
-							if (getTile(x2, s) == Tiles.get("Obsidian Wall") || getTile(x2, s) == Tiles.get("Ornate Obsidian")) {
-								d.x = x2 * 23 - 14;
-								d.y = s * 21 - 16;
-							}
-						}
-					}
-					if (d.x == 0 && d.y == 0) {
-						d.x = (x2 << 4) - 8;
-						d.y = (y2 << 4) - 8;
-					}
-
-					// Target place may not exist a dungeon chest
-					if (!getEntitiesInTiles(d.x >> 4, d.y >> 4, 0, true, DungeonChest.class).isEmpty()) continue;
-					// If target place is blocking wall, remove it
-					if (getTile(d.x >> 4, d.y >> 4) == Tiles.get("Obsidian Wall"))
-						setTile(d.x >> 4, d.y >> 4, Tiles.get("Raw Obsidian"));
-
-					add(d);
-					chestCount++;
-					addedchest = true;
-				}
-			}
+		if (!found) {
+			AirWizard aw = new AirWizard();
+			add(aw, w / 2, h / 2, true);
 		}
 	}
 
@@ -485,78 +356,21 @@ public class Level {
 			trySpawn();
 	}
 
-	public void loadChunksAround(int tileX, int tileY) {
-		// Update all chunks up to 3 chunks away from the player to make sure they are loaded
-		int cX = Math.floorDiv(tileX, ChunkManager.CHUNK_SIZE), cY = Math.floorDiv(tileY, ChunkManager.CHUNK_SIZE);
-		for (int x = cX - 3; x <= cX + 3; x++)
-			for (int y = cY - 3; y <= cY + 3; y++)
-				if (chunkManager.getChunkStage(x, y) != ChunkManager.CHUNK_STAGE_DONE)
-					loadChunk(x, y);
-	}
-
-	public void loadChunk(int x, int y) {
-		if(chunkManager.getChunkStage(x, y) == ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS && parentLevel != null) {
-			if(parentLevel.chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS) {
-				LevelGen.advanceChunk(parentLevel.chunkManager, x, y, parentLevel.depth, seed);
-				return;
-			}
-			int S = ChunkManager.CHUNK_SIZE;
-			for (int i = x * S; i < x * S + S; i++)
-				for (int j = y * S; j < y * S + S; j++) {
-					if (parentLevel.getTile(i, j) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (depth == -4) { /// Make the obsidian wall formation around the stair in the dungeon level
-							Structure.dungeonGate.draw(this, i, j); // Te gate should not intersect with the boss room.
-							Structure.dungeonBossRoom.draw(this, w / 2, h / 2); // Generating the boss room at the center.
-						} else if (depth == 0) { // Surface
-							Logging.WORLD.trace("Setting tiles around " + i + "," + j + " to hard rock");
-							setAreaTiles(i, j, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
-						} else // Any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(i, j, 1, Tiles.get("dirt"), 0);
-
-						setTile(i, j, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
-					} else if (getTile(i, j) == Tiles.get("Stairs Up") && parentLevel.getTile(i, j) != Tiles.get("Stairs Down")) {
-						parentLevel.setTile(i, j, "Stairs Down");
-					}
-				}
-			chunkManager.setChunkStage(x, y, ChunkManager.CHUNK_STAGE_DONE);
-		}
-		else if(chunkManager.getChunkStage(x, y) < ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS)
-			LevelGen.advanceChunk(chunkManager, x, y, depth, seed);
-	}
-
 	public boolean entityNearPlayer(Entity entity) {
-		for (Player player : players) {
-			if (Math.abs(player.x - entity.x) < 128 && Math.abs(player.y - entity.y) < 76) {
+		for (Player player : players)
+			if (Math.abs(player.x - entity.x) < 128 && Math.abs(player.y - entity.y) < 76)
 				return true;
-			}
-		}
+
 		return false;
 	}
 
 	public double distanceOfClosestPlayer(Entity entity) {
-		double distance = Math.hypot(w, h);
+		double sq_distance = Double.POSITIVE_INFINITY;
 		for (Player player : players) {
-			double d = Math.hypot(Math.abs(entity.x - player.x), Math.abs(entity.y - player.y));
-			if (d < distance) distance = d;
+			sq_distance = Math.min(sq_distance, (entity.x-player.x)*(entity.x-player.x) + (entity.y-player.y)*(entity.y-player.y));
 		}
 
-		return distance;
-	}
-
-	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
-		// "searching" can contain any number of class names I want to print when found.
-		String clazz = entity.getClass().getCanonicalName();
-		clazz = clazz.substring(clazz.lastIndexOf(".") + 1);
-		for (String search : searching) {
-			try {
-				if (Class.forName("minicraft.entity." + search).isAssignableFrom(entity.getClass())) {
-					printLevelLoc(entityMessage + clazz, entity.x >> 4, entity.y >> 4, ": " + entity);
-					break;
-				}
-			} catch (ClassNotFoundException ex) {
-				ex.printStackTrace();
-			}
-		}
+		return Math.sqrt(sq_distance);
 	}
 
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
@@ -585,6 +399,7 @@ public class Level {
 		return ie;
 	}
 
+	// Render tiles of level
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4; // Latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
@@ -599,6 +414,7 @@ public class Level {
 		screen.setOffset(0, 0);
 	}
 
+	// Render sprites of level
 	public void renderSprites(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4; // Latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
@@ -611,6 +427,7 @@ public class Level {
 		screen.setOffset(0, 0);
 	}
 
+	// Update lighting data
 	public void renderLight(Screen screen, int xScroll, int yScroll, int brightness) {
 		int xo = xScroll >> 4;
 		int yo = yScroll >> 4;
@@ -650,29 +467,16 @@ public class Level {
 	}
 
 	public TreeTile.TreeType getTreeType(int x, int y) {
-		LevelGen noise1 = new LevelGen(x, y, 1, 1, 32, -1);
-		LevelGen noise2 = new LevelGen(x, y, 1, 1, 32, -2);
+		double featureSize = 32;
+		float a = simplex.noise3(x / featureSize, y / featureSize, -100),
+		      b = simplex.noise3(x / featureSize, y / featureSize, -200);
 
-		int idx = (int) Math.round(Math.abs(noise1.values[0] - noise2.values[0]) * 3 - 2);
+		int idx = (int) Math.round(Math.abs(a - b) * 3 - 2);
 		return (idx >= TreeType.values().length || idx < 0) ? TreeType.OAK : TreeType.values()[idx];
 	}
 
 	public Tile getTile(int x, int y) {
 		return chunkManager.getTile(x, y);
-	}
-
-	/**
-	 * @deprecated Currently unused, but this should be prevented being used.
-	 */
-	@Deprecated
-	public void setTile(int x, int y, String tilewithdata) {
-		if (!tilewithdata.contains("_")) {
-			setTile(x, y, Tiles.get(tilewithdata));
-			return;
-		}
-		String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
-		int data = Tiles.get(name).getData(tilewithdata.substring(name.length() + 1));
-		setTile(x, y, Tiles.get(name), data);
 	}
 
 	public void setTile(int x, int y, Tile t) {
@@ -807,6 +611,8 @@ public class Level {
 		synchronized (entityLock) {
 			entityArray = new Entity[entities.size()];
 			for (Entity entity : entities) {
+				if(entity == null)
+					continue;
 				entityArray[index++] = entity;
 			}
 		}
@@ -1065,234 +871,6 @@ public class Level {
 		}
 
 		return false;
-	}
-
-	private void generateSpawnerStructures() {
-		if (depth != -4) {
-			for (int i = 0; i < 18 / -depth * (w / 128); i++) {
-
-				/// For generating spawner dungeons
-				MobAi m;
-				int r = random.nextInt(5);
-
-				if (r == 1) {
-					m = new Skeleton(-depth);
-				} else if (r == 2 || r == 0) {
-					m = new Slime(-depth);
-				} else {
-					m = new Zombie(-depth);
-				}
-
-				Spawner sp = new Spawner(m);
-				int x3 = random.nextInt(16 * w) / 16;
-				int y3 = random.nextInt(16 * h) / 16;
-				if (getTile(x3, y3) == Tiles.get("dirt")) {
-					boolean xaxis2 = random.nextBoolean();
-
-					if (xaxis2) {
-						for (int s2 = x3; s2 < w - s2; s2++) {
-							if (getTile(s2, y3) == Tiles.get("rock")) {
-								sp.x = (s2 << 4) - 24;
-								sp.y = (y3 << 4) - 24;
-							}
-						}
-					} else {
-						for (int s2 = y3; s2 < h - s2; s2++) {
-							if (getTile(x3, s2) == Tiles.get("rock")) {
-								sp.x = x3 * 16 - 24;
-								sp.y = s2 * 16 - 24;
-							}
-						}
-					}
-
-					if (sp.x == 0 && sp.y == 0) {
-						sp.x = x3 * 16 - 8;
-						sp.y = y3 * 16 - 8;
-					}
-
-					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("rock")) {
-						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
-					}
-
-					Structure.mobDungeonCenter.draw(this, sp.x >> 4, sp.y >> 4);
-
-					if (getTile(sp.x >> 4, (sp.y >> 4) - 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonNorth.draw(this, sp.x >> 4, (sp.y >> 4) - 5);
-					}
-					if (getTile(sp.x >> 4, (sp.y >> 4) + 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonSouth.draw(this, sp.x >> 4, (sp.y >> 4) + 5);
-					}
-					if (getTile((sp.x >> 4) + 4, sp.y >> 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonEast.draw(this, (sp.x >> 4) + 5, sp.y >> 4);
-					}
-					if (getTile((sp.x >> 4) - 4, sp.y >> 4) == Tiles.get("dirt")) {
-						Structure.mobDungeonWest.draw(this, (sp.x >> 4) - 5, sp.y >> 4);
-					}
-
-					add(sp);
-					for (int rpt = 0; rpt < 2; rpt++) {
-						if (random.nextInt(2) != 0) continue;
-						Chest c = new Chest();
-						int chance = -depth;
-
-						c.populateInvRandom(random, "minidungeon", chance);
-
-						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
-					}
-				}
-			}
-		} else {
-			for (int i = 0; i < 18 * (w / 128); i++) {
-
-				/// For generating spawner dungeons
-				MobAi m;
-				int r = random.nextInt(2);
-
-				if (r == 1) {
-					m = new Knight(2);
-				} else {
-					m = new Snake(2);
-				}
-
-				Spawner sp = new Spawner(m);
-				int x3 = random.nextInt(16 * w) / 16;
-				int y3 = random.nextInt(16 * h) / 16;
-				if (getTile(x3, y3) == Tiles.get("Obsidian")) {
-					boolean xaxis2 = random.nextBoolean();
-
-					if (xaxis2) {
-						for (int s2 = x3; s2 < w - s2; s2++) {
-							if (getTile(s2, y3) == Tiles.get("Obsidian Wall")) {
-								sp.x = s2 * 16 - 24;
-								sp.y = y3 * 16 - 24;
-							}
-						}
-					} else {
-						for (int s2 = y3; s2 < h - s2; s2++) {
-							if (getTile(x3, s2) == Tiles.get("Obsidian Wall")) {
-								sp.x = x3 * 16 - 24;
-								sp.y = s2 * 16 - 24;
-							}
-						}
-					}
-
-					if (sp.x == 0 && sp.y == 0) {
-						sp.x = x3 * 16 - 8;
-						sp.y = y3 * 16 - 8;
-					}
-
-					if (getTile(sp.x >> 4, sp.y >> 4) == Tiles.get("Obsidian Wall")) {
-						setTile(sp.x >> 4, sp.y >> 4, Tiles.get("dirt"));
-					}
-
-					Structure.dungeonSpawner.draw(this, sp.x >> 4, sp.y >> 4);
-
-					add(sp);
-					for (int rpt = 0; rpt < 2; rpt++) {
-						if (random.nextInt(2) != 0) continue;
-						DungeonChest c = new DungeonChest(random);
-						chestCount++;
-
-						add(c, sp.x - 16 + rpt * 32, sp.y - 16);
-					}
-				}
-			}
-		}
-	}
-
-	private void generateVillages() {
-		int lastVillageX = 0;
-		int lastVillageY = 0;
-
-		for (int i = 0; i < w / 128 * 2; i++) {
-			// Makes 2-8 villages based on world size
-
-			for (int t = 0; t < 10; t++) {
-				// Tries 10 times for each one
-
-				int x = random.nextInt(w);
-				int y = random.nextInt(h);
-
-				// Makes sure the village isn't to close to the previous village
-				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 16 && Math.abs(y - lastVillageY) > 16)) {
-					lastVillageX = x;
-					lastVillageY = y;
-
-					// A number between 2 and 4
-					int numHouses = random.nextInt(3) + 2;
-
-					// Loops for each house in the village
-					for (int hs = 0; hs < numHouses; hs++) {
-						boolean hasChest = random.nextBoolean();
-						boolean twoDoors = random.nextBoolean();
-						int overlay = random.nextInt(2) + 1;
-
-						// Basically just gets what offset this house should have from the center of the village
-						int xo = hs == 0 || hs == 3 ? -4 : 4;
-						int yo = hs < 2 ? -4 : 4;
-
-						xo += random.nextInt(5) - 2;
-						yo += random.nextInt(5) - 2;
-
-						if (twoDoors) {
-							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo);
-						} else {
-							Structure.villageHouseNormal.draw(this, x + xo, y + yo);
-						}
-
-						// Make the village look ruined
-						if (overlay == 1) {
-							Structure.villageRuinedOverlay1.draw(this, x + xo, y + yo);
-						} else { // overlay == 2
-							Structure.villageRuinedOverlay2.draw(this, x + xo, y + yo);
-						}
-
-						// Add a chest to some of the houses
-						if (hasChest) {
-							Chest c = new Chest();
-							c.populateInvRandom(random, "villagehouse", 1);
-							add(c, (x + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
-						}
-					}
-
-					break;
-				}
-			}
-		}
-	}
-
-	private void generateDungeonStructures() {
-		for (int i = 0; i < Math.sqrt(w); i++) {
-			int x = random.nextInt(w - 2) + 1;
-			int y = random.nextInt(h - 2) + 1;
-
-			if (x > 8 && y > 8) {
-				if (x < w - 8 && y < w - 8) {
-					if (random.nextInt(2) == 1) {
-						Structure.dungeonGarden.draw(this, x, y);
-					} else {
-						Structure.dungeonChest.draw(this, x, y, furniture -> {
-							if (furniture instanceof DungeonChest)
-								((DungeonChest) furniture).populateInv(random);
-						});
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Regenerating/repairing the boss room in the dungeon.
-	 */
-	public void regenerateBossRoom() {
-		if (depth == -4) {
-			Structure.dungeonBossRoom.draw(chunkManager, w / 2, h / 2); // Generating the boss room at the center.
-			for (int x = w / 2 - 4; x < w / 2 + 5; x++) { // Resetting tile data.
-				for (int y = h / 2 - 4; y < h / 2 + 5; y++) {
-					setData(x, y, 0);
-				}
-			}
-		}
 	}
 
 	public String toString() {

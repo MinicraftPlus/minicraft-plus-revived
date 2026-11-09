@@ -64,6 +64,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
@@ -295,7 +296,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Ensure chunks generated around player
-		level.loadChunksAround(x >> 4, y >> 4);
+		level.getChunkGenerator().queueChunksAround(x >> 4, y >> 4);
 
 		super.tick(); // Ticks Mob.java
 
@@ -1204,6 +1205,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public void findStartPos(Level level, boolean setSpawn) {
+		Random r = new Random(level.getSeed());
 		Point spawnPos;
 
 		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass"));
@@ -1230,6 +1232,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Set (entity) coordinates of player to the center of the tile.
 		this.x = spawnPos.x * 16 + 8; // conversion from tile coords to entity coords.
+		this.y = spawnPos.y * 16 + 8;
+	}
+
+	public void chooseSpawn(Level level) {
+		// Choose spawnpoint from level's options
+		List<Point> options = level.prepareForSpawn();
+		Random r = new Random(level.getSeed());
+		Point spawnPos = options.get(random.nextInt(options.size()));
+
+		// Update spawn position
+		spawnx = spawnPos.x;
+		spawny = spawnPos.y;
+
+		// Set position with spawnpos into entity coords
+		this.x = spawnPos.x * 16 + 8;
 		this.y = spawnPos.y * 16 + 8;
 	}
 

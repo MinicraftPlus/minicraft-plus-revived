@@ -53,6 +53,7 @@ import minicraft.item.Recipe;
 import minicraft.item.StackableItem;
 import minicraft.level.ChunkManager;
 import minicraft.level.Level;
+import minicraft.level.biome.Biomes;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
 import minicraft.screen.AchievementsDisplay;
@@ -310,9 +311,9 @@ public class Load {
 				loadWorld("Level");
 			else
 				loadWorldInf("Level");
+			loadPlayer("Player", Game.player);
 			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.getInventory());
-			loadPlayer("Player", Game.player);
 
 			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
@@ -487,7 +488,7 @@ public class Load {
 		LoadingDisplay.progress(percentInc);
 	}
 
-	private void loadFromFile(String filename, List<String> data) {
+	private static void loadFromFile(String filename, List<String> data) {
 		data.clear();
 
 		String total;
@@ -499,8 +500,6 @@ public class Load {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-
-		LoadingDisplay.progress(percentInc);
 	}
 
 	/**
@@ -980,6 +979,8 @@ public class Load {
 	}
 
 	private void loadWorldInf(String filename) {
+		loadFromFile(location + "/Player" + extension, extradata);
+		Point playerPos = new Point(Integer.parseInt(extradata.get(0)), Integer.parseInt(extradata.get(1)));
 		loadFromFile(location + "/Game" + extension, extradata);
 		long seed = Long.parseLong(extradata.get(1));
 		for (int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
@@ -987,29 +988,18 @@ public class Load {
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + "/index" + extension, data);
 
-			Set<Point> chunks = new HashSet<>();
-			while(data.size() >= 2)
-				chunks.add(new Point(Integer.parseInt(data.remove(0)), Integer.parseInt(data.remove(0))));
-
 			ChunkManager map = new ChunkManager();
+
 			Level parent = World.levels[World.lvlIdx(l + 1)];
 			World.levels[lvlidx] = new Level((int)Settings.get("size"), (int)Settings.get("size"), seed, l, parent, false);
 
 			Level curLevel = World.levels[lvlidx];
 			curLevel.chunkManager = map;
-			for(Point c : chunks) {
-				loadFromFile(location + filename + lvlidx + "/t." + c.x + "." + c.y + extension, data);
-				loadFromFile(location + filename + lvlidx + "/d." + c.x + "." + c.y + extension, extradata);
-				for(int x = 0; x < ChunkManager.CHUNK_SIZE; x++) {
-					for(int y = 0; y < ChunkManager.CHUNK_SIZE; y++) {
-						int tileidx = y + x * ChunkManager.CHUNK_SIZE; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-						int tX = x + c.x * ChunkManager.CHUNK_SIZE, tY = y + c.y * ChunkManager.CHUNK_SIZE;
-						loadTile(worldVer, map, tX, tY, data.get(tileidx), extradata.get(tileidx));
-						map.getTile(tX, tY).onTileSet(curLevel, tX, tY);
-					}
-				}
-				map.setChunkStage(c.x, c.y, ChunkManager.CHUNK_STAGE_DONE);
-			}
+			Point c = new Point(playerPos.x / (16 * 64), playerPos.y / (16 * 64));
+			for(int x = -1; x <= 1; x++)
+				for(int y = -1; y <= 1; y++)
+					if(new File(location + filename + lvlidx + "/c." + (c.x+x)+"."+(c.y+y)+extension).exists())
+						loadChunkFile(worldVer, location, filename + lvlidx, curLevel, c.x+x, c.y+y);
 
 			if (Logging.logLevel) curLevel.printTileLocs(Tiles.get("Stairs Down"));
 
@@ -1018,12 +1008,12 @@ public class Load {
 			// if there isn't, mark the chunk as needing stairs
 			for (minicraft.gfx.Point p : parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
 				if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
-					curLevel.chunkManager.setChunkStage(p.x / ChunkManager.CHUNK_SIZE, p.y / ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS);
+					curLevel.chunkManager.setChunkStage(p.x / ChunkManager.CHUNK_SIZE, p.y / ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_STAGE_ASSIGNED_TILES);
 				}
 			}
 			for (minicraft.gfx.Point p : curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
 				if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
-					parent.chunkManager.setChunkStage(p.x / ChunkManager.CHUNK_SIZE, p.y / ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_STAGE_UNFINISHED_STAIRS);
+					parent.chunkManager.setChunkStage(p.x / ChunkManager.CHUNK_SIZE, p.y / ChunkManager.CHUNK_SIZE, ChunkManager.CHUNK_STAGE_ASSIGNED_TILES);
 				}
 			}
 		}
@@ -1089,6 +1079,65 @@ public class Load {
 
 		if (!signsLoadSucceeded) {
 			SignDisplay.resetSignTexts();
+		}
+	}
+
+	public static boolean chunkFileExists(Level level, int chunkX, int chunkY) {
+		String location = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName();
+		String levelDir = "/Level" + World.lvlIdx(level.depth);
+		String filename = "/c." + chunkX + "." + chunkY + extension;
+		return new File(location + levelDir + filename).exists();
+	}
+
+	public static void loadChunkFile(Level level, int chunkX, int chunkY) {
+		String location = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName();
+		String levelDir = "/Level" + World.lvlIdx(level.depth);
+		loadChunkFile(Game.VERSION, location, levelDir, level, chunkX, chunkY);
+	}
+
+	public static int chunkFileStage(Level level, int chunkX, int chunkY) {
+		String location = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName();
+		String levelDir = "/Level" + World.lvlIdx(level.depth);
+		String filename = "/c." + chunkX + "." + chunkY + extension;
+		List<String> data = new ArrayList<>();
+		loadFromFile(location + levelDir + filename, data);
+		return Integer.parseInt(data.get(2));
+	}
+
+	public static void loadChunkFile(Version worldVer, String location, String levelDir, Level level, int chunkX, int chunkY) {
+		String filename = "/c." + chunkX + "." + chunkY + extension;
+		List<String> data = new ArrayList<>();
+		loadFromFile(location + levelDir + filename, data);
+		// data.get(0) == chunkX, data.get(1) == chunkY
+		level.chunkManager.setChunkStage(chunkX, chunkY, Integer.parseInt(data.get(2)));
+
+		// Grab tile & biome palettes
+		int tilePaletteSize = Integer.parseInt(data.get(3));
+		List<String> tilePalette = new ArrayList<>();
+		for(int i = 0; i < tilePaletteSize; i++)
+			tilePalette.add(data.get(4 + i));
+
+		int biomePaletteSize = Integer.parseInt(data.get(4 + tilePaletteSize));
+		List<String> biomePalette = new ArrayList<>();
+		for(int i = 0; i < biomePaletteSize; i++)
+			biomePalette.add(data.get(5 + tilePaletteSize + i));
+
+		Biomes.BiomeCollection biomes = Biomes.getLayerBiomes(level.depth);
+		// store current index in `List<String> data` for brevity
+		int offset = 5 + tilePaletteSize + biomePaletteSize;
+		for(int x = 0; x < ChunkManager.CHUNK_SIZE; x++) {
+			for(int y = 0; y < ChunkManager.CHUNK_SIZE; y++) {
+				int tileidx = y + x * ChunkManager.CHUNK_SIZE; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+				int tX = x + chunkX * ChunkManager.CHUNK_SIZE, tY = y + chunkY * ChunkManager.CHUNK_SIZE;
+
+				String tileID = tilePalette.get(Integer.parseInt(data.get(offset)));
+				String biomeID = biomePalette.get(Integer.parseInt(data.get(offset + 1)));
+				String tileDat = data.get(offset + 2);
+				loadTile(worldVer, level.chunkManager, tX, tY, tileID, tileDat);
+				level.chunkManager.getTile(tX, tY).onTileSet(level, tX, tY);
+				level.chunkManager.setBiome(tX, tY, biomes.getBiome(biomeID));
+				offset += 3;
+			}
 		}
 	}
 
@@ -1331,7 +1380,7 @@ public class Load {
 		}
 
 		for (int i = 0; i < World.levels.length; i++) {
-			World.levels[i].checkChestCount();
+			//World.levels[i].checkChestCount();
 			World.levels[i].checkAirWizard();
 		}
 	}

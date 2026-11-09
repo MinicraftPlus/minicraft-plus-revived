@@ -67,8 +67,6 @@ public class ObsidianKnight extends EnemyMob {
 		walkTime = 3;
 		this.health = health;
 		entity = this;
-
-		World.levels[World.lvlIdx(-4)].regenerateBossRoom();
 	}
 
 	@Override

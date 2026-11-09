@@ -2,9 +2,12 @@ package minicraft.level.biome;
 
 import minicraft.level.ChunkManager;
 import minicraft.level.noise.LevelNoise;
+import minicraft.level.structure.Structure;
+import java.util.ArrayList;
 
 public abstract class Biome {
 	private float temperature, height, humidity, rarity;
+	protected ArrayList<Structure> structures = new ArrayList<Structure>();
 
 	public Biome(float temperature, float height, float humidity, float rarity) {
 		this.temperature = temperature;
@@ -30,4 +33,8 @@ public abstract class Biome {
 	}
 
 	public abstract void generate(ChunkManager map, int x, int y);
+
+	public ArrayList<Structure> getStructures() {
+		return structures;
+	}
 }

@@ -19,13 +19,17 @@ import minicraft.util.Logging;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class World extends Game {
 	private World() {
 	}
 
-	public static final int[] idxToDepth = { -3, -2, -1, 0, 1, -4 }; /// This is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
+	/// This is to map the level depths to each level's index in Game's levels array.
+	/// This must ALWAYS be the same length as the levels array, of course.
+	public static final int[] idxToDepth = { -3, -2, -1, 0, 1, -4 };
+
 	public static final int minLevelDepth, maxLevelDepth;
 
 	static int worldSize = 128; // The size of the world
@@ -135,23 +139,29 @@ public class World extends Game {
 			seed = WorldGenDisplay.getSeed().orElse(new Random().nextLong());
 			random = new Random(seed);
 
-			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // The .002 is for floating point errors, in case they occur.
-			for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
-				// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
+			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 2); // The .002 is for floating point errors, in case they occur.
 
+			for(int i = maxLevelDepth; i >= minLevelDepth; i--)
+				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], true);
+
+			Logging.WORLD.trace("Finding spawnpoint...");
+			LoadingDisplay.setMessage("minicraft.displays.loading.message.spawnpoint", true);
+			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
+			player.chooseSpawn(level); // Finds the start level for the player
+			LoadingDisplay.progress(loadingInc);
+
+			for(int i = minLevelDepth; i <= maxLevelDepth; i++) {
 				Logging.WORLD.trace("Generating level " + i + "...");
 
 				LoadingDisplay.setMessage(Level.getDepthString(i), false);
-				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], !WorldSelectDisplay.hasLoadedWorld());
+				levels[lvlIdx(i)].getChunkGenerator().generateChunksAround(player.spawnx, player.spawny);
 
 				LoadingDisplay.progress(loadingInc);
 			}
 
 			Logging.WORLD.trace("Level generation complete.");
 
-			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
 			Updater.pastDay1 = false;
-			player.findStartPos(level, seed); // Finds the start level for the player
 			level.add(player);
 			QuestsDisplay.resetGameQuests();
 			CraftingDisplay.resetRecipeUnlocks();
@@ -212,6 +222,7 @@ public class World extends Game {
 		player.x = (player.x >> 4) * 16 + 8; // Sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // Sets the player's y coord (to center yourself on the stairs)
 
+		levels[currentLevel].getChunkGenerator().generateChunksAround(Math.floorDiv(player.x, 16), Math.floorDiv(player.y, 16));
 		levels[currentLevel].add(player); // Adds the player to the level.
 
 		if (currentLevel == 0) {

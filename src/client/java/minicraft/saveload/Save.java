@@ -34,6 +34,7 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.level.ChunkManager;
+import minicraft.level.biome.Biomes;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.CraftingDisplay;
 import minicraft.screen.LoadingDisplay;
@@ -55,6 +56,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Save {
@@ -75,7 +77,6 @@ public class Save {
 	 */
 	private Save(File worldFolder) {
 		data = new ArrayList<>();
-
 
 		if (worldFolder.getParent().equals("saves")) {
 			String worldName = worldFolder.getName();
@@ -104,17 +105,19 @@ public class Save {
 	public Save(String worldname) {
 		this(new File(Game.gameDir + "/saves/" + worldname + "/"));
 
-		writeGame("Game");
-		writeWorld("Level");
-		writePlayer("Player", Game.player);
-		writeInventory("Inventory", Game.player);
-		writeEntities("Entities");
+		new Thread(() -> {
+			writeGame("Game");
+			writePlayer("Player", Game.player);
+			writeInventory("Inventory", Game.player);
+			writeWorld("Level");
+			writeEntities("Entities");
 
-		WorldSelectDisplay.updateWorlds();
+			WorldSelectDisplay.updateWorlds();
 
-		Updater.notifyAll("minicraft.notification.world_saved");
-		Updater.asTick = 0;
-		Updater.saving = false;
+			Updater.notifyAll("minicraft.notification.world_saved");
+			Updater.asTick = 0;
+			Updater.saving = false;
+		}, "SaveThread").start();
 	}
 
 	/**
@@ -185,8 +188,6 @@ public class Save {
 		if (LoadingDisplay.getPercentage() > 100) {
 			LoadingDisplay.setPercentage(100);
 		}
-
-		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
 
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
@@ -271,36 +272,53 @@ public class Save {
 	private void writeWorld(String filename) {
 		LoadingDisplay.setMessage("minicraft.displays.loading.message.levels");
 		for (int l = 0; l < World.levels.length; l++) {
-			/*String worldSize = String.valueOf(Settings.get("size"));
-			data.add(worldSize);
-			data.add(worldSize);
-			data.add(Long.toString(World.levels[l].getSeed()));
-			data.add(String.valueOf(World.levels[l].depth));
-
-			for (int x = 0; x < World.levels[l].w; x++) {
-				for (int y = 0; y < World.levels[l].h; y++) {
-					data.add(String.valueOf(World.levels[l].getTile(x, y).name));
-				}
-			}
-
-			writeToFile(location + filename + l + extension, data);*/
 			new File(location + filename + l).mkdir();
 			List<String> index = new ArrayList<>();
 			ChunkManager c = World.levels[l].chunkManager;
+
+			int depth = World.idxToDepth[l];
+			Biomes.BiomeCollection biomes = Biomes.getLayerBiomes(depth);
 			for(Point p : c.getAllChunks()) {
-				if(c.getChunkStage(p.x, p.y) != ChunkManager.CHUNK_STAGE_DONE)
+				int stage = c.getChunkStage(p.x, p.y);
+				if(stage < ChunkManager.CHUNK_STAGE_ASSIGNED_TILES)
 					continue;
+
 				index.add(String.valueOf(p.x));
 				index.add(String.valueOf(p.y));
-				List<String> tiles = new ArrayList<>();
+				// Grab data about tiles in chunk
+				List<String> tilePalette = new ArrayList<>(),
+					biomePalette = new ArrayList<>(),
+					tiles = new ArrayList<>();
+				HashMap<String, Integer> tilePaletteMap = new HashMap<>(),
+					biomePaletteMap = new HashMap<>();
 				for(int x = 0; x < ChunkManager.CHUNK_SIZE; x++)
 					for(int y = 0; y < ChunkManager.CHUNK_SIZE; y++) {
 						int tX = x+p.x*ChunkManager.CHUNK_SIZE, tY = y+p.y*ChunkManager.CHUNK_SIZE;
-						tiles.add(String.valueOf(World.levels[l].getTile(tX, tY).name));
-						data.add(String.valueOf(World.levels[l].getData(tX, tY)));
+						String tileName = c.getTile(tX, tY).name;
+						String biomeName = biomes.getName(c.getBiome(tX, tY));
+						if(!tilePaletteMap.containsKey(tileName)) {
+							tilePaletteMap.put(tileName, tilePalette.size());
+							tilePalette.add(tileName);
+						}
+						if(!biomePaletteMap.containsKey(biomeName)) {
+							biomePaletteMap.put(biomeName, biomePalette.size());
+							biomePalette.add(biomeName);
+						}
+						tiles.add(String.valueOf(tilePaletteMap.get(tileName)));
+						tiles.add(String.valueOf(biomePaletteMap.get(biomeName)));
+						tiles.add(String.valueOf(c.getData(tX, tY)));
 					}
-				writeToFile(location + filename + l + "/d." + String.valueOf(p.x) + "." + String.valueOf(p.y) + extension, data);
-				writeToFile(location + filename + l + "/t." + String.valueOf(p.x) + "." + String.valueOf(p.y) + extension, tiles);
+
+				List<String> data = new ArrayList<>();
+				data.add(String.valueOf(p.x));
+				data.add(String.valueOf(p.y));
+				data.add(String.valueOf(stage));
+				data.add(String.valueOf(tilePalette.size()));
+				data.addAll(tilePalette);
+				data.add(String.valueOf(biomePalette.size()));
+				data.addAll(biomePalette);
+				data.addAll(tiles);
+				writeToFile(location + filename + l + "/c." + String.valueOf(p.x) + "." + String.valueOf(p.y) + extension, data);
 			}
 			writeToFile(location + filename + l + "/index" + extension, index);
 		}

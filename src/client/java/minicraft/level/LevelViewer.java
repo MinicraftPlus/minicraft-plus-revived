@@ -54,9 +54,10 @@ public class LevelViewer {
 			//noinspection ConstantConditions
 			if (lvl > 1 || lvl < -4) continue;
 
-			ChunkManager map = LevelGen.createAndValidateMap(w, h, lvl, worldSeed);
-			Level parentLevel = lvl + 1 > 1 ? null : new Level(w, h, worldSeed, lvl + 1, null, false);
-			map = Level.genStructuresToMap(map, new Level(w, h, worldSeed, lvl, parentLevel, false));
+			Level level = new Level(w, h, worldSeed, lvl, null, true);
+			//ChunkManager map = LevelGen.createAndValidateMap(w, h, lvl, worldSeed, f -> {});
+			//map = Level.genStructuresToMap(map, new Level(w, h, worldSeed, lvl, parentLevel, false));
+			ChunkManager map = level.chunkManager;
 
 			if (map == null) continue;
 

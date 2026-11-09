@@ -1,14 +1,15 @@
 package minicraft.level.biome;
 
-import java.util.Random; // TODO: Make single-instance tiles (stairs) into structures
-
 import minicraft.level.ChunkManager;
 import minicraft.level.noise.LevelNoise;
+import minicraft.level.structure.Structures;
 import minicraft.level.tile.Tiles;
 
 public class SkyBiome extends Biome {
 	public SkyBiome() {
 		super(0, 0, 0);
+		structures.add(Structures.airWizardHouse);
+		structures.add(Structures.skyStairsDown);
 	}
 
 	public void generate(ChunkManager map, int x, int y) {
@@ -19,8 +20,6 @@ public class SkyBiome extends Biome {
 			map.setTile(x, y, Tiles.get("Infinite Fall"), 0);
 		else if (noise.getScale8Noise(x, y, 3) < -0.65)
 			map.setTile(x, y, Tiles.get("Cloud Cactus"), 0);
-		else if (new Random(System.nanoTime()).nextDouble() < 0.0001 * 5)
-			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
 		else
 			map.setTile(x, y, Tiles.get("cloud"), 0);
 	}

@@ -1,14 +1,16 @@
 package minicraft.level.biome;
 
-import java.util.Random; // TODO: Make single-instance tiles (stairs) into structures
-
 import minicraft.level.ChunkManager;
 import minicraft.level.noise.LevelNoise;
+import minicraft.level.structure.Structures;
 import minicraft.level.tile.Tiles;
 
 public class GemCaveBiome extends Biome {
 	public GemCaveBiome() {
 		super(0, 0, 0);
+		structures.add(Structures.complexMobDungeon);
+		structures.add(Structures.stairsDown);
+		structures.add(Structures.stairsUp);
 	}
 
 	public void generate(ChunkManager map, int x, int y) {
@@ -26,8 +28,6 @@ public class GemCaveBiome extends Biome {
 			map.setTile(x, y, Tiles.get("gem Ore"), 0);
 		else if(noise.getScale32Noise(x, y, 3) > 0.85)
 			map.setTile(x, y, Tiles.get("Lapis"), 0);
-		else if (new Random(System.nanoTime()).nextDouble() < 0.002)
-			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
 		else
 			map.setTile(x, y, Tiles.get("rock"), 0);
 	}
