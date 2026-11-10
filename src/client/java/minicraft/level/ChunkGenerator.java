@@ -2,6 +2,7 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.World;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
 import minicraft.level.biome.Biome;
 import minicraft.level.biome.Biomes;
@@ -38,12 +39,16 @@ public class ChunkGenerator implements Runnable {
 					c = chunksToLoad.remove(0);
 				}
 				int stage = target.chunkManager.getChunkStage(c.x, c.y);
-				if(Load.chunkFileExists(target, c.x, c.y)
-					&& Load.chunkFileStage(target, c.x, c.y) > stage) {
-					Load.loadChunkFile(target, c.x, c.y);
-				}
+				try {
+					if(Load.chunkFileExists(target, c.x, c.y)
+						&& Load.chunkFileStage(target, c.x, c.y) > stage) {
+						Load.loadChunkFile(target, c.x, c.y);
+					}
 				else
 					advanceChunk(c.x, c.y);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				try {
 					Thread.sleep(200);
@@ -88,6 +93,25 @@ public class ChunkGenerator implements Runnable {
 						advanceChunk(x, y);
 	}
 
+	public void unloadChunks() {
+		final int S = ChunkManager.CHUNK_SIZE;
+		HashSet<Point> keep = new HashSet<>();
+		for(Player p : target.getPlayers()) {
+			int chunkX = Math.floorDiv(p.x, S*16);
+			int chunkY = Math.floorDiv(p.y, S*16);
+			for(int x = chunkX - 1; x <= chunkX + 1; x++)
+				for(int y = chunkY - 1; y <= chunkY + 1; y++)
+					keep.add(new Point(x, y));
+		}
+
+		synchronized(chunksToLoad) {
+			chunksToLoad.clear();
+			for(Point c : target.chunkManager.getAllChunks())
+				if(!keep.contains(c))
+					target.chunkManager.unloadChunk(c.x, c.y);
+		}
+	}
+
 	private void primeNoise(int x, int y) {
 		final int S = ChunkManager.CHUNK_SIZE;
 		target.chunkManager.setChunkNoise(x, y, new LevelNoise(target.getSeed(), S * x, S * y, 0, S, S));
@@ -123,7 +147,6 @@ public class ChunkGenerator implements Runnable {
 						continue;
 					if(target.chunkManager.getBiome(p.x, p.y) != b)
 						continue;
-
 					for(ChunkPoint c : s.affectedChunks(target, p.x, p.y)) {
 						Level affectedLevel = Game.levels[World.lvlIdx(c.level)];
 						ChunkManager affectedCM = affectedLevel.chunkManager;

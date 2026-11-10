@@ -33,7 +33,7 @@ public abstract class GridGenStructure extends Structure {
 		HashSet<Point> points = new HashSet<>();
 		for(int x = mingx; x <= maxgx; x++)
 			for(int y = mingy; y <= maxgy; y++) {
-				long hash = Math.abs(Hash2.hash2(level.getSeed() ^ seedOffset, x, y) % (gridSize * gridSize));
+				long hash = Math.abs(Hash2.hash2(level.getSeed() ^ seedOffset ^ (level.depth * 593993), x, y) % (gridSize * gridSize));
 				int yt = (int)(hash / gridSize) + y * gridSize, xt = (int)(hash % gridSize) + x * gridSize;
 				if(xt >= mintx && xt <= maxtx && yt >= minty && yt <= maxty)
 					points.add(new Point(xt, yt));

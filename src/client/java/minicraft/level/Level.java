@@ -114,7 +114,6 @@ public class Level {
 		this.parentLevel = parentLevel;
 		random = new Random(seed);
 		simplex = new Simplex(seed);
-		short[][] maps; // Multidimensional array (an array within a array), used for the map
 
 		chunkGenerator = new ChunkGenerator(this);
 		new Thread(chunkGenerator, "Level " + level + " Chunk Generator").start();
@@ -321,9 +320,9 @@ public class Level {
 			// This prevents any entity (or tile) tick action from happening on a server level with no players.
 
 			for(Player player : players) {
-				for (int i = 0; i < 10; i++) { // remain using tick rate based on W and H, TODO: add tickrate constant (or variable) when removing w and h, currently tick 10 tiles in surrounding chunks
-					int xt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.x >> 4;
-					int yt = (random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE) + player.y >> 4;
+				for (int i = 0; i < 300; i++) { // remain using tick rate based on W and H, TODO: add tickrate constant (or variable) when removing w and h, currently tick 10 tiles in surrounding chunks
+					int xt = random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE + (player.x >> 4);
+					int yt = random.nextInt(ChunkManager.CHUNK_SIZE * 2) - ChunkManager.CHUNK_SIZE + (player.y >> 4);
 					getTile(xt, yt).tick(this, xt, yt);
 				}
 			}
@@ -447,8 +446,6 @@ public class Level {
 
 		for (int y = yo - r; y <= h + yo + r; y++) {
 			for (int x = xo - r; x <= w + xo + r; x++) {
-				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
-
 				int lr = getTile(x, y).getLightRadius(this, x, y);
 				if (lr > 0) screen.renderLight((x << 4) + 8, (y << 4) + 8, lr * brightness);
 			}
@@ -494,6 +491,10 @@ public class Level {
 
 	public void setData(int x, int y, int val) {
 		chunkManager.setData(x, y, val);
+	}
+
+	public Biome getBiome(int x, int y) {
+		return chunkManager.getBiome(x, y);
 	}
 
 	public void add(Entity e) {

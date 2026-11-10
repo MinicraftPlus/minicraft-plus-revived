@@ -483,6 +483,7 @@ public class Screen {
 		public final BufferedImage overlay = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		public final int[] olPixels;
 		public final HashMap<@NotNull Point, @NotNull Integer> lights = new HashMap<>();
+		public final HashMap<Integer, BufferedImage> cachedRadials = new HashMap<>();
 
 		public LightOverlay() {
 			bufPixels = ((DataBufferByte) buffer.getRaster().getDataBuffer()).getData();
@@ -518,7 +519,18 @@ public class Screen {
 		}
 
 		public void renderLight(int x, int y, int r) {
+			if(!cachedRadials.containsKey(new Integer(r)))
+				cacheRadial(r);
 			lights.put(new Point(x, y), r);
+		}
+
+		private void cacheRadial(int radius) {
+			BufferedImage radial = new BufferedImage(radius * 2, radius * 2, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = radial.createGraphics();
+			g2d.setPaint(new RadialGradientPaint(radius, radius, radius, graFractions, graColors));
+			g2d.fillOval(0, 0, radius * 2, radius * 2);
+			g2d.dispose();
+			cachedRadials.put(radius, radial);
 		}
 
 		public BufferedImage render(int xa, int ya) {
@@ -546,8 +558,7 @@ public class Screen {
 					g2d.setColor(java.awt.Color.WHITE);
 					g2d.fillRect(x - 8, y - 8, 16, 16);
 				} else {
-					g2d.setPaint(new RadialGradientPaint(x, y, r, graFractions, graColors));
-					g2d.fillOval(x - r, y - r, r * 2, r * 2);
+					g2d.drawImage(cachedRadials.get(r), null, x-r, y-r);
 				}
 			}
 			g2d.dispose();

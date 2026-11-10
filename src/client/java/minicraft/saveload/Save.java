@@ -101,11 +101,12 @@ public class Save {
 	/**
 	 * This will save world options
 	 * @param worldname The name of the world.
+	 * @param waitForComplete Pause execution of game until save is complete
 	 */
-	public Save(String worldname) {
+	public Save(String worldname, boolean waitForComplete) {
 		this(new File(Game.gameDir + "/saves/" + worldname + "/"));
 
-		new Thread(() -> {
+		Thread t = new Thread(() -> {
 			writeGame("Game");
 			writePlayer("Player", Game.player);
 			writeInventory("Inventory", Game.player);
@@ -113,11 +114,19 @@ public class Save {
 			writeEntities("Entities");
 
 			WorldSelectDisplay.updateWorlds();
+			Game.levels[Game.currentLevel].getChunkGenerator().unloadChunks();
 
 			Updater.notifyAll("minicraft.notification.world_saved");
 			Updater.asTick = 0;
 			Updater.saving = false;
-		}, "SaveThread").start();
+		}, "SaveThread");
+		t.start();
+
+		if(waitForComplete) {
+			try {
+				t.join();
+			} catch (InterruptedException ignored) {}
+		}
 	}
 
 	/**
@@ -272,6 +281,8 @@ public class Save {
 	private void writeWorld(String filename) {
 		LoadingDisplay.setMessage("minicraft.displays.loading.message.levels");
 		for (int l = 0; l < World.levels.length; l++) {
+			if(World.levels[l] == null)
+				continue;
 			new File(location + filename + l).mkdir();
 			List<String> index = new ArrayList<>();
 			ChunkManager c = World.levels[l].chunkManager;

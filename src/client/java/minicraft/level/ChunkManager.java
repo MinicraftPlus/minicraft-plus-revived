@@ -40,6 +40,11 @@ public class ChunkManager {
 		return out;
 	}
 
+	public void unloadChunk(int cX, int cY) {
+		if(chunks.containsKey(cX) && chunks.get(cX).containsKey(cY))
+			chunks.get(cX).remove(cY);
+	}
+
 	private Chunk getChunk(int cX, int cY) {
 		// If [cX][cY] are not keys in chunks, put them there
 		if(!chunks.containsKey(cX))

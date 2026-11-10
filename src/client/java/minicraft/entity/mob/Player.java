@@ -564,7 +564,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.inputDown("quicksave") && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
-					new Save(WorldSelectDisplay.getWorldName());
+					new Save(WorldSelectDisplay.getWorldName(), false);
 				}
 				//debug feature:
 				if (input.inputDown("F3-p")) { // Remove all potion effects
@@ -1238,8 +1238,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void chooseSpawn(Level level) {
 		// Choose spawnpoint from level's options
 		List<Point> options = level.prepareForSpawn();
-		Random r = new Random(level.getSeed());
-		Point spawnPos = options.get(random.nextInt(options.size()));
+		Point spawnPos = options.get(new Random(level.getSeed()).nextInt(options.size()));
 
 		// Update spawn position
 		spawnx = spawnPos.x;

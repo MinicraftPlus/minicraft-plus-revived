@@ -38,7 +38,6 @@ public class World extends Game {
 	static int pendingLevelChange; // Used to determine if the player should change levels or not.
 
 	private static long seed;
-	private static Random random;
 
 	@Nullable
 	public static Action onChangeAction; // Allows action to be stored during a change schedule that should only occur once the screen is blacked out.
@@ -137,12 +136,11 @@ public class World extends Game {
 			worldSize = (Integer) Settings.get("size");
 
 			seed = WorldGenDisplay.getSeed().orElse(new Random().nextLong());
-			random = new Random(seed);
 
 			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 2); // The .002 is for floating point errors, in case they occur.
 
 			for(int i = maxLevelDepth; i >= minLevelDepth; i--)
-				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i + 1)], true);
+				levels[lvlIdx(i)] = new Level(worldSize, worldSize, seed, i, levels[lvlIdx(i + 1)], true);
 
 			Logging.WORLD.trace("Finding spawnpoint...");
 			LoadingDisplay.setMessage("minicraft.displays.loading.message.spawnpoint", true);

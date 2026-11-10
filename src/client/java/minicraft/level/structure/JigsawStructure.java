@@ -190,6 +190,8 @@ public class JigsawStructure extends MultiStructure {
 		Structure initialPiece = centerPiece;
 		if(initialPiece == null)
 			initialPiece = structures[r.nextInt(structures.length)];
+		if(pieces.get(initialPiece).minimumUses > 0)
+			requiredPieces--;
 		out.get(initialPiece).add(new Point(x, y));
 		for(Connector c : pieces.get(initialPiece).connectors) {
 			Connector moved = new Connector(c);
@@ -207,7 +209,11 @@ public class JigsawStructure extends MultiStructure {
 
 
 		// Ideally, "requiredPieces" hits zero before maximumPieces is reached
-		for(int numPieces = 0; numPieces < maximumPieces + requiredPieces && !availableConnectors.isEmpty(); numPieces++) {
+		for(int numPieces = 1; numPieces < maximumPieces + requiredPieces && !availableConnectors.isEmpty(); numPieces++) {
+			// If all requirements are met, 25% chance of being done
+			if(requiredPieces == 0 && numPieces >= minimumPieces && r.nextInt(4) == 0)
+				break;
+
 			// Whether we are strictly searching for required pieces only
 			boolean strict = numPieces >= (maximumPieces - requiredPieces);
 
@@ -284,11 +290,6 @@ public class JigsawStructure extends MultiStructure {
 				moved.connectionOffset.translate(placement.x, placement.y);
 				availableConnectors.add(moved);
 			}
-
-			// If all requirements are met, 25% chance of being done
-			if(requiredPieces == 0 && numPieces >= minimumPieces
-				&& r.nextInt(4) == 0)
-				break;
 		}
 
 		return out;

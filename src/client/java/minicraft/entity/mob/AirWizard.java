@@ -93,8 +93,8 @@ public class AirWizard extends EnemyMob {
 				double yDir = (double)yd / dist;
 				// Travel all but the last 64 tiles towards player
 				dist -= 16 * 64;
-				x = player.x + (int)(dist * xDir);
-				y = player.y + (int)(dist * yDir);
+				x += (int)(dist * xDir);
+				y += (int)(dist * yDir);
 			} else if (xd * xd + yd * yd < 16 * 16 * 2 * 2) {
 				/// Move away from the player if less than 2 blocks away
 
