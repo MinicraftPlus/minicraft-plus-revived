@@ -11,6 +11,7 @@ import minicraft.level.biome.Biome;
 import minicraft.level.noise.LevelNoise;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.structure.Structure;
 
 public class ChunkManager {
 
@@ -18,7 +19,7 @@ public class ChunkManager {
 	public static final int CHUNK_STAGE_NONE = 0;
 	public static final int CHUNK_STAGE_PRIMED_NOISE = 1;
 	public static final int CHUNK_STAGE_ASSIGNED_BIOMES = 2;
-	public static final int CHUNK_STAGE_UNFINISHED_STAIRS = 3;
+	public static final int CHUNK_STAGE_ASSIGNED_TILES = 3;
 	public static final int CHUNK_STAGE_DONE = 4;
 
 	/**
@@ -37,6 +38,11 @@ public class ChunkManager {
 			for(int y : chunks.get(x).keySet())
 				out.add(new Point(x, y));
 		return out;
+	}
+
+	public void unloadChunk(int cX, int cY) {
+		if(chunks.containsKey(cX) && chunks.get(cX).containsKey(cY))
+			chunks.get(cX).remove(cY);
 	}
 
 	private Chunk getChunk(int cX, int cY) {
@@ -80,19 +86,30 @@ public class ChunkManager {
 		return getTileChunk(x, y).getTileDat(x, y).getBiome();
 	}
 
-	public Biome setBiome(int x, int y, Biome b) {
-		return getTileChunk(x, y).getTileDat(x, y).biome = b;
+	public void setBiome(int x, int y, Biome b) {
+		getTileChunk(x, y).setTileBiome(x, y, b);
 	}
 
 	public void setData(int x, int y, int val) {
 		getTileChunk(x, y).getTileDat(x, y).data = (short) val;
 	}
 
+	/** Get generation data & information */
 	public int getChunkStage(int chunkX, int chunkY) {
 		// If [cX][cY] are not keys in chunks, stage must be 0
 		if(!chunks.containsKey(chunkX) || !chunks.get(chunkX).containsKey(chunkY))
 			return CHUNK_STAGE_NONE;
 		return chunks.get(chunkX).get(chunkY).stage;
+	}
+
+	public HashSet<Biome> getChunkBiomes(int chunkX, int chunkY) {
+		if(!chunks.containsKey(chunkX) || !chunks.get(chunkX).containsKey(chunkY))
+			return new HashSet<Biome>();
+		return chunks.get(chunkX).get(chunkY).biomes;
+	}
+
+	public HashMap<Structure, HashSet<Point>> getChunkLoadedStructures(int chunkX, int chunkY) {
+		return getChunk(chunkX, chunkY).loadedStructures;
 	}
 
 	public LevelNoise getChunkNoise(int chunkX, int chunkY) {
@@ -107,7 +124,7 @@ public class ChunkManager {
 		getChunk(chunkX, chunkY).stage = (short)stage;
 
 		// Let go of noise if no longer needed
-		if(stage == CHUNK_STAGE_UNFINISHED_STAIRS)
+		if(stage == CHUNK_STAGE_ASSIGNED_TILES)
 			chunks.get(chunkX).get(chunkY).noise = null;
 	}
 
@@ -116,18 +133,26 @@ public class ChunkManager {
 	}
 
 	private static class Chunk {
+		public HashMap<Structure, HashSet<Point>> loadedStructures = new HashMap<>();
 		protected TileDat[] tiles;
 		protected short stage = 0;
 		protected LevelNoise noise = null;
+		protected HashSet<Biome> biomes = new HashSet<>();
 		public Chunk() {
 			tiles = new TileDat[CHUNK_SIZE * CHUNK_SIZE];
 		}
 
 		public TileDat getTileDat(int tileX, int tileY) {
 			int index = Math.floorMod(tileX, CHUNK_SIZE) + Math.floorMod(tileY, CHUNK_SIZE) * CHUNK_SIZE;
-			if(tiles[index] == null)
+			if(tiles[index] == null) {
 				tiles[index] = new TileDat((short)0);
+			}
 			return tiles[index];
+		}
+
+		public void setTileBiome(int tileX, int tileY, Biome b) {
+			getTileDat(tileX, tileY).biome = b;
+			biomes.add(b);
 		}
 	}
 

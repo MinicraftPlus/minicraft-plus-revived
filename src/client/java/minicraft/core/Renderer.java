@@ -531,6 +531,7 @@ public class Renderer extends Game {
 
 			if (levels[currentLevel] != null) {
 				info.add("Seed: " + levels[currentLevel].getSeed());
+				info.add("Biome: " + levels[currentLevel].getBiome(player.x >> 4, player.y >> 4));
 			}
 
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);

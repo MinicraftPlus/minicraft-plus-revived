@@ -35,7 +35,7 @@ public class PlayerDeathDisplay extends Display {
 		}
 
 		entries.add(new SelectEntry("minicraft.displays.player_death.save_quit", () -> {
-			new Save(WorldSelectDisplay.getWorldName());
+			new Save(WorldSelectDisplay.getWorldName(), true);
 			Game.setDisplay(new TitleDisplay());
 		}));
 

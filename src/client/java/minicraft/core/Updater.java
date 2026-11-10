@@ -149,8 +149,7 @@ public class Updater extends Game {
 			asTick++;
 		if (asTick > astime) {
 			if ((boolean) Settings.get("autosave") && !gameOver && player.health > 0) {
-
-				new Save(WorldSelectDisplay.getWorldName());
+				new Save(WorldSelectDisplay.getWorldName(), false);
 			}
 
 			asTick = 0;
@@ -227,7 +226,7 @@ public class Updater extends Game {
 					} else if (isMode("minicraft.settings.mode.creative") && input.getMappedKey("SHIFT-W").isClicked()) {
 						Game.setDisplay(new LevelTransitionDisplay(1));
 					}
-					
+
 					if (input.getMappedKey("F3-L").isClicked()) {
 						// Print all players on all levels, and their coordinates.
 						Logging.WORLD.info("Printing players on all levels.");

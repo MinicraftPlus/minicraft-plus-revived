@@ -4,11 +4,15 @@ import java.util.Random; // TODO: Make single-instance tiles (stairs) into struc
 
 import minicraft.level.ChunkManager;
 import minicraft.level.noise.LevelNoise;
+import minicraft.level.structure.Structures;
 import minicraft.level.tile.Tiles;
 
 public class IronCaveBiome extends Biome {
 	public IronCaveBiome() {
 		super(0, 0, 0);
+		structures.add(Structures.mobDungeon);
+		structures.add(Structures.stairsDown);
+		structures.add(Structures.surfaceStairsUp);
 	}
 
 	public void generate(ChunkManager map, int x, int y) {
@@ -26,8 +30,8 @@ public class IronCaveBiome extends Biome {
 			map.setTile(x, y, Tiles.get("iron Ore"), 0);
 		else if(noise.getScale32Noise(x, y, 3) > 0.8)
 			map.setTile(x, y, Tiles.get("Lapis"), 0);
-		else if (new Random(System.nanoTime()).nextDouble() < 0.003)
-			map.setTile(x, y, Tiles.get("Stairs Down"), 0);
+		//else if (new Random(System.nanoTime()).nextDouble() < 0.003)
+		//	map.setTile(x, y, Tiles.get("Stairs Down"), 0);
 		else
 			map.setTile(x, y, Tiles.get("rock"), 0);
 	}

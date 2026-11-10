@@ -1,15 +1,22 @@
 plugins {
     id 'application'
     id 'maven-publish'
+	id 'java'
+	id 'base'
 }
 
 allprojects {
     apply plugin: "java"
     apply plugin: "application"
 
-    version = "2.3.0-infdev3"
+    version = "2.3.0-infdev4"
 
-    sourceCompatibility = 8
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(8)
+		}
+	}
+
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
     repositories {
@@ -41,7 +48,10 @@ project(":common") {
 }
 
 project(":client") {
-    archivesBaseName = "minicraft-plus"
+
+	base {
+	    archivesName = "minicraft-plus"
+	}
 
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -66,7 +76,9 @@ project(":client") {
 
 project(":server") {
 
-    archivesBaseName = "minicraft-plus-server"
+	base {
+		archivesName = "minicraft-plus-server"
+	}
 
     dependencies {
         implementation project(":common")

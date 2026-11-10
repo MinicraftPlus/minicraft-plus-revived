@@ -120,6 +120,14 @@ public class Rectangle {
 		setPosition(p, anchor);
 	}
 
+	// Expands the rectangle's bounds to encapsulate the given point
+	public void addPoint(Point p) {
+		this.x = Math.min(this.x, p.x);
+		this.y = Math.min(this.y, p.y);
+		this.w = Math.max(p.x - this.x, this.w);
+		this.h = Math.max(p.y - this.y, this.h);
+	}
+
 	public String toString() {
 		return super.toString() + "[center=" + getCenter() + "; size=" + getSize() + "]";
 	}
