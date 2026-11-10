@@ -16,7 +16,7 @@ public class MaterialTile extends Tile {
 	protected Material type;
 
 	protected MaterialTile(Material type) {
-		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" : type.name()), (SpriteAnimation) null);
+		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" : type == Material.LavaStone ? "Lava Stone" : type.name()), (SpriteAnimation) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
@@ -26,6 +26,9 @@ public class MaterialTile extends Tile {
 			case Obsidian:
 				sprite = new SpriteAnimation(SpriteType.Tile, "obsidian");
 				break;
+                        case LavaStone:
+                                sprite = new SpriteAnimation(SpriteType.Tile, "lava_stone");
+                                break;
 			default:
 		}
 	}
@@ -49,6 +52,9 @@ public class MaterialTile extends Tile {
 						case Obsidian:
 							drop = Items.get("Raw Obsidian");
 							break;
+                                                case LavaStone:
+                                                        drop = Items.get("Lava Stone");
+                                                        break;
 						default:
 							throw new IllegalStateException("Unexpected value: " + type);
 					}

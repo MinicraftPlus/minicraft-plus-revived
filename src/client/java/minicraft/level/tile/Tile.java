@@ -24,7 +24,8 @@ public abstract class Tile {
 	protected enum Material {
 		Wood(ToolType.Axe),
 		Stone(ToolType.Pickaxe),
-		Obsidian(ToolType.Pickaxe);
+		Obsidian(ToolType.Pickaxe),
+                LavaStone(ToolType.Pickaxe);
 
 		public static final Material[] values = Material.values();
 		private final ToolType requiredTool;

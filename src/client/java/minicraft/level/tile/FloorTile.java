@@ -20,7 +20,7 @@ public class FloorTile extends Tile {
 	}
 
 	protected FloorTile(Material type, String name) {
-		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" + (name == null ? "" : " " + name) : type.name() + " " + (name == null ? "Bricks" : name)), null);
+		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" + (name == null ? "" : " " + name) : type == Material.LavaStone ? "Lava Stone Bricks" : type.name() + " " + (name == null ? "Bricks" : name)), null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
@@ -33,6 +33,8 @@ public class FloorTile extends Tile {
 			case Obsidian:
 				sprite = new SpriteAnimation(SpriteType.Tile, "obsidian_floor");
 				break;
+                        case LavaStone:
+                                sprite = new SpriteAnimation(SpriteType.Tile, "lavabrick_floor");
 		}
 	}
 

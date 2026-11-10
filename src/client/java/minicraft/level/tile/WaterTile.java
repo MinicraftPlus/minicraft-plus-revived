@@ -7,51 +7,69 @@ import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class WaterTile extends Tile {
-	private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "water")
-		.setConnectionChecker((level, x, y, tile, side) -> tile.connectsToFluid(level, x, y))
-		.setSingletonWithConnective(true);
 
-	protected WaterTile(String name) {
-		super(name, sprite);
-	}
+    private static SpriteAnimation sprite = new SpriteAnimation(SpriteType.Tile, "water")
+            .setConnectionChecker((level, x, y, tile, side) -> tile.connectsToFluid(level, x, y))
+            .setSingletonWithConnective(true);
 
-	@Override
-	public boolean connectsToFluid(Level level, int x, int y) {
-		return true;
-	}
+    protected WaterTile(String name) {
+        super(name, sprite);
+    }
 
-	@Override
-	public void render(Screen screen, Level level, int x, int y) {
-		Tiles.get("dirt").render(screen, level, x, y);
-		sprite.render(screen, level, x, y);
-	}
+    @Override
+    public boolean connectsToFluid(Level level, int x, int y) {
+        return true;
+    }
 
-	@Override
-	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e.canSwim();
-	}
+    @Override
+    public void render(Screen screen, Level level, int x, int y) {
+        // Render logic for lava stone biome
+        if (level.getTile(x + 1, y) == Tiles.get("Ashed Dirt")
+                || level.getTile(x - 1, y) == Tiles.get("Ashed Dirt")
+                || level.getTile(x, y + 1) == Tiles.get("Ashed Dirt")
+                || level.getTile(x, y - 1) == Tiles.get("Ashed Dirt")
+                || level.getTile(x + 1, y) == Tiles.get("Hard rock")
+                || level.getTile(x - 1, y) == Tiles.get("Hard rock")
+                || level.getTile(x, y + 1) == Tiles.get("Hard rock")
+                || level.getTile(x, y - 1) == Tiles.get("Hard rock")) {
+            Tiles.get("Ashed Dirt").render(screen, level, x, y);
+        } else {
+            Tiles.get("dirt").render(screen, level, x, y);
+        }
+        sprite.render(screen, level, x, y);
+    }
 
-	@Override
-	public boolean tick(Level level, int xt, int yt) {
-		int xn = xt;
-		int yn = yt;
+    @Override
+    public boolean mayPass(Level level, int x, int y, Entity e) {
+        return e.canSwim();
+    }
 
-		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
-		else yn += random.nextInt(2) * 2 - 1;
+    @Override
+    public boolean tick(Level level, int xt, int yt) {
+        int xn = xt;
+        int yn = yt;
 
-		if (level.getTile(xn, yn) instanceof HoleTile) {
-			level.setTile(xn, yn, this);
-		}
+        if (random.nextBoolean()) {
+            xn += random.nextInt(2) * 2 - 1;
+        } else {
+            yn += random.nextInt(2) * 2 - 1;
+        }
 
-		// These set only the non-diagonally adjacent lava tiles to obsidian
-		for (int x = -1; x < 2; x++) {
-			if (level.getTile(xt + x, yt) instanceof LavaTile)
-				level.setTile(xt + x, yt, Tiles.get("Raw Obsidian"));
-		}
-		for (int y = -1; y < 2; y++) {
-			if (level.getTile(xt, yt + y) instanceof LavaTile)
-				level.setTile(xt, yt + y, Tiles.get("Raw Obsidian"));
-		}
-		return false;
-	}
+        if (level.getTile(xn, yn) instanceof HoleTile) {
+            level.setTile(xn, yn, this);
+        }
+
+        // These set only the non-diagonally adjacent lava tiles to obsidian
+        for (int x = -1; x < 2; x++) {
+            if (level.getTile(xt + x, yt) instanceof LavaTile) {
+                level.setTile(xt + x, yt, Tiles.get("Raw Obsidian"));
+            }
+        }
+        for (int y = -1; y < 2; y++) {
+            if (level.getTile(xt, yt + y) instanceof LavaTile) {
+                level.setTile(xt, yt + y, Tiles.get("Raw Obsidian"));
+            }
+        }
+        return false;
+    }
 }

@@ -54,7 +54,7 @@ public final class Tiles {
 		tiles.put((short) 15, new OreTile(OreTile.OreType.Gem));
 		tiles.put((short) 16, new OreTile(OreTile.OreType.Lapis));
 
-		tiles.put((short) 18, new LavaBrickTile("Lava Brick"));
+		tiles.put((short) 18, new FloorTile(Tile.Material.LavaStone));
 		tiles.put((short) 19, new ExplodedTile("Explode"));
 		tiles.put((short) 20, new FarmTile("Farmland"));
 		tiles.put((short) 21, new WheatTile("Wheat"));
@@ -109,6 +109,10 @@ public final class Tiles {
 		tiles.put((short) 57, new TorchTile());
 		tiles.put((short) 58, new SignTile());
 		tiles.put((short) 59, new DecorTile(DecorTile.decorType.ORNATE_WOOD));
+		tiles.put((short) 70, new AshedDirtTile());
+		tiles.put((short) 71, new DecorTile(DecorTile.decorType.LAVA_STONE));
+		tiles.put((short) 72, new LavaStoneWallTile());
+                tiles.put((short) 73, new MaterialTile(Tile.Material.LavaStone));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short) 255, new ConnectTile());
